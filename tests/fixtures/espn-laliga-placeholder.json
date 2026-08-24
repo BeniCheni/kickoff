@@ -1,0 +1,400 @@
+{
+  "events": [
+    {
+      "id": "401882832",
+      "uid": "s:600~l:740~e:401882832",
+      "date": "2026-10-25T18:00Z",
+      "name": "Real Madrid at Barcelona",
+      "shortName": "RMA @ BAR",
+      "season": {
+        "year": 2026,
+        "type": 14357,
+        "slug": "2026-27-laliga"
+      },
+      "competitions": [
+        {
+          "id": "401882832",
+          "uid": "s:600~l:740~e:401882832~c:401882832",
+          "date": "2026-10-25T18:00Z",
+          "startDate": "2026-10-25T18:00Z",
+          "attendance": 0,
+          "timeValid": false,
+          "recent": false,
+          "status": {
+            "clock": 0.0,
+            "displayClock": "0'",
+            "type": {
+              "id": "1",
+              "name": "STATUS_SCHEDULED",
+              "state": "pre",
+              "completed": false,
+              "description": "Scheduled",
+              "detail": "TBD",
+              "shortDetail": "TBD"
+            }
+          },
+          "venue": {
+            "id": "1625",
+            "fullName": "Spotify Camp Nou",
+            "address": {
+              "city": "Barcelona",
+              "country": "Spain"
+            }
+          },
+          "tickets": [
+            {
+              "summary": "Tickets as low as $1,241",
+              "numberAvailable": 616,
+              "links": [
+                {
+                  "href": "https://www.vividseats.com/fc-barcelona-tickets-spotify-camp-nou-10-25-2026--sports-soccer/production/7236228?wsUser=717"
+                },
+                {
+                  "href": "https://www.vividseats.com/venues/spotify-camp-nou-tickets.html?wsUser=717"
+                }
+              ]
+            }
+          ],
+          "format": {
+            "regulation": {
+              "periods": 2
+            }
+          },
+          "altGameNote": "LALIGA",
+          "notes": [],
+          "geoBroadcasts": [
+            {
+              "type": {
+                "id": "4",
+                "shortName": "STREAMING"
+              },
+              "market": {
+                "id": "1",
+                "type": "National"
+              },
+              "media": {
+                "shortName": "ESPN+",
+                "logo": "https://a.espncdn.com/guid/322a7e47-3cdb-3b5c-ab1b-678e1f2c27e5/logos/default.png",
+                "darkLogo": "https://a.espncdn.com/guid/322a7e47-3cdb-3b5c-ab1b-678e1f2c27e5/logos/default-dark.png"
+              },
+              "lang": "en",
+              "region": "us"
+            }
+          ],
+          "broadcasts": [
+            {
+              "market": "national",
+              "names": [
+                "ESPN+"
+              ]
+            }
+          ],
+          "broadcast": "",
+          "competitors": [
+            {
+              "id": "83",
+              "uid": "s:600~t:83",
+              "type": "team",
+              "order": 0,
+              "homeAway": "home",
+              "winner": false,
+              "form": "WLWLW",
+              "score": "0",
+              "records": [
+                {
+                  "name": "All Splits",
+                  "type": "total",
+                  "summary": "0-0-0",
+                  "abbreviation": "Total"
+                }
+              ],
+              "team": {
+                "id": "83",
+                "uid": "s:600~t:83",
+                "abbreviation": "BAR",
+                "displayName": "Barcelona",
+                "shortDisplayName": "Barcelona",
+                "name": "Barcelona",
+                "location": "Barcelona",
+                "color": "990000",
+                "alternateColor": "FCE38A",
+                "isActive": true,
+                "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/83.png",
+                "links": [
+                  {
+                    "rel": [
+                      "clubhouse",
+                      "desktop",
+                      "team"
+                    ],
+                    "href": "https://www.espn.com/soccer/club/_/id/83/barcelona",
+                    "text": "Clubhouse",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  },
+                  {
+                    "rel": [
+                      "stats",
+                      "desktop",
+                      "team"
+                    ],
+                    "href": "https://www.espn.com/soccer/team/stats/_/id/83/barcelona",
+                    "text": "Stats",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  },
+                  {
+                    "rel": [
+                      "stats",
+                      "sportscenter",
+                      "app",
+                      "team"
+                    ],
+                    "href": "sportscenter://x-callback-url/showClubhouse?uid=s:600~t:83&section=stats",
+                    "text": "Stats",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  },
+                  {
+                    "rel": [
+                      "schedule",
+                      "desktop",
+                      "team"
+                    ],
+                    "href": "https://www.espn.com/soccer/team/fixtures/_/id/83/barcelona",
+                    "text": "Fixtures",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  },
+                  {
+                    "rel": [
+                      "schedule",
+                      "sportscenter",
+                      "app",
+                      "team"
+                    ],
+                    "href": "sportscenter://x-callback-url/showClubhouse?uid=s:600~t:83&section=scores",
+                    "text": "Fixtures",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  },
+                  {
+                    "rel": [
+                      "squad",
+                      "desktop",
+                      "team"
+                    ],
+                    "href": "https://www.espn.com/soccer/team/squad/_/id/83/barcelona",
+                    "text": "Squad",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  },
+                  {
+                    "rel": [
+                      "squad",
+                      "sportscenter",
+                      "app",
+                      "team"
+                    ],
+                    "href": "sportscenter://x-callback-url/showClubhouse?uid=s:600~t:83&section=squad",
+                    "text": "Squad",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  }
+                ],
+                "venue": {
+                  "id": "1625"
+                }
+              },
+              "statistics": []
+            },
+            {
+              "id": "86",
+              "uid": "s:600~t:86",
+              "type": "team",
+              "order": 1,
+              "homeAway": "away",
+              "winner": false,
+              "form": "WWWLW",
+              "score": "0",
+              "records": [
+                {
+                  "name": "All Splits",
+                  "type": "total",
+                  "summary": "0-0-0",
+                  "abbreviation": "Total"
+                }
+              ],
+              "team": {
+                "id": "86",
+                "uid": "s:600~t:86",
+                "abbreviation": "RMA",
+                "displayName": "Real Madrid",
+                "shortDisplayName": "Real Madrid",
+                "name": "Real Madrid",
+                "location": "Real Madrid",
+                "color": "ffffff",
+                "alternateColor": "1B4D3E",
+                "isActive": true,
+                "logo": "https://a.espncdn.com/i/teamlogos/soccer/500/86.png",
+                "links": [
+                  {
+                    "rel": [
+                      "clubhouse",
+                      "desktop",
+                      "team"
+                    ],
+                    "href": "https://www.espn.com/soccer/club/_/id/86/real-madrid",
+                    "text": "Clubhouse",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  },
+                  {
+                    "rel": [
+                      "stats",
+                      "desktop",
+                      "team"
+                    ],
+                    "href": "https://www.espn.com/soccer/team/stats/_/id/86/real-madrid",
+                    "text": "Stats",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  },
+                  {
+                    "rel": [
+                      "stats",
+                      "sportscenter",
+                      "app",
+                      "team"
+                    ],
+                    "href": "sportscenter://x-callback-url/showClubhouse?uid=s:600~t:86&section=stats",
+                    "text": "Stats",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  },
+                  {
+                    "rel": [
+                      "schedule",
+                      "desktop",
+                      "team"
+                    ],
+                    "href": "https://www.espn.com/soccer/team/fixtures/_/id/86/real-madrid",
+                    "text": "Fixtures",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  },
+                  {
+                    "rel": [
+                      "schedule",
+                      "sportscenter",
+                      "app",
+                      "team"
+                    ],
+                    "href": "sportscenter://x-callback-url/showClubhouse?uid=s:600~t:86&section=scores",
+                    "text": "Fixtures",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  },
+                  {
+                    "rel": [
+                      "squad",
+                      "desktop",
+                      "team"
+                    ],
+                    "href": "https://www.espn.com/soccer/team/squad/_/id/86/real-madrid",
+                    "text": "Squad",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  },
+                  {
+                    "rel": [
+                      "squad",
+                      "sportscenter",
+                      "app",
+                      "team"
+                    ],
+                    "href": "sportscenter://x-callback-url/showClubhouse?uid=s:600~t:86&section=squad",
+                    "text": "Squad",
+                    "isExternal": false,
+                    "isPremium": false,
+                    "isHidden": false
+                  }
+                ],
+                "venue": {
+                  "id": "10630"
+                }
+              },
+              "statistics": []
+            }
+          ],
+          "details": [],
+          "odds": [
+            null
+          ],
+          "wasSuspended": false,
+          "playByPlayAvailable": true,
+          "playByPlayAthletes": true
+        }
+      ],
+      "status": {
+        "clock": 0.0,
+        "displayClock": "0'",
+        "type": {
+          "id": "1",
+          "name": "STATUS_SCHEDULED",
+          "state": "pre",
+          "completed": false,
+          "description": "Scheduled",
+          "detail": "TBD",
+          "shortDetail": "TBD"
+        }
+      },
+      "venue": {
+        "displayName": "Spotify Camp Nou"
+      },
+      "links": [
+        {
+          "language": "en-US",
+          "rel": [
+            "summary",
+            "desktop",
+            "event"
+          ],
+          "href": "https://www.espn.com/soccer/match/_/gameId/401882832/real-madrid-barcelona",
+          "text": "Summary",
+          "shortText": "Summary",
+          "isExternal": false,
+          "isPremium": false,
+          "isHidden": false
+        },
+        {
+          "language": "en-US",
+          "rel": [
+            "stats",
+            "desktop",
+            "event"
+          ],
+          "href": "https://www.espn.com/soccer/matchstats/_/gameId/401882832",
+          "text": "Statistics",
+          "shortText": "Statistics",
+          "isExternal": false,
+          "isPremium": false,
+          "isHidden": false
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+import { describe, it, expect } from 'vitest'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
+import { normalizeEvent, seasonLabel } from '../scripts/providers/espn'
+import { fixtureSchema } from '../src/lib/schema'
+
+const load = (name: string) =>
+  JSON.parse(readFileSync(resolve(import.meta.dirname, 'fixtures', name), 'utf8'))
+
+const ligue1 = load('espn-ligue1-md1.json').events
+const placeholder = load('espn-laliga-placeholder.json').events
+
+const AT = '2026-08-21T12:00:00.000Z'
+
+describe('seasonLabel', () => {
+  it('formats a European split season', () => {
+    expect(seasonLabel(2026)).toBe('2026-27')
+    expect(seasonLabel(2029)).toBe('2029-30')
+  })
+})
+
+describe('normalizeEvent', () => {
+  it('produces a schema-valid fixture from a real payload', () => {
+    for (const e of ligue1) {
+      const f = normalizeEvent(e, 'ligue1', AT)
+      expect(f).not.toBeNull()
+      expect(() => fixtureSchema.parse(f)).not.toThrow()
+    }
+  })
+
+  it('pins the Ligue 1 season opener to its true kickoff instant', () => {
+    const e = ligue1.find((x: any) => x.name.includes('Marseille'))
+    const f = normalizeEvent(e, 'ligue1', AT)!
+    // The prototype had this on Thu 20 Aug. It is Fri 21 Aug, 20:45 CEST = 18:45 UTC.
+    expect(f.kickoffUtc).toBe('2026-08-21T18:45:00.000Z')
+    expect(f.home.name).toBe('Olympique de Marseille')
+    expect(f.away.name).toBe('RC Strasbourg')
+    expect(f.timeConfidence).toBe('exact')
+  })
+
+  it('records Rennes as the home side against PSG', () => {
+    // The LFP moved this out of the Parc des Princes on 19 Aug 2026. Home/away inversion
+    // flips the moneyline, so this assertion is deliberately explicit.
+    const e = ligue1.find((x: any) => x.shortName === 'PSG @ REN')
+    const f = normalizeEvent(e, 'ligue1', AT)!
+    expect(f.home.name).toBe('Stade Rennais')
+    expect(f.away.name).toBe('Paris Saint-Germain')
+    expect(f.venue).toBe('Roazhon Park')
+    expect(f.id).toBe(`ligue1:${e.id}`)
+  })
+
+  it('marks an unscheduled kickoff as a placeholder rather than exact', () => {
+    // El Clásico, 25 Oct 2026: LaLiga has fixed the date but not the time. The prototype
+    // presented a 16:15 kickoff as confirmed.
+    const f = normalizeEvent(placeholder[0], 'laliga', AT)!
+    expect(f.timeConfidence).toBe('round_placeholder')
+    expect(f.kickoffUtc.slice(0, 10)).toBe('2026-10-25')
+  })
+
+  it('returns null instead of a half-built fixture when the payload is malformed', () => {
+    expect(normalizeEvent({ id: '1' }, 'ligue1', AT)).toBeNull()
+    expect(normalizeEvent({ competitions: [{ competitors: [] }] }, 'ligue1', AT)).toBeNull()
+    expect(
+      normalizeEvent({ competitions: [{ competitors: [{ homeAway: 'home', team: {} }] }] }, 'ligue1', AT),
+    ).toBeNull()
+  })
+
+  it('generates an id that survives a fixture being rescheduled or relocated', () => {
+    const e = ligue1.find((x: any) => x.name.includes('Marseille'))
+    const moved = { ...e, date: '2026-09-15T18:45Z' }
+    expect(normalizeEvent(moved, 'ligue1', AT)!.id).toBe(normalizeEvent(e, 'ligue1', AT)!.id)
+  })
+
+  it('gives the two legs of a season distinct ids', () => {
+    const [a, b] = ligue1
+    expect(normalizeEvent(a, 'ligue1', AT)!.id).not.toBe(normalizeEvent(b, 'ligue1', AT)!.id)
+  })
+})

@@ -1,0 +1,83 @@
+@import 'tailwindcss';
+
+/* Theme is driven by a data-theme attribute on <html>, set before paint in main.tsx. */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/*
+ * The palette is carried over unchanged from the V5 prototype — a hand-tuned "floodlit
+ * pitch" scheme. Semantic variables are declared here and swapped wholesale for dark mode;
+ * `@theme inline` below points Tailwind's generated utilities at those variables rather
+ * than at literal colours, so `bg-surface` follows the theme automatically.
+ */
+:root {
+  --bg: #f7f5ee;
+  --surface: #ffffff;
+  --surface-alt: #efead9;
+  --border: rgb(22 33 27 / 0.12);
+  --border-strong: rgb(22 33 27 / 0.22);
+  --text: #16211b;
+  --text-secondary: #55614f;
+  --text-muted: #8a9284;
+  --pitch: #2c7a4b;
+  --pitch-deep: #1e5636;
+  --floodlight: #c98a00;
+  --floodlight-bg: #fbefd3;
+  --accent: #d85a30;
+}
+
+[data-theme='dark'] {
+  --bg: #0e1c15;
+  --surface: #142a1f;
+  --surface-alt: #1a3325;
+  --border: rgb(231 239 233 / 0.14);
+  --border-strong: rgb(231 239 233 / 0.26);
+  --text: #e7efe9;
+  --text-secondary: #a9b9ac;
+  --text-muted: #6e8074;
+  --pitch: #56c083;
+  --pitch-deep: #2f7a4d;
+  --floodlight: #f7c948;
+  --floodlight-bg: rgb(247 201 72 / 0.14);
+  --accent: #f7a864;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-alt: var(--surface-alt);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-ink: var(--text);
+  --color-ink-secondary: var(--text-secondary);
+  --color-ink-muted: var(--text-muted);
+  --color-pitch: var(--pitch);
+  --color-pitch-deep: var(--pitch-deep);
+  --color-floodlight: var(--floodlight);
+  --color-floodlight-bg: var(--floodlight-bg);
+  --color-accent: var(--accent);
+
+  --font-display: 'Oswald', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+  [data-theme='dark'] {
+    color-scheme: dark;
+  }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@utility label-caps {
+  font-family: var(--font-display);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
