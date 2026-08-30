@@ -2,7 +2,7 @@ import rawStandings from '../data/standings.json'
 import { standingsFileSchema, type Fixture, type StandingRow } from './schema'
 import { zoneFor, type CompetitionKey, type Zone } from './competitions'
 import { FIXTURES } from './fixtures'
-import { fixtureTimes, todayIso, weekdayShort, type FixtureTimes } from './time'
+import { brooklynDate, fixtureTimes, hoursSince, todayIso, weekdayShort, type FixtureTimes } from './time'
 
 /**
  * The league table plus everything the Table view derives around it.
@@ -39,8 +39,24 @@ export type TableRow = StandingRow & {
   } | null
 }
 
-function leagueFixtures(key: CompetitionKey): Fixture[] {
-  return FIXTURES.filter((f) => f.competition === key)
+/** One league's fixtures grouped by team id, in kickoff order — one pass, reused per row. */
+function fixturesByTeam(key: CompetitionKey): Map<string, Fixture[]> {
+  const byTeam = new Map<string, Fixture[]>()
+  const add = (id: string | undefined, f: Fixture) => {
+    if (!id) return
+    const list = byTeam.get(id)
+    if (list) list.push(f)
+    else byTeam.set(id, [f])
+  }
+  for (const f of FIXTURES) {
+    if (f.competition !== key) continue
+    add(f.home.sourceId, f)
+    add(f.away.sourceId, f)
+  }
+  for (const list of byTeam.values()) {
+    list.sort((a, b) => a.kickoffUtc.localeCompare(b.kickoffUtc))
+  }
+  return byTeam
 }
 
 /** The table for one league, or [] when the snapshot has none (non-domestic keys). */
@@ -48,19 +64,16 @@ export function tableFor(key: CompetitionKey): TableRow[] {
   const rows = STANDINGS.leagues[key]
   if (!rows?.length) return []
 
-  const fixtures = leagueFixtures(key)
+  const byTeam = fixturesByTeam(key)
   const today = todayIso()
   const maxPlayed = Math.max(...rows.map((r) => r.played))
   const abbrevById = new Map(rows.map((r) => [r.teamId, r.abbrev]))
 
   return rows.map((r) => {
-    const mine = fixtures.filter(
-      (f) => f.home.sourceId === r.teamId || f.away.sourceId === r.teamId,
-    )
+    const mine = byTeam.get(r.teamId) ?? []
 
     const form: FormResult[] = mine
       .filter((f) => f.status === 'full_time' && f.result)
-      .sort((a, b) => a.kickoffUtc.localeCompare(b.kickoffUtc))
       .slice(-5)
       .map((f) => {
         const isHome = f.home.sourceId === r.teamId
@@ -69,9 +82,11 @@ export function tableFor(key: CompetitionKey): TableRow[] {
         return us > them ? 'W' : us === them ? 'D' : 'L'
       })
 
-    const upcoming = mine
-      .filter((f) => f.status === 'scheduled' && f.kickoffUtc.slice(0, 10) >= today)
-      .sort((a, b) => a.kickoffUtc.localeCompare(b.kickoffUtc))[0]
+    // Compare Brooklyn calendar dates on both sides — slicing the raw UTC string would
+    // keep advertising a Saturday-night kickoff as "next" through Sunday (see time.ts).
+    const upcoming = mine.find(
+      (f) => f.status === 'scheduled' && brooklynDate(f.kickoffUtc) >= today,
+    )
 
     const isHome = upcoming?.home.sourceId === r.teamId
     const nextTimes = upcoming ? fixtureTimes(upcoming.kickoffUtc, upcoming.venueTz) : null
@@ -111,5 +126,5 @@ export function clubsInHand(rows: TableRow[]): number {
 }
 
 export function hoursSinceStandingsSync(now = new Date()): number {
-  return (now.getTime() - Date.parse(STANDINGS.fetchedAt)) / 3_600_000
+  return hoursSince(STANDINGS.fetchedAt, now)
 }

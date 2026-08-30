@@ -84,10 +84,28 @@ export type Zone = {
 }
 
 export type LeagueTableMeta = {
+  /**
+   * Expected table size. Cross-checked against the standings feed at sync time — a feed
+   * row that fails normalization would otherwise shrink the league silently, which skews
+   * games-in-hand and the matchday label downstream.
+   */
   teams: number
   /** One sentence on how level clubs are separated — shown in the Zones & key legend. */
   tieBreak: string
   zones: Zone[]
+}
+
+/**
+ * The season the zone ranges above describe (start year: 2026 = 2026-27). Zone allocations
+ * move year to year — the fifth UCL berths are coefficient-dependent — so the UI compares
+ * this against the synced snapshot's season and hides the bands rather than painting last
+ * season's zones over this season's table.
+ */
+export const ZONES_SEASON = 2026
+
+/** "1–5" or "6" — the one place the range formatting rule lives. */
+export function zoneRange(z: Zone): string {
+  return z.from === z.to ? String(z.from) : `${z.from}–${z.to}`
 }
 
 const UCL = RAW.ucl.color

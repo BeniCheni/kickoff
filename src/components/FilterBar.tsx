@@ -1,4 +1,5 @@
 import { COMPETITIONS, COMPETITION_KEYS, GROUP_LABELS, type CompetitionKey } from '../lib/competitions'
+import { CompetitionChip } from './CompetitionChip'
 
 type Props = {
   active: ReadonlySet<CompetitionKey>
@@ -47,24 +48,14 @@ export function FilterBar({ active, onToggle, onSetGroup, onSetAll }: Props) {
                 </button>
               </div>
               <div className="flex flex-wrap gap-1.5">
-                {keys.map((key) => {
-                  const on = active.has(key)
-                  const c = COMPETITIONS[key]
-                  return (
-                    <button
-                      key={key}
-                      onClick={() => onToggle(key)}
-                      aria-pressed={on}
-                      className={[
-                        'cursor-pointer rounded-full border-[1.5px] px-2.5 py-1 text-[11.5px] font-semibold transition-opacity',
-                        on ? 'border-transparent text-white' : 'border-line-strong text-ink-secondary opacity-45',
-                      ].join(' ')}
-                      style={on ? { background: c.color } : undefined}
-                    >
-                      {c.flag} {c.name}
-                    </button>
-                  )
-                })}
+                {keys.map((key) => (
+                  <CompetitionChip
+                    key={key}
+                    competition={key}
+                    on={active.has(key)}
+                    onClick={() => onToggle(key)}
+                  />
+                ))}
               </div>
             </div>
           )

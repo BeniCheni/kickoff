@@ -30,37 +30,46 @@ const META = resolve(ROOT, 'src/data/meta.json')
 const STANDINGS = resolve(ROOT, 'src/data/standings.json')
 
 /**
- * League tables, fetched alongside fixtures. Rank moves are reported for the same reason
- * fixture moves are — the table is betting context — but they never drive the exit code:
- * positions changing after a matchday is the feed working, not an anomaly.
+ * League tables, fetched after the fixtures are safely written. Rank moves are reported
+ * for the same reason fixture moves are — the table is betting context — but standings are
+ * secondary data: a failure here (a 503 on one league, an upstream payload reshape) warns
+ * and keeps the previous committed snapshot rather than aborting, so it can never discard
+ * a successful fixtures sync or change the exit code.
  */
 async function syncStandings(check: boolean): Promise<void> {
-  const previous: StandingsFile | null = existsSync(STANDINGS)
-    ? standingsFileSchema.parse(JSON.parse(readFileSync(STANDINGS, 'utf8')))
-    : null
+  try {
+    const previous: StandingsFile | null = existsSync(STANDINGS)
+      ? standingsFileSchema.parse(JSON.parse(readFileSync(STANDINGS, 'utf8')))
+      : null
 
-  const standings = await fetchStandings()
+    const standings = await fetchStandings()
 
-  const moves: string[] = []
-  for (const [league, rows] of Object.entries(standings.leagues)) {
-    const before = new Map((previous?.leagues[league] ?? []).map((r) => [r.teamId, r.rank]))
-    for (const r of rows) {
-      const prev = before.get(r.teamId)
-      if (prev !== undefined && prev !== r.rank) {
-        moves.push(`  ${league.padEnd(12)} ${r.name}: ${prev} -> ${r.rank}`)
+    const moves: string[] = []
+    for (const [league, rows] of Object.entries(standings.leagues)) {
+      const before = new Map((previous?.leagues[league] ?? []).map((r) => [r.teamId, r.rank]))
+      for (const r of rows) {
+        const prev = before.get(r.teamId)
+        if (prev !== undefined && prev !== r.rank) {
+          moves.push(`  ${league.padEnd(12)} ${r.name}: ${prev} -> ${r.rank}`)
+        }
       }
     }
-  }
-  console.log(
-    `\nstandings: ${Object.entries(standings.leagues)
-      .map(([k, v]) => `${k} ${v.length}`)
-      .join(' · ')}`,
-  )
-  if (moves.length) console.log(`rank changes vs last snapshot:\n${moves.join('\n')}`)
+    console.log(
+      `\nstandings: ${Object.entries(standings.leagues)
+        .map(([k, v]) => `${k} ${v.length}`)
+        .join(' · ')}`,
+    )
+    if (moves.length) console.log(`rank changes vs last snapshot:\n${moves.join('\n')}`)
 
-  if (!check) {
-    writeFileSync(STANDINGS, JSON.stringify(standings, null, 2) + '\n')
-    console.log('wrote src/data/standings.json')
+    if (!check) {
+      writeFileSync(STANDINGS, JSON.stringify(standings, null, 2) + '\n')
+      console.log('wrote src/data/standings.json')
+    }
+  } catch (err) {
+    console.error(
+      `\n⚠  standings sync failed — fixtures are unaffected, previous standings kept:\n` +
+        `   ${err instanceof Error ? err.message : err}`,
+    )
   }
 }
 
@@ -117,9 +126,8 @@ async function main() {
   )
   console.log(`\nchanges vs last snapshot:\n${formatChanges(changes)}`)
 
-  await syncStandings(check)
-
   if (check) {
+    await syncStandings(true)
     console.log('\n--check: no files written.')
     process.exit(hasUrgentChanges(changes) ? 1 : 0)
   }
@@ -135,6 +143,8 @@ async function main() {
   writeFileSync(FIXTURES, JSON.stringify(valid, null, 2) + '\n')
   writeFileSync(META, JSON.stringify(meta, null, 2) + '\n')
   console.log(`\nwrote src/data/fixtures.json (${valid.length}) and src/data/meta.json`)
+
+  await syncStandings(false)
 
   if (hasUrgentChanges(changes)) {
     console.log('\n⚠  Something inside 72h moved. Re-check any open position on it.')

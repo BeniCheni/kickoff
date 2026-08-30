@@ -12,11 +12,13 @@ export default function App() {
   const [theme, setTheme] = useState(() => document.documentElement.dataset.theme ?? 'light')
 
   // `/` is Fixtures; `/?tab=table` is the league table. The header and tab row persist
-  // across both, so each view is always one tap from the other.
+  // across both, so each view is always one tap from the other. Tab switches push a
+  // history entry — Back returns to the previous tab, not out of the site.
   const [tab, setTab] = useUrlState<Tab>(
     'tab', 'fixtures',
     (v) => (v === 'fixtures' ? null : v),
     (s) => (s === 'table' ? 'table' : 'fixtures'),
+    'push',
   )
 
   const toggleTheme = () => {

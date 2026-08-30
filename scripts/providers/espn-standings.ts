@@ -1,4 +1,4 @@
-import { COMPETITIONS, TABLE_LEAGUES, type CompetitionKey } from '../../src/lib/competitions'
+import { LEAGUE_TABLES, SYNCABLE } from '../../src/lib/competitions'
 import { standingsFileSchema, type StandingRow, type StandingsFile } from '../../src/lib/schema'
 
 /**
@@ -51,25 +51,45 @@ export function normalizeStandingEntry(entry: any): StandingRow | null {
 
 export async function fetchStandings(season = currentSeasonStartYear()): Promise<StandingsFile> {
   const fetchedAt = new Date().toISOString()
-  const leagues: Record<string, StandingRow[]> = {}
 
-  for (const key of TABLE_LEAGUES as CompetitionKey[]) {
-    const code = COMPETITIONS[key].espnCode
-    if (!code) continue
-    const res = await fetch(`${BASE}/${code}/standings?season=${season}`)
-    if (!res.ok) throw new Error(`ESPN standings ${code} responded ${res.status}`)
-    const body: any = await res.json()
+  // The five leagues are independent requests — fetch them concurrently. Any failure
+  // rejects the whole batch: a partial standings file is worse than keeping the previous
+  // committed snapshot, and the caller treats standings as non-fatal to the fixture sync.
+  const perLeague = await Promise.all(
+    SYNCABLE.filter(({ key }) => key in LEAGUE_TABLES).map(async ({ key, code }) => {
+      const res = await fetch(`${BASE}/${code}/standings?season=${season}`)
+      if (!res.ok) throw new Error(`ESPN standings ${code} responded ${res.status}`)
+      const body: any = await res.json()
 
-    const entries: any[] = body?.children?.[0]?.standings?.entries ?? []
-    const rows: StandingRow[] = []
-    for (const entry of entries) {
-      const row = normalizeStandingEntry(entry)
-      if (row) rows.push(row)
-      else console.warn(`  ! ${code} standings: skipped an entry that could not be normalized`)
-    }
-    rows.sort((a, b) => a.rank - b.rank)
-    leagues[key] = rows
-  }
+      const entries: any[] = body?.children?.[0]?.standings?.entries ?? []
+      const rows: StandingRow[] = []
+      for (const entry of entries) {
+        const row = normalizeStandingEntry(entry)
+        if (row) rows.push(row)
+        else console.warn(`  ! ${code} standings: skipped an entry that could not be normalized`)
+      }
 
-  return standingsFileSchema.parse({ fetchedAt, provider: 'espn', season, leagues })
+      // Fail loudly on the two silent-corruption paths: a payload reshape upstream (zero
+      // entries still satisfies the schema) and a dropped row (which would skew
+      // games-in-hand and the matchday label). The previous snapshot survives either way,
+      // because the throw happens before anything is written.
+      const expected = LEAGUE_TABLES[key]!.teams
+      if (rows.length !== expected) {
+        throw new Error(
+          `ESPN standings ${code}: got ${rows.length} rows, expected ${expected} — ` +
+            `payload shape changed or rows failed validation; keeping the previous snapshot`,
+        )
+      }
+
+      rows.sort((a, b) => a.rank - b.rank)
+      return [key, rows] as const
+    }),
+  )
+
+  return standingsFileSchema.parse({
+    fetchedAt,
+    provider: 'espn',
+    season,
+    leagues: Object.fromEntries(perLeague),
+  })
 }
