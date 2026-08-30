@@ -1,0 +1,268 @@
+{
+ "entries": [
+  {
+   "team": {
+    "id": "1068",
+    "displayName": "Atlético Madrid",
+    "shortDisplayName": "Atlético",
+    "abbreviation": "ATM"
+   },
+   "stats": [
+    {
+     "name": "gamesPlayed",
+     "value": 3.0
+    },
+    {
+     "name": "losses",
+     "value": 0.0
+    },
+    {
+     "name": "pointDifferential",
+     "value": 4.0
+    },
+    {
+     "name": "points",
+     "value": 7.0
+    },
+    {
+     "name": "pointsAgainst",
+     "value": 3.0
+    },
+    {
+     "name": "pointsFor",
+     "value": 7.0
+    },
+    {
+     "name": "ties",
+     "value": 1.0
+    },
+    {
+     "name": "wins",
+     "value": 2.0
+    },
+    {
+     "name": "advanced",
+     "value": 0.0
+    },
+    {
+     "name": "deductions",
+     "value": 0.0
+    },
+    {
+     "name": "ppg",
+     "value": 0.0
+    },
+    {
+     "name": "rank",
+     "value": 1.0
+    },
+    {
+     "name": "rankChange",
+     "value": 0.0
+    },
+    {
+     "name": "overall",
+     "value": null
+    }
+   ]
+  },
+  {
+   "team": {
+    "id": "96",
+    "displayName": "Alavés",
+    "shortDisplayName": "Alavés",
+    "abbreviation": "ALA"
+   },
+   "stats": [
+    {
+     "name": "gamesPlayed",
+     "value": 3.0
+    },
+    {
+     "name": "losses",
+     "value": 0.0
+    },
+    {
+     "name": "pointDifferential",
+     "value": 4.0
+    },
+    {
+     "name": "points",
+     "value": 7.0
+    },
+    {
+     "name": "pointsAgainst",
+     "value": 1.0
+    },
+    {
+     "name": "pointsFor",
+     "value": 5.0
+    },
+    {
+     "name": "ties",
+     "value": 1.0
+    },
+    {
+     "name": "wins",
+     "value": 2.0
+    },
+    {
+     "name": "advanced",
+     "value": 0.0
+    },
+    {
+     "name": "deductions",
+     "value": 0.0
+    },
+    {
+     "name": "ppg",
+     "value": 0.0
+    },
+    {
+     "name": "rank",
+     "value": 2.0
+    },
+    {
+     "name": "rankChange",
+     "value": 0.0
+    },
+    {
+     "name": "overall",
+     "value": null
+    }
+   ]
+  },
+  {
+   "team": {
+    "id": "83",
+    "displayName": "Barcelona",
+    "shortDisplayName": "Barcelona",
+    "abbreviation": "BAR"
+   },
+   "stats": [
+    {
+     "name": "gamesPlayed",
+     "value": 2.0
+    },
+    {
+     "name": "losses",
+     "value": 0.0
+    },
+    {
+     "name": "pointDifferential",
+     "value": 7.0
+    },
+    {
+     "name": "points",
+     "value": 6.0
+    },
+    {
+     "name": "pointsAgainst",
+     "value": 0.0
+    },
+    {
+     "name": "pointsFor",
+     "value": 7.0
+    },
+    {
+     "name": "ties",
+     "value": 0.0
+    },
+    {
+     "name": "wins",
+     "value": 2.0
+    },
+    {
+     "name": "advanced",
+     "value": 0.0
+    },
+    {
+     "name": "deductions",
+     "value": 0.0
+    },
+    {
+     "name": "ppg",
+     "value": 0.0
+    },
+    {
+     "name": "rank",
+     "value": 3.0
+    },
+    {
+     "name": "rankChange",
+     "value": 0.0
+    },
+    {
+     "name": "overall",
+     "value": null
+    }
+   ]
+  },
+  {
+   "team": {
+    "id": "86",
+    "displayName": "Real Madrid",
+    "shortDisplayName": "Real Madrid",
+    "abbreviation": "RMA"
+   },
+   "stats": [
+    {
+     "name": "gamesPlayed",
+     "value": 2.0
+    },
+    {
+     "name": "losses",
+     "value": 0.0
+    },
+    {
+     "name": "pointDifferential",
+     "value": 4.0
+    },
+    {
+     "name": "points",
+     "value": 6.0
+    },
+    {
+     "name": "pointsAgainst",
+     "value": 2.0
+    },
+    {
+     "name": "pointsFor",
+     "value": 6.0
+    },
+    {
+     "name": "ties",
+     "value": 0.0
+    },
+    {
+     "name": "wins",
+     "value": 2.0
+    },
+    {
+     "name": "advanced",
+     "value": 0.0
+    },
+    {
+     "name": "deductions",
+     "value": 0.0
+    },
+    {
+     "name": "ppg",
+     "value": 0.0
+    },
+    {
+     "name": "rank",
+     "value": 4.0
+    },
+    {
+     "name": "rankChange",
+     "value": 0.0
+    },
+    {
+     "name": "overall",
+     "value": null
+    }
+   ]
+  }
+ ]
+}

@@ -59,9 +59,47 @@ export const metaSchema = z.object({
 
 export const fixturesFileSchema = z.array(fixtureSchema)
 
+/**
+ * One row of a league table as stored in src/data/standings.json.
+ *
+ * The row is the provider's official table entry, not something recomputed from results:
+ * league position depends on per-competition tie-breakers (La Liga separates level clubs
+ * on head-to-head first), and re-deriving that locally would be the same
+ * plausible-but-unverified data this project exists to eliminate. `teamId` is ESPN's team
+ * id — the same id space as `team.sourceId` on fixtures, which is how the table joins to
+ * form and next-fixture data.
+ */
+export const standingRowSchema = z.object({
+  teamId: z.string().min(1),
+  name: z.string().min(1),
+  shortName: z.string().min(1),
+  /** ESPN's 2-4 letter code, e.g. "ATM". Rendered in the club chip. */
+  abbrev: z.string().min(1),
+  rank: z.number().int().min(1),
+  /** Provider's movement since the previous round. Positive = moved up. */
+  rankChange: z.number().int(),
+  played: z.number().int().min(0),
+  w: z.number().int().min(0),
+  d: z.number().int().min(0),
+  l: z.number().int().min(0),
+  gf: z.number().int().min(0),
+  ga: z.number().int().min(0),
+  pts: z.number().int(),
+})
+
+export const standingsFileSchema = z.object({
+  fetchedAt: z.iso.datetime(),
+  provider: z.literal('espn'),
+  /** Season start year: 2026 means 2026-27. */
+  season: z.number().int(),
+  leagues: z.record(z.string(), z.array(standingRowSchema)),
+})
+
 export type Team = z.infer<typeof teamSchema>
 export type Fixture = z.infer<typeof fixtureSchema>
 export type SyncMeta = z.infer<typeof metaSchema>
+export type StandingRow = z.infer<typeof standingRowSchema>
+export type StandingsFile = z.infer<typeof standingsFileSchema>
 export type FixtureStatus = Fixture['status']
 export type TimeConfidence = Fixture['timeConfidence']
 

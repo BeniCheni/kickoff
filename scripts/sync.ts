@@ -3,8 +3,16 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { espnProvider } from './providers/espn'
+import { fetchStandings } from './providers/espn-standings'
 import { diffFixtures, formatChanges, hasUrgentChanges } from './diff'
-import { fixturesFileSchema, metaSchema, type Fixture, type SyncMeta } from '../src/lib/schema'
+import {
+  fixturesFileSchema,
+  metaSchema,
+  standingsFileSchema,
+  type Fixture,
+  type StandingsFile,
+  type SyncMeta,
+} from '../src/lib/schema'
 import { addDays, todayIso } from '../src/lib/time'
 
 /**
@@ -19,6 +27,42 @@ import { addDays, todayIso } from '../src/lib/time'
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const FIXTURES = resolve(ROOT, 'src/data/fixtures.json')
 const META = resolve(ROOT, 'src/data/meta.json')
+const STANDINGS = resolve(ROOT, 'src/data/standings.json')
+
+/**
+ * League tables, fetched alongside fixtures. Rank moves are reported for the same reason
+ * fixture moves are — the table is betting context — but they never drive the exit code:
+ * positions changing after a matchday is the feed working, not an anomaly.
+ */
+async function syncStandings(check: boolean): Promise<void> {
+  const previous: StandingsFile | null = existsSync(STANDINGS)
+    ? standingsFileSchema.parse(JSON.parse(readFileSync(STANDINGS, 'utf8')))
+    : null
+
+  const standings = await fetchStandings()
+
+  const moves: string[] = []
+  for (const [league, rows] of Object.entries(standings.leagues)) {
+    const before = new Map((previous?.leagues[league] ?? []).map((r) => [r.teamId, r.rank]))
+    for (const r of rows) {
+      const prev = before.get(r.teamId)
+      if (prev !== undefined && prev !== r.rank) {
+        moves.push(`  ${league.padEnd(12)} ${r.name}: ${prev} -> ${r.rank}`)
+      }
+    }
+  }
+  console.log(
+    `\nstandings: ${Object.entries(standings.leagues)
+      .map(([k, v]) => `${k} ${v.length}`)
+      .join(' · ')}`,
+  )
+  if (moves.length) console.log(`rank changes vs last snapshot:\n${moves.join('\n')}`)
+
+  if (!check) {
+    writeFileSync(STANDINGS, JSON.stringify(standings, null, 2) + '\n')
+    console.log('wrote src/data/standings.json')
+  }
+}
 
 const arg = (name: string, fallback: string) => {
   const hit = process.argv.find((a) => a.startsWith(`--${name}=`))
@@ -72,6 +116,8 @@ async function main() {
     Object.entries(counts).map(([k, v]) => `  ${k.padEnd(14)} ${v}`).join('\n'),
   )
   console.log(`\nchanges vs last snapshot:\n${formatChanges(changes)}`)
+
+  await syncStandings(check)
 
   if (check) {
     console.log('\n--check: no files written.')
