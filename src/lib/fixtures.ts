@@ -2,7 +2,7 @@ import rawFixtures from '../data/fixtures.json'
 import rawMeta from '../data/meta.json'
 import { fixturesFileSchema, metaSchema, type Fixture } from './schema'
 import { competitionRank, type CompetitionKey } from './competitions'
-import { brooklynDate, zonedParts } from './time'
+import { brooklynDate, hoursSince, zonedParts } from './time'
 import { BROOKLYN_TZ } from './competitions'
 
 /**
@@ -69,5 +69,5 @@ export const LAST_SYNC_DATE = zonedParts(new Date(META.lastSyncAt), BROOKLYN_TZ)
 
 /** Hours since the last successful sync — drives the staleness banner. */
 export function hoursSinceSync(now = new Date()): number {
-  return (now.getTime() - Date.parse(META.lastSyncAt)) / 3_600_000
+  return hoursSince(META.lastSyncAt, now)
 }

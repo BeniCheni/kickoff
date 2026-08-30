@@ -130,6 +130,11 @@ export function weekdayShort(iso: string): string {
   return formatter('UTC', { weekday: 'short' }).format(new Date(`${iso}T12:00:00Z`))
 }
 
+/** Hours elapsed since an ISO instant — the one freshness clock for every snapshot. */
+export function hoursSince(iso: string, now = new Date()): number {
+  return (now.getTime() - Date.parse(iso)) / 3_600_000
+}
+
 export function daysUntil(iso: string, from = todayIso()): number {
   return Math.round(
     (Date.parse(`${iso}T12:00:00Z`) - Date.parse(`${from}T12:00:00Z`)) / 86_400_000,
