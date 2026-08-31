@@ -8,6 +8,7 @@ import {
   monthCellSummary,
   nextKickoffId,
   planPosterWeek,
+  slateSubLine,
   tickerSegments,
   type DayInfo,
 } from '../src/lib/lensSelectors'
@@ -101,6 +102,30 @@ describe('kickoffBounds', () => {
     const bounds = kickoffBounds([only])
     expect(bounds?.first).toBe(only)
     expect(bounds?.last).toBe(only)
+  })
+})
+
+describe('slateSubLine', () => {
+  it('renders the FIRST/LAST range for a multi-kickoff slate', () => {
+    const early = fx({ competition: 'pl', kickoffUtc: '2026-08-30T17:00:00.000Z' })
+    const late = fx({ competition: 'laliga', kickoffUtc: '2026-08-30T19:30:00.000Z' })
+    expect(slateSubLine([early, late], true)).toBe('2 REMAINING · FIRST 1:00 PM · LAST 3:30 PM')
+  })
+
+  it('collapses a one-kickoff slate to a single time — never FIRST and LAST of the same match', () => {
+    const only = fx({ competition: 'pl', kickoffUtc: '2026-08-31T00:00:00.000Z' })
+    expect(slateSubLine([only], true)).toBe('1 REMAINING · KICKOFF 8:00 PM')
+  })
+
+  it('says MATCHES, not REMAINING, about a future matchday', () => {
+    const a = fx({ competition: 'pl', kickoffUtc: '2026-09-01T17:00:00.000Z' })
+    const b = fx({ competition: 'pl', kickoffUtc: '2026-09-01T19:00:00.000Z' })
+    expect(slateSubLine([a, b], false)).toBe('2 MATCHES · FIRST 1:00 PM · LAST 3:00 PM')
+  })
+
+  it('gives an all-TBC slate its count and no invented times', () => {
+    const tbc = fx({ competition: 'ligue1', timeConfidence: 'round_placeholder' })
+    expect(slateSubLine([tbc], true)).toBe('1 REMAINING')
   })
 })
 

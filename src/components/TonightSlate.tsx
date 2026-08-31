@@ -1,7 +1,7 @@
 import { COMPETITIONS, type CompetitionKey } from '../lib/competitions'
 import { fixtureTimes } from '../lib/time'
 import { fixturesOn, nextMatchday } from '../lib/fixtures'
-import { dominantCompetition, kickoffBounds } from '../lib/lensSelectors'
+import { dominantCompetition, slateSubLine } from '../lib/lensSelectors'
 import { posterDayTitle } from './PosterWeek'
 import type { Fixture } from '../lib/schema'
 
@@ -55,16 +55,7 @@ export function TonightSlate({
   }
 
   const dominant = dominantCompetition(slate)
-  const bounds = kickoffBounds(slate)
-  const sub = [
-    `${slate.length} REMAINING`,
-    ...(bounds
-      ? [
-          `FIRST ${fixtureTimes(bounds.first.kickoffUtc, bounds.first.venueTz).brooklyn.time}`,
-          `LAST ${fixtureTimes(bounds.last.kickoffUtc, bounds.last.venueTz).brooklyn.time}`,
-        ]
-      : []),
-  ].join(' · ')
+  const sub = slateSubLine(slate, isTonight)
 
   return (
     <div

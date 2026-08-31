@@ -69,6 +69,23 @@ export function kickoffBounds(
 }
 
 /**
+ * The Poster hero's mono sub-line. A one-kickoff slate collapses the range to a single
+ * `KICKOFF h:mm` — FIRST and LAST wearing the same time is a range that isn't one. A
+ * future matchday's slate counts `MATCHES`, not `REMAINING`: nothing about a day that
+ * hasn't started is remaining. A slate of only TBC times gets the count and no times.
+ */
+export function slateSubLine(slate: readonly Fixture[], isTonight: boolean): string {
+  const parts = [`${slate.length} ${isTonight ? 'REMAINING' : 'MATCHES'}`]
+  const bounds = kickoffBounds(slate)
+  if (bounds) {
+    const time = (f: Fixture) => fixtureTimes(f.kickoffUtc, f.venueTz).brooklyn.time
+    if (bounds.first.id === bounds.last.id) parts.push(`KICKOFF ${time(bounds.first)}`)
+    else parts.push(`FIRST ${time(bounds.first)}`, `LAST ${time(bounds.last)}`)
+  }
+  return parts.join(' · ')
+}
+
+/**
  * The next kickoff: the earliest still-scheduled fixture after `nowUtcIso` whose time the
  * league has actually set. Placeholder times are never "next" — that would be a guess.
  */
