@@ -69,7 +69,7 @@ export function FixtureRow({ fixture, hot = false }: { fixture: Fixture; hot?: b
               className={[
                 'rounded px-1.5 py-px text-[9px] font-bold tracking-wide uppercase',
                 fixture.status === 'in_play'
-                  ? 'bg-accent text-white broadcast:bg-floodlight broadcast:text-bg'
+                  ? 'bg-accent text-white dark:text-bg broadcast:bg-floodlight broadcast:text-on-accent-lead'
                   : unsettled
                     ? 'bg-accent/15 text-accent'
                     : 'bg-line text-ink-muted',
@@ -125,7 +125,7 @@ export function FixtureRow({ fixture, hot = false }: { fixture: Fixture; hot?: b
             <div className="mt-1.5 inline-flex items-center gap-1 rounded-full border border-dashed border-line-strong px-2 py-0.5 text-[10.5px] text-ink-secondary">
               📺 {comp.tv}
               {comp.tvNew && (
-                <span className="rounded bg-pitch px-1 py-px text-[8.5px] font-bold text-white">NEW</span>
+                <span className="rounded bg-pitch px-1 py-px text-[8.5px] font-bold text-white dark:text-bg">NEW</span>
               )}
             </div>
           </div>

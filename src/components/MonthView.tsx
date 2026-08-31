@@ -50,9 +50,9 @@ export function MonthView({
           const frame = [
             'flex aspect-square flex-col rounded border p-1 text-left',
             date === selected
-              ? 'border-accent-lead ring-1 ring-accent-lead'
+              ? 'border-accent-lead-strong ring-1 ring-accent-lead-strong'
               : date === today
-                ? 'border-accent-lead ring-1 ring-accent-lead/40'
+                ? 'border-accent-lead-strong ring-1 ring-accent-lead-strong/40'
                 : list.length
                   ? 'border-line-strong'
                   : 'border-line',

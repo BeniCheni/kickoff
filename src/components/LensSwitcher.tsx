@@ -54,8 +54,8 @@ export function LensSwitcher({ lens, onSelect }: { lens: Lens; onSelect: (l: Len
           className={[
             'font-display cursor-pointer rounded-full px-2.5 py-[3px] text-[10px] font-semibold tracking-[0.1em] uppercase',
             'transition-[background-color,color] duration-[180ms] ease-[cubic-bezier(.2,.7,.2,1)] motion-reduce:transition-none',
-            'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--lens-accent)',
-            lens === l ? 'bg-(--lens-accent) text-bg' : 'text-ink-muted hover:text-ink-secondary',
+            'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--accent-lead-strong)',
+            lens === l ? 'bg-(--lens-accent) text-on-accent-lead' : 'text-ink-muted hover:text-ink-secondary',
           ].join(' ')}
         >
           {LABELS[l]}

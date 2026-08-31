@@ -33,7 +33,7 @@ export function TabNav({
           className={[
             'label-caps cursor-pointer pb-2 text-[13px]',
             tab === key
-              ? 'text-ink shadow-[inset_0_-2.5px_0_var(--accent-lead)]'
+              ? 'text-ink shadow-[inset_0_-2.5px_0_var(--accent-lead-strong)]'
               : 'text-ink-muted hover:text-ink-secondary',
           ].join(' ')}
         >

@@ -38,12 +38,31 @@
   --accent-lead: var(--pitch);
   /* The lens switcher's active fill: pitch (Ledger) / ink (Poster) / floodlight (Broadcast). */
   --lens-accent: var(--pitch);
+  /*
+   * Text sitting ON an accent-lead / lens-accent fill. var(--bg) wherever the fill is
+   * deep enough (pitch, ink, dark-theme amber); Broadcast's light theme flips it to ink —
+   * cream on light amber is 2.7:1, ink on it is 5.6:1 (AA).
+   */
+  --on-accent-lead: var(--bg);
+  /*
+   * Accent-lead drawn ON the background — tab underline, Broadcast day numerals, focus
+   * rings. Follows --accent-lead except in Broadcast light, where floodlight #c98a00
+   * reads 2.7:1 on cream; a deepened floodlight derived from it keeps the amber voice
+   * at 4.5:1+. Fills keep the true token.
+   */
+  --accent-lead-strong: var(--accent-lead);
 }
 
 [data-lens='poster'] {
   --lens-accent: var(--text);
 }
 
+/*
+ * Cascade note: this block and [data-theme='dark'] below are both (0,1,0) on <html> and
+ * declare disjoint custom properties — the pairing works through var() late binding. If a
+ * property ever needs declaring in both, the combined selector two blocks down is the
+ * place, not a re-ordering.
+ */
 [data-lens='broadcast'] {
   --accent-lead: var(--floodlight);
   --lens-accent: var(--floodlight);
@@ -66,6 +85,16 @@
   --glow: rgb(247 201 72 / 0.18);
 }
 
+/*
+ * Broadcast under the light theme is the one lens × theme where amber is light-on-light:
+ * the template's own cream-on-amber idiom measures 2.7:1 there (it is 11.2:1 in dark).
+ * AA wins over the template — a documented deviation, not a token repaint.
+ */
+[data-lens='broadcast']:not([data-theme='dark']) {
+  --on-accent-lead: var(--text);
+  --accent-lead-strong: #966700; /* floodlight deepened to 4.5:1+ on --bg and --surface */
+}
+
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);
@@ -81,6 +110,8 @@
   --color-floodlight-bg: var(--floodlight-bg);
   --color-accent: var(--accent);
   --color-accent-lead: var(--accent-lead);
+  --color-accent-lead-strong: var(--accent-lead-strong);
+  --color-on-accent-lead: var(--on-accent-lead);
 
   --font-display: 'Oswald', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
@@ -100,9 +131,10 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
-  /* One visible focus ring everywhere, in the lens's leading accent. */
+  /* One visible focus ring everywhere, in the lens's leading accent (its on-background
+     variant, so Broadcast light keeps 3:1 non-text contrast). */
   :focus-visible {
-    outline: 2px solid var(--accent-lead);
+    outline: 2px solid var(--accent-lead-strong);
     outline-offset: 2px;
   }
 }

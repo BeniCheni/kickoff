@@ -41,13 +41,13 @@ export function LedgerWeek({ days, hot = EMPTY }: { days: DayInfo[]; hot?: Reado
               <div
                 className={[
                   'font-display mt-0.5 text-[30px] leading-none font-semibold',
-                  isToday ? 'text-accent-lead' : 'text-ink broadcast:text-accent-lead',
+                  isToday ? 'text-accent-lead-strong' : 'text-ink broadcast:text-accent-lead-strong',
                 ].join(' ')}
               >
                 {numeral}
               </div>
               {isToday && (
-                <span className="font-display mt-1.5 inline-block rounded-full bg-accent-lead px-[7px] py-[2px] text-[8.5px] font-semibold tracking-[0.1em] text-bg uppercase">
+                <span className="font-display mt-1.5 inline-block rounded-full bg-accent-lead px-[7px] py-[2px] text-[8.5px] font-semibold tracking-[0.1em] text-on-accent-lead uppercase">
                   Today
                 </span>
               )}

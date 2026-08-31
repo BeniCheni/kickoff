@@ -11,7 +11,7 @@ export function posterDayTitle(date: string): string {
 
 function TodayPill() {
   return (
-    <span className="font-display inline-block rounded-full bg-accent-lead px-[7px] py-[2px] text-[8.5px] font-semibold tracking-[0.1em] text-bg uppercase">
+    <span className="font-display inline-block rounded-full bg-accent-lead px-[7px] py-[2px] text-[8.5px] font-semibold tracking-[0.1em] text-on-accent-lead uppercase">
       Today
     </span>
   )
