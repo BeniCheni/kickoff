@@ -69,7 +69,7 @@ export function FixtureRow({ fixture, hot = false }: { fixture: Fixture; hot?: b
               className={[
                 'rounded px-1.5 py-px text-[9px] font-bold tracking-wide uppercase',
                 fixture.status === 'in_play'
-                  ? 'bg-accent text-white'
+                  ? 'bg-accent text-white broadcast:bg-floodlight broadcast:text-bg'
                   : unsettled
                     ? 'bg-accent/15 text-accent'
                     : 'bg-line text-ink-muted',

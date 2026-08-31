@@ -3,8 +3,11 @@ import type { Fixture } from '../src/lib/schema'
 import type { CompetitionKey } from '../src/lib/competitions'
 import {
   dominantCompetition,
+  hotFixtureIds,
   kickoffBounds,
+  nextKickoffId,
   planPosterWeek,
+  tickerSegments,
   type DayInfo,
 } from '../src/lib/lensSelectors'
 
@@ -72,6 +75,98 @@ describe('kickoffBounds', () => {
 
   it('returns null when no fixture has a league-set time', () => {
     expect(kickoffBounds([fx({ competition: 'pl', timeConfidence: 'tbd' })])).toBeNull()
+  })
+})
+
+describe('hot rows (LIVE + next kickoff)', () => {
+  const NOW = '2026-08-30T17:00:00.000Z'
+  const live = fx({ competition: 'pl', status: 'in_play', kickoffUtc: '2026-08-30T15:30:00.000Z' })
+  const soon = fx({ competition: 'laliga', kickoffUtc: '2026-08-30T19:30:00.000Z' })
+  const later = fx({ competition: 'seriea', kickoffUtc: '2026-08-31T19:00:00.000Z' })
+  const done = fx({
+    competition: 'pl',
+    status: 'full_time',
+    kickoffUtc: '2026-08-30T13:00:00.000Z',
+    result: { home: 2, away: 1 },
+  })
+  const filler = fx({
+    competition: 'ligue1',
+    kickoffUtc: '2026-08-30T18:00:00.000Z',
+    timeConfidence: 'round_placeholder',
+  })
+
+  it('marks every LIVE fixture plus the next league-set kickoff — and nothing else', () => {
+    const hot = hotFixtureIds([done, live, filler, soon, later], NOW)
+    expect(hot).toEqual(new Set([live.id, soon.id]))
+  })
+
+  it('never treats a placeholder time as the next kickoff', () => {
+    expect(nextKickoffId([filler, later], NOW)).toBe(later.id)
+  })
+
+  it('with no live fixtures, only the next kickoff is hot; with nothing upcoming, nothing is', () => {
+    expect(hotFixtureIds([done, soon], NOW)).toEqual(new Set([soon.id]))
+    expect(hotFixtureIds([done], NOW)).toEqual(new Set())
+  })
+
+  it('ignores fixtures already kicked off when picking next', () => {
+    const started = fx({ competition: 'pl', kickoffUtc: '2026-08-30T16:00:00.000Z' })
+    expect(nextKickoffId([started, soon], NOW)).toBe(soon.id)
+  })
+})
+
+describe('tickerSegments', () => {
+  const NOW = '2026-08-30T17:00:00.000Z'
+  const TODAY = '2026-08-30'
+
+  it('orders live, then next kickoff, then today’s FT scores — with no invented minute', () => {
+    const live = fx({
+      competition: 'pl',
+      status: 'in_play',
+      kickoffUtc: '2026-08-30T15:30:00.000Z',
+      result: { home: 1, away: 0 },
+      home: { name: 'Man Utd' },
+      away: { name: 'Ipswich' },
+    })
+    const liveNoScore = fx({
+      competition: 'ligue1',
+      status: 'in_play',
+      kickoffUtc: '2026-08-30T15:15:00.000Z',
+      home: { name: 'Rennes' },
+      away: { name: 'Le Mans' },
+    })
+    const next = fx({
+      competition: 'laliga',
+      kickoffUtc: '2026-08-30T17:30:00.000Z',
+      home: { name: 'Deportivo' },
+      away: { name: 'Valencia' },
+    })
+    const ft = fx({
+      competition: 'pl',
+      status: 'full_time',
+      kickoffUtc: '2026-08-30T13:00:00.000Z',
+      result: { home: 4, away: 3 },
+      home: { name: 'Chelsea' },
+      away: { name: 'Brighton' },
+    })
+    const ftYesterday = fx({
+      competition: 'pl',
+      status: 'full_time',
+      kickoffUtc: '2026-08-29T13:00:00.000Z',
+      result: { home: 0, away: 0 },
+    })
+
+    const segments = tickerSegments([ft, next, live, liveNoScore, ftYesterday], TODAY, NOW)
+    expect(segments.map((s) => s.keyword)).toEqual(['LIVE', 'LIVE', 'NEXT', 'FT'])
+    expect(segments[0]?.text).toBe('Man Utd 1–0 Ipswich')
+    expect(segments[1]?.text).toBe('Rennes v Le Mans')
+    expect(segments[2]?.text).toBe('1:30 PM Deportivo v Valencia')
+    expect(segments[3]?.text).toBe('Chelsea 4–3 Brighton')
+  })
+
+  it('yields only NEXT when nothing is live and nothing finished today', () => {
+    const later = fx({ competition: 'seriea', kickoffUtc: '2026-08-31T19:00:00.000Z' })
+    expect(tickerSegments([later], TODAY, NOW).map((s) => s.keyword)).toEqual(['NEXT'])
   })
 })
 

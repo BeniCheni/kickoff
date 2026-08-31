@@ -1,6 +1,7 @@
+import { useMemo } from 'react'
 import { addDays } from '../lib/time'
-import { fixturesOn, totalOn } from '../lib/fixtures'
-import { planPosterWeek, type DayInfo } from '../lib/lensSelectors'
+import { FIXTURES, fixturesOn, totalOn } from '../lib/fixtures'
+import { hotFixtureIds, planPosterWeek, type DayInfo } from '../lib/lensSelectors'
 import { LedgerWeek } from './LedgerWeek'
 import { PosterWeek } from './PosterWeek'
 import type { CompetitionKey } from '../lib/competitions'
@@ -27,6 +28,9 @@ export function WeekView({
     return { date, shown: fixturesOn(date, active), total: totalOn(date), isToday: date === today }
   })
 
+  // LIVE + next-kickoff rows carry data-hot; the glow itself only renders under Broadcast.
+  const hot = useMemo(() => hotFixtureIds(FIXTURES, new Date().toISOString()), [])
+
   if (lens === 'poster') return <PosterWeek blocks={planPosterWeek(days)} />
-  return <LedgerWeek days={days} />
+  return <LedgerWeek days={days} hot={hot} />
 }

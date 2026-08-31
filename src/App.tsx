@@ -9,6 +9,7 @@ import { LensSwitcher } from './components/LensSwitcher'
 import { FixturesPage } from './components/FixturesPage'
 import { TablePage } from './components/TablePage'
 import { StalenessBanner } from './components/StalenessBanner'
+import { TickerStrip } from './components/TickerStrip'
 
 export default function App() {
   const today = useMemo(() => todayIso(), [])
@@ -89,6 +90,8 @@ export default function App() {
       <TabNav tab={tab} onSelect={setTab}>
         <LensSwitcher lens={lens} onSelect={setLens} />
       </TabNav>
+
+      {lens === 'broadcast' && tab === 'fixtures' && <TickerStrip />}
 
       <StalenessBanner />
 

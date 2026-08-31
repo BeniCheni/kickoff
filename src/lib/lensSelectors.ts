@@ -1,5 +1,6 @@
 import type { Fixture } from './schema'
 import { COMPETITIONS, competitionRank, type CompetitionKey } from './competitions'
+import { brooklynDate, fixtureTimes } from './time'
 
 /**
  * Pure per-lens data shaping. Everything here takes fixtures as arguments (never importing
@@ -63,6 +64,76 @@ export function kickoffBounds(
     if (!last || f.kickoffUtc > last.kickoffUtc) last = f
   }
   return first && last ? { first, last } : null
+}
+
+/**
+ * The next kickoff: the earliest still-scheduled fixture after `nowUtcIso` whose time the
+ * league has actually set. Placeholder times are never "next" — that would be a guess.
+ */
+export function nextKickoffId(fixtures: readonly Fixture[], nowUtcIso: string): string | null {
+  let best: Fixture | null = null
+  for (const f of fixtures) {
+    if (f.status !== 'scheduled' || f.timeConfidence !== 'exact') continue
+    if (f.kickoffUtc <= nowUtcIso) continue
+    if (!best || f.kickoffUtc < best.kickoffUtc) best = f
+  }
+  return best ? best.id : null
+}
+
+/**
+ * Broadcast's hot rows: everything LIVE in the snapshot plus the next kickoff. These are
+ * the only rows that glow — nothing else does.
+ */
+export function hotFixtureIds(
+  fixtures: readonly Fixture[],
+  nowUtcIso: string,
+): ReadonlySet<string> {
+  const hot = new Set<string>()
+  for (const f of fixtures) {
+    if (f.status === 'in_play') hot.add(f.id)
+  }
+  const next = nextKickoffId(fixtures, nowUtcIso)
+  if (next !== null) hot.add(next)
+  return hot
+}
+
+/**
+ * The Broadcast ticker's content, from the loaded snapshot: live fixtures, the next
+ * kickoff, today's full-time scores. The snapshot carries no live match minute, so none
+ * is rendered — inventing one would break the data-honesty rule.
+ */
+export type TickerSegment = { keyword: 'LIVE' | 'NEXT' | 'FT'; text: string }
+
+export function tickerSegments(
+  fixtures: readonly Fixture[],
+  todayBrooklyn: string,
+  nowUtcIso: string,
+): TickerSegment[] {
+  const segments: TickerSegment[] = []
+  for (const f of fixtures) {
+    if (f.status !== 'in_play') continue
+    segments.push({
+      keyword: 'LIVE',
+      text: f.result
+        ? `${f.home.name} ${f.result.home}–${f.result.away} ${f.away.name}`
+        : `${f.home.name} v ${f.away.name}`,
+    })
+  }
+  const nextId = nextKickoffId(fixtures, nowUtcIso)
+  const next = nextId !== null ? fixtures.find((f) => f.id === nextId) : undefined
+  if (next) {
+    const time = fixtureTimes(next.kickoffUtc, next.venueTz).brooklyn.time
+    segments.push({ keyword: 'NEXT', text: `${time} ${next.home.name} v ${next.away.name}` })
+  }
+  for (const f of fixtures) {
+    if (f.status !== 'full_time' || !f.result) continue
+    if (brooklynDate(f.kickoffUtc) !== todayBrooklyn) continue
+    segments.push({
+      keyword: 'FT',
+      text: `${f.home.name} ${f.result.home}–${f.result.away} ${f.away.name}`,
+    })
+  }
+  return segments
 }
 
 /**

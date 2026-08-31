@@ -127,6 +127,32 @@
   }
 }
 
+/* Broadcast's ticker marquee: a duplicated track slides one copy's width, seamlessly. */
+@keyframes ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.ticker-track {
+  animation: ticker-scroll 36s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track {
+    animation: none;
+  }
+}
+
+/* Broadcast's glow — only rows that are LIVE or the next kickoff. Nothing else glows. */
+[data-lens='broadcast'] [data-hot='true'] {
+  background: var(--surface);
+  box-shadow: 0 0 14px var(--glow);
+}
+
 @utility label-caps {
   font-family: var(--font-display);
   font-weight: 600;
