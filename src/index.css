@@ -28,7 +28,7 @@
   --floodlight: #c98a00;
   --floodlight-bg: #fbefd3;
   --accent: #d85a30;
-  /* Broadcast-only outer glow — floodlight at 18% alpha (v0.0.3). */
+  /* Broadcast-only outer glow — floodlight at 18% alpha (the lens system). */
   --glow: rgb(201 138 0 / 0.18);
   /*
    * The lens's leading accent. Pitch everywhere except Broadcast, where floodlight is
