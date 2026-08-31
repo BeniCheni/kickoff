@@ -66,14 +66,18 @@ export function NextUpStrip({
 
   if (cards.length === 0) {
     return (
-      <div className="rounded border border-line bg-surface px-3.5 py-3 text-[13px] text-ink-muted">
-        No upcoming fixtures match your filters.
+      <div>
+        <div className="label-caps mb-2 text-[10px] text-ink-muted">Next up</div>
+        <div className="rounded border border-line bg-surface px-3.5 py-3 text-[13px] text-ink-muted">
+          No upcoming fixtures match your filters.
+        </div>
       </div>
     )
   }
 
   return (
     <div>
+      <div className="label-caps mb-2 text-[10px] text-ink-muted">Next up</div>
       <div className="flex gap-2">
         {cards.map((f) => (
           <Card key={f.id} fixture={f} today={today} />

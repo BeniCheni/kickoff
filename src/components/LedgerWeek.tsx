@@ -1,13 +1,6 @@
 import { weekdayShort } from '../lib/time'
 import { FixtureRow } from './FixtureRow'
-import type { Fixture } from '../lib/schema'
-
-export type DayInfo = {
-  date: string
-  shown: Fixture[]
-  total: number
-  isToday: boolean
-}
+import type { DayInfo } from '../lib/lensSelectors'
 
 const EMPTY: ReadonlySet<string> = new Set()
 

@@ -60,6 +60,18 @@ export function upcoming(
     .slice(0, limit)
 }
 
+/** The next date after `fromDate` with at least one fixture surviving the filters. */
+export function nextMatchday(
+  fromDate: string,
+  active: ReadonlySet<CompetitionKey>,
+): string | null {
+  const dates = [...BY_DATE.keys()].filter((d) => d > fromDate).sort()
+  for (const d of dates) {
+    if (fixturesOn(d, active).length > 0) return d
+  }
+  return null
+}
+
 /**
  * The sync timestamp as a Brooklyn calendar date. Everything else in this app is expressed in
  * Beni's local time, so slicing the raw UTC ISO string would show "Aug 24" for a sync that ran

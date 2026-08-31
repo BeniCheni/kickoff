@@ -2,7 +2,9 @@ import { useCallback } from 'react'
 import { COMPETITION_KEYS, COMPETITIONS, type CompetitionKey } from '../lib/competitions'
 import { addDays, addMonths, niceDate, shortDate, startOfWeek } from '../lib/time'
 import { useUrlState } from '../lib/useUrlState'
+import type { Lens } from '../lib/lens'
 import { NextUpStrip } from './NextUpStrip'
+import { TonightSlate } from './TonightSlate'
 import { FilterBar } from './FilterBar'
 import { WeekView } from './WeekView'
 import { MonthView } from './MonthView'
@@ -15,7 +17,7 @@ const ALL = new Set(COMPETITION_KEYS)
  * tab is active. Its view state (`view`, `date`, `only`) stays in the URL, so it survives
  * a hop to the Table tab and back.
  */
-export function FixturesPage({ today }: { today: string }) {
+export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
   const [view, setView] = useUrlState<'week' | 'month'>(
     'view', 'week',
     (v) => (v === 'week' ? null : v),
@@ -64,8 +66,13 @@ export function FixturesPage({ today }: { today: string }) {
 
   return (
     <>
-      <div className="label-caps mb-2 text-[10px] text-ink-muted">Next up</div>
-      <NextUpStrip today={today} active={active} />
+      {/* The hero is the one lens axis that changes the tree: Ledger's Next-up strip,
+          Poster's tonight's slate, Broadcast's ticker (mounted under the tab row in App). */}
+      {lens === 'poster' ? (
+        <TonightSlate today={today} active={active} />
+      ) : lens === 'ledger' ? (
+        <NextUpStrip today={today} active={active} />
+      ) : null}
 
       <WatchPanel />
       <FilterBar
@@ -105,7 +112,7 @@ export function FixturesPage({ today }: { today: string }) {
       </div>
 
       {view === 'week' ? (
-        <WeekView weekStart={weekStart} active={active} today={today} />
+        <WeekView weekStart={weekStart} active={active} today={today} lens={lens} />
       ) : (
         <MonthView monthStart={monthStart} active={active} today={today} />
       )}

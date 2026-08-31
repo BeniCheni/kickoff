@@ -92,7 +92,7 @@ export default function App() {
 
       <StalenessBanner />
 
-      {tab === 'table' ? <TablePage /> : <FixturesPage today={today} />}
+      {tab === 'table' ? <TablePage /> : <FixturesPage today={today} lens={lens} />}
     </div>
   )
 }
