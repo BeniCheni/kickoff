@@ -3,6 +3,11 @@
 /* Theme is driven by a data-theme attribute on <html>, set before paint in main.tsx. */
 @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 
+/* Lens is driven the same way by data-lens (also set before paint). Ledger is the
+   unstyled base — there is no `ledger:` variant; Poster and Broadcast layer on top. */
+@custom-variant poster (&:where([data-lens='poster'], [data-lens='poster'] *));
+@custom-variant broadcast (&:where([data-lens='broadcast'], [data-lens='broadcast'] *));
+
 /*
  * The palette is carried over unchanged from the V5 prototype — a hand-tuned "floodlit
  * pitch" scheme. Semantic variables are declared here and swapped wholesale for dark mode;
@@ -23,6 +28,25 @@
   --floodlight: #c98a00;
   --floodlight-bg: #fbefd3;
   --accent: #d85a30;
+  /* Broadcast-only outer glow — floodlight at 18% alpha (v0.0.3). */
+  --glow: rgb(201 138 0 / 0.18);
+  /*
+   * The lens's leading accent. Pitch everywhere except Broadcast, where floodlight is
+   * sanctioned to lead (tab underline, Today pill, day numerals, focus rings). Scores
+   * and confirmations keep explicit pitch.
+   */
+  --accent-lead: var(--pitch);
+  /* The lens switcher's active fill: pitch (Ledger) / ink (Poster) / floodlight (Broadcast). */
+  --lens-accent: var(--pitch);
+}
+
+[data-lens='poster'] {
+  --lens-accent: var(--text);
+}
+
+[data-lens='broadcast'] {
+  --accent-lead: var(--floodlight);
+  --lens-accent: var(--floodlight);
 }
 
 [data-theme='dark'] {
@@ -39,6 +63,7 @@
   --floodlight: #f7c948;
   --floodlight-bg: rgb(247 201 72 / 0.14);
   --accent: #f7a864;
+  --glow: rgb(247 201 72 / 0.18);
 }
 
 @theme inline {
@@ -55,6 +80,7 @@
   --color-floodlight: var(--floodlight);
   --color-floodlight-bg: var(--floodlight-bg);
   --color-accent: var(--accent);
+  --color-accent-lead: var(--accent-lead);
 
   --font-display: 'Oswald', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
@@ -73,6 +99,31 @@
     color: var(--text);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+  }
+  /* One visible focus ring everywhere, in the lens's leading accent. */
+  :focus-visible {
+    outline: 2px solid var(--accent-lead);
+    outline-offset: 2px;
+  }
+}
+
+/*
+ * Transient class on <html> while a lens switch cross-fades (added/removed by App).
+ * Only these three properties — transform and grid-template-rows must stay free so the
+ * Broadcast ticker and row expansion are never caught in a global transition.
+ */
+.lens-switching,
+.lens-switching * {
+  transition:
+    background-color 220ms ease,
+    color 220ms ease,
+    border-color 220ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lens-switching,
+  .lens-switching * {
+    transition: none;
   }
 }
 
