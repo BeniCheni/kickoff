@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 import { COMPETITION_KEYS, COMPETITIONS, type CompetitionKey } from '../lib/competitions'
 import { addDays, addMonths, niceDate, shortDate, startOfWeek } from '../lib/time'
 import { useUrlState } from '../lib/useUrlState'
+import { parseDateParam, parseOnlyParam } from '../lib/urlCodecs'
 import type { Lens } from '../lib/lens'
 import { NextUpStrip } from './NextUpStrip'
 import { TonightSlate } from './TonightSlate'
@@ -26,12 +27,12 @@ export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
   const [anchor, setAnchor] = useUrlState<string>(
     'date', today,
     (v) => (v === today ? null : v),
-    (s) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? s : today),
+    (s) => parseDateParam(s, today),
   )
   const [active, setActive] = useUrlState<ReadonlySet<CompetitionKey>>(
     'only', ALL,
     (v) => (v.size === COMPETITION_KEYS.length ? null : [...v].join(',')),
-    (s) => new Set(s.split(',').filter((k): k is CompetitionKey => k in COMPETITIONS)),
+    parseOnlyParam,
   )
 
   const onToggle = useCallback(
