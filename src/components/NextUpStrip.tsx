@@ -9,14 +9,15 @@ function countdownLabel(date: string, today: string): string {
   return n <= 0 ? 'Today' : n === 1 ? 'Tomorrow' : `${n} days`
 }
 
-/** "11:15 AM" → clock at full size, meridiem small (the Poster hero's own split) so four
- *  cards fit a 390px viewport without the time wrapping. */
+/** "11:15 AM" → clock at full size, meridiem small (the Poster hero's own split). A worst
+ *  case "12:30 PM" is ~63px; the card's padding and the strip's gaps are sized so it fits
+ *  at 375px, and the card clips rather than ever spilling across its neighbour. */
 function SplitTime({ time }: { time: string }) {
   const at = time.lastIndexOf(' ')
   return (
     <span className="whitespace-nowrap">
       {time.slice(0, at)}
-      <span className="text-[10px] text-ink-muted"> {time.slice(at + 1)}</span>
+      <span className="ml-0.5 text-[10px] text-ink-muted">{time.slice(at + 1)}</span>
     </span>
   )
 }
@@ -27,7 +28,7 @@ function Card({ fixture, today }: { fixture: Fixture; today: string }) {
   const placeholder = fixture.timeConfidence !== 'exact'
   return (
     <div
-      className="min-w-0 flex-1 rounded border border-line border-b-[3px] bg-surface px-[9px] py-2"
+      className="min-w-0 flex-1 overflow-hidden rounded border border-line border-b-[3px] bg-surface px-2 py-2"
       style={{ borderBottomColor: comp.color }}
     >
       <div className="font-display text-[9px] font-semibold tracking-[0.1em] text-ink-muted uppercase">
@@ -78,7 +79,7 @@ export function NextUpStrip({
   return (
     <div>
       <div className="label-caps mb-2 text-[10px] text-ink-muted">Next up</div>
-      <div className="flex gap-2">
+      <div className="flex gap-1.5">
         {cards.map((f) => (
           <Card key={f.id} fixture={f} today={today} />
         ))}
