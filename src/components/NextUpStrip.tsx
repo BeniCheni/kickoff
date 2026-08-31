@@ -59,7 +59,7 @@ export function NextUpStrip({
   today: string
   active: ReadonlySet<CompetitionKey>
 }) {
-  const next = useMemo(() => upcoming(today, active, 500), [today, active])
+  const next = useMemo(() => upcoming(today, new Date().toISOString(), active, 500), [today, active])
   const cards = next.slice(0, 4)
   const moreToday = next.slice(4).filter((f) => brooklynDate(f.kickoffUtc) === today)
   const nextMore = moreToday[0]

@@ -48,14 +48,26 @@ export function totalOn(date: string): number {
   return BY_DATE.get(date)?.length ?? 0
 }
 
+/**
+ * Kickoffs still ahead: scheduled fixtures only — a postponed or cancelled match has no
+ * honest kickoff to promise, and an in-play match is on, not next. League-set times must
+ * still be ahead of `nowUtcIso`; placeholder (TBC) times are trusted only to the day.
+ */
 export function upcoming(
   fromDate: string,
+  nowUtcIso: string,
   active: ReadonlySet<CompetitionKey>,
   limit: number,
+  fixtures: readonly Fixture[] = FIXTURES,
 ): Fixture[] {
-  return FIXTURES.filter(
-    (f) => brooklynDate(f.kickoffUtc) >= fromDate && active.has(f.competition) && f.status !== 'full_time',
-  )
+  return fixtures
+    .filter(
+      (f) =>
+        f.status === 'scheduled' &&
+        brooklynDate(f.kickoffUtc) >= fromDate &&
+        (f.timeConfidence !== 'exact' || f.kickoffUtc > nowUtcIso) &&
+        active.has(f.competition),
+    )
     .sort((a, b) => a.kickoffUtc.localeCompare(b.kickoffUtc))
     .slice(0, limit)
 }

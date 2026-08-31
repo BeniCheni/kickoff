@@ -51,7 +51,8 @@ export function dominantCompetition(list: readonly Fixture[]): CompetitionKey | 
 
 /**
  * Earliest and latest fixtures with a league-set kickoff time. Placeholder times are
- * excluded — a sub-line must never derive "FIRST 3:00 PM" from a provider filler.
+ * excluded — a sub-line must never derive "FIRST 3:00 PM" from a provider filler — and so
+ * are postponed/cancelled fixtures, whose old kickoff instants are no longer promises.
  */
 export function kickoffBounds(
   fixtures: readonly Fixture[],
@@ -60,6 +61,7 @@ export function kickoffBounds(
   let last: Fixture | null = null
   for (const f of fixtures) {
     if (f.timeConfidence !== 'exact') continue
+    if (f.status === 'postponed' || f.status === 'cancelled') continue
     if (!first || f.kickoffUtc < first.kickoffUtc) first = f
     if (!last || f.kickoffUtc > last.kickoffUtc) last = f
   }

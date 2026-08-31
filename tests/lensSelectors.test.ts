@@ -77,6 +77,31 @@ describe('kickoffBounds', () => {
   it('returns null when no fixture has a league-set time', () => {
     expect(kickoffBounds([fx({ competition: 'pl', timeConfidence: 'tbd' })])).toBeNull()
   })
+
+  it('never derives a bound from a postponed or cancelled fixture', () => {
+    const post = fx({
+      competition: 'pl',
+      status: 'postponed',
+      kickoffUtc: '2026-08-30T12:00:00.000Z',
+    })
+    const gone = fx({
+      competition: 'laliga',
+      status: 'cancelled',
+      kickoffUtc: '2026-08-30T22:00:00.000Z',
+    })
+    const real = fx({ competition: 'seriea', kickoffUtc: '2026-08-30T17:00:00.000Z' })
+    const bounds = kickoffBounds([post, real, gone])
+    expect(bounds?.first).toBe(real)
+    expect(bounds?.last).toBe(real)
+    expect(kickoffBounds([post, gone])).toBeNull()
+  })
+
+  it('returns the same fixture as first and last for a one-kickoff slate', () => {
+    const only = fx({ competition: 'pl', kickoffUtc: '2026-08-30T19:00:00.000Z' })
+    const bounds = kickoffBounds([only])
+    expect(bounds?.first).toBe(only)
+    expect(bounds?.last).toBe(only)
+  })
 })
 
 describe('hot rows (LIVE + next kickoff)', () => {
