@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { COMPETITIONS, type CompetitionKey } from '../lib/competitions'
 import { addDays, startOfWeek, niceDate } from '../lib/time'
-import { FIXTURES, fixturesOn } from '../lib/fixtures'
+import { FIXTURES, fixturesOn, totalOn } from '../lib/fixtures'
 import { hotFixtureIds, monthCellSummary } from '../lib/lensSelectors'
 import { FixtureRow } from './FixtureRow'
 
@@ -66,9 +66,20 @@ export function MonthView({
           ].join(' ')
 
           if (list.length === 0) {
+            // "Hidden by filters" and "nothing on" are different truths — the week views
+            // already say so; the grid must not flatten them into the same blank cell.
+            const hidden = inMonth ? totalOn(date) : 0
             return (
               <div key={date} className={frame}>
                 <div className="text-[10.5px] text-ink-muted">{numeral}</div>
+                {hidden > 0 && (
+                  <div className="mt-auto text-[8px] leading-none text-ink-muted">
+                    <span aria-hidden>🔎</span>
+                    <span className="sr-only">
+                      {hidden} hidden by filters
+                    </span>
+                  </div>
+                )}
               </div>
             )
           }
