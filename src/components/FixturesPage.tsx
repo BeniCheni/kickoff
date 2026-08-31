@@ -1,9 +1,11 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback } from 'react'
 import { COMPETITION_KEYS, COMPETITIONS, type CompetitionKey } from '../lib/competitions'
 import { addDays, addMonths, niceDate, shortDate, startOfWeek } from '../lib/time'
-import { upcoming } from '../lib/fixtures'
 import { useUrlState } from '../lib/useUrlState'
-import { Ticker } from './Ticker'
+import { parseDateParam, parseOnlyParam } from '../lib/urlCodecs'
+import type { Lens } from '../lib/lens'
+import { NextUpStrip } from './NextUpStrip'
+import { TonightSlate } from './TonightSlate'
 import { FilterBar } from './FilterBar'
 import { WeekView } from './WeekView'
 import { MonthView } from './MonthView'
@@ -16,7 +18,7 @@ const ALL = new Set(COMPETITION_KEYS)
  * tab is active. Its view state (`view`, `date`, `only`) stays in the URL, so it survives
  * a hop to the Table tab and back.
  */
-export function FixturesPage({ today }: { today: string }) {
+export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
   const [view, setView] = useUrlState<'week' | 'month'>(
     'view', 'week',
     (v) => (v === 'week' ? null : v),
@@ -25,12 +27,12 @@ export function FixturesPage({ today }: { today: string }) {
   const [anchor, setAnchor] = useUrlState<string>(
     'date', today,
     (v) => (v === today ? null : v),
-    (s) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? s : today),
+    (s) => parseDateParam(s, today),
   )
   const [active, setActive] = useUrlState<ReadonlySet<CompetitionKey>>(
     'only', ALL,
     (v) => (v.size === COMPETITION_KEYS.length ? null : [...v].join(',')),
-    (s) => new Set(s.split(',').filter((k): k is CompetitionKey => k in COMPETITIONS)),
+    parseOnlyParam,
   )
 
   const onToggle = useCallback(
@@ -63,12 +65,15 @@ export function FixturesPage({ today }: { today: string }) {
       ? `${shortDate(weekStart)} – ${niceDate(addDays(weekStart, 6))}`
       : niceDate(monthStart).replace(/ \d+,/, '')
 
-  const next = useMemo(() => upcoming(today, active, 8), [today, active])
-
   return (
     <>
-      <div className="label-caps mb-2 text-[11px] text-floodlight">Next up</div>
-      <Ticker fixtures={next} />
+      {/* The hero is the one lens axis that changes the tree: Ledger's Next-up strip,
+          Poster's tonight's slate, Broadcast's ticker (mounted under the tab row in App). */}
+      {lens === 'poster' ? (
+        <TonightSlate today={today} active={active} />
+      ) : lens === 'ledger' ? (
+        <NextUpStrip today={today} active={active} />
+      ) : null}
 
       <WatchPanel />
       <FilterBar
@@ -108,9 +113,9 @@ export function FixturesPage({ today }: { today: string }) {
       </div>
 
       {view === 'week' ? (
-        <WeekView weekStart={weekStart} active={active} today={today} />
+        <WeekView weekStart={weekStart} active={active} today={today} lens={lens} />
       ) : (
-        <MonthView monthStart={monthStart} active={active} today={today} />
+        <MonthView key={monthStart} monthStart={monthStart} active={active} today={today} />
       )}
 
       <footer className="mt-8 border-t border-line pt-4 text-[11.5px] leading-relaxed text-ink-muted">

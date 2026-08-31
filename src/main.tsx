@@ -1,12 +1,15 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
+import { parseLens } from './lib/lens'
+import { resolveThemeFromEnvironment } from './lib/theme'
 import './index.css'
 
-// Applied before first paint so the page never flashes the wrong theme.
-const stored = localStorage.getItem('kickoff-theme')
-const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-document.documentElement.dataset.theme = stored ?? (prefersDark ? 'dark' : 'light')
+// Applied at module start, before React renders, so the app never paints the wrong
+// theme or lens. (A deferred module is not a hard pre-paint guarantee — noted for later.)
+const lens = parseLens(new URLSearchParams(window.location.search).get('lens'))
+document.documentElement.dataset.lens = lens
+document.documentElement.dataset.theme = resolveThemeFromEnvironment(lens)
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

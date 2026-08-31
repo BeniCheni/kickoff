@@ -1,5 +1,14 @@
 import { describe, it, expect } from 'vitest'
-import { fixtureTimes, brooklynAbbrev, brooklynDate, startOfWeek, addDays } from '../src/lib/time'
+import { fixtureTimes, brooklynAbbrev, brooklynDate, startOfWeek, addDays, syncStamp } from '../src/lib/time'
+
+describe('syncStamp', () => {
+  it('renders the sync instant in UTC, not a local zone', () => {
+    expect(syncStamp('2026-08-30T17:02:26.000Z')).toBe('2026-08-30 17:02 UTC')
+    // A late-evening UTC sync must not slip to the next or previous local day.
+    expect(syncStamp('2026-08-30T23:59:00.000Z')).toBe('2026-08-30 23:59 UTC')
+    expect(syncStamp('2026-08-30T00:01:00.000Z')).toBe('2026-08-30 00:01 UTC')
+  })
+})
 
 /**
  * Europe and the US do not change clocks on the same day. In 2026 the EU falls back on

@@ -44,7 +44,15 @@ export function useUrlState<T>(
   useEffect(() => {
     const onPop = () => {
       const raw = new URLSearchParams(window.location.search).get(key)
-      setValue(raw === null ? initial : decode(raw))
+      if (raw === null) {
+        setValue(initial)
+        return
+      }
+      try {
+        setValue(decode(raw))
+      } catch {
+        setValue(initial)
+      }
     }
     window.addEventListener('popstate', onPop)
     return () => window.removeEventListener('popstate', onPop)

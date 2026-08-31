@@ -2,7 +2,7 @@ import rawFixtures from '../data/fixtures.json'
 import rawMeta from '../data/meta.json'
 import { fixturesFileSchema, metaSchema, type Fixture } from './schema'
 import { competitionRank, type CompetitionKey } from './competitions'
-import { brooklynDate, hoursSince, zonedParts } from './time'
+import { brooklynDate, hoursSince, syncStamp, zonedParts } from './time'
 import { BROOKLYN_TZ } from './competitions'
 
 /**
@@ -48,16 +48,40 @@ export function totalOn(date: string): number {
   return BY_DATE.get(date)?.length ?? 0
 }
 
+/**
+ * Kickoffs still ahead: scheduled fixtures only — a postponed or cancelled match has no
+ * honest kickoff to promise, and an in-play match is on, not next. League-set times must
+ * still be ahead of `nowUtcIso`; placeholder (TBC) times are trusted only to the day.
+ */
 export function upcoming(
   fromDate: string,
+  nowUtcIso: string,
   active: ReadonlySet<CompetitionKey>,
   limit: number,
+  fixtures: readonly Fixture[] = FIXTURES,
 ): Fixture[] {
-  return FIXTURES.filter(
-    (f) => brooklynDate(f.kickoffUtc) >= fromDate && active.has(f.competition) && f.status !== 'full_time',
-  )
+  return fixtures
+    .filter(
+      (f) =>
+        f.status === 'scheduled' &&
+        brooklynDate(f.kickoffUtc) >= fromDate &&
+        (f.timeConfidence !== 'exact' || f.kickoffUtc > nowUtcIso) &&
+        active.has(f.competition),
+    )
     .sort((a, b) => a.kickoffUtc.localeCompare(b.kickoffUtc))
     .slice(0, limit)
+}
+
+/** The next date after `fromDate` with at least one fixture surviving the filters. */
+export function nextMatchday(
+  fromDate: string,
+  active: ReadonlySet<CompetitionKey>,
+): string | null {
+  const dates = [...BY_DATE.keys()].filter((d) => d > fromDate).sort()
+  for (const d of dates) {
+    if (fixturesOn(d, active).length > 0) return d
+  }
+  return null
 }
 
 /**
@@ -66,6 +90,9 @@ export function upcoming(
  * on the evening of Aug 23.
  */
 export const LAST_SYNC_DATE = zonedParts(new Date(META.lastSyncAt), BROOKLYN_TZ).isoDate
+
+/** The header's provenance stamp — the sync instant, stated in UTC per the templates. */
+export const SYNC_STAMP = syncStamp(META.lastSyncAt)
 
 /** Hours since the last successful sync — drives the staleness banner. */
 export function hoursSinceSync(now = new Date()): number {
