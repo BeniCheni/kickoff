@@ -139,6 +139,17 @@ describe('hot rows (LIVE + next kickoff)', () => {
     const started = fx({ competition: 'pl', kickoffUtc: '2026-08-30T16:00:00.000Z' })
     expect(nextKickoffId([started, soon], NOW)).toBe(soon.id)
   })
+
+  it('stops believing a frozen in_play once its kickoff is hours old — a stale snapshot must not glow LIVE', () => {
+    const frozen = fx({
+      competition: 'pl',
+      status: 'in_play',
+      kickoffUtc: '2026-08-30T11:00:00.000Z', // 6h before NOW
+    })
+    expect(hotFixtureIds([frozen, soon], NOW)).toEqual(new Set([soon.id]))
+    // A day later — the committed-snapshot case — nothing about it is hot.
+    expect(hotFixtureIds([live], '2026-08-31T17:00:00.000Z')).toEqual(new Set())
+  })
 })
 
 describe('tickerSegments', () => {
@@ -193,6 +204,23 @@ describe('tickerSegments', () => {
   it('yields only NEXT when nothing is live and nothing finished today', () => {
     const later = fx({ competition: 'seriea', kickoffUtc: '2026-08-31T19:00:00.000Z' })
     expect(tickerSegments([later], TODAY, NOW).map((s) => s.keyword)).toEqual(['NEXT'])
+  })
+
+  it('drops LIVE segments whose kickoff is hours behind now — yesterday’s frozen matches stay silent', () => {
+    const frozen = fx({
+      competition: 'pl',
+      status: 'in_play',
+      kickoffUtc: '2026-08-30T15:30:00.000Z',
+      home: { name: 'Man Utd' },
+      away: { name: 'Ipswich' },
+    })
+    const later = fx({ competition: 'seriea', kickoffUtc: '2026-09-01T19:00:00.000Z' })
+    // A day after the sync (the committed-snapshot case): no LIVE, only NEXT.
+    const dayLater = tickerSegments([frozen, later], '2026-08-31', '2026-08-31T17:00:00.000Z')
+    expect(dayLater.map((s) => s.keyword)).toEqual(['NEXT'])
+    // Within the window it still reads LIVE.
+    const fresh = tickerSegments([frozen, later], TODAY, NOW)
+    expect(fresh.map((s) => s.keyword)).toEqual(['LIVE', 'NEXT'])
   })
 })
 

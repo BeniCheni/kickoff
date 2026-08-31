@@ -83,8 +83,22 @@ export function nextKickoffId(fixtures: readonly Fixture[], nowUtcIso: string): 
 }
 
 /**
- * Broadcast's hot rows: everything LIVE in the snapshot plus the next kickoff. These are
- * the only rows that glow — nothing else does.
+ * A snapshot `in_play` is believably live only for a few hours after kickoff. The data is
+ * a static sync — a match frozen in_play would otherwise claim LIVE forever, long after
+ * the staleness banner has given up on it. Four hours clears any amount of stoppage time
+ * without promising a liveness the snapshot can no longer know.
+ */
+const LIVE_WINDOW_MS = 4 * 60 * 60 * 1000
+
+function believablyLive(f: Fixture, nowUtcIso: string): boolean {
+  return (
+    f.status === 'in_play' && Date.parse(nowUtcIso) - Date.parse(f.kickoffUtc) <= LIVE_WINDOW_MS
+  )
+}
+
+/**
+ * Broadcast's hot rows: everything believably LIVE in the snapshot plus the next kickoff.
+ * These are the only rows that glow — nothing else does.
  */
 export function hotFixtureIds(
   fixtures: readonly Fixture[],
@@ -92,7 +106,7 @@ export function hotFixtureIds(
 ): ReadonlySet<string> {
   const hot = new Set<string>()
   for (const f of fixtures) {
-    if (f.status === 'in_play') hot.add(f.id)
+    if (believablyLive(f, nowUtcIso)) hot.add(f.id)
   }
   const next = nextKickoffId(fixtures, nowUtcIso)
   if (next !== null) hot.add(next)
@@ -113,7 +127,7 @@ export function tickerSegments(
 ): TickerSegment[] {
   const segments: TickerSegment[] = []
   for (const f of fixtures) {
-    if (f.status !== 'in_play') continue
+    if (!believablyLive(f, nowUtcIso)) continue
     segments.push({
       keyword: 'LIVE',
       text: f.result
