@@ -50,7 +50,8 @@ export function FixtureRow({ fixture, hot = false }: { fixture: Fixture; hot?: b
         aria-expanded={expanded}
         className="block w-full cursor-pointer text-left"
       >
-        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+        {/* spans with block/flex display — a <button> must not contain <div>s */}
+        <span className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
           <span className="font-mono min-w-[58px] text-[13px] font-medium text-ink-secondary poster:min-w-[82px] poster:text-[20px] poster:font-semibold poster:text-ink broadcast:font-semibold">
             {placeholder ? '—' : t.brooklyn.time}
           </span>
@@ -78,19 +79,19 @@ export function FixtureRow({ fixture, hot = false }: { fixture: Fixture; hot?: b
               {status}
             </span>
           )}
-        </div>
+        </span>
 
-        <div className="mt-0.5 pl-[66px] text-[11px] text-ink-muted poster:pl-[92px] broadcast:font-mono broadcast:text-[10.5px] broadcast:font-medium">
+        <span className="mt-0.5 block pl-[66px] text-[11px] text-ink-muted poster:pl-[92px] broadcast:font-mono broadcast:text-[10.5px] broadcast:font-medium">
           <span style={{ color: comp.color }}>
-            {comp.flag} {comp.name}
+            <span aria-hidden>{comp.flag}</span> {comp.name}
           </span>
           {fixture.venue && <> &middot; {fixture.venue}</>}
-        </div>
+        </span>
 
         {placeholder && (
-          <div className="mt-0.5 pl-[66px] text-[11px] text-floodlight italic poster:pl-[92px]">
+          <span className="mt-0.5 block pl-[66px] text-[11px] text-floodlight italic poster:pl-[92px]">
             {t.brooklyn.weekday} {t.brooklyn.isoDate} &mdash; kickoff time not yet set by the league
-          </div>
+          </span>
         )}
       </button>
 
@@ -105,10 +106,10 @@ export function FixtureRow({ fixture, hot = false }: { fixture: Fixture; hot?: b
             {!placeholder && (
               <div className="flex flex-wrap gap-x-2.5 gap-y-1 text-[11px] text-ink-secondary">
                 <span className="inline-flex items-center gap-1 rounded-full border border-line bg-surface px-2 py-0.5">
-                  {comp.flag} {t.local.time} local
+                  <span aria-hidden>{comp.flag}</span> {t.local.time} local
                 </span>
                 <span className="inline-flex items-center gap-1 rounded-full border border-pitch bg-surface px-2 py-0.5 font-semibold text-pitch">
-                  🗽 {t.brooklyn.time} {t.abbrev}
+                  <span aria-hidden>🗽</span> {t.brooklyn.time} {t.abbrev}
                   {t.dayDelta !== 0 && (
                     <span className="font-normal">
                       ({t.brooklyn.weekday}, {t.dayDelta === -1 ? 'prev.' : 'next'} day)
@@ -123,7 +124,7 @@ export function FixtureRow({ fixture, hot = false }: { fixture: Fixture; hot?: b
             )}
 
             <div className="mt-1.5 inline-flex items-center gap-1 rounded-full border border-dashed border-line-strong px-2 py-0.5 text-[10.5px] text-ink-secondary">
-              📺 {comp.tv}
+              <span aria-hidden>📺</span> {comp.tv}
               {comp.tvNew && (
                 <span className="rounded bg-pitch px-1 py-px text-[8.5px] font-bold text-white dark:text-bg">NEW</span>
               )}

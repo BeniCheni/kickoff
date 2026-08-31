@@ -24,7 +24,7 @@ export function TabNav({
   children?: ReactNode
 }) {
   return (
-    <nav className="mb-5 flex flex-wrap items-end gap-x-4 border-b-[1.5px] border-line">
+    <nav aria-label="Primary" className="mb-5 flex flex-wrap items-end gap-x-4 border-b-[1.5px] border-line">
       {TABS.map(({ key, label }) => (
         <button
           key={key}

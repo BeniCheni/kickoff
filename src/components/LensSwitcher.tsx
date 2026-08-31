@@ -9,19 +9,23 @@ const LABELS: Record<Lens, string> = {
 
 /**
  * The lens control: a segmented pill on the tab-row line, right-aligned. The active
- * segment fills with the lens's leading accent (pitch / ink / floodlight via
- * `--lens-accent`) so the control previews the atmosphere it's about to apply.
- * Radiogroup semantics — arrow keys move the selection, focus ring in the lens accent.
+ * segment fills with the *current* lens's leading accent (pitch / ink / floodlight via
+ * `--lens-accent`), so the control wears the atmosphere it has applied.
+ * Radiogroup semantics — arrow keys move the selection, Home/End jump to the ends,
+ * focus ring in the lens accent's on-background variant.
  */
 export function LensSwitcher({ lens, onSelect }: { lens: Lens; onSelect: (l: Lens) => void }) {
   const refs = useRef<Array<HTMLButtonElement | null>>([])
 
-  const move = (delta: number) => {
-    const i = LENSES.indexOf(lens)
-    const next = LENSES[(i + delta + LENSES.length) % LENSES.length]
-    if (next === undefined) return
+  const select = (next: Lens | undefined) => {
+    if (next === undefined || next === lens) return
     onSelect(next)
     refs.current[LENSES.indexOf(next)]?.focus()
+  }
+
+  const move = (delta: number) => {
+    const i = LENSES.indexOf(lens)
+    select(LENSES[(i + delta + LENSES.length) % LENSES.length])
   }
 
   const onKeyDown = (e: React.KeyboardEvent) => {
@@ -31,6 +35,12 @@ export function LensSwitcher({ lens, onSelect }: { lens: Lens; onSelect: (l: Len
     } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
       e.preventDefault()
       move(-1)
+    } else if (e.key === 'Home') {
+      e.preventDefault()
+      select(LENSES[0])
+    } else if (e.key === 'End') {
+      e.preventDefault()
+      select(LENSES[LENSES.length - 1])
     }
   }
 

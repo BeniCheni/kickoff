@@ -28,7 +28,13 @@ export function LedgerWeek({ days, hot = EMPTY }: { days: DayInfo[]; hot?: Reado
                 <span className="font-display text-[16px] font-semibold text-ink-muted">{numeral}</span>
               </div>
               <div className="font-mono border-b border-line py-1.5 text-[11px] font-medium text-ink-muted">
-                {total > 0 ? <>🔎 {total} hidden by filters</> : '—'}
+                {total > 0 ? (
+                  <>
+                    <span aria-hidden>🔎</span> {total} hidden by filters
+                  </>
+                ) : (
+                  '—'
+                )}
               </div>
             </section>
           )

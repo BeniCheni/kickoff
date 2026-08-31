@@ -31,16 +31,22 @@ export function MonthView({
   )
 
   const selectedList = selected ? fixturesOn(selected, active) : []
-  const open = selected !== null && selectedList.length > 0
+  // A selection whose fixtures the filters have since hidden is no selection at all —
+  // frame, aria-expanded and panel must all agree on that.
+  const activeSelection = selectedList.length > 0 ? selected : null
+  const open = activeSelection !== null
 
   return (
     <div>
       <div className="mb-1 grid grid-cols-7 gap-1">
-        {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((d, i) => (
-          <div key={i} className="py-1 text-center text-[10.5px] text-ink-muted uppercase">
-            {d}
-          </div>
-        ))}
+        {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(
+          (name) => (
+            <div key={name} className="py-1 text-center text-[10.5px] text-ink-muted uppercase">
+              <span aria-hidden>{name[0]}</span>
+              <span className="sr-only">{name}</span>
+            </div>
+          ),
+        )}
       </div>
       <div className="grid grid-cols-7 gap-1">
         {weeks.flat().map((date) => {
@@ -49,7 +55,7 @@ export function MonthView({
           const numeral = Number(date.slice(8))
           const frame = [
             'flex aspect-square flex-col rounded border p-1 text-left',
-            date === selected
+            date === activeSelection
               ? 'border-accent-lead-strong ring-1 ring-accent-lead-strong'
               : date === today
                 ? 'border-accent-lead-strong ring-1 ring-accent-lead-strong/40'
@@ -73,16 +79,24 @@ export function MonthView({
               key={date}
               type="button"
               onClick={() => setSelected((s) => (s === date ? null : date))}
-              aria-expanded={date === selected}
-              aria-label={`${niceDate(date)}, ${cell.count} ${cell.count === 1 ? 'match' : 'matches'}`}
+              aria-expanded={date === activeSelection}
+              aria-controls="month-day-panel"
+              aria-label={[
+                `${niceDate(date)}, ${cell.count} ${cell.count === 1 ? 'match' : 'matches'}`,
+                cell.bars.map((c) => COMPETITIONS[c].name).join(', '),
+              ].join(': ')}
               className={`${frame} cursor-pointer`}
             >
-              <div className="flex items-start justify-between text-[10.5px] text-ink-secondary">
+              <span className="flex items-start justify-between text-[10.5px] text-ink-secondary">
                 {numeral}
-                {cell.marquee && <span className="text-[8px] leading-[1.4]">⭐</span>}
-              </div>
-              <div className="font-mono mt-auto text-[11px] font-semibold">{cell.count}</div>
-              <div className="mt-0.5 flex gap-0.5">
+                {cell.marquee && (
+                  <span aria-hidden className="text-[8px] leading-[1.4]">
+                    ⭐
+                  </span>
+                )}
+              </span>
+              <span className="font-mono mt-auto block text-[11px] font-semibold">{cell.count}</span>
+              <span className="mt-0.5 flex gap-0.5">
                 {cell.bars.map((c) => (
                   <span
                     key={c}
@@ -91,22 +105,23 @@ export function MonthView({
                     style={{ background: COMPETITIONS[c].color }}
                   />
                 ))}
-              </div>
+              </span>
             </button>
           )
         })}
       </div>
 
       <div
+        id="month-day-panel"
         className={[
           'grid transition-[grid-template-rows] duration-150 ease-out motion-reduce:transition-none',
           open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
         ].join(' ')}
       >
         <div className="min-h-0 overflow-hidden">
-          {selected !== null && selectedList.length > 0 && (
+          {activeSelection !== null && (
             <div className="pt-4">
-              <div className="text-[12px] text-ink-secondary">{niceDate(selected)}</div>
+              <div className="text-[12px] text-ink-secondary">{niceDate(activeSelection)}</div>
               <div className="mt-1 border-t border-line">
                 {selectedList.map((f) => (
                   <FixtureRow key={f.id} fixture={f} hot={hot.has(f.id)} />
