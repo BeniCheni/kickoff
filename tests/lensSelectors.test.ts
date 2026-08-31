@@ -5,6 +5,7 @@ import {
   dominantCompetition,
   hotFixtureIds,
   kickoffBounds,
+  monthCellSummary,
   nextKickoffId,
   planPosterWeek,
   tickerSegments,
@@ -167,6 +168,43 @@ describe('tickerSegments', () => {
   it('yields only NEXT when nothing is live and nothing finished today', () => {
     const later = fx({ competition: 'seriea', kickoffUtc: '2026-08-31T19:00:00.000Z' })
     expect(tickerSegments([later], TODAY, NOW).map((s) => s.keyword)).toEqual(['NEXT'])
+  })
+})
+
+describe('monthCellSummary', () => {
+  it('reports the full count and one bar per competition, most fixtures first', () => {
+    const cell = monthCellSummary([
+      fx({ competition: 'laliga' }),
+      fx({ competition: 'pl' }),
+      fx({ competition: 'pl' }),
+    ])
+    expect(cell.count).toBe(3)
+    expect(cell.bars).toEqual(['pl', 'laliga'])
+    expect(cell.marquee).toBe(false)
+  })
+
+  it('trims to the top three bars when more competitions play', () => {
+    const cell = monthCellSummary([
+      fx({ competition: 'pl' }),
+      fx({ competition: 'pl' }),
+      fx({ competition: 'laliga' }),
+      fx({ competition: 'laliga' }),
+      fx({ competition: 'seriea' }),
+      fx({ competition: 'bundesliga' }),
+    ])
+    expect(cell.count).toBe(6)
+    expect(cell.bars).toHaveLength(3)
+    expect(cell.bars.slice(0, 2).sort()).toEqual(['laliga', 'pl'])
+  })
+
+  it('flags marquee days and ranks the marquee competition first on a tie', () => {
+    const cell = monthCellSummary([fx({ competition: 'ucl' }), fx({ competition: 'pl' })])
+    expect(cell.marquee).toBe(true)
+    expect(cell.bars[0]).toBe('ucl')
+  })
+
+  it('handles an empty day', () => {
+    expect(monthCellSummary([])).toEqual({ count: 0, bars: [], marquee: false })
   })
 })
 

@@ -114,7 +114,7 @@ export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
       {view === 'week' ? (
         <WeekView weekStart={weekStart} active={active} today={today} lens={lens} />
       ) : (
-        <MonthView monthStart={monthStart} active={active} today={today} />
+        <MonthView key={monthStart} monthStart={monthStart} active={active} today={today} />
       )}
 
       <footer className="mt-8 border-t border-line pt-4 text-[11.5px] leading-relaxed text-ink-muted">

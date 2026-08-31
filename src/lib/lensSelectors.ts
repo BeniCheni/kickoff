@@ -137,6 +137,32 @@ export function tickerSegments(
 }
 
 /**
+ * One month-grid cell: the match count, up to three competition bars (most fixtures
+ * first, ties toward the marquee competition, then display rank), and whether the day
+ * has a marquee fixture at all (the ⭐). Dots-aren't-data; counts and bars are.
+ */
+export function monthCellSummary(list: readonly Fixture[]): {
+  count: number
+  bars: CompetitionKey[]
+  marquee: boolean
+} {
+  const counts = new Map<CompetitionKey, number>()
+  let marquee = false
+  for (const f of list) {
+    counts.set(f.competition, (counts.get(f.competition) ?? 0) + 1)
+    if (isMarquee(f.competition)) marquee = true
+  }
+  const bars = [...counts.keys()]
+    .sort((a, b) => {
+      const diff = (counts.get(b) ?? 0) - (counts.get(a) ?? 0)
+      if (diff !== 0) return diff
+      return beats(a, b) ? -1 : 1
+    })
+    .slice(0, 3)
+  return { count: list.length, bars, marquee }
+}
+
+/**
  * Poster's proportional-loudness fold: days with more than two shown matches get the
  * full-bleed duotone header, one or two matches an inline header, and consecutive empty
  * days merge into a single hairline line (carrying the filtered-away count so a merged
