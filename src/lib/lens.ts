@@ -1,8 +1,9 @@
 /**
- * The lens system (v0.0.3): three presets over one fixture skeleton. A lens may change
- * only atmosphere, day-header scale, row density and the hero element — everything else
- * is invariant, and the Table never changes with lens. Lens is URL state (`?lens=`);
- * Ledger is the default and stays out of the URL.
+ * The lens system: three presets over one fixture skeleton. A lens may change only
+ * atmosphere, day-header scale, row density and the hero element — everything else is
+ * invariant. The Table's markup is untouched by lens; only the sanctioned atmosphere
+ * reaches it (Broadcast's theme default, the tab underline and focus-ring accent).
+ * Lens is URL state (`?lens=`); Ledger is the default and stays out of the URL.
  */
 export const LENSES = ['ledger', 'poster', 'broadcast'] as const
 

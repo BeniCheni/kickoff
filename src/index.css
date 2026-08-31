@@ -140,9 +140,11 @@
 }
 
 /*
- * Transient class on <html> while a lens switch cross-fades (added/removed by App).
- * Only these three properties — transform and grid-template-rows must stay free so the
- * Broadcast ticker and row expansion are never caught in a global transition.
+ * Transient class on <html> while a lens switch cross-fades (added/removed by App; App
+ * also skips adding it entirely under prefers-reduced-motion). Three properties only —
+ * the ticker's transform is animation-driven and stays free, but note this shorthand
+ * does replace an element's own transitions (e.g. a 150ms grid-template-rows expansion)
+ * for the 240ms window; acceptable, since a lens switch resets what's expanded anyway.
  */
 .lens-switching,
 .lens-switching * {
@@ -150,13 +152,6 @@
     background-color 220ms ease,
     color 220ms ease,
     border-color 220ms ease;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .lens-switching,
-  .lens-switching * {
-    transition: none;
-  }
 }
 
 /* Broadcast's ticker marquee: a duplicated track slides one copy's width, seamlessly. */
