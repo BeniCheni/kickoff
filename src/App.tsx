@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { todayIso } from './lib/time'
-import { LAST_SYNC_DATE, META } from './lib/fixtures'
+import { META, SYNC_STAMP } from './lib/fixtures'
 import { useUrlState } from './lib/useUrlState'
 import { encodeLens, parseLens, type Lens } from './lib/lens'
 import { parseTheme, resolveTheme, themeStorageKey, type Theme } from './lib/theme'
@@ -76,7 +76,7 @@ export default function App() {
           <span className="font-display block text-[34px] font-bold tracking-wide uppercase">Kickoff</span>
           <span className="label-caps block text-[13px] text-pitch">Brooklyn · ET</span>
           <span className="label-caps mt-1 block text-[10px] text-floodlight">
-            v0.0.1 · {META.total} fixtures · synced {LAST_SYNC_DATE}
+            v{__APP_VERSION__} · {META.total} fixtures · synced {SYNC_STAMP}
           </span>
         </div>
         <button

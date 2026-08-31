@@ -2,7 +2,7 @@ import rawFixtures from '../data/fixtures.json'
 import rawMeta from '../data/meta.json'
 import { fixturesFileSchema, metaSchema, type Fixture } from './schema'
 import { competitionRank, type CompetitionKey } from './competitions'
-import { brooklynDate, hoursSince, zonedParts } from './time'
+import { brooklynDate, hoursSince, syncStamp, zonedParts } from './time'
 import { BROOKLYN_TZ } from './competitions'
 
 /**
@@ -78,6 +78,9 @@ export function nextMatchday(
  * on the evening of Aug 23.
  */
 export const LAST_SYNC_DATE = zonedParts(new Date(META.lastSyncAt), BROOKLYN_TZ).isoDate
+
+/** The header's provenance stamp — the sync instant, stated in UTC per the templates. */
+export const SYNC_STAMP = syncStamp(META.lastSyncAt)
 
 /** Hours since the last successful sync — drives the staleness banner. */
 export function hoursSinceSync(now = new Date()): number {

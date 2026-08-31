@@ -130,6 +130,19 @@ export function weekdayShort(iso: string): string {
   return formatter('UTC', { weekday: 'short' }).format(new Date(`${iso}T12:00:00Z`))
 }
 
+/** An ISO instant as the provenance line renders it: "2026-08-30 17:02 UTC". */
+export function syncStamp(iso: string): string {
+  const p = Object.fromEntries(
+    formatter('UTC', {
+      year: 'numeric', month: '2-digit', day: '2-digit',
+      hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
+    })
+      .formatToParts(new Date(iso))
+      .map((x) => [x.type, x.value]),
+  )
+  return `${p.year}-${p.month}-${p.day} ${p.hour}:${p.minute} UTC`
+}
+
 /** Hours elapsed since an ISO instant — the one freshness clock for every snapshot. */
 export function hoursSince(iso: string, now = new Date()): number {
   return (now.getTime() - Date.parse(iso)) / 3_600_000
