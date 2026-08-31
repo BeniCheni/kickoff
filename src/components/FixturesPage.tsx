@@ -1,9 +1,8 @@
-import { useCallback, useMemo } from 'react'
+import { useCallback } from 'react'
 import { COMPETITION_KEYS, COMPETITIONS, type CompetitionKey } from '../lib/competitions'
 import { addDays, addMonths, niceDate, shortDate, startOfWeek } from '../lib/time'
-import { upcoming } from '../lib/fixtures'
 import { useUrlState } from '../lib/useUrlState'
-import { Ticker } from './Ticker'
+import { NextUpStrip } from './NextUpStrip'
 import { FilterBar } from './FilterBar'
 import { WeekView } from './WeekView'
 import { MonthView } from './MonthView'
@@ -63,12 +62,10 @@ export function FixturesPage({ today }: { today: string }) {
       ? `${shortDate(weekStart)} – ${niceDate(addDays(weekStart, 6))}`
       : niceDate(monthStart).replace(/ \d+,/, '')
 
-  const next = useMemo(() => upcoming(today, active, 8), [today, active])
-
   return (
     <>
-      <div className="label-caps mb-2 text-[11px] text-floodlight">Next up</div>
-      <Ticker fixtures={next} />
+      <div className="label-caps mb-2 text-[10px] text-ink-muted">Next up</div>
+      <NextUpStrip today={today} active={active} />
 
       <WatchPanel />
       <FilterBar
