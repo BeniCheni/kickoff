@@ -3,7 +3,7 @@ import { todayIso } from './lib/time'
 import { META, SYNC_STAMP } from './lib/fixtures'
 import { useUrlState } from './lib/useUrlState'
 import { encodeLens, parseLens, type Lens } from './lib/lens'
-import { parseTheme, resolveTheme, themeStorageKey, type Theme } from './lib/theme'
+import { resolveThemeFromEnvironment, themeStorageKey, writeStoredTheme, type Theme } from './lib/theme'
 import { TabNav, type Tab } from './components/TabNav'
 import { LensSwitcher } from './components/LensSwitcher'
 import { FixturesPage } from './components/FixturesPage'
@@ -39,12 +39,7 @@ export default function App() {
   useEffect(() => {
     const root = document.documentElement
     root.dataset.lens = lens
-    const next = resolveTheme(
-      lens,
-      parseTheme(localStorage.getItem('kickoff-theme')),
-      parseTheme(localStorage.getItem('kickoff-theme-broadcast')),
-      window.matchMedia('(prefers-color-scheme: dark)').matches,
-    )
+    const next = resolveThemeFromEnvironment(lens)
     root.dataset.theme = next
     setTheme(next)
     if (
@@ -59,13 +54,18 @@ export default function App() {
       fadeTimer.current = window.setTimeout(() => root.classList.remove('lens-switching'), 240)
     }
     prevLens.current = lens
-    return () => window.clearTimeout(fadeTimer.current)
+    return () => {
+      // Drop the class too — a cleared timer must not strand `.lens-switching` (and its
+      // document-wide transitions) on <html>.
+      window.clearTimeout(fadeTimer.current)
+      root.classList.remove('lens-switching')
+    }
   }, [lens])
 
   const toggleTheme = () => {
     const next = theme === 'dark' ? 'light' : 'dark'
     document.documentElement.dataset.theme = next
-    localStorage.setItem(themeStorageKey(lens), next)
+    writeStoredTheme(themeStorageKey(lens), next)
     setTheme(next)
   }
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { parseTheme, resolveTheme, themeStorageKey } from '../src/lib/theme'
+import { parseTheme, readStoredTheme, resolveTheme, themeStorageKey, writeStoredTheme } from '../src/lib/theme'
 
 describe('resolveTheme — the Broadcast dark-default decision', () => {
   it('entering Broadcast with no stored Broadcast choice defaults to dark', () => {
@@ -38,5 +38,18 @@ describe('theme storage', () => {
     expect(parseTheme('DARK')).toBeNull()
     expect(parseTheme('light')).toBe('light')
     expect(parseTheme('dark')).toBe('dark')
+  })
+})
+
+describe('storage guards', () => {
+  it('reads as "no stored choice" when localStorage itself throws — a blank page is never the fallback', () => {
+    // The node test env has no localStorage at all, so the access throws; the guard
+    // must swallow it exactly as it swallows Safari private mode.
+    expect(readStoredTheme('kickoff-theme')).toBeNull()
+    expect(readStoredTheme('kickoff-theme-broadcast')).toBeNull()
+  })
+
+  it('writes silently give up when storage is unavailable', () => {
+    expect(() => writeStoredTheme('kickoff-theme', 'dark')).not.toThrow()
   })
 })

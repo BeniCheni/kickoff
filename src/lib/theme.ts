@@ -29,3 +29,48 @@ export function resolveTheme(
   if (lens === 'broadcast') return storedBroadcastTheme ?? 'dark'
   return storedTheme ?? (prefersDark ? 'dark' : 'light')
 }
+
+type ThemeKey = ReturnType<typeof themeStorageKey>
+
+// This module is imported by the node test suite (no DOM lib), so browser globals are
+// reached through globalThis and typed structurally rather than via lib.dom.
+type ThemeEnvironment = {
+  localStorage?: { getItem(k: string): string | null; setItem(k: string, v: string): void }
+  matchMedia?: (query: string) => { matches: boolean }
+}
+const env = globalThis as ThemeEnvironment
+
+/**
+ * localStorage can throw on mere access (Safari private mode, storage-blocked embeds). A
+ * theme preference is never worth a blank page: reads fall back to "no stored choice",
+ * writes fail silently — a lost preference beats a crashed toggle.
+ */
+export function readStoredTheme(key: ThemeKey): Theme | null {
+  try {
+    return parseTheme(env.localStorage?.getItem(key) ?? null)
+  } catch {
+    return null
+  }
+}
+
+export function writeStoredTheme(key: ThemeKey, theme: Theme): void {
+  try {
+    env.localStorage?.setItem(key, theme)
+  } catch {
+    // storage is unavailable; the in-page theme still applied
+  }
+}
+
+/**
+ * resolveTheme fed from the live environment — the single call both the pre-paint
+ * bootstrap and App's lens effect use, with the storage keys coming from
+ * themeStorageKey so no caller ever spells a key literal again.
+ */
+export function resolveThemeFromEnvironment(lens: Lens): Theme {
+  return resolveTheme(
+    lens,
+    readStoredTheme(themeStorageKey('ledger')),
+    readStoredTheme(themeStorageKey('broadcast')),
+    env.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false,
+  )
+}
