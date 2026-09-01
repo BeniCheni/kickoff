@@ -20,7 +20,7 @@ import { useUrlState } from '../lib/useUrlState'
 import { CompetitionChip } from './CompetitionChip'
 
 /**
- * The league table, built to the standings design reference (Kickoff Standings.html):
+ * The league table, built to the standings design reference (docs/Kickoff Standings.html):
  * zone bands in the calendar's competition colours, lettered form pips, a PPG column and a
  * games-in-hand chip while played counts are uneven, per-row expansion on mobile, sortable
  * full columns on desktop. Position, points and records come from the provider's official
