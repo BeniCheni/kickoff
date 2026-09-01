@@ -8,7 +8,8 @@ that pipeline's Step 0 fixture source (`http://localhost:5173/`, `?only=` and `&
 filters), so data honesty here is betting-grade: never render a kickoff time the league hasn't
 set, never invent matchday numbers, both clocks derive from one UTC instant.
 
-## How this repo gets built (the prompt ladder, proven on v0.0.3)
+## How this repo gets built (the prompt ladder, proven on the v0.0.3 doc cycle — shipped as
+release v0.1.0; doc-ladder naming and release semver diverge, don't assume they match)
 
 Versions move through four documents, all archived in `docs/` and all **generated from a fresh
 read of the repo, never from recollection** — treat the repo as ground truth and my description
@@ -26,7 +27,7 @@ sessions get prior findings only as a sealed "verify independently" appendix, ne
 conclusions; model routing that worked — Fable 5 **High** for design/build, **Extra** for the
 review pass.
 
-## Verification discipline (from the v0.0.3 review)
+## Verification discipline (from that v0.0.3-doc-cycle / v0.1.0-release review)
 
 - `npm run typecheck` and `npm test` green at every commit; data-honesty test assertions are
   never weakened to make a redesign pass.
@@ -48,8 +49,8 @@ mirrors them, not the reverse.
 
 ## Roadmap pointers
 
-`docs/v0.0.4-ideas.md` (written by the v0.0.3 review) carries the candidate scope. The
-standing bridge to the betting track: fixtures carry stable ids so a later
-`positions.json`/`tokens.json` join can badge fixtures holding an open position or an
-expiring token — highest research value on the list, blocked on defining those files in
-`../Sportsbooks/`.
+`docs/v0.1.1-ideas.md` (written from the v0.1.0 review) carries the ranked candidate scope.
+Separately, `README.md`'s "Beyond" section names the standing bridge to the betting track:
+fixtures carry stable ids so a later `positions.json` join — plus a token-expiry-vs-kickoff
+feature — can badge fixtures holding an open position or an expiring token. Not yet on the
+ranked list; blocked on defining those files in `../Sportsbooks/`.
