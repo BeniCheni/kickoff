@@ -49,7 +49,8 @@ mirrors them, not the reverse.
 
 ## Roadmap pointers
 
-`docs/v0.1.1-ideas.md` (written from the v0.1.0 review) carries the ranked candidate scope.
+`docs/v0.2.0-ideas.md` (written from the v0.1.0 review; restaged from v0.1.1 when that
+number shipped as PR #4's housekeeping patch) carries the ranked candidate scope.
 Separately, `README.md`'s "Beyond" section names the standing bridge to the betting track:
 fixtures carry stable ids so a later `positions.json` join — plus a token-expiry-vs-kickoff
 feature — can badge fixtures holding an open position or an expiring token. Not yet on the
