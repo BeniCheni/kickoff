@@ -30,17 +30,18 @@ export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
     (s) => parseDateParam(s, today),
   )
 
-  // today ticks (useNow, in App) — when it rolls to a new day, follow it, but only if the
-  // anchor was still sitting on the day that just ended: a `?date=` pinned to some other day
-  // is navigation, not a stale default, and rolling it out from under the reader would be
-  // exactly the kind of surprise this app's honesty rules exist to prevent elsewhere.
+  // today ticks (useNow, in App) — when it rolls to a new day, follow it, but only while
+  // nothing is pinned: a `?date=` in the URL is navigation, not a stale default, and a
+  // reload keeps it too. The test is the URL, not "anchor === the day that just ended" —
+  // that version dropped a pin on yesterday's date at the second midnight (browser-proven:
+  // ?date=2026-09-12 lost its param at the 12th→13th rollover), and the next Sunday→Monday
+  // would then have dragged the reader into a week they never asked for.
   const prevToday = useRef(today)
   useEffect(() => {
-    if (prevToday.current !== today) {
-      if (anchor === prevToday.current) setAnchor(today)
-      prevToday.current = today
-    }
-  }, [today, anchor, setAnchor])
+    if (prevToday.current === today) return
+    prevToday.current = today
+    if (!new URLSearchParams(window.location.search).has('date')) setAnchor(today)
+  }, [today, setAnchor])
   const [active, setActive] = useUrlState<ReadonlySet<CompetitionKey>>(
     'only', ALL,
     (v) => (v.size === COMPETITION_KEYS.length ? null : [...v].join(',')),
