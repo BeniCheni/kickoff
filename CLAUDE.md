@@ -56,7 +56,9 @@ commit and no PR. Consequence, accepted: the app's `synced` stamp and staleness 
 measure time since the last *change-bearing* sync a human merged, and go amber then red
 through an international break even though the bot verified nothing moved. The fix
 (auto-merging an empty report) is deliberately not in v0.2.0 — see the proposal's "Review
-resolutions".
+resolutions". The workflow dispatches the `verify` check **after** opening or updating the PR:
+GitHub's merge box only counts check suites created while the PR exists (proved on PR #9 —
+a suite created seconds before `gh pr create` left the PR BLOCKED for five-plus minutes).
 
 ## Fergie Time (the design system)
 
