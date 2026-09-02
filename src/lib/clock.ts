@@ -10,7 +10,9 @@ import { todayIso } from './time'
  */
 
 export type ClockSnapshot = {
-  /** The current instant, as an ISO string — what every `nowUtcIso` parameter wants. */
+  /** The current *minute*, as an ISO instant (seconds and milliseconds always zero) — what
+   *  every `nowUtcIso` parameter wants. The clock ticks in minutes, so the snapshot is the
+   *  minute: two reads inside the same minute are the same snapshot, by identity. */
   nowUtcIso: string
   /** The current instant's Brooklyn calendar date. */
   today: string
@@ -38,7 +40,11 @@ const MINUTE_MS = 60_000
 const SETTLE_MS = 50
 
 function snapshotAt(instant: number): ClockSnapshot {
-  const d = new Date(instant)
+  // Floored to the minute. Every consumer compares against kickoff instants that sit on
+  // :00 seconds, or measures hours since a sync — none can tell :00.050 from :23.456 —
+  // while a catch-up tick (focus, visibilitychange) inside the minute the armed timer
+  // already covers *must* come out identical, or every alt-tab re-renders the app.
+  const d = new Date(instant - (instant % MINUTE_MS))
   return { nowUtcIso: d.toISOString(), today: todayIso(d) }
 }
 
@@ -55,7 +61,8 @@ export function createClock(env: ClockEnv): Clock {
   function notifyIfChanged() {
     const next = snapshotAt(env.now())
     // A visibility-triggered tick can land in the same minute the armed timer already
-    // covers — stable identity when nothing actually changed avoids a spurious re-render.
+    // covers — the snapshot is minute-floored, so "same minute" is literally "same string",
+    // and keeping the old object's identity is what stops a spurious re-render.
     if (next.nowUtcIso === snapshot.nowUtcIso) return
     snapshot = next
     for (const fn of subscribers) fn()

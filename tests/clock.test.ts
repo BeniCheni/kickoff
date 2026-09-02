@@ -75,7 +75,16 @@ describe('createClock — the tick', () => {
     const expectedAt = Date.parse('2026-09-01T12:01:00.050Z')
     h.fireNextTimer()
     expect(h.nowMs()).toBe(expectedAt)
-    expect(clock.getSnapshot().nowUtcIso).toBe(new Date(expectedAt).toISOString())
+    // The timer fires 50ms past the boundary; the snapshot is the minute itself.
+    expect(clock.getSnapshot().nowUtcIso).toBe('2026-09-01T12:01:00.000Z')
+  })
+
+  it('the snapshot is the minute — seconds and milliseconds are always zero', () => {
+    const h = fakeEnv(Date.parse('2026-09-01T12:00:23.456Z'))
+    const clock = createClock(h.env)
+    expect(clock.getSnapshot().nowUtcIso).toBe('2026-09-01T12:00:00.000Z')
+    clock.subscribe(() => {})
+    expect(clock.getSnapshot().nowUtcIso).toBe('2026-09-01T12:00:00.000Z')
   })
 
   it('never drifts across many ticks — always exactly 50ms past the boundary', () => {
@@ -125,7 +134,8 @@ describe('createClock — catching up without a separate midnight event', () => 
     h.fireListeners() // the tab regains visibility
     expect(notified).toBe(1)
     expect(clock.getSnapshot().today).toBe('2026-09-01')
-    expect(clock.getSnapshot().nowUtcIso).toBe(new Date(start + 8 * 60 * 60 * 1000).toISOString())
+    // 03:59:30 + 8h = 11:59:30, floored to the minute.
+    expect(clock.getSnapshot().nowUtcIso).toBe('2026-09-01T11:59:00.000Z')
   })
 
   it('a visibility tick that lands in the same minute as the last one is a no-op', () => {
@@ -140,6 +150,20 @@ describe('createClock — catching up without a separate midnight event', () => 
     h.fireListeners() // no real time has passed
     expect(clock.getSnapshot()).toBe(before) // same object — stable identity, no re-render
     expect(notified).toBe(0)
+
+    // Real time *has* passed, but not a minute: a window focus 23 seconds into the minute
+    // the armed timer already covers. The comment on notifyIfChanged claims this is a
+    // no-op — the assertion above could not tell, because it never moved the clock.
+    h.jumpSilently(Date.parse('2026-09-01T12:00:23.456Z'))
+    h.fireListeners()
+    expect(clock.getSnapshot()).toBe(before)
+    expect(notified).toBe(0)
+
+    // …and once the minute has actually rolled, the same signal notifies exactly once.
+    h.jumpSilently(Date.parse('2026-09-01T12:01:05.000Z'))
+    h.fireListeners()
+    expect(notified).toBe(1)
+    expect(clock.getSnapshot().nowUtcIso).toBe('2026-09-01T12:01:00.000Z')
   })
 })
 
