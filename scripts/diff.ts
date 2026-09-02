@@ -187,6 +187,29 @@ export function hasUrgentChanges(changes: Change[]): boolean {
   return changes.some((c) => c.urgent && c.kind !== 'NEW')
 }
 
+/**
+ * A competition whose freshly-fetched, in-window count falls far short of what the previous
+ * snapshot held in that same window is more likely a truncated or reshaped ESPN response than
+ * a league that genuinely lost most of its fixtures — writing it would silently disappear real
+ * matches as a wall of DISAPPEARED lines nobody is watching for. `ratio` is the floor: the
+ * fetched count must be at least `ratio` of the previous one to be trusted. A previous count of
+ * zero is exempt — a competition with no prior snapshot, or a cup whose fixtures have all
+ * rolled out of the window, legitimately reaches zero.
+ */
+export function implausibleShrink(
+  previousCounts: Readonly<Record<string, number>>,
+  fetchedCounts: Readonly<Record<string, number>>,
+  ratio = 0.5,
+): Array<{ competition: string; previous: number; fetched: number }> {
+  const offenders: Array<{ competition: string; previous: number; fetched: number }> = []
+  for (const [competition, previous] of Object.entries(previousCounts)) {
+    if (previous === 0) continue
+    const fetched = fetchedCounts[competition] ?? 0
+    if (fetched < previous * ratio) offenders.push({ competition, previous, fetched })
+  }
+  return offenders.sort((a, b) => a.competition.localeCompare(b.competition))
+}
+
 export function formatChanges(changes: Change[]): string {
   if (!changes.length) return '  no changes'
   return changes

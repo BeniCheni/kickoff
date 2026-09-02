@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { diffFixtures, hasUrgentChanges } from '../scripts/diff'
+import { diffFixtures, hasUrgentChanges, implausibleShrink } from '../scripts/diff'
 import type { Fixture } from '../src/lib/schema'
 
 /**
@@ -155,5 +155,46 @@ describe('other transitions', () => {
     const changes = diffFixtures(before, after, { now: NOW })
     expect(changes[0]!.id).toBe('near')
     expect(changes[0]!.urgent).toBe(true)
+  })
+})
+
+describe('implausibleShrink — a truncated or broken response, not a real collapse', () => {
+  it('flags a league that came back empty', () => {
+    const offenders = implausibleShrink({ pl: 20, laliga: 18 }, { pl: 0, laliga: 18 })
+    expect(offenders).toEqual([{ competition: 'pl', previous: 20, fetched: 0 }])
+  })
+
+  it('flags a league fetched at under half its previous in-window count', () => {
+    const offenders = implausibleShrink({ ligue1: 40 }, { ligue1: 15 })
+    expect(offenders).toEqual([{ competition: 'ligue1', previous: 40, fetched: 15 }])
+  })
+
+  it('does not flag a healthy fetch, even a modest real dip', () => {
+    // A window shrinking as time passes and past fixtures roll out is normal, not a bug.
+    expect(implausibleShrink({ pl: 20 }, { pl: 20 })).toEqual([])
+    expect(implausibleShrink({ pl: 20 }, { pl: 11 })).toEqual([])
+    expect(implausibleShrink({ pl: 20 }, { pl: 25 })).toEqual([])
+  })
+
+  it('exempts a competition with no previous in-window count — first sync, or a cup that fully rolled out of the window', () => {
+    expect(implausibleShrink({ supercup: 0 }, { supercup: 0 })).toEqual([])
+    expect(implausibleShrink({}, { pl: 20 })).toEqual([])
+  })
+
+  it('treats a missing competition in the fetched counts as zero', () => {
+    const offenders = implausibleShrink({ seriea: 30 }, {})
+    expect(offenders).toEqual([{ competition: 'seriea', previous: 30, fetched: 0 }])
+  })
+
+  it('reports every offender, sorted by competition, not just the first', () => {
+    const offenders = implausibleShrink({ pl: 20, laliga: 20, seriea: 20 }, { pl: 0, laliga: 20, seriea: 5 })
+    expect(offenders.map((o) => o.competition)).toEqual(['pl', 'seriea'])
+  })
+
+  it('respects a custom ratio', () => {
+    expect(implausibleShrink({ pl: 20 }, { pl: 15 }, 0.9)).toEqual([
+      { competition: 'pl', previous: 20, fetched: 15 },
+    ])
+    expect(implausibleShrink({ pl: 20 }, { pl: 15 }, 0.5)).toEqual([])
   })
 })

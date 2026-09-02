@@ -192,9 +192,12 @@ export const espnProvider: FixtureProvider = {
         const events: any[] = body?.events ?? []
 
         if (events.length >= ESPN_PAGE_CAP) {
-          console.warn(
-            `  ! ${code} ${chunkFrom}..${chunkTo} returned ${events.length} events — at or above ` +
-              `ESPN's ${ESPN_PAGE_CAP}-event cap, so this chunk may be truncated. Lower CHUNK_DAYS.`,
+          // A warning nobody reads is the same as no warning once this runs unattended —
+          // a chunk at the cap may be silently missing rows, so refuse to write from it.
+          throw new Error(
+            `${code} ${chunkFrom}..${chunkTo} returned ${events.length} events — at or above ` +
+              `ESPN's ${ESPN_PAGE_CAP}-event cap, so this chunk may be truncated. Lower CHUNK_DAYS ` +
+              `and re-run; refusing to write a fixture list that might be missing rows.`,
           )
         }
 
