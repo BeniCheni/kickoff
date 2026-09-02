@@ -1,7 +1,7 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { normalizeEvent, seasonLabel } from '../scripts/providers/espn'
+import { normalizeEvent, seasonLabel, espnProvider, UnmappedStatusError } from '../scripts/providers/espn'
 import { fixtureSchema } from '../src/lib/schema'
 
 const load = (name: string) =>
@@ -74,5 +74,97 @@ describe('normalizeEvent', () => {
   it('gives the two legs of a season distinct ids', () => {
     const [a, b] = ligue1
     expect(normalizeEvent(a, 'ligue1', AT)!.id).not.toBe(normalizeEvent(b, 'ligue1', AT)!.id)
+  })
+})
+
+describe('normalizeEvent — status mapping', () => {
+  const template = ligue1.find((x: any) => x.name.includes('Marseille'))
+  const withStatus = (name: unknown) => ({ ...template, status: { type: { name } } })
+
+  const MAPPED: Record<string, string> = {
+    STATUS_SCHEDULED: 'scheduled',
+    STATUS_IN_PROGRESS: 'in_play',
+    STATUS_FIRST_HALF: 'in_play',
+    STATUS_SECOND_HALF: 'in_play',
+    STATUS_HALFTIME: 'in_play',
+    STATUS_FULL_TIME: 'full_time',
+    STATUS_FINAL: 'full_time',
+    STATUS_POSTPONED: 'postponed',
+    STATUS_CANCELED: 'cancelled',
+    STATUS_CANCELLED: 'cancelled',
+  }
+
+  it('maps every ESPN status name this app knows about', () => {
+    for (const [name, expected] of Object.entries(MAPPED)) {
+      expect(normalizeEvent(withStatus(name), 'ligue1', AT)!.status).toBe(expected)
+    }
+  })
+
+  it('throws, naming the status and the event, on a name the map does not cover', () => {
+    // Real ESPN statuses this app has never seen in a synced window — not a guess about
+    // spelling, a guess that the map is complete.
+    for (const name of [
+      'STATUS_DELAYED', 'STATUS_SUSPENDED', 'STATUS_ABANDONED', 'STATUS_FORFEIT',
+      'STATUS_FINAL_AET', 'STATUS_FINAL_PEN', 'STATUS_RAIN_DELAY',
+    ]) {
+      let threw: unknown
+      try {
+        normalizeEvent(withStatus(name), 'ligue1', AT)
+      } catch (err) {
+        threw = err
+      }
+      expect(threw).toBeInstanceOf(UnmappedStatusError)
+      expect((threw as UnmappedStatusError).statusName).toBe(name)
+      expect((threw as UnmappedStatusError).eventId).toBe(String(template.id))
+    }
+  })
+
+  it('throws on a missing status name rather than defaulting to scheduled', () => {
+    const e = { ...template, status: {} }
+    expect(() => normalizeEvent(e, 'ligue1', AT)).toThrow(UnmappedStatusError)
+    const e2 = { ...template, status: undefined }
+    expect(() => normalizeEvent(e2, 'ligue1', AT)).toThrow(UnmappedStatusError)
+  })
+})
+
+describe('espnProvider.fetchWindow — unmapped statuses abort before any write', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  it('collects every offender across the whole window and rejects once, naming them all', async () => {
+    const template = ligue1.find((x: any) => x.name.includes('Marseille'))
+    const good = template
+    const bad1 = { ...template, id: 'bad-delayed', status: { type: { name: 'STATUS_DELAYED' } } }
+    const bad2 = { ...template, id: 'bad-abandoned', status: { type: { name: 'STATUS_ABANDONED' } } }
+
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => ({
+        ok: true,
+        json: async () => ({ events: [good, bad1, bad2] }),
+      })),
+    )
+
+    await expect(espnProvider.fetchWindow('2026-08-21', '2026-08-21')).rejects.toThrow(
+      /STATUS_DELAYED[\s\S]*STATUS_ABANDONED|STATUS_ABANDONED[\s\S]*STATUS_DELAYED/,
+    )
+  })
+
+  it('never writes a fixture for the offenders it collected', async () => {
+    const template = ligue1.find((x: any) => x.name.includes('Marseille'))
+    const bad = { ...template, id: 'bad-suspended', status: { type: { name: 'STATUS_SUSPENDED' } } }
+
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => ({ ok: true, json: async () => ({ events: [bad] }) })),
+    )
+
+    await expect(espnProvider.fetchWindow('2026-08-21', '2026-08-21')).rejects.toThrow(/STATUS_SUSPENDED/)
+  })
+
+  it('still reports a non-2xx response as a hard failure, unrelated to status mapping', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: false, status: 503, json: async () => ({}) })))
+    await expect(espnProvider.fetchWindow('2026-08-21', '2026-08-21')).rejects.toThrow(/responded 503/)
   })
 })
