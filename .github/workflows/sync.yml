@@ -1,0 +1,15 @@
+name: Scheduled sync
+
+# Placeholder. GitHub only allows workflow_dispatch against a workflow *path* once that path
+# exists on the default branch — this registers the name (dispatch-only, no schedule, so it
+# does nothing on its own) so the real implementation on the v0.2.0 branch can be dispatched
+# and tested before that branch merges. The v0.2.0 PR replaces this file's content wholesale.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  placeholder:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "placeholder — the real workflow lands with the v0.2.0 PR"
