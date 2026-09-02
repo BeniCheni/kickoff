@@ -1,0 +1,150 @@
+name: Scheduled sync
+
+# Fetches, diffs and (unless dry-run) commits a fresh fixture/standings snapshot on a
+# schedule, then opens or updates one rolling pull request against main — it never pushes
+# straight to main and never merges its own PR (see docs/v0.2.0-proposal.md's auto-merge
+# decision). npm run sync itself is the honesty gate: an unmapped ESPN status, a truncated
+# response, or an implausibly shrunk league all abort with exit 2 before anything is written,
+# which this workflow turns into a failed, unmissable run rather than a silent bad commit.
+
+on:
+  schedule:
+    - cron: '0 */4 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Fetch and diff only (npm run sync -- --check) — never write, commit, or open a PR'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+concurrency:
+  group: sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+
+      - name: Determine mode
+        id: mode
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            echo "dry_run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "dry_run=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Timestamp
+        id: ts
+        run: echo "stamp=$(TZ=America/New_York date '+%m/%d/%Y %-I:%M %p ET')" >> "$GITHUB_OUTPUT"
+
+      # `set +e`: the default runner shell has `-eo pipefail`, which would abort this step —
+      # and the whole job — the instant `npm run sync` exits non-zero, before its own exit
+      # code could be captured and read. We want that code, not an early abort.
+      - name: Run the sync
+        id: sync
+        run: |
+          set +e
+          ARGS=""
+          if [ "${{ steps.mode.outputs.dry_run }}" = "true" ]; then ARGS="--check"; fi
+          npm run sync -- $ARGS 2>&1 | tee sync-output.txt
+          exit_code=${PIPESTATUS[0]}
+          set -e
+          echo "sync_exit=$exit_code" >> "$GITHUB_OUTPUT"
+
+      - name: Fail loudly on a hard sync failure
+        if: steps.sync.outputs.sync_exit == '2'
+        run: |
+          echo "::error::npm run sync exited 2 — a hard failure before any write (unmapped ESPN status, a truncated response, or an implausibly shrunk league). Nothing written, no PR opened. See the 'Run the sync' step's log above."
+          exit 1
+
+      - name: Dry run — nothing written, stop here
+        if: steps.mode.outputs.dry_run == 'true'
+        run: |
+          echo "Dry run (--check): the report above is everything this run did. Nothing written, no commit, no PR."
+
+      - name: Verify the written snapshot
+        if: steps.mode.outputs.dry_run == 'false'
+        run: |
+          npm run typecheck
+          npm test
+          npm run build
+
+      - name: Stage the synced data
+        id: diff
+        if: steps.mode.outputs.dry_run == 'false'
+        run: |
+          git add src/data/fixtures.json src/data/meta.json src/data/standings.json
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit and push the rolling sync branch
+        if: steps.mode.outputs.dry_run == 'false' && steps.diff.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "npm run sync ${{ steps.ts.outputs.stamp }}"
+          git push --force origin HEAD:sync/scheduled
+
+      # A PR opened by github-actions[bot] doesn't trigger `pull_request` workflows, so
+      # without this the required "verify" check would never appear and the CI-gate ruleset
+      # would block the merge forever.
+      - name: Ask CI to verify the sync branch head
+        if: steps.mode.outputs.dry_run == 'false' && steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run ci.yml --ref sync/scheduled
+
+      - name: Open or update the sync PR
+        if: steps.mode.outputs.dry_run == 'false' && steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TITLE="npm run sync ${{ steps.ts.outputs.stamp }}"
+          if [ "${{ steps.sync.outputs.sync_exit }}" = "1" ]; then
+            TITLE="⚠ ${TITLE} — something inside 72h moved"
+          fi
+          {
+            echo "## Summary"
+            echo "Scheduled \`npm run sync\` against ESPN. This PR is opened by the sync"
+            echo "workflow and is never auto-merged — see the auto-merge decision in"
+            echo "\`docs/v0.2.0-proposal.md\`."
+            echo
+            echo "## Sync report"
+            echo '```'
+            cat sync-output.txt
+            echo '```'
+            echo
+            echo "## Reviewer checklist"
+            echo "- [ ] Every DATE_MOVED / TIME_CHANGED / HOME_AWAY_INVERTED line checked against any open position on that fixture (betting pipeline Step 0)."
+            echo "- [ ] STATUS_CHANGED lines to postponed/cancelled reconciled with any open position."
+            echo "- [ ] DISAPPEARED lines are cup fixtures leaving the window, not a real loss."
+            echo "- [ ] Standings rank moves agree with the FT results in this report."
+          } > pr-body.md
+
+          EXISTING=$(gh pr list --head sync/scheduled --base main --state open --json number --jq '.[0].number // empty')
+          if [ -n "$EXISTING" ]; then
+            gh pr edit "$EXISTING" --title "$TITLE" --body-file pr-body.md
+            echo "Updated PR #$EXISTING"
+          else
+            gh pr create --base main --head sync/scheduled --title "$TITLE" --body-file pr-body.md
+          fi
+
+      - name: Nothing changed
+        if: steps.mode.outputs.dry_run == 'false' && steps.diff.outputs.changed == 'false'
+        run: echo "Sync produced no changes vs the previous snapshot — nothing to commit, no PR needed."

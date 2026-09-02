@@ -38,6 +38,18 @@ review pass.
 - `.claude/worktrees/` entries look "prunable" from cloud/VM sessions because their absolute
   gitdir paths only resolve on the Mac — don't prune them from a mounted session.
 
+## Scheduled sync (v0.2.0)
+
+`.github/workflows/sync.yml` runs `npm run sync` every four hours and opens or updates one
+rolling PR (`sync/scheduled` → `main`) carrying the diff report — it never pushes straight
+to `main` and **never auto-merges its own PR**: this repo feeds real betting decisions, so a
+human reads the change report (every DATE_MOVED / TIME_CHANGED / HOME_AWAY_INVERTED /
+STATUS_CHANGED line is a Track A Step 0 re-verification trigger) before it lands. Full
+reasoning in `docs/v0.2.0-proposal.md`. `workflow_dispatch` (with a `dry_run` input mapped
+to `npm run sync -- --check`) lets a session test the workflow without waiting for the
+schedule. Needs the repo's "Allow GitHub Actions to create and approve pull requests"
+setting on (enabled 2026-09-01) — no secret, no PAT.
+
 ## Fergie Time (the design system)
 
 `../Fergie Time Design System/` — the exported Claude Design system (tokens, 15 component
