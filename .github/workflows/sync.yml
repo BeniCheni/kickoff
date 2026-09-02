@@ -1,15 +1,220 @@
 name: Scheduled sync
 
-# Placeholder. GitHub only allows workflow_dispatch against a workflow *path* once that path
-# exists on the default branch — this registers the name (dispatch-only, no schedule, so it
-# does nothing on its own) so the real implementation on the v0.2.0 branch can be dispatched
-# and tested before that branch merges. The v0.2.0 PR replaces this file's content wholesale.
+# Fetches, diffs and (unless dry-run) commits a fresh fixture/standings snapshot on a
+# schedule, then opens or updates one rolling pull request against main — it never pushes
+# straight to main and never merges its own PR (see docs/v0.2.0-proposal.md's auto-merge
+# decision). npm run sync itself is the honesty gate: an unmapped ESPN status, a truncated
+# response, or an implausibly shrunk league all abort with exit 2 before anything is written,
+# which this workflow turns into a failed, unmissable run rather than a silent bad commit.
+#
+# Cadence: twice a day, at midnight and noon Brooklyn time. GitHub's cron is UTC and does not
+# follow DST, so '0 4,16 * * *' is exactly 00:00 and 12:00 EDT, and an hour early — 23:00 and
+# 11:00 ET — once EST starts on 1 Nov 2026. That drift is accepted on purpose: one plain cron,
+# not two clever ones. Midnight ET catches every European result of the day; noon ET catches
+# the early weekend kickoffs and the weekday fixture announcements. There is deliberately no
+# "skip quiet days" gate in front of the fetch: the fetch *is* the check (ESPN has no "did
+# anything change?" endpoint), and the days with no matches are exactly the days fixture
+# updates land — see "Review resolutions" in docs/v0.2.0-proposal.md. The gate that does
+# exist sits after the fetch: a run whose diff engine reports nothing commits nothing.
 
 on:
+  schedule:
+    - cron: '0 4,16 * * *'
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Fetch and diff only (npm run sync -- --check) — never write, commit, or open a PR'
+        type: boolean
+        default: false
+
+# contents: push the rolling branch · pull-requests: open/edit the PR · actions: the minimum
+# that can create a workflow_dispatch event (gh workflow run ci.yml, below).
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+concurrency:
+  group: sync
+  cancel-in-progress: false
 
 jobs:
-  placeholder:
+  sync:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "placeholder — the real workflow lands with the v0.2.0 PR"
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+
+      - name: Determine mode
+        id: mode
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            echo "dry_run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "dry_run=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Timestamp
+        id: ts
+        run: echo "stamp=$(TZ=America/New_York date '+%m/%d/%Y %-I:%M %p ET')" >> "$GITHUB_OUTPUT"
+
+      # `set +e`: the default runner shell has `-eo pipefail`, which would abort this step —
+      # and the whole job — the instant `npm run sync` exits non-zero, before its own exit
+      # code could be captured and read. We want that code, not an early abort.
+      - name: Run the sync
+        id: sync
+        run: |
+          set +e
+          ARGS=""
+          if [ "${{ steps.mode.outputs.dry_run }}" = "true" ]; then ARGS="--check"; fi
+          npm run sync -- $ARGS 2>&1 | tee sync-output.txt
+          exit_code=${PIPESTATUS[0]}
+          set -e
+          echo "sync_exit=$exit_code" >> "$GITHUB_OUTPUT"
+
+      - name: Fail loudly on a hard sync failure
+        if: steps.sync.outputs.sync_exit == '2'
+        run: |
+          echo "::error::npm run sync exited 2 — a hard failure before any write (unmapped ESPN status, a truncated response, an implausibly shrunk league, or a row the schema rejects). Nothing written, no PR opened. See the 'Run the sync' step's log above."
+          exit 1
+
+      # "Changed" is the diff engine's verdict, not git's. Every run rewrites 959 per-row
+      # fetchedAt stamps and lastSyncAt, so the working tree is always dirty and a
+      # `git diff --cached --quiet` test opened a PR on every run — the 1 Sep 2026 dispatch
+      # committed 961 changed lines under a "no changes" report. sync.ts now ends every run
+      # with one machine-readable line; this step reads it and refuses to guess when it is
+      # missing, malformed, or the process died with a code that is not a sync verdict.
+      - name: Read the sync report
+        id: report
+        run: |
+          EXIT="${{ steps.sync.outputs.sync_exit }}"
+          if [ "$EXIT" != "0" ] && [ "$EXIT" != "1" ]; then
+            echo "::error::npm run sync exited $EXIT — not a sync verdict (0 clean, 1 something inside 72h moved, 2 refused to write). The process died before it could report; nothing from this run is trusted."
+            exit 1
+          fi
+          LINE=$(grep -E '^report: ' sync-output.txt | tail -n 1)
+          if [ -z "$LINE" ]; then
+            echo "::error::the sync output has no 'report:' line — refusing to guess whether anything changed."
+            exit 1
+          fi
+          if ! printf '%s\n' "$LINE" | grep -Eqx 'report: changed=(true|false) changes=[0-9]+ urgent=[0-9]+ standings=(changed|unchanged|failed) rank-moves=[0-9]+'; then
+            echo "::error::malformed report line: $LINE"
+            exit 1
+          fi
+          echo "$LINE"
+          CHANGED=$(printf '%s\n' "$LINE" | sed -n 's/.*[[:space:]]changed=\([a-z]*\).*/\1/p')
+          STANDINGS=$(printf '%s\n' "$LINE" | sed -n 's/.*[[:space:]]standings=\([a-z]*\).*/\1/p')
+          echo "changed=$CHANGED" >> "$GITHUB_OUTPUT"
+          echo "line=$LINE" >> "$GITHUB_OUTPUT"
+          if [ "$STANDINGS" = "failed" ]; then
+            echo "::warning::standings sync failed — fixtures are unaffected and the previous table is kept; see the 'Run the sync' log. Not a reason to commit on its own."
+          fi
+
+      - name: Dry run — nothing written, stop here
+        if: steps.mode.outputs.dry_run == 'true'
+        env:
+          REPORT_LINE: ${{ steps.report.outputs.line }}
+        run: |
+          {
+            echo "## Dry run (--check)"
+            echo
+            echo "\`$REPORT_LINE\`"
+            echo
+            echo "Nothing written, no commit, no PR. The sync log is everything this run did."
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "Dry run (--check): the report above is everything this run did. Nothing written, no commit, no PR."
+
+      - name: Nothing changed
+        if: steps.mode.outputs.dry_run == 'false' && steps.report.outputs.changed == 'false'
+        env:
+          REPORT_LINE: ${{ steps.report.outputs.line }}
+        run: |
+          {
+            echo "## Nothing changed"
+            echo
+            echo "\`$REPORT_LINE\`"
+            echo
+            echo "The diff engine reported no fixture change and no standings row moved — only per-row fetchedAt stamps did. No commit, no push, no PR. An open sync/scheduled PR from an earlier change-bearing run is left alone."
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "Nothing changed vs the previous snapshot — no commit, no PR."
+
+      - name: Verify the written snapshot
+        if: steps.mode.outputs.dry_run == 'false' && steps.report.outputs.changed == 'true'
+        run: |
+          npm run typecheck
+          npm test
+          npm run build
+
+      - name: Commit and push the rolling sync branch
+        if: steps.mode.outputs.dry_run == 'false' && steps.report.outputs.changed == 'true'
+        run: |
+          git add src/data/fixtures.json src/data/meta.json src/data/standings.json
+          if git diff --cached --quiet; then
+            echo "::error::the report says changed=true but nothing is staged — sync.ts and the working tree disagree; refusing to open an empty PR."
+            exit 1
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "npm run sync ${{ steps.ts.outputs.stamp }}"
+          git push --force origin HEAD:sync/scheduled
+
+      # A PR opened by github-actions[bot] doesn't trigger `pull_request` workflows, so
+      # without this the required "verify" check would never appear and the CI-gate ruleset
+      # would block the merge forever.
+      - name: Ask CI to verify the sync branch head
+        if: steps.mode.outputs.dry_run == 'false' && steps.report.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run ci.yml --ref sync/scheduled
+
+      - name: Open or update the sync PR
+        if: steps.mode.outputs.dry_run == 'false' && steps.report.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPORT_LINE: ${{ steps.report.outputs.line }}
+        run: |
+          TITLE="npm run sync ${{ steps.ts.outputs.stamp }}"
+          if [ "${{ steps.sync.outputs.sync_exit }}" = "1" ]; then
+            TITLE="⚠ ${TITLE} — something inside 72h moved"
+          fi
+          # The sync log goes in a four-backtick fence: team and venue names are ESPN's text,
+          # and a wider fence cannot be closed by anything a three-backtick line could.
+          {
+            echo "## Summary"
+            echo "Scheduled \`npm run sync\` against ESPN. This PR is opened by the sync"
+            echo "workflow and is never auto-merged — see the auto-merge decision in"
+            echo "\`docs/v0.2.0-proposal.md\`."
+            echo
+            echo "\`$REPORT_LINE\`"
+            echo
+            echo "## Sync report"
+            echo '````'
+            cat sync-output.txt
+            echo '````'
+            echo
+            echo "## Reviewer checklist"
+            echo "- [ ] Every DATE_MOVED / TIME_CHANGED / HOME_AWAY_INVERTED line checked against any open position on that fixture (betting pipeline Step 0)."
+            echo "- [ ] STATUS_CHANGED lines to postponed/cancelled reconciled with any open position."
+            echo "- [ ] DISAPPEARED lines are cup fixtures leaving the window, not a real loss."
+            echo "- [ ] Standings rank moves agree with the FT results in this report."
+          } > pr-body.md
+
+          EXISTING=$(gh pr list --head sync/scheduled --base main --state open --json number --jq '.[0].number // empty')
+          if [ -n "$EXISTING" ]; then
+            gh pr edit "$EXISTING" --title "$TITLE" --body-file pr-body.md
+            URL=$(gh pr view "$EXISTING" --json url --jq .url)
+            echo "Updated PR #$EXISTING"
+          else
+            URL=$(gh pr create --base main --head sync/scheduled --title "$TITLE" --body-file pr-body.md)
+          fi
+          {
+            echo "## Sync PR"
+            echo
+            echo "\`$REPORT_LINE\`"
+            echo
+            echo "$URL — never auto-merged; a human reads what moved."
+          } >> "$GITHUB_STEP_SUMMARY"

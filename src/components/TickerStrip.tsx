@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { FIXTURES } from '../lib/fixtures'
-import { todayIso } from '../lib/time'
+import { useNow } from '../lib/useNow'
 import { tickerSegments, type TickerSegment } from '../lib/lensSelectors'
 
 function Track({ segments, decorative }: { segments: TickerSegment[]; decorative?: boolean }) {
@@ -28,7 +28,8 @@ function Track({ segments, decorative }: { segments: TickerSegment[]; decorative
 export function TickerStrip() {
   const [hovered, setHovered] = useState(false)
   const [pinned, setPinned] = useState(false)
-  const segments = useMemo(() => tickerSegments(FIXTURES, todayIso(), new Date().toISOString()), [])
+  const { today, nowUtcIso } = useNow()
+  const segments = useMemo(() => tickerSegments(FIXTURES, today, nowUtcIso), [today, nowUtcIso])
 
   if (segments.length === 0) return null
 

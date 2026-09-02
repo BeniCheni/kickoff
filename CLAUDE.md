@@ -38,6 +38,26 @@ review pass.
 - `.claude/worktrees/` entries look "prunable" from cloud/VM sessions because their absolute
   gitdir paths only resolve on the Mac — don't prune them from a mounted session.
 
+## Scheduled sync (v0.2.0)
+
+`.github/workflows/sync.yml` runs `npm run sync` twice a day — `0 4,16 * * *`, midnight and
+noon EDT, an hour early under EST because GitHub's cron is UTC — and opens or updates one
+rolling PR (`sync/scheduled` → `main`) carrying the diff report — it never pushes straight
+to `main` and **never auto-merges its own PR**: this repo feeds real betting decisions, so a
+human reads the change report (every DATE_MOVED / TIME_CHANGED / HOME_AWAY_INVERTED /
+STATUS_CHANGED line is a Track A Step 0 re-verification trigger) before it lands. Full
+reasoning in `docs/v0.2.0-proposal.md`. `workflow_dispatch` (with a `dry_run` input mapped
+to `npm run sync -- --check`) lets a session test the workflow without waiting for the
+schedule. Needs the repo's "Allow GitHub Actions to create and approve pull requests"
+setting on (enabled 2026-09-01) — no secret, no PAT. The workflow commits only when the diff
+engine's report line (`report: changed=…`, the last line `npm run sync` prints) says
+something moved — a fixture change of any kind or a standings row — so a quiet run leaves no
+commit and no PR. Consequence, accepted: the app's `synced` stamp and staleness banner
+measure time since the last *change-bearing* sync a human merged, and go amber then red
+through an international break even though the bot verified nothing moved. The fix
+(auto-merging an empty report) is deliberately not in v0.2.0 — see the proposal's "Review
+resolutions".
+
 ## Fergie Time (the design system)
 
 `../Fergie Time Design System/` — the exported Claude Design system (tokens, 15 component

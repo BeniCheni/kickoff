@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { todayIso } from './lib/time'
+import { useEffect, useRef, useState } from 'react'
+import { useNow } from './lib/useNow'
 import { META, SYNC_STAMP } from './lib/fixtures'
 import { useUrlState } from './lib/useUrlState'
 import { encodeLens, parseLens, type Lens } from './lib/lens'
@@ -12,7 +12,7 @@ import { StalenessBanner } from './components/StalenessBanner'
 import { TickerStrip } from './components/TickerStrip'
 
 export default function App() {
-  const today = useMemo(() => todayIso(), [])
+  const { today } = useNow()
   const [theme, setTheme] = useState<Theme>(() =>
     document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light',
   )

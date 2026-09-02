@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { COMPETITIONS, type CompetitionKey } from '../lib/competitions'
 import { addDays, startOfWeek, niceDate } from '../lib/time'
+import { useNow } from '../lib/useNow'
 import { FIXTURES, fixturesOn, totalOn } from '../lib/fixtures'
 import { hotFixtureIds, monthCellSummary } from '../lib/lensSelectors'
 import { FixtureRow } from './FixtureRow'
@@ -21,7 +22,8 @@ export function MonthView({
   today: string
 }) {
   const [selected, setSelected] = useState<string | null>(null)
-  const hot = useMemo(() => hotFixtureIds(FIXTURES, new Date().toISOString()), [])
+  const { nowUtcIso } = useNow()
+  const hot = useMemo(() => hotFixtureIds(FIXTURES, nowUtcIso), [nowUtcIso])
 
   const month = monthStart.slice(0, 7)
   const gridStart = startOfWeek(monthStart)

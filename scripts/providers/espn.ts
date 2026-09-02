@@ -18,6 +18,32 @@ export type FixtureProvider = {
   fetchWindow(from: string, to: string): Promise<{ fixtures: Fixture[]; counts: Record<string, number> }>
 }
 
+/**
+ * A status name ESPN sent that this map doesn't cover — including a missing one. Thrown by
+ * `normalizeEvent` rather than falling back to `scheduled`, because a fallback here is exactly
+ * the failure class this project exists to kill: inventing scheduledness for a fixture whose
+ * real state (delayed, suspended, abandoned, gone to penalties) the sync simply doesn't know.
+ * `fetchWindow` catches these, collects every offender across the whole run, and throws once
+ * so a single sync reports everything it doesn't understand rather than dying on the first.
+ */
+export class UnmappedStatusError extends Error {
+  constructor(
+    public readonly statusName: string | undefined,
+    public readonly eventId: string,
+  ) {
+    super(`unmapped ESPN status ${statusName ?? '(missing)'} for event ${eventId}`)
+    this.name = 'UnmappedStatusError'
+  }
+}
+
+/**
+ * Deliberately NOT mapped: STATUS_FINAL_AET / STATUS_FINAL_PEN / STATUS_SHOOTOUT. ESPN's score
+ * after extra time (or a penalty shootout) is not the 90-minute result the books settle a
+ * Moneyline/Match Result market on — mapping either straight to `full_time` would render a
+ * confident, wrong score. None of the five leagues and four cups this app syncs can currently
+ * reach extra time inside the fetched window (the cups have already been played), so this earns
+ * its own design the day a synced fixture actually needs it, rather than a guess today.
+ */
 const STATUS: Record<string, FixtureStatus> = {
   STATUS_SCHEDULED: 'scheduled',
   STATUS_IN_PROGRESS: 'in_play',
@@ -105,7 +131,8 @@ export function normalizeEvent(
   const home = ALIAS[rawHome] ?? rawHome
   const away = ALIAS[rawAway] ?? rawAway
   const statusName = event.status?.type?.name
-  const status = STATUS[statusName] ?? 'scheduled'
+  const status = STATUS[statusName]
+  if (!status) throw new UnmappedStatusError(statusName, String(event?.id))
 
   // `timeValid: false` is ESPN telling us the kickoff time is a round placeholder and the
   // league has only fixed the date. Honouring this flag is what stops the dashboard from
@@ -147,6 +174,9 @@ export const espnProvider: FixtureProvider = {
     const fetchedAt = new Date().toISOString()
     const fixtures: Fixture[] = []
     const counts: Record<string, number> = {}
+    // Every unmapped-status offender across the whole window, collected rather than thrown
+    // immediately — a run that dies on the first one hides how many others there are.
+    const unmapped: string[] = []
 
     const seen = new Set<string>()
 
@@ -162,14 +192,27 @@ export const espnProvider: FixtureProvider = {
         const events: any[] = body?.events ?? []
 
         if (events.length >= ESPN_PAGE_CAP) {
-          console.warn(
-            `  ! ${code} ${chunkFrom}..${chunkTo} returned ${events.length} events — at or above ` +
-              `ESPN's ${ESPN_PAGE_CAP}-event cap, so this chunk may be truncated. Lower CHUNK_DAYS.`,
+          // A warning nobody reads is the same as no warning once this runs unattended —
+          // a chunk at the cap may be silently missing rows, so refuse to write from it.
+          throw new Error(
+            `${code} ${chunkFrom}..${chunkTo} returned ${events.length} events — at or above ` +
+              `ESPN's ${ESPN_PAGE_CAP}-event cap, so this chunk may be truncated. Lower CHUNK_DAYS ` +
+              `and re-run; refusing to write a fixture list that might be missing rows.`,
           )
         }
 
         for (const event of events) {
-          const fixture = normalizeEvent(event, key, fetchedAt)
+          let fixture: Fixture | null
+          try {
+            fixture = normalizeEvent(event, key, fetchedAt)
+          } catch (err) {
+            if (!(err instanceof UnmappedStatusError)) throw err
+            unmapped.push(
+              `  ! ${code} event ${err.eventId} (${event?.date ?? 'no date'}): ` +
+                `unmapped status ${err.statusName ?? '(missing)'}`,
+            )
+            continue
+          }
           if (!fixture) {
             console.warn(`  ! ${code}: skipped an event that could not be normalized (id ${event?.id})`)
             continue
@@ -182,6 +225,13 @@ export const espnProvider: FixtureProvider = {
         }
       }
       counts[key] = ok
+    }
+
+    if (unmapped.length > 0) {
+      throw new Error(
+        `ESPN sent ${unmapped.length} fixture(s) with a status this sync doesn't know how to map — ` +
+          `refusing to guess "scheduled":\n${unmapped.join('\n')}`,
+      )
     }
 
     return { fixtures, counts }

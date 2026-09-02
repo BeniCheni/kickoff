@@ -2,7 +2,7 @@ import rawStandings from '../data/standings.json'
 import { standingsFileSchema, type Fixture, type StandingRow } from './schema'
 import { zoneFor, type CompetitionKey, type Zone } from './competitions'
 import { FIXTURES } from './fixtures'
-import { brooklynDate, fixtureTimes, hoursSince, todayIso, weekdayShort, type FixtureTimes } from './time'
+import { brooklynDate, fixtureTimes, hoursSince, weekdayShort, type FixtureTimes } from './time'
 
 /**
  * The league table plus everything the Table view derives around it.
@@ -40,7 +40,7 @@ export type TableRow = StandingRow & {
 }
 
 /** One league's fixtures grouped by team id, in kickoff order — one pass, reused per row. */
-function fixturesByTeam(key: CompetitionKey): Map<string, Fixture[]> {
+function fixturesByTeam(key: CompetitionKey, fixtures: readonly Fixture[]): Map<string, Fixture[]> {
   const byTeam = new Map<string, Fixture[]>()
   const add = (id: string | undefined, f: Fixture) => {
     if (!id) return
@@ -48,7 +48,7 @@ function fixturesByTeam(key: CompetitionKey): Map<string, Fixture[]> {
     if (list) list.push(f)
     else byTeam.set(id, [f])
   }
-  for (const f of FIXTURES) {
+  for (const f of fixtures) {
     if (f.competition !== key) continue
     add(f.home.sourceId, f)
     add(f.away.sourceId, f)
@@ -59,13 +59,22 @@ function fixturesByTeam(key: CompetitionKey): Map<string, Fixture[]> {
   return byTeam
 }
 
-/** The table for one league, or [] when the snapshot has none (non-domestic keys). */
-export function tableFor(key: CompetitionKey): TableRow[] {
-  const rows = STANDINGS.leagues[key]
-  if (!rows?.length) return []
+/**
+ * The table for one league, or [] when the snapshot has none (non-domestic keys). `today`
+ * decides "next match" — a caller-supplied instant, never read internally, so this stays
+ * exactly as ticking as the app around it (see useNow()) and exactly as testable with
+ * synthetic data as the rest of the pure layer. `rows`/`fixtures` default to the loaded
+ * snapshot; tests inject their own.
+ */
+export function tableFor(
+  key: CompetitionKey,
+  today: string,
+  rows: readonly StandingRow[] = STANDINGS.leagues[key] ?? [],
+  fixtures: readonly Fixture[] = FIXTURES,
+): TableRow[] {
+  if (!rows.length) return []
 
-  const byTeam = fixturesByTeam(key)
-  const today = todayIso()
+  const byTeam = fixturesByTeam(key, fixtures)
   const maxPlayed = Math.max(...rows.map((r) => r.played))
   const abbrevById = new Map(rows.map((r) => [r.teamId, r.abbrev]))
 

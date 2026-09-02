@@ -17,6 +17,7 @@ import {
   type TableRow,
 } from '../lib/standings'
 import { useUrlState } from '../lib/useUrlState'
+import { useNow } from '../lib/useNow'
 import { CompetitionChip } from './CompetitionChip'
 
 /**
@@ -57,8 +58,8 @@ function sortRows(rows: TableRow[], sort: SortKey): TableRow[] {
   return [...rows].sort((a, b) => key(b) - key(a) || a.rank - b.rank)
 }
 
-function syncedAgo(): string {
-  const h = hoursSinceStandingsSync()
+function syncedAgo(now: Date): string {
+  const h = hoursSinceStandingsSync(now)
   if (h < 1) return 'synced under an hour ago'
   if (h < 48) return `synced ${Math.round(h)}h ago`
   return `synced ${Math.floor(h / 24)}d ago`
@@ -146,8 +147,9 @@ export function TablePage() {
   const [openRow, setOpenRow] = useState<string | null>(null)
   const [legendOpen, setLegendOpen] = useState(false)
   const [sort, setSort] = useState<SortKey>('pts')
+  const { today, nowUtcIso } = useNow()
 
-  const rows = useMemo(() => tableFor(league), [league])
+  const rows = useMemo(() => tableFor(league, today), [league, today])
   const meta = LEAGUE_TABLES[league]!
   const comp = COMPETITIONS[league]
   const progress = matchdayProgress(rows)
@@ -186,7 +188,7 @@ export function TablePage() {
       {/* freshness + games-in-hand callout */}
       <div className="mb-2.5 rounded-[5px] border border-line border-l-3 border-l-floodlight bg-floodlight-bg px-2.5 py-2">
         <div className="label-caps text-[9.5px] text-floodlight">
-          {progress ? `As of matchday ${progress.played} of ${progress.of}` : 'League table'} · {syncedAgo()}
+          {progress ? `As of matchday ${progress.played} of ${progress.of}` : 'League table'} · {syncedAgo(new Date(nowUtcIso))}
         </div>
         {inHand > 0 && (
           <div className="mt-0.5 text-[11px] leading-normal text-ink-secondary">

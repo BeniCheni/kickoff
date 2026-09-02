@@ -4,7 +4,15 @@ import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { espnProvider } from './providers/espn'
 import { fetchStandings } from './providers/espn-standings'
-import { diffFixtures, formatChanges, hasUrgentChanges } from './diff'
+import {
+  diffFixtures,
+  diffStandings,
+  formatChanges,
+  formatReportLine,
+  hasUrgentChanges,
+  implausibleShrink,
+  type SyncReport,
+} from './diff'
 import {
   fixturesFileSchema,
   metaSchema,
@@ -14,6 +22,7 @@ import {
   type SyncMeta,
 } from '../src/lib/schema'
 import { addDays, todayIso } from '../src/lib/time'
+import { validateFixtures } from './validate'
 
 /**
  * The only writer of fixture data. Run it with `npm run sync`.
@@ -21,7 +30,10 @@ import { addDays, todayIso } from '../src/lib/time'
  *   fetch -> normalize -> validate -> preserve hand-authored notes -> diff -> write
  *
  * Exits non-zero when something inside the urgency horizon moved, so a scheduled run can
- * surface it rather than updating silently.
+ * surface it rather than updating silently: 0 clean, 1 something inside 72 h moved (after
+ * writing), 2 refused to write. The last line of every run is the machine-readable report
+ * (`report: changed=… …`, see formatReportLine) that sync.yml reads to decide whether there
+ * is anything to commit — per-row fetchedAt stamps move on every run and are not changes.
  */
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -36,7 +48,9 @@ const STANDINGS = resolve(ROOT, 'src/data/standings.json')
  * and keeps the previous committed snapshot rather than aborting, so it can never discard
  * a successful fixtures sync or change the exit code.
  */
-async function syncStandings(check: boolean): Promise<void> {
+type StandingsOutcome = { status: SyncReport['standings']; rankMoves: number }
+
+async function syncStandings(check: boolean): Promise<StandingsOutcome> {
   try {
     const previous: StandingsFile | null = existsSync(STANDINGS)
       ? standingsFileSchema.parse(JSON.parse(readFileSync(STANDINGS, 'utf8')))
@@ -44,32 +58,30 @@ async function syncStandings(check: boolean): Promise<void> {
 
     const standings = await fetchStandings()
 
-    const moves: string[] = []
-    for (const [league, rows] of Object.entries(standings.leagues)) {
-      const before = new Map((previous?.leagues[league] ?? []).map((r) => [r.teamId, r.rank]))
-      for (const r of rows) {
-        const prev = before.get(r.teamId)
-        if (prev !== undefined && prev !== r.rank) {
-          moves.push(`  ${league.padEnd(12)} ${r.name}: ${prev} -> ${r.rank}`)
-        }
-      }
-    }
+    const { rowsChanged, moves } = diffStandings(previous, standings)
     console.log(
       `\nstandings: ${Object.entries(standings.leagues)
         .map(([k, v]) => `${k} ${v.length}`)
         .join(' · ')}`,
     )
     if (moves.length) console.log(`rank changes vs last snapshot:\n${moves.join('\n')}`)
+    console.log(
+      rowsChanged
+        ? `${rowsChanged} standings row(s) changed vs last snapshot`
+        : 'standings unchanged vs last snapshot',
+    )
 
     if (!check) {
       writeFileSync(STANDINGS, JSON.stringify(standings, null, 2) + '\n')
       console.log('wrote src/data/standings.json')
     }
+    return { status: rowsChanged > 0 ? 'changed' : 'unchanged', rankMoves: moves.length }
   } catch (err) {
     console.error(
       `\n⚠  standings sync failed — fixtures are unaffected, previous standings kept:\n` +
         `   ${err instanceof Error ? err.message : err}`,
     )
+    return { status: 'failed', rankMoves: 0 }
   }
 }
 
@@ -92,14 +104,18 @@ async function main() {
 
   const { fixtures: fetched, counts } = await espnProvider.fetchWindow(from, to)
 
-  // Validate at the boundary. A row that fails the schema is reported and dropped — never
-  // coerced into something plausible, which is how bad data gets laundered into good-looking
-  // data. A hard failure here is a signal that the provider changed shape.
-  const valid: Fixture[] = []
-  for (const candidate of fetched) {
-    const parsed = fixturesFileSchema.safeParse([candidate])
-    if (parsed.success) valid.push(parsed.data[0]!)
-    else console.warn(`  ! dropped ${candidate.id}: ${parsed.error.issues[0]?.message}`)
+  // Validate at the boundary, all-or-nothing (see validate.ts). A row the schema rejects
+  // is the provider changing shape, and this used to be a console.warn that dropped the row
+  // and wrote the rest — a silent path the shrink guard could not see, because `counts`
+  // came from before validation. Refuse to write instead, like every other guard.
+  const { valid, rejected } = validateFixtures(fetched)
+  if (rejected.length > 0) {
+    console.error(
+      `\n⚠  ${rejected.length} fetched row(s) failed the schema — the provider changed shape, ` +
+        `or the mapper let a value through it shouldn't have — refusing to write:\n` +
+        rejected.join('\n'),
+    )
+    process.exit(2)
   }
 
   // Hand-authored notes are Beni's context (venue quirks, postponement reasons, why a
@@ -118,7 +134,29 @@ async function main() {
     const d = f.kickoffUtc.slice(0, 10)
     return d >= from && d <= to
   }
-  const changes = diffFixtures(previous.filter(inWindow), valid, {})
+  const previousInWindow = previous.filter(inWindow)
+
+  // A competition that shrank implausibly is a broken-response signal, checked before the
+  // diff (which would otherwise just report a wall of DISAPPEARED lines) and before any write.
+  const previousCountsByComp: Record<string, number> = {}
+  for (const f of previousInWindow) {
+    previousCountsByComp[f.competition] = (previousCountsByComp[f.competition] ?? 0) + 1
+  }
+  const shrink = implausibleShrink(previousCountsByComp, counts)
+  if (shrink.length > 0) {
+    console.error(
+      `\n⚠  possible truncated or broken ESPN response — refusing to write:\n` +
+        shrink
+          .map(
+            (s) =>
+              `  ${s.competition}: had ${s.previous} fixtures in this window last sync, fetched only ${s.fetched}`,
+          )
+          .join('\n'),
+    )
+    process.exit(2)
+  }
+
+  const changes = diffFixtures(previousInWindow, valid, {})
 
   console.log(`\nfetched ${valid.length} fixtures`)
   console.log(
@@ -126,9 +164,20 @@ async function main() {
   )
   console.log(`\nchanges vs last snapshot:\n${formatChanges(changes)}`)
 
+  // The verdict sync.yml reads. Printed last, in both modes, after the standings outcome
+  // is known — a failed standings fetch is reported, never counted as a change.
+  const reportFor = (standings: StandingsOutcome): string =>
+    formatReportLine({
+      changes: changes.length,
+      urgent: changes.filter((c) => c.urgent && c.kind !== 'NEW').length,
+      standings: standings.status,
+      rankMoves: standings.rankMoves,
+    })
+
   if (check) {
-    await syncStandings(true)
+    const standings = await syncStandings(true)
     console.log('\n--check: no files written.')
+    console.log(reportFor(standings))
     process.exit(hasUrgentChanges(changes) ? 1 : 0)
   }
 
@@ -144,12 +193,13 @@ async function main() {
   writeFileSync(META, JSON.stringify(meta, null, 2) + '\n')
   console.log(`\nwrote src/data/fixtures.json (${valid.length}) and src/data/meta.json`)
 
-  await syncStandings(false)
+  const standings = await syncStandings(false)
 
   if (hasUrgentChanges(changes)) {
     console.log('\n⚠  Something inside 72h moved. Re-check any open position on it.')
-    process.exit(1)
   }
+  console.log(`\n${reportFor(standings)}`)
+  process.exit(hasUrgentChanges(changes) ? 1 : 0)
 }
 
 main().catch((err) => {

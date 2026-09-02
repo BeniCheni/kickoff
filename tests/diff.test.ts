@@ -1,6 +1,14 @@
 import { describe, it, expect } from 'vitest'
-import { diffFixtures, hasUrgentChanges } from '../scripts/diff'
-import type { Fixture } from '../src/lib/schema'
+import {
+  diffFixtures,
+  diffStandings,
+  formatReportLine,
+  hasUrgentChanges,
+  implausibleShrink,
+  reportSaysChanged,
+  type SyncReport,
+} from '../scripts/diff'
+import type { Fixture, StandingRow, StandingsFile } from '../src/lib/schema'
 
 /**
  * Every case here is a real defect found in the hand-maintained prototype on 21 Aug 2026.
@@ -155,5 +163,132 @@ describe('other transitions', () => {
     const changes = diffFixtures(before, after, { now: NOW })
     expect(changes[0]!.id).toBe('near')
     expect(changes[0]!.urgent).toBe(true)
+  })
+})
+
+describe('implausibleShrink — a truncated or broken response, not a real collapse', () => {
+  it('flags a league that came back empty', () => {
+    const offenders = implausibleShrink({ pl: 20, laliga: 18 }, { pl: 0, laliga: 18 })
+    expect(offenders).toEqual([{ competition: 'pl', previous: 20, fetched: 0 }])
+  })
+
+  it('flags a league fetched at under half its previous in-window count', () => {
+    const offenders = implausibleShrink({ ligue1: 40 }, { ligue1: 15 })
+    expect(offenders).toEqual([{ competition: 'ligue1', previous: 40, fetched: 15 }])
+  })
+
+  it('does not flag a healthy fetch, even a modest real dip', () => {
+    // A window shrinking as time passes and past fixtures roll out is normal, not a bug.
+    expect(implausibleShrink({ pl: 20 }, { pl: 20 })).toEqual([])
+    expect(implausibleShrink({ pl: 20 }, { pl: 11 })).toEqual([])
+    expect(implausibleShrink({ pl: 20 }, { pl: 25 })).toEqual([])
+  })
+
+  it('exempts a competition with no previous in-window count — first sync, or a cup that fully rolled out of the window', () => {
+    expect(implausibleShrink({ supercup: 0 }, { supercup: 0 })).toEqual([])
+    expect(implausibleShrink({}, { pl: 20 })).toEqual([])
+  })
+
+  it('treats a missing competition in the fetched counts as zero', () => {
+    const offenders = implausibleShrink({ seriea: 30 }, {})
+    expect(offenders).toEqual([{ competition: 'seriea', previous: 30, fetched: 0 }])
+  })
+
+  it('reports every offender, sorted by competition, not just the first', () => {
+    const offenders = implausibleShrink({ pl: 20, laliga: 20, seriea: 20 }, { pl: 0, laliga: 20, seriea: 5 })
+    expect(offenders.map((o) => o.competition)).toEqual(['pl', 'seriea'])
+  })
+
+  it('respects a custom ratio', () => {
+    expect(implausibleShrink({ pl: 20 }, { pl: 15 }, 0.9)).toEqual([
+      { competition: 'pl', previous: 20, fetched: 15 },
+    ])
+    expect(implausibleShrink({ pl: 20 }, { pl: 15 }, 0.5)).toEqual([])
+  })
+})
+
+describe('the sync report — "changed" is decided here, never by git diff', () => {
+  const quiet: SyncReport = { changes: 0, urgent: 0, standings: 'unchanged', rankMoves: 0 }
+
+  it('a run that only rewrote fetchedAt stamps is not a change', () => {
+    expect(reportSaysChanged(quiet)).toBe(false)
+  })
+
+  it('one diff-engine line of any kind is a change — NEW and TIME_CONFIDENCE_CHANGED included', () => {
+    expect(reportSaysChanged({ ...quiet, changes: 1 })).toBe(true)
+  })
+
+  it('standings rows moving is a change even with no fixture lines', () => {
+    expect(reportSaysChanged({ ...quiet, standings: 'changed' })).toBe(true)
+  })
+
+  it('a failed standings fetch is never a reason to commit', () => {
+    expect(reportSaysChanged({ ...quiet, standings: 'failed' })).toBe(false)
+    expect(reportSaysChanged({ ...quiet, standings: 'failed', changes: 2 })).toBe(true)
+  })
+
+  it('formats the one stable line sync.yml greps — pinned verbatim, because the workflow parses it', () => {
+    expect(formatReportLine({ changes: 3, urgent: 1, standings: 'changed', rankMoves: 2 })).toBe(
+      'report: changed=true changes=3 urgent=1 standings=changed rank-moves=2',
+    )
+    expect(formatReportLine(quiet)).toBe(
+      'report: changed=false changes=0 urgent=0 standings=unchanged rank-moves=0',
+    )
+  })
+
+  it("matches the exact regex the workflow validates it against, and the fields it extracts", () => {
+    // Mirror of sync.yml's `grep -Eqx` and its two `sed` extractions — if this drifts, the
+    // workflow's "Read the sync report" step fails loudly rather than guessing.
+    const shape = /^report: changed=(true|false) changes=[0-9]+ urgent=[0-9]+ standings=(changed|unchanged|failed) rank-moves=[0-9]+$/
+    for (const r of [quiet, { ...quiet, changes: 12, urgent: 4, standings: 'failed' as const }]) {
+      const line = formatReportLine(r)
+      expect(line).toMatch(shape)
+      expect(/\schanged=([a-z]*)/.exec(line)?.[1]).toBe(String(reportSaysChanged(r)))
+      expect(/\sstandings=([a-z]*)/.exec(line)?.[1]).toBe(r.standings)
+    }
+  })
+})
+
+describe('diffStandings — rows move on every matchday, ranks only sometimes', () => {
+  function row(teamId: string, over: Partial<StandingRow> = {}): StandingRow {
+    return {
+      teamId, name: `Team ${teamId}`, shortName: teamId, abbrev: teamId.padEnd(3, 'X'),
+      rank: 1, rankChange: 0, played: 3, w: 3, d: 0, l: 0, gf: 9, ga: 1, pts: 9,
+      ...over,
+    }
+  }
+  function file(leagues: Record<string, StandingRow[]>): StandingsFile {
+    return { fetchedAt: '2026-09-01T00:00:00.000Z', provider: 'espn', season: 2026, leagues }
+  }
+  const table = () => [row('A', { rank: 1 }), row('B', { rank: 2, pts: 6, w: 2, l: 1, gf: 5 })]
+
+  it('a first sync (no previous file) counts every row as new and no rank as moved', () => {
+    expect(diffStandings(null, file({ pl: table() }))).toEqual({ rowsChanged: 2, moves: [] })
+  })
+
+  it('an identical table — a different fetchedAt only — changed nothing', () => {
+    const prev = file({ pl: table() })
+    const next = { ...file({ pl: table() }), fetchedAt: '2026-09-02T00:00:00.000Z' }
+    expect(diffStandings(prev, next)).toEqual({ rowsChanged: 0, moves: [] })
+  })
+
+  it('the leader winning again holds every rank and still changes a row', () => {
+    const prev = file({ pl: table() })
+    const next = file({ pl: [row('A', { rank: 1, played: 4, w: 4, gf: 12, pts: 12 }), table()[1]!] })
+    expect(diffStandings(prev, next)).toEqual({ rowsChanged: 1, moves: [] })
+  })
+
+  it('a rank move is a changed row and a named move', () => {
+    const prev = file({ pl: table() })
+    const next = file({ pl: [row('B', { rank: 1, pts: 10, played: 4, w: 3, d: 1 }), row('A', { rank: 2 })] })
+    const out = diffStandings(prev, next)
+    expect(out.rowsChanged).toBe(2)
+    expect(out.moves).toEqual(['  pl           Team B: 2 -> 1', '  pl           Team A: 1 -> 2'])
+  })
+
+  it('a row or a league that vanished from the table counts as changed', () => {
+    const prev = file({ pl: table(), laliga: [row('C')] })
+    const next = file({ pl: [table()[0]!] })
+    expect(diffStandings(prev, next).rowsChanged).toBe(2) // B gone from pl, laliga gone
   })
 })
