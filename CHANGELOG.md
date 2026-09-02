@@ -6,6 +6,40 @@ All notable changes to Kickoff. The format loosely follows
 diverge (the v0.1.0 release shipped from the v0.0.3 doc cycle) — this file tracks
 releases.
 
+## [0.2.0] — Unreleased
+
+The app's relationship to time: a clock that ticks, a source that refuses to guess, and a
+refresh that runs itself but never merges itself. Paper trail: `docs/v0.2.0-proposal.md`.
+
+### Added
+- **A clock that ticks.** `useNow()` over a minute-aligned clock store (`src/lib/clock.ts`,
+  `useSyncExternalStore`, no prop threading). Every "now" and "today" in the app moves on its
+  own — the Today pill, the Next-up labels, the ticker's NEXT, the Broadcast glow, the
+  staleness banner's 24h → 72h escalation, the Table's "next" column and freshness line — and
+  a suspended tab catches up in one tick when it wakes. An unpinned fixtures view follows
+  midnight into the new day (and the new week); a `?date=` pin stays where it was put.
+- **A scheduled sync.** `.github/workflows/sync.yml` runs `npm run sync` every four hours,
+  verifies the written snapshot, and opens or updates one rolling pull request
+  (`sync/scheduled` → `main`) carrying the diff report and a reviewer checklist. It never
+  pushes to `main` and never merges its own PR. `workflow_dispatch` with a `dry_run` input
+  tests it without waiting for the cron; `ci.yml` gains `workflow_dispatch` so the bot's PR
+  receives its required `verify` check. No secrets, no PAT.
+- **A sync that fails loudly.** An ESPN status the mapper doesn't know (or a missing one), a
+  chunk at ESPN's 100-event cap, and a league that comes back under half its previous
+  in-window count each abort with exit 2 before anything is written — an unattended job must
+  not invent scheduledness or quietly disappear a league. Extra-time and penalty finals stay
+  unmapped on purpose: ESPN's score after extra time is not the 90-minute result the books
+  settle on.
+
+### Changed
+- `tableFor` takes `today` as a parameter — the one pure-layer function that had been reading
+  the clock itself. The ESPN cap warning is now a hard failure rather than a `console.warn`.
+
+### Deliberately not done
+- Roadmap row 4 (the stale LIVE pill) needs a design brief this release didn't have; row 5
+  (a jsdom component rig) is deferred, so the clock's component wiring is browser-verified,
+  not unit-tested. Auto-merging sync PRs: no — argued in the proposal.
+
 ## [0.1.1] — 2026-09-01
 
 The public-repo milestone: a security sweep of the full tree and git history

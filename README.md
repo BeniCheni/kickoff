@@ -1,7 +1,7 @@
 # ⚽ Kickoff
 
 [![CI](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml/badge.svg)](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml)
-[![version](https://img.shields.io/badge/version-0.1.1-1d4ed8)](CHANGELOG.md)
+[![version](https://img.shields.io/badge/version-0.2.0-1d4ed8)](CHANGELOG.md)
 [![license](https://img.shields.io/badge/license-MIT-16a34a)](LICENSE)
 [![built with](https://img.shields.io/badge/built%20with-Claude%20Code-D97757)](CLAUDE.md)
 
@@ -36,13 +36,16 @@ in crime built the fix, and the house rule got carved over the door:
 
 ### **Never a confident lie.**
 
-## 🧭 What it does (v0.1.1)
+## 🧭 What it does (v0.2.0)
 
 La Liga, Premier League, Serie A, Ligue 1, Bundesliga, their domestic super cups and the
 UEFA Super Cup; full league standings; and one fixture skeleton read through three lenses.
 Every kickoff traces to one stored UTC instant. Every unset time is admitted out loud.
-Every sync is diffed against the last one. Every snapshot carries its timestamp, so the
-app warns you — in amber, right under the wordmark — when its own data has grown old.
+Every sync is diffed against the last one — and since v0.2.0 the sync runs itself every
+four hours, opening a pull request a human still reads before it lands. Every snapshot
+carries its timestamp, so the app warns you — in amber, right under the wordmark — when its
+own data has grown old; and the clock behind that warning ticks, so a tab left open
+overnight rolls over honestly instead of quietly showing yesterday.
 
 ## 🔒 How it stays honest
 
@@ -61,7 +64,9 @@ Fixture data is **generated and diffed, never typed.**
 - **The snapshot is committed**, so git history is the fixture-change audit trail.
 - **Staleness is a first-class state.** The data's age escalates from a quiet note to a
   warning banner; a snapshot's frozen "live" matches stop claiming LIVE a few hours after
-  kickoff, because the app can no longer know.
+  kickoff, because the app can no longer know. Every one of those clocks ticks (v0.2.0):
+  the Today pill, the next kickoff, the Broadcast glow and the banner all move on their own,
+  and a tab that was asleep catches up the moment it wakes.
 
 ## 🔭 One skeleton, three lenses
 
@@ -169,17 +174,17 @@ in the tunnel, unreleased until it earns its debut.
 
 ## 🧭 Roadmap
 
-**v0.2.0** is scoped from the v0.1.0 review — the ranked list lives in
-[docs/v0.2.0-ideas.md](docs/v0.2.0-ideas.md). The headline candidates:
+**v0.2.0** took rows 1, 3 and 13 of [docs/v0.2.0-ideas.md](docs/v0.2.0-ideas.md) — the
+paper trail is [docs/v0.2.0-proposal.md](docs/v0.2.0-proposal.md). Still ranked there for
+whatever comes next:
 
-- **A clock that ticks.** Every "now" is currently captured at page load; a tab left open
-  overnight keeps yesterday's Today pill and a frozen ticker. The pure layer already takes
-  `now` as an argument everywhere — it's waiting for a hook that supplies a fresh one.
 - **An error boundary**, so no malformed input is ever a white screen again.
-- **Sync statuses that fail loudly** — an ESPN status the mapper doesn't know should never
-  quietly become "scheduled".
-- **A component test rig** (jsdom beside the node suite), so keyboard behavior and URL
-  hooks get the coverage the pure selectors already enjoy.
+- **A component test rig** (jsdom beside the node suite), so the clock's component wiring,
+  keyboard behavior and URL hooks get the coverage the pure layer already enjoys.
+- **The stale LIVE pill** — a designed state for "kicked off, outcome unknown to this
+  snapshot", the one surface where a frozen `in_play` can still claim liveness.
+- **Auto-merging an empty sync report** — defensible only once the diff engine also reports
+  result corrections and team-name changes, its two blind spots today.
 
 **Beyond**: betting overlays that join `positions.json` on fixture ids (the
 token-expiry-vs-kickoff map is the obvious first feature); a second data provider that
@@ -197,7 +202,10 @@ tab row already leaves it room.
   review (see `docs/v0.0.3-*.md` for the design cycle's paper trail, which kept its
   working name).
 - **v0.1.1** *(1 Sep 2026)* — the public-repo milestone: security sweep, housekeeping,
-  license, CI, and this README. See [CHANGELOG.md](CHANGELOG.md).
+  license, CI, and this README.
+- **v0.2.0** *(Sep 2026)* — the app's relationship to time: a clock that ticks, a sync that
+  fails loudly instead of guessing, and a scheduled refresh that opens its own PR but never
+  merges it. See [CHANGELOG.md](CHANGELOG.md) and `docs/v0.2.0-proposal.md`.
 
 ## ⚖️ License & the small print
 
