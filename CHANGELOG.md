@@ -6,7 +6,7 @@ All notable changes to Kickoff. The format loosely follows
 diverge (the v0.1.0 release shipped from the v0.0.3 doc cycle) — this file tracks
 releases.
 
-## [0.2.0] — Unreleased
+## [0.2.0] — 2026-09-02
 
 The app's relationship to time: a clock that ticks, a source that refuses to guess, and a
 refresh that runs itself but never merges itself. Paper trail: `docs/v0.2.0-proposal.md`.
@@ -34,7 +34,13 @@ refresh that runs itself but never merges itself. Paper trail: `docs/v0.2.0-prop
 
 ### Changed
 - `tableFor` takes `today` as a parameter — the one pure-layer function that had been reading
-  the clock itself. The ESPN cap warning is now a hard failure rather than a `console.warn`.
+  the clock itself. The ESPN cap warning is now a hard failure rather than a `console.warn`,
+  and so is a fetched row the schema rejects (the review's find).
+- From the review: the workflow commits only when `npm run sync`'s closing `report:` line says
+  a fixture or a standings row changed — per-row `fetchedAt` stamps are not changes — so a
+  quiet run leaves no commit and no PR, and the staleness banner measures time since the last
+  change-bearing sync a human merged. The clock's snapshot is minute-floored, so a focus
+  inside the same minute is literally a no-op.
 
 ### Deliberately not done
 - Roadmap row 4 (the stale LIVE pill) needs a design brief this release didn't have; row 5

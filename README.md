@@ -205,7 +205,7 @@ tab row already leaves it room.
   working name).
 - **v0.1.1** *(1 Sep 2026)* — the public-repo milestone: security sweep, housekeeping,
   license, CI, and this README.
-- **v0.2.0** *(Sep 2026)* — the app's relationship to time: a clock that ticks, a sync that
+- **v0.2.0** *(2 Sep 2026)* — the app's relationship to time: a clock that ticks, a sync that
   fails loudly instead of guessing, and a scheduled refresh that opens its own PR but never
   merges it. See [CHANGELOG.md](CHANGELOG.md) and `docs/v0.2.0-proposal.md`.
 
