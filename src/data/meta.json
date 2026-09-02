@@ -1,9 +1,9 @@
 {
-  "lastSyncAt": "2026-09-02T01:16:41.297Z",
+  "lastSyncAt": "2026-09-02T05:26:30.700Z",
   "provider": "espn",
   "window": {
-    "from": "2026-08-02",
-    "to": "2027-01-29"
+    "from": "2026-08-03",
+    "to": "2027-01-30"
   },
   "counts": {
     "supercup": 1,
@@ -11,10 +11,10 @@
     "tdc": 1,
     "dflsupercup": 1,
     "laliga": 210,
-    "pl": 220,
+    "pl": 230,
     "seriea": 210,
-    "ligue1": 153,
-    "bundesliga": 162
+    "ligue1": 162,
+    "bundesliga": 171
   },
-  "total": 959
+  "total": 987
 }
