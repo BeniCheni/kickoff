@@ -162,15 +162,6 @@ jobs:
           git commit -m "npm run sync ${{ steps.ts.outputs.stamp }}"
           git push --force origin HEAD:sync/scheduled
 
-      # A PR opened by github-actions[bot] doesn't trigger `pull_request` workflows, so
-      # without this the required "verify" check would never appear and the CI-gate ruleset
-      # would block the merge forever.
-      - name: Ask CI to verify the sync branch head
-        if: steps.mode.outputs.dry_run == 'false' && steps.report.outputs.changed == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh workflow run ci.yml --ref sync/scheduled
-
       - name: Open or update the sync PR
         if: steps.mode.outputs.dry_run == 'false' && steps.report.outputs.changed == 'true'
         env:
@@ -218,3 +209,17 @@ jobs:
             echo
             echo "$URL — never auto-merged; a human reads what moved."
           } >> "$GITHUB_STEP_SUMMARY"
+
+      # A PR opened by github-actions[bot] doesn't trigger `pull_request` workflows, so
+      # without this the required "verify" check would never appear and the CI-gate ruleset
+      # would block the merge forever. It runs AFTER the PR exists, on purpose: observed on
+      # PR #9 (2 Sep 2026), a check suite created a few seconds *before* `gh pr create` was
+      # attached to the head SHA and associated with the PR in the API, yet the PR's merge box
+      # never counted it — statusCheckRollup stayed empty and mergeStateStatus BLOCKED for
+      # over five minutes — while a suite created with the PR already open populated the
+      # rollup and flipped it to CLEAN within two minutes. Order is the fix.
+      - name: Ask CI to verify the sync branch head
+        if: steps.mode.outputs.dry_run == 'false' && steps.report.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run ci.yml --ref sync/scheduled
