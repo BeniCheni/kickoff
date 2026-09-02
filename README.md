@@ -132,15 +132,27 @@ Two traps worth knowing:
 
 1. **It caps responses at 100 events and does not say so.** A four-month range for La Liga
    silently returns only the first 100 fixtures. The provider requests the window in
-   28-day chunks and warns loudly if any chunk comes back at the cap.
+   28-day chunks and refuses to write from any chunk that comes back at the cap, rather
+   than trusting a list that might be truncated.
 2. **Some venue strings are wrong.** Rayo Vallecano's home fixtures are currently tagged
    with Leganés's ground. Venue is cosmetic here and is not corrected by hand —
    hand-correcting generated data is the habit this project exists to break. A second
    provider is the durable fix.
 
+An ESPN status this app doesn't recognize (a delay, a suspension, an abandonment) also
+refuses to write rather than defaulting to "scheduled," and a league whose fetched count
+falls implausibly short of its last snapshot is treated as a broken response, not a real
+collapse. All three are "fail loudly" guards: an unattended sync should never invent
+scheduledness or silently disappear real fixtures.
+
 Fixture ids are the provider's own event id, namespaced by competition — *not* built from
 team names: a season contains both legs of every pairing, and a name-derived id makes the
 reverse fixture look like an inversion of the first.
+
+`npm run sync` also runs on a schedule (`.github/workflows/sync.yml`, every four hours) —
+it never pushes straight to `main`. It opens or updates one pull request carrying the diff
+report, and that PR is never auto-merged: the data feeds real bets, so a human reads what
+moved before it lands.
 
 ## 🤖 How this repo is actually built
 
