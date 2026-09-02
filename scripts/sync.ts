@@ -22,6 +22,7 @@ import {
   type SyncMeta,
 } from '../src/lib/schema'
 import { addDays, todayIso } from '../src/lib/time'
+import { validateFixtures } from './validate'
 
 /**
  * The only writer of fixture data. Run it with `npm run sync`.
@@ -103,14 +104,18 @@ async function main() {
 
   const { fixtures: fetched, counts } = await espnProvider.fetchWindow(from, to)
 
-  // Validate at the boundary. A row that fails the schema is reported and dropped — never
-  // coerced into something plausible, which is how bad data gets laundered into good-looking
-  // data. A hard failure here is a signal that the provider changed shape.
-  const valid: Fixture[] = []
-  for (const candidate of fetched) {
-    const parsed = fixturesFileSchema.safeParse([candidate])
-    if (parsed.success) valid.push(parsed.data[0]!)
-    else console.warn(`  ! dropped ${candidate.id}: ${parsed.error.issues[0]?.message}`)
+  // Validate at the boundary, all-or-nothing (see validate.ts). A row the schema rejects
+  // is the provider changing shape, and this used to be a console.warn that dropped the row
+  // and wrote the rest — a silent path the shrink guard could not see, because `counts`
+  // came from before validation. Refuse to write instead, like every other guard.
+  const { valid, rejected } = validateFixtures(fetched)
+  if (rejected.length > 0) {
+    console.error(
+      `\n⚠  ${rejected.length} fetched row(s) failed the schema — the provider changed shape, ` +
+        `or the mapper let a value through it shouldn't have — refusing to write:\n` +
+        rejected.join('\n'),
+    )
+    process.exit(2)
   }
 
   // Hand-authored notes are Beni's context (venue quirks, postponement reasons, why a
