@@ -6,6 +6,16 @@ All notable changes to Kickoff. The format loosely follows
 diverge (the v0.1.0 release shipped from the v0.0.3 doc cycle) — this file tracks
 releases.
 
+## [Unreleased]
+
+### Fixed
+- The scheduled sync's PR could not be merged unattended: its `verify` check was held for
+  approval (github-actions[bot] is not a collaborator), and the `workflow_dispatch` check the
+  workflow requested never counted in the merge box. `sync.yml` now approves the held run
+  itself through the Actions API after opening or updating the PR — proved hands-off on PR #9.
+  The dispatch step is gone; `ci.yml` keeps `workflow_dispatch` for manual runs. This answers
+  the v0.2.0 proposal's residual unknown; PR #10's ordering theory was wrong and is retracted.
+
 ## [0.2.0] — 2026-09-02
 
 The app's relationship to time: a clock that ticks, a source that refuses to guess, and a
