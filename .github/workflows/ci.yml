@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Lets the scheduled sync workflow ask for a verify run against its own branch head — a PR
+  # opened by the Actions token doesn't trigger `pull_request`, so without this the required
+  # "verify" status check would never appear and main's CI-gate ruleset would block the merge.
+  workflow_dispatch:
 
 jobs:
   verify:
