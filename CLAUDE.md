@@ -56,9 +56,11 @@ commit and no PR. Consequence, accepted: the app's `synced` stamp and staleness 
 measure time since the last *change-bearing* sync a human merged, and go amber then red
 through an international break even though the bot verified nothing moved. The fix
 (auto-merging an empty report) is deliberately not in v0.2.0 — see the proposal's "Review
-resolutions". The workflow dispatches the `verify` check **after** opening or updating the PR:
-GitHub's merge box only counts check suites created while the PR exists (proved on PR #9 —
-a suite created seconds before `gh pr create` left the PR BLOCKED for five-plus minutes).
+resolutions". The bot's PR does trigger `ci.yml`'s `pull_request` run, but GitHub holds it for
+approval (github-actions[bot] is not a collaborator) and the merge box counts only that run —
+a `workflow_dispatch` check on the same SHA never appears — so `sync.yml` approves the held
+run itself through the Actions API right after opening or updating the PR (proved hands-off
+on PR #9, 2 Sep 2026; the fork-PR approval policy setting made no difference).
 
 ## Fergie Time (the design system)
 

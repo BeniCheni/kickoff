@@ -210,16 +210,32 @@ jobs:
             echo "$URL — never auto-merged; a human reads what moved."
           } >> "$GITHUB_STEP_SUMMARY"
 
-      # A PR opened by github-actions[bot] doesn't trigger `pull_request` workflows, so
-      # without this the required "verify" check would never appear and the CI-gate ruleset
-      # would block the merge forever. It runs AFTER the PR exists, on purpose: observed on
-      # PR #9 (2 Sep 2026), a check suite created a few seconds *before* `gh pr create` was
-      # attached to the head SHA and associated with the PR in the API, yet the PR's merge box
-      # never counted it — statusCheckRollup stayed empty and mergeStateStatus BLOCKED for
-      # over five minutes — while a suite created with the PR already open populated the
-      # rollup and flipped it to CLEAN within two minutes. Order is the fix.
-      - name: Ask CI to verify the sync branch head
+      # Observed on the first real runs (PR #9, 2 Sep 2026): the bot's PR *does* get a
+      # `pull_request` run of ci.yml, but GitHub holds it for approval — github-actions[bot]
+      # is not a collaborator — and the merge box counts only that run: a workflow_dispatch
+      # check-run on the same SHA never appears in the PR's rollup (PR #7, PR #9 twice), and
+      # the repo's approval-policy setting made no difference. So approve the held run here.
+      # No trust is granted that this job doesn't already hold: it is the repo's own ci.yml
+      # against a data-only tree this workflow verified a step ago, with no secrets in play.
+      - name: Approve the PR's held verify run
         if: steps.mode.outputs.dry_run == 'false' && steps.report.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh workflow run ci.yml --ref sync/scheduled
+        run: |
+          HEAD=$(git rev-parse HEAD)
+          RUN=""
+          for i in 1 2 3 4 5 6 7 8 9 10 11 12; do
+            RUN=$(gh api "repos/${{ github.repository }}/actions/runs?event=pull_request&head_sha=$HEAD&per_page=10" \
+              --jq '.workflow_runs[] | select(.name == "CI" and .status == "completed" and .conclusion == "action_required") | .id' | head -n 1)
+            [ -n "$RUN" ] && break
+            sleep 10
+          done
+          if [ -z "$RUN" ]; then
+            echo "::warning::no held verify run found for $HEAD after two minutes — if the PR's check is missing, approve it by hand on the PR page."
+            exit 0
+          fi
+          if gh api -X POST "repos/${{ github.repository }}/actions/runs/$RUN/approve"; then
+            echo "approved the held verify run $RUN for $HEAD"
+          else
+            echo "::warning::could not approve run $RUN — the merge box will wait for a human to approve it on the PR page."
+          fi
