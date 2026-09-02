@@ -4,7 +4,7 @@ import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { espnProvider } from './providers/espn'
 import { fetchStandings } from './providers/espn-standings'
-import { diffFixtures, formatChanges, hasUrgentChanges } from './diff'
+import { diffFixtures, formatChanges, hasUrgentChanges, implausibleShrink } from './diff'
 import {
   fixturesFileSchema,
   metaSchema,
@@ -118,7 +118,29 @@ async function main() {
     const d = f.kickoffUtc.slice(0, 10)
     return d >= from && d <= to
   }
-  const changes = diffFixtures(previous.filter(inWindow), valid, {})
+  const previousInWindow = previous.filter(inWindow)
+
+  // A competition that shrank implausibly is a broken-response signal, checked before the
+  // diff (which would otherwise just report a wall of DISAPPEARED lines) and before any write.
+  const previousCountsByComp: Record<string, number> = {}
+  for (const f of previousInWindow) {
+    previousCountsByComp[f.competition] = (previousCountsByComp[f.competition] ?? 0) + 1
+  }
+  const shrink = implausibleShrink(previousCountsByComp, counts)
+  if (shrink.length > 0) {
+    console.error(
+      `\n⚠  possible truncated or broken ESPN response — refusing to write:\n` +
+        shrink
+          .map(
+            (s) =>
+              `  ${s.competition}: had ${s.previous} fixtures in this window last sync, fetched only ${s.fetched}`,
+          )
+          .join('\n'),
+    )
+    process.exit(2)
+  }
+
+  const changes = diffFixtures(previousInWindow, valid, {})
 
   console.log(`\nfetched ${valid.length} fixtures`)
   console.log(

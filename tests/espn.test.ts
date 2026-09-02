@@ -167,4 +167,11 @@ describe('espnProvider.fetchWindow — unmapped statuses abort before any write'
     vi.stubGlobal('fetch', vi.fn(async () => ({ ok: false, status: 503, json: async () => ({}) })))
     await expect(espnProvider.fetchWindow('2026-08-21', '2026-08-21')).rejects.toThrow(/responded 503/)
   })
+
+  it('refuses a chunk at ESPN\'s 100-event cap rather than writing a possibly-truncated list', async () => {
+    const template = ligue1.find((x: any) => x.name.includes('Marseille'))
+    const events = Array.from({ length: 100 }, (_, i) => ({ ...template, id: `cap-${i}` }))
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => ({ events }) })))
+    await expect(espnProvider.fetchWindow('2026-08-21', '2026-08-21')).rejects.toThrow(/100-event cap/)
+  })
 })
