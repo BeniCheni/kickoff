@@ -4,9 +4,10 @@ on:
   push:
     branches: [main]
   pull_request:
-  # Lets the scheduled sync workflow ask for a verify run against its own branch head — a PR
-  # opened by the Actions token doesn't trigger `pull_request`, so without this the required
-  # "verify" status check would never appear and main's CI-gate ruleset would block the merge.
+  # Manual re-verify of any ref. (It was added so the scheduled sync could dispatch a verify
+  # run for its own PR; that turned out not to count in the PR's merge box — the bot's PR does
+  # trigger `pull_request`, GitHub just holds the run for approval, and sync.yml now approves
+  # it. Kept because a hand-run verify is useful.)
   workflow_dispatch:
 
 jobs:
