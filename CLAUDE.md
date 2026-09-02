@@ -40,7 +40,8 @@ review pass.
 
 ## Scheduled sync (v0.2.0)
 
-`.github/workflows/sync.yml` runs `npm run sync` every four hours and opens or updates one
+`.github/workflows/sync.yml` runs `npm run sync` twice a day — `0 4,16 * * *`, midnight and
+noon EDT, an hour early under EST because GitHub's cron is UTC — and opens or updates one
 rolling PR (`sync/scheduled` → `main`) carrying the diff report — it never pushes straight
 to `main` and **never auto-merges its own PR**: this repo feeds real betting decisions, so a
 human reads the change report (every DATE_MOVED / TIME_CHANGED / HOME_AWAY_INVERTED /

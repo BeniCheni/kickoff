@@ -41,8 +41,9 @@ in crime built the fix, and the house rule got carved over the door:
 La Liga, Premier League, Serie A, Ligue 1, Bundesliga, their domestic super cups and the
 UEFA Super Cup; full league standings; and one fixture skeleton read through three lenses.
 Every kickoff traces to one stored UTC instant. Every unset time is admitted out loud.
-Every sync is diffed against the last one — and since v0.2.0 the sync runs itself every
-four hours, opening a pull request a human still reads before it lands. Every snapshot
+Every sync is diffed against the last one — and since v0.2.0 the sync runs itself twice a
+day, at midnight and noon Brooklyn time, opening a pull request a human still reads before
+it lands. Every snapshot
 carries its timestamp, so the app warns you — in amber, right under the wordmark — when its
 own data has grown old; and the clock behind that warning ticks, so a tab left open
 overnight rolls over honestly instead of quietly showing yesterday.
@@ -154,8 +155,9 @@ Fixture ids are the provider's own event id, namespaced by competition — *not*
 team names: a season contains both legs of every pairing, and a name-derived id makes the
 reverse fixture look like an inversion of the first.
 
-`npm run sync` also runs on a schedule (`.github/workflows/sync.yml`, every four hours) —
-it never pushes straight to `main`. It opens or updates one pull request carrying the diff
+`npm run sync` also runs on a schedule (`.github/workflows/sync.yml`, twice a day at
+midnight and noon ET — an hour earlier once EST starts, because GitHub's cron is UTC) — it
+never pushes straight to `main`. It opens or updates one pull request carrying the diff
 report, and that PR is never auto-merged: the data feeds real bets, so a human reads what
 moved before it lands.
 

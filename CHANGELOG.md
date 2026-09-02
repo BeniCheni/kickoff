@@ -18,7 +18,8 @@ refresh that runs itself but never merges itself. Paper trail: `docs/v0.2.0-prop
   staleness banner's 24h → 72h escalation, the Table's "next" column and freshness line — and
   a suspended tab catches up in one tick when it wakes. An unpinned fixtures view follows
   midnight into the new day (and the new week); a `?date=` pin stays where it was put.
-- **A scheduled sync.** `.github/workflows/sync.yml` runs `npm run sync` every four hours,
+- **A scheduled sync.** `.github/workflows/sync.yml` runs `npm run sync` twice a day (midnight
+  and noon Brooklyn time),
   verifies the written snapshot, and opens or updates one rolling pull request
   (`sync/scheduled` → `main`) carrying the diff report and a reviewer checklist. It never
   pushes to `main` and never merges its own PR. `workflow_dispatch` with a `dry_run` input

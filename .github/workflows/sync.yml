@@ -6,10 +6,18 @@ name: Scheduled sync
 # decision). npm run sync itself is the honesty gate: an unmapped ESPN status, a truncated
 # response, or an implausibly shrunk league all abort with exit 2 before anything is written,
 # which this workflow turns into a failed, unmissable run rather than a silent bad commit.
+#
+# Cadence: twice a day, at midnight and noon Brooklyn time. GitHub's cron is UTC and does not
+# follow DST, so '0 4,16 * * *' is exactly 00:00 and 12:00 EDT, and an hour early — 23:00 and
+# 11:00 ET — once EST starts on 1 Nov 2026. That drift is accepted on purpose: one plain cron,
+# not two clever ones. Midnight ET catches every European result of the day; noon ET catches
+# the early weekend kickoffs and the weekday fixture announcements (the days with no matches
+# are exactly the days fixture updates land, so there is no "skip quiet days" gate — see
+# docs/v0.2.0-proposal.md, "Row 13").
 
 on:
   schedule:
-    - cron: '0 */4 * * *'
+    - cron: '0 4,16 * * *'
   workflow_dispatch:
     inputs:
       dry_run:
