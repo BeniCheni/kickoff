@@ -4,7 +4,15 @@ import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { espnProvider } from './providers/espn'
 import { fetchStandings } from './providers/espn-standings'
-import { diffFixtures, formatChanges, hasUrgentChanges, implausibleShrink } from './diff'
+import {
+  diffFixtures,
+  diffStandings,
+  formatChanges,
+  formatReportLine,
+  hasUrgentChanges,
+  implausibleShrink,
+  type SyncReport,
+} from './diff'
 import {
   fixturesFileSchema,
   metaSchema,
@@ -21,7 +29,10 @@ import { addDays, todayIso } from '../src/lib/time'
  *   fetch -> normalize -> validate -> preserve hand-authored notes -> diff -> write
  *
  * Exits non-zero when something inside the urgency horizon moved, so a scheduled run can
- * surface it rather than updating silently.
+ * surface it rather than updating silently: 0 clean, 1 something inside 72 h moved (after
+ * writing), 2 refused to write. The last line of every run is the machine-readable report
+ * (`report: changed=… …`, see formatReportLine) that sync.yml reads to decide whether there
+ * is anything to commit — per-row fetchedAt stamps move on every run and are not changes.
  */
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -36,7 +47,9 @@ const STANDINGS = resolve(ROOT, 'src/data/standings.json')
  * and keeps the previous committed snapshot rather than aborting, so it can never discard
  * a successful fixtures sync or change the exit code.
  */
-async function syncStandings(check: boolean): Promise<void> {
+type StandingsOutcome = { status: SyncReport['standings']; rankMoves: number }
+
+async function syncStandings(check: boolean): Promise<StandingsOutcome> {
   try {
     const previous: StandingsFile | null = existsSync(STANDINGS)
       ? standingsFileSchema.parse(JSON.parse(readFileSync(STANDINGS, 'utf8')))
@@ -44,32 +57,30 @@ async function syncStandings(check: boolean): Promise<void> {
 
     const standings = await fetchStandings()
 
-    const moves: string[] = []
-    for (const [league, rows] of Object.entries(standings.leagues)) {
-      const before = new Map((previous?.leagues[league] ?? []).map((r) => [r.teamId, r.rank]))
-      for (const r of rows) {
-        const prev = before.get(r.teamId)
-        if (prev !== undefined && prev !== r.rank) {
-          moves.push(`  ${league.padEnd(12)} ${r.name}: ${prev} -> ${r.rank}`)
-        }
-      }
-    }
+    const { rowsChanged, moves } = diffStandings(previous, standings)
     console.log(
       `\nstandings: ${Object.entries(standings.leagues)
         .map(([k, v]) => `${k} ${v.length}`)
         .join(' · ')}`,
     )
     if (moves.length) console.log(`rank changes vs last snapshot:\n${moves.join('\n')}`)
+    console.log(
+      rowsChanged
+        ? `${rowsChanged} standings row(s) changed vs last snapshot`
+        : 'standings unchanged vs last snapshot',
+    )
 
     if (!check) {
       writeFileSync(STANDINGS, JSON.stringify(standings, null, 2) + '\n')
       console.log('wrote src/data/standings.json')
     }
+    return { status: rowsChanged > 0 ? 'changed' : 'unchanged', rankMoves: moves.length }
   } catch (err) {
     console.error(
       `\n⚠  standings sync failed — fixtures are unaffected, previous standings kept:\n` +
         `   ${err instanceof Error ? err.message : err}`,
     )
+    return { status: 'failed', rankMoves: 0 }
   }
 }
 
@@ -148,9 +159,20 @@ async function main() {
   )
   console.log(`\nchanges vs last snapshot:\n${formatChanges(changes)}`)
 
+  // The verdict sync.yml reads. Printed last, in both modes, after the standings outcome
+  // is known — a failed standings fetch is reported, never counted as a change.
+  const reportFor = (standings: StandingsOutcome): string =>
+    formatReportLine({
+      changes: changes.length,
+      urgent: changes.filter((c) => c.urgent && c.kind !== 'NEW').length,
+      standings: standings.status,
+      rankMoves: standings.rankMoves,
+    })
+
   if (check) {
-    await syncStandings(true)
+    const standings = await syncStandings(true)
     console.log('\n--check: no files written.')
+    console.log(reportFor(standings))
     process.exit(hasUrgentChanges(changes) ? 1 : 0)
   }
 
@@ -166,12 +188,13 @@ async function main() {
   writeFileSync(META, JSON.stringify(meta, null, 2) + '\n')
   console.log(`\nwrote src/data/fixtures.json (${valid.length}) and src/data/meta.json`)
 
-  await syncStandings(false)
+  const standings = await syncStandings(false)
 
   if (hasUrgentChanges(changes)) {
     console.log('\n⚠  Something inside 72h moved. Re-check any open position on it.')
-    process.exit(1)
   }
+  console.log(`\n${reportFor(standings)}`)
+  process.exit(hasUrgentChanges(changes) ? 1 : 0)
 }
 
 main().catch((err) => {

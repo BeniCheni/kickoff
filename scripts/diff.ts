@@ -1,4 +1,4 @@
-import type { Fixture } from '../src/lib/schema'
+import type { Fixture, StandingRow, StandingsFile } from '../src/lib/schema'
 import { brooklynDate } from '../src/lib/time'
 
 /**
@@ -215,4 +215,80 @@ export function formatChanges(changes: Change[]): string {
   return changes
     .map((c) => `  ${c.urgent ? '⚠ ' : '  '}${c.kind.padEnd(24)} ${c.label}\n${' '.repeat(29)}${c.detail}`)
     .join('\n')
+}
+
+/* ---------- the standings side of the report ------------------------------------------- */
+
+function sameRow(a: StandingRow, b: StandingRow): boolean {
+  const keys = new Set([...Object.keys(a), ...Object.keys(b)]) as Set<keyof StandingRow>
+  for (const k of keys) if (a[k] !== b[k]) return false
+  return true
+}
+
+/**
+ * What moved in the league tables. A row counts as changed when any field a reader can see
+ * differs — rank, but also played, W/D/L, goals and points, which move on every matchday
+ * even when the order holds: the leader winning again changes no rank and every number in
+ * its row, and the Table renders those numbers. Rank moves are also listed by name, because
+ * they are the betting context a reviewer scans for. `previous === null` is a first sync:
+ * every row is new, nothing "moved".
+ */
+export function diffStandings(
+  previous: StandingsFile | null,
+  next: StandingsFile,
+): { rowsChanged: number; moves: string[] } {
+  const moves: string[] = []
+  let rowsChanged = 0
+  for (const [league, rows] of Object.entries(next.leagues)) {
+    const before = new Map((previous?.leagues[league] ?? []).map((r) => [r.teamId, r]))
+    for (const r of rows) {
+      const prev = before.get(r.teamId)
+      if (!prev || !sameRow(prev, r)) rowsChanged++
+      if (prev && prev.rank !== r.rank) {
+        moves.push(`  ${league.padEnd(12)} ${r.name}: ${prev.rank} -> ${r.rank}`)
+      }
+      before.delete(r.teamId)
+    }
+    rowsChanged += before.size // rows the previous table had and this one lacks
+  }
+  for (const league of Object.keys(previous?.leagues ?? {})) {
+    if (!(league in next.leagues)) rowsChanged += previous!.leagues[league]!.length
+  }
+  return { rowsChanged, moves }
+}
+
+/* ---------- the report line: the one place "did anything change" is decided ------------ */
+
+export type SyncReport = {
+  /** Lines the fixture diff engine produced, of every kind, urgent or not. */
+  changes: number
+  /** Of those, the ones inside the urgency horizon (what exit code 1 means). */
+  urgent: number
+  /** `failed` keeps the previous table and is never a reason to commit. */
+  standings: 'changed' | 'unchanged' | 'failed'
+  rankMoves: number
+}
+
+/**
+ * Whether a sync produced anything worth committing. Per-row `fetchedAt` stamps and
+ * `lastSyncAt` move on every run by construction and are not changes — which is why the
+ * scheduled workflow reads this verdict instead of `git diff` (a git-level test opened a PR
+ * on every run, "no changes" or not). Any diff-engine line counts, NEW and
+ * TIME_CONFIDENCE_CHANGED included: each is data the app renders.
+ */
+export function reportSaysChanged(r: SyncReport): boolean {
+  return r.changes > 0 || r.standings === 'changed'
+}
+
+/**
+ * The last line every sync run prints — machine-readable, greppable, stable. sync.yml
+ * extracts `changed=` and `standings=` from it with a fixed regex and refuses to run the
+ * commit/PR half of the job when the line is missing or malformed, so: add fields at the
+ * end if you must, never rename, reorder or drop these.
+ */
+export function formatReportLine(r: SyncReport): string {
+  return (
+    `report: changed=${reportSaysChanged(r)} changes=${r.changes} urgent=${r.urgent} ` +
+    `standings=${r.standings} rank-moves=${r.rankMoves}`
+  )
 }
