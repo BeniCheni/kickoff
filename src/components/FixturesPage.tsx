@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { COMPETITION_KEYS, COMPETITIONS, type CompetitionKey } from '../lib/competitions'
 import { addDays, addMonths, niceDate, shortDate, startOfWeek } from '../lib/time'
 import { useUrlState } from '../lib/useUrlState'
@@ -29,6 +29,18 @@ export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
     (v) => (v === today ? null : v),
     (s) => parseDateParam(s, today),
   )
+
+  // today ticks (useNow, in App) — when it rolls to a new day, follow it, but only if the
+  // anchor was still sitting on the day that just ended: a `?date=` pinned to some other day
+  // is navigation, not a stale default, and rolling it out from under the reader would be
+  // exactly the kind of surprise this app's honesty rules exist to prevent elsewhere.
+  const prevToday = useRef(today)
+  useEffect(() => {
+    if (prevToday.current !== today) {
+      if (anchor === prevToday.current) setAnchor(today)
+      prevToday.current = today
+    }
+  }, [today, anchor, setAnchor])
   const [active, setActive] = useUrlState<ReadonlySet<CompetitionKey>>(
     'only', ALL,
     (v) => (v.size === COMPETITION_KEYS.length ? null : [...v].join(',')),
