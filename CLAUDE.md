@@ -18,7 +18,10 @@ of it as unreliable:
 1. `docs/vX.Y.Z-proposal.md` — audit + directions (written by a Claude Code session in-repo).
 2. `docs/vX.Y.Z-design-prompt.md` — the Claude Design brief, built on real tokens/data.
 3. `docs/vX.Y.Z-implementation-prompt.md` — the Claude Code build spec.
-4. `docs/vX.Y.Z-review-prompt.md` — the adversarial review + merge instructions.
+4. `docs/vX.Y.Z-review-prompt.md` — the adversarial review + merge instructions. Since v0.2.1
+   the method lives in the repo skill `/beni-pr-review` (`.claude/skills/beni-pr-review/`);
+   the archived prompt for a release is the per-PR part — number, spec files, human-review
+   items, the sealed appendix — not the method.
 
 Rules that earned their place: **spec precedence is template > design brief > implementation
 prompt** (note every resolution in the PR); every prompt is delivered in the chat message in a
@@ -31,8 +34,10 @@ review pass.
 
 - `npm run typecheck` and `npm test` green at every commit; data-honesty test assertions are
   never weakened to make a redesign pass.
-- Browser-verify before declaring done: every lens × theme × tab at 390px and ~1000px, and
-  check `document.documentElement.scrollWidth === viewport width` — **set the viewport before
+- Browser-verify before declaring done: every lens × theme × tab at 360, 375, 390 and
+  ~1000px (390 is the judge, 360 the jury) when the diff touches `src/` or `index.css`, a
+  smoke pass when it is docs or tooling, and check
+  `document.documentElement.scrollWidth === window.innerWidth` — **set the viewport before
   capturing any screenshot**; a clipped capture cost a review pass proving a non-bug.
 - Commits authored as `Claude <noreply@anthropic.com>` so GitHub attribution stays clean.
 - `.claude/worktrees/` entries look "prunable" from cloud/VM sessions because their absolute
@@ -90,14 +95,16 @@ cycle) and always have. Do not infer one from the other.
 
 **`docs/vX.Y.Z-ideas.md` is a ranked candidate list, not a release scope.** It is written cold by
 the session that reviewed the *previous* release, ranked by research value × feasibility, and it
-carries rows forward across releases with their original numbering. Turning one into a release
+carries rows forward across releases — renumbered, with the previous file's row number kept in
+parentheses (`docs/v0.3.0-ideas.md` row 6 is `docs/v0.2.0-ideas.md` row 2), so always name the
+file when you cite a row. Turning one into a release
 means: group rows by what they touch, decide patch vs minor per row under semver, sequence them
 so prerequisites land first, and name what is deferred *and why* — the deferral reasons are the
 part a cold reader six months out actually needs.
 
 **Patch vs minor, as this repo has actually used them:**
 
-- **Patch** (v0.1.1, and the planned v0.2.1): fixes, tooling, docs, housekeeping, security. No new
+- **Patch** (v0.1.1, v0.2.1): fixes, tooling, docs, housekeeping, security. No new
   user-visible capability. A data refresh is *not* a release at all — v0.2.0's proposal dropped
   PR #5's 0.1.2 bump for exactly this reason.
 - **Minor** (v0.1.0, v0.2.0): a new capability, shipped under one subject line. Both minors so far
@@ -108,14 +115,17 @@ part a cold reader six months out actually needs.
   is the one holding the diff.
 
 **`CHANGELOG.md` is a product surface, not a commit log.** The repo is public and a LinkedIn
-reader may clone it. Every released section so far leads with one sentence naming the release's
-subject, then Added / Changed / Fixed, then **"Deliberately not done"** — that last heading is
-this repo's signature and it stays. `[Unreleased]` accumulates between releases and is emptied
-into the new version's section at release time, with the date in Brooklyn time.
+reader may clone it. From v0.2.0 on, every released section leads with one sentence naming the
+release's subject, then Added / Changed / Fixed, then **"Deliberately not done"** — that last
+heading (first used in `[0.2.0]`; the earlier sections predate the rule) is this repo's signature
+and it stays. `[Unreleased]` (a heading that began with PR #11) accumulates between releases and
+is emptied into the new version's section at release time, with the date in Brooklyn time.
 
-**Where the version string is written, all of which must move together on a release:**
-`package.json` `version` (the app renders it), `CHANGELOG.md`, `README.md`'s Lineage list, and an
-annotated `git tag -a vX.Y.Z`.
+**Where the version string is written, all seven of which must move together on a release:**
+`package.json` `version` (the app renders it), `package-lock.json` (two lines — `npm version
+X.Y.Z --no-git-tag-version` moves both files; a hand edit does not), `CHANGELOG.md`, `README.md`'s
+version badge, its "What it does (vX.Y.Z)" heading and its Lineage list, and an annotated
+`git tag -a vX.Y.Z`.
 
 **Escalate numbering forks to Beni.** Which number a release takes is a product decision with a
 public paper trail. A session that picks one silently has renumbered the roadmap for everyone
@@ -126,8 +136,10 @@ downstream.
 `docs/v0.3.0-ideas.md` (written cold 2 Sep 2026 by the session that reviewed and landed PR #8)
 is the **current** ranked candidate list — 13 rows, several carried forward from
 `docs/v0.2.0-ideas.md`, whose text stays the fuller description for the rows it originated.
-`docs/v0.2.1-pr-review-skill-plan.md` separately reserves a patch for landing a
-`/beni-pr-review` skill into `.claude/skills/` so ladder step 4 stops being hand-typed.
+`docs/v0.2.1-proposal.md` ("The train") is the release plan that turns that list into three
+patches and the v0.3.0 minor, with the deferred rows and their reasons; `/beni-pr-review`
+(`.claude/skills/beni-pr-review/`, shipped in v0.2.1, planned in
+`docs/v0.2.1-pr-review-skill-plan.md`) is ladder step 4 as a command.
 Separately, `README.md`'s "Beyond" section names the standing bridge to the betting track:
 fixtures carry stable ids so a later `positions.json` join — plus a token-expiry-vs-kickoff
 feature — can badge fixtures holding an open position or an expiring token. Not yet on the

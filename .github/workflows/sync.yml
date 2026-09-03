@@ -27,8 +27,9 @@ on:
         type: boolean
         default: false
 
-# contents: push the rolling branch · pull-requests: open/edit the PR · actions: the minimum
-# that can create a workflow_dispatch event (gh workflow run ci.yml, below).
+# contents: push the rolling branch · pull-requests: open/edit the PR · actions: approve the
+# PR's held verify run through the Actions API (the last step below). It once dispatched ci.yml
+# instead; that check never counted in the merge box — docs/v0.2.0-proposal.md, "The residual".
 permissions:
   contents: write
   pull-requests: write

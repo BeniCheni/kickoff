@@ -169,7 +169,8 @@ through a four-document prompt ladder — audit proposal → design brief → im
 spec → **adversarial review** — and the whole paper trail is archived in [`docs/`](docs/),
 receipts and all. Review sessions receive prior findings only as a sealed
 "verify independently" appendix, never as conclusions, which is how v0.1.0's review caught
-real bugs instead of nodding along. Commits are authored by Claude; typecheck and tests
+real bugs instead of nodding along; since v0.2.1 that review method is a repo skill,
+`/beni-pr-review`, diffed like code instead of retyped per release. Commits are authored by Claude; typecheck and tests
 are green at every one of them; data-honesty assertions are never weakened to make a
 redesign pass. The design system it's built against (*Fergie Time* — yes, really) is still
 in the tunnel, unreleased until it earns its debut.
@@ -177,8 +178,9 @@ in the tunnel, unreleased until it earns its debut.
 ## 🧭 Roadmap
 
 **v0.2.0** took rows 1, 3 and 13 of [docs/v0.2.0-ideas.md](docs/v0.2.0-ideas.md) — the
-paper trail is [docs/v0.2.0-proposal.md](docs/v0.2.0-proposal.md). Still ranked there for
-whatever comes next:
+paper trail is [docs/v0.2.0-proposal.md](docs/v0.2.0-proposal.md). The current ranked list is
+[docs/v0.3.0-ideas.md](docs/v0.3.0-ideas.md), and the plan that turns it into releases —
+three patches, then v0.3.0 — is in [docs/v0.2.1-proposal.md](docs/v0.2.1-proposal.md). Next up:
 
 - **An error boundary**, so no malformed input is ever a white screen again.
 - **A component test rig** (jsdom beside the node suite), so the clock's component wiring,
