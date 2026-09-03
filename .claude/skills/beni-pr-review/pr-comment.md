@@ -7,6 +7,7 @@ a reader who did not watch the session.
 ## Review — <verdict in one sentence: mergeable / mergeable after fixes / not mergeable, and why>
 
 Baseline at `<tip sha>`: `npm run typecheck` <clean|N errors>; `npm test` <N> tests in <M> files.
+Diff against `origin/main`: <F> files, +<A> / −<B>.
 
 ### Findings
 
@@ -27,7 +28,7 @@ Baseline at `<tip sha>`: `npm run typecheck` <clean|N errors>; `npm test` <N> te
 - <thing> — <reason: out of scope / wants a design brief / needs a dependency / deferred to row N of docs/vX.Y.Z-ideas.md>.
 
 ### Matrix as run
-- Unit: <numbers>. Browser: <cells run, widths, scrollWidth === innerWidth on every one>, <scenarios re-run from the proposal's matrix>. Workflow: <dispatch run id and what its log showed>, or "not applicable — no workflow changed".
+- Unit: <numbers>. Browser: <cells run, widths, scrollWidth === innerWidth on every one>, <scenarios re-run from the proposal's matrix>. Workflow: <dispatch run id and what its log showed>, or "changed, not dispatched — <why>", or "not applicable — no workflow changed".
 - Not verified: <what, and why>.
 ```
 

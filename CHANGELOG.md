@@ -22,7 +22,8 @@ and the v0.3.0 minor.
   360/375/390/~1000 matrix when `src/` or `index.css` moved, a smoke pass for docs and
   tooling), the fix policy, the one-comment shape, the sealed appendix. It forbids
   `npm run sync` during a review — a data refresh is not a release. This release's own review
-  was its first live run.
+  was its first live run — on the branch, before a PR existed, which is why it now takes a
+  branch name too.
 - `CLAUDE.md`'s "Release management" section: the four sources that together say what has
   shipped, patch vs minor as this repo has actually used them, the CHANGELOG as a product
   surface, and the rule that numbering forks go to Beni. Written by the PM session; five of its

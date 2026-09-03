@@ -4,8 +4,8 @@ Big-5 European football fixtures + standings tracker, Brooklyn time (`README.md`
 philosophy: **generated and diffed, never typed**). This project is the **build track** of the
 unified `/beni-betting-pipeline` skill — the same skill that runs the betting work in
 `../Sportsbooks/` also generates the prompts and reviews that build this app. Kickoff is also
-that pipeline's Step 0 fixture source (`http://localhost:5173/`, `?only=` and `&date=` URL
-filters), so data honesty here is betting-grade: never render a kickoff time the league hasn't
+that pipeline's Step 0 fixture source (`http://localhost:5173/`, the `?only=` competition
+filter and the `&date=` week anchor), so data honesty here is betting-grade: never render a kickoff time the league hasn't
 set, never invent matchday numbers, both clocks derive from one UTC instant.
 
 ## How this repo gets built (the prompt ladder, proven on the v0.0.3 doc cycle — shipped as

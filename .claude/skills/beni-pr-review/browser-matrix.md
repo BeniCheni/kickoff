@@ -13,6 +13,13 @@ theme is the toggle (or storage: `kickoff-theme`, `kickoff-theme-broadcast`).
 Six 390 px captures (lens × theme, Fixtures tab) go in the PR when anything visual changed.
 Nothing is committed under `docs/screenshots/` unless the originals were wrong.
 
+## One tab, your own
+
+Reviews that run in parallel share one pane and one origin: another session's `replaceState`
+lands in your tab and its theme toggle lands in your `localStorage`. Open your own tab,
+confirm which checkout port 5173 serves (worktrees share it), and clear `kickoff-theme` and
+`kickoff-theme-broadcast` before any theme claim.
+
 ## Set the viewport before anything else
 
 `resize_window` to the width **before** any capture or measurement. A clipped capture once cost
@@ -50,8 +57,11 @@ before a capture or the 220 ms cross-fade is in the shot.
 
 ## Driving the clock
 
-Inject a `Date` subclass carrying an offset through a `<script>` element so it runs in the page
-world, then reach the app's own clock instance by the exact URL Vite served it under:
+All three steps must run in the app's own world. The pane's JavaScript tool already does (the
+`<script>` element is belt and braces); the Chrome-extension tool runs in an isolated world
+where step 1 lands and steps 2–3 silently miss — `import()` returns a fresh module there and
+`Date.__setOffset` is undefined. Inject a `Date` subclass carrying an offset, then reach the
+app's own clock instance by the exact URL Vite served it under:
 
 ```js
 // 1. shim (page world)
@@ -64,7 +74,8 @@ s.textContent = `
 document.head.appendChild(s)
 
 // 2. the app's clock module, not a fresh one
-const url = performance.getEntriesByType('resource').map((e) => e.name).find((n) => /\/src\/lib\/clock\.ts/.test(n))
+// take the LAST match: after an HMR edit there are two (`clock.ts` and `clock.ts?t=…`) and the first is dead — or reload first
+const url = performance.getEntriesByType('resource').map((e) => e.name).filter((n) => /\/src\/lib\/clock\.ts/.test(n)).at(-1)
 const clock = await import(url)
 clock.clock.subscriberCount() > 0   // must be true, or you hold a copy the app never reads
 
@@ -79,9 +90,16 @@ switches and tab flips — StrictMode's double subscribe must leave nothing behi
 
 ## URL state without navigating
 
-`history.replaceState(null, '', '?date=2026-09-12')` then
-`window.dispatchEvent(new PopStateEvent('popstate'))` — the shim survives, a navigation would
-not.
+Edit one key — replacing the whole query string silently moves you to another cell, because
+lens and tab live there too:
+
+```js
+const p = new URLSearchParams(location.search); p.set('date', '2026-09-12')
+history.replaceState(null, '', '?' + p); window.dispatchEvent(new PopStateEvent('popstate'))
+```
+
+Every mounted hook instance re-reads on the synthetic event; the shim survives, a navigation
+would not.
 
 ## What to read, not what to look at
 
