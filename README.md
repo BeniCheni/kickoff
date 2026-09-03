@@ -1,7 +1,7 @@
 # ⚽ Kickoff
 
 [![CI](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml/badge.svg)](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml)
-[![version](https://img.shields.io/badge/version-0.2.0-1d4ed8)](CHANGELOG.md)
+[![version](https://img.shields.io/badge/version-0.2.1-1d4ed8)](CHANGELOG.md)
 [![license](https://img.shields.io/badge/license-MIT-16a34a)](LICENSE)
 [![built with](https://img.shields.io/badge/built%20with-Claude%20Code-D97757)](CLAUDE.md)
 
@@ -36,7 +36,7 @@ in crime built the fix, and the house rule got carved over the door:
 
 ### **Never a confident lie.**
 
-## 🧭 What it does (v0.2.0)
+## 🧭 What it does (v0.2.1)
 
 La Liga, Premier League, Serie A, Ligue 1, Bundesliga, their domestic super cups and the
 UEFA Super Cup; full league standings; and one fixture skeleton read through three lenses.
@@ -210,6 +210,10 @@ tab row already leaves it room.
 - **v0.2.0** *(2 Sep 2026)* — the app's relationship to time: a clock that ticks, a sync that
   fails loudly instead of guessing, and a scheduled refresh that opens its own PR but never
   merges it. See [CHANGELOG.md](CHANGELOG.md) and `docs/v0.2.0-proposal.md`.
+- **v0.2.1** *(3 Sep 2026)* — the review becomes a command: `/beni-pr-review` lands as a repo
+  skill, the sync PR's held check approves itself (the fix that shipped between releases), and
+  how a release gets scoped is written down, with the plan for the rest of the v0.2.x train.
+  See `docs/v0.2.1-proposal.md`.
 
 ## ⚖️ License & the small print
 
