@@ -8,13 +8,73 @@ releases.
 
 ## [Unreleased]
 
+## [0.2.1] — 2026-09-03
+
+The review becomes a command: the adversarial pass that hardened v0.1.0 and v0.2.0 is now a
+repo skill, the sync PR's held check approves itself, and how a release gets scoped is written
+down. Paper trail: `docs/v0.2.1-proposal.md`, which also plans the rest of the v0.2.x train
+and the v0.3.0 minor.
+
+### Added
+- **`/beni-pr-review`** (`.claude/skills/beni-pr-review/`): prompt-ladder step 4 as a command
+  instead of a prompt retyped per release. Read order and precedence, a real-numbers baseline,
+  hunt classes chosen by what the diff touches, a browser pass scoped to the diff (the full
+  360/375/390/~1000 matrix when `src/` or `index.css` moved, a smoke pass for docs and
+  tooling), the fix policy, the one-comment shape, the sealed appendix. It forbids
+  `npm run sync` during a review — a data refresh is not a release. This release's own review
+  was its first live run — on the branch, before a PR existed, which is why it now takes a
+  branch name too — with one deviation on the record: three of six cold reviewers died on a
+  usage limit and their classes (data honesty, theme, absolute words) were covered by the
+  author, then read cold in the PR #13 review. What this is, and is not: a Claude Code
+  *project* skill — it runs only with this repo checked out, a human types it
+  (`disable-model-invocation`), and its hunt classes are Kickoff's. A portable, account-level
+  `/beni-pr-review` for generic PR work across Claude Code, Claude Design, Cowork and Chat is
+  a separate deliverable, not a later version of this file.
+- `CLAUDE.md`'s "Release management" section: the four sources that together say what has
+  shipped, patch vs minor as this repo has actually used them, the CHANGELOG as a product
+  surface, and the rule that numbering forks go to Beni. Written by the PM session; the claims
+  the audit and the review found false or unbounded were corrected in the same release
+  (Changed, below).
+- The release plan for the whole train — three patches, then v0.3.0 — with every open ideas
+  row either in a named release or deferred with a reason, in the proposal.
+- The two `docs/v0.2.x-*` prompt archives that scoped this train.
+
+### Changed
+- `CLAUDE.md`: the version string lives in seven places, not four; ideas rows are renumbered
+  across files, so name the file when citing one; "Deliberately not done" is the convention
+  from v0.2.0 on, not "every section so far"; `[Unreleased]` is dated to PR #11 rather than
+  described as long-standing; the browser matrix is 360/375/390/~1000 and is scoped to
+  whether `src/` changed; `&date=` is a week anchor, not a filter; "user-visible" in the patch
+  rule means the deployed app's users, so a new command is still a patch; `git tag` as a
+  ground-truth source starts at v0.2.0. README's roadmap pointer now names
+  `docs/v0.3.0-ideas.md`, the current list — it had gone stale in the squash that created it —
+  and its "How this repo is actually built" paragraph no longer claims every cycle archived
+  all four ladder documents (v0.1.0's has no proposal, v0.2.0's no design brief or build spec).
+- `docs/v0.3.0-ideas.md` row 2 no longer cites the dispatched `verify` check PR #11 removed;
+  row 9 records the active-tab duplicate history entry (`TabNav.tsx:38`) this release's
+  review found.
+
 ### Fixed
 - The scheduled sync's PR could not be merged unattended: its `verify` check was held for
   approval (github-actions[bot] is not a collaborator), and the `workflow_dispatch` check the
   workflow requested never counted in the merge box. `sync.yml` now approves the held run
-  itself through the Actions API after opening or updating the PR — proved hands-off on PR #9.
-  The dispatch step is gone; `ci.yml` keeps `workflow_dispatch` for manual runs. This answers
-  the v0.2.0 proposal's residual unknown; PR #10's ordering theory was wrong and is retracted.
+  itself through the Actions API after opening or updating the PR — proved hands-off on PR #9,
+  and again on PR #12 from the first real scheduled run. The dispatch step is gone; `ci.yml`
+  keeps `workflow_dispatch` for manual runs. This answers the v0.2.0 proposal's residual
+  unknown; PR #10's ordering theory was wrong and is retracted.
+- `sync.yml`'s permissions comment still explained `actions: write` by that deleted dispatch
+  step; it now names the approve call the permission actually serves.
+
+### Deliberately not done
+- The inert `Default` ruleset (`docs/v0.3.0-ideas.md` row 13) is a repository setting, not a
+  file, and it must be *deleted* rather than aimed at `main` — it would forbid every merge.
+  Beni's click, not a PR.
+- `[0.2.0]`'s "ci.yml gains `workflow_dispatch` so the bot's PR receives its required check"
+  stays as written: true for what 0.2.0 shipped, superseded above.
+- No app behaviour. Rows 6, 7, 8, 12, the four code items of 13 and one third of 11 wait for
+  v0.2.3, behind the jsdom rig (v0.2.2); rows 3, 4, 10 and the rest of 11 wait for a design
+  cycle; row 9 for a v0.3.x patch; row 13's fifth item is the ruleset above. Each reason is in
+  the proposal.
 
 ## [0.2.0] — 2026-09-02
 

@@ -1,7 +1,7 @@
 # ⚽ Kickoff
 
 [![CI](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml/badge.svg)](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml)
-[![version](https://img.shields.io/badge/version-0.2.0-1d4ed8)](CHANGELOG.md)
+[![version](https://img.shields.io/badge/version-0.2.1-1d4ed8)](CHANGELOG.md)
 [![license](https://img.shields.io/badge/license-MIT-16a34a)](LICENSE)
 [![built with](https://img.shields.io/badge/built%20with-Claude%20Code-D97757)](CLAUDE.md)
 
@@ -36,7 +36,7 @@ in crime built the fix, and the house rule got carved over the door:
 
 ### **Never a confident lie.**
 
-## 🧭 What it does (v0.2.0)
+## 🧭 What it does (v0.2.1)
 
 La Liga, Premier League, Serie A, Ligue 1, Bundesliga, their domestic super cups and the
 UEFA Super Cup; full league standings; and one fixture skeleton read through three lenses.
@@ -166,23 +166,28 @@ moved before it lands.
 Kickoff is an AI-driven codebase in the boring, disciplined sense rather than the
 press-release one. The standing brief lives in [CLAUDE.md](CLAUDE.md); every version moves
 through a four-document prompt ladder — audit proposal → design brief → implementation
-spec → **adversarial review** — and the whole paper trail is archived in [`docs/`](docs/),
-receipts and all. Review sessions receive prior findings only as a sealed
-"verify independently" appendix, never as conclusions, which is how v0.1.0's review caught
-real bugs instead of nodding along. Commits are authored by Claude; typecheck and tests
-are green at every one of them; data-honesty assertions are never weakened to make a
-redesign pass. The design system it's built against (*Fergie Time* — yes, really) is still
+spec → **adversarial review** — and whatever a cycle wrote is archived in [`docs/`](docs/),
+receipts and all (not every cycle wrote all four: v0.1.0's has no proposal, v0.2.0's no
+design brief or build spec, and the archive says so rather than pretending). Review sessions
+receive prior findings only as a sealed "verify independently" appendix, never as
+conclusions, which is how v0.1.0's review caught real bugs instead of nodding along; since
+v0.2.1 that review method is a repo skill, `/beni-pr-review`, diffed like code instead of
+retyped per release. Commits are authored by Claude; typecheck and tests are green at every
+one of them; data-honesty assertions are never weakened to make a redesign pass.
+The design system it's built against (*Fergie Time* — yes, really) is still
 in the tunnel, unreleased until it earns its debut.
 
 ## 🧭 Roadmap
 
 **v0.2.0** took rows 1, 3 and 13 of [docs/v0.2.0-ideas.md](docs/v0.2.0-ideas.md) — the
-paper trail is [docs/v0.2.0-proposal.md](docs/v0.2.0-proposal.md). Still ranked there for
-whatever comes next:
+paper trail is [docs/v0.2.0-proposal.md](docs/v0.2.0-proposal.md). The current ranked list is
+[docs/v0.3.0-ideas.md](docs/v0.3.0-ideas.md), and the plan that turns it into releases —
+three patches, then v0.3.0 — is in [docs/v0.2.1-proposal.md](docs/v0.2.1-proposal.md). Next up:
 
-- **An error boundary**, so no malformed input is ever a white screen again.
 - **A component test rig** (jsdom beside the node suite), so the clock's component wiring,
-  keyboard behavior and URL hooks get the coverage the pure layer already enjoys.
+  keyboard behavior and URL hooks get the coverage the pure layer already enjoys — v0.2.2,
+  first, so what follows ships with tests instead of browser-only proof.
+- **An error boundary**, so no malformed input is ever a white screen again — v0.2.3.
 - **The stale LIVE pill** — a designed state for "kicked off, outcome unknown to this
   snapshot", the one surface where a frozen `in_play` can still claim liveness.
 - **Auto-merging an empty sync report** — defensible only once the diff engine also reports
@@ -208,6 +213,10 @@ tab row already leaves it room.
 - **v0.2.0** *(2 Sep 2026)* — the app's relationship to time: a clock that ticks, a sync that
   fails loudly instead of guessing, and a scheduled refresh that opens its own PR but never
   merges it. See [CHANGELOG.md](CHANGELOG.md) and `docs/v0.2.0-proposal.md`.
+- **v0.2.1** *(3 Sep 2026)* — the review becomes a command: `/beni-pr-review` lands as a repo
+  skill, the sync PR's held check approves itself (the fix that shipped between releases), and
+  how a release gets scoped is written down, with the plan for the rest of the v0.2.x train.
+  See `docs/v0.2.1-proposal.md`.
 
 ## ⚖️ License & the small print
 
