@@ -12,12 +12,12 @@ releases.
 - **The front door gets its voice back.** `README.md`, `CONTRIBUTING.md` and `docs/README.md`
   say what they already said, louder: a text banner under the README's badges, the 23 Aug 2026
   audit re-set as a betting slip in place of its four bullets (the same four facts, the same
-  "about twenty"), one emoji per H2 as an icon system that means the same thing in every file,
-  a mood icon per lens row, and connective prose with more football in it. No fact, command,
-  path, threshold or version string moves; nothing under `src/` moves; `docs/HONESTY.md` and
-  `docs/ARCHITECTURE.md` keep their quieter register on purpose — the front door shouts, the
-  workshop does not. Not a release: a copy pass rides the next one, so every version string
-  stays at 0.2.3.
+  about-twenty count — the receipt line says `ABOUT 20`), one emoji per H2 as an icon system
+  that means the same thing in every file, a mood icon per lens row, and connective prose with
+  more football in it. No fact, command, path, threshold or version string moves; nothing
+  under `src/` moves; `docs/HONESTY.md` and `docs/ARCHITECTURE.md` keep their quieter register
+  on purpose — the front door shouts, the workshop does not. Not a release: a copy pass rides
+  the next one, so every version string stays at 0.2.3.
 
 ## [0.2.3] — 2026-09-04
 
