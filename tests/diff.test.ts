@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest'
+import { readFileSync } from 'node:fs'
 import {
   diffFixtures,
   diffStandings,
@@ -255,6 +256,28 @@ describe('the sync report — "changed" is decided here, never by git diff', () 
       expect(/\sstandings=([a-z]*)/.exec(line)?.[1]).toBe(r.standings)
       expect(/\smerge=([a-z]*)/.exec(line)?.[1]).toBe(r.merge)
     }
+  })
+
+  // v0.2.2 review: the mirror above is a copy, and a copy can drift. This reads the regex out
+  // of sync.yml itself, so a format change that forgets either side goes red here rather than
+  // in a scheduled run's "malformed report line" error.
+  it("matches the regex sync.yml actually carries — read from the workflow file, not mirrored", () => {
+    const yml = readFileSync(new URL('../.github/workflows/sync.yml', import.meta.url), 'utf8')
+    const literal = /grep -Eqx '([^']+)'/.exec(yml)?.[1]
+    expect(literal).toBeDefined()
+    const shape = new RegExp(`^${literal}$`)
+    for (const standings of ['changed', 'unchanged', 'failed'] as const) {
+      for (const merge of ['auto', 'hold'] as const) {
+        for (const changes of [0, 195]) {
+          const r: SyncReport = { changes, urgent: changes ? 4 : 0, standings, rankMoves: 8, merge }
+          expect(formatReportLine(r)).toMatch(shape)
+        }
+      }
+    }
+    // The pre-v0.2.2 line (no merge= field), a renamed field and a trailing field all fail it.
+    expect('report: changed=true changes=3 urgent=1 standings=changed rank-moves=2').not.toMatch(shape)
+    expect(formatReportLine(quiet).replace('merge=', 'verdict=')).not.toMatch(shape)
+    expect(`${formatReportLine(quiet)} extra=1`).not.toMatch(shape)
   })
 })
 
