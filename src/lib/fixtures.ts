@@ -49,10 +49,20 @@ export function totalOn(date: string): number {
 }
 
 /**
- * Kickoffs still ahead: scheduled fixtures only — a postponed or cancelled match has no
- * honest kickoff to promise, and an in-play match is on, not next. League-set times must
- * still be ahead of `nowUtcIso`; placeholder (TBC) times are trusted only to the day.
+ * The one gate for "not yet kicked off", shared by every hero (v0.2.2): Ledger's Next-up
+ * strip through `upcoming`, Poster's Tonight's slate through `planSlate`. Two heroes with two
+ * clocks was the bug (docs/v0.3.0-ideas.md row 3); two copies of one gate would be the same
+ * bug in disguise. Scheduled only — a postponed or cancelled match has no honest kickoff to
+ * promise, and an in-play match (a snapshot's or a real one) has kicked off. A league-set
+ * time must still be ahead of `nowUtcIso`, so a fixture drops out at its kickoff minute; a
+ * placeholder (TBC) time is trusted only to the day and is never evicted by arithmetic on an
+ * instant the league never set — the caller's date filter is what retires it.
  */
+export function stillToKickOff(f: Fixture, nowUtcIso: string): boolean {
+  return f.status === 'scheduled' && (f.timeConfidence !== 'exact' || f.kickoffUtc > nowUtcIso)
+}
+
+/** Kickoffs still ahead from `fromDate` on, earliest first — see stillToKickOff. */
 export function upcoming(
   fromDate: string,
   nowUtcIso: string,
@@ -63,9 +73,8 @@ export function upcoming(
   return fixtures
     .filter(
       (f) =>
-        f.status === 'scheduled' &&
+        stillToKickOff(f, nowUtcIso) &&
         brooklynDate(f.kickoffUtc) >= fromDate &&
-        (f.timeConfidence !== 'exact' || f.kickoffUtc > nowUtcIso) &&
         active.has(f.competition),
     )
     .sort((a, b) => a.kickoffUtc.localeCompare(b.kickoffUtc))
@@ -76,12 +85,44 @@ export function upcoming(
 export function nextMatchday(
   fromDate: string,
   active: ReadonlySet<CompetitionKey>,
+  fixtures: readonly Fixture[] = FIXTURES,
 ): string | null {
-  const dates = [...BY_DATE.keys()].filter((d) => d > fromDate).sort()
-  for (const d of dates) {
-    if (fixturesOn(d, active).length > 0) return d
+  let best: string | null = null
+  for (const f of fixtures) {
+    if (!active.has(f.competition)) continue
+    const d = brooklynDate(f.kickoffUtc)
+    if (d > fromDate && (best === null || d < best)) best = d
   }
-  return null
+  return best
+}
+
+/**
+ * What Poster's hero shows, decided here so the component decides nothing about time:
+ * tonight's slate — today's fixtures still to kick off, in kickoff order — while there is
+ * one; otherwise the next matchday's scheduled fixtures, and `isTonight: false` so the hero
+ * says so ("Next matchday — nothing left today", `MATCHES` not `REMAINING`). The flip is
+ * clock-driven: it happens at the last kickoff, not at the next snapshot. `date` is null
+ * only when nothing at all is ahead under the filters.
+ */
+export function planSlate(
+  today: string,
+  nowUtcIso: string,
+  active: ReadonlySet<CompetitionKey>,
+  fixtures: readonly Fixture[] = FIXTURES,
+): { date: string | null; slate: Fixture[]; isTonight: boolean } {
+  const on = (date: string) =>
+    fixtures
+      .filter(
+        (f) =>
+          brooklynDate(f.kickoffUtc) === date &&
+          stillToKickOff(f, nowUtcIso) &&
+          active.has(f.competition),
+      )
+      .sort((a, b) => a.kickoffUtc.localeCompare(b.kickoffUtc))
+  const tonight = on(today)
+  if (tonight.length > 0) return { date: today, slate: tonight, isTonight: true }
+  const date = nextMatchday(today, active, fixtures)
+  return { date, slate: date ? on(date) : [], isTonight: false }
 }
 
 /**
