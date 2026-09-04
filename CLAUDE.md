@@ -171,8 +171,9 @@ is the **current** ranked candidate list — 15 rows, several carried forward fr
 `docs/v0.2.0-ideas.md`, whose text stays the fuller description for the rows it originated.
 `docs/v0.2.1-proposal.md` ("The train") is the release plan that turns that list into a train
 of patches and the v0.3.0 minor, with the deferred rows and their reasons — **amended on
-numbering by `docs/v0.2.2-proposal.md`** (4 Sep 2026: v0.2.2 is "the front door"; the jsdom
-rig is v0.2.3, the resilience patch v0.2.4, v0.3.0 unchanged); `/beni-pr-review`
+numbering by `docs/v0.2.2-proposal.md`** (4 Sep 2026: v0.2.2 is "the front door") **and again
+by the v0.2.3 hotfix** (same day, `CHANGELOG.md` `[0.2.3]`, Node 24 actions; Beni's call): the
+jsdom rig is v0.2.4, the resilience patch v0.2.5, v0.3.0 unchanged; `/beni-pr-review`
 (`.claude/skills/beni-pr-review/`, shipped in v0.2.1, planned in
 `docs/v0.2.1-pr-review-skill-plan.md`) is ladder step 4 as a command.
 Separately, `README.md`'s "Beyond" section names the standing bridge to the betting track:

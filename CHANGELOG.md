@@ -8,6 +8,40 @@ releases.
 
 ## [Unreleased]
 
+## [0.2.3] — 2026-09-04
+
+A hotfix: the workflows run on Node 24 actions, so no run warns any more that Node 20 is
+deprecated. Nothing in the app changes.
+
+### Changed
+- **Every first-party action moved to its Node 24 major:** `actions/checkout@v7`,
+  `actions/setup-node@v7`, `actions/configure-pages@v6`, `actions/upload-pages-artifact@v5`,
+  `actions/deploy-pages@v5`. The Node 20 majors still ran, but the runner forced them onto
+  Node 24 and said so on every job ("Node 20 is being deprecated … forced to run on Node.js
+  24"). Across the majors crossed, the release notes carry two behavioural changes and neither
+  reaches this repo: setup-node's caching became npm-only with auto-detection (`cache: npm` is
+  named explicitly here), and upload-pages-artifact stopped including dotfiles in the artifact
+  (`dist/` has none). checkout v7 blocks fork checkouts under `pull_request_target` and
+  `workflow_run`, neither of which any workflow here uses.
+
+### Fixed
+- `pages.yml`'s header said the deploy step fails until the Pages source is flipped. The first
+  run on `main` showed what actually happens: the `build` job fails at `configure-pages` ("Get
+  Pages site failed … Not Found") and `deploy` is skipped. The comment now says so, and records
+  that the source was flipped on 4 Sep 2026 — the demo at `https://benicheni.github.io/kickoff/`
+  has been live since the re-run of that first deploy (nine seconds, "Reported success!").
+
+### Deliberately not done
+- **The numbering, again.** This hotfix took v0.2.3, so the train slides a second time: the
+  jsdom rig is **v0.2.4**, the resilience patch **v0.2.5** (still free to split into v0.2.5 +
+  v0.2.6), v0.3.0 unchanged — Beni's call, 4 Sep 2026. `[0.2.2]`'s sentences naming v0.2.3 and
+  v0.2.4 stay as written, superseded here, the way `[0.2.2]` superseded `[0.2.1]`.
+- **Pinning actions by commit SHA** instead of major tag. Majors, as before: a supply-chain
+  policy is a decision for a proposal, not a hotfix.
+- **`deploy-pages`'s own `punycode` DeprecationWarning** under Node 24 — the action's bundled
+  dependency, not ours; whether v5 still prints it is known only after this lands and the
+  first deploy runs.
+
 ## [0.2.2] — 2026-09-04
 
 The front door: everything a first-time visitor meets — the lens the app opens on, a hero that
