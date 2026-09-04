@@ -166,13 +166,15 @@ moved before it lands.
 Kickoff is an AI-driven codebase in the boring, disciplined sense rather than the
 press-release one. The standing brief lives in [CLAUDE.md](CLAUDE.md); every version moves
 through a four-document prompt ladder — audit proposal → design brief → implementation
-spec → **adversarial review** — and the whole paper trail is archived in [`docs/`](docs/),
-receipts and all. Review sessions receive prior findings only as a sealed
-"verify independently" appendix, never as conclusions, which is how v0.1.0's review caught
-real bugs instead of nodding along; since v0.2.1 that review method is a repo skill,
-`/beni-pr-review`, diffed like code instead of retyped per release. Commits are authored by Claude; typecheck and tests
-are green at every one of them; data-honesty assertions are never weakened to make a
-redesign pass. The design system it's built against (*Fergie Time* — yes, really) is still
+spec → **adversarial review** — and whatever a cycle wrote is archived in [`docs/`](docs/),
+receipts and all (not every cycle wrote all four: v0.1.0's has no proposal, v0.2.0's no
+design brief or build spec, and the archive says so rather than pretending). Review sessions
+receive prior findings only as a sealed "verify independently" appendix, never as
+conclusions, which is how v0.1.0's review caught real bugs instead of nodding along; since
+v0.2.1 that review method is a repo skill, `/beni-pr-review`, diffed like code instead of
+retyped per release. Commits are authored by Claude; typecheck and tests are green at every
+one of them; data-honesty assertions are never weakened to make a redesign pass.
+The design system it's built against (*Fergie Time* — yes, really) is still
 in the tunnel, unreleased until it earns its debut.
 
 ## 🧭 Roadmap
@@ -182,9 +184,10 @@ paper trail is [docs/v0.2.0-proposal.md](docs/v0.2.0-proposal.md). The current r
 [docs/v0.3.0-ideas.md](docs/v0.3.0-ideas.md), and the plan that turns it into releases —
 three patches, then v0.3.0 — is in [docs/v0.2.1-proposal.md](docs/v0.2.1-proposal.md). Next up:
 
-- **An error boundary**, so no malformed input is ever a white screen again.
 - **A component test rig** (jsdom beside the node suite), so the clock's component wiring,
-  keyboard behavior and URL hooks get the coverage the pure layer already enjoys.
+  keyboard behavior and URL hooks get the coverage the pure layer already enjoys — v0.2.2,
+  first, so what follows ships with tests instead of browser-only proof.
+- **An error boundary**, so no malformed input is ever a white screen again — v0.2.3.
 - **The stale LIVE pill** — a designed state for "kicked off, outcome unknown to this
   snapshot", the one surface where a frozen `in_play` can still claim liveness.
 - **Auto-merging an empty sync report** — defensible only once the diff engine also reports

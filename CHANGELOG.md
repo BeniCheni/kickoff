@@ -23,11 +23,18 @@ and the v0.3.0 minor.
   tooling), the fix policy, the one-comment shape, the sealed appendix. It forbids
   `npm run sync` during a review — a data refresh is not a release. This release's own review
   was its first live run — on the branch, before a PR existed, which is why it now takes a
-  branch name too.
+  branch name too — with one deviation on the record: three of six cold reviewers died on a
+  usage limit and their classes (data honesty, theme, absolute words) were covered by the
+  author, then read cold in the PR #13 review. What this is, and is not: a Claude Code
+  *project* skill — it runs only with this repo checked out, a human types it
+  (`disable-model-invocation`), and its hunt classes are Kickoff's. A portable, account-level
+  `/beni-pr-review` for generic PR work across Claude Code, Claude Design, Cowork and Chat is
+  a separate deliverable, not a later version of this file.
 - `CLAUDE.md`'s "Release management" section: the four sources that together say what has
   shipped, patch vs minor as this repo has actually used them, the CHANGELOG as a product
-  surface, and the rule that numbering forks go to Beni. Written by the PM session; five of its
-  claims were corrected in the same release (Changed, below).
+  surface, and the rule that numbering forks go to Beni. Written by the PM session; the claims
+  the audit and the review found false or unbounded were corrected in the same release
+  (Changed, below).
 - The release plan for the whole train — three patches, then v0.3.0 — with every open ideas
   row either in a named release or deferred with a reason, in the proposal.
 - The two `docs/v0.2.x-*` prompt archives that scoped this train.
@@ -35,10 +42,17 @@ and the v0.3.0 minor.
 ### Changed
 - `CLAUDE.md`: the version string lives in seven places, not four; ideas rows are renumbered
   across files, so name the file when citing one; "Deliberately not done" is the convention
-  from v0.2.0 on, not "every section so far"; the browser matrix is 360/375/390/~1000 and is
-  scoped to whether `src/` changed. README's roadmap pointer now names `docs/v0.3.0-ideas.md`,
-  the current list — it had gone stale in the squash that created it.
-- `docs/v0.3.0-ideas.md` row 2 no longer cites the dispatched `verify` check PR #11 removed.
+  from v0.2.0 on, not "every section so far"; `[Unreleased]` is dated to PR #11 rather than
+  described as long-standing; the browser matrix is 360/375/390/~1000 and is scoped to
+  whether `src/` changed; `&date=` is a week anchor, not a filter; "user-visible" in the patch
+  rule means the deployed app's users, so a new command is still a patch; `git tag` as a
+  ground-truth source starts at v0.2.0. README's roadmap pointer now names
+  `docs/v0.3.0-ideas.md`, the current list — it had gone stale in the squash that created it —
+  and its "How this repo is actually built" paragraph no longer claims every cycle archived
+  all four ladder documents (v0.1.0's has no proposal, v0.2.0's no design brief or build spec).
+- `docs/v0.3.0-ideas.md` row 2 no longer cites the dispatched `verify` check PR #11 removed;
+  row 9 records the active-tab duplicate history entry (`TabNav.tsx:38`) this release's
+  review found.
 
 ### Fixed
 - The scheduled sync's PR could not be merged unattended: its `verify` check was held for
@@ -57,9 +71,10 @@ and the v0.3.0 minor.
   Beni's click, not a PR.
 - `[0.2.0]`'s "ci.yml gains `workflow_dispatch` so the bot's PR receives its required check"
   stays as written: true for what 0.2.0 shipped, superseded above.
-- No app behaviour. Rows 6, 7, 8, 12, 13 and one third of 11 wait for v0.2.3, behind the jsdom
-  rig (v0.2.2); rows 3, 4, 10 and the rest of 11 wait for a design cycle; row 9 for a v0.3.x
-  patch. Each reason is in the proposal.
+- No app behaviour. Rows 6, 7, 8, 12, the four code items of 13 and one third of 11 wait for
+  v0.2.3, behind the jsdom rig (v0.2.2); rows 3, 4, 10 and the rest of 11 wait for a design
+  cycle; row 9 for a v0.3.x patch; row 13's fifth item is the ruleset above. Each reason is in
+  the proposal.
 
 ## [0.2.0] — 2026-09-02
 

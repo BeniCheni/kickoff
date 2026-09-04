@@ -5,8 +5,9 @@ philosophy: **generated and diffed, never typed**). This project is the **build 
 unified `/beni-betting-pipeline` skill — the same skill that runs the betting work in
 `../Sportsbooks/` also generates the prompts and reviews that build this app. Kickoff is also
 that pipeline's Step 0 fixture source (`http://localhost:5173/`, the `?only=` competition
-filter and the `&date=` week anchor), so data honesty here is betting-grade: never render a kickoff time the league hasn't
-set, never invent matchday numbers, both clocks derive from one UTC instant.
+filter and the `&date=` week anchor), so data honesty here is betting-grade: never render a
+kickoff time the league hasn't set, never invent matchday numbers, both clocks derive from one
+UTC instant.
 
 ## How this repo gets built (the prompt ladder, proven on the v0.0.3 doc cycle — shipped as
 release v0.1.0; doc-ladder naming and release semver diverge, don't assume they match)
@@ -86,9 +87,10 @@ detail and is relying on those roles to have read them — so nothing here is an
 recollection.
 
 **Ground truth for "what has shipped" is four things read together**, never one of them alone:
-`package.json`'s `version`, `git tag`, `CHANGELOG.md`'s released sections, and the `docs/` file
-for that version. When they disagree, say so and stop — a wrong version number renumbers a public
-roadmap.
+`package.json`'s `version`, `git tag` (annotated tags start at v0.2.0 — v0.0.1 through v0.1.1
+shipped untagged, so the tag list alone undercounts), `CHANGELOG.md`'s released sections, and
+the `docs/` file for that version. When they disagree, say so and stop — a wrong version number
+renumbers a public roadmap.
 
 **Doc-ladder names and release numbers diverge on purpose** (v0.1.0 shipped from the v0.0.3 doc
 cycle) and always have. Do not infer one from the other.
@@ -105,8 +107,10 @@ part a cold reader six months out actually needs.
 **Patch vs minor, as this repo has actually used them:**
 
 - **Patch** (v0.1.1, v0.2.1): fixes, tooling, docs, housekeeping, security. No new
-  user-visible capability. A data refresh is *not* a release at all — v0.2.0's proposal dropped
-  PR #5's 0.1.2 bump for exactly this reason.
+  user-visible capability — *user-visible* means the deployed app's users, so a repo skill, a
+  workflow or a doc is a patch however large (v0.2.1 ships a new command and is one). A data
+  refresh is *not* a release at all — v0.2.0's proposal dropped PR #5's 0.1.2 bump for exactly
+  this reason.
 - **Minor** (v0.1.0, v0.2.0): a new capability, shipped under one subject line. Both minors so far
   were scoped as a single theme ("one skeleton, three lenses"; "the app learns to tell time")
   rather than a grab bag, and both read better for it.
