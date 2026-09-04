@@ -32,4 +32,5 @@ please open a [GitHub security advisory](https://github.com/BeniCheni/kickoff/se
 rather than a public issue, so there is time to fix it before it is described. You'll get a
 reply, and credit in the changelog if you want it.
 
-Dependency advisories that Dependabot already surfaces can go straight in as issues.
+Dependabot alerts are not switched on for this repo today; a dependency advisory you know
+applies here can go straight in as an issue.

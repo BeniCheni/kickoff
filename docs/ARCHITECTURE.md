@@ -22,7 +22,7 @@ ESPN scoreboard API ──▶ normalizeEvent ──▶ Zod at the boundary ─�
 2. **Normalize.** `normalizeEvent` turns one ESPN event into one `Fixture`: the UTC instant,
    the venue zone, home and away, the status mapped from ESPN's vocabulary (an unmapped status
    throws — see [HONESTY.md](HONESTY.md) §5), and the time confidence (`exact`,
-   `round_placeholder`, `date_only`). The fixture id is ESPN's event id namespaced by
+   `round_placeholder`, `tbd`). The fixture id is ESPN's event id namespaced by
    competition.
 3. **Validate.** `scripts/validate.ts` runs every normalized row through the Zod schema in
    `src/lib/schema.ts`, all-or-nothing. A single rejected row aborts the sync.
@@ -104,9 +104,10 @@ each other live once a minute on every match night.
 1. **It caps responses at 100 events and does not say so.** A four-month range for La Liga
    silently returns the first 100 fixtures. The provider requests the window in 28-day chunks
    and refuses to write from any chunk that comes back at the cap.
-2. **Some venue strings are wrong.** Rayo Vallecano's home fixtures are tagged with Leganés's
-   ground. Venue is cosmetic here and is not corrected by hand. A second provider that can
-   disagree with the first is the durable fix — and an open invitation.
+2. **Some venue strings are wrong.** Two of Rayo Vallecano's twelve home fixtures in the
+   current snapshot are tagged with Leganés's ground (Butarque); the other ten say Vallecas.
+   Venue is cosmetic here and is not corrected by hand. A second provider that can disagree
+   with the first is the durable fix — and an open invitation.
 
 ## The URL contract
 

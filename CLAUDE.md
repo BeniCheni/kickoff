@@ -67,9 +67,17 @@ by a quieter run. Only a human clears it, by merging or by removing the label.
 
 **The Step 0 contract with the betting pipeline, as of v0.2.2:** every sync PR *left open for
 you* is a Track A Step 0 re-verification trigger — read every DATE_MOVED / TIME_CHANGED /
-HOME_AWAY_INVERTED / STATUS_CHANGED / DISAPPEARED line against any open position. The PRs that
-merged themselves carried nothing inside 72 hours, nothing that vanished and nothing
-inverted. (Before v0.2.2 every sync PR was a trigger; `docs/v0.2.2-proposal.md` §C.)
+HOME_AWAY_INVERTED / STATUS_CHANGED / DISAPPEARED line against any open position. A PR that
+merged itself moved no fixture the app already knew inside −6 h..+72 h of the run, and
+carried no DISAPPEARED and no HOME_AWAY_INVERTED line at any horizon. Three things can still
+land unread through an auto-merge, so Step 0 keeps re-reading the app for every open position
+rather than waiting for a PR: a `NEW` fixture inside 72 h (NEW is never urgent — no position
+was placed off this app on a fixture it had not listed, and a recreated fixture arrives with a
+DISAPPEARED line that holds); a result correction or a team rename (invisible to the diff
+engine either way — `docs/v0.3.0-ideas.md` row 1); and a DATE_MOVED or TIME_CHANGED more than
+72 h out, which is where a position placed early lives — 53 DATE_MOVED lines rode one
+`merge=auto` report on 4 Sep 2026. (Before v0.2.2 every sync PR was a trigger;
+`docs/v0.2.2-proposal.md` §C and its review resolutions.)
 
 Mechanics that have not changed: `workflow_dispatch` (with a `dry_run` input mapped to
 `npm run sync -- --check`) tests the workflow without waiting for the schedule, and its

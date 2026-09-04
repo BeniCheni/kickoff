@@ -95,8 +95,8 @@ commit → pull request → app. The pure layer (everything under `src/lib/` and
 unit-tested; the components render what it decides and decide nothing about time themselves.
 A scheduled workflow runs the sync every three hours *as scheduled* (GitHub's cron is a
 suggestion, not a promise), opens one rolling pull request with the diff, and since v0.2.2
-lets that PR merge itself when nothing in it needs a human first — nothing inside 72 hours,
-nothing vanished, nothing inverted. Anything that does is held for a person.
+lets that PR merge itself when nothing in it needs a human first — no known fixture moved
+inside 72 hours, nothing vanished, nothing inverted. Anything that does is held for a person.
 
 The map, the data flow, where the pure layer ends and the components begin, and the two ESPN
 traps worth knowing about are in **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**.
@@ -112,9 +112,10 @@ Three honest places to start, none of them claimed by a scoped release:
 - **A second data provider.** Cross-check ESPN and *surface* disagreement rather than
   averaging it — the durable fix for wrong venue strings and the one feature that would make
   "never a confident lie" a two-source claim.
-- **A venue-correction path.** Rayo Vallecano's home fixtures are currently tagged with
-  Leganés's ground. Venue is cosmetic here and is not hand-corrected — hand-correcting
-  generated data is the habit this project exists to break. Design a path that isn't that.
+- **A venue-correction path.** Two of Rayo Vallecano's twelve home fixtures in the snapshot
+  are tagged with Leganés's ground. Venue is cosmetic here and is not hand-corrected —
+  hand-correcting generated data is the habit this project exists to break. Design a path
+  that isn't that.
 
 Found a fixture the app gets wrong? That's this repo's signature issue type; there's a
 [template](.github/ISSUE_TEMPLATE/wrong-fixture-data.md) that asks for the three things we

@@ -31,12 +31,14 @@ nothing to contradict it.
 ## 3. An unset kickoff stays unset
 
 Leagues fix the date before the hour. When ESPN carries a placeholder time for such a
-fixture, the normalizer marks it `timeConfidence: round_placeholder` (or `date_only`) rather
-than `exact`, and the app renders "kickoff time not yet set by the league" in amber italic —
-never a number. No sub-line derives "FIRST 3:00 PM" from a filler; no hero counts a
-placeholder as the next kickoff; no ticker segment names it. A placeholder is trusted to the
-*day* and no further: it stays in tonight's slate until midnight, and is never evicted by
-arithmetic on an instant the league never set.
+fixture, the normalizer marks it `timeConfidence: round_placeholder` (or `tbd`, when neither
+the date nor the time is settled) rather than `exact`, and the app renders "kickoff time not
+yet set by the league" in amber italic — never a number. No sub-line derives "FIRST 3:00 PM"
+from a filler; no hero counts a placeholder as the next kickoff; no ticker segment names it.
+A placeholder is trusted to the *day* and no further: it stays in tonight's slate until
+midnight, and is never evicted by arithmetic on an instant the league never set — and the
+slate's sub-line says how many of its count are TBC, so a count never quietly outruns the
+FIRST/LAST range drawn from the league-set times.
 
 Matchday numbers are not invented either. The provider exposes none, so the app shows none.
 
@@ -94,8 +96,8 @@ data may have moved, past 72 hours that it is stale. The clock behind that ticks
 minute and catches up in one step when a suspended tab wakes, so a page left open overnight
 rolls over honestly instead of quietly showing yesterday. A frozen `in_play` stops claiming
 LIVE four hours after kickoff, because the app can no longer know. Two heroes on two clocks
-was a lie the app told for a week; since v0.2.2 both read one gate — *remaining* means not
-yet kicked off, on the same instant.
+was a lie the app told from the day the lenses shipped (31 Aug 2026) until v0.2.2; since then
+both read one gate — *remaining* means not yet kicked off, on the same instant.
 
 One honest cost, written down rather than hidden: the scheduled sync commits only when the
 diff engine reports a change, so through an international break the banner measures time
