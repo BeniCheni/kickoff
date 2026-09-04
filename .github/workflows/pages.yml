@@ -25,11 +25,16 @@ permissions:
   pages: write
   id-token: write
 
-# One deploy at a time; a newer push supersedes a build still in flight, because the older
-# one would deploy an older tree over a newer one.
+# One deploy at a time, never cancelled mid-flight. GitHub's own Pages starter workflow
+# (actions/starter-workflows, pages/static.yml) sets exactly this, with the note "do NOT
+# cancel in-progress runs as we want to allow these production deployments to complete" —
+# a deploy stopped between upload and activation is the one state this workflow cannot
+# reason about. Ordering still holds without cancelling: a push during a deploy waits as the
+# single pending run, a further push replaces that pending run, and the newest tree is always
+# the last one deployed. (v0.2.2 shipped `true`; changed in its review.)
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
