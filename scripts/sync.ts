@@ -11,6 +11,7 @@ import {
   formatReportLine,
   hasUrgentChanges,
   implausibleShrink,
+  mergeVerdict,
   type SyncReport,
 } from './diff'
 import {
@@ -32,8 +33,9 @@ import { validateFixtures } from './validate'
  * Exits non-zero when something inside the urgency horizon moved, so a scheduled run can
  * surface it rather than updating silently: 0 clean, 1 something inside 72 h moved (after
  * writing), 2 refused to write. The last line of every run is the machine-readable report
- * (`report: changed=… …`, see formatReportLine) that sync.yml reads to decide whether there
- * is anything to commit — per-row fetchedAt stamps move on every run and are not changes.
+ * (`report: changed=… … merge=…`, see formatReportLine) that sync.yml reads to decide whether
+ * there is anything to commit — per-row fetchedAt stamps move on every run and are not
+ * changes — and whether the PR it opens may merge itself (mergeVerdict).
  */
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -165,14 +167,25 @@ async function main() {
   console.log(`\nchanges vs last snapshot:\n${formatChanges(changes)}`)
 
   // The verdict sync.yml reads. Printed last, in both modes, after the standings outcome
-  // is known — a failed standings fetch is reported, never counted as a change.
-  const reportFor = (standings: StandingsOutcome): string =>
-    formatReportLine({
-      changes: changes.length,
-      urgent: changes.filter((c) => c.urgent && c.kind !== 'NEW').length,
-      standings: standings.status,
-      rankMoves: standings.rankMoves,
-    })
+  // is known — a failed standings fetch is reported, never counted as a change. The merge
+  // verdict's reasons print just above it, so a held PR's body says why it is held.
+  const reportFor = (standings: StandingsOutcome): string => {
+    const merge = mergeVerdict(changes, standings.status)
+    const why =
+      merge.verdict === 'hold'
+        ? `hold for a human:\n${merge.reasons.map((r) => `  - ${r}`).join('\n')}\n`
+        : 'no hold reasons — a change-bearing PR from this run may merge itself.\n'
+    return (
+      why +
+      formatReportLine({
+        changes: changes.length,
+        urgent: changes.filter((c) => c.urgent && c.kind !== 'NEW').length,
+        standings: standings.status,
+        rankMoves: standings.rankMoves,
+        merge: merge.verdict,
+      })
+    )
+  }
 
   if (check) {
     const standings = await syncStandings(true)

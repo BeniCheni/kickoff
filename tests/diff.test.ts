@@ -5,7 +5,9 @@ import {
   formatReportLine,
   hasUrgentChanges,
   implausibleShrink,
+  mergeVerdict,
   reportSaysChanged,
+  type Change,
   type SyncReport,
 } from '../scripts/diff'
 import type { Fixture, StandingRow, StandingsFile } from '../src/lib/schema'
@@ -208,7 +210,9 @@ describe('implausibleShrink — a truncated or broken response, not a real colla
 })
 
 describe('the sync report — "changed" is decided here, never by git diff', () => {
-  const quiet: SyncReport = { changes: 0, urgent: 0, standings: 'unchanged', rankMoves: 0 }
+  const quiet: SyncReport = {
+    changes: 0, urgent: 0, standings: 'unchanged', rankMoves: 0, merge: 'auto',
+  }
 
   it('a run that only rewrote fetchedAt stamps is not a change', () => {
     expect(reportSaysChanged(quiet)).toBe(false)
@@ -228,24 +232,103 @@ describe('the sync report — "changed" is decided here, never by git diff', () 
   })
 
   it('formats the one stable line sync.yml greps — pinned verbatim, because the workflow parses it', () => {
-    expect(formatReportLine({ changes: 3, urgent: 1, standings: 'changed', rankMoves: 2 })).toBe(
-      'report: changed=true changes=3 urgent=1 standings=changed rank-moves=2',
-    )
+    expect(
+      formatReportLine({ changes: 3, urgent: 1, standings: 'changed', rankMoves: 2, merge: 'hold' }),
+    ).toBe('report: changed=true changes=3 urgent=1 standings=changed rank-moves=2 merge=hold')
     expect(formatReportLine(quiet)).toBe(
-      'report: changed=false changes=0 urgent=0 standings=unchanged rank-moves=0',
+      'report: changed=false changes=0 urgent=0 standings=unchanged rank-moves=0 merge=auto',
     )
   })
 
   it("matches the exact regex the workflow validates it against, and the fields it extracts", () => {
-    // Mirror of sync.yml's `grep -Eqx` and its two `sed` extractions — if this drifts, the
+    // Mirror of sync.yml's `grep -Eqx` and its three `sed` extractions — if this drifts, the
     // workflow's "Read the sync report" step fails loudly rather than guessing.
-    const shape = /^report: changed=(true|false) changes=[0-9]+ urgent=[0-9]+ standings=(changed|unchanged|failed) rank-moves=[0-9]+$/
-    for (const r of [quiet, { ...quiet, changes: 12, urgent: 4, standings: 'failed' as const }]) {
+    const shape = /^report: changed=(true|false) changes=[0-9]+ urgent=[0-9]+ standings=(changed|unchanged|failed) rank-moves=[0-9]+ merge=(auto|hold)$/
+    const cases: SyncReport[] = [
+      quiet,
+      { ...quiet, changes: 12, urgent: 4, standings: 'failed', merge: 'hold' },
+    ]
+    for (const r of cases) {
       const line = formatReportLine(r)
       expect(line).toMatch(shape)
       expect(/\schanged=([a-z]*)/.exec(line)?.[1]).toBe(String(reportSaysChanged(r)))
       expect(/\sstandings=([a-z]*)/.exec(line)?.[1]).toBe(r.standings)
+      expect(/\smerge=([a-z]*)/.exec(line)?.[1]).toBe(r.merge)
     }
+  })
+})
+
+describe('the merge verdict — hold only what a human must read (v0.2.2)', () => {
+  const change = (kind: Change['kind'], urgent: boolean): Change => ({
+    kind, urgent, id: `ligue1:${kind}`, label: `ligue1 · Home v Away`, detail: '',
+  })
+
+  it('a clean, non-urgent change set may merge itself', () => {
+    const changes = [
+      change('DATE_MOVED', false), change('TIME_CHANGED', false), change('VENUE_CHANGED', false),
+      change('STATUS_CHANGED', false), change('TIME_CONFIDENCE_CHANGED', false), change('NEW', false),
+    ]
+    expect(mergeVerdict(changes, 'changed')).toEqual({ verdict: 'auto', reasons: [] })
+    expect(mergeVerdict(changes, 'unchanged').verdict).toBe('auto')
+  })
+
+  it('nothing changed is also auto — the field is printed on a quiet run and nothing reads it', () => {
+    expect(mergeVerdict([], 'unchanged')).toEqual({ verdict: 'auto', reasons: [] })
+  })
+
+  it('one urgent line of any kind holds the PR — the same rule as exit code 1', () => {
+    const r = mergeVerdict([change('TIME_CHANGED', false), change('DATE_MOVED', true)], 'changed')
+    expect(r.verdict).toBe('hold')
+    expect(r.reasons).toEqual(['1 urgent change(s) — inside 72h, or a postponement/cancellation'])
+  })
+
+  it('an urgent NEW line is not a reason — NEW is never urgent, and hasUrgentChanges agrees', () => {
+    const changes = [change('NEW', true)]
+    expect(hasUrgentChanges(changes)).toBe(false)
+    expect(mergeVerdict(changes, 'changed').verdict).toBe('auto')
+  })
+
+  it('a DISAPPEARED line holds at any horizon — a vanished fixture costs money months out', () => {
+    const r = mergeVerdict([change('DISAPPEARED', false)], 'unchanged')
+    expect(r.verdict).toBe('hold')
+    expect(r.reasons).toEqual(['1 DISAPPEARED line(s), at any horizon'])
+  })
+
+  it('a HOME_AWAY_INVERTED line holds at any horizon — the moneyline is the wrong way round', () => {
+    const r = mergeVerdict([change('HOME_AWAY_INVERTED', false)], 'unchanged')
+    expect(r.verdict).toBe('hold')
+    expect(r.reasons).toEqual(['1 HOME_AWAY_INVERTED line(s), at any horizon'])
+  })
+
+  it('a failed standings fetch holds even a clean fixture diff — the report is partial', () => {
+    const r = mergeVerdict([change('TIME_CHANGED', false)], 'failed')
+    expect(r.verdict).toBe('hold')
+    expect(r.reasons).toEqual(['the standings fetch failed — the previous table was kept'])
+  })
+
+  it('lists every reason, not just the first — the PR body says all of why it is held', () => {
+    const r = mergeVerdict(
+      [change('DATE_MOVED', true), change('DISAPPEARED', false), change('HOME_AWAY_INVERTED', true)],
+      'failed',
+    )
+    expect(r.verdict).toBe('hold')
+    expect(r.reasons).toHaveLength(4)
+  })
+
+  it('agrees with diffFixtures on a real urgent move', () => {
+    const before = fx({ id: 'ligue1:1', kickoffUtc: '2026-08-22T18:45:00.000Z' })
+    const after = fx({ id: 'ligue1:1', kickoffUtc: '2026-08-23T18:45:00.000Z' })
+    const changes = diffFixtures([before], [after], { now: NOW })
+    expect(hasUrgentChanges(changes)).toBe(true)
+    expect(mergeVerdict(changes, 'unchanged').verdict).toBe('hold')
+    // The same move four weeks out is not urgent and may merge itself.
+    const far = diffFixtures(
+      [fx({ id: 'ligue1:2', kickoffUtc: '2026-09-20T18:45:00.000Z' })],
+      [fx({ id: 'ligue1:2', kickoffUtc: '2026-09-21T18:45:00.000Z' })],
+      { now: NOW },
+    )
+    expect(hasUrgentChanges(far)).toBe(false)
+    expect(mergeVerdict(far, 'unchanged').verdict).toBe('auto')
   })
 })
 

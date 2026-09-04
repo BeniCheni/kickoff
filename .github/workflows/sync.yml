@@ -2,24 +2,33 @@ name: Scheduled sync
 
 # Fetches, diffs and (unless dry-run) commits a fresh fixture/standings snapshot on a
 # schedule, then opens or updates one rolling pull request against main — it never pushes
-# straight to main and never merges its own PR (see docs/v0.2.0-proposal.md's auto-merge
-# decision). npm run sync itself is the honesty gate: an unmapped ESPN status, a truncated
-# response, or an implausibly shrunk league all abort with exit 2 before anything is written,
-# which this workflow turns into a failed, unmissable run rather than a silent bad commit.
+# straight to main. Since v0.2.2 it lets that PR merge itself when nothing in it needs a
+# human first, and holds it otherwise: the verdict is decided in scripts/diff.ts
+# (mergeVerdict — anything urgent, any DISAPPEARED or HOME_AWAY_INVERTED line, a failed
+# standings fetch), printed on the report line as merge=auto|hold, and only obeyed here. A
+# held PR stays held across later runs (the `hold: human` label, below) until a human merges
+# it or removes the label. npm run sync itself is the honesty gate: an unmapped ESPN status,
+# a truncated response, or an implausibly shrunk league all abort with exit 2 before anything
+# is written, which this workflow turns into a failed, unmissable run rather than a silent
+# bad commit. Reasoning: docs/v0.2.2-proposal.md §C; the original no-auto-merge decision and
+# why the *empty* report still needs v0.3.0: docs/v0.2.0-proposal.md.
 #
-# Cadence: twice a day, at midnight and noon Brooklyn time. GitHub's cron is UTC and does not
-# follow DST, so '0 4,16 * * *' is exactly 00:00 and 12:00 EDT, and an hour early — 23:00 and
-# 11:00 ET — once EST starts on 1 Nov 2026. That drift is accepted on purpose: one plain cron,
-# not two clever ones. Midnight ET catches every European result of the day; noon ET catches
-# the early weekend kickoffs and the weekday fixture announcements. There is deliberately no
-# "skip quiet days" gate in front of the fetch: the fetch *is* the check (ESPN has no "did
-# anything change?" endpoint), and the days with no matches are exactly the days fixture
-# updates land — see "Review resolutions" in docs/v0.2.0-proposal.md. The gate that does
-# exist sits after the fetch: a run whose diff engine reports nothing commits nothing.
+# Cadence: every three hours (v0.2.2; twice a day before that). GitHub's cron is UTC and does
+# not follow DST: '1,4,…,22' keeps 00:23 and 12:23 EDT in the set, an hour early — 23:23 and
+# 11:23 ET — once EST starts on the first Sunday of November. That drift is accepted on
+# purpose: one plain cron, not two clever ones. The minute is :23 because GitHub documents
+# the top of every hour as its high-load window and advises another minute; the three real
+# scheduled runs under '0 4,16' each fired three to four and a half hours late. A schedule is
+# what is asked for, not what is delivered — the app's copy never promises "every three
+# hours". There is deliberately no "skip quiet days" gate in front of the fetch: the fetch
+# *is* the check (ESPN has no "did anything change?" endpoint), and the days with no matches
+# are exactly the days fixture updates land — see "Review resolutions" in
+# docs/v0.2.0-proposal.md. The gate that does exist sits after the fetch: a run whose diff
+# engine reports nothing commits nothing.
 
 on:
   schedule:
-    - cron: '0 4,16 * * *'
+    - cron: '23 1,4,7,10,13,16,19,22 * * *'
   workflow_dispatch:
     inputs:
       dry_run:
@@ -27,13 +36,16 @@ on:
         type: boolean
         default: false
 
-# contents: push the rolling branch · pull-requests: open/edit the PR · actions: approve the
-# PR's held verify run through the Actions API (the last step below). It once dispatched ci.yml
-# instead; that check never counted in the merge box — docs/v0.2.0-proposal.md, "The residual".
+# contents: push the rolling branch · pull-requests: open/edit/label/auto-merge the PR ·
+# actions: approve the PR's held verify run through the Actions API (it once dispatched ci.yml
+# instead; that check never counted in the merge box — docs/v0.2.0-proposal.md, "The
+# residual") · issues: create the `hold: human` label on first use (labels are an issues
+# resource; adding one to a PR is covered by pull-requests).
 permissions:
   contents: write
   pull-requests: write
   actions: write
+  issues: write
 
 concurrency:
   group: sync
@@ -102,14 +114,16 @@ jobs:
             echo "::error::the sync output has no 'report:' line — refusing to guess whether anything changed."
             exit 1
           fi
-          if ! printf '%s\n' "$LINE" | grep -Eqx 'report: changed=(true|false) changes=[0-9]+ urgent=[0-9]+ standings=(changed|unchanged|failed) rank-moves=[0-9]+'; then
+          if ! printf '%s\n' "$LINE" | grep -Eqx 'report: changed=(true|false) changes=[0-9]+ urgent=[0-9]+ standings=(changed|unchanged|failed) rank-moves=[0-9]+ merge=(auto|hold)'; then
             echo "::error::malformed report line: $LINE"
             exit 1
           fi
           echo "$LINE"
           CHANGED=$(printf '%s\n' "$LINE" | sed -n 's/.*[[:space:]]changed=\([a-z]*\).*/\1/p')
           STANDINGS=$(printf '%s\n' "$LINE" | sed -n 's/.*[[:space:]]standings=\([a-z]*\).*/\1/p')
+          MERGE=$(printf '%s\n' "$LINE" | sed -n 's/.*[[:space:]]merge=\([a-z]*\).*/\1/p')
           echo "changed=$CHANGED" >> "$GITHUB_OUTPUT"
+          echo "merge=$MERGE" >> "$GITHUB_OUTPUT"
           echo "line=$LINE" >> "$GITHUB_OUTPUT"
           if [ "$STANDINGS" = "failed" ]; then
             echo "::warning::standings sync failed — fixtures are unaffected and the previous table is kept; see the 'Run the sync' log. Not a reason to commit on its own."
@@ -126,8 +140,10 @@ jobs:
             echo "\`$REPORT_LINE\`"
             echo
             echo "Nothing written, no commit, no PR. The sync log is everything this run did."
+            echo
+            echo "Merge verdict this run would have obeyed: \`merge=${{ steps.report.outputs.merge }}\` (auto = the PR may merge itself; hold = a human reads it first)."
           } >> "$GITHUB_STEP_SUMMARY"
-          echo "Dry run (--check): the report above is everything this run did. Nothing written, no commit, no PR."
+          echo "Dry run (--check): the report above is everything this run did. Nothing written, no commit, no PR. Verdict: merge=${{ steps.report.outputs.merge }}."
 
       - name: Nothing changed
         if: steps.mode.outputs.dry_run == 'false' && steps.report.outputs.changed == 'false'
@@ -164,6 +180,7 @@ jobs:
           git push --force origin HEAD:sync/scheduled
 
       - name: Open or update the sync PR
+        id: pr
         if: steps.mode.outputs.dry_run == 'false' && steps.report.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
@@ -177,9 +194,19 @@ jobs:
           # and a wider fence cannot be closed by anything a three-backtick line could.
           {
             echo "## Summary"
-            echo "Scheduled \`npm run sync\` against ESPN. This PR is opened by the sync"
-            echo "workflow and is never auto-merged — see the auto-merge decision in"
-            echo "\`docs/v0.2.0-proposal.md\`."
+            echo "Scheduled \`npm run sync\` against ESPN, opened by the sync workflow."
+            if [ "${{ steps.report.outputs.merge }}" = "hold" ]; then
+              echo "**Held for a human** (\`merge=hold\`): something in this report needs reading"
+              echo "before it lands — the reasons are in the sync report below. This PR stays held"
+              echo "on every later run until a human merges it or removes the \`hold: human\` label."
+            else
+              echo "**Merges itself** (\`merge=auto\`) once \`verify\` is green: nothing inside 72 h"
+              echo "moved, nothing vanished, nothing inverted, standings fetched. If it is still open,"
+              echo "either a human held it (the \`hold: human\` label) or auto-merge was refused —"
+              echo "the run's step summary says which."
+            fi
+            echo "The policy is \`mergeVerdict\` in \`scripts/diff.ts\`; reasoning in"
+            echo "\`docs/v0.2.2-proposal.md\` §C."
             echo
             echo "\`$REPORT_LINE\`"
             echo
@@ -188,11 +215,12 @@ jobs:
             cat sync-output.txt
             echo '````'
             echo
-            echo "## Reviewer checklist"
-            echo "- [ ] Every DATE_MOVED / TIME_CHANGED / HOME_AWAY_INVERTED line checked against any open position on that fixture (betting pipeline Step 0)."
+            echo "## Reviewer checklist (a held PR — betting pipeline Step 0)"
+            echo "- [ ] Every DATE_MOVED / TIME_CHANGED / HOME_AWAY_INVERTED line checked against any open position on that fixture."
             echo "- [ ] STATUS_CHANGED lines to postponed/cancelled reconciled with any open position."
             echo "- [ ] DISAPPEARED lines are cup fixtures leaving the window, not a real loss."
-            echo "- [ ] Standings rank moves agree with the FT results in this report."
+            echo "- [ ] Standings rank moves agree with the FT results in this report; a failed standings fetch is stated in the log."
+            echo "- [ ] This PR was held on an earlier run too? The latest run's reasons are above; earlier runs' reasons are in the Actions log."
           } > pr-body.md
 
           EXISTING=$(gh pr list --head sync/scheduled --base main --state open --json number --jq '.[0].number // empty')
@@ -203,12 +231,13 @@ jobs:
           else
             URL=$(gh pr create --base main --head sync/scheduled --title "$TITLE" --body-file pr-body.md)
           fi
+          echo "number=${URL##*/}" >> "$GITHUB_OUTPUT"
           {
             echo "## Sync PR"
             echo
             echo "\`$REPORT_LINE\`"
             echo
-            echo "$URL — never auto-merged; a human reads what moved."
+            echo "$URL"
           } >> "$GITHUB_STEP_SUMMARY"
 
       # Observed on the first real runs (PR #9, 2 Sep 2026): the bot's PR *does* get a
@@ -239,4 +268,68 @@ jobs:
             echo "approved the held verify run $RUN for $HEAD"
           else
             echo "::warning::could not approve run $RUN — the merge box will wait for a human to approve it on the PR page."
+          fi
+
+      # The merge verdict, obeyed. `hold` labels the PR and disarms any auto-merge an earlier
+      # run enabled — the branch was just force-pushed with new changes, and an armed
+      # auto-merge would otherwise fire on them the moment verify went green. `auto` arms
+      # auto-merge unless the label is present: a held PR stays held whatever this run's
+      # verdict says, because urgency expires (a kickoff six hours past is no longer urgent)
+      # and a line Beni never read must not be swept in by a quieter later run. Only a human
+      # clears the label — by merging, or by removing it. The squash goes through GitHub's own
+      # auto-merge, so the rulesets' required `verify` check still gates it; if the repo's
+      # "Allow auto-merge" setting is off, the request is refused, the run warns, and the PR is
+      # left open for a human — never a blind immediate merge.
+      - name: Obey the merge verdict
+        if: steps.mode.outputs.dry_run == 'false' && steps.report.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPORT_LINE: ${{ steps.report.outputs.line }}
+          HOLD_LABEL: 'hold: human'
+        run: |
+          N="${{ steps.pr.outputs.number }}"
+          VERDICT="${{ steps.report.outputs.merge }}"
+          if [ -z "$N" ]; then
+            echo "::error::no PR number captured — cannot obey the verdict; the PR (if any) is left as it is."
+            exit 1
+          fi
+          if [ "$VERDICT" = "hold" ]; then
+            gh label create "$HOLD_LABEL" --color D93F0B --force \
+              --description "Held by the sync workflow: a human reads this PR before it lands. Remove the label to release it."
+            gh pr edit "$N" --add-label "$HOLD_LABEL"
+            gh pr merge "$N" --disable-auto >/dev/null 2>&1 || true
+            {
+              echo "## Held for a human"
+              echo
+              echo "\`merge=hold\` — labelled \`$HOLD_LABEL\`, auto-merge disarmed. The reasons are in the sync report; the label stays until a human merges or removes it."
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "held: PR #$N labelled '$HOLD_LABEL' and auto-merge disarmed."
+            exit 0
+          fi
+          if gh pr view "$N" --json labels --jq '.labels[].name' | grep -Fxq "$HOLD_LABEL"; then
+            {
+              echo "## Still held"
+              echo
+              echo "\`merge=auto\` this run, but PR #$N carries \`$HOLD_LABEL\` from an earlier run and stays held — an urgent line may have aged past the horizon unread. A human merges it, or removes the label."
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "still held: PR #$N carries '$HOLD_LABEL'; not arming auto-merge."
+            exit 0
+          fi
+          TITLE=$(gh pr view "$N" --json title --jq .title)
+          if gh pr merge "$N" --squash --auto --subject "$TITLE" --body "$REPORT_LINE"; then
+            {
+              echo "## Merges itself"
+              echo
+              echo "\`merge=auto\` — auto-merge armed on PR #$N; GitHub squashes it once \`verify\` is green."
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "auto-merge armed on PR #$N."
+          elif [ "$(gh pr view "$N" --json autoMergeRequest --jq '.autoMergeRequest != null')" = "true" ]; then
+            echo "auto-merge was already armed on PR #$N."
+          else
+            echo "::warning::merge=auto but GitHub refused to arm auto-merge on PR #$N — the repo's 'Allow auto-merge' setting is probably off. The PR is left open for a human; nothing was merged."
+            {
+              echo "## Auto-merge refused"
+              echo
+              echo "\`merge=auto\`, but arming auto-merge on PR #$N failed (is Settings → General → Allow auto-merge on?). Left open for a human."
+            } >> "$GITHUB_STEP_SUMMARY"
           fi
