@@ -7,7 +7,7 @@ yet set" than be wrong.
 
 ## 🥅 Run it
 
-Eight commands. The last one writes to the repo, so read the next section before you run it.
+`npm run sync` writes to the repo, so read the next section before you run it.
 
 ```bash
 npm install
@@ -47,7 +47,7 @@ Three consequences you'll meet in review:
 
 ## 🔍 What a good PR looks like here
 
-Small, true, and proved — in that order. This is what a review here actually checks:
+Small, true, and proved — that is what a review here actually checks:
 
 - **Small, and about one thing.** Every commit is green on `npm run typecheck` and
   `npm test`. A behavioural change comes with a test where the logic is pure; if the logic
