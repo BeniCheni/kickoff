@@ -8,12 +8,22 @@ disable-model-invocation: true
 # Kickoff PR review — verify, don't vibe
 
 `$ARGUMENTS` — the first token is a PR number or, before a PR exists, a branch name (the base
-is then `origin/main` and the "PR comment" becomes the PR body); `--no-merge` anywhere means
-stop at the PR comment and leave the merge to a human. Invoked by hand only — it pushes commits. Beni clicks every release merge; a tag is a release act.
+is then `origin/main`, and §7 step 0 turns the branch into a PR before anything lands);
+`--no-merge` anywhere means stop at the PR comment and leave the merge to a human. Invoked by
+hand only — it pushes commits. Beni clicks every release merge; a tag is a release act.
+
+**Who can invoke it, and when.** `disable-model-invocation: true` means a human types
+`/beni-pr-review <N>` as the message. A prompt that says "invoke the skill" cannot make the
+session load it, and the description's trigger phrases are never in the model's context — the
+description is for the `/` menu. Skill directories are watched live, but a `.claude/skills/`
+that did not exist when the session started is not watched, and a fresh worktree of a branch
+that carries this skill has exactly that shape: check the branch out, *then* start (or restart)
+the session in that worktree. Proved in the v0.2.1 review — this skill and a plain probe skill
+were both "Unknown skill" in a session started before the checkout.
 
 This skill encodes the *method*. The adversarial reading is still your work in the session; a
 skill that pre-listed findings would be the sealed-appendix anti-pattern in a new costume.
-Model routing that has worked here: Fable Extra for this pass.
+Model routing: `CLAUDE.md`'s routing line (the Extra reasoning tier for this pass).
 
 ## 0. Before anything
 
@@ -133,7 +143,12 @@ to be read cold.
 
 ## 7. Land it
 
-1. Push your commits to the PR branch; wait for `verify` (`gh pr checks <N> --watch`).
+0. **Branch mode only:** open the PR first — `gh pr create --base main --head <branch>` with
+   the review comment (step 2's shape) as the body — and continue from step 1 with its number.
+   Nothing below runs against a bare branch: there is no check to watch, nothing to comment
+   on, nothing to merge.
+1. Push your commits to the PR branch; wait for `verify` (`gh pr checks <N> --watch`). A red
+   `verify` is a high finding: fix it, or the verdict is "not mergeable — `verify` red".
 2. **One PR comment**, shape in `${CLAUDE_SKILL_DIR}/pr-comment.md`: verdict · findings table
    (severity · finding · how verified · fix commit) · findings killed as unreproducible · what was
    deliberately not done · the matrix as actually run · precedence resolutions · human-review
@@ -141,19 +156,27 @@ to be read cold.
 3. If the invoking prompt carries **human-review items** (Beni routes his review through the
    prompt, not PR comments), resolve each on the branch, record the resolution in the spec of
    record, and answer any "correct me if I'm wrong" in one line in the comment.
-4. **Stop here** if `--no-merge` was given, or if the PR is a release — Beni clicks every merge
-   and a tag is a release act. Otherwise squash-merge (the practice since PR #4) with a message
-   written as a release note in the repo's voice: terse, factual, one wink maximum.
+4. **The gate.** A merge needs all three: the verdict is "mergeable" or "mergeable after
+   fixes", every high finding has a fix commit, and `verify` is green at the tip. Then **stop
+   here** if `--no-merge` was given, or if the PR is a release (a version bump, a new
+   `CHANGELOG.md` section, a tag to follow) — Beni clicks every release merge, this skill's own
+   releases included, and a tag is a release act. Otherwise squash-merge (the practice since
+   PR #4) with a message written as a release note in the repo's voice: terse, factual, one
+   wink maximum.
 5. A release's version moves *inside the PR* — this repo has bumped in the PR on every
-   release; only the tag is post-merge: `package.json` and `package-lock.json`, `CHANGELOG.md`
-   (dated with the intended merge day, `TZ=America/New_York date`; if the merge slips past
-   Brooklyn midnight, fix the date before tagging), the README's badge, heading and Lineage.
+   release; only the tag is post-merge: `package.json` and `package-lock.json`, `CHANGELOG.md`,
+   the README's badge, heading and Lineage. The release *date* is written in the PR too, with
+   the intended merge day (`TZ=America/New_York date`), and it lives in more than one file —
+   the `CHANGELOG.md` heading, the README Lineage entry, and any `docs/` table that dates
+   releases (`docs/v0.2.1-pr-review-skill-plan.md` has one); `grep -rn '<day> Sep 2026'` finds
+   them all. If the merge slips past Brooklyn midnight, move every one before tagging.
    Whoever tags: `git tag -a vX.Y.Z -m "vX.Y.Z — <subject>"` on the squash commit, push the
    tag, pull `main`; typecheck, test and build must be green there.
 6. If `sync.yml` changed: watch the first scheduled run and report what the merge box does —
    on a change-bearing day a clean data-only PR whose `verify` goes green hands-off; on a quiet
-   day "Nothing changed" and no PR — expected, never yet observed (ten runs, zero executions as
-   of 3 Sep 2026). Test the merge box itself; the first theory shipped was wrong.
+   day "Nothing changed" and no PR — expected, and never yet observed in any run: count them
+   with `gh run list --workflow=sync.yml` when you write this up, never carry a number from a
+   document. Test the merge box itself; the first theory shipped was wrong.
 7. Say where everything landed.
 
 ## 8. Sealed appendix
@@ -164,6 +187,9 @@ ghosts. **A no-finding review of a real diff is a finding about the review.**
 
 ## 9. Retro, when this skill was the method
 
-Three things the skill got right, three to fix. Fold the fixes into this file in the same PR
-when the PR is tooling; otherwise note them in the ideas file for the next patch. If the
-*method* changed, fold it into `CLAUDE.md` too.
+What the skill got right and what it got wrong, counted honestly — not a quota of three and
+three, and "nothing to fix" needs the same evidence as any other finding. Fold the fixes into
+this file in the same PR when the PR is tooling, and list that edit in the findings table like
+any other diff, so the next reviewer reads it cold instead of inheriting it; otherwise note
+them in the ideas file for the next patch. If the *method* changed, fold it into `CLAUDE.md`
+too.
