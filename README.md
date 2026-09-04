@@ -6,14 +6,17 @@
 [![built with](https://img.shields.io/badge/built%20with-Claude%20Code-D97757)](CLAUDE.md)
 
 ```
- ██╗  ██╗██╗ ██████╗██╗  ██╗ ██████╗ ███████╗███████╗
- ██║ ██╔╝██║██╔════╝██║ ██╔╝██╔═══██╗██╔════╝██╔════╝
- █████╔╝ ██║██║     █████╔╝ ██║   ██║█████╗  █████╗
- ██╔═██╗ ██║██║     ██╔═██╗ ██║   ██║██╔══╝  ██╔══╝
- ██║  ██╗██║╚██████╗██║  ██╗╚██████╔╝██║     ██║
- ╚═╝  ╚═╝╚═╝ ╚═════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝     ╚═╝
- ───────────────────────────────────────────────────────────────────
-  BIG-5 FIXTURES + STANDINGS · BROOKLYN TIME · NEVER A CONFIDENT LIE
+╔══════════════════════════════╗
+║  ╦╔═ ╦ ╔═╗ ╦╔═ ╔═╗ ╔═╗ ╔═╗   ║
+║  ║║  ║ ║   ║║  ║ ║ ║   ║     ║
+║  ╠╩╗ ║ ║   ╠╩╗ ║ ║ ╠╣  ╠╣    ║
+║  ║ ║ ║ ║   ║ ║ ║ ║ ║   ║     ║
+║  ╩ ╩ ╩ ╚═╝ ╩ ╩ ╚═╝ ╩   ╩     ║
+╠══════════════════════════════╣
+║  BIG-5 FIXTURES + STANDINGS  ║
+║  BROOKLYN TIME               ║
+║  NEVER A CONFIDENT LIE       ║
+╚══════════════════════════════╝
 ```
 
 **Big-5 European football fixtures and standings, in Brooklyn time — from a tracker that
@@ -44,20 +47,27 @@ HTML dashboard, lovingly maintained, quietly wrong. Then we audited it (23 Aug 2
 rap sheet came back with about twenty falsified rows. The slip, as settled:
 
 ```
-┌────────────────────────────────────────────────────────────────────┐
-│  AUDIT SLIP · 23 AUG 2026 · hand-typed dashboard v. the leagues    │
-├────────────────────────────────────────────────────────────────────┤
-│  Ligue 1, an entire opening matchday .............. ONE DAY EARLY  │
-│  Bundesliga, the opener ........................... SIX HOURS OFF  │
-│  One fixture, never scheduled by anyone, ever ..... DID NOT EXIST  │
-│  PSG–Rennes, after the LFP relocated it ...... WRONG TEAM AT HOME  │
-├────────────────────────────────────────────────────────────────────┤
-│  Falsified rows: about twenty · Rendering bugs: none · Slip: VOID  │
-└────────────────────────────────────────────────────────────────────┘
+┌───────────────────────────────┐
+│ AUDIT SLIP · 23 AUG 2026      │
+│ THE DASHBOARD v. THE LEAGUES  │
+├───────────────────────────────┤
+│ Ligue 1, its opening matchday │
+│ ............... ONE DAY EARLY │
+│ Bundesliga, the opener        │
+│ ............... SIX HOURS OFF │
+│ One fixture nobody scheduled  │
+│ ............... DID NOT EXIST │
+│ PSG–Rennes, relocated by LFP  │
+│ .......... WRONG TEAM AT HOME │
+├───────────────────────────────┤
+│ FALSIFIED ROWS . ABOUT TWENTY │
+│ RENDERING BUGS ......... NONE │
+│ SLIP ................... VOID │
+└───────────────────────────────┘
 ```
 
-That last line is the one to sit with. The LFP relocated the match, the dashboard kept the old
-home side, and — if you're keeping score — that *inverts the moneyline*.
+The PSG–Rennes line is the one to sit with. The LFP relocated the match, the dashboard kept
+the old home side, and — if you're keeping score — that *inverts the moneyline*.
 
 None of those were rendering bugs. They were provenance bugs, and no model, however charming a
 co-conspirator, can out-reason a fixture list that lies to it. So the partner in crime built
