@@ -123,9 +123,24 @@ describe('slateSubLine', () => {
     expect(slateSubLine([a, b], false)).toBe('2 MATCHES · FIRST 1:00 PM · LAST 3:00 PM')
   })
 
-  it('gives an all-TBC slate its count and no invented times', () => {
+  it('gives an all-TBC slate its count, its TBC count and no invented times', () => {
     const tbc = fx({ competition: 'ligue1', timeConfidence: 'round_placeholder' })
-    expect(slateSubLine([tbc], true)).toBe('1 REMAINING')
+    expect(slateSubLine([tbc], true)).toBe('1 REMAINING · 1 TBC')
+    const tbd = fx({ competition: 'ligue1', timeConfidence: 'tbd', kickoffUtc: '2026-09-01T12:00:00.000Z' })
+    expect(slateSubLine([tbc, tbd], false)).toBe('2 MATCHES · 2 TBC')
+  })
+
+  // v0.2.2 review: the count includes every fixture, the range only the league-set ones, so a
+  // mixed slate read "3 REMAINING · FIRST … · LAST …" over a range that covered two. The gap
+  // is now named instead of left for the reader to notice.
+  it('names the TBC fixtures the FIRST/LAST range cannot cover, on tonight and on a future matchday', () => {
+    const early = fx({ competition: 'pl', kickoffUtc: '2026-08-30T17:00:00.000Z' })
+    const late = fx({ competition: 'laliga', kickoffUtc: '2026-08-30T19:30:00.000Z' })
+    const tbc = fx({ competition: 'ligue1', timeConfidence: 'round_placeholder', kickoffUtc: '2026-08-30T12:00:00.000Z' })
+    expect(slateSubLine([early, tbc, late], true)).toBe('3 REMAINING · 1 TBC · FIRST 1:00 PM · LAST 3:30 PM')
+    expect(slateSubLine([early, tbc, late], false)).toBe('3 MATCHES · 1 TBC · FIRST 1:00 PM · LAST 3:30 PM')
+    // …and the placeholder's filler instant never becomes FIRST or LAST, whichever side it sits on.
+    expect(slateSubLine([tbc, late], true)).toBe('2 REMAINING · 1 TBC · KICKOFF 3:30 PM')
   })
 })
 
