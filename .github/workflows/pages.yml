@@ -1,0 +1,58 @@
+name: Pages
+
+# The app's public address (v0.2.2): https://benicheni.github.io/kickoff/. Every push to
+# main — a release, or a sync PR that merged itself — rebuilds dist/ and deploys it as the
+# GitHub Pages project site, so the demo is redeployed within minutes of the data landing.
+# What it serves is a point-in-time build: the header's synced stamp and the staleness banner
+# are the visitor's proof of how old the snapshot is, which is the whole point. No code
+# change was needed — vite.config.ts already builds with `base: './'` and every view lives in
+# query params, so the bundle resolves under the /kickoff/ path unchanged.
+#
+# Needs the repo's Settings → Pages → Source set to "GitHub Actions" (Beni's click); until
+# then the deploy step fails and nothing else is affected. workflow_dispatch redeploys by
+# hand — it resolves the workflow path on main, so it works only once this file is there.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# contents: read the tree · pages: publish the artifact · id-token: the OIDC token
+# actions/deploy-pages uses to prove the artifact came from this workflow. Nothing writes to
+# the repo.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deploy at a time; a newer push supersedes a build still in flight, because the older
+# one would deploy an older tree over a newer one.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
