@@ -2,7 +2,9 @@
 
 Every version of Kickoff moves through a ladder of up to four documents, and whatever a cycle
 wrote is archived here — receipts and all, and honestly incomplete where a cycle skipped a
-rung. Two things a cold reader needs first:
+rung. This is the back office: the front door is [README.md](../README.md), the house rules
+are [HONESTY.md](HONESTY.md), and what follows is every piece of paper that got the app from a
+hand-typed dashboard to here, filed by release. Two things a cold reader needs first:
 
 - **Doc-cycle names and release numbers diverge on purpose.** The v0.1.0 release shipped
   from the v0.0.3 design cycle and kept its working name; v0.2.1's proposal plans v0.2.2
@@ -15,14 +17,14 @@ rung. Two things a cold reader needs first:
   `/beni-pr-review` (`.claude/skills/beni-pr-review/`) plus a per-PR appendix. Precedence
   when they disagree: design template, then brief, then build spec.
 
-## Reader-facing pages
+## 📖 Reader-facing pages
 
 | File | What it is |
 |---|---|
-| [HONESTY.md](HONESTY.md) | The house rules — the UTC instant, the diff engine, fail-loud guards, staleness as a state — as a first-class argument. Start here. |
-| [ARCHITECTURE.md](ARCHITECTURE.md) | The data flow ESPN → app, the file map, where the pure layer ends, one skeleton and three lenses, the two ESPN traps. |
+| 📜 [HONESTY.md](HONESTY.md) | The house rules — the UTC instant, the diff engine, fail-loud guards, staleness as a state — as a first-class argument. Start here. |
+| 🗺️ [ARCHITECTURE.md](ARCHITECTURE.md) | The data flow ESPN → app, the file map, where the pure layer ends, one skeleton and three lenses, the two ESPN traps. |
 
-## The archive, by release
+## 📚 The archive, by release
 
 | File | Release | Rung | Notes |
 |---|---|---|---|
