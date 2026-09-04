@@ -55,8 +55,11 @@ sync that finally stops knocking with news nobody needs to read. Paper trail:
   hour on GitHub's own advice.
 - **The Step 0 contract with the betting pipeline** (`CLAUDE.md`, "Scheduled sync"): every
   sync PR *left open for you* is a re-verification trigger; the ones that merged themselves
-  carried nothing inside 72 hours, nothing that vanished and nothing inverted. Before this
-  release every sync PR was a trigger.
+  moved no known fixture inside 72 hours and carried nothing that vanished and nothing
+  inverted. What can still ride an auto-merge unread is named there — a `NEW` fixture inside
+  the window, a result correction or a rename, a move further than 72 hours out — so Step 0
+  keeps re-reading the app for every open position. Before this release every sync PR was a
+  trigger.
 - `README.md` rewritten around three moments — the hook, the try, the contribute — with the
   long honesty section, the map and the ESPN traps moved to their own pages, the emoji budget
   cut to one, and a "where to start" list that names only unclaimed work.
@@ -74,6 +77,33 @@ sync that finally stops knocking with news nobody needs to read. Paper trail:
   "nothing left today" flip fires at the last kickoff, not at the next snapshot; a placeholder
   time is still trusted only to the day. Browser-proved with the clock driven through all
   three instants.
+- **Poster's hero could show "No upcoming fixtures" with a matchday waiting behind it**
+  (found in review, on fabricated fixtures). The next matchday was the next date with a
+  fixture of *any* status, so a date holding only a postponed or cancelled fixture produced
+  an empty slate. `nextMatchday` now counts scheduled fixtures only, and a non-null date
+  always comes with a non-empty slate. Pre-existing; latent until the snapshot holds a
+  postponement.
+- **The hero's count could outrun its FIRST/LAST range** (review). A slate with a
+  placeholder read `3 REMAINING · FIRST … · LAST …` over a range that covered two; the
+  sub-line now names the gap — `3 REMAINING · 1 TBC · FIRST … · LAST …`, and an all-TBC
+  slate `1 REMAINING · 1 TBC`.
+- **Two fail-open seams in the sync workflow's merge-verdict step** (review). A swallowed
+  `--disable-auto` error could announce a hold while an earlier run's auto-merge stayed
+  armed; a failed label read counted as "no label" and armed auto-merge on a held PR. The
+  disarm is now its own step, run *before* the held `verify` run is approved, and reads the
+  state back — a PR still armed fails the job with verify unapproved, so GitHub cannot merge
+  it; a failed label read fails the step before anything is armed. Proved by running the
+  step text under a fake `gh` (16 checks) and `gh pr merge --auto` against a blocked probe
+  PR with the setting off ("Auto merge is not allowed for this repository", nothing merged).
+- **`pages.yml` no longer cancels a deploy in flight** (review): GitHub's own Pages starter
+  sets `cancel-in-progress: false` so a production deployment completes; ordering holds
+  without cancelling.
+- **The report-line regex is read from `sync.yml` by the test**, not mirrored, so the pin
+  and the workflow cannot drift apart (review).
+- **Doc claims a review could falsify, corrected** (review): the Step 0 contract's "carried
+  nothing inside 72 hours" (see Changed); `date_only` is not a `timeConfidence` value (the
+  enum is `tbd`); two of Rayo Vallecano's twelve home fixtures carry Leganés's ground, not
+  all; Dependabot alerts are off, and `SECURITY.md` now says so.
 
 ### Deliberately not done
 - **The numbering.** This release was inserted ahead of the jsdom rig, so the train slides one
