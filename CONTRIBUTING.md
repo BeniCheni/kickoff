@@ -1,9 +1,13 @@
 # Contributing to Kickoff
 
 Thanks for being here. This is a small, opinionated repo with one rule that outranks every
-other, and if you take the rule seriously you'll fit right in.
+other, and if you take the rule seriously you'll fit right in. Everything below serves one
+promise, made to a person with money riding on a kickoff time: the app would rather say "not
+yet set" than be wrong.
 
-## Run it
+## 🥅 Run it
+
+Eight commands. The last one writes to the repo, so read the next section before you run it.
 
 ```bash
 npm install
@@ -22,7 +26,7 @@ days. It needs no key and no account — ESPN's scoreboard and standings endpoin
 You'll want Node 24 (that's what CI runs). The fixture snapshot is committed, so everything
 except `sync` works offline.
 
-## The rule
+## 📜 The rule
 
 **Fixture data is generated and diffed, never typed.** `src/data/*.json` is written only by
 `npm run sync`. Do not hand-edit it, even to fix something you know is wrong — a
@@ -41,7 +45,9 @@ Three consequences you'll meet in review:
   `nowUtcIso` and `today` as parameters. A bare `new Date()` in a component is a bug, because
   it silently stops ticking.
 
-## What a good PR looks like here
+## 🔍 What a good PR looks like here
+
+Small, true, and proved — in that order. This is what a review here actually checks:
 
 - **Small, and about one thing.** Every commit is green on `npm run typecheck` and
   `npm test`. A behavioural change comes with a test where the logic is pure; if the logic
@@ -65,7 +71,7 @@ Wrong fixture data is this repo's signature issue type: open one with the
 the app shows and what the league says. A bug report that starts with "what did the app
 claim, and what was actually true" is already halfway to a test.
 
-## Why the commits are authored by Claude
+## 🤖 Why the commits are authored by Claude
 
 Kickoff is built by Claude Code sessions working from written specifications, with a human
 (Beni) as the product owner who scopes releases, reads the changes, and clicks every release
@@ -79,7 +85,7 @@ tests green at every commit, browser verification before anything is declared do
 adversarial review — run as a repo command, `/beni-pr-review` — that receives prior findings
 only as a sealed "verify independently" list, never as conclusions.
 
-## The four-document ladder
+## 📚 The four-document ladder
 
 Every version moves through four documents, all archived in [`docs/`](docs/README.md): an
 audit and proposal written from a fresh read of the repo, a design brief built on real tokens
