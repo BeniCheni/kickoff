@@ -8,6 +8,100 @@ releases.
 
 ## [Unreleased]
 
+## [0.2.2] — 2026-09-04
+
+The front door: everything a first-time visitor meets — the lens the app opens on, a hero that
+tells the time, an address to reach it at, a README that talks you into cloning it — plus a
+sync that finally stops knocking with news nobody needs to read. Paper trail:
+`docs/v0.2.2-proposal.md`.
+
+### Added
+- **The app has an address.** `.github/workflows/pages.yml` deploys `dist/` to GitHub Pages
+  on every push to `main`, so the demo at `https://benicheni.github.io/kickoff/` is a
+  point-in-time build redeployed within minutes of a merge — a sync that merges itself is live
+  before Beni has read the notification. No code change: the build was already relative. Needs
+  the repo's Pages source set to GitHub Actions.
+- **The sync merges its own boring news.** `mergeVerdict` in `scripts/diff.ts` decides, in
+  one pure function with a test per branch, whether the PR a run opens may merge itself: held
+  for a human when anything is urgent (inside −6 h..+72 h, or a postponement/cancellation at
+  any horizon), when any `DISAPPEARED` or `HOME_AWAY_INVERTED` line appears at any horizon, or
+  when the standings fetch failed; auto otherwise. The verdict rides the report line as
+  `merge=auto|hold` — pinned verbatim in the test, matched by `sync.yml`'s regex — and the
+  workflow only obeys it: `gh pr merge --squash --auto` behind the required `verify` check, or
+  a sticky `hold: human` label plus a disarmed auto-merge that no later, quieter run may
+  re-arm. A held PR stays held until a human merges it or removes the label. Needs the repo's
+  "Allow auto-merge" setting on; until then the run warns and leaves the PR open.
+- **The docs.** `CONTRIBUTING.md` (how to run it, the honesty rules as contribution rules, what
+  a good PR looks like, why the commits are authored by Claude), `SECURITY.md`,
+  `docs/HONESTY.md` (the house rules as a first-class page), `docs/ARCHITECTURE.md` (the data
+  flow ESPN → app, where the pure layer ends), `docs/README.md` (an index of the paper trail),
+  a pull-request template and three issue templates — including one for wrong fixture data,
+  this repo's signature issue type. The six-combo screenshot matrix recaptured at v0.2.2 into
+  `docs/screenshots/v0.2.2/`.
+- A `kickoff-dev-worktree` launch configuration on port 5174, so a worktree session's dev
+  server does not collide with the main checkout's.
+
+### Changed
+- **Poster is the default lens.** A URL without `?lens=` opens Poster; `?lens=ledger` is now
+  the value that gets written down, with a round-trip test for exactly that. The pill order
+  keeps its loudness gradient (Ledger, Poster, Broadcast) — Poster simply starts filled — and
+  theme defaults do not move: Poster shares the non-Broadcast theme key with Ledger, as it
+  always has. **Accepted cost:** every previously shared link without `?lens=` now means
+  Poster.
+- **The sync runs every three hours as scheduled** — `23 1,4,7,10,13,16,19,22 * * *`, up from
+  twice a day, keeping midnight and noon ET in the set. *As scheduled* is the honest phrase:
+  GitHub's cron ran three to four and a half hours late on every real run so far, so eight
+  runs a day is what is asked for, not what is promised. The minute moved off the top of the
+  hour on GitHub's own advice.
+- **The Step 0 contract with the betting pipeline** (`CLAUDE.md`, "Scheduled sync"): every
+  sync PR *left open for you* is a re-verification trigger; the ones that merged themselves
+  carried nothing inside 72 hours, nothing that vanished and nothing inverted. Before this
+  release every sync PR was a trigger.
+- `README.md` rewritten around three moments — the hook, the try, the contribute — with the
+  long honesty section, the map and the ESPN traps moved to their own pages, the emoji budget
+  cut to one, and a "where to start" list that names only unclaimed work.
+- `docs/v0.3.0-ideas.md`: row 3 struck through (shipped here); row 2 annotated (its urgency
+  half shipped here, its `changed=false` half stays v0.3.0); row 5 carries its new number;
+  row 15 added — a docsite, decided and deferred with its trigger.
+
+### Fixed
+- **Poster's hero contradicted Ledger's, live, once a minute.** `TonightSlate` never read a
+  clock: it filtered by status, so a scheduled fixture sat in "N REMAINING" after its kickoff
+  and a snapshot `in_play` counted as remaining from the start, while the Next-up strip
+  dropped both at the kickoff minute. Now one pure gate, `stillToKickOff`, decides "not yet
+  kicked off" for both heroes, and one pure planner, `planSlate`, decides what Poster shows.
+  A fixture leaves the slate at its kickoff minute in the same tick Next-up drops it; the
+  "nothing left today" flip fires at the last kickoff, not at the next snapshot; a placeholder
+  time is still trusted only to the day. Browser-proved with the clock driven through all
+  three instants.
+
+### Deliberately not done
+- **The numbering.** This release was inserted ahead of the jsdom rig, so the train slides one
+  number: the rig is v0.2.3, the resilience patch v0.2.4, v0.3.0 unchanged. `[0.2.1]`'s
+  sentence "wait for v0.2.3, behind the jsdom rig (v0.2.2)" stays as written — true for what
+  0.2.1 planned, superseded here — and `docs/v0.2.1-proposal.md`'s train table carries a
+  dated note rather than a rewrite.
+- **The jsdom component rig** — v0.2.3. Consequence, named: the lens default and the hero's
+  clock ship browser-verified, not unit-tested at the component seam, which is the exact class
+  the rig exists for.
+- **Row 4's stale-LIVE pill**, row 10's palette AA debts, row 11's marquee speed and
+  reduced-motion control — the design cycle, not a build guess.
+- **Row 1** (`RESULT_CHANGED` / `TEAM_RENAMED`) and **row 2's `changed=false` stamp-only
+  auto-merge** — v0.3.0. Row 1 is not a prerequisite for the urgency gate shipped here (a
+  result correction or a rename is invisible to the diff engine whether or not the PR merges
+  itself, so this release widens no hole); it is a prerequisite for row 2. And so the
+  staleness banner still goes amber through an international break — more frequent syncing
+  does not change what it measures, and its thresholds were not tightened to compensate.
+- **Normalize-on-load** (stripping a redundant `?lens=poster` from the address bar) — row 7's
+  `canonicalSearch()`, v0.2.4 with the rest of `useUrlState`. Not half-built here.
+- **A docsite** — deferred with a trigger (`docs/v0.3.0-ideas.md` row 15): VitePress, under a
+  path of the Pages workflow, once the reader-facing set passes roughly six pages.
+- **Aged-out urgency** is presented to a human as a non-urgent line inside a held PR, never
+  merged by the bot — the label says the PR was flagged, not which line did the flagging.
+  Accepted; the run history is the recourse.
+- **Row 14's portable `/beni-pr-review`** — a separate deliverable. **Row 13(e)**, the inert
+  `Default` ruleset — still Beni's click, still not a PR.
+
 ## [0.2.1] — 2026-09-03
 
 The review becomes a command: the adversarial pass that hardened v0.1.0 and v0.2.0 is now a
