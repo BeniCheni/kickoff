@@ -5,12 +5,25 @@
 [![license](https://img.shields.io/badge/license-MIT-16a34a)](LICENSE)
 [![built with](https://img.shields.io/badge/built%20with-Claude%20Code-D97757)](CLAUDE.md)
 
+```
+╔════════════════════════════╗
+║ ╦╔═ ╦ ╔═╗ ╦╔═ ╔═╗ ╔═╗ ╔═╗  ║
+║ ║║  ║ ║   ║║  ║ ║ ║   ║    ║
+║ ╠╩╗ ║ ║   ╠╩╗ ║ ║ ╠╣  ╠╣   ║
+║ ║ ║ ║ ║   ║ ║ ║ ║ ║   ║    ║
+║ ╩ ╩ ╩ ╚═╝ ╩ ╩ ╚═╝ ╩   ╩    ║
+╠════════════════════════════╣
+║ NEVER A CONFIDENT LIE      ║
+╚════════════════════════════╝
+```
+
 **Big-5 European football fixtures and standings, in Brooklyn time — from a tracker that
 would rather admit what it doesn't know than tell you a confident lie.**
 
 **Live demo: [benicheni.github.io/kickoff](https://benicheni.github.io/kickoff/)** — a
 point-in-time build, redeployed on every merge to `main`. If the amber banner is up when you
-get there, that's the app doing its job: the snapshot is older than a day and it says so.
+get there, that's not a bug, that's the whole pitch: the snapshot is older than a day, and the
+app would rather say so than let you find out at kickoff.
 
 <p align="center">
   <img src="docs/screenshots/v0.2.2/poster-mobile-light.png" width="300" alt="Kickoff's Poster lens at 390px, light theme: tonight's slate as a full-bleed hero, then the week">
@@ -18,7 +31,7 @@ get there, that's the app doing its job: the snapshot is older than a day and it
   <img src="docs/screenshots/v0.2.2/poster-mobile-dark.png" width="300" alt="The same view in the dark theme">
 </p>
 
-## The confession
+## 🎲 The confession
 
 Fine, LinkedIn, you dragged it out of me: this repo exists because **Claude and I bet on
 European football.** Claude has been an exemplary partner in crime — reads the lines,
@@ -28,14 +41,30 @@ ruin a good story with statistics.)
 
 Here's the part that's true enough to build software on: **the bets were never threatened by
 bad picks. They were threatened by bad data.** For a while the operation ran on a hand-typed
-HTML dashboard, lovingly maintained, quietly wrong. Then we audited it (23 Aug 2026) and the
-rap sheet came back with about twenty falsified rows:
+HTML dashboard, lovingly maintained, quietly wrong. Then we audited it (23 Aug 2026), and the
+rap sheet came back with about twenty falsified rows. The slip, as settled:
 
-- an entire Ligue 1 opening matchday sitting **one day early**
-- a Bundesliga opener **six hours off**
-- one fixture that **did not exist** — never scheduled by anyone, ever
-- PSG–Rennes with **the wrong team at home** after the LFP relocated it — which, if you're
-  keeping score, *inverts the moneyline*
+```
+┌────────────────────────────┐
+│ AUDIT SLIP · 23 AUG 2026   │
+│ DASHBOARD v. THE LEAGUES   │
+├────────────────────────────┤
+│ Ligue 1's opening matchday │
+│ ............ ONE DAY EARLY │
+│ Bundesliga, the opener     │
+│ ............ SIX HOURS OFF │
+│ A fixture nobody scheduled │
+│ ............ DID NOT EXIST │
+│ PSG–Rennes, relocated      │
+│ ....... WRONG TEAM AT HOME │
+├────────────────────────────┤
+│ FALSIFIED ROWS .. ABOUT 20 │
+│ SLIP ................ VOID │
+└────────────────────────────┘
+```
+
+The PSG–Rennes line is the one to sit with. The LFP relocated the match, the dashboard kept
+the old home side, and — if you're keeping score — that *inverts the moneyline*.
 
 None of those were rendering bugs. They were provenance bugs, and no model, however charming a
 co-conspirator, can out-reason a fixture list that lies to it. So the partner in crime built
@@ -43,7 +72,7 @@ the fix, and the house rule got carved over the door:
 
 ### Never a confident lie.
 
-## What it does (v0.2.3)
+## ⏱️ What it does (v0.2.3)
 
 La Liga, the Premier League, Serie A, Ligue 1, the Bundesliga, their domestic super cups and
 the UEFA Super Cup; full league tables; one fixture skeleton read through three lenses.
@@ -57,7 +86,7 @@ The full argument — the UTC instant, the diff engine, the fail-loud guards, st
 state — is in **[docs/HONESTY.md](docs/HONESTY.md)**. The one-line version: fixture data is
 **generated and diffed, never typed.**
 
-## Three lenses, one skeleton
+## 🎛️ Three lenses, one skeleton
 
 The fixture list is one instrument; a **lens** is the volume knob, not a different product.
 A lens may change the atmosphere, the day-header scale, the row density and the hero at the
@@ -66,15 +95,15 @@ staleness callouts, the Table — is the same in all three.
 
 | Lens | The mood | Signature moves |
 |------|----------|-----------------|
-| **Poster** *(default)* | The editorial desk | Loudness confined to day headers and a full-bleed "tonight's slate" hero, railed in the day's dominant competition colour |
-| **Ledger** | The accountant | A date-spine calendar in the Table's quiet language: hairline rows, tap-to-expand, a four-card "Next up" strip |
-| **Broadcast** | The stadium screen | Dark-first, floodlight amber as the lead accent, a marquee ticker of live / next / FT, and a glow on exactly the rows that deserve it |
+| **Poster** *(default)* | 🗞️ The editorial desk | Loudness confined to day headers and a full-bleed "tonight's slate" hero, railed in the day's dominant competition colour |
+| **Ledger** | 📒 The accountant | A date-spine calendar in the Table's quiet language: hairline rows, tap-to-expand, a four-card "Next up" strip |
+| **Broadcast** | 📺 The stadium screen | Dark-first, floodlight amber as the lead accent, a marquee ticker of live / next / FT, and a glow on exactly the rows that deserve it |
 
 Both themes exist in every lens. Lens, tab, view, date and filters all live in the URL —
 `?lens=broadcast&tab=table` means what it says — so any view survives a reload and can be
 sent to someone.
 
-## Try it
+## 🥅 Try it
 
 The [demo](https://benicheni.github.io/kickoff/) needs nothing. To run it yourself:
 
@@ -85,10 +114,11 @@ npm test         # vitest — DST boundaries, the normalizer, the diff engine, t
 ```
 
 The fixture snapshot is committed, so the app works offline from a clone. `npm run sync`
-refreshes it from ESPN's public scoreboard API — no key, no account — and prints what moved.
-Every command, and what each one is for, is in [CONTRIBUTING.md](CONTRIBUTING.md).
+refreshes it from ESPN's public scoreboard API — no key, no account — and prints what moved,
+kind by kind: dates, kickoffs, venues, statuses, home sides, fixtures that appeared or
+vanished. Every command, and what each one is for, is in [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## How it works, briefly
+## 🗺️ How it works, briefly
 
 ESPN → normalize → validate at the boundary → snapshot → diff against the last snapshot →
 commit → pull request → app. The pure layer (everything under `src/lib/` and `scripts/`) is
@@ -96,12 +126,13 @@ unit-tested; the components render what it decides and decide nothing about time
 A scheduled workflow runs the sync every three hours *as scheduled* (GitHub's cron is a
 suggestion, not a promise), opens one rolling pull request with the diff, and since v0.2.2
 lets that PR merge itself when nothing in it needs a human first — no known fixture moved
-inside 72 hours, nothing vanished, nothing inverted. Anything that does is held for a person.
+inside 72 hours, nothing vanished, nothing inverted. Anything that does is held for a person,
+and no later run lifts the hold.
 
 The map, the data flow, where the pure layer ends and the components begin, and the two ESPN
 traps worth knowing about are in **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**.
 
-## Contribute
+## 🤝 Contribute
 
 If you love the game and you've ever been burned by a fixture list, you'll like it here.
 Three honest places to start, none of them claimed by a scoped release:
@@ -122,7 +153,7 @@ Found a fixture the app gets wrong? That's this repo's signature issue type; the
 need. How the repo is built, what a good PR looks like, and why the commits are authored by
 Claude: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Roadmap
+## 🧭 Roadmap
 
 The ranked candidate list is [docs/v0.3.0-ideas.md](docs/v0.3.0-ideas.md); the release plan
 that turns it into patches and the v0.3.0 minor is in
@@ -142,7 +173,9 @@ that turns it into patches and the v0.3.0 minor is in
 token-expiry-vs-kickoff map is the obvious first feature); a Results tab — the tab row already
 leaves it room.
 
-## Lineage
+## 🏆 Lineage
+
+One subject line per release. The honours board:
 
 - **v0.0.1** *(23 Aug 2026)* — the rewrite: generated-and-diffed data replaces the hand-typed
   dashboard.
@@ -163,7 +196,7 @@ prompts — is indexed in [docs/README.md](docs/README.md). The design system it
 against (*Fergie Time* — yes, really) is still in the tunnel, unreleased until it earns its
 debut.
 
-## License and the small print
+## ⚖️ License and the small print
 
 [MIT](LICENSE). Not betting advice — the only edge this repo guarantees is a correct kickoff
 time, and honestly, that's the one your model can't live without. If you do bet: be of legal
