@@ -200,10 +200,13 @@ jobs:
               echo "before it lands — the reasons are in the sync report below. This PR stays held"
               echo "on every later run until a human merges it or removes the \`hold: human\` label."
             else
-              echo "**Merges itself** (\`merge=auto\`) once \`verify\` is green: nothing inside 72 h"
-              echo "moved, nothing vanished, nothing inverted, standings fetched. If it is still open,"
-              echo "either a human held it (the \`hold: human\` label) or auto-merge was refused —"
-              echo "the run's step summary says which."
+              echo "**Merges itself** (\`merge=auto\`) once \`verify\` is green: no fixture the app"
+              echo "already knew moved inside 72 h, nothing vanished, nothing inverted, standings"
+              echo "fetched. What can still ride an auto-merge unread: a \`NEW\` fixture inside 72 h"
+              echo "(NEW is never urgent), a result correction or a team rename (invisible to the"
+              echo "diff engine — \`docs/v0.3.0-ideas.md\` row 1), and any move more than 72 h out."
+              echo "If it is still open, either a human held it (the \`hold: human\` label) or"
+              echo "auto-merge was refused — the run's step summary says which."
             fi
             echo "The policy is \`mergeVerdict\` in \`scripts/diff.ts\`; reasoning in"
             echo "\`docs/v0.2.2-proposal.md\` §C."
@@ -240,6 +243,36 @@ jobs:
             echo "$URL"
           } >> "$GITHUB_STEP_SUMMARY"
 
+      # A held PR must not be able to merge itself, and the one thing that could make it is an
+      # auto-merge a quieter earlier run armed: the branch was just force-pushed with new
+      # changes, and an armed auto-merge fires the moment verify goes green. So disarm it
+      # *before* the held verify run is approved below, while the merge box is still blocked
+      # — and read the state back rather than trusting the command: gh exits non-zero when
+      # nothing was armed (the usual case), so its exit code alone says nothing, and `|| true`
+      # alone once swallowed a real failure into a step summary that said "held". A PR still
+      # armed after this step fails the job here with verify never approved, so GitHub cannot
+      # merge it until a human looks. (v0.2.2 review, appendix H1.)
+      - name: Disarm auto-merge on a held PR
+        if: steps.mode.outputs.dry_run == 'false' && steps.report.outputs.changed == 'true' && steps.report.outputs.merge == 'hold'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          N="${{ steps.pr.outputs.number }}"
+          if [ -z "$N" ]; then
+            echo "::error::no PR number captured — cannot disarm auto-merge on a PR this run cannot name; nothing was approved or armed."
+            exit 1
+          fi
+          gh pr merge "$N" --disable-auto || echo "(nothing was armed, or the request failed — the state is read back next)"
+          ARMED=$(gh pr view "$N" --json autoMergeRequest --jq '.autoMergeRequest != null') || {
+            echo "::error::could not read PR #$N's auto-merge state — refusing to call it held. Its verify run is left unapproved, so it cannot merge; check the PR by hand."
+            exit 1
+          }
+          if [ "$ARMED" != "false" ]; then
+            echo "::error::PR #$N still has auto-merge armed after --disable-auto — it would merge itself once verify went green. Its verify run is left unapproved; disarm it by hand: gh pr merge $N --disable-auto"
+            exit 1
+          fi
+          echo "PR #$N: auto-merge is not armed."
+
       # Observed on the first real runs (PR #9, 2 Sep 2026): the bot's PR *does* get a
       # `pull_request` run of ci.yml, but GitHub holds it for approval — github-actions[bot]
       # is not a collaborator — and the merge box counts only that run: a workflow_dispatch
@@ -270,16 +303,17 @@ jobs:
             echo "::warning::could not approve run $RUN — the merge box will wait for a human to approve it on the PR page."
           fi
 
-      # The merge verdict, obeyed. `hold` labels the PR and disarms any auto-merge an earlier
-      # run enabled — the branch was just force-pushed with new changes, and an armed
-      # auto-merge would otherwise fire on them the moment verify went green. `auto` arms
-      # auto-merge unless the label is present: a held PR stays held whatever this run's
-      # verdict says, because urgency expires (a kickoff six hours past is no longer urgent)
-      # and a line Beni never read must not be swept in by a quieter later run. Only a human
-      # clears the label — by merging, or by removing it. The squash goes through GitHub's own
-      # auto-merge, so the rulesets' required `verify` check still gates it; if the repo's
-      # "Allow auto-merge" setting is off, the request is refused, the run warns, and the PR is
-      # left open for a human — never a blind immediate merge.
+      # The merge verdict, obeyed. `hold` labels the PR (auto-merge was disarmed two steps up,
+      # before verify was approved). `auto` arms auto-merge unless the label is present: a
+      # held PR stays held whatever this run's verdict says, because urgency expires (a
+      # kickoff six hours past is no longer urgent) and a line Beni never read must not be
+      # swept in by a quieter later run. Only a human clears the label — by merging, or by
+      # removing it. Reading the label is the gate, so a failed read is a failed step, never
+      # "no label" (v0.2.2 review, appendix H2). The squash goes through GitHub's own
+      # auto-merge, so the rulesets' required `verify` check gates it; `gh pr merge --auto`
+      # merges at once instead only when the PR is already clean — which on this repo means
+      # verify already green — and says so below. If the repo's "Allow auto-merge" setting is
+      # off, the request is refused, the run warns, and the PR is left open for a human.
       - name: Obey the merge verdict
         if: steps.mode.outputs.dry_run == 'false' && steps.report.outputs.changed == 'true'
         env:
@@ -297,16 +331,19 @@ jobs:
             gh label create "$HOLD_LABEL" --color D93F0B --force \
               --description "Held by the sync workflow: a human reads this PR before it lands. Remove the label to release it."
             gh pr edit "$N" --add-label "$HOLD_LABEL"
-            gh pr merge "$N" --disable-auto >/dev/null 2>&1 || true
             {
               echo "## Held for a human"
               echo
-              echo "\`merge=hold\` — labelled \`$HOLD_LABEL\`, auto-merge disarmed. The reasons are in the sync report; the label stays until a human merges or removes it."
+              echo "\`merge=hold\` — labelled \`$HOLD_LABEL\`; auto-merge confirmed disarmed before verify was approved. The reasons are in the sync report; the label stays until a human merges or removes it."
             } >> "$GITHUB_STEP_SUMMARY"
-            echo "held: PR #$N labelled '$HOLD_LABEL' and auto-merge disarmed."
+            echo "held: PR #$N labelled '$HOLD_LABEL'."
             exit 0
           fi
-          if gh pr view "$N" --json labels --jq '.labels[].name' | grep -Fxq "$HOLD_LABEL"; then
+          LABELS=$(gh pr view "$N" --json labels --jq '.labels[].name') || {
+            echo "::error::could not read PR #$N's labels — refusing to arm auto-merge on a PR that may be held. Nothing was armed; the PR is left open."
+            exit 1
+          }
+          if printf '%s\n' "$LABELS" | grep -Fxq "$HOLD_LABEL"; then
             {
               echo "## Still held"
               echo
@@ -317,12 +354,20 @@ jobs:
           fi
           TITLE=$(gh pr view "$N" --json title --jq .title)
           if gh pr merge "$N" --squash --auto --subject "$TITLE" --body "$REPORT_LINE"; then
-            {
-              echo "## Merges itself"
-              echo
-              echo "\`merge=auto\` — auto-merge armed on PR #$N; GitHub squashes it once \`verify\` is green."
-            } >> "$GITHUB_STEP_SUMMARY"
-            echo "auto-merge armed on PR #$N."
+            # gh arms auto-merge on a blocked PR and merges at once on a clean one; say which.
+            OUTCOME=$(gh pr view "$N" --json state,autoMergeRequest \
+              --jq 'if .state == "MERGED" then "merged" elif .autoMergeRequest != null then "armed" else "neither" end') || OUTCOME="unread"
+            case "$OUTCOME" in
+              merged)
+                { echo "## Merged itself"; echo; echo "\`merge=auto\` — PR #$N was already clean (\`verify\` green), so the squash landed at once."; } >> "$GITHUB_STEP_SUMMARY"
+                echo "merged: PR #$N squashed — verify was already green." ;;
+              armed)
+                { echo "## Merges itself"; echo; echo "\`merge=auto\` — auto-merge armed on PR #$N; GitHub squashes it once \`verify\` is green."; } >> "$GITHUB_STEP_SUMMARY"
+                echo "auto-merge armed on PR #$N." ;;
+              *)
+                echo "::warning::gh reported success on PR #$N but it is neither merged nor armed ($OUTCOME) — check the PR by hand."
+                { echo "## Auto-merge: outcome unclear"; echo; echo "\`merge=auto\` — the request succeeded but PR #$N reads as neither merged nor armed. Check it by hand."; } >> "$GITHUB_STEP_SUMMARY" ;;
+            esac
           elif [ "$(gh pr view "$N" --json autoMergeRequest --jq '.autoMergeRequest != null')" = "true" ]; then
             echo "auto-merge was already armed on PR #$N."
           else
