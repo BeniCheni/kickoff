@@ -33,8 +33,11 @@ Model routing: `CLAUDE.md`'s routing line (the Extra reasoning tier for this pas
   the branch, so use a different local branch name and push with `HEAD:<remote-branch>`.
   Worktrees share the main checkout's `node_modules` and port 5173 — confirm which checkout
   the dev server serves (`lsof -iTCP:5173 -sTCP:LISTEN`, then that process's cwd) before any
-  browser claim, and use one browser tab of your own. `tsx`, `gh` and `git fetch/push` need
-  the sandbox off in this harness; `vitest` ran inside it on 3 Sep 2026 — try first, bypass on evidence.
+  browser claim, and use one browser tab of your own. In this harness (the Claude Code desktop
+  app with its Bash sandbox on), `tsx`, `gh` and `git fetch/push` need the sandbox off, and so
+  does any write under `.claude/skills/` or under the main checkout's `node_modules` —
+  `vitest` writes `node_modules/.vite-temp/` there, so whether `npm test` runs sandboxed
+  depends on that day's write allowlist. Try sandboxed first; bypass on an `EPERM`, and say so.
 - **Never run `npm run sync` during a review.** It writes `src/data/*.json`, and a data refresh
   is not a release. `npm run sync -- --check` is the only form allowed.
 - Leave the bot's open `sync/scheduled` PR alone; it is the rolling data PR and not yours.
@@ -64,8 +67,8 @@ Model routing: `CLAUDE.md`'s routing line (the Extra reasoning tier for this pas
 ## 2. Baseline
 
 `npm run typecheck` and `npm test` on the branch head. **Report the real numbers**, never a
-number from a document (61, 110 and 126 across two releases and a mid-review baseline; every
-prompt that carried one was stale within days). If either is red, that is your first finding.
+number from a document — every prompt that carried a test count was stale within days, and
+this file carries none for that reason. If either is red, that is your first finding.
 
 ## 3. Static pass — choose the classes by what the diff touches
 
@@ -81,16 +84,54 @@ Always, whatever the diff:
   test named for a claim must be able to fail that claim. Are synthetic events honest stand-ins
   for ESPN's shape?
 
-Then by touch:
+Then by touch — pick the classes whose trigger names something the diff touches; a diff that
+touches none of them gets only the three above:
 
-| Diff touches | Hunt |
-|---|---|
-| `src/lib/clock.ts`, `useNow`, `time.ts`, `fixtures.ts`, `standings.ts`, `lensSelectors.ts`, `scripts/`, any component | every `new Date()` / `Date.now()` / `todayIso()` read — including default-argument helpers (`hoursSinceSync(now = new Date())` in `fixtures.ts` and `standings.ts`: a bare call silently stops ticking), `believablyLive`'s 4 h window, `diff.ts`'s −6 h..+72 h window, `sync.ts`'s Brooklyn window against a UTC-sliced `inWindow`, the UTC cron under DST; anything frozen at mount; StrictMode's double subscribe; the two DST nights (EU 25 Oct, US 1 Nov 2026 — the mismatch week `time.ts` exists for); a suspended tab catching up |
-| `useUrlState`, `urlCodecs`, `lens.ts`, `main.tsx`, `App.tsx`, `FixturesPage`, `TablePage`, `TabNav`, `LensSwitcher` | codec totality, and identity between `main.tsx`'s pre-paint decode and App's hook; push vs replace and a same-URL guard (the active tab pushes a duplicate entry today); the popstate handler's freshness (`initial`/`decode` close over `today`) and StrictMode's double listener; `#hash` survival (dropped on every `set()` today); `URLSearchParams` re-encoding (`only=a,b` → `a%2Cb` on the first `set()` of any instance); junk params rendered-around but never normalized; the re-anchor effect's pin test; the cross-track contract — `?only=` and `&date=` are read by the betting pipeline's Step 0, so a codec change breaks another repo |
-| `theme.ts`, `index.css`, `main.tsx` | the Broadcast dark-default in all entry cases; storage that throws; pre-paint vs App's effect (can they disagree?); computed-style reads for every colour claim; a contrast check over every new pair in **both** themes |
-| `index.css`, `TickerStrip`, App's lens effect | the motion budget (150/180/220 ms + the marquee, nothing else); reduced-motion paths; no permanently enabled global transitions |
-| `scripts/`, `.github/workflows/` | every `console.warn`-and-continue (what would a reader who never sees the console want?); exit-code capture under `-eo pipefail`; inputs that arrive as strings; permissions minimality; user-controlled text rendered as markdown; **read the previous run's log before believing a step is reachable** (`gh run list --workflow=<file>`, `gh run view <id> --log`); the report line is an API — format pinned in a test and mirrored in the workflow's regex |
-| `CHANGELOG.md`, `README.md`, `CLAUDE.md`, `docs/` | every claim is an assertion. On a release: the version string moves in **seven** places (`package.json`, `package-lock.json` ×2, `CHANGELOG.md`, the README badge, the README "What it does" heading, the README Lineage, the annotated tag); the section leads with one sentence, then Added / Changed / Fixed, then **Deliberately not done** |
+**Clock and time** — `src/lib/clock.ts`, `useNow`, `time.ts`, `fixtures.ts`, `standings.ts`,
+`lensSelectors.ts`, `scripts/`, any component that reads the clock:
+- every `new Date()` / `Date.now()` / `todayIso()` read — including default-argument helpers
+  (`hoursSinceSync(now = new Date())` in `fixtures.ts` and `standings.ts`: a bare call silently
+  stops ticking); anything frozen at mount; StrictMode's double subscribe; a suspended tab
+  catching up;
+- the windows: `believablyLive`'s 4 h, `diff.ts`'s −6 h..+72 h, `sync.ts`'s Brooklyn window
+  against a UTC-sliced `inWindow`; the UTC cron under DST;
+- the mismatch week `time.ts` exists for: the EU moves on the last Sunday of October, the US
+  on the first Sunday of November — compute the two nights for the season under review, don't
+  copy them from a doc.
+
+**URL and history** — `useUrlState`, `urlCodecs`, `lens.ts`, `main.tsx`, `App.tsx`,
+`FixturesPage`, `TablePage`, `TabNav`, `LensSwitcher`:
+- codec totality, and identity between `main.tsx`'s pre-paint decode and App's hook;
+- push vs replace, and whether a same-URL guard exists — does the active tab push a duplicate
+  entry? (`docs/v0.3.0-ideas.md` row 9 records what was true when it was last checked);
+- the popstate handler's freshness (`initial`/`decode` close over `today`) and StrictMode's
+  double listener; does `#hash` survive `set()`? does `URLSearchParams` re-encode a typed
+  `only=a,b` on the first `set()`? junk params rendered-around but never normalized; the
+  re-anchor effect's pin test;
+- the cross-track contract — `?only=` and `&date=` are read by the betting pipeline's Step 0,
+  so a codec change breaks another repo: a high finding, never a wording one.
+
+**Theme** — `theme.ts`, `index.css`, `main.tsx`: the Broadcast dark-default in all entry cases;
+storage that throws; pre-paint vs App's effect (can they disagree?); computed-style reads for
+every colour claim; a contrast check over every new pair in **both** themes.
+
+**Motion** — `index.css`, `TickerStrip`, App's lens effect: the motion budget (150/180/220 ms +
+the marquee, nothing else); reduced-motion paths; no permanently enabled global transitions.
+
+**Scripts and workflows** — `scripts/`, `.github/workflows/`: every `console.warn`-and-continue
+(what would a reader who never sees the console want?); exit-code capture under `-eo pipefail`;
+inputs that arrive as strings; permissions minimality; user-controlled text rendered as
+markdown; **read the previous run's log before believing a step is reachable**
+(`gh run list --workflow=<file>`, `gh run view <id> --log`); the report line is an API —
+format pinned in a test and mirrored in the workflow's regex.
+
+**Docs** — `CHANGELOG.md`, `README.md`, `CLAUDE.md`, `docs/`: every claim is an assertion, and a
+claim about the current state of the code ("X happens today") belongs in the ideas file with
+a date, not in this method. On a release: the version string moves in **seven** places —
+`package.json`; `package-lock.json` (two lines — `npm version X.Y.Z --no-git-tag-version`
+moves both files, a hand edit does not); `CHANGELOG.md`; the README badge; the README "What it
+does" heading; the README Lineage; the annotated tag. The section leads with one sentence,
+then Added / Changed / Fixed, then **Deliberately not done**.
 
 ## 4. Dynamic pass — scoped to what actually changed
 
@@ -104,7 +145,8 @@ Then by touch:
   header's version string and `scrollWidth`. Don't spend 48 captures proving a CHANGELOG edit
   didn't break the renderer.
 - **Re-run whatever the PR's own verification matrix promised.** Read it out of the proposal;
-  do not trust the PR body's account of it.
+  do not trust the PR body's account of it. With no proposal (§1.2 tolerates that), the PR
+  body's promise is all there is — run it, and say in the comment that no spec backed it.
 - **Latent paths need synthetic data.** The snapshot holds zero postponed, cancelled or
   in-play fixtures; no manual QA reaches those branches. Fabricated-fixture unit tests are
   their only coverage.
@@ -129,6 +171,9 @@ Then by touch:
   `git -c user.name=Claude -c user.email=noreply@anthropic.com commit` — never `git config`,
   the repo config is shared across worktrees. End each message with the `Co-Authored-By`
   trailer the harness gives you for the model in the session; do not hard-code one.
+- A behavioural fix in a non-release PR goes under `[Unreleased]` in `CHANGELOG.md` in the
+  same commit — the heading accumulates between releases (`CLAUDE.md`, "Release management");
+  a release PR folds it into the new section instead.
 - Re-run typecheck, the full suite and the matrix after fixes.
 
 ## 6. The next ideas note
