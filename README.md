@@ -13,8 +13,6 @@
 ║ ║ ║ ║ ║   ║ ║ ║ ║ ║   ║    ║
 ║ ╩ ╩ ╩ ╚═╝ ╩ ╩ ╚═╝ ╩   ╩    ║
 ╠════════════════════════════╣
-║ BIG-5 FIXTURES + STANDINGS ║
-║ BROOKLYN TIME              ║
 ║ NEVER A CONFIDENT LIE      ║
 ╚════════════════════════════╝
 ```
@@ -61,7 +59,6 @@ rap sheet came back with about twenty falsified rows. The slip, as settled:
 │ ....... WRONG TEAM AT HOME │
 ├────────────────────────────┤
 │ FALSIFIED ROWS .. ABOUT 20 │
-│ RENDERING BUGS ...... NONE │
 │ SLIP ................ VOID │
 └────────────────────────────┘
 ```
@@ -94,8 +91,7 @@ state — is in **[docs/HONESTY.md](docs/HONESTY.md)**. The one-line version: fi
 The fixture list is one instrument; a **lens** is the volume knob, not a different product.
 A lens may change the atmosphere, the day-header scale, the row density and the hero at the
 top of Fixtures. Everything else — tabs, filters, the two-clock rendering, provenance and
-staleness callouts, the Table — is the same in all three. Turn it up or down; the fixtures
-underneath are the same fixtures.
+staleness callouts, the Table — is the same in all three.
 
 | Lens | The mood | Signature moves |
 |------|----------|-----------------|
@@ -109,8 +105,7 @@ sent to someone.
 
 ## 🥅 Try it
 
-The [demo](https://benicheni.github.io/kickoff/) needs nothing: no install, no account, no
-key. To run it yourself:
+The [demo](https://benicheni.github.io/kickoff/) needs nothing. To run it yourself:
 
 ```bash
 npm install
@@ -121,8 +116,7 @@ npm test         # vitest — DST boundaries, the normalizer, the diff engine, t
 The fixture snapshot is committed, so the app works offline from a clone. `npm run sync`
 refreshes it from ESPN's public scoreboard API — no key, no account — and prints what moved,
 kind by kind: dates, kickoffs, venues, statuses, home sides, fixtures that appeared or
-vanished.
-Every command, and what each one is for, is in [CONTRIBUTING.md](CONTRIBUTING.md).
+vanished. Every command, and what each one is for, is in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## 🗺️ How it works, briefly
 
@@ -133,7 +127,7 @@ A scheduled workflow runs the sync every three hours *as scheduled* (GitHub's cr
 suggestion, not a promise), opens one rolling pull request with the diff, and since v0.2.2
 lets that PR merge itself when nothing in it needs a human first — no known fixture moved
 inside 72 hours, nothing vanished, nothing inverted. Anything that does is held for a person,
-and stays held until a person clears it.
+and no later run lifts the hold.
 
 The map, the data flow, where the pure layer ends and the components begin, and the two ESPN
 traps worth knowing about are in **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**.
@@ -181,7 +175,7 @@ leaves it room.
 
 ## 🏆 Lineage
 
-Eight releases in twelve days, one subject line each. The honours board:
+One subject line per release. The honours board:
 
 - **v0.0.1** *(23 Aug 2026)* — the rewrite: generated-and-diffed data replaces the hand-typed
   dashboard.
