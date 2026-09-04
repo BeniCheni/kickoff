@@ -3,8 +3,8 @@
 Every version of Kickoff moves through a ladder of up to four documents, and whatever a cycle
 wrote is archived here — receipts and all, and honestly incomplete where a cycle skipped a
 rung. This is the back office: the front door is [README.md](../README.md), the house rules
-are [HONESTY.md](HONESTY.md), and what follows is every piece of paper that got the app from a
-hand-typed dashboard to here, filed by release. Two things a cold reader needs first:
+are [HONESTY.md](HONESTY.md), and what follows is the paper trail from a hand-typed dashboard
+to here, filed by release. Two things a cold reader needs first:
 
 - **Doc-cycle names and release numbers diverge on purpose.** The v0.1.0 release shipped
   from the v0.0.3 design cycle and kept its working name; v0.2.1's proposal plans v0.2.2
