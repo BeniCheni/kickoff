@@ -45,4 +45,6 @@ rung. Two things a cold reader needs first:
 
 Counts drift; `ls docs` is the truth. Ideas files are ranked candidate lists, not release
 scopes — turning one into a release is the proposal's job, and the deferral reasons in each
-proposal are the part a reader six months out actually needs.
+proposal are the part a reader six months out actually needs. A hotfix has no rung: v0.2.3
+(the workflows on Node 24 actions, 4 Sep 2026) is recorded only in `CHANGELOG.md`, and it is
+why the train's numbers in the two proposals above carry dated notes instead of rewrites.

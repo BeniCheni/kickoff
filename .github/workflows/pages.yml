@@ -8,9 +8,12 @@ name: Pages
 # change was needed — vite.config.ts already builds with `base: './'` and every view lives in
 # query params, so the bundle resolves under the /kickoff/ path unchanged.
 #
-# Needs the repo's Settings → Pages → Source set to "GitHub Actions" (Beni's click); until
-# then the deploy step fails and nothing else is affected. workflow_dispatch redeploys by
-# hand — it resolves the workflow path on main, so it works only once this file is there.
+# Needs the repo's Settings → Pages → Source set to "GitHub Actions" (flipped 4 Sep 2026).
+# Without it the `build` job fails at configure-pages ("Get Pages site failed … Not Found")
+# and `deploy` is skipped — the first run on main showed exactly that — and nothing else is
+# affected. workflow_dispatch redeploys by hand — it resolves the workflow path on main, so
+# it works only once this file is there. Every action here is on its Node 24 major (v0.2.3):
+# the Node 20 majors ran, but the runner forced them onto Node 24 and warned on every job.
 
 on:
   push:
@@ -40,15 +43,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
       - run: npm ci
       - run: npm run build
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: dist
 
@@ -60,4 +63,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
