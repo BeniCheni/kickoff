@@ -1,226 +1,168 @@
 # ⚽ Kickoff
 
 [![CI](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml/badge.svg)](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml)
-[![version](https://img.shields.io/badge/version-0.2.1-1d4ed8)](CHANGELOG.md)
+[![version](https://img.shields.io/badge/version-0.2.2-1d4ed8)](CHANGELOG.md)
 [![license](https://img.shields.io/badge/license-MIT-16a34a)](LICENSE)
 [![built with](https://img.shields.io/badge/built%20with-Claude%20Code-D97757)](CLAUDE.md)
 
 **Big-5 European football fixtures and standings, in Brooklyn time — from a tracker that
 would rather admit what it doesn't know than tell you a confident lie.**
 
-> *"Who plays tonight, and when is that for me?"* — asked many times a day,
-> answered without ever getting burned.
+**Live demo: [benicheni.github.io/kickoff](https://benicheni.github.io/kickoff/)** — a
+point-in-time build, redeployed on every merge to `main`. If the amber banner is up when you
+get there, that's the app doing its job: the snapshot is older than a day and it says so.
 
-## 🍸 The confession
+<p align="center">
+  <img src="docs/screenshots/v0.2.2/poster-mobile-light.png" width="300" alt="Kickoff's Poster lens at 390px, light theme: tonight's slate as a full-bleed hero, then the week">
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/v0.2.2/poster-mobile-dark.png" width="300" alt="The same view in the dark theme">
+</p>
+
+## The confession
 
 Fine, LinkedIn, you dragged it out of me: this repo exists because **Claude and I bet on
 European football.** Claude has been an exemplary partner in crime — reads the lines,
-remembers La Liga's head-to-head tie-breakers, never orders anything at the bar, splits
-the winnings zero ways. The profits have been *juicy* (the sample size is a coin flip and
-variance never sleeps, but let's not ruin a good LinkedIn post with statistics 📈).
+remembers La Liga's head-to-head tie-breakers, never orders anything at the bar, splits the
+winnings zero ways. (The sample size is a coin flip and the variance is undefeated. Let's not
+ruin a good story with statistics.)
 
-Here's the part that's actually true enough to build software on: **the bets were never
-threatened by bad picks. They were threatened by bad data.** For a while the operation ran
-on a hand-typed HTML dashboard, lovingly maintained, quietly wrong. Then we audited it
-(23 Aug 2026) and the rap sheet came back with ~20 falsified rows:
+Here's the part that's true enough to build software on: **the bets were never threatened by
+bad picks. They were threatened by bad data.** For a while the operation ran on a hand-typed
+HTML dashboard, lovingly maintained, quietly wrong. Then we audited it (23 Aug 2026) and the
+rap sheet came back with about twenty falsified rows:
 
-- 🗓️ an entire Ligue 1 opening matchday sitting **one day early**
-- ⏰ a Bundesliga opener **six hours off**
-- 👻 one fixture that **did not exist** — never scheduled by anyone, ever
-- 🔄 PSG–Rennes with **the wrong team at home** after the LFP relocated it — which, if
-  you're keeping score at home, *inverts the moneyline* 💸
+- an entire Ligue 1 opening matchday sitting **one day early**
+- a Bundesliga opener **six hours off**
+- one fixture that **did not exist** — never scheduled by anyone, ever
+- PSG–Rennes with **the wrong team at home** after the LFP relocated it — which, if you're
+  keeping score, *inverts the moneyline*
 
-None of those were rendering bugs. They were **provenance** bugs — and no model, however
-charming a co-conspirator, can out-reason a fixture list that lies to it. So the partner
-in crime built the fix, and the house rule got carved over the door:
+None of those were rendering bugs. They were provenance bugs, and no model, however charming a
+co-conspirator, can out-reason a fixture list that lies to it. So the partner in crime built
+the fix, and the house rule got carved over the door:
 
-### **Never a confident lie.**
+### Never a confident lie.
 
-## 🧭 What it does (v0.2.1)
+## What it does (v0.2.2)
 
-La Liga, Premier League, Serie A, Ligue 1, Bundesliga, their domestic super cups and the
-UEFA Super Cup; full league standings; and one fixture skeleton read through three lenses.
-Every kickoff traces to one stored UTC instant. Every unset time is admitted out loud.
-Every sync is diffed against the last one — and since v0.2.0 the sync runs itself twice a
-day, at midnight and noon Brooklyn time, opening a pull request a human still reads before
-it lands. Every snapshot
-carries its timestamp, so the app warns you — in amber, right under the wordmark — when its
-own data has grown old; and the clock behind that warning ticks, so a tab left open
-overnight rolls over honestly instead of quietly showing yesterday.
+La Liga, the Premier League, Serie A, Ligue 1, the Bundesliga, their domestic super cups and
+the UEFA Super Cup; full league tables; one fixture skeleton read through three lenses.
 
-## 🔒 How it stays honest
+Every kickoff traces to one stored UTC instant, so the stadium clock and the Brooklyn clock
+can't disagree. Every unset time is admitted out loud instead of guessed. Every sync is
+diffed against the last one, so a moved kickoff or a swapped home side surfaces instead of
+rotting. The app knows how old its own data is, and says so in amber, then red.
 
-Fixture data is **generated and diffed, never typed.**
+The full argument — the UTC instant, the diff engine, the fail-loud guards, staleness as a
+state — is in **[docs/HONESTY.md](docs/HONESTY.md)**. The one-line version: fixture data is
+**generated and diffed, never typed.**
 
-- **The stored fact is a UTC instant** (`kickoffUtc`), not a date plus a local time
-  string. Stadium-local and Brooklyn clocks are both *derived* from it, so they cannot
-  disagree with each other or with the source. Storing them separately is what let a whole
-  matchday sit one day early with nothing to contradict it.
-- **Every sync diffs against the previous snapshot** and reports what moved — dates,
-  times, venues, status, home/away swaps — exiting non-zero when something within 72 hours
-  changed. A relocation surfaces instead of rotting.
-- **An unset kickoff stays unset.** Fixtures where the league has fixed the date but not
-  the hour render as "kickoff time not yet set by the league" in amber italic — never as a
-  confident number. No matchday numbers are invented either; the provider exposes none.
-- **The snapshot is committed**, so git history is the fixture-change audit trail.
-- **Staleness is a first-class state.** The data's age escalates from a quiet note to a
-  warning banner; a snapshot's frozen "live" matches stop claiming LIVE a few hours after
-  kickoff, because the app can no longer know. Every one of those clocks ticks (v0.2.0):
-  the Today pill, the next kickoff, the Broadcast glow and the banner all move on their own,
-  and a tab that was asleep catches up the moment it wakes.
+## Three lenses, one skeleton
 
-## 🔭 One skeleton, three lenses
-
-The fixture list is one instrument; a **lens** is the volume knob, not a different
-product. A lens may change the atmosphere (default theme, leading accent), the day-header
-scale, the row density, and the hero element at the top of Fixtures. Everything else —
-tabs, filters, chips, the two-clock rendering, provenance and staleness callouts,
-competition colors, the Table, the footer — is invariant across all three.
+The fixture list is one instrument; a **lens** is the volume knob, not a different product.
+A lens may change the atmosphere, the day-header scale, the row density and the hero at the
+top of Fixtures. Everything else — tabs, filters, the two-clock rendering, provenance and
+staleness callouts, the Table — is the same in all three.
 
 | Lens | The mood | Signature moves |
 |------|----------|-----------------|
-| 📒 **Ledger** *(default)* | The accountant | Date-spine calendar in the Table's quiet language: 30px day numerals, hairline rows, tap-to-expand, a four-card "Next up" strip |
-| 🎞️ **Poster** | The editorial desk | Loudness confined to day headers and a full-bleed "tonight's slate" hero, railed in the day's dominant competition color. Rows stay Ledger rows |
-| 📺 **Broadcast** | The stadium screen | Dark-first (with a remembered light override), floodlight amber promoted to lead accent, a 36s marquee ticker of live/next/FT, and a glow on exactly the rows that deserve it |
+| **Poster** *(default)* | The editorial desk | Loudness confined to day headers and a full-bleed "tonight's slate" hero, railed in the day's dominant competition colour |
+| **Ledger** | The accountant | A date-spine calendar in the Table's quiet language: hairline rows, tap-to-expand, a four-card "Next up" strip |
+| **Broadcast** | The stadium screen | Dark-first, floodlight amber as the lead accent, a marquee ticker of live / next / FT, and a glow on exactly the rows that deserve it |
 
-Both themes exist in every lens; a lens only chooses its default. Lens, tab, view, date
-and filters all live in the URL — `?lens=broadcast&tab=table` means what it says — so any
-view survives a reload and can be sent to someone.
+Both themes exist in every lens. Lens, tab, view, date and filters all live in the URL —
+`?lens=broadcast&tab=table` means what it says — so any view survives a reload and can be
+sent to someone.
 
-## 🚀 Quick start
+## Try it
+
+The [demo](https://benicheni.github.io/kickoff/) needs nothing. To run it yourself:
 
 ```bash
 npm install
-npm run dev            # dev server with HMR at localhost:5173
-npm run sync           # refresh fixtures + standings; exits 1 if something near-term moved
-npm run sync -- --check   # report changes without writing
-npm test               # vitest
-npm run typecheck      # tsc -b
-npm run build          # static bundle in dist/
-npm run build:single   # one self-contained dist-single/index.html, opens by double-click
+npm run dev      # localhost:5173, hot reload
+npm test         # vitest — DST boundaries, the normalizer, the diff engine, the honesty guards
 ```
 
-`sync` accepts `--from=YYYY-MM-DD` and `--to=YYYY-MM-DD`; the default window is −30 to
-+150 days.
+The fixture snapshot is committed, so the app works offline from a clone. `npm run sync`
+refreshes it from ESPN's public scoreboard API — no key, no account — and prints what moved.
+Every command, and what each one is for, is in [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## 🗺️ The map
+## How it works, briefly
 
-```
-src/lib/schema.ts          Zod schemas + the Fixture type. Identity lives here.
-src/lib/time.ts            Timezone rendering. Formats instants; never parses wall-clock.
-src/lib/competitions.ts    Competition metadata: colors, zones, US broadcasters, codes.
-src/lib/fixtures.ts        Loads and validates the snapshot; grouping and query helpers.
-src/lib/standings.ts       The league tables, same provenance rules.
-src/lib/lens.ts            The lens type and its total URL codec.
-src/lib/lensSelectors.ts   Pure per-lens data shaping (heroes, ticker, month cells).
-src/lib/theme.ts           The one theme decision + guarded storage. Broadcast dark-first.
-src/lib/urlCodecs.ts       Total decoders for ?date= and ?only= — junk never crashes.
-src/lib/useUrlState.ts     View state in the query string; push vs replace semantics.
-src/components/            The skeleton: one FixtureRow, week/month views, lens heroes.
-src/data/*.json            GENERATED by `npm run sync`. Do not hand-edit.
-scripts/providers/espn.ts  Fetch + normalize, behind a FixtureProvider interface.
-scripts/diff.ts            Snapshot comparison. The safety net.
-scripts/sync.ts            Orchestrator: fetch → validate → preserve notes → diff → write.
-tests/                     DST boundaries, the normalizer, lens plumbing, honesty guards —
-                           one case per audited bug class, and per reviewed one.
-```
+ESPN → normalize → validate at the boundary → snapshot → diff against the last snapshot →
+commit → pull request → app. The pure layer (everything under `src/lib/` and `scripts/`) is
+unit-tested; the components render what it decides and decide nothing about time themselves.
+A scheduled workflow runs the sync every three hours *as scheduled* (GitHub's cron is a
+suggestion, not a promise), opens one rolling pull request with the diff, and since v0.2.2
+lets that PR merge itself when nothing in it needs a human first — no known fixture moved
+inside 72 hours, nothing vanished, nothing inverted. Anything that does is held for a person.
 
-## 📡 Data source
+The map, the data flow, where the pure layer ends and the components begin, and the two ESPN
+traps worth knowing about are in **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**.
 
-ESPN's public scoreboard and standings APIs — no key, no auth, no secrets anywhere in
-this repo (independently reviewed; see PR #4).
+## Contribute
 
-```
-GET site.api.espn.com/apis/site/v2/sports/soccer/{code}/scoreboard?dates=YYYYMMDD-YYYYMMDD
-```
+If you love the game and you've ever been burned by a fixture list, you'll like it here.
+Three honest places to start, none of them claimed by a scoped release:
 
-Two traps worth knowing:
+- **Back-button honesty.** All date paging replaces history, so Back after five weeks of
+  paging exits the site; the active tab pushes a duplicate entry. Row 9 in
+  [docs/v0.3.0-ideas.md](docs/v0.3.0-ideas.md).
+- **A second data provider.** Cross-check ESPN and *surface* disagreement rather than
+  averaging it — the durable fix for wrong venue strings and the one feature that would make
+  "never a confident lie" a two-source claim.
+- **A venue-correction path.** Two of Rayo Vallecano's twelve home fixtures in the snapshot
+  are tagged with Leganés's ground. Venue is cosmetic here and is not hand-corrected —
+  hand-correcting generated data is the habit this project exists to break. Design a path
+  that isn't that.
 
-1. **It caps responses at 100 events and does not say so.** A four-month range for La Liga
-   silently returns only the first 100 fixtures. The provider requests the window in
-   28-day chunks and refuses to write from any chunk that comes back at the cap, rather
-   than trusting a list that might be truncated.
-2. **Some venue strings are wrong.** Rayo Vallecano's home fixtures are currently tagged
-   with Leganés's ground. Venue is cosmetic here and is not corrected by hand —
-   hand-correcting generated data is the habit this project exists to break. A second
-   provider is the durable fix.
+Found a fixture the app gets wrong? That's this repo's signature issue type; there's a
+[template](.github/ISSUE_TEMPLATE/wrong-fixture-data.md) that asks for the three things we
+need. How the repo is built, what a good PR looks like, and why the commits are authored by
+Claude: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-An ESPN status this app doesn't recognize (a delay, a suspension, an abandonment) also
-refuses to write rather than defaulting to "scheduled," and a league whose fetched count
-falls implausibly short of its last snapshot is treated as a broken response, not a real
-collapse. All three are "fail loudly" guards: an unattended sync should never invent
-scheduledness or silently disappear real fixtures.
+## Roadmap
 
-Fixture ids are the provider's own event id, namespaced by competition — *not* built from
-team names: a season contains both legs of every pairing, and a name-derived id makes the
-reverse fixture look like an inversion of the first.
+The ranked candidate list is [docs/v0.3.0-ideas.md](docs/v0.3.0-ideas.md); the release plan
+that turns it into patches and the v0.3.0 minor is in
+[docs/v0.2.1-proposal.md](docs/v0.2.1-proposal.md), amended by
+[docs/v0.2.2-proposal.md](docs/v0.2.2-proposal.md). Next up:
 
-`npm run sync` also runs on a schedule (`.github/workflows/sync.yml`, twice a day at
-midnight and noon ET — an hour earlier once EST starts, because GitHub's cron is UTC) — it
-never pushes straight to `main`. It opens or updates one pull request carrying the diff
-report, and that PR is never auto-merged: the data feeds real bets, so a human reads what
-moved before it lands.
+- **v0.2.3 — a component test rig** (jsdom beside the node suite), so the clock's component
+  wiring, keyboard behaviour and URL hooks get the coverage the pure layer already has.
+- **v0.2.4 — the resilience patch:** an error boundary so no malformed input is ever a white
+  screen, and the URL contract made total.
+- **A design cycle** for the stale LIVE pill — a designed state for "kicked off, outcome
+  unknown to this snapshot" — and the palette's AA debts.
+- **v0.3.0 — the sync tells the whole truth:** result corrections and team renames in the
+  diff engine, then a quiet run that keeps the staleness banner honest through a break.
 
-## 🤖 How this repo is actually built
+**Beyond**: betting overlays that join a positions file on fixture ids (the
+token-expiry-vs-kickoff map is the obvious first feature); a Results tab — the tab row already
+leaves it room.
 
-Kickoff is an AI-driven codebase in the boring, disciplined sense rather than the
-press-release one. The standing brief lives in [CLAUDE.md](CLAUDE.md); every version moves
-through a four-document prompt ladder — audit proposal → design brief → implementation
-spec → **adversarial review** — and whatever a cycle wrote is archived in [`docs/`](docs/),
-receipts and all (not every cycle wrote all four: v0.1.0's has no proposal, v0.2.0's no
-design brief or build spec, and the archive says so rather than pretending). Review sessions
-receive prior findings only as a sealed "verify independently" appendix, never as
-conclusions, which is how v0.1.0's review caught real bugs instead of nodding along; since
-v0.2.1 that review method is a repo skill, `/beni-pr-review`, diffed like code instead of
-retyped per release. Commits are authored by Claude; typecheck and tests are green at every
-one of them; data-honesty assertions are never weakened to make a redesign pass.
-The design system it's built against (*Fergie Time* — yes, really) is still
-in the tunnel, unreleased until it earns its debut.
+## Lineage
 
-## 🧭 Roadmap
+- **v0.0.1** *(23 Aug 2026)* — the rewrite: generated-and-diffed data replaces the hand-typed
+  dashboard.
+- **v0.0.2** *(26 Aug 2026)* — the Table: full standings synced from ESPN.
+- **v0.1.0** *(31 Aug 2026)* — the lens system: Ledger, Poster, Broadcast over one skeleton;
+  hardened by an adversarial review.
+- **v0.1.1** *(1 Sep 2026)* — the public-repo milestone: security sweep, license, CI.
+- **v0.2.0** *(2 Sep 2026)* — the app learns to tell time: a clock that ticks, a sync that
+  fails loudly, a scheduled refresh that opens its own PR.
+- **v0.2.1** *(3 Sep 2026)* — the review becomes a command: `/beni-pr-review` as a repo skill.
+- **v0.2.2** *(4 Sep 2026)* — the front door: Poster by default, a hero that tells the time, a
+  sync that merges its own boring news, an address, and these docs.
 
-**v0.2.0** took rows 1, 3 and 13 of [docs/v0.2.0-ideas.md](docs/v0.2.0-ideas.md) — the
-paper trail is [docs/v0.2.0-proposal.md](docs/v0.2.0-proposal.md). The current ranked list is
-[docs/v0.3.0-ideas.md](docs/v0.3.0-ideas.md), and the plan that turns it into releases —
-three patches, then v0.3.0 — is in [docs/v0.2.1-proposal.md](docs/v0.2.1-proposal.md). Next up:
+The paper trail for every release — proposals, design briefs, build specs and review
+prompts — is indexed in [docs/README.md](docs/README.md). The design system it's built
+against (*Fergie Time* — yes, really) is still in the tunnel, unreleased until it earns its
+debut.
 
-- **A component test rig** (jsdom beside the node suite), so the clock's component wiring,
-  keyboard behavior and URL hooks get the coverage the pure layer already enjoys — v0.2.2,
-  first, so what follows ships with tests instead of browser-only proof.
-- **An error boundary**, so no malformed input is ever a white screen again — v0.2.3.
-- **The stale LIVE pill** — a designed state for "kicked off, outcome unknown to this
-  snapshot", the one surface where a frozen `in_play` can still claim liveness.
-- **Auto-merging an empty sync report** — defensible only once the diff engine also reports
-  result corrections and team-name changes, its two blind spots today.
+## License and the small print
 
-**Beyond**: betting overlays that join `positions.json` on fixture ids (the
-token-expiry-vs-kickoff map is the obvious first feature); a second data provider that
-cross-checks ESPN and surfaces disagreement rather than averaging it; a Results tab — the
-tab row already leaves it room.
-
-## 📜 Lineage
-
-- **v0.0.1** *(23 Aug 2026)* — the rewrite: generated-and-diffed data replaces the
-  hand-typed dashboard.
-- **v0.0.2** *(26 Aug 2026)* — the Table: full standings synced from ESPN, Fixtures ↔
-  Table navigation.
-- **v0.1.0** *(31 Aug 2026)* — the lens system: Ledger, Poster, Broadcast over one
-  skeleton; both themes everywhere; month grid as navigation; hardened by an adversarial
-  review (see `docs/v0.0.3-*.md` for the design cycle's paper trail, which kept its
-  working name).
-- **v0.1.1** *(1 Sep 2026)* — the public-repo milestone: security sweep, housekeeping,
-  license, CI, and this README.
-- **v0.2.0** *(2 Sep 2026)* — the app's relationship to time: a clock that ticks, a sync that
-  fails loudly instead of guessing, and a scheduled refresh that opens its own PR but never
-  merges it. See [CHANGELOG.md](CHANGELOG.md) and `docs/v0.2.0-proposal.md`.
-- **v0.2.1** *(3 Sep 2026)* — the review becomes a command: `/beni-pr-review` lands as a repo
-  skill, the sync PR's held check approves itself (the fix that shipped between releases), and
-  how a release gets scoped is written down, with the plan for the rest of the v0.2.x train.
-  See `docs/v0.2.1-proposal.md`.
-
-## ⚖️ License & the small print
-
-[MIT](LICENSE). Not betting advice — the only edge this repo guarantees is a correct
-kickoff time, and honestly, that's the one your model can't live without. If you do bet:
-be of legal age, in a legal market, with money you can afford to lose. The variance is
-undefeated. 🍀
+[MIT](LICENSE). Not betting advice — the only edge this repo guarantees is a correct kickoff
+time, and honestly, that's the one your model can't live without. If you do bet: be of legal
+age, in a legal market, with money you can afford to lose. The variance is undefeated.

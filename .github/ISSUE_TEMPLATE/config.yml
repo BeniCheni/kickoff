@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Questions
+    url: https://github.com/BeniCheni/kickoff/issues/new?labels=question
+    about: Anything that isn't a bug, wrong data, or a concrete idea — how it works, why it's built this way, the betting origin story. Discussions is not enabled; a labelled issue is the place.
+  - name: Security
+    url: https://github.com/BeniCheni/kickoff/security/advisories/new
+    about: Report a vulnerability privately (see SECURITY.md).

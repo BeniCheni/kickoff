@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNow } from './lib/useNow'
 import { META, SYNC_STAMP } from './lib/fixtures'
 import { useUrlState } from './lib/useUrlState'
-import { encodeLens, parseLens, type Lens } from './lib/lens'
+import { DEFAULT_LENS, encodeLens, parseLens, type Lens } from './lib/lens'
 import { resolveThemeFromEnvironment, themeStorageKey, writeStoredTheme, type Theme } from './lib/theme'
 import { TabNav, type Tab } from './components/TabNav'
 import { LensSwitcher } from './components/LensSwitcher'
@@ -28,7 +28,7 @@ export default function App() {
   )
 
   // The lens is a view preference, not navigation — replace history, default omitted.
-  const [lens, setLens] = useUrlState<Lens>('lens', 'ledger', encodeLens, parseLens, 'replace')
+  const [lens, setLens] = useUrlState<Lens>('lens', DEFAULT_LENS, encodeLens, parseLens, 'replace')
 
   const prevLens = useRef<Lens | null>(null)
   const fadeTimer = useRef<number | undefined>(undefined)

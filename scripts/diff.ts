@@ -267,6 +267,41 @@ export type SyncReport = {
   /** `failed` keeps the previous table and is never a reason to commit. */
   standings: 'changed' | 'unchanged' | 'failed'
   rankMoves: number
+  /** Whether the PR this run would open may merge itself — see mergeVerdict. */
+  merge: MergeVerdict
+}
+
+export type MergeVerdict = 'auto' | 'hold'
+
+/**
+ * Hold only what a human must read. The scheduled workflow (v0.2.2) lets a change-bearing PR
+ * merge itself unless one of these is true, each a line that has cost money in the betting
+ * pipeline's Step 0 or would hide a partial report:
+ *
+ *   - anything urgent — inside −6 h..+72 h of now, or a postponement/cancellation at any
+ *     horizon (the same rule as exit code 1);
+ *   - a DISAPPEARED or HOME_AWAY_INVERTED line at any horizon — a vanished fixture and an
+ *     inverted moneyline are the two that cost money far out;
+ *   - a failed standings fetch — the previous table was kept, and the report is partial.
+ *
+ * The verdict is decided here and printed on the report line; sync.yml obeys it and never
+ * spells the policy in bash. A held PR stays held across later runs (the workflow's sticky
+ * label), so an urgent change that ages past the horizon before anyone reads it is still
+ * merged by a human, never by the bot.
+ */
+export function mergeVerdict(
+  changes: readonly Change[],
+  standings: SyncReport['standings'],
+): { verdict: MergeVerdict; reasons: string[] } {
+  const reasons: string[] = []
+  const urgent = changes.filter((c) => c.urgent && c.kind !== 'NEW').length
+  if (urgent > 0) reasons.push(`${urgent} urgent change(s) — inside 72h, or a postponement/cancellation`)
+  const disappeared = changes.filter((c) => c.kind === 'DISAPPEARED').length
+  if (disappeared > 0) reasons.push(`${disappeared} DISAPPEARED line(s), at any horizon`)
+  const inverted = changes.filter((c) => c.kind === 'HOME_AWAY_INVERTED').length
+  if (inverted > 0) reasons.push(`${inverted} HOME_AWAY_INVERTED line(s), at any horizon`)
+  if (standings === 'failed') reasons.push('the standings fetch failed — the previous table was kept')
+  return { verdict: reasons.length > 0 ? 'hold' : 'auto', reasons }
 }
 
 /**
@@ -282,13 +317,14 @@ export function reportSaysChanged(r: SyncReport): boolean {
 
 /**
  * The last line every sync run prints — machine-readable, greppable, stable. sync.yml
- * extracts `changed=` and `standings=` from it with a fixed regex and refuses to run the
- * commit/PR half of the job when the line is missing or malformed, so: add fields at the
- * end if you must, never rename, reorder or drop these.
+ * extracts `changed=`, `standings=` and `merge=` from it with a fixed regex and refuses to
+ * run the commit/PR half of the job when the line is missing or malformed, so: add fields at
+ * the end if you must, never rename, reorder or drop these. `merge=` (v0.2.2) is the verdict
+ * on the PR this run would open; on a `changed=false` run it is printed and nothing reads it.
  */
 export function formatReportLine(r: SyncReport): string {
   return (
     `report: changed=${reportSaysChanged(r)} changes=${r.changes} urgent=${r.urgent} ` +
-    `standings=${r.standings} rank-moves=${r.rankMoves}`
+    `standings=${r.standings} rank-moves=${r.rankMoves} merge=${r.merge}`
   )
 }

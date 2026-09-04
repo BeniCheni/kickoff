@@ -69,6 +69,9 @@ export function writeStoredTheme(key: ThemeKey, theme: Theme): void {
 export function resolveThemeFromEnvironment(lens: Lens): Theme {
   return resolveTheme(
     lens,
+    // The shared non-Broadcast key (Ledger's and Poster's alike), not "Ledger's key" — spelled
+    // through a lens so no caller spells the literal; the key name itself is never renamed,
+    // that would drop every existing reader's stored theme.
     readStoredTheme(themeStorageKey('ledger')),
     readStoredTheme(themeStorageKey('broadcast')),
     env.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false,

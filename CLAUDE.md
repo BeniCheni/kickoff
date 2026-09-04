@@ -44,29 +44,58 @@ review pass.
 - `.claude/worktrees/` entries look "prunable" from cloud/VM sessions because their absolute
   gitdir paths only resolve on the Mac — don't prune them from a mounted session.
 
-## Scheduled sync (v0.2.0)
+## Scheduled sync (v0.2.0, amended v0.2.2)
 
-`.github/workflows/sync.yml` runs `npm run sync` twice a day — `0 4,16 * * *`, midnight and
-noon EDT, an hour early under EST because GitHub's cron is UTC — and opens or updates one
-rolling PR (`sync/scheduled` → `main`) carrying the diff report — it never pushes straight
-to `main` and **never auto-merges its own PR**: this repo feeds real betting decisions, so a
-human reads the change report (every DATE_MOVED / TIME_CHANGED / HOME_AWAY_INVERTED /
-STATUS_CHANGED line is a Track A Step 0 re-verification trigger) before it lands. Full
-reasoning in `docs/v0.2.0-proposal.md`. `workflow_dispatch` (with a `dry_run` input mapped
-to `npm run sync -- --check`) lets a session test the workflow without waiting for the
-schedule. Needs the repo's "Allow GitHub Actions to create and approve pull requests"
-setting on (enabled 2026-09-01) — no secret, no PAT. The workflow commits only when the diff
-engine's report line (`report: changed=…`, the last line `npm run sync` prints) says
-something moved — a fixture change of any kind or a standings row — so a quiet run leaves no
-commit and no PR. Consequence, accepted: the app's `synced` stamp and staleness banner
-measure time since the last *change-bearing* sync a human merged, and go amber then red
-through an international break even though the bot verified nothing moved. The fix
-(auto-merging an empty report) is deliberately not in v0.2.0 — see the proposal's "Review
-resolutions". The bot's PR does trigger `ci.yml`'s `pull_request` run, but GitHub holds it for
-approval (github-actions[bot] is not a collaborator) and the merge box counts only that run —
-a `workflow_dispatch` check on the same SHA never appears — so `sync.yml` approves the held
-run itself through the Actions API right after opening or updating the PR (proved hands-off
-on PR #9, 2 Sep 2026; the fork-PR approval policy setting made no difference).
+`.github/workflows/sync.yml` runs `npm run sync` on a cron of `23 1,4,7,10,13,16,19,22 * * *`
+— every three hours *as scheduled*, keeping 00:23 and 12:23 EDT in the set, an hour early
+under EST because GitHub's cron is UTC. What is scheduled is not what is delivered: GitHub's
+cron has run three to four and a half hours late here, so runs may bunch or go missing, and
+no copy in this repo promises "every three hours". It opens or updates one rolling PR
+(`sync/scheduled` → `main`) carrying the diff report — it never pushes straight to `main`.
+
+**Since v0.2.2 the PR merges itself when nothing in it needs a human first, and is held
+otherwise.** The verdict is `mergeVerdict` in `scripts/diff.ts` — hold when anything is
+urgent (inside −6 h..+72 h, or a postponement/cancellation at any horizon), when any
+`DISAPPEARED` or `HOME_AWAY_INVERTED` line appears at any horizon, or when the standings
+fetch failed; auto otherwise — printed on the report line as `merge=auto|hold` and only
+obeyed by the workflow (`gh pr merge --squash --auto`, gated by the rulesets' required
+`verify` check; needs the repo's "Allow auto-merge" setting on, else the PR is left open with
+a warning). **A held PR stays held**: the workflow labels it `hold: human` and disarms
+auto-merge, and no later run arms it while the label is present, whatever that run's verdict
+— urgency expires six hours after kickoff, and a line Beni never read must not be swept in
+by a quieter run. Only a human clears it, by merging or by removing the label.
+
+**The Step 0 contract with the betting pipeline, as of v0.2.2:** every sync PR *left open for
+you* is a Track A Step 0 re-verification trigger — read every DATE_MOVED / TIME_CHANGED /
+HOME_AWAY_INVERTED / STATUS_CHANGED / DISAPPEARED line against any open position. A PR that
+merged itself moved no fixture the app already knew inside −6 h..+72 h of the run, and
+carried no DISAPPEARED and no HOME_AWAY_INVERTED line at any horizon. Three things can still
+land unread through an auto-merge, so Step 0 keeps re-reading the app for every open position
+rather than waiting for a PR: a `NEW` fixture inside 72 h (NEW is never urgent — no position
+was placed off this app on a fixture it had not listed, and a recreated fixture arrives with a
+DISAPPEARED line that holds); a result correction or a team rename (invisible to the diff
+engine either way — `docs/v0.3.0-ideas.md` row 1); and a DATE_MOVED or TIME_CHANGED more than
+72 h out, which is where a position placed early lives — 53 DATE_MOVED lines rode one
+`merge=auto` report on 4 Sep 2026. (Before v0.2.2 every sync PR was a trigger;
+`docs/v0.2.2-proposal.md` §C and its review resolutions.)
+
+Mechanics that have not changed: `workflow_dispatch` (with a `dry_run` input mapped to
+`npm run sync -- --check`) tests the workflow without waiting for the schedule, and its
+summary now states the verdict the run would have obeyed. Needs the repo's "Allow GitHub
+Actions to create and approve pull requests" setting on (enabled 2026-09-01) — no secret, no
+PAT. The workflow commits only when the diff engine's report line (`report: changed=…`, the
+last line `npm run sync` prints) says something moved — a fixture change of any kind or a
+standings row — so a quiet run leaves no commit and no PR. Consequence, accepted: the app's
+`synced` stamp and staleness banner measure time since the last *change-bearing* merged
+sync, and go amber then red through an international break even though the bot verified
+nothing moved; a higher cadence does not change that. The fix (auto-merging an empty report)
+is v0.3.0's, behind the diff engine's two blind spots — see `docs/v0.2.0-proposal.md`'s
+"Review resolutions" and `docs/v0.3.0-ideas.md` rows 1–2. The bot's PR does trigger
+`ci.yml`'s `pull_request` run, but GitHub holds it for approval (github-actions[bot] is not
+a collaborator) and the merge box counts only that run — a `workflow_dispatch` check on the
+same SHA never appears — so `sync.yml` approves the held run itself through the Actions API
+right after opening or updating the PR (proved hands-off on PR #9, 2 Sep 2026; the fork-PR
+approval policy setting made no difference).
 
 ## Fergie Time (the design system)
 
@@ -138,10 +167,12 @@ downstream.
 ## Roadmap pointers
 
 `docs/v0.3.0-ideas.md` (written cold 2 Sep 2026 by the session that reviewed and landed PR #8)
-is the **current** ranked candidate list — 13 rows, several carried forward from
+is the **current** ranked candidate list — 15 rows, several carried forward from
 `docs/v0.2.0-ideas.md`, whose text stays the fuller description for the rows it originated.
-`docs/v0.2.1-proposal.md` ("The train") is the release plan that turns that list into three
-patches and the v0.3.0 minor, with the deferred rows and their reasons; `/beni-pr-review`
+`docs/v0.2.1-proposal.md` ("The train") is the release plan that turns that list into a train
+of patches and the v0.3.0 minor, with the deferred rows and their reasons — **amended on
+numbering by `docs/v0.2.2-proposal.md`** (4 Sep 2026: v0.2.2 is "the front door"; the jsdom
+rig is v0.2.3, the resilience patch v0.2.4, v0.3.0 unchanged); `/beni-pr-review`
 (`.claude/skills/beni-pr-review/`, shipped in v0.2.1, planned in
 `docs/v0.2.1-pr-review-skill-plan.md`) is ladder step 4 as a command.
 Separately, `README.md`'s "Beyond" section names the standing bridge to the betting track:

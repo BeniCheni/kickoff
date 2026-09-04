@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { LENSES, encodeLens, parseLens } from '../src/lib/lens'
+import { DEFAULT_LENS, LENSES, encodeLens, parseLens } from '../src/lib/lens'
 
 describe('lens URL codec', () => {
   it('round-trips every lens through encode → parse', () => {
@@ -8,19 +8,31 @@ describe('lens URL codec', () => {
     }
   })
 
-  it('omits the default (ledger) from the URL and keeps the others', () => {
-    expect(encodeLens('ledger')).toBeNull()
-    expect(encodeLens('poster')).toBe('poster')
+  it('the default is Poster (v0.2.2) — the one lens that stays out of the URL', () => {
+    expect(DEFAULT_LENS).toBe('poster')
+    expect(encodeLens('poster')).toBeNull()
+    expect(encodeLens('ledger')).toBe('ledger')
     expect(encodeLens('broadcast')).toBe('broadcast')
   })
 
-  it('falls back to ledger on junk input', () => {
-    expect(parseLens(null)).toBe('ledger')
-    expect(parseLens('')).toBe('ledger')
-    expect(parseLens('x')).toBe('ledger')
-    expect(parseLens('LEDGER')).toBe('ledger')
-    expect(parseLens('Broadcast')).toBe('ledger')
-    expect(parseLens('poster ')).toBe('ledger')
-    expect(parseLens('poster,broadcast')).toBe('ledger')
+  it('writes ?lens=ledger down and reads it back — Ledger is now the value that must survive', () => {
+    const encoded = encodeLens('ledger')
+    expect(encoded).toBe('ledger')
+    expect(parseLens(encoded)).toBe('ledger')
+    expect(parseLens('poster')).toBe('poster')
+  })
+
+  it('falls back to the default (poster) on junk input', () => {
+    expect(parseLens(null)).toBe('poster')
+    expect(parseLens('')).toBe('poster')
+    expect(parseLens('x')).toBe('poster')
+    expect(parseLens('LEDGER')).toBe('poster')
+    expect(parseLens('Broadcast')).toBe('poster')
+    expect(parseLens('ledger ')).toBe('poster')
+    expect(parseLens('ledger,broadcast')).toBe('poster')
+  })
+
+  it('keeps the loudness gradient — the default is not moved to the front of the pill order', () => {
+    expect(LENSES).toEqual(['ledger', 'poster', 'broadcast'])
   })
 })

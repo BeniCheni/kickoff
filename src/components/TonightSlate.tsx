@@ -1,6 +1,8 @@
+import { useMemo } from 'react'
 import { COMPETITIONS, type CompetitionKey } from '../lib/competitions'
 import { fixtureTimes } from '../lib/time'
-import { fixturesOn, nextMatchday } from '../lib/fixtures'
+import { planSlate } from '../lib/fixtures'
+import { useNow } from '../lib/useNow'
 import { dominantCompetition, slateSubLine } from '../lib/lensSelectors'
 import { posterDayTitle } from './PosterWeek'
 import type { Fixture } from '../lib/schema'
@@ -23,7 +25,9 @@ function SlateTime({ fixture }: { fixture: Fixture }) {
 /**
  * Poster's hero: tonight's remaining slate as a full-bleed block railed in the day's
  * dominant competition colour, each fixture on a 4px competition rail with a 24px mono
- * clock. When nothing is left today it shows the next matchday — and says so.
+ * clock. When nothing is left today it shows the next matchday — and says so. "Remaining"
+ * means not yet kicked off, on the same ticking clock and the same gate as Ledger's Next-up
+ * strip (planSlate → stillToKickOff), so the two heroes can no longer disagree live.
  */
 export function TonightSlate({
   today,
@@ -32,19 +36,11 @@ export function TonightSlate({
   today: string
   active: ReadonlySet<CompetitionKey>
 }) {
-  const remainingToday = fixturesOn(today, active)
-    .filter((f) => f.status === 'scheduled' || f.status === 'in_play')
-    .sort((a, b) => a.kickoffUtc.localeCompare(b.kickoffUtc))
-
-  const isTonight = remainingToday.length > 0
-  const date = isTonight ? today : nextMatchday(today, active)
-  const slate = isTonight
-    ? remainingToday
-    : date
-      ? fixturesOn(date, active)
-          .filter((f) => f.status === 'scheduled' || f.status === 'in_play')
-          .sort((a, b) => a.kickoffUtc.localeCompare(b.kickoffUtc))
-      : []
+  const { nowUtcIso } = useNow()
+  const { date, slate, isTonight } = useMemo(
+    () => planSlate(today, nowUtcIso, active),
+    [today, nowUtcIso, active],
+  )
 
   if (date === null || slate.length === 0) {
     return (
