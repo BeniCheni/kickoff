@@ -81,7 +81,14 @@ export function upcoming(
     .slice(0, limit)
 }
 
-/** The next date after `fromDate` with at least one fixture surviving the filters. */
+/**
+ * The next date after `fromDate` with at least one *scheduled* fixture surviving the
+ * filters. Scheduled only: a postponed or cancelled fixture keeps its dead instant in the
+ * snapshot, so a date that holds nothing else is not a matchday — a scan over every status
+ * once handed `planSlate` such a date, and the hero showed "No upcoming fixtures" with a real
+ * matchday waiting behind it (found in the v0.2.2 review, on fabricated fixtures). Any date
+ * after today's is ahead of now by construction, so "scheduled" is the whole gate here.
+ */
 export function nextMatchday(
   fromDate: string,
   active: ReadonlySet<CompetitionKey>,
@@ -89,7 +96,7 @@ export function nextMatchday(
 ): string | null {
   let best: string | null = null
   for (const f of fixtures) {
-    if (!active.has(f.competition)) continue
+    if (f.status !== 'scheduled' || !active.has(f.competition)) continue
     const d = brooklynDate(f.kickoffUtc)
     if (d > fromDate && (best === null || d < best)) best = d
   }
@@ -102,7 +109,9 @@ export function nextMatchday(
  * one; otherwise the next matchday's scheduled fixtures, and `isTonight: false` so the hero
  * says so ("Next matchday — nothing left today", `MATCHES` not `REMAINING`). The flip is
  * clock-driven: it happens at the last kickoff, not at the next snapshot. `date` is null
- * only when nothing at all is ahead under the filters.
+ * only when no scheduled fixture is ahead under the filters, and a non-null `date` always
+ * comes with a non-empty `slate` — `nextMatchday` skips the dates that hold only postponed
+ * or cancelled fixtures.
  */
 export function planSlate(
   today: string,

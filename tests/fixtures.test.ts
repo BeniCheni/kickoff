@@ -167,5 +167,33 @@ describe('planSlate — Poster\'s hero, decided on the clock', () => {
     expect(nextMatchday(TODAY, new Set<CompetitionKey>(['pl']), [far, near])).toBe('2026-09-05')
     expect(nextMatchday(TODAY, ALL, [])).toBeNull()
   })
+
+  // Found in the v0.2.2 review: the planner's date came from a scan over every status, so a
+  // date holding only a postponed fixture was "the next matchday", its slate was empty, and
+  // the hero showed "No upcoming fixtures" with a real matchday waiting behind it.
+  it('a date that holds only postponed or cancelled fixtures is not a matchday — the hero skips to the one behind it', () => {
+    const postponed = fx({ competition: 'pl', status: 'postponed', kickoffUtc: '2026-09-01T18:00:00.000Z' })
+    const cancelled = fx({ competition: 'laliga', status: 'cancelled', kickoffUtc: '2026-09-01T20:00:00.000Z' })
+    const real = fx({ competition: 'seriea', kickoffUtc: '2026-09-03T18:45:00.000Z' })
+    expect(nextMatchday(TODAY, ALL, [postponed, cancelled, real])).toBe('2026-09-03')
+    expect(planSlate(TODAY, NOON, ALL, [postponed, cancelled, real])).toEqual({
+      date: '2026-09-03', slate: [real], isTonight: false,
+    })
+    // …and when nothing scheduled is behind it, the answer is "nothing ahead", not an empty day.
+    expect(planSlate(TODAY, NOON, ALL, [postponed, cancelled])).toEqual({
+      date: null, slate: [], isTonight: false,
+    })
+  })
+
+  it('a non-null date always comes with a non-empty slate', () => {
+    const postponed = fx({ competition: 'pl', status: 'postponed', kickoffUtc: '2026-09-01T18:00:00.000Z' })
+    const tbcLater = fx({
+      competition: 'ligue1', timeConfidence: 'round_placeholder', kickoffUtc: '2026-09-02T12:00:00.000Z',
+    })
+    for (const list of [[postponed], [postponed, tbcLater], [tbcLater], []]) {
+      const plan = planSlate(TODAY, NOON, ALL, list)
+      expect(plan.date === null).toBe(plan.slate.length === 0)
+    }
+  })
 })
 
