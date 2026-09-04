@@ -6,17 +6,17 @@
 [![built with](https://img.shields.io/badge/built%20with-Claude%20Code-D97757)](CLAUDE.md)
 
 ```
-╔══════════════════════════════╗
-║  ╦╔═ ╦ ╔═╗ ╦╔═ ╔═╗ ╔═╗ ╔═╗   ║
-║  ║║  ║ ║   ║║  ║ ║ ║   ║     ║
-║  ╠╩╗ ║ ║   ╠╩╗ ║ ║ ╠╣  ╠╣    ║
-║  ║ ║ ║ ║   ║ ║ ║ ║ ║   ║     ║
-║  ╩ ╩ ╩ ╚═╝ ╩ ╩ ╚═╝ ╩   ╩     ║
-╠══════════════════════════════╣
-║  BIG-5 FIXTURES + STANDINGS  ║
-║  BROOKLYN TIME               ║
-║  NEVER A CONFIDENT LIE       ║
-╚══════════════════════════════╝
+╔════════════════════════════╗
+║ ╦╔═ ╦ ╔═╗ ╦╔═ ╔═╗ ╔═╗ ╔═╗  ║
+║ ║║  ║ ║   ║║  ║ ║ ║   ║    ║
+║ ╠╩╗ ║ ║   ╠╩╗ ║ ║ ╠╣  ╠╣   ║
+║ ║ ║ ║ ║   ║ ║ ║ ║ ║   ║    ║
+║ ╩ ╩ ╩ ╚═╝ ╩ ╩ ╚═╝ ╩   ╩    ║
+╠════════════════════════════╣
+║ BIG-5 FIXTURES + STANDINGS ║
+║ BROOKLYN TIME              ║
+║ NEVER A CONFIDENT LIE      ║
+╚════════════════════════════╝
 ```
 
 **Big-5 European football fixtures and standings, in Brooklyn time — from a tracker that
@@ -47,23 +47,23 @@ HTML dashboard, lovingly maintained, quietly wrong. Then we audited it (23 Aug 2
 rap sheet came back with about twenty falsified rows. The slip, as settled:
 
 ```
-┌───────────────────────────────┐
-│ AUDIT SLIP · 23 AUG 2026      │
-│ THE DASHBOARD v. THE LEAGUES  │
-├───────────────────────────────┤
-│ Ligue 1, its opening matchday │
-│ ............... ONE DAY EARLY │
-│ Bundesliga, the opener        │
-│ ............... SIX HOURS OFF │
-│ One fixture nobody scheduled  │
-│ ............... DID NOT EXIST │
-│ PSG–Rennes, relocated by LFP  │
-│ .......... WRONG TEAM AT HOME │
-├───────────────────────────────┤
-│ FALSIFIED ROWS . ABOUT TWENTY │
-│ RENDERING BUGS ......... NONE │
-│ SLIP ................... VOID │
-└───────────────────────────────┘
+┌────────────────────────────┐
+│ AUDIT SLIP · 23 AUG 2026   │
+│ DASHBOARD v. THE LEAGUES   │
+├────────────────────────────┤
+│ Ligue 1's opening matchday │
+│ ............ ONE DAY EARLY │
+│ Bundesliga, the opener     │
+│ ............ SIX HOURS OFF │
+│ A fixture nobody scheduled │
+│ ............ DID NOT EXIST │
+│ PSG–Rennes, relocated      │
+│ ....... WRONG TEAM AT HOME │
+├────────────────────────────┤
+│ FALSIFIED ROWS .. ABOUT 20 │
+│ RENDERING BUGS ...... NONE │
+│ SLIP ................ VOID │
+└────────────────────────────┘
 ```
 
 The PSG–Rennes line is the one to sit with. The LFP relocated the match, the dashboard kept
