@@ -36,8 +36,9 @@ review pass.
 - `npm run typecheck` and `npm test` green at every commit; data-honesty test assertions are
   never weakened to make a redesign pass.
 - Since v0.2.4 `npm test` runs two vitest projects (`vite.config.ts`, `test.projects`): `node`
-  — the pure layer, `tests/**/*.test.ts`, what always ran — and `dom` — the component wiring,
-  `tests/dom/**/*.test.tsx` under jsdom + Testing Library, typed by `tsconfig.test-dom.json`.
+  — the pure layer, `tests/**/*.test.ts` minus `tests/dom`, what always ran — and `dom` — the
+  component wiring, everything under `tests/dom/` (`*.test.ts` or `.tsx`) under jsdom +
+  Testing Library, typed by `tsconfig.test-dom.json`.
   The rig is `tests/dom/rig.ts`: drive the app's own clock store with fake timers and a focus
   catch-up, URL state by `replaceState` + a synthetic popstate, StrictMode's double subscribe,
   a stubbed `matchMedia`, a `localStorage` that throws, a contained throw under a boundary.

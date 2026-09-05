@@ -12,7 +12,7 @@ yet set" than be wrong.
 ```bash
 npm install
 npm run dev              # dev server with hot reload at localhost:5173
-npm test                 # vitest, two projects: node (tests/**/*.test.ts) and dom (tests/dom/**/*.test.tsx, jsdom)
+npm test                 # vitest, two projects: node (tests/**/*.test.ts, minus tests/dom) and dom (tests/dom/**, jsdom)
 npm run typecheck        # tsc -b --noEmit
 npm run build            # static bundle in dist/
 npm run build:single     # one self-contained dist-single/index.html — opens by double-click

@@ -1,5 +1,6 @@
 /// <reference types="vitest/config" />
 import { defineConfig } from 'vite'
+import { configDefaults } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { viteSingleFile } from 'vite-plugin-singlefile'
@@ -30,6 +31,11 @@ export default defineConfig(({ mode }) => ({
           name: 'node',
           environment: 'node',
           include: ['tests/**/*.test.ts'],
+          // The directory is the dom project's whatever the extension — the same line
+          // tsconfig.node.json draws. Without it a `.test.ts` under tests/dom matched the
+          // include above and ran here with no DOM (found by the review of PR #21);
+          // tests/dom/environment.test.ts is that file, and fails loudly if this goes.
+          exclude: [...configDefaults.exclude, 'tests/dom/**'],
         },
       },
       {
@@ -37,7 +43,7 @@ export default defineConfig(({ mode }) => ({
         test: {
           name: 'dom',
           environment: 'jsdom',
-          include: ['tests/dom/**/*.test.tsx'],
+          include: ['tests/dom/**/*.test.{ts,tsx}'],
           setupFiles: ['tests/dom/setup.ts'],
         },
       },

@@ -17,8 +17,10 @@ Nothing in the app changes. Paper trail: `docs/v0.2.4-proposal.md`.
 
 ### Added
 - **Two vitest projects under one `npm test`.** `node` is the pure layer, exactly what ran
-  before; `dom` runs `tests/dom/**/*.test.tsx` under jsdom + Testing Library, inheriting the
-  root config so the header's version string and the React plugin reach the components.
+  before, with `tests/dom` excluded outright; `dom` runs everything under `tests/dom/`
+  (`.test.ts` or `.test.tsx`) under jsdom + Testing Library, inheriting the root config so the
+  header's version string and the React plugin reach the components. A guard test in that
+  directory fails loudly under node if the routing ever regresses.
   `tsconfig.test-dom.json` types the DOM tests; `tsconfig.node.json` excludes them and stays
   green on its own, which was the train table's acceptance line.
 - **The rig** (`tests/dom/rig.ts`): five affordances with a test each, built so the resilience
