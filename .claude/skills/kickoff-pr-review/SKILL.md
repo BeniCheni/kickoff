@@ -28,6 +28,10 @@ Model routing: `CLAUDE.md`'s routing line (the Extra reasoning tier for this pas
 ## 0. Before anything
 
 - `CLAUDE.md` and `AGENTS.md` outrank this skill on process. Read them first.
+- **Detect a release before you start.** A version bump in `package.json`, a new `CHANGELOG.md`
+  section, or a tag to follow makes this a release PR — §7 step 4 will stop you short of the
+  merge. Say so in your first message and plan the handoff (§7 step 8) from the beginning; do
+  not discover the gate at the end of a long pass.
 - `TZ=America/New_York date` before you write any date anywhere.
 - Work in a worktree for the PR branch (`git fetch origin` first). Beni's main checkout may hold
   the branch, so use a different local branch name and push with `HEAD:<remote-branch>`.
@@ -40,7 +44,13 @@ Model routing: `CLAUDE.md`'s routing line (the Extra reasoning tier for this pas
   depends on that day's write allowlist. Try sandboxed first; bypass on an `EPERM`, and say so.
 - **Never run `npm run sync` during a review.** It writes `src/data/*.json`, and a data refresh
   is not a release. `npm run sync -- --check` is the only form allowed.
-- Leave the bot's open `sync/scheduled` PR alone; it is the rolling data PR and not yours.
+- Leave the bot's open `sync/scheduled` PR alone — and know what it is. It is the rolling data
+  PR; when it carries the `hold: human` label, the sync's merge verdict held it (something
+  inside −6 h..+72 h moved, a postponement or cancellation, a `DISAPPEARED` or
+  `HOME_AWAY_INVERTED` line, a failed standings fetch — `CLAUDE.md`, "Scheduled sync"), and
+  every sync PR left open is a Track A Step 0 re-verification trigger for every open position
+  in the betting track. Beni alone clears it, by merging it or by removing the label. This
+  skill neither reviews nor merges it.
 - Repo ground truth beats any description of it, including the PR body and this skill.
 
 ## 1. Read, in this order
@@ -215,14 +225,26 @@ to be read cold.
    the `CHANGELOG.md` heading, the README Lineage entry, and any `docs/` table that dates
    releases (`docs/v0.2.1-pr-review-skill-plan.md` has one); `grep -rn '<day> Sep 2026'` finds
    them all. If the merge slips past Brooklyn midnight, move every one before tagging.
-   Whoever tags: `git tag -a vX.Y.Z -m "vX.Y.Z — <subject>"` on the squash commit, push the
-   tag, pull `main`; typecheck, test and build must be green there.
+   **Beni merges and tags every release.** The tag record says so — `v0.2.2` and `v0.2.3` are
+   his; `v0.2.0` and `v0.2.1`, before this skill existed, were Claude's — and this line makes it
+   the rule rather than a habit: `git tag -a vX.Y.Z -m "vX.Y.Z — <subject>"` on the squash
+   commit, push the tag, pull `main`; typecheck, test and build must be green there. The
+   session's last act on a release is the handoff block (step 8), never the tag.
 6. If `sync.yml` changed: watch the first scheduled run and report what the merge box does —
    on a change-bearing day a clean data-only PR whose `verify` goes green hands-off; on a quiet
    day "Nothing changed" and no PR — expected, and never yet observed in any run: count them
    with `gh run list --workflow=sync.yml` when you write this up, never carry a number from a
    document. Test the merge box itself; the first theory shipped was wrong.
+
 7. Say where everything landed.
+8. **The handoff block.** On a release, end with one fenced, paste-ready block — Beni should
+   paste, not compose (he tagged v0.2.3 fifty-eight seconds after merging it, which means he
+   was typing it himself): the merge to click and its squash message; `git tag -a vX.Y.Z -m
+   "vX.Y.Z — <subject>"` with the subject already written; `git push origin vX.Y.Z`;
+   `git pull`; and the three commands that must come back green (`npm run typecheck`,
+   `npm test`, `npm run build`). If the release added or renamed a skill, the block also
+   carries the one step only a human can run: a worktree on the branch, a fresh session, the
+   command typed and seen in the `/` menu.
 
 ## 8. Sealed appendix
 
