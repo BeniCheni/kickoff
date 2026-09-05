@@ -38,6 +38,12 @@ describe('validateFixtures — a rejected row is a reason to stop, not a line to
     expect(out.rejected[0]).toMatch(/result\.home/)
   })
 
+  it.each(['', ' ', 'undefined', 'null'])('rejects a missing or coerced source identity %j at the schema boundary too', (sourceId) => {
+    const out = validateFixtures([fx({ id: 'ligue1:bad-id', source: { provider: 'espn', sourceId, fetchedAt: AT } })])
+    expect(out.valid).toEqual([])
+    expect(out.rejected[0]).toMatch(/ligue1:bad-id: source.sourceId/)
+  })
+
   it('reports every offender, not just the first, so one run shows them all', () => {
     const out = validateFixtures([
       fx({ id: 'x', kickoffUtc: 'not an instant' }),

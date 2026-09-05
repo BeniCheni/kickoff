@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useEffectEvent, useState } from 'react'
 
 /**
  * View state lives in the URL query string so a view survives a reload and can be sent to
@@ -34,15 +34,15 @@ export function useUrlState<T>(
       if (encoded === null) params.delete(key)
       else params.set(key, encoded)
       const qs = params.toString()
-      const url = qs ? `?${qs}` : window.location.pathname
+      const url = window.location.pathname + (qs ? `?${qs}` : '') + window.location.hash
       if (history === 'push') window.history.pushState(null, '', url)
       else window.history.replaceState(null, '', url)
     },
     [key, encode, history],
   )
 
-  useEffect(() => {
-    const onPop = () => {
+  // The subscription stays put; initial/decode stay fresh when today's date changes.
+  const onPop = useEffectEvent(() => {
       const raw = new URLSearchParams(window.location.search).get(key)
       if (raw === null) {
         setValue(initial)
@@ -53,10 +53,12 @@ export function useUrlState<T>(
       } catch {
         setValue(initial)
       }
-    }
-    window.addEventListener('popstate', onPop)
-    return () => window.removeEventListener('popstate', onPop)
   })
+  useEffect(() => {
+    const listener = () => onPop()
+    window.addEventListener('popstate', listener)
+    return () => window.removeEventListener('popstate', listener)
+  }, [key])
 
   return [value, set]
 }

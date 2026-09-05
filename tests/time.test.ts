@@ -1,5 +1,24 @@
 import { describe, it, expect } from 'vitest'
-import { fixtureTimes, brooklynAbbrev, brooklynDate, startOfWeek, addDays, syncStamp } from '../src/lib/time'
+import { fixtureTimes, brooklynAbbrev, brooklynDate, startOfWeek, addDays, syncStamp, posterDayTitle, zonedParts } from '../src/lib/time'
+
+describe('structured display time', () => {
+  it.each([
+    ['2026-09-05T04:00:00Z', '12:00', 'AM'],
+    ['2026-09-05T16:00:00Z', '12:00', 'PM'],
+    ['2026-09-05T18:45:00Z', '2:45', 'PM'],
+  ])('exposes clock and meridiem for %s without parsing display whitespace', (instant, clock, meridiem) => {
+    const parts = zonedParts(new Date(instant), 'America/New_York')
+    expect(parts.clock).toBe(clock)
+    expect(parts.meridiem).toBe(meridiem)
+    expect(parts.time).toBe(`${clock} ${meridiem}`)
+  })
+
+  it('formats Poster titles at calendar boundaries', () => {
+    expect(posterDayTitle('2026-08-30')).toBe('Sun 30 Aug')
+    expect(posterDayTitle('2027-01-01')).toBe('Fri 1 Jan')
+    expect(posterDayTitle('2028-02-29')).toBe('Tue 29 Feb')
+  })
+})
 
 describe('syncStamp', () => {
   it('renders the sync instant in UTC, not a local zone', () => {

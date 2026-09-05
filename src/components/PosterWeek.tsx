@@ -1,13 +1,7 @@
 import { COMPETITIONS } from '../lib/competitions'
-import { fixtureTimes, shortDate, weekdayShort } from '../lib/time'
-import { kickoffBounds, type PosterBlock } from '../lib/lensSelectors'
+import { posterDayTitle, weekdayShort } from '../lib/time'
+import { posterSubLine, type PosterBlock } from '../lib/lensSelectors'
 import { FixtureRow } from './FixtureRow'
-import type { Fixture } from '../lib/schema'
-
-/** "2026-08-30" → "Sun 30 Aug" (rendered uppercase by the headers). */
-export function posterDayTitle(date: string): string {
-  return `${weekdayShort(date)} ${Number(date.slice(8))} ${shortDate(date).split(' ')[0] ?? ''}`
-}
 
 function TodayPill() {
   return (
@@ -15,21 +9,6 @@ function TodayPill() {
       Today
     </span>
   )
-}
-
-function subLine(fixtures: Fixture[]): string {
-  const leagues = new Set(fixtures.map((f) => f.competition)).size
-  const parts = [
-    `${fixtures.length} ${fixtures.length === 1 ? 'MATCH' : 'MATCHES'}`,
-    `${leagues} ${leagues === 1 ? 'LEAGUE' : 'LEAGUES'}`,
-  ]
-  const bounds = kickoffBounds(fixtures)
-  if (bounds) {
-    parts.push(
-      `FIRST KICKOFF ${fixtureTimes(bounds.first.kickoffUtc, bounds.first.venueTz).brooklyn.time}`,
-    )
-  }
-  return parts.join(' · ')
 }
 
 /**
@@ -81,7 +60,7 @@ export function PosterWeek({ blocks }: { blocks: PosterBlock[] }) {
                   {block.isToday && <TodayPill />}
                 </div>
                 <div className="font-mono mt-1.5 text-[11px] font-medium tracking-[0.06em] text-ink-secondary">
-                  {subLine(block.fixtures)}
+                  {posterSubLine(block.fixtures)}
                 </div>
               </div>
               <div className="mt-2.5 border-t border-line">

@@ -57,6 +57,16 @@ review pass.
 
 ## Scheduled sync (v0.2.0, amended v0.2.2)
 
+**Since v0.2.5, fixtures + standings are one authoritative snapshot boundary.** A fetch or
+validation failure in either aborts with exit 2 before snapshot writes. A standings outage
+intentionally delays otherwise valid fixtures; the earlier soft-failure exception is retired.
+Future ancillary datasets do not join this boundary automatically. `standings=failed` remains
+a legacy report value understood by the merge policy below; current failures abort instead.
+A failed run is visible only as a red `sync.yml` run in Actions — no PR, no `hold: human`
+label, no commit — so a fixture that moved during a standings outage reaches no PR until the
+next successful run; Step 0's re-read of the app for every open position is the only guard,
+and the staleness banner the only in-product signal (the v0.2.5 review, PR #23).
+
 `.github/workflows/sync.yml` runs `npm run sync` on a cron of `23 1,4,7,10,13,16,19,22 * * *`
 — every three hours *as scheduled*, keeping 00:23 and 12:23 EDT in the set, an hour early
 under EST because GitHub's cron is UTC. What is scheduled is not what is delivered: GitHub's
@@ -177,9 +187,12 @@ downstream.
 
 ## Roadmap pointers
 
-`docs/v0.3.0-ideas.md` (written cold 2 Sep 2026 by the session that reviewed and landed PR #8)
-is the **current** ranked candidate list — 15 rows, several carried forward from
-`docs/v0.2.0-ideas.md`, whose text stays the fuller description for the rows it originated.
+`docs/v0.2.6-ideas.md` is the **current** ranked candidate list, written cold after the v0.2.5
+build. It carries open rows from `docs/v0.3.0-ideas.md` with their original numbers, the two
+new provider candidates, and this build's verification lessons. Read its process notes
+together with that earlier file's tail and `docs/v0.2.0-ideas.md`, whose text stays the fuller
+description for the rows it originated. `docs/v0.2.5-proposal.md` is the inherited spec for
+the next session, including the authoritative snapshot boundary and its accepted cost.
 `docs/v0.2.1-proposal.md` ("The train") is the release plan that turns that list into a train
 of patches and the v0.3.0 minor, with the deferred rows and their reasons — **amended on
 numbering by `docs/v0.2.2-proposal.md`** (4 Sep 2026: v0.2.2 is "the front door") **and again

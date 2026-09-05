@@ -17,6 +17,9 @@ import { BROOKLYN_TZ } from './competitions'
 export type ZonedParts = {
   /** "8:45 PM" */
   time: string
+  /** Display pieces from Intl, so components never have to split a formatted string. */
+  clock: string
+  meridiem: string
   /** "2026-08-21" — the calendar date *in that zone*, which may differ from the UTC date. */
   isoDate: string
   /** "Fri" */
@@ -43,8 +46,12 @@ export function zonedParts(instant: Date, tz: string): ZonedParts {
       .formatToParts(instant)
       .map((p) => [p.type, p.value]),
   )
+  const clock = `${parts.hour}:${parts.minute}`
+  const meridiem = parts.dayPeriod ?? ''
   return {
-    time: `${parts.hour}:${parts.minute} ${parts.dayPeriod}`,
+    time: meridiem ? `${clock} ${meridiem}` : clock,
+    clock,
+    meridiem,
     isoDate: `${parts.year}-${parts.month}-${parts.day}`,
     weekday: parts.weekday ?? '',
   }
@@ -128,6 +135,12 @@ export function shortDate(iso: string): string {
 
 export function weekdayShort(iso: string): string {
   return formatter('UTC', { weekday: 'short' }).format(new Date(`${iso}T12:00:00Z`))
+}
+
+/** "2026-08-30" → "Sun 30 Aug", without parsing another display string. */
+export function posterDayTitle(iso: string): string {
+  const month = formatter('UTC', { month: 'short' }).format(new Date(`${iso}T12:00:00Z`))
+  return `${weekdayShort(iso)} ${Number(iso.slice(8))} ${month}`
 }
 
 /** An ISO instant as the provenance line renders it: "2026-08-30 17:02 UTC". */

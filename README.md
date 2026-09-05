@@ -1,7 +1,7 @@
 # ⚽ Kickoff
 
 [![CI](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml/badge.svg)](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml)
-[![version](https://img.shields.io/badge/version-0.2.4-1d4ed8)](CHANGELOG.md)
+[![version](https://img.shields.io/badge/version-0.2.5-1d4ed8)](CHANGELOG.md)
 [![license](https://img.shields.io/badge/license-MIT-16a34a)](LICENSE)
 [![built with](https://img.shields.io/badge/built%20with-Claude%20Code-D97757)](CLAUDE.md)
 
@@ -72,7 +72,7 @@ the fix, and the house rule got carved over the door:
 
 ### Never a confident lie.
 
-## ⏱️ What it does (v0.2.4)
+## ⏱️ What it does (v0.2.5)
 
 La Liga, the Premier League, Serie A, Ligue 1, the Bundesliga, their domestic super cups and
 the UEFA Super Cup; full league tables; one fixture skeleton read through three lenses.
@@ -81,6 +81,11 @@ Every kickoff traces to one stored UTC instant, so the stadium clock and the Bro
 can't disagree. Every unset time is admitted out loud instead of guessed. Every sync is
 diffed against the last one, so a moved kickoff or a swapped home side surfaces instead of
 rotting. The app knows how old its own data is, and says so in amber, then red.
+
+Fixtures and standings publish together only after both validate. A failed provider run
+leaves the committed snapshot intact; a standings outage can deliberately delay fresh
+fixtures. A view that throws during rendering keeps the navigation and offers Reload or
+Reset view. Validation during module import, before the app mounts, is outside that recovery.
 
 The full argument — the UTC instant, the diff engine, the fail-loud guards, staleness as a
 state — is in **[docs/HONESTY.md](docs/HONESTY.md)**. The one-line version: fixture data is
@@ -155,13 +160,12 @@ Claude: [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## 🧭 Roadmap
 
-The ranked candidate list is [docs/v0.3.0-ideas.md](docs/v0.3.0-ideas.md); the release plan
+The ranked candidate list is [docs/v0.2.6-ideas.md](docs/v0.2.6-ideas.md); the release plan
 that turns it into patches and the v0.3.0 minor is in
 [docs/v0.2.1-proposal.md](docs/v0.2.1-proposal.md), amended by
-[docs/v0.2.2-proposal.md](docs/v0.2.2-proposal.md). Next up:
+[docs/v0.2.2-proposal.md](docs/v0.2.2-proposal.md), with the completed resilience scope in
+[docs/v0.2.5-proposal.md](docs/v0.2.5-proposal.md). Next up:
 
-- **v0.2.5 — the resilience patch:** an error boundary so no malformed input is ever a white
-  screen, and the URL contract made total.
 - **A design cycle** for the stale LIVE pill — a designed state for "kicked off, outcome
   unknown to this snapshot" — and the palette's AA debts.
 - **v0.3.0 — the sync tells the whole truth:** result corrections and team renames in the
@@ -192,6 +196,8 @@ One subject line per release. The honours board:
 - **v0.2.4** *(5 Sep 2026)* — tests reach the wiring: a jsdom project beside the node suite, the two
   browser-found bugs reproduced as tests that fail against their pre-fix logic, and the review
   command renamed `/kickoff-pr-review`.
+- **v0.2.5** *(5 Sep 2026)* — the resilience patch: fixtures and standings publish together,
+  failed views can recover, URL state stays honest, and theme boot runs before paint.
 
 The paper trail for every release — proposals, design briefs, build specs and review
 prompts — is indexed in [docs/README.md](docs/README.md). The design system it's built

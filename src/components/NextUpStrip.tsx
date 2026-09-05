@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { COMPETITIONS, type CompetitionKey } from '../lib/competitions'
-import { brooklynDate, daysUntil, fixtureTimes } from '../lib/time'
+import { brooklynDate, daysUntil, fixtureTimes, type ZonedParts } from '../lib/time'
 import { useNow } from '../lib/useNow'
 import { upcoming } from '../lib/fixtures'
 import type { Fixture } from '../lib/schema'
@@ -13,12 +13,11 @@ function countdownLabel(date: string, today: string): string {
 /** "11:15 AM" → clock at full size, meridiem small (the Poster hero's own split). A worst
  *  case "12:30 PM" is ~63px; the card's padding and the strip's gaps are sized so it fits
  *  at 375px, and the card clips rather than ever spilling across its neighbour. */
-function SplitTime({ time }: { time: string }) {
-  const at = time.lastIndexOf(' ')
+function SplitTime({ time }: { time: ZonedParts }) {
   return (
     <span className="whitespace-nowrap">
-      {time.slice(0, at)}
-      <span className="ml-0.5 text-[10px] text-ink-muted">{time.slice(at + 1)}</span>
+      {time.clock}
+      {time.meridiem && <span className="ml-0.5 text-[10px] text-ink-muted">{time.meridiem}</span>}
     </span>
   )
 }
@@ -39,7 +38,7 @@ function Card({ fixture, today }: { fixture: Fixture; today: string }) {
         {placeholder ? (
           <span className="text-floodlight italic">TBC</span>
         ) : (
-          <SplitTime time={fixtureTimes(fixture.kickoffUtc, fixture.venueTz).brooklyn.time} />
+          <SplitTime time={fixtureTimes(fixture.kickoffUtc, fixture.venueTz).brooklyn} />
         )}
       </div>
       <div className="mt-0.5 truncate text-[10.5px] text-ink-secondary">

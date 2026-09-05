@@ -5,6 +5,7 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { viteSingleFile } from 'vite-plugin-singlefile'
 import pkg from './package.json' with { type: 'json' }
+import { themeBootstrap } from './scripts/themeBootstrap.ts'
 
 // `--mode single` inlines every asset into one self-contained dist/index.html that opens
 // straight from the filesystem by double-click, the way the original prototype did.
@@ -13,7 +14,7 @@ export default defineConfig(({ mode }) => ({
   base: './',
   // The header's version string comes from package.json — one source of truth.
   define: { __APP_VERSION__: JSON.stringify(pkg.version) },
-  plugins: [react(), tailwindcss(), ...(mode === 'single' ? [viteSingleFile()] : [])],
+  plugins: [themeBootstrap(), react(), tailwindcss(), ...(mode === 'single' ? [viteSingleFile()] : [])],
   build: { outDir: mode === 'single' ? 'dist-single' : 'dist' },
   // Two vitest projects under one `npm test` (v0.2.4). `node` is the pure layer — `lib/`,
   // `scripts/`, the diff engine — exactly what ran before. `dom` is the component wiring

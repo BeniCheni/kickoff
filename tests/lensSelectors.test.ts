@@ -8,6 +8,7 @@ import {
   monthCellSummary,
   nextKickoffId,
   planPosterWeek,
+  posterSubLine,
   slateSubLine,
   tickerSegments,
   type DayInfo,
@@ -32,6 +33,42 @@ function fx(over: Partial<Fixture> & { competition: CompetitionKey }): Fixture {
 function day(shown: Fixture[], over: Partial<DayInfo> = {}): DayInfo {
   return { date: '2026-08-30', shown, total: shown.length, isToday: false, ...over }
 }
+
+describe('Poster day-header count versus league-set times', () => {
+  it('names mixed exact/TBC counts and ignores the placeholder instant for FIRST', () => {
+    const exact = fx({ competition: 'pl', kickoffUtc: '2026-09-05T19:30:00.000Z' })
+    const tbc = fx({ competition: 'laliga', kickoffUtc: '2026-09-05T12:00:00.000Z', timeConfidence: 'round_placeholder' })
+    expect(posterSubLine([tbc, exact])).toBe('2 MATCHES · 2 LEAGUES · 1 TBC · FIRST KICKOFF 3:30 PM')
+  })
+  it('an all-TBC day has counts but no invented FIRST time', () => {
+    const tbc = fx({ competition: 'pl', timeConfidence: 'round_placeholder' })
+    const tbd = fx({ competition: 'pl', timeConfidence: 'tbd' })
+    expect(posterSubLine([tbc, tbd])).toBe('2 MATCHES · 1 LEAGUE · 2 TBC')
+  })
+  it('postponed and cancelled exact times do not become FIRST or get counted as TBC', () => {
+    expect(posterSubLine([
+      fx({ competition: 'pl', status: 'postponed' }),
+      fx({ competition: 'pl', status: 'cancelled' }),
+    ])).toBe('2 MATCHES · 1 LEAGUE')
+  })
+  it('retains singular labels for a one-fixture input', () => {
+    expect(posterSubLine([fx({ competition: 'pl' })])).toBe('1 MATCH · 1 LEAGUE · FIRST KICKOFF 1:00 PM')
+  })
+})
+
+describe('NEXT carries its Brooklyn date when it is not today', () => {
+  it('qualifies tomorrow with an actual date, not the stadium date', () => {
+    const next = fx({ competition: 'pl', kickoffUtc: '2026-09-07T00:30:00.000Z' })
+    expect(tickerSegments([next], '2026-09-05', '2026-09-05T23:00:00.000Z')).toEqual([
+      { keyword: 'NEXT', text: 'Sun 6 Sep · 8:30 PM Home v Away' },
+    ])
+  })
+  it('qualifies a later week as well, while UTC tomorrow can still be Brooklyn today', () => {
+    const next = fx({ competition: 'pl', kickoffUtc: '2026-09-14T00:30:00.000Z' })
+    expect(tickerSegments([next], '2026-09-05', '2026-09-05T23:00:00.000Z')[0]?.text).toBe('Sun 13 Sep · 8:30 PM Home v Away')
+    expect(tickerSegments([next], '2026-09-13', '2026-09-13T23:00:00.000Z')[0]?.text).toBe('8:30 PM Home v Away')
+  })
+})
 
 describe('dominantCompetition', () => {
   it('picks the competition with the most fixtures that day', () => {
