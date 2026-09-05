@@ -82,7 +82,7 @@ you, for the same reason.
 
 The disciplined version of "AI-driven" is the only one this repo practices: typecheck and
 tests green at every commit, browser verification before anything is declared done, and an
-adversarial review — run as a repo command, `/beni-pr-review` — that receives prior findings
+adversarial review — run as a repo command, `/kickoff-pr-review` — that receives prior findings
 only as a sealed "verify independently" list, never as conclusions.
 
 ## 📚 The four-document ladder

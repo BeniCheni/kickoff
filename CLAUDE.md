@@ -20,7 +20,7 @@ of it as unreliable:
 2. `docs/vX.Y.Z-design-prompt.md` — the Claude Design brief, built on real tokens/data.
 3. `docs/vX.Y.Z-implementation-prompt.md` — the Claude Code build spec.
 4. `docs/vX.Y.Z-review-prompt.md` — the adversarial review + merge instructions. Since v0.2.1
-   the method lives in the repo skill `/beni-pr-review` (`.claude/skills/beni-pr-review/`);
+   the method lives in the repo skill `/kickoff-pr-review` (`.claude/skills/kickoff-pr-review/`, `/beni-pr-review` until v0.2.4);
    the archived prompt for a release is the per-PR part — number, spec files, human-review
    items, the sealed appendix — not the method.
 
@@ -173,8 +173,8 @@ is the **current** ranked candidate list — 15 rows, several carried forward fr
 of patches and the v0.3.0 minor, with the deferred rows and their reasons — **amended on
 numbering by `docs/v0.2.2-proposal.md`** (4 Sep 2026: v0.2.2 is "the front door") **and again
 by the v0.2.3 hotfix** (same day, `CHANGELOG.md` `[0.2.3]`, Node 24 actions; Beni's call): the
-jsdom rig is v0.2.4, the resilience patch v0.2.5, v0.3.0 unchanged; `/beni-pr-review`
-(`.claude/skills/beni-pr-review/`, shipped in v0.2.1, planned in
+jsdom rig is v0.2.4, the resilience patch v0.2.5, v0.3.0 unchanged; `/kickoff-pr-review`
+(`.claude/skills/kickoff-pr-review/`, shipped in v0.2.1, renamed in v0.2.4, planned in
 `docs/v0.2.1-pr-review-skill-plan.md`) is ladder step 4 as a command.
 Separately, `README.md`'s "Beyond" section names the standing bridge to the betting track:
 fixtures carry stable ids so a later `positions.json` join — plus a token-expiry-vs-kickoff

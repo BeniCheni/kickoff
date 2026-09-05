@@ -185,7 +185,7 @@ One subject line per release. The honours board:
 - **v0.1.1** *(1 Sep 2026)* — the public-repo milestone: security sweep, license, CI.
 - **v0.2.0** *(2 Sep 2026)* — the app learns to tell time: a clock that ticks, a sync that
   fails loudly, a scheduled refresh that opens its own PR.
-- **v0.2.1** *(3 Sep 2026)* — the review becomes a command: `/beni-pr-review` as a repo skill.
+- **v0.2.1** *(3 Sep 2026)* — the review becomes a command: `/beni-pr-review` as a repo skill (renamed `/kickoff-pr-review` in v0.2.4).
 - **v0.2.2** *(4 Sep 2026)* — the front door: Poster by default, a hero that tells the time, a
   sync that merges its own boring news, an address, and these docs.
 - **v0.2.3** *(4 Sep 2026)* — a hotfix: the workflows on Node 24 actions, so no run warns that

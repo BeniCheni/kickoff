@@ -1,6 +1,6 @@
 ---
-name: beni-pr-review
-description: Adversarial review → fix → land pass for one Kickoff pull request (prompt-ladder step 4). Use when asked to review, verify, or land a Kickoff PR by number — "/beni-pr-review 12", "review PR 12", "land PR 12". Not for reviewing plans, drafts or proposals.
+name: kickoff-pr-review
+description: Adversarial review → fix → land pass for one Kickoff pull request (prompt-ladder step 4). Use when asked to review, verify, or land a Kickoff PR by number — "/kickoff-pr-review 12", "review PR 12", "land PR 12". Not for reviewing plans, drafts or proposals.
 argument-hint: <PR# or branch> [--no-merge]
 disable-model-invocation: true
 ---
@@ -13,7 +13,7 @@ is then `origin/main`, and §7 step 0 turns the branch into a PR before anything
 hand only — it pushes commits. Beni clicks every release merge; a tag is a release act.
 
 **Who can invoke it, and when.** `disable-model-invocation: true` means a human types
-`/beni-pr-review <N>` as the message. A prompt that says "invoke the skill" cannot make the
+`/kickoff-pr-review <N>` as the message. A prompt that says "invoke the skill" cannot make the
 session load it, and the description's trigger phrases are never in the model's context — the
 description is for the `/` menu. Skill directories are watched live, but a `.claude/skills/`
 that did not exist when the session started is not watched, and a fresh worktree of a branch
