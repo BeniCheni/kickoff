@@ -24,6 +24,7 @@ import {
 } from '../src/lib/schema'
 import { addDays, todayIso } from '../src/lib/time'
 import { validateFixtures } from './validate'
+import { inWindow } from './window'
 
 /**
  * The only writer of fixture data. Run it with `npm run sync`.
@@ -118,11 +119,7 @@ async function main() {
 
   // Only diff inside the fetched window: fixtures outside it are absent because we did not
   // ask for them, not because they were cancelled.
-  const inWindow = (f: Fixture) => {
-    const d = f.kickoffUtc.slice(0, 10)
-    return d >= from && d <= to
-  }
-  const previousInWindow = previous.filter(inWindow)
+  const previousInWindow = previous.filter((f) => inWindow(f, from, to))
 
   // A competition that shrank implausibly is a broken-response signal, checked before the
   // diff (which would otherwise just report a wall of DISAPPEARED lines) and before any write.
