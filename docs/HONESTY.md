@@ -60,7 +60,7 @@ fixture look like an inversion of the first.
 ## 5. Fail loudly, never guess
 
 An unattended sync must never invent scheduledness or quietly disappear real fixtures. So
-four things abort with exit 2 before anything is written:
+these failures abort with exit 2 before any snapshot is written:
 
 - an ESPN status the mapper doesn't recognise (a delay, a suspension, an abandonment) —
   rather than defaulting to `scheduled`;
@@ -68,15 +68,21 @@ four things abort with exit 2 before anything is written:
   28-day chunks precisely so a cap is unlikely, and refuses any chunk that reaches it;
 - a league whose fetched count falls under half its previous in-window count — a broken
   response, not a real collapse;
-- a fetched row the Zod schema rejects — the provider changing shape.
+- a fetched row the Zod schema rejects — the provider changing shape;
+- an event or standings entry that cannot be normalized, including an invalid provider
+  identity — every offender is reported, never skipped just because enough other rows remain;
+- a fixture or standings fetch failure, including a network outage or malformed response.
 
-The standings fetch is the one soft failure: it warns and keeps the previous table, because a
-503 on one league must never discard a successful fixtures sync. Even that is reported on the
-sync's last line, and since v0.2.2 it holds the sync PR for a human.
+**Fixtures + standings form the authoritative snapshot boundary (v0.2.5).** Both must be
+fetched and validated before publication; a failure in either publishes neither. A standings
+outage can therefore delay otherwise valid fixture updates — an explicitly accepted
+availability cost. The last committed snapshot remains the last completely successful one.
+Future ancillary data does not automatically join this boundary; membership needs an explicit
+decision. This supersedes the earlier standings soft-failure exception.
 
 ## 6. The report line is an API
 
-Every sync ends with one machine-readable line:
+Every sync that completes fetching and validation ends with one machine-readable line:
 
 ```
 report: changed=true changes=2 urgent=0 standings=changed rank-moves=8 merge=auto
@@ -85,7 +91,9 @@ report: changed=true changes=2 urgent=0 standings=changed rank-moves=8 merge=aut
 "Changed" is the diff engine's verdict, never `git diff`'s — per-row fetch stamps move on
 every run and are not changes. `merge=` is whether the PR this run opens may merge itself:
 `hold` when anything is urgent, when any fixture vanished or inverted at any horizon, or when
-the standings fetch failed; `auto` otherwise. The format is pinned verbatim in a test, the
+the standings fetch failed; `auto` otherwise. `standings=failed` remains a supported legacy
+report value; current fetch failures abort with exit 2 before a report instead.
+The format is pinned verbatim in a test, the
 workflow validates it with the same regex, and a missing or malformed line fails the run
 rather than falling through to a guess.
 

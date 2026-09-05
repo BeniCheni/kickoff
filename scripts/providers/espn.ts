@@ -1,6 +1,7 @@
 import { SYNCABLE, COMPETITIONS, type CompetitionKey } from '../../src/lib/competitions'
 import { fixtureId, type Fixture, type FixtureStatus } from '../../src/lib/schema'
 import { addDays } from '../../src/lib/time'
+import { identityContext, providerIdentity } from './identity'
 
 /**
  * ESPN's public scoreboard API. No key, no auth, no rate limit we've hit.
@@ -110,23 +111,36 @@ export function seasonLabel(year: number): string {
   return `${year}-${String((year + 1) % 100).padStart(2, '0')}`
 }
 
+function eventProblem(event: any): string | null {
+  if (providerIdentity(event?.id) === null) return 'missing or invalid event id'
+  const comp = event?.competitions?.[0]
+  if (!comp) return 'missing competition'
+  if (!Array.isArray(comp.competitors)) return 'missing competitors array'
+  for (const role of ['home', 'away']) {
+    const competitor = comp.competitors.find((c: any) => c?.homeAway === role)
+    if (!competitor) return `missing ${role} competitor`
+    if (typeof competitor.team?.displayName !== 'string' || !competitor.team.displayName.trim()) {
+      return `missing or invalid ${role} team name`
+    }
+  }
+  return null
+}
+
 /** Pure transform: one ESPN event -> one Fixture. Exported so tests can pin it. */
 export function normalizeEvent(
   event: any,
   competition: CompetitionKey,
   fetchedAt: string,
 ): Fixture | null {
+  if (eventProblem(event)) return null
   const comp = event?.competitions?.[0]
   const competitors = comp?.competitors
-  if (!comp || !Array.isArray(competitors)) return null
-
-  const homeC = competitors.find((c: any) => c.homeAway === 'home')
-  const awayC = competitors.find((c: any) => c.homeAway === 'away')
-  if (!homeC || !awayC) return null
+  const sourceId = providerIdentity(event.id)!
+  const homeC = competitors.find((c: any) => c?.homeAway === 'home')
+  const awayC = competitors.find((c: any) => c?.homeAway === 'away')
 
   const rawHome = homeC.team?.displayName
   const rawAway = awayC.team?.displayName
-  if (!rawHome || !rawAway) return null
 
   const home = ALIAS[rawHome] ?? rawHome
   const away = ALIAS[rawAway] ?? rawAway
@@ -140,7 +154,7 @@ export function normalizeEvent(
   const timeConfidence = comp.timeValid === false ? 'round_placeholder' : 'exact'
 
   const fixture: Fixture = {
-    id: fixtureId(competition, String(event.id)),
+    id: fixtureId(competition, sourceId),
     competition,
     kickoffUtc: new Date(event.date).toISOString(),
     venueTz: COMPETITIONS[competition].tz,
@@ -148,7 +162,7 @@ export function normalizeEvent(
     away: { name: away, sourceId: awayC.team?.id ? String(awayC.team.id) : undefined },
     status,
     timeConfidence,
-    source: { provider: 'espn', sourceId: String(event.id), fetchedAt },
+    source: { provider: 'espn', sourceId, fetchedAt },
   }
 
   const venue = comp.venue?.fullName
@@ -174,9 +188,9 @@ export const espnProvider: FixtureProvider = {
     const fetchedAt = new Date().toISOString()
     const fixtures: Fixture[] = []
     const counts: Record<string, number> = {}
-    // Every unmapped-status offender across the whole window, collected rather than thrown
-    // immediately — a run that dies on the first one hides how many others there are.
-    const unmapped: string[] = []
+    // Collect normalization failures across the window; no offender may disappear just
+    // because it was new, or because enough other events normalized successfully.
+    const rejected: string[] = []
 
     const seen = new Set<string>()
 
@@ -184,12 +198,18 @@ export const espnProvider: FixtureProvider = {
       let ok = 0
       for (const [chunkFrom, chunkTo] of chunkWindow(from, to)) {
         const url = `${BASE}/${code}/scoreboard?dates=${compact(chunkFrom)}-${compact(chunkTo)}`
-        const res = await fetch(url)
-        if (!res.ok) {
-          throw new Error(`ESPN ${code} responded ${res.status} for ${chunkFrom}..${chunkTo}`)
+        let body: any
+        try {
+          const res = await fetch(url)
+          if (!res.ok) throw new Error(`responded ${res.status}`)
+          body = await res.json()
+        } catch (err) {
+          throw new Error(`ESPN ${code} ${chunkFrom}..${chunkTo}: ${err instanceof Error ? err.message : err}`)
         }
-        const body: any = await res.json()
-        const events: any[] = body?.events ?? []
+        if (!Array.isArray(body?.events)) {
+          throw new Error(`ESPN ${code} ${chunkFrom}..${chunkTo}: missing or invalid events array`)
+        }
+        const events: any[] = body.events
 
         if (events.length >= ESPN_PAGE_CAP) {
           // A warning nobody reads is the same as no warning once this runs unattended —
@@ -201,20 +221,18 @@ export const espnProvider: FixtureProvider = {
           )
         }
 
-        for (const event of events) {
+        for (const [index, event] of events.entries()) {
+          const context = `${code} ${chunkFrom}..${chunkTo} entry ${index + 1}, event ` +
+            `${identityContext(event?.id)} (${event?.date ?? 'no date'})`
           let fixture: Fixture | null
           try {
             fixture = normalizeEvent(event, key, fetchedAt)
           } catch (err) {
-            if (!(err instanceof UnmappedStatusError)) throw err
-            unmapped.push(
-              `  ! ${code} event ${err.eventId} (${event?.date ?? 'no date'}): ` +
-                `unmapped status ${err.statusName ?? '(missing)'}`,
-            )
+            rejected.push(`  ! ${context}: ${err instanceof Error ? err.message : err}`)
             continue
           }
           if (!fixture) {
-            console.warn(`  ! ${code}: skipped an event that could not be normalized (id ${event?.id})`)
+            rejected.push(`  ! ${context}: ${eventProblem(event)}`)
             continue
           }
           // Chunk boundaries are inclusive on both ends, so a fixture can arrive twice.
@@ -227,10 +245,10 @@ export const espnProvider: FixtureProvider = {
       counts[key] = ok
     }
 
-    if (unmapped.length > 0) {
+    if (rejected.length > 0) {
       throw new Error(
-        `ESPN sent ${unmapped.length} fixture(s) with a status this sync doesn't know how to map — ` +
-          `refusing to guess "scheduled":\n${unmapped.join('\n')}`,
+        `ESPN sent ${rejected.length} fixture(s) this sync could not normalize — ` +
+          `refusing to write:\n${rejected.join('\n')}`,
       )
     }
 

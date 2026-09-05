@@ -75,6 +75,14 @@ describe('normalizeEvent', () => {
     const [a, b] = ligue1
     expect(normalizeEvent(a, 'ligue1', AT)!.id).not.toBe(normalizeEvent(b, 'ligue1', AT)!.id)
   })
+
+  it.each([undefined, null, '', ' ', 'undefined', 'null', {}, NaN, 1.5])('rejects invalid provider identity %j before building a fixture', (id) => {
+    expect(normalizeEvent({ ...ligue1[0], id }, 'ligue1', AT)).toBeNull()
+  })
+
+  it('accepts a provider numeric id only after validation', () => {
+    expect(normalizeEvent({ ...ligue1[0], id: 123 }, 'ligue1', AT)?.id).toBe('ligue1:123')
+  })
 })
 
 describe('normalizeEvent — status mapping', () => {
@@ -173,5 +181,19 @@ describe('espnProvider.fetchWindow — unmapped statuses abort before any write'
     const events = Array.from({ length: 100 }, (_, i) => ({ ...template, id: `cap-${i}` }))
     vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => ({ events }) })))
     await expect(espnProvider.fetchWindow('2026-08-21', '2026-08-21')).rejects.toThrow(/100-event cap/)
+  })
+
+  it('reports missing names and both id-less events instead of silently deduplicating them', async () => {
+    const idless = { ...ligue1[0], id: undefined }
+    const missingAway = { ...ligue1[0], id: 'bad-away', competitions: [{ competitors: [{ homeAway: 'home', team: { displayName: 'Home' } }] }] }
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => ({ events: [idless, idless, missingAway] }) })))
+    await expect(espnProvider.fetchWindow('2026-08-21', '2026-08-21')).rejects.toThrow(
+      /entry 1, event \(missing\).*missing or invalid event id[\s\S]*entry 2, event \(missing\)[\s\S]*bad-away.*missing away competitor/,
+    )
+  })
+
+  it('rejects a missing events array rather than interpreting a reshaped response as an empty schedule', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => ({}) })))
+    await expect(espnProvider.fetchWindow('2026-08-21', '2026-08-21')).rejects.toThrow(/missing or invalid events array/)
   })
 })

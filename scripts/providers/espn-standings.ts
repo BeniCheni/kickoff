@@ -1,5 +1,6 @@
 import { LEAGUE_TABLES, SYNCABLE } from '../../src/lib/competitions'
-import { standingsFileSchema, type StandingRow, type StandingsFile } from '../../src/lib/schema'
+import { standingRowSchema, standingsFileSchema, type StandingRow, type StandingsFile } from '../../src/lib/schema'
+import { identityContext, providerIdentity } from './identity'
 
 /**
  * ESPN's public standings API — the same host and posture as the scoreboard provider.
@@ -19,21 +20,30 @@ export function currentSeasonStartYear(now = new Date()): number {
   return now.getUTCMonth() >= 6 ? now.getUTCFullYear() : now.getUTCFullYear() - 1
 }
 
+const REQUIRED_STATS = ['gamesPlayed', 'wins', 'ties', 'losses', 'pointsFor', 'pointsAgainst', 'points', 'rank']
+
+function entryProblem(entry: any): string | null {
+  if (providerIdentity(entry?.team?.id) === null) return 'missing or invalid team id'
+  if (typeof entry.team.displayName !== 'string' || !entry.team.displayName.trim()) return 'missing or invalid team name'
+  if (!Array.isArray(entry.stats)) return 'missing stats array'
+  const available = new Set(entry.stats.filter((s: any) => Number.isFinite(s?.value)).map((s: any) => s.name))
+  const missing = REQUIRED_STATS.filter((name) => !available.has(name))
+  return missing.length ? `missing or nonnumeric required stats: ${missing.join(', ')}` : null
+}
+
 /** Pure transform: one ESPN standings entry -> one row. Exported so tests can pin it. */
 export function normalizeStandingEntry(entry: any): StandingRow | null {
+  if (entryProblem(entry)) return null
   const team = entry?.team
-  if (!team?.id || !team.displayName) return null
 
   const stats = new Map<string, number>(
     (entry.stats ?? [])
       .filter((s: any) => typeof s?.name === 'string' && Number.isFinite(s.value))
       .map((s: any) => [s.name, Number(s.value)]),
   )
-  const need = ['gamesPlayed', 'wins', 'ties', 'losses', 'pointsFor', 'pointsAgainst', 'points', 'rank']
-  if (need.some((n) => !stats.has(n))) return null
 
   return {
-    teamId: String(team.id),
+    teamId: providerIdentity(team.id)!,
     name: team.displayName,
     shortName: team.shortDisplayName ?? team.displayName,
     abbrev: team.abbreviation ?? team.displayName.slice(0, 3).toUpperCase(),
@@ -52,22 +62,35 @@ export function normalizeStandingEntry(entry: any): StandingRow | null {
 export async function fetchStandings(season = currentSeasonStartYear()): Promise<StandingsFile> {
   const fetchedAt = new Date().toISOString()
 
-  // The five leagues are independent requests — fetch them concurrently. Any failure
-  // rejects the whole batch: a partial standings file is worse than keeping the previous
-  // committed snapshot, and the caller treats standings as non-fatal to the fixture sync.
-  const perLeague = await Promise.all(
+  // Await every league so one rejection does not hide diagnostics from the others.
+  // A failure aborts the fixtures + standings snapshot before publication.
+  const perLeague = await Promise.allSettled(
     SYNCABLE.filter(({ key }) => key in LEAGUE_TABLES).map(async ({ key, code }) => {
-      const res = await fetch(`${BASE}/${code}/standings?season=${season}`)
-      if (!res.ok) throw new Error(`ESPN standings ${code} responded ${res.status}`)
-      const body: any = await res.json()
-
-      const entries: any[] = body?.children?.[0]?.standings?.entries ?? []
-      const rows: StandingRow[] = []
-      for (const entry of entries) {
-        const row = normalizeStandingEntry(entry)
-        if (row) rows.push(row)
-        else console.warn(`  ! ${code} standings: skipped an entry that could not be normalized`)
+      let body: any
+      try {
+        const res = await fetch(`${BASE}/${code}/standings?season=${season}`)
+        if (!res.ok) throw new Error(`responded ${res.status}`)
+        body = await res.json()
+      } catch (err) {
+        throw new Error(`ESPN standings ${code}: ${err instanceof Error ? err.message : err}`)
       }
+
+      const entries: unknown = body?.children?.[0]?.standings?.entries
+      if (!Array.isArray(entries)) throw new Error(`ESPN standings ${code}: missing entries array`)
+      const rows: StandingRow[] = []
+      const rejected: string[] = []
+      for (const [index, entry] of entries.entries()) {
+        const context = `${code} entry ${index + 1}, team ${identityContext(entry?.team?.id)}`
+        const row = normalizeStandingEntry(entry)
+        if (!row) {
+          rejected.push(`  ! ${context}: ${entryProblem(entry)}`)
+          continue
+        }
+        const parsed = standingRowSchema.safeParse(row)
+        if (parsed.success) rows.push(parsed.data)
+        else rejected.push(`  ! ${context}: ${parsed.error.issues.map((i) => `${i.path.join('.')} — ${i.message}`).join('; ')}`)
+      }
+      if (rejected.length) throw new Error(`ESPN standings: ${rejected.length} rejected entries:\n${rejected.join('\n')}`)
 
       // Fail loudly on the two silent-corruption paths: a payload reshape upstream (zero
       // entries still satisfies the schema) and a dropped row (which would skew
@@ -77,7 +100,7 @@ export async function fetchStandings(season = currentSeasonStartYear()): Promise
       if (rows.length !== expected) {
         throw new Error(
           `ESPN standings ${code}: got ${rows.length} rows, expected ${expected} — ` +
-            `payload shape changed or rows failed validation; keeping the previous snapshot`,
+            `payload shape changed; refusing to publish the authoritative snapshot`,
         )
       }
 
@@ -86,10 +109,15 @@ export async function fetchStandings(season = currentSeasonStartYear()): Promise
     }),
   )
 
+  const failures = perLeague.filter((r) => r.status === 'rejected')
+  if (failures.length) {
+    throw new Error(failures.map((r) => r.reason instanceof Error ? r.reason.message : String(r.reason)).join('\n'))
+  }
+
   return standingsFileSchema.parse({
     fetchedAt,
     provider: 'espn',
     season,
-    leagues: Object.fromEntries(perLeague),
+    leagues: Object.fromEntries(perLeague.filter((r) => r.status === 'fulfilled').map((r) => r.value)),
   })
 }

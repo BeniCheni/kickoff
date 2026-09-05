@@ -30,8 +30,11 @@ ESPN scoreboard API ──▶ normalizeEvent ──▶ Zod at the boundary ─�
    only in a previous snapshot) are carried forward by id.
 5. **Diff.** `scripts/diff.ts` compares the fetch with the committed snapshot inside the
    fetched window and produces the change list, the urgency flags, and the merge verdict.
-6. **Write, or refuse.** `scripts/sync.ts` orchestrates: the shrink guard, the write, the
-   standings fetch, the exit code, and the last line — the report line the workflow parses.
+6. **Prepare both, then write or refuse.** `scripts/sync.ts` orchestrates the shrink guard,
+   both dataset validations, the writes, the exit code and the report line. Fixtures and
+   standings form one authoritative snapshot: either fetch/validation failing aborts before
+   any snapshot write. Git publishes the files together. A standings outage can delay valid
+   fixture updates; future ancillary datasets do not join this boundary automatically.
 7. **Commit and PR.** `.github/workflows/sync.yml` runs the script on a schedule, commits
    only when the report line says something changed, force-pushes one rolling branch, opens
    or updates one PR, and obeys the merge verdict: `gh pr merge --auto` behind the required

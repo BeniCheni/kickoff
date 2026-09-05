@@ -44,7 +44,10 @@ export const fixtureSchema = z.object({
   note: z.string().optional(),
   source: z.object({
     provider: z.literal('espn'),
-    sourceId: z.string(),
+    sourceId: z.string().min(1).refine(
+      (s) => s.trim() === s && s !== 'undefined' && s !== 'null',
+      'a nonempty provider identity, not a coerced missing value',
+    ),
     fetchedAt: z.iso.datetime(),
   }),
 })

@@ -57,6 +57,12 @@ review pass.
 
 ## Scheduled sync (v0.2.0, amended v0.2.2)
 
+**Since v0.2.5, fixtures + standings are one authoritative snapshot boundary.** A fetch or
+validation failure in either aborts with exit 2 before snapshot writes. A standings outage
+intentionally delays otherwise valid fixtures; the earlier soft-failure exception is retired.
+Future ancillary datasets do not join this boundary automatically. `standings=failed` remains
+a legacy report value understood by the merge policy below; current failures abort instead.
+
 `.github/workflows/sync.yml` runs `npm run sync` on a cron of `23 1,4,7,10,13,16,19,22 * * *`
 — every three hours *as scheduled*, keeping 00:23 and 12:23 EDT in the set, an hour early
 under EST because GitHub's cron is UTC. What is scheduled is not what is delivered: GitHub's

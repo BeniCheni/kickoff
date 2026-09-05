@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 import { readFileSync, writeFileSync, existsSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import { espnProvider } from './providers/espn'
 import { fetchStandings } from './providers/espn-standings'
 import {
@@ -32,7 +32,8 @@ import { validateFixtures } from './validate'
  *
  * Exits non-zero when something inside the urgency horizon moved, so a scheduled run can
  * surface it rather than updating silently: 0 clean, 1 something inside 72 h moved (after
- * writing), 2 refused to write. The last line of every run is the machine-readable report
+ * writing), 2 failed. Fetch/validation failures occur before any snapshot write.
+ * The last line of every successful fetch/validation run is the machine-readable report
  * (`report: changed=… … merge=…`, see formatReportLine) that sync.yml reads to decide whether
  * there is anything to commit — per-row fetchedAt stamps move on every run and are not
  * changes — and whether the PR it opens may merge itself (mergeVerdict).
@@ -44,47 +45,33 @@ const META = resolve(ROOT, 'src/data/meta.json')
 const STANDINGS = resolve(ROOT, 'src/data/standings.json')
 
 /**
- * League tables, fetched after the fixtures are safely written. Rank moves are reported
- * for the same reason fixture moves are — the table is betting context — but standings are
- * secondary data: a failure here (a 503 on one league, an upstream payload reshape) warns
- * and keeps the previous committed snapshot rather than aborting, so it can never discard
- * a successful fixtures sync or change the exit code.
+ * Fixtures + standings are the authoritative snapshot boundary. Fetch and validate both
+ * before writing either; even a standings outage intentionally delays fixture updates.
+ * Ancillary datasets added later do not automatically join this boundary.
  */
-type StandingsOutcome = { status: SyncReport['standings']; rankMoves: number }
+type StandingsOutcome = { status: SyncReport['standings']; rankMoves: number; data: StandingsFile }
 
-async function syncStandings(check: boolean): Promise<StandingsOutcome> {
-  try {
-    const previous: StandingsFile | null = existsSync(STANDINGS)
-      ? standingsFileSchema.parse(JSON.parse(readFileSync(STANDINGS, 'utf8')))
-      : null
+async function prepareStandings(): Promise<StandingsOutcome> {
+  const previous: StandingsFile | null = existsSync(STANDINGS)
+    ? standingsFileSchema.parse(JSON.parse(readFileSync(STANDINGS, 'utf8')))
+    : null
 
-    const standings = await fetchStandings()
+  const standings = standingsFileSchema.parse(await fetchStandings())
 
-    const { rowsChanged, moves } = diffStandings(previous, standings)
-    console.log(
-      `\nstandings: ${Object.entries(standings.leagues)
-        .map(([k, v]) => `${k} ${v.length}`)
-        .join(' · ')}`,
-    )
-    if (moves.length) console.log(`rank changes vs last snapshot:\n${moves.join('\n')}`)
-    console.log(
-      rowsChanged
-        ? `${rowsChanged} standings row(s) changed vs last snapshot`
-        : 'standings unchanged vs last snapshot',
-    )
+  const { rowsChanged, moves } = diffStandings(previous, standings)
+  console.log(
+    `\nstandings: ${Object.entries(standings.leagues)
+      .map(([k, v]) => `${k} ${v.length}`)
+      .join(' · ')}`,
+  )
+  if (moves.length) console.log(`rank changes vs last snapshot:\n${moves.join('\n')}`)
+  console.log(
+    rowsChanged
+      ? `${rowsChanged} standings row(s) changed vs last snapshot`
+      : 'standings unchanged vs last snapshot',
+  )
 
-    if (!check) {
-      writeFileSync(STANDINGS, JSON.stringify(standings, null, 2) + '\n')
-      console.log('wrote src/data/standings.json')
-    }
-    return { status: rowsChanged > 0 ? 'changed' : 'unchanged', rankMoves: moves.length }
-  } catch (err) {
-    console.error(
-      `\n⚠  standings sync failed — fixtures are unaffected, previous standings kept:\n` +
-        `   ${err instanceof Error ? err.message : err}`,
-    )
-    return { status: 'failed', rankMoves: 0 }
-  }
+  return { status: rowsChanged > 0 ? 'changed' : 'unchanged', rankMoves: moves.length, data: standings }
 }
 
 const arg = (name: string, fallback: string) => {
@@ -112,12 +99,11 @@ async function main() {
   // came from before validation. Refuse to write instead, like every other guard.
   const { valid, rejected } = validateFixtures(fetched)
   if (rejected.length > 0) {
-    console.error(
+    throw new Error(
       `\n⚠  ${rejected.length} fetched row(s) failed the schema — the provider changed shape, ` +
         `or the mapper let a value through it shouldn't have — refusing to write:\n` +
         rejected.join('\n'),
     )
-    process.exit(2)
   }
 
   // Hand-authored notes are Beni's context (venue quirks, postponement reasons, why a
@@ -146,7 +132,7 @@ async function main() {
   }
   const shrink = implausibleShrink(previousCountsByComp, counts)
   if (shrink.length > 0) {
-    console.error(
+    throw new Error(
       `\n⚠  possible truncated or broken ESPN response — refusing to write:\n` +
         shrink
           .map(
@@ -155,7 +141,6 @@ async function main() {
           )
           .join('\n'),
     )
-    process.exit(2)
   }
 
   const changes = diffFixtures(previousInWindow, valid, {})
@@ -167,7 +152,7 @@ async function main() {
   console.log(`\nchanges vs last snapshot:\n${formatChanges(changes)}`)
 
   // The verdict sync.yml reads. Printed last, in both modes, after the standings outcome
-  // is known — a failed standings fetch is reported, never counted as a change. The merge
+  // is known — a failed standings fetch aborts before reaching this report. The merge
   // verdict's reasons print just above it, so a held PR's body says why it is held.
   const reportFor = (standings: StandingsOutcome): string => {
     const merge = mergeVerdict(changes, standings.status)
@@ -187,11 +172,12 @@ async function main() {
     )
   }
 
+  const standings = await prepareStandings()
+
   if (check) {
-    const standings = await syncStandings(true)
     console.log('\n--check: no files written.')
     console.log(reportFor(standings))
-    process.exit(hasUrgentChanges(changes) ? 1 : 0)
+    return hasUrgentChanges(changes) ? 1 : 0
   }
 
   const meta: SyncMeta = metaSchema.parse({
@@ -202,20 +188,33 @@ async function main() {
     total: valid.length,
   })
 
-  writeFileSync(FIXTURES, JSON.stringify(valid, null, 2) + '\n')
-  writeFileSync(META, JSON.stringify(meta, null, 2) + '\n')
-  console.log(`\nwrote src/data/fixtures.json (${valid.length}) and src/data/meta.json`)
-
-  const standings = await syncStandings(false)
+  // All provider work, schema checks and serialization precede the first write.
+  // Git publishes these three files together; a failed run is never committed by sync.yml.
+  const payloads = [
+    [FIXTURES, JSON.stringify(valid, null, 2) + '\n'],
+    [META, JSON.stringify(meta, null, 2) + '\n'],
+    [STANDINGS, JSON.stringify(standings.data, null, 2) + '\n'],
+  ] as const
+  for (const [path, content] of payloads) writeFileSync(path, content)
+  console.log(`\nwrote src/data/fixtures.json (${valid.length}), src/data/meta.json and src/data/standings.json`)
 
   if (hasUrgentChanges(changes)) {
     console.log('\n⚠  Something inside 72h moved. Re-check any open position on it.')
   }
   console.log(`\n${reportFor(standings)}`)
-  process.exit(hasUrgentChanges(changes) ? 1 : 0)
+  return hasUrgentChanges(changes) ? 1 : 0
 }
 
-main().catch((err) => {
-  console.error('\nsync failed:', err instanceof Error ? err.message : err)
-  process.exit(2)
-})
+/** The CLI's exit-code boundary, also exercised by integration tests with intercepted IO. */
+export async function runSync(): Promise<number> {
+  try {
+    return await main()
+  } catch (err) {
+    console.error('\nsync failed:', err instanceof Error ? err.message : err)
+    return 2
+  }
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
+  process.exitCode = await runSync()
+}
