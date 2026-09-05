@@ -1,8 +1,30 @@
 import { describe, expect, it } from 'vitest'
 import { COMPETITION_KEYS } from '../src/lib/competitions'
-import { parseDateParam, parseOnlyParam } from '../src/lib/urlCodecs'
+import { canonicalSearch, parseDateParam, parseOnlyParam } from '../src/lib/urlCodecs'
 
 const TODAY = '2026-08-30'
+
+describe('canonicalSearch — normalize the address without changing decoder semantics', () => {
+  it('omits invalid and default values, including a date equal to today', () => {
+    expect(canonicalSearch(`?lens=BROADCAST&date=${TODAY}&tab=fixtures&view=week&league=laliga`, TODAY)).toBe('')
+    expect(canonicalSearch('?date=2026-02-30&tab=junk&view=junk&league=constructor', TODAY)).toBe('')
+  })
+  it('retains a real nondefault date and the cross-track competition filter', () => {
+    expect(canonicalSearch('?only=pl,laliga&date=2026-09-15', TODAY)).toBe('?only=pl%2Claliga&date=2026-09-15')
+  })
+  it('keeps an explicitly empty selection and unknown parameters', () => {
+    expect(canonicalSearch('?only=&campaign=friend&campaign=second&lens=poster', TODAY)).toBe('?only=&campaign=friend&campaign=second')
+  })
+  it('canonicalizes duplicate owned keys to the same first value the hook renders', () => {
+    expect(canonicalSearch('?lens=ledger&lens=broadcast&only=pl,pl', TODAY)).toBe('?lens=ledger&only=pl')
+  })
+  it('is idempotent across defaults, junk, filters and all nondefault views', () => {
+    for (const search of ['', '?lens=ledger&tab=table&league=pl&view=month', '?only=garbage', '?only=', '?date=2026-13-45&ref=a+b']) {
+      const normalized = canonicalSearch(search, TODAY)
+      expect(canonicalSearch(normalized, TODAY)).toBe(normalized)
+    }
+  })
+})
 
 describe('parseDateParam', () => {
   it('accepts a real calendar date', () => {

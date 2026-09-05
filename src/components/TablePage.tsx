@@ -17,6 +17,7 @@ import {
   type TableRow,
 } from '../lib/standings'
 import { useUrlState } from '../lib/useUrlState'
+import { encodeLeague, parseLeague } from '../lib/urlCodecs'
 import { useNow } from '../lib/useNow'
 import { CompetitionChip } from './CompetitionChip'
 
@@ -141,8 +142,7 @@ function ZoneDivider({
 export function TablePage() {
   const [league, setLeague] = useUrlState<CompetitionKey>(
     'league', 'laliga',
-    (v) => (v === 'laliga' ? null : v),
-    (s) => (TABLE_LEAGUES.includes(s as CompetitionKey) ? (s as CompetitionKey) : 'laliga'),
+    encodeLeague, parseLeague,
   )
   const [openRow, setOpenRow] = useState<string | null>(null)
   const [legendOpen, setLegendOpen] = useState(false)

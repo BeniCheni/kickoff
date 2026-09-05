@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 
-export type Tab = 'fixtures' | 'table'
+import type { Tab } from '../lib/urlCodecs'
+export type { Tab } from '../lib/urlCodecs'
 
 const TABS: Array<{ key: Tab; label: string }> = [
   { key: 'fixtures', label: 'Fixtures' },

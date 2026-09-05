@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNow } from './lib/useNow'
 import { META, SYNC_STAMP } from './lib/fixtures'
 import { useUrlState } from './lib/useUrlState'
+import { canonicalSearch, encodeTab, parseTab } from './lib/urlCodecs'
 import { DEFAULT_LENS, encodeLens, parseLens, type Lens } from './lib/lens'
 import { resolveThemeFromEnvironment, themeStorageKey, writeStoredTheme, type Theme } from './lib/theme'
 import { TabNav, type Tab } from './components/TabNav'
@@ -22,13 +23,22 @@ export default function App() {
   // history entry — Back returns to the previous tab, not out of the site.
   const [tab, setTab] = useUrlState<Tab>(
     'tab', 'fixtures',
-    (v) => (v === 'fixtures' ? null : v),
-    (s) => (s === 'table' ? 'table' : 'fixtures'),
+    encodeTab, parseTab,
     'push',
   )
 
   // The lens is a view preference, not navigation — replace history, default omitted.
   const [lens, setLens] = useUrlState<Lens>('lens', DEFAULT_LENS, encodeLens, parseLens, 'replace')
+
+  const normalized = useRef(false)
+  useEffect(() => {
+    if (normalized.current) return
+    normalized.current = true
+    const search = canonicalSearch(window.location.search, today)
+    if (search !== window.location.search) {
+      window.history.replaceState(window.history.state, '', window.location.pathname + search + window.location.hash)
+    }
+  }, [today])
 
   const prevLens = useRef<Lens | null>(null)
   const fadeTimer = useRef<number | undefined>(undefined)
