@@ -8,7 +8,52 @@ releases.
 
 ## [Unreleased]
 
+## [0.2.4] — 2026-09-05
+
+Tests reach the wiring: a jsdom project beside the node suite, so the component seam every
+browser-found bug in this repo has lived in — the re-anchor effect, the clock's React glue,
+StrictMode's double subscribe, `useUrlState`'s popstate — is unit-tested for the first time.
+Nothing in the app changes. Paper trail: `docs/v0.2.4-proposal.md`.
+
+### Added
+- **Two vitest projects under one `npm test`.** `node` is the pure layer, exactly what ran
+  before, with `tests/dom` excluded outright; `dom` runs everything under `tests/dom/`
+  (`.test.ts` or `.test.tsx`) under jsdom + Testing Library, inheriting the root config so the
+  header's version string and the React plugin reach the components. A guard test in that
+  directory fails loudly under node if the routing ever regresses.
+  `tsconfig.test-dom.json` types the DOM tests; `tsconfig.node.json` excludes them and stays
+  green on its own, which was the train table's acceptance line.
+- **The rig** (`tests/dom/rig.ts`): five affordances with a test each, built so the resilience
+  patch extends them instead of inventing them — drive the app's own clock store with fake
+  timers and a focus catch-up; URL state through `replaceState` and a synthetic `PopStateEvent`;
+  StrictMode's double effect and double subscribe, with the clock's subscriber count returning
+  to what it was; a stubbed `matchMedia` and a `localStorage` that throws; a deliberate throw
+  under a boundary with React's error report contained to the one test.
+- **The two bugs that motivated the rig, as tests that fail against their pre-fix logic.** The
+  `?date=` crash (v0.1.0 review) reproduces as `RangeError: Invalid time value` with the
+  shape-only decoder re-applied; the pinned-date rollover (v0.2.0 review) reproduces as a
+  `?date=2026-09-12` pin dropped at midnight with the old "anchor equals the day that ended"
+  condition re-introduced. Both runs are quoted in the proposal, red then green, beside the
+  deliberate red (three tests in two files saw one missing line in App's theme effect).
+- Dev dependencies, each with its reason in the proposal: `jsdom` 30.0.1,
+  `@testing-library/react` 16.3.3, `@testing-library/dom` 10.4.1 (RTL's explicit peer). Not
+  `jest-dom`: every assertion here reads a string or a boolean the DOM already exposes.
+- **A Node floor, written down.** jsdom 30 needs Node `^22.22.2 || ^24.15.0 || >=26.0.0`, and
+  `package.json` `engines` now says so. npm warns on an older Node and installs anyway — a
+  signpost, not a gate. CI runs Node 24; `CONTRIBUTING.md` names the floor.
+
 ### Changed
+- **`/beni-pr-review` is now `/kickoff-pr-review`** (`.claude/skills/kickoff-pr-review/`).
+  Beni's call, 5 Sep 2026: drop the personal nickname, and let the command name map back to the
+  repo. Moved with `git mv` before any content edit, so `git log --follow` keeps the file's
+  history. The archived `docs/` files and the released sections below keep the old name on
+  purpose — they record what was decided when; two dated notes point forward.
+- **The review skill's gate announces itself first and hands over last.** From a retro on why
+  PRs #18 and #19 needed Beni's hand (both correctly: a release, and the bot's held sync PR):
+  §0 now detects a release in the first read and says what a held `sync/scheduled` PR *is* — a
+  Step 0 re-verification trigger, cleared by Beni alone; §7 names Beni as the one who merges
+  and tags every release; and a new final step ends every release review with a paste-ready
+  handoff block — squash message, tag line, push, pull, the three green commands.
 - **The front door gets its voice back.** `README.md`, `CONTRIBUTING.md` and `docs/README.md`
   say what they already said, louder: a text banner under the README's badges, the 23 Aug 2026
   audit re-set as a betting slip in place of its four bullets (the same four facts, the same
@@ -16,8 +61,28 @@ releases.
   that means the same thing in every file, a mood icon per lens row, and connective prose with
   more football in it. No fact, command, path, threshold or version string moves; nothing
   under `src/` moves; `docs/HONESTY.md` and `docs/ARCHITECTURE.md` keep their quieter register
-  on purpose — the front door shouts, the workshop does not. Not a release: a copy pass rides
-  the next one, so every version string stays at 0.2.3.
+  on purpose — the front door shouts, the workshop does not. Rode this release, as its own
+  text said it would.
+- `vite.config.ts` imports `package.json` with `with { type: 'json' }`, retiring a Vite
+  config-loader warning that the second test project had tripled.
+
+### Deliberately not done
+- **No app behaviour.** The rig found no new bug; the three observations it made are in the
+  proposal, each already on `docs/v0.3.0-ideas.md` (row 7) or by design in `clock.ts`.
+- **The browser matrix is not retired.** jsdom covers wiring — effects, subscriptions, URL,
+  storage — not layout, not contrast, not `scrollWidth === innerWidth`, not what a real engine
+  does with the marquee. `CLAUDE.md`'s verification discipline and the review skill's §4 stand.
+- **No Playwright** — settled in `docs/v0.2.1-proposal.md`; the matrix lives as snippets in the
+  review skill's `browser-matrix.md`.
+- **The archives keep `/beni-pr-review`.** Six `docs/` files and three released sections; a
+  find-and-replace would retcon the paper trail.
+- **`jest-dom`, `user-event`, a `main.tsx` boot test** — reasons in the proposal. The
+  `LensSwitcher` arrow-key contract is the first test that will want `user-event`; row 12
+  replaces the boot before it is worth testing.
+- **Rows 6, 7, 8, 12, 13a–d and one third of 11** — v0.2.5, the resilience patch, which the
+  proposal reports splits cleanly along the sync/app seam should Beni want v0.2.5 + v0.2.6.
+  **Rows 3, 4, 10** and the rest of 11 — the design cycle. **Rows 1, 2** — v0.3.0. The rest
+  unscheduled.
 
 ## [0.2.3] — 2026-09-04
 
