@@ -183,9 +183,12 @@ downstream.
 
 ## Roadmap pointers
 
-`docs/v0.3.0-ideas.md` (written cold 2 Sep 2026 by the session that reviewed and landed PR #8)
-is the **current** ranked candidate list — 15 rows, several carried forward from
-`docs/v0.2.0-ideas.md`, whose text stays the fuller description for the rows it originated.
+`docs/v0.2.6-ideas.md` is the **current** ranked candidate list, written cold after the v0.2.5
+build. It carries open rows from `docs/v0.3.0-ideas.md` with their original numbers, the two
+new provider candidates, and this build's verification lessons. Read its process notes
+together with that earlier file's tail and `docs/v0.2.0-ideas.md`, whose text stays the fuller
+description for the rows it originated. `docs/v0.2.5-proposal.md` is the inherited spec for
+the next session, including the authoritative snapshot boundary and its accepted cost.
 `docs/v0.2.1-proposal.md` ("The train") is the release plan that turns that list into a train
 of patches and the v0.3.0 minor, with the deferred rows and their reasons — **amended on
 numbering by `docs/v0.2.2-proposal.md`** (4 Sep 2026: v0.2.2 is "the front door") **and again

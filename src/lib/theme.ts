@@ -17,8 +17,8 @@ export function themeStorageKey(lens: Lens): 'kickoff-theme' | 'kickoff-theme-br
 }
 
 /**
- * The one theme decision, used identically by the generated inline bootstrap and
- * by App's lens-change effect so the two can never disagree.
+ * The shared stored/default theme decision for the generated bootstrap and App.
+ * App also retains explicit session choices when storage is unavailable.
  */
 export function resolveTheme(
   lens: Lens,
