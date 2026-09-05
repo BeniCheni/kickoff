@@ -23,10 +23,11 @@ npm run sync             # refresh src/data/*.json; exits 1 if something inside 
 `sync` takes `--from=YYYY-MM-DD` and `--to=YYYY-MM-DD`; the default window is −30 to +150
 days. It needs no key and no account — ESPN's scoreboard and standings endpoints are public.
 
-You'll want Node 24 (that's what CI runs) — 24.15 or newer, to be exact, or 22.22.2+, or 26+:
-that is jsdom 30's engine floor, mirrored in `package.json`'s `engines`, which npm warns about
-rather than enforces. The fixture snapshot is committed, so everything except `sync` works
-offline.
+You'll want Node 24 (that's what CI runs) — 24.15 or a later 24.x, to be exact; 22.22.2 or a
+later 22.x, or any 26+, clear it too. That is jsdom 30's engine floor
+(`^22.22.2 || ^24.15.0 || >=26.0.0`), mirrored in `package.json`'s `engines`, which npm warns
+about rather than enforces. The fixture snapshot is committed, so everything except `sync`
+works offline.
 
 ## 📜 The rule
 
