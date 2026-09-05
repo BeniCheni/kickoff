@@ -235,7 +235,6 @@ to be read cold.
    day "Nothing changed" and no PR — expected, and never yet observed in any run: count them
    with `gh run list --workflow=sync.yml` when you write this up, never carry a number from a
    document. Test the merge box itself; the first theory shipped was wrong.
-
 7. Say where everything landed.
 8. **The handoff block.** On a release, end with one fenced, paste-ready block — Beni should
    paste, not compose (he tagged v0.2.3 fifty-eight seconds after merging it, which means he
