@@ -1,7 +1,7 @@
 # ⚽ Kickoff
 
 [![CI](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml/badge.svg)](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml)
-[![version](https://img.shields.io/badge/version-0.2.3-1d4ed8)](CHANGELOG.md)
+[![version](https://img.shields.io/badge/version-0.2.4-1d4ed8)](CHANGELOG.md)
 [![license](https://img.shields.io/badge/license-MIT-16a34a)](LICENSE)
 [![built with](https://img.shields.io/badge/built%20with-Claude%20Code-D97757)](CLAUDE.md)
 
@@ -72,7 +72,7 @@ the fix, and the house rule got carved over the door:
 
 ### Never a confident lie.
 
-## ⏱️ What it does (v0.2.3)
+## ⏱️ What it does (v0.2.4)
 
 La Liga, the Premier League, Serie A, Ligue 1, the Bundesliga, their domestic super cups and
 the UEFA Super Cup; full league tables; one fixture skeleton read through three lenses.
@@ -110,7 +110,7 @@ The [demo](https://benicheni.github.io/kickoff/) needs nothing. To run it yourse
 ```bash
 npm install
 npm run dev      # localhost:5173, hot reload
-npm test         # vitest — DST boundaries, the normalizer, the diff engine, the honesty guards
+npm test         # vitest, two projects — the pure layer under node, the component wiring under jsdom
 ```
 
 The fixture snapshot is committed, so the app works offline from a clone. `npm run sync`
@@ -160,8 +160,6 @@ that turns it into patches and the v0.3.0 minor is in
 [docs/v0.2.1-proposal.md](docs/v0.2.1-proposal.md), amended by
 [docs/v0.2.2-proposal.md](docs/v0.2.2-proposal.md). Next up:
 
-- **v0.2.4 — a component test rig** (jsdom beside the node suite), so the clock's component
-  wiring, keyboard behaviour and URL hooks get the coverage the pure layer already has.
 - **v0.2.5 — the resilience patch:** an error boundary so no malformed input is ever a white
   screen, and the URL contract made total.
 - **A design cycle** for the stale LIVE pill — a designed state for "kicked off, outcome
@@ -190,6 +188,9 @@ One subject line per release. The honours board:
   sync that merges its own boring news, an address, and these docs.
 - **v0.2.3** *(4 Sep 2026)* — a hotfix: the workflows on Node 24 actions, so no run warns that
   Node 20 is deprecated. The train slides again — the rig is v0.2.4, the resilience patch v0.2.5.
+- **v0.2.4** *(5 Sep 2026)* — tests reach the wiring: a jsdom project beside the node suite, the two
+  browser-found bugs reproduced as tests that fail against their pre-fix logic, and the review
+  command renamed `/kickoff-pr-review`.
 
 The paper trail for every release — proposals, design briefs, build specs and review
 prompts — is indexed in [docs/README.md](docs/README.md). The design system it's built

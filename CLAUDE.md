@@ -35,6 +35,16 @@ review pass.
 
 - `npm run typecheck` and `npm test` green at every commit; data-honesty test assertions are
   never weakened to make a redesign pass.
+- Since v0.2.4 `npm test` runs two vitest projects (`vite.config.ts`, `test.projects`): `node`
+  — the pure layer, `tests/**/*.test.ts`, what always ran — and `dom` — the component wiring,
+  `tests/dom/**/*.test.tsx` under jsdom + Testing Library, typed by `tsconfig.test-dom.json`.
+  The rig is `tests/dom/rig.ts`: drive the app's own clock store with fake timers and a focus
+  catch-up, URL state by `replaceState` + a synthetic popstate, StrictMode's double subscribe,
+  a stubbed `matchMedia`, a `localStorage` that throws, a contained throw under a boundary.
+  Extend it; do not re-invent it. What it does *not* cover is the next bullet — jsdom knows
+  nothing of layout, contrast, `scrollWidth` or the marquee, so the browser matrix stands.
+  Node floor: jsdom 30 needs `^22.22.2 || ^24.15.0 || >=26.0.0`, mirrored in `package.json`
+  `engines` (npm warns, it does not block); CI runs Node 24.
 - Browser-verify before declaring done: every lens × theme × tab at 360, 375, 390 and
   ~1000px (390 is the judge, 360 the jury) when the diff touches `src/` or `index.css`, a
   smoke pass when it is docs or tooling, and check

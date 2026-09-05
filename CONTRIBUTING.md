@@ -12,7 +12,7 @@ yet set" than be wrong.
 ```bash
 npm install
 npm run dev              # dev server with hot reload at localhost:5173
-npm test                 # vitest, node environment, tests/**/*.test.ts
+npm test                 # vitest, two projects: node (tests/**/*.test.ts) and dom (tests/dom/**/*.test.tsx, jsdom)
 npm run typecheck        # tsc -b --noEmit
 npm run build            # static bundle in dist/
 npm run build:single     # one self-contained dist-single/index.html — opens by double-click
@@ -23,8 +23,10 @@ npm run sync             # refresh src/data/*.json; exits 1 if something inside 
 `sync` takes `--from=YYYY-MM-DD` and `--to=YYYY-MM-DD`; the default window is −30 to +150
 days. It needs no key and no account — ESPN's scoreboard and standings endpoints are public.
 
-You'll want Node 24 (that's what CI runs). The fixture snapshot is committed, so everything
-except `sync` works offline.
+You'll want Node 24 (that's what CI runs) — 24.15 or newer, to be exact, or 22.22.2+, or 26+:
+that is jsdom 30's engine floor, mirrored in `package.json`'s `engines`, which npm warns about
+rather than enforces. The fixture snapshot is committed, so everything except `sync` works
+offline.
 
 ## 📜 The rule
 

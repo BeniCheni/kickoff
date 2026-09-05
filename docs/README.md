@@ -41,6 +41,8 @@ to here, filed by release. Two things a cold reader needs first:
 | `v0.2.x-one-shot-ultracode-prompt.md` | v0.2.1 | scoping | The one-shot prompt v0.2.1 was built from. |
 | `v0.2.1-proposal.md` | v0.2.1 | proposal | "The review becomes a command", plus the release plan for the whole train and two rounds of review resolutions. Its train table is superseded on numbering by the next row. |
 | `v0.2.2-proposal.md` | v0.2.2 | proposal | "The front door": Poster by default, the heroes on one clock, the sync's merge verdict, GitHub Pages, and these docs. |
+| `v0.2.4-scoping-and-build-prompt.md` | v0.2.4 | scoping | The PM brief v0.2.4 was built from — the two-project rig, five affordances, two regressions, the review command renamed — with a head note listing where the repo disagreed with it. |
+| `v0.2.4-proposal.md` | v0.2.4 | proposal | "Tests reach the wiring": the rig and its Node floor, each dependency's reason, both regressions quoted red then green, and what v0.2.5 inherits — including that it splits cleanly. |
 | `Kickoff Standings.html` | v0.0.2 | reference | The standings design reference the Table was built from — the one hand-made artefact left, kept as history. |
 | `screenshots/v0.0.3/` | v0.1.0 | evidence | The six-combo matrix (lens × theme, 390 px) as v0.1.0 shipped. |
 | `screenshots/v0.2.2/` | v0.2.2 | evidence | The same six cells at v0.2.2, Poster as default. |
