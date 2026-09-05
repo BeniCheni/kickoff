@@ -77,6 +77,8 @@ these failures abort with exit 2 before any snapshot is written:
 fetched and validated before publication; a failure in either publishes neither. A standings
 outage can therefore delay otherwise valid fixture updates — an explicitly accepted
 availability cost. The last committed snapshot remains the last completely successful one.
+A failed run leaves no PR and no label; it is a red run in Actions, and the app ages until
+the next successful one.
 Future ancillary data does not automatically join this boundary; membership needs an explicit
 decision. This supersedes the earlier standings soft-failure exception.
 

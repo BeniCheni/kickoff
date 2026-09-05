@@ -62,6 +62,10 @@ validation failure in either aborts with exit 2 before snapshot writes. A standi
 intentionally delays otherwise valid fixtures; the earlier soft-failure exception is retired.
 Future ancillary datasets do not join this boundary automatically. `standings=failed` remains
 a legacy report value understood by the merge policy below; current failures abort instead.
+A failed run is visible only as a red `sync.yml` run in Actions — no PR, no `hold: human`
+label, no commit — so a fixture that moved during a standings outage reaches no PR until the
+next successful run; Step 0's re-read of the app for every open position is the only guard,
+and the staleness banner the only in-product signal (the v0.2.5 review, PR #23).
 
 `.github/workflows/sync.yml` runs `npm run sync` on a cron of `23 1,4,7,10,13,16,19,22 * * *`
 — every three hours *as scheduled*, keeping 00:23 and 12:23 EDT in the set, an hour early
