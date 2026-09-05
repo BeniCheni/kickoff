@@ -4,7 +4,7 @@ import { META, SYNC_STAMP } from './lib/fixtures'
 import { useUrlState } from './lib/useUrlState'
 import { canonicalSearch, encodeTab, parseTab } from './lib/urlCodecs'
 import { DEFAULT_LENS, encodeLens, parseLens, type Lens } from './lib/lens'
-import { resolveThemeFromEnvironment, themeStorageKey, writeStoredTheme, type Theme } from './lib/theme'
+import { readStoredTheme, resolveThemeFromEnvironment, themeStorageKey, writeStoredTheme, type Theme } from './lib/theme'
 import { TabNav, type Tab } from './components/TabNav'
 import { LensSwitcher } from './components/LensSwitcher'
 import { FixturesPage } from './components/FixturesPage'
@@ -43,6 +43,8 @@ export default function App() {
 
   const prevLens = useRef<Lens | null>(null)
   const fadeTimer = useRef<number | undefined>(undefined)
+  // Explicit choices remain authoritative in this session even if storage is blocked.
+  const sessionThemes = useRef<Partial<Record<ReturnType<typeof themeStorageKey>, Theme>>>({})
 
   // The single lens → DOM sync point. Covers switcher clicks and Back/Forward alike
   // (useUrlState's popstate handler re-renders us). Re-resolving the theme here is what
@@ -50,7 +52,7 @@ export default function App() {
   useEffect(() => {
     const root = document.documentElement
     root.dataset.lens = lens
-    const next = resolveThemeFromEnvironment(lens)
+    const next = sessionThemes.current[themeStorageKey(lens)] ?? resolveThemeFromEnvironment(lens)
     root.dataset.theme = next
     setTheme(next)
     if (
@@ -73,9 +75,23 @@ export default function App() {
     }
   }, [lens])
 
+  useEffect(() => {
+    const media = window.matchMedia('(prefers-color-scheme: dark)')
+    const key = themeStorageKey(lens)
+    const onChange = () => {
+      if (sessionThemes.current[key] || readStoredTheme(key)) return
+      const next = resolveThemeFromEnvironment(lens)
+      document.documentElement.dataset.theme = next
+      setTheme(next)
+    }
+    media.addEventListener('change', onChange)
+    return () => media.removeEventListener('change', onChange)
+  }, [lens])
+
   const toggleTheme = () => {
     const next = theme === 'dark' ? 'light' : 'dark'
     document.documentElement.dataset.theme = next
+    sessionThemes.current[themeStorageKey(lens)] = next
     writeStoredTheme(themeStorageKey(lens), next)
     setTheme(next)
   }

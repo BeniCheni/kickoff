@@ -94,9 +94,10 @@ The fixture list is one component tree. A **lens** (`?lens=`) may change four th
 atmosphere (default theme, lead accent), day-header scale, row density, and the hero at the
 top of Fixtures — Ledger's Next-up strip, Poster's Tonight's slate, Broadcast's ticker.
 Everything else is invariant, and the Table's markup is untouched by lens entirely. The lens
-is applied twice by design: once in `main.tsx` before React renders (so the first paint is
-already the right lens and theme), and once in `App.tsx`'s effect for every switch after
-that, through the same decoder and the same theme function so the two can never disagree.
+is applied twice by design: once by a classic inline head script compiled from
+`src/themeBoot.ts` before stylesheets, and once in `App.tsx`'s effect for later switches.
+Both use the same decoder and theme decision. An OS scheme change updates an unchosen theme;
+an explicit choice takes priority, including in-session when storage is blocked.
 
 Poster's hero and Ledger's hero share one gate, `stillToKickOff`, and one clock. That was the
 v0.2.2 fix; before it, Poster filtered by status and Ledger by instant, and they contradicted
