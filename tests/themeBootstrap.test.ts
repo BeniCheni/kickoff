@@ -1,4 +1,5 @@
 import { beforeAll, describe, expect, it } from 'vitest'
+import { readFileSync } from 'node:fs'
 import { runInNewContext } from 'node:vm'
 import { buildThemeBootstrap } from '../scripts/themeBootstrap'
 import { parseLens } from '../src/lib/lens'
@@ -47,5 +48,21 @@ describe('the generated head script executes the production lens/theme decision'
         })
       }
     }
+  })
+})
+
+describe('the head prepend keeps the charset declaration inside the parser prescan', () => {
+  it('leaves <meta charset> within the first 1024 bytes of index.html after injection', () => {
+    // HTML's encoding prescan reads only the first 1024 bytes of the document, and
+    // head-prepend puts the classic bootstrap ahead of <meta charset>. The budget is
+    // index.html's own prelude plus the injected tag. Measured at v0.2.5: 648 bytes of
+    // script, the declaration ending at byte 763 in both dist/ and dist-single/. If this
+    // ever binds, inject after the charset meta instead of prepending the head.
+    const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8')
+    const meta = html.match(/<meta charset="[^"]+" \/>/)?.[0]
+    expect(meta).toBeTruthy()
+    const prelude = Buffer.byteLength(html.slice(0, html.indexOf(meta!) + meta!.length))
+    const tag = Buffer.byteLength(`<script data-kickoff-theme="">${code}</script>\n`)
+    expect(prelude + tag).toBeLessThanOrEqual(1024)
   })
 })

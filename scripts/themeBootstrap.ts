@@ -28,6 +28,8 @@ export function themeBootstrap(): Plugin {
     transformIndexHtml: {
       order: 'pre',
       async handler() {
+        // head-prepend lands before <meta charset>, which the encoding prescan must find in the
+        // first 1024 bytes; tests/themeBootstrap.test.ts pins prelude + script under that budget.
         return [{ tag: 'script', attrs: { 'data-kickoff-theme': '' }, children: await buildThemeBootstrap(), injectTo: 'head-prepend' }]
       },
     },
