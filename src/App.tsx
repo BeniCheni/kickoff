@@ -11,6 +11,7 @@ import { FixturesPage } from './components/FixturesPage'
 import { TablePage } from './components/TablePage'
 import { StalenessBanner } from './components/StalenessBanner'
 import { TickerStrip } from './components/TickerStrip'
+import { ViewBoundary } from './components/ViewBoundary'
 
 export default function App() {
   const { today } = useNow()
@@ -101,11 +102,13 @@ export default function App() {
         <LensSwitcher lens={lens} onSelect={setLens} />
       </TabNav>
 
-      {lens === 'broadcast' && tab === 'fixtures' && <TickerStrip />}
+      <ViewBoundary key={`${tab}:${lens}`}>
+        {lens === 'broadcast' && tab === 'fixtures' && <TickerStrip />}
 
-      <StalenessBanner />
+        <StalenessBanner />
 
-      {tab === 'table' ? <TablePage /> : <FixturesPage today={today} lens={lens} />}
+        {tab === 'table' ? <TablePage /> : <FixturesPage today={today} lens={lens} />}
+      </ViewBoundary>
     </div>
   )
 }
