@@ -20,9 +20,9 @@ of it as unreliable:
 2. `docs/vX.Y.Z-design-prompt.md` — the Claude Design brief, built on real tokens/data.
 3. `docs/vX.Y.Z-implementation-prompt.md` — the Claude Code build spec.
 4. `docs/vX.Y.Z-review-prompt.md` — the adversarial review + merge instructions. Since v0.2.1
-   the method lives in the repo skill `/kickoff-pr-review` (`.claude/skills/kickoff-pr-review/`, `/beni-pr-review` until v0.2.4);
-   the archived prompt for a release is the per-PR part — number, spec files, human-review
-   items, the sealed appendix — not the method.
+   the method lives in the repo skill `/kickoff-pr-review` (`.claude/skills/kickoff-pr-review/`;
+   `/beni-pr-review` until v0.2.4); the archived prompt for a release is the per-PR part —
+   number, spec files, human-review items, the sealed appendix — not the method.
 
 Rules that earned their place: **spec precedence is template > design brief > implementation
 prompt** (note every resolution in the PR); every prompt is delivered in the chat message in a
