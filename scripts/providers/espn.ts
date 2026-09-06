@@ -123,6 +123,12 @@ function eventProblem(event: any): string | null {
       return `missing or invalid ${role} team name`
     }
   }
+  // Both sides of the fixture/table join must validate before coercion. An array such as
+  // ["123"] would otherwise borrow team "123"'s identity, not merely miss the join.
+  for (const role of ['home', 'away']) {
+    const id = comp.competitors.find((c: any) => c?.homeAway === role).team.id
+    if (providerIdentity(id) === null) return `${role} team id ${identityContext(id)} is missing or invalid`
+  }
   return null
 }
 
@@ -158,8 +164,8 @@ export function normalizeEvent(
     competition,
     kickoffUtc: new Date(event.date).toISOString(),
     venueTz: COMPETITIONS[competition].tz,
-    home: { name: home, sourceId: homeC.team?.id ? String(homeC.team.id) : undefined },
-    away: { name: away, sourceId: awayC.team?.id ? String(awayC.team.id) : undefined },
+    home: { name: home, sourceId: providerIdentity(homeC.team.id)! },
+    away: { name: away, sourceId: providerIdentity(awayC.team.id)! },
     status,
     timeConfidence,
     source: { provider: 'espn', sourceId, fetchedAt },

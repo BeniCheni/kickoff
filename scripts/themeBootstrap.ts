@@ -28,8 +28,9 @@ export function themeBootstrap(): Plugin {
     transformIndexHtml: {
       order: 'pre',
       async handler() {
-        // head-prepend lands before <meta charset>, which the encoding prescan must find in the
-        // first 1024 bytes; tests/themeBootstrap.test.ts pins prelude + script under that budget.
+        // The emitted charset declaration must end within 1024 bytes; tests measure both
+        // builds. If this binds, insert after charset but before styles/modules. Prepending
+        // the head is convenient, not required for the bootstrap's ordering guarantee.
         return [{ tag: 'script', attrs: { 'data-kickoff-theme': '' }, children: await buildThemeBootstrap(), injectTo: 'head-prepend' }]
       },
     },

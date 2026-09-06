@@ -77,8 +77,12 @@ these failures abort with exit 2 before any snapshot is written:
 fetched and validated before publication; a failure in either publishes neither. A standings
 outage can therefore delay otherwise valid fixture updates — an explicitly accepted
 availability cost. The last committed snapshot remains the last completely successful one.
-A failed run leaves no PR and no label; it is a red run in Actions, and the app ages until
-the next successful one.
+A failed run creates or updates no sync PR, label or commit; an existing PR stays unchanged.
+Its failure and diagnostics are in Actions. Re-reading the committed app cannot reveal a
+withheld fixture move. The header stamp and 24/72-hour banner describe snapshot age, not
+whether a check failed, and the app advances only after a change-bearing update merges (a
+successful quiet run does not advance it). PR #23's Pass 2 treats a verified failure reader
+as an unresolved release gate, not a cost that documentation alone settles.
 Future ancillary data does not automatically join this boundary; membership needs an explicit
 decision. This supersedes the earlier standings soft-failure exception.
 

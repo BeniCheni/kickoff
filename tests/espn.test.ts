@@ -83,6 +83,23 @@ describe('normalizeEvent', () => {
   it('accepts a provider numeric id only after validation', () => {
     expect(normalizeEvent({ ...ligue1[0], id: 123 }, 'ligue1', AT)?.id).toBe('ligue1:123')
   })
+
+  it.each(['home', 'away'])('rejects absent or malformed %s team identities before coercion', (role) => {
+    for (const id of [undefined, null, '', ' ', 'undefined', 'null', {}, [], ['123'], true, NaN, -1, 1.5]) {
+      const event = structuredClone(ligue1[0])
+      event.competitions[0].competitors.find((c: any) => c.homeAway === role).team.id = id
+      expect(normalizeEvent(event, 'ligue1', AT), `raw ${role} id: ${JSON.stringify(id)}`).toBeNull()
+    }
+  })
+
+  it('keeps validated numeric team identities, including zero', () => {
+    const event = structuredClone(ligue1[0])
+    event.competitions[0].competitors.find((c: any) => c.homeAway === 'home').team.id = 0
+    event.competitions[0].competitors.find((c: any) => c.homeAway === 'away').team.id = 123
+    const fixture = normalizeEvent(event, 'ligue1', AT)!
+    expect(fixture.home.sourceId).toBe('0')
+    expect(fixture.away.sourceId).toBe('123')
+  })
 })
 
 describe('normalizeEvent — status mapping', () => {
@@ -195,5 +212,16 @@ describe('espnProvider.fetchWindow — unmapped statuses abort before any write'
   it('rejects a missing events array rather than interpreting a reshaped response as an empty schedule', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => ({}) })))
     await expect(espnProvider.fetchWindow('2026-08-21', '2026-08-21')).rejects.toThrow(/missing or invalid events array/)
+  })
+
+  it('reports invalid team ids even on an event already seen, with role and raw identity', async () => {
+    const badHome = structuredClone(ligue1[0])
+    badHome.competitions[0].competitors.find((c: any) => c.homeAway === 'home').team.id = ['123']
+    const badAway = structuredClone(ligue1[0])
+    delete badAway.competitions[0].competitors.find((c: any) => c.homeAway === 'away').team.id
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => ({ events: [ligue1[0], badHome, badAway] }) })))
+    await expect(espnProvider.fetchWindow('2026-08-21', '2026-08-21')).rejects.toThrow(
+      /fra\.1.*entry 2, event.*home team id \["123"\][\s\S]*entry 3, event.*away team id \(missing\)/,
+    )
   })
 })
