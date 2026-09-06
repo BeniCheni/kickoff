@@ -160,3 +160,41 @@ reproduction of the old and proposed values, and browser confirmation. The perma
   procedural until `docs/v0.2.6-ideas.md` row 15's trigger warrants product work.
 - No merge or tag. This PR is the implementation pass; cold review, rebuttal and Beni's
   adjudication still follow. Release numbering remains explicitly pending his ruling.
+
+## Review resolutions — Pass 1 (Claude Code cold review of PR #26, 6 Sep 2026)
+
+Recorded here because the spec of record carries a review's resolutions and accepted costs;
+the PR comment carries the evidence. Pass 2 (Codex's rebuttal) and Beni's adjudication follow.
+
+- **Precedence, recognised as resolved by this build.** The design spec's `--accent-strong`
+  `#bd4720` measures 4.27:1 on light surface-alt (the Table's desktop hover ground) and 4.19:1
+  on the 72h banner's actual accent/10-over-bg ground; the built `#b4431e` clears both (4.64
+  and 4.55 unrounded; 4.53 against the rendered pixel). AA on the actual ground wins over the
+  template's literal — the repo's own precedent (`src/index.css`, Broadcast light). Recomputed
+  independently in the review; `tests/contrast.test.ts` goes red on the spec's value.
+- **Precedence, extended beyond the spec's offer.** The spec offered a hollow POSTPONED and
+  kept CANCELLED in the tinted "alarm at low volume" shape; this build hollows both so
+  CANCELLED does not keep the failing 15% tint (4.29:1 even with the new token). The hollow
+  shape now covers two unresolved states (KICKED OFF, POSTPONED) and a resolved one
+  (CANCELLED); the labels differ, so the states are not distinguished by hue alone. Left as
+  built; the shape grammar is the designer's to reopen.
+- **Deferred to adjudication, not changed by the review.** (1) The empty-state gate is
+  `segments.length === 0`, while the spec defines the state on NEXT alone ("no scheduled
+  fixture after now, exact or placeholder"): on a day carrying LIVE or FT segments with nothing
+  scheduled after, the strip renders those segments and no `window ends …` provenance. The
+  build's own test pins that reading; `docs/v0.2.6-ideas.md` row 18 holds the alternative.
+  (2) `tickerSegments` resolves NEXT within the first eligible Brooklyn date while
+  `hotFixtureIds` resolves it across all fixtures, so an all-placeholder earliest date makes
+  the marquee and the Broadcast glow name different fixtures on one screen — the accepted cost
+  above, reproduced in the browser; `docs/v0.2.6-ideas.md` row 19.
+- **Fixed by the review on the branch.** The empty strip's focusable line is
+  `role="region"` named "Ticker" (Chrome's accessibility tree exposed a focusable generic with
+  an empty name). `tests/dom/designCycle.test.tsx` restores fixtures by deleting the keys a
+  test added before `Object.assign`, and selects the Month cell by the fixture's own date
+  rather than the month's first match-day.
+- **The reworded `standings=failed` text is accurate.** `prepareStandings` throws through
+  `runSync` to exit 2 before any report line; `mergeVerdict` keeps the value as a defensive
+  input; `sync.yml`'s regex still accepts it. The workflow's own header comment, its warning
+  branch and `mergeVerdict`'s doc comment still describe the retired soft failure —
+  `docs/v0.2.6-ideas.md` row 21.
+- **Accepted costs above stand as written.**
