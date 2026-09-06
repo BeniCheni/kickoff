@@ -38,7 +38,6 @@ runs, and a four-backtick outer fence when the block carries its own ```-fenced 
 NOT apply to files in this repo — `docs/`, `CLAUDE.md`, `README.md` and `CHANGELOG.md` keep their
 existing wrapped style.
 
-
 ## Verification discipline (from that v0.0.3-doc-cycle / v0.1.0-release review)
 
 - `npm run typecheck` and `npm test` green at every commit; data-honesty test assertions are
@@ -133,7 +132,7 @@ standings row — so a quiet run leaves no commit and no PR. Consequence, accept
 `synced` stamp and staleness banner measure time since the last *change-bearing* merged
 sync, and go amber then red through an international break even though the bot verified
 nothing moved; a higher cadence does not change that. The fix (auto-merging an empty report)
-is v0.3.0's, behind the diff engine's two blind spots — see `docs/v0.2.0-proposal.md`'s
+is v0.4.0's, behind the diff engine's two blind spots — see `docs/v0.2.0-proposal.md`'s
 "Review resolutions" and `docs/v0.3.0-ideas.md` rows 1–2. The bot's PR does trigger
 `ci.yml`'s `pull_request` run, but GitHub holds it for approval (github-actions[bot] is not
 a collaborator) and the merge box counts only that run — a `workflow_dispatch` check on the
@@ -217,10 +216,12 @@ together with that earlier file's tail and `docs/v0.2.0-ideas.md`, whose text st
 description for the rows it originated. `docs/v0.2.5-proposal.md` is the inherited spec for
 the next session, including the authoritative snapshot boundary and its accepted cost.
 `docs/v0.2.1-proposal.md` ("The train") is the release plan that turns that list into a train
-of patches and the v0.3.0 minor, with the deferred rows and their reasons — **amended on
+of patches and the v0.4.0 sync minor, with the deferred rows and their reasons — **amended on
 numbering by `docs/v0.2.2-proposal.md`** (4 Sep 2026: v0.2.2 is "the front door") **and again
 by the v0.2.3 hotfix** (same day, `CHANGELOG.md` `[0.2.3]`, Node 24 actions; Beni's call): the
-jsdom rig is v0.2.4, the resilience patch v0.2.5, v0.3.0 unchanged; `/kickoff-pr-review`
+jsdom rig is v0.2.4, the resilience patch v0.2.5; **amended again by v0.3.0**
+(`docs/design-cycle-proposal.md`, Beni's 6 Sep ruling): the design cycle takes v0.3.0,
+the sync theme becomes v0.4.0, and the earlier proposals stay as historical records; `/kickoff-pr-review`
 (`.claude/skills/kickoff-pr-review/`, shipped in v0.2.1, renamed in v0.2.4, planned in
 `docs/v0.2.1-pr-review-skill-plan.md`) is ladder step 4 as a command.
 Separately, `README.md`'s "Beyond" section names the standing bridge to the betting track:

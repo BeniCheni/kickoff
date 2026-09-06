@@ -105,3 +105,23 @@ also read the pill’s actual foreground, transparent background, border, height
 Local raw receipts: `/tmp/kickoff-design-qa/contrast.json`, `comparisons.json`,
 `computed-contrast.json`, and `states.json`. These raw files are local QA artifacts;
 this table and the tests are the GitHub-visible evidence.
+
+
+## Pass 2 — source-derived alphas and rendered-pixel check (6 Sep 2026)
+
+All 40 pairs in the original table reproduce identically with `--border` and
+`--floodlight-bg` alphas parsed from CSS and the 72h opacity parsed from the component's
+`bg-accent/10`. Mutating those three sources turns the relevant tests red. The permanent
+inventory now includes five additional pairs: secondary on floodlight-bg in both themes,
+and dark floodlight-strong, accent-strong and the Poster ring on floodlight-bg over bg.
+Only dark muted on that tint is excluded (4.43:1); `tests/contrast.test.ts` guards the three
+source sites and `tests/dom/contrast.test.tsx` mounts the 24h banner plus all five leagues'
+callouts and non-default sort banners to assert no muted text inherits or uses that ground.
+Changing the inventory requires updating its proof. This remains scoped coverage.
+
+At margins under 0.05, Chrome's rendered pixel is decisive. The 72h light banner is
+`(243,229,218)` against `#b4431e`: **4.5268:1**, versus the 4.55 sRGB prediction (Tailwind
+emits an oklab color-mix). The actual Poster meridiem uses `#646c61` on surface-alt
+`(239,234,217)`: **4.5190:1**. Other banner pixels: light 24h `(251,239,211)` **4.9466**;
+dark 24h `(47,52,28)` **8.2286**; dark 72h `(37,42,28)` **7.5282**.
+Local raw receipt: `/tmp/kickoff-pass2/pixels.json`; original palette and pill pixels unchanged.

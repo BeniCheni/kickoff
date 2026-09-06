@@ -6,10 +6,9 @@ All notable changes to Kickoff. The format loosely follows
 diverge (the v0.1.0 release shipped from the v0.0.3 doc cycle) — this file tracks
 releases.
 
-## [Unreleased]
+## [0.3.0] — 2026-09-06
 
-The design cycle: snapshot states say what is known, and semantic status text clears its
-actual backgrounds. Paper trail: `docs/design-cycle-proposal.md`; release numbering awaits Beni.
+Snapshot states say what is known. Paper trail: `docs/design-cycle-proposal.md`.
 
 ### Added
 
@@ -26,6 +25,9 @@ actual backgrounds. Paper trail: `docs/design-cycle-proposal.md`; release number
   negative values on its hover ground and the actual 72h banner tint.
 - Retired standings-failure hold descriptions and the adjudicated failed-sync-reader candidate.
   The wanted generated-prompt formatting paragraph is carried into the project instructions.
+- NEXT provenance survives beside LIVE/FT at the window tail; the marquee and glow share
+  the earliest eligible date and the heroes' still-to-kick-off gate. Contrast assertions read
+  token/component alphas and guard the dark-tint text inventory.
 - The empty marquee's static line is a named region (`role="region"`, "Ticker"): Chrome's
   accessibility tree had exposed the Tab stop as a nameless generic. Found by the PR #26 Pass 1
   review; the DOM test asserts the name.
@@ -33,11 +35,14 @@ actual backgrounds. Paper trail: `docs/design-cycle-proposal.md`; release number
 ### Deliberately not done
 
 - No competition-color repaint, FixtureRow em-dash migration, ticker filter change, speed
-  redesign or nonempty reduced-motion pause-control change. No provider/sync/auto-merge work.
+  redesign or nonempty reduced-motion pause-control change. No provider/sync/auto-merge behavior changes.
 - The app still ticks in minutes; stale status appears on the first tick past four hours.
   Empty marquee copy stays one line and can require horizontal panning on narrow screens.
 - No new row-age line or final-score inference. The in-product failure reader remains deferred
-  under `docs/v0.2.6-ideas.md` row 15. Release numbering, merge and tag are separate decisions.
+  under `docs/v0.2.6-ideas.md` row 15. The hollow status grammar returns to the designer.
+- **The train slides again.** This release takes v0.3.0, so the sync theme becomes v0.4.0 —
+  Beni's call, 6 Sep 2026. Prior sections' sentences naming v0.3.0 stay as written, superseded
+  here, the way **`[0.2.3]`** superseded **`[0.2.2]`**. Merge and annotated tag remain Beni's acts.
 
 ## [0.2.5] — 2026-09-05
 

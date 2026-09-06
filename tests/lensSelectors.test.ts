@@ -1,8 +1,11 @@
+import { stillToKickOff as snapshotGate } from '../src/lib/fixtures'
 import { describe, expect, it } from 'vitest'
 import type { Fixture } from '../src/lib/schema'
 import type { CompetitionKey } from '../src/lib/competitions'
 import {
   LIVE_WINDOW_MS,
+  nextMatchdaySelection,
+  stillToKickOff,
   believablyLive,
   staleLiveIds,
   dominantCompetition,
@@ -16,6 +19,9 @@ import {
   tickerSegments,
   type DayInfo,
 } from '../src/lib/lensSelectors'
+
+const WINDOW_TO = '2027-02-02'
+const EMPTY_NEXT = { keyword: 'NEXT', emptyNext: true, text: '— nothing scheduled in this snapshot · window ends Tue 2 Feb' }
 
 let seq = 0
 function fx(over: Partial<Fixture> & { competition: CompetitionKey }): Fixture {
@@ -62,14 +68,14 @@ describe('Poster day-header count versus league-set times', () => {
 describe('NEXT carries its Brooklyn date when it is not today', () => {
   it('qualifies tomorrow with an actual date, not the stadium date', () => {
     const next = fx({ competition: 'pl', kickoffUtc: '2026-09-07T00:30:00.000Z' })
-    expect(tickerSegments([next], '2026-09-05', '2026-09-05T23:00:00.000Z')).toEqual([
+    expect(tickerSegments([next], '2026-09-05', '2026-09-05T23:00:00.000Z', WINDOW_TO)).toEqual([
       { keyword: 'NEXT', text: 'Sun 6 Sep · 8:30 PM Home v Away' },
     ])
   })
   it('qualifies a later week as well, while UTC tomorrow can still be Brooklyn today', () => {
     const next = fx({ competition: 'pl', kickoffUtc: '2026-09-14T00:30:00.000Z' })
-    expect(tickerSegments([next], '2026-09-05', '2026-09-05T23:00:00.000Z')[0]?.text).toBe('Sun 13 Sep · 8:30 PM Home v Away')
-    expect(tickerSegments([next], '2026-09-13', '2026-09-13T23:00:00.000Z')[0]?.text).toBe('8:30 PM Home v Away')
+    expect(tickerSegments([next], '2026-09-05', '2026-09-05T23:00:00.000Z', WINDOW_TO)[0]?.text).toBe('Sun 13 Sep · 8:30 PM Home v Away')
+    expect(tickerSegments([next], '2026-09-13', '2026-09-13T23:00:00.000Z', WINDOW_TO)[0]?.text).toBe('8:30 PM Home v Away')
   })
 })
 
@@ -273,7 +279,7 @@ describe('tickerSegments', () => {
       result: { home: 0, away: 0 },
     })
 
-    const segments = tickerSegments([ft, next, live, liveNoScore, ftYesterday], TODAY, NOW)
+    const segments = tickerSegments([ft, next, live, liveNoScore, ftYesterday], TODAY, NOW, WINDOW_TO)
     expect(segments.map((s) => s.keyword)).toEqual(['LIVE', 'LIVE', 'NEXT', 'FT'])
     expect(segments[0]?.text).toBe('Man Utd 1–0 Ipswich')
     expect(segments[1]?.text).toBe('Rennes v Le Mans')
@@ -283,7 +289,7 @@ describe('tickerSegments', () => {
 
   it('yields only NEXT when nothing is live and nothing finished today', () => {
     const later = fx({ competition: 'seriea', kickoffUtc: '2026-08-31T19:00:00.000Z' })
-    expect(tickerSegments([later], TODAY, NOW).map((s) => s.keyword)).toEqual(['NEXT'])
+    expect(tickerSegments([later], TODAY, NOW, WINDOW_TO).map((s) => s.keyword)).toEqual(['NEXT'])
   })
 
   it('drops LIVE segments whose kickoff is hours behind now — yesterday’s frozen matches stay silent', () => {
@@ -296,10 +302,10 @@ describe('tickerSegments', () => {
     })
     const later = fx({ competition: 'seriea', kickoffUtc: '2026-09-01T19:00:00.000Z' })
     // A day after the sync (the committed-snapshot case): no LIVE, only NEXT.
-    const dayLater = tickerSegments([frozen, later], '2026-08-31', '2026-08-31T17:00:00.000Z')
+    const dayLater = tickerSegments([frozen, later], '2026-08-31', '2026-08-31T17:00:00.000Z', WINDOW_TO)
     expect(dayLater.map((s) => s.keyword)).toEqual(['NEXT'])
     // Within the window it still reads LIVE.
-    const fresh = tickerSegments([frozen, later], TODAY, NOW)
+    const fresh = tickerSegments([frozen, later], TODAY, NOW, WINDOW_TO)
     expect(fresh.map((s) => s.keyword)).toEqual(['LIVE', 'NEXT'])
   })
 })
@@ -387,7 +393,7 @@ describe('stale LIVE exact boundary (synthetic, never a snapshot edit)', () => {
     expect(stale).toBe(delta > 0)
     expect(stale).toBe(!believablyLive(fixture, now))
     expect(hotFixtureIds([fixture], now).has(fixture.id)).toBe(!stale)
-    expect(tickerSegments([fixture], '2026-08-30', now).some((s) => s.keyword === 'LIVE')).toBe(!stale)
+    expect(tickerSegments([fixture], '2026-08-30', now, WINDOW_TO).some((s) => s.keyword === 'LIVE')).toBe(!stale)
     expect(fixture.status).toBe('in_play')
   })
   it('does not call any other stored status stale LIVE', () => {
@@ -404,22 +410,22 @@ describe('approximate NEXT uses days, never filler-time ordering', () => {
   const exact = () => fx({ competition: 'pl', kickoffUtc: '2026-10-13T22:00:00.000Z' })
   it('retains today’s placeholder after its filler instant instead of skipping to a timed later day', () => {
     const a = tbc(), b = exact()
-    expect(tickerSegments([b, a], TODAY, NOW)).toEqual([
+    expect(tickerSegments([b, a], TODAY, NOW, WINDOW_TO)).toEqual([
       { keyword: 'NEXT', tbc: { date: 'Sat 10 Oct' }, text: 'Home v Away' },
     ])
-    expect(hotFixtureIds([a, b], NOW)).toEqual(new Set([b.id]))
+    expect(hotFixtureIds([a, b], NOW)).toEqual(new Set())
   })
   it('counts multiple placeholders, independent of input order and filler instants', () => {
     const a = tbc(), b = { ...tbc(), kickoffUtc: '2026-10-11T03:00:00.000Z', timeConfidence: 'tbd' as const }
     const list = [exact(), a, b]
     const expected = [{ keyword: 'NEXT', tbc: { date: 'Sat 10 Oct' }, text: '· 2 kickoffs, times not yet set by the league' }]
-    expect(tickerSegments(list, TODAY, NOW)).toEqual(expected)
-    expect(tickerSegments(list.reverse(), TODAY, NOW)).toEqual(expected)
+    expect(tickerSegments(list, TODAY, NOW, WINDOW_TO)).toEqual(expected)
+    expect(tickerSegments(list.reverse(), TODAY, NOW, WINDOW_TO)).toEqual(expected)
   })
   it('chooses the earliest exact kickoff on a mixed day and names the TBC count', () => {
     const a = { ...exact(), kickoffUtc: '2026-10-10T23:00:00.000Z' }
     const b = { ...exact(), kickoffUtc: '2026-10-11T00:00:00.000Z' }
-    expect(tickerSegments([b, tbc(), a], TODAY, NOW)).toEqual([
+    expect(tickerSegments([b, tbc(), a], TODAY, NOW, WINDOW_TO)).toEqual([
       { keyword: 'NEXT', text: '7:00 PM Home v Away · +1 TBC' },
     ])
   })
@@ -427,12 +433,48 @@ describe('approximate NEXT uses days, never filler-time ordering', () => {
     const a = tbc()
     const list = [a, { ...exact(), status: 'postponed' as const }, { ...exact(), status: 'cancelled' as const },
       { ...exact(), kickoffUtc: '2026-10-11T04:00:00.000Z' }]
-    expect(tickerSegments(list, '2026-10-11', '2026-10-11T04:00:00.000Z')).toEqual([])
+    expect(tickerSegments(list, '2026-10-11', '2026-10-11T04:00:00.000Z', WINDOW_TO)).toEqual([EMPTY_NEXT])
   })
-  it('keeps today’s FT and believable LIVE when no NEXT exists, and yields no segments for an empty snapshot', () => {
+  it('keeps today’s FT and believable LIVE when no NEXT exists, and yields just empty NEXT for an empty snapshot', () => {
     const live = { ...exact(), status: 'in_play' as const, kickoffUtc: NOW }
     const ft = { ...exact(), status: 'full_time' as const, kickoffUtc: NOW, result: { home: 1, away: 0 } }
-    expect(tickerSegments([live, ft], TODAY, NOW).map((s) => s.keyword)).toEqual(['LIVE', 'FT'])
-    expect(tickerSegments([], TODAY, NOW)).toEqual([])
+    expect(tickerSegments([live, ft], TODAY, NOW, WINDOW_TO).map((s) => s.keyword)).toEqual(['LIVE', 'NEXT', 'FT'])
+    expect(tickerSegments([], TODAY, NOW, WINDOW_TO)).toEqual([EMPTY_NEXT])
   })
+})
+
+// Pass 2: executable counterexamples to the whole-list gate and the later-date glow.
+describe('one NEXT meaning across the strip and the glow', () => {
+  it('retains window provenance alongside a window-tail day of twenty FT results', () => {
+    const now = '2027-01-31T23:30:00.000Z'
+    const results = Array.from({ length: 20 }, () => fx({ competition: 'pl', status: 'full_time',
+      kickoffUtc: '2027-01-31T15:00:00.000Z', result: { home: 1, away: 0 } }))
+    const segments = tickerSegments(results, '2027-01-31', now, WINDOW_TO)
+    expect(segments.filter((s) => s.keyword === 'FT')).toHaveLength(20)
+    expect(segments.find((s) => s.keyword === 'NEXT')?.text).toContain('window ends')
+  })
+})
+
+it('exports the same gate to the snapshot module without a cycle', () => {
+  expect(snapshotGate).toBe(stillToKickOff)
+  const tbc = fx({ competition: 'pl', timeConfidence: 'round_placeholder' })
+  expect(snapshotGate(tbc, '2026-09-01T00:00:00.000Z')).toBe(true)
+})
+
+it('switches both NEXT instruments at Brooklyn midnight, including shuffled mixed dates', () => {
+  const tbc = fx({ competition: 'pl', kickoffUtc: '2026-10-10T12:00:00.000Z', timeConfidence: 'round_placeholder' })
+  const first = fx({ competition: 'pl', kickoffUtc: '2026-10-11T12:00:00.000Z' })
+  const later = fx({ competition: 'pl', kickoffUtc: '2026-10-11T13:00:00.000Z' })
+  const nextTbc = fx({ competition: 'pl', kickoffUtc: '2026-10-11T14:00:00.000Z', timeConfidence: 'tbd' })
+  for (const list of [[later, tbc, first, nextTbc], [nextTbc, first, tbc, later]]) {
+    const before = '2026-10-11T03:59:59.999Z'
+    expect(nextMatchdaySelection(list, '2026-10-10', before).exact).toBeNull()
+    expect(hotFixtureIds(list, before)).toEqual(new Set())
+    const after = '2026-10-11T04:00:00.000Z'
+    expect(nextMatchdaySelection(list, '2026-10-11', after).exact).toBe(first)
+    expect(tickerSegments(list, '2026-10-11', after, WINDOW_TO)).toEqual([
+      { keyword: 'NEXT', text: '8:00 AM Home v Away · +1 TBC' },
+    ])
+    expect(hotFixtureIds(list, after)).toEqual(new Set([first.id]))
+  }
 })

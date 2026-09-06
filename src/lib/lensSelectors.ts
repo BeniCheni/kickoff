@@ -107,17 +107,47 @@ export function posterSubLine(fixtures: readonly Fixture[]): string {
 }
 
 /**
+ * The one gate for "not yet kicked off", shared by every hero (v0.2.2): Ledger's Next-up
+ * strip through `upcoming`, Poster's Tonight's slate through `planSlate`. Two heroes with two
+ * clocks was the bug (docs/v0.3.0-ideas.md row 3); two copies of one gate would be the same
+ * bug in disguise. Scheduled only — a postponed or cancelled match has no honest kickoff to
+ * promise, and an in-play match (a snapshot's or a real one) has kicked off. A league-set
+ * time must still be ahead of `nowUtcIso`, so a fixture drops out at its kickoff minute; a
+ * placeholder (TBC) time is trusted only to the day and is never evicted by arithmetic on an
+ * instant the league never set — the caller's date filter is what retires it.
+ */
+export function stillToKickOff(f: Fixture, nowUtcIso: string): boolean {
+  return f.status === 'scheduled' && (f.timeConfidence !== 'exact' || f.kickoffUtc > nowUtcIso)
+}
+
+/**
  * The next kickoff: the earliest still-scheduled fixture after `nowUtcIso` whose time the
  * league has actually set. Placeholder times are never "next" — that would be a guess.
  */
 export function nextKickoffId(fixtures: readonly Fixture[], nowUtcIso: string): string | null {
   let best: Fixture | null = null
   for (const f of fixtures) {
-    if (f.status !== 'scheduled' || f.timeConfidence !== 'exact') continue
-    if (f.kickoffUtc <= nowUtcIso) continue
+    if (f.timeConfidence !== 'exact' || !stillToKickOff(f, nowUtcIso)) continue
     if (!best || f.kickoffUtc < best.kickoffUtc) best = f
   }
   return best ? best.id : null
+}
+
+/** The marquee and glow share the earliest eligible Brooklyn date. An all-TBC day
+ * has no exact selection: a later day's known time must not silently outrank it. */
+export function nextMatchdaySelection(
+  fixtures: readonly Fixture[], todayBrooklyn: string, nowUtcIso: string,
+): { date: string | null; exact: Fixture | null; placeholders: Fixture[] } {
+  const upcoming = fixtures.filter((f) => stillToKickOff(f, nowUtcIso)
+    && brooklynDate(f.kickoffUtc) >= todayBrooklyn)
+  const date = upcoming.map((f) => brooklynDate(f.kickoffUtc)).sort()[0] ?? null
+  const firstDay = upcoming.filter((f) => brooklynDate(f.kickoffUtc) === date)
+  const nextId = nextKickoffId(firstDay, nowUtcIso)
+  return {
+    date,
+    exact: firstDay.find((f) => f.id === nextId) ?? null,
+    placeholders: firstDay.filter((f) => f.timeConfidence !== 'exact'),
+  }
 }
 
 /**
@@ -140,8 +170,8 @@ export function staleLiveIds(fixtures: readonly Fixture[], nowUtcIso: string): R
 }
 
 /**
- * Broadcast's hot rows: everything believably LIVE in the snapshot plus the next kickoff.
- * These are the only rows that glow — nothing else does.
+ * Broadcast's hot rows: everything believably LIVE in the snapshot plus the exact NEXT
+ * on the first eligible date. These are the only rows that glow — nothing else does.
  */
 export function hotFixtureIds(
   fixtures: readonly Fixture[],
@@ -151,8 +181,8 @@ export function hotFixtureIds(
   for (const f of fixtures) {
     if (believablyLive(f, nowUtcIso)) hot.add(f.id)
   }
-  const next = nextKickoffId(fixtures, nowUtcIso)
-  if (next !== null) hot.add(next)
+  const { exact } = nextMatchdaySelection(fixtures, brooklynDate(nowUtcIso), nowUtcIso)
+  if (exact) hot.add(exact.id)
   return hot
 }
 
@@ -161,12 +191,13 @@ export function hotFixtureIds(
  * kickoff, today's full-time scores. The snapshot carries no live match minute, so none
  * is rendered — inventing one would break the data-honesty rule.
  */
-export type TickerSegment = { keyword: 'LIVE' | 'NEXT' | 'FT'; text: string; tbc?: { date: string } }
+export type TickerSegment = { keyword: 'LIVE' | 'NEXT' | 'FT'; text: string; tbc?: { date: string }; emptyNext?: true }
 
 export function tickerSegments(
   fixtures: readonly Fixture[],
   todayBrooklyn: string,
   nowUtcIso: string,
+  windowTo: string,
 ): TickerSegment[] {
   const segments: TickerSegment[] = []
   for (const f of fixtures) {
@@ -178,16 +209,7 @@ export function tickerSegments(
         : `${f.home.name} v ${f.away.name}`,
     })
   }
-  // Placeholder instants carry only a Brooklyn date: retain today's TBC even after
-  // its filler instant. Order days first, then exact kickoffs within the first day.
-  const upcoming = fixtures.filter((f) => f.status === 'scheduled'
-    && brooklynDate(f.kickoffUtc) >= todayBrooklyn
-    && (f.timeConfidence !== 'exact' || f.kickoffUtc > nowUtcIso))
-  const date = upcoming.map((f) => brooklynDate(f.kickoffUtc)).sort()[0]
-  const firstDay = upcoming.filter((f) => brooklynDate(f.kickoffUtc) === date)
-  const placeholders = firstDay.filter((f) => f.timeConfidence !== 'exact')
-  const nextId = nextKickoffId(firstDay, nowUtcIso)
-  const next = firstDay.find((f) => f.id === nextId)
+  const { date, exact: next, placeholders } = nextMatchdaySelection(fixtures, todayBrooklyn, nowUtcIso)
   if (next) {
     const { time, isoDate } = fixtureTimes(next.kickoffUtc, next.venueTz).brooklyn
     const when = isoDate === todayBrooklyn ? time : `${posterDayTitle(isoDate)} · ${time}`
@@ -200,6 +222,11 @@ export function tickerSegments(
       text: placeholders.length === 1
         ? `${only.home.name} v ${only.away.name}`
         : `· ${placeholders.length} kickoffs, times not yet set by the league`,
+    })
+  } else {
+    segments.push({
+      keyword: 'NEXT', emptyNext: true,
+      text: `— nothing scheduled in this snapshot · window ends ${posterDayTitle(windowTo)}`,
     })
   }
   for (const f of fixtures) {

@@ -10,6 +10,7 @@ import { TickerStrip } from '../../src/components/TickerStrip'
 import { primeClock, wake } from './rig'
 
 let release: (() => void) | undefined
+const pristine = structuredClone(FIXTURES)
 const originals = FIXTURES.map((f) => ({ ...f }))
 afterEach(() => {
   cleanup()
@@ -22,6 +23,7 @@ afterEach(() => {
     for (const key of Object.keys(f)) if (!(key in original)) delete (f as unknown as Record<string, unknown>)[key]
     Object.assign(f, original)
   })
+  expect(FIXTURES).toEqual(pristine)
 })
 const active = new Set(COMPETITION_KEYS)
 
@@ -29,7 +31,7 @@ describe('synthetic frozen snapshot through the real selector and clock wiring',
   for (const lens of ['ledger', 'poster', 'broadcast'] as const) {
     for (const view of ['week', 'month']) {
       it(`${lens} ${view}: LIVE expires through parent selection, without changing the snapshot`, () => {
-        const fixture = FIXTURES.find((f) => f.timeConfidence === 'exact')!
+        const fixture = FIXTURES.find((f) => f.timeConfidence === 'exact' && !f.result)!
         fixture.status = 'in_play'
         fixture.result = { home: 1, away: 0 } // ILLUSTRATIVE; in-memory only.
         const kickoff = Date.parse(fixture.kickoffUtc)
@@ -94,4 +96,19 @@ describe('ticker mounted/static contract', () => {
     expect(container.querySelector('i')?.textContent).toBe('TBC')
     expect(container.querySelector('i')?.className).toContain('text-floodlight-strong')
   })
+})
+
+it('renders empty NEXT provenance on the moving track alongside FT', () => {
+  FIXTURES.forEach((f) => { f.status = 'cancelled' })
+  const fixture = FIXTURES[0]!
+  fixture.status = 'full_time'
+  fixture.result = { home: 1, away: 0 }
+  release = primeClock(new Date(fixture.kickoffUtc))
+  const { container } = render(<TickerStrip />)
+  expect(container.querySelector('[data-ticker="active"]')).toBeTruthy()
+  const track = container.querySelector('.ticker-track > span')!
+  expect(track.textContent).toContain(`window ends ${posterDayTitle(META.window.to)}`)
+  expect(track.textContent).toContain('FT')
+  expect(container.querySelector('.ticker-track > span:nth-child(2)')?.getAttribute('aria-hidden')).toBe('true')
+  expect(screen.getByRole('button', { name: 'Pause ticker' })).toBeTruthy()
 })

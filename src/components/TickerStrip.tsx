@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react'
 import { FIXTURES, META } from '../lib/fixtures'
-import { posterDayTitle } from '../lib/time'
 import { useNow } from '../lib/useNow'
 import { tickerSegments, type TickerSegment } from '../lib/lensSelectors'
 
@@ -32,9 +31,9 @@ export function TickerStrip() {
   const [hovered, setHovered] = useState(false)
   const [pinned, setPinned] = useState(false)
   const { today, nowUtcIso } = useNow()
-  const segments = useMemo(() => tickerSegments(FIXTURES, today, nowUtcIso), [today, nowUtcIso])
+  const segments = useMemo(() => tickerSegments(FIXTURES, today, nowUtcIso, META.window.to), [today, nowUtcIso])
 
-  const empty = segments.length === 0
+  const empty = segments.length === 1 && segments[0]!.emptyNext === true
 
   const paused = hovered || pinned
 
@@ -64,7 +63,7 @@ export function TickerStrip() {
           style={{ scrollbarWidth: 'none' }}
         >
           <span className="font-semibold text-floodlight-strong">NEXT</span>{' '}
-          — nothing scheduled in this snapshot · window ends {posterDayTitle(META.window.to)}
+          {segments[0]!.text}
         </div>
       ) : (
         <>

@@ -1,7 +1,7 @@
 # ⚽ Kickoff
 
 [![CI](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml/badge.svg)](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml)
-[![version](https://img.shields.io/badge/version-0.2.5-1d4ed8)](CHANGELOG.md)
+[![version](https://img.shields.io/badge/version-0.3.0-1d4ed8)](CHANGELOG.md)
 [![license](https://img.shields.io/badge/license-MIT-16a34a)](LICENSE)
 [![built with](https://img.shields.io/badge/built%20with-Claude%20Code-D97757)](CLAUDE.md)
 [![built with](https://img.shields.io/badge/built%20with-Codex-000000)](https://openai.com/codex/)
@@ -73,7 +73,7 @@ the fix, and the house rule got carved over the door:
 
 ### Never a confident lie.
 
-## ⏱️ What it does (v0.2.5)
+## ⏱️ What it does (v0.3.0)
 
 La Liga, the Premier League, Serie A, Ligue 1, the Bundesliga, their domestic super cups and
 the UEFA Super Cup; full league tables; one fixture skeleton read through three lenses.
@@ -180,14 +180,13 @@ Claude: [CONTRIBUTING.md](CONTRIBUTING.md).
 ## 🧭 Roadmap
 
 The ranked candidate list is [docs/v0.2.6-ideas.md](docs/v0.2.6-ideas.md); the release plan
-that turns it into patches and the v0.3.0 minor is in
+that turns it into patches and the v0.4.0 sync minor is in
 [docs/v0.2.1-proposal.md](docs/v0.2.1-proposal.md), amended by
 [docs/v0.2.2-proposal.md](docs/v0.2.2-proposal.md), with the completed resilience scope in
-[docs/v0.2.5-proposal.md](docs/v0.2.5-proposal.md). Next up:
+[docs/v0.2.5-proposal.md](docs/v0.2.5-proposal.md) and the v0.3.0 numbering ruling in
+[docs/design-cycle-proposal.md](docs/design-cycle-proposal.md). Next up:
 
-- **A design cycle** for the stale LIVE pill — a designed state for "kicked off, outcome
-  unknown to this snapshot" — and the palette's AA debts.
-- **v0.3.0 — the sync tells the whole truth:** result corrections and team renames in the
+- **v0.4.0 — the sync tells the whole truth:** result corrections and team renames in the
   diff engine, then a quiet run that keeps the staleness banner honest through a break.
 
 **Beyond**: betting overlays that join a positions file on fixture ids (the
@@ -217,6 +216,8 @@ One subject line per release. The honours board:
   command renamed `/kickoff-pr-review`.
 - **v0.2.5** *(5 Sep 2026)* — the resilience patch: fixtures and standings publish together,
   failed views can recover, URL state stays honest, and theme boot runs before paint.
+- **v0.3.0** *(6 Sep 2026)* — snapshot states say what is known: a frozen LIVE admits its
+  age, NEXT names the first matchday it knows, and an empty schedule keeps its provenance.
 
 The paper trail for every release — proposals, design briefs, build specs and review
 prompts — is indexed in [docs/README.md](docs/README.md). The design system it's built

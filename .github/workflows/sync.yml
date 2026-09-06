@@ -4,14 +4,15 @@ name: Scheduled sync
 # schedule, then opens or updates one rolling pull request against main — it never pushes
 # straight to main. Since v0.2.2 it lets that PR merge itself when nothing in it needs a
 # human first, and holds it otherwise: the verdict is decided in scripts/diff.ts
-# (mergeVerdict — anything urgent, any DISAPPEARED or HOME_AWAY_INVERTED line, a failed
-# standings fetch), printed on the report line as merge=auto|hold, and only obeyed here. A
+# (mergeVerdict — anything urgent, any DISAPPEARED or HOME_AWAY_INVERTED line), printed
+# on the report line as merge=auto|hold, and only obeyed here. Current standings failures
+# abort with exit 2 before any report or PR update; standings=failed is legacy-only. A
 # held PR stays held across later runs (the `hold: human` label, below) until a human merges
 # it or removes the label. npm run sync itself is the honesty gate: an unmapped ESPN status,
 # a truncated response, or an implausibly shrunk league all abort with exit 2 before anything
 # is written, which this workflow turns into a failed, unmissable run rather than a silent
 # bad commit. Reasoning: docs/v0.2.2-proposal.md §C; the original no-auto-merge decision and
-# why the *empty* report still needs v0.3.0: docs/v0.2.0-proposal.md.
+# why the *empty* report still needs v0.4.0: docs/v0.2.0-proposal.md.
 #
 # Cadence: every three hours (v0.2.2; twice a day before that). GitHub's cron is UTC and does
 # not follow DST: '1,4,…,22' keeps 00:23 and 12:23 EDT in the set, an hour early — 23:23 and
@@ -126,7 +127,7 @@ jobs:
           echo "merge=$MERGE" >> "$GITHUB_OUTPUT"
           echo "line=$LINE" >> "$GITHUB_OUTPUT"
           if [ "$STANDINGS" = "failed" ]; then
-            echo "::warning::standings sync failed — fixtures are unaffected and the previous table is kept; see the 'Run the sync' log. Not a reason to commit on its own."
+            echo "::warning::legacy standings=failed report — held defensively; current sync failures abort with exit 2 before any report or snapshot write."
           fi
 
       - name: Dry run — nothing written, stop here
