@@ -138,6 +138,24 @@ and no later run lifts the hold.
 The map, the data flow, where the pure layer ends and the components begin, and the two ESPN
 traps worth knowing about are in **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**.
 
+## 🤖 Two builders, one repo
+
+Both badges up top are earned. Kickoff's SDLC now routes each release, and each PR inside it,
+to whichever model actually fits the work — not to one default:
+
+| The work | The builder |
+|---|---|
+| Scoping, planning, ideation | Claude Cowork drafts the prompt; Claude Code (Fable 5.1) turns it into a spec |
+| Deep, ambiguous, scope-creeping implementation | Codex (GPT 6 Astra) |
+| Smaller implementation with clear acceptance criteria | Codex, the lighter GPT-5.6 family — Sol, Terra, Luna |
+| Trivial, reasoning-free implementation | Codex (GPT-5.3 Codex Spark) |
+| Specific implementations kept in-house | Claude Code (Fable 5.1, Opus 5, or Sonnet 5) |
+
+The routing is dynamic — it's adjusted release to release as lessons come in, not fixed in
+advance — but the rule underneath it doesn't move: whichever model writes a branch's commits,
+it's authored under its own name, so `git log` never has to guess which agent, or which human
+decision, produced a given line.
+
 ## 🤝 Contribute
 
 If you love the game and you've ever been burned by a fixture list, you'll like it here.
