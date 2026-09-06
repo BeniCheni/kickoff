@@ -22,7 +22,12 @@ of it as unreliable:
 4. `docs/vX.Y.Z-review-prompt.md` — the adversarial review + merge instructions. Since v0.2.1
    the method lives in the repo skill `/kickoff-pr-review` (`.claude/skills/kickoff-pr-review/`;
    `/beni-pr-review` until v0.2.4); the archived prompt for a release is the per-PR part —
-   number, spec files, human-review items, the sealed appendix — not the method.
+   number, spec files, human-review items, the sealed appendix — not the method. Since v0.3.0
+   the skill also carries the **six-pass 360 cycle** for a release built by one vendor and
+   reviewed by another — Pass 0 brief → 1 cold review → 1.5 rebuttal brief → 2 rebuttal →
+   2.5 synthesis and Executive Summary Brief → 3 Beni's adjudication — with the Pass 2.5
+   merge gate that decides auto-merge versus escalation; the pipeline skill's B1.6 is the
+   PM-side copy of the same cycle.
 
 Rules that earned their place: **spec precedence is template > design brief > implementation
 prompt** (note every resolution in the PR); every prompt is delivered in the chat message in a

@@ -18,6 +18,14 @@ Snapshot states say what is known. Paper trail: `docs/design-cycle-proposal.md`.
   mixed dates name the TBC remainder. An empty marquee keeps its strip and snapshot-window
   provenance, without animation or a pause control.
 
+### Changed
+
+- `/kickoff-pr-review` orchestrates the six-pass 360 cycle (Pass 0 brief, 1 cold review,
+  1.5 rebuttal brief, 2 rebuttal, 2.5 synthesis and Executive Summary Brief, 3 adjudication)
+  with a `--pass` selector and a Pass 2.5 merge gate: a release, a numbering fork, a contested
+  finding or a touched sync gate escalates to Beni; everything else may merge itself once
+  `verify` is green. Beni's design, first run end-to-end on this PR.
+
 ### Fixed
 
 - Text-safe floodlight and accent variants, muted text in both themes, the LIVE fill's

@@ -1,7 +1,7 @@
 ---
 name: kickoff-pr-review
-description: Adversarial review → fix → land pass for one Kickoff pull request (prompt-ladder step 4). Use when asked to review, verify, or land a Kickoff PR by number — "/kickoff-pr-review 12", "review PR 12", "land PR 12". Not for reviewing plans, drafts or proposals.
-argument-hint: <PR# or branch> [--no-merge]
+description: Adversarial review → fix → land pass for one Kickoff pull request (prompt-ladder step 4), and the Pass 2.5 synthesis of the six-pass 360 cycle. Use when asked to review, verify, synthesise or land a Kickoff PR by number — "/kickoff-pr-review 12", "review PR 12", "/kickoff-pr-review 12 --pass 2.5". Not for reviewing plans, drafts or proposals.
+argument-hint: <PR# or branch> [--no-merge] [--pass 1|2.5]
 disable-model-invocation: true
 ---
 
@@ -24,6 +24,52 @@ were both "Unknown skill" in a session started before the checkout.
 This skill encodes the *method*. The adversarial reading is still your work in the session; a
 skill that pre-listed findings would be the sealed-appendix anti-pattern in a new costume.
 Model routing: `CLAUDE.md`'s routing line (the Extra reasoning tier for this pass).
+
+## The 360 cycle — six passes, two vendors, one adjudicator (Beni's design, 6 Sep 2026)
+
+A release built by one vendor and reviewed by another moves through six passes. PR #23
+(v0.2.5) ran three of them and proved the third was worth having — Pass 2 overturned a Pass 1
+claim in code; PR #26 (v0.3.0) ran all six and added the synthesis pass, because two vendors'
+comments are evidence for a decision, not the decision. `--pass` selects which one this
+session is running; the default is Pass 1.
+
+| Pass | Seat | Reads | Leaves behind |
+|---|---|---|---|
+| **0 — brief the cold review** | PM: a Claude Code session, Fable 5.1 High, with the pipeline skill (`/anthropic-skills:football-soccer-god`) loaded | the PR and the repo, read fresh; the executives' goals for the release | the Pass 1 prompt — `/kickoff-pr-review <N> --no-merge` plus tailored context and the sealed appendix — delivered in chat and archived as `docs/<version>-review-prompt.md` |
+| **1 — cold review** | the vendor that did not build it: Claude Code, Fable 5.1 Extra, a fresh session | Pass 0's prompt, then the repo (§1–§4) | fix commits for what it reproduced, one PR comment (`pr-comment.md`); stops at the comment |
+| **1.5 — rebuttal brief** | the PM seat again | Pass 1's comment | the Pass 2 prompt: every finding for the builder to accept / contest / accept-but-contest-the-characterisation, with the evidence needed to reproduce each; Beni's rulings so far travel in it, named as his |
+| **2 — rebuttal** | the builder: Codex, GPT-6 Astra Extra High | Pass 1.5's prompt, then the head | fix commits, one PR comment in the same table shape; may prepare the release only when a ruling on the number travelled in the prompt |
+| **2.5 — synthesis** | the PM seat, `--pass 2.5` | Pass 2's comment and commits, re-run against the head | corroboration, the Executive Summary Brief (`executive-brief.md`), one short PR comment, and either the merge or the escalation |
+| **3 — adjudication** | Beni | the brief | rules on anything the vendors still contest; clicks every release merge and tags it |
+
+Rules the cycle runs on:
+
+- **The builder reviews nothing it built and the reviewer builds nothing it will review.** A
+  vendor that writes to the PR branch during its pass says so in its comment — the branch has
+  moved under the next seat.
+- **Pass 2.5 is a re-run, not a read.** Every number in the brief comes from a command run in
+  that session: typecheck, the suite and both builds at the head; `verify` at the tip; the
+  browser matrix on every surface the rebuttal touched, cell for cell; each "fixed" finding
+  reproduced red-then-green or re-measured; the seven version places on a release; the squash
+  body's two trailers ready to paste. A claim the pass could not re-run is listed as not
+  verified, never as verified.
+- **The Pass 2.5 merge gate.** Auto-merge (squash, `--auto` is fine when `verify` is
+  green) only when *all* of these hold: not a release (no version bump, no new `CHANGELOG.md`
+  section, no tag to follow); no numbering fork; every high finding has a fix commit; nothing
+  is still contested between the two vendors; `verify` green at the tip; no change to the
+  `?only=` / `&date=` contract, to `sync.yml`'s gates, or to `src/data/*.json`. Any one
+  failing means **escalate**: the brief carries the handoff block (§7 step 8) and the questions,
+  each answerable in one word. Beni merges and tags every release, this cycle included.
+- **A ruling recorded second-hand is confirmed, never assumed.** A PR body that says "Beni
+  approved v0.3.0" is a claim by the builder; the brief asks him to confirm it in one word
+  before the merge that makes it public. Numbering forks are his (`CLAUDE.md`, "Release
+  management").
+- **Passes 0, 1.5 and 2.5 are prompt-and-brief work, not code work.** They read the repo fresh
+  (`CLAUDE.md`, B0), deliver prompts in chat in a fenced block, and archive them under
+  `docs/`. The PM seat may run in Claude Code or Cowork; the skill it loads is the pipeline's.
+- **Each pass writes its retro where the method lives**: Pass 1 and 2.5 into this file when
+  the PR is tooling, else into the current ideas file's process notes; the cycle's own shape
+  into `CLAUDE.md` and the pipeline skill's B1.6.
 
 ## 0. Before anything
 
@@ -53,6 +99,12 @@ Model routing: `CLAUDE.md`'s routing line (the Extra reasoning tier for this pas
   skill neither reviews nor merges it. Current standings failures abort with exit 2 before
   any report or PR update; `standings=failed` is only a legacy defensive hold value.
 - Repo ground truth beats any description of it, including the PR body and this skill.
+- **`--pass 2.5` changes the starting point, not the standard.** Read Pass 1's and Pass 2's
+  comments first, then the head's full diff against `origin/main` and each rebuttal commit on
+  its own; re-run §2 and every §4 cell class the rebuttal touched; check every "fixed" row
+  against the code, not the table. The deliverable is the Executive Summary Brief
+  (`executive-brief.md`) in chat, one short PR comment recording the corroboration and the
+  merge or escalation, and — when the gate allows — the merge itself.
 
 ## 1. Read, in this order
 
@@ -214,11 +266,13 @@ to be read cold.
    record, and answer any "correct me if I'm wrong" in one line in the comment.
 4. **The gate.** A merge needs all three: the verdict is "mergeable" or "mergeable after
    fixes", every high finding has a fix commit, and `verify` is green at the tip. Then **stop
-   here** if `--no-merge` was given, or if the PR is a release (a version bump, a new
+   here** if `--no-merge` was given, if the PR is a release (a version bump, a new
    `CHANGELOG.md` section, a tag to follow) — Beni clicks every release merge, this skill's own
-   releases included, and a tag is a release act. Otherwise squash-merge (the practice since
-   PR #4) with a message written as a release note in the repo's voice: terse, factual, one
-   wink maximum.
+   releases included, and a tag is a release act — or, on `--pass 2.5`, if any clause of the
+   Pass 2.5 merge gate above fails. Otherwise squash-merge (the practice since PR #4) with a
+   message written as a release note in the repo's voice: terse, factual, one wink maximum. A
+   cross-vendor squash body names who ran which pass and carries both `Co-authored-by:`
+   trailers (`Codex <noreply@openai.com>`, `Claude <noreply@anthropic.com>`), as `8498726` did.
 5. A release's version moves *inside the PR* — this repo has bumped in the PR on every
    release; only the tag is post-merge: `package.json` and `package-lock.json`, `CHANGELOG.md`,
    the README's badge, heading and Lineage. The release *date* is written in the PR too, with
@@ -244,7 +298,8 @@ to be read cold.
    `git pull`; and the three commands that must come back green (`npm run typecheck`,
    `npm test`, `npm run build`). If the release added or renamed a skill, the block also
    carries the one step only a human can run: a worktree on the branch, a fresh session, the
-   command typed and seen in the `/` menu.
+   command typed and seen in the `/` menu. On `--pass 2.5` the same block is the last
+   section of the Executive Summary Brief whenever the pass escalates instead of merging.
 
 ## 8. Sealed appendix
 
