@@ -8,6 +8,34 @@ releases.
 
 ## [Unreleased]
 
+The design cycle: snapshot states say what is known, and semantic status text clears its
+actual backgrounds. Paper trail: `docs/design-cycle-proposal.md`; release numbering awaits Beni.
+
+### Added
+
+- A hollow **KICKED OFF** pill after the existing four-hour LIVE window, using the shared
+  clock and selector in all three lenses and both calendar views. Snapshot scores stay pitch.
+- Approximate NEXT: the earliest Brooklyn date can be TBC; multiple placeholders are counted,
+  mixed dates name the TBC remainder. An empty marquee keeps its strip and snapshot-window
+  provenance, without animation or a pause control.
+
+### Fixed
+
+- Text-safe floodlight and accent variants, muted text in both themes, the LIVE fill's
+  white-text pairing, FT text, and hollow POSTPONED/CANCELLED pills. Includes Table's
+  negative values on its hover ground and the actual 72h banner tint.
+- Retired standings-failure hold descriptions and the adjudicated failed-sync-reader candidate.
+  The wanted generated-prompt formatting paragraph is carried into the project instructions.
+
+### Deliberately not done
+
+- No competition-color repaint, FixtureRow em-dash migration, ticker filter change, speed
+  redesign or nonempty reduced-motion pause-control change. No provider/sync/auto-merge work.
+- The app still ticks in minutes; stale status appears on the first tick past four hours.
+  Empty marquee copy stays one line and can require horizontal panning on narrow screens.
+- No new row-age line or final-score inference. The in-product failure reader remains deferred
+  under `docs/v0.2.6-ideas.md` row 15. Release numbering, merge and tag are separate decisions.
+
 ## [0.2.5] — 2026-09-05
 
 The resilience patch: a sync publishes only a complete authoritative snapshot, and a failed

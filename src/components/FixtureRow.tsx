@@ -19,14 +19,15 @@ const STATUS_LABEL: Record<Fixture['status'], string | null> = {
  * is rendered as "time not yet set" rather than as a confident number.
  *
  * Lens deltas (Poster's 20px time, Broadcast's tighter mono) are pure CSS variants — the
- * component takes no lens prop. `hot` marks the LIVE/next-kickoff rows whose glow only
- * renders under the Broadcast lens.
+ * component takes no lens prop. `stale` is selected by the parent clock; `hot` marks the
+ * LIVE/next-kickoff rows whose glow only renders under the Broadcast lens.
  */
-export function FixtureRow({ fixture, hot = false }: { fixture: Fixture; hot?: boolean }) {
+export function FixtureRow({ fixture, hot = false, stale = false }: { fixture: Fixture; hot?: boolean; stale?: boolean }) {
   const comp = COMPETITIONS[fixture.competition]
   const t = fixtureTimes(fixture.kickoffUtc, fixture.venueTz)
   const marquee = comp.group !== 'domestic'
-  const status = STATUS_LABEL[fixture.status]
+  const isStale = fixture.status === 'in_play' && stale
+  const status = isStale ? 'KICKED OFF' : STATUS_LABEL[fixture.status]
   const unsettled = fixture.status === 'postponed' || fixture.status === 'cancelled'
   const placeholder = fixture.timeConfidence !== 'exact'
   const [expanded, setExpanded] = useState(false)
@@ -68,12 +69,15 @@ export function FixtureRow({ fixture, hot = false }: { fixture: Fixture; hot?: b
           {status && (
             <span
               className={[
-                'rounded px-1.5 py-px text-[9px] font-bold tracking-wide uppercase',
-                fixture.status === 'in_play'
-                  ? 'bg-accent text-white dark:text-bg broadcast:bg-floodlight broadcast:text-on-accent-lead'
-                  : unsettled
-                    ? 'bg-accent/15 text-accent'
-                    : 'bg-line text-ink-muted',
+                'rounded px-1.5 text-[9px] font-bold tracking-wide uppercase',
+                isStale || unsettled ? 'border py-0' : 'py-px',
+                isStale
+                  ? 'border-floodlight-strong text-floodlight-strong'
+                  : fixture.status === 'in_play'
+                    ? 'bg-accent-strong text-white dark:text-bg broadcast:bg-floodlight broadcast:text-on-accent-lead'
+                    : unsettled
+                      ? 'border-accent-strong text-accent-strong'
+                      : 'bg-line text-ink-secondary',
               ].join(' ')}
             >
               {status}
@@ -89,7 +93,7 @@ export function FixtureRow({ fixture, hot = false }: { fixture: Fixture; hot?: b
         </span>
 
         {placeholder && (
-          <span className="mt-0.5 block pl-[66px] text-[11px] text-floodlight italic poster:pl-[92px]">
+          <span className="mt-0.5 block pl-[66px] text-[11px] text-floodlight-strong italic poster:pl-[92px]">
             {t.brooklyn.weekday} {t.brooklyn.isoDate} &mdash; kickoff time not yet set by the league
           </span>
         )}

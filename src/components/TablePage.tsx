@@ -70,12 +70,12 @@ function syncedAgo(now: Date): string {
 
 function Movement({ change }: { change: number }) {
   const glyph = change > 0 ? '▲' : change < 0 ? '▼' : '–'
-  const color = change > 0 ? 'text-pitch' : change < 0 ? 'text-accent' : 'text-ink-muted'
+  const color = change > 0 ? 'text-pitch' : change < 0 ? 'text-accent-strong' : 'text-ink-muted'
   return <span className={`text-[8px] leading-none ${color}`}>{glyph}</span>
 }
 
 function GdText({ gd, className = '' }: { gd: number; className?: string }) {
-  const color = gd > 0 ? 'text-pitch' : gd < 0 ? 'text-accent' : 'text-ink-secondary'
+  const color = gd > 0 ? 'text-pitch' : gd < 0 ? 'text-accent-strong' : 'text-ink-secondary'
   return (
     <span className={`font-mono font-medium ${color} ${className}`}>
       {gd > 0 ? `+${gd}` : gd}
@@ -110,7 +110,7 @@ function FormPips({ form, size = 13 }: { form: FormResult[]; size?: number }) {
 
 function InHandChip({ n }: { n: number }) {
   return (
-    <span className="flex-none rounded-[3px] border border-floodlight px-[3px] font-mono text-[8px] leading-normal font-semibold text-floodlight">
+    <span className="flex-none rounded-[3px] border border-floodlight px-[3px] font-mono text-[8px] leading-normal font-semibold text-floodlight-strong">
       +{n}
     </span>
   )
@@ -187,7 +187,7 @@ export function TablePage() {
 
       {/* freshness + games-in-hand callout */}
       <div className="mb-2.5 rounded-[5px] border border-line border-l-3 border-l-floodlight bg-floodlight-bg px-2.5 py-2">
-        <div className="label-caps text-[9.5px] text-floodlight">
+        <div className="label-caps text-[9.5px] text-floodlight-strong">
           {progress ? `As of matchday ${progress.played} of ${progress.of}` : 'League table'} · {syncedAgo(new Date(nowUtcIso))}
         </div>
         {inHand > 0 && (
@@ -336,7 +336,7 @@ export function TablePage() {
                             {r.next.times.local.time} local
                           </>
                         ) : (
-                          <i className="text-floodlight">
+                          <i className="text-floodlight-strong">
                             {r.next.times.brooklyn.isoDate} — kickoff time not yet set
                           </i>
                         )}

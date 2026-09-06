@@ -47,10 +47,11 @@ Model routing: `CLAUDE.md`'s routing line (the Extra reasoning tier for this pas
 - Leave the bot's open `sync/scheduled` PR alone — and know what it is. It is the rolling data
   PR; when it carries the `hold: human` label, the sync's merge verdict held it (something
   inside −6 h..+72 h moved, a postponement or cancellation, a `DISAPPEARED` or
-  `HOME_AWAY_INVERTED` line, a failed standings fetch — `CLAUDE.md`, "Scheduled sync"), and
+  `HOME_AWAY_INVERTED` line — `CLAUDE.md`, "Scheduled sync"), and
   every sync PR left open is a Track A Step 0 re-verification trigger for every open position
   in the betting track. Beni alone clears it, by merging it or by removing the label. This
-  skill neither reviews nor merges it.
+  skill neither reviews nor merges it. Current standings failures abort with exit 2 before
+  any report or PR update; `standings=failed` is only a legacy defensive hold value.
 - Repo ground truth beats any description of it, including the PR body and this skill.
 
 ## 1. Read, in this order

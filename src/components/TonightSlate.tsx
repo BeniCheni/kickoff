@@ -9,7 +9,7 @@ import type { Fixture } from '../lib/schema'
 /** "1:30 PM" → big clock, small meridiem — the Poster template's own split. */
 function SlateTime({ fixture }: { fixture: Fixture }) {
   if (fixture.timeConfidence !== 'exact') {
-    return <span className="font-mono text-[13px] font-medium text-floodlight italic">TBC</span>
+    return <span className="font-mono text-[13px] font-medium text-floodlight-strong italic">TBC</span>
   }
   const { clock, meridiem } = fixtureTimes(fixture.kickoffUtc, fixture.venueTz).brooklyn
   return (

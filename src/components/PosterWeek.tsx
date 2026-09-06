@@ -3,6 +3,8 @@ import { posterDayTitle, weekdayShort } from '../lib/time'
 import { posterSubLine, type PosterBlock } from '../lib/lensSelectors'
 import { FixtureRow } from './FixtureRow'
 
+const EMPTY: ReadonlySet<string> = new Set()
+
 function TodayPill() {
   return (
     <span className="font-display inline-block rounded-full bg-accent-lead px-[7px] py-[2px] text-[8.5px] font-semibold tracking-[0.1em] text-on-accent-lead uppercase">
@@ -17,7 +19,7 @@ function TodayPill() {
  * an inline header; consecutive empty days merge into one hairline line. Rows stay Ledger
  * rows — only the leading time grows (a `poster:` variant inside FixtureRow).
  */
-export function PosterWeek({ blocks }: { blocks: PosterBlock[] }) {
+export function PosterWeek({ blocks, stale = EMPTY }: { blocks: PosterBlock[]; stale?: ReadonlySet<string> }) {
   return (
     <div>
       {blocks.map((block) => {
@@ -65,7 +67,7 @@ export function PosterWeek({ blocks }: { blocks: PosterBlock[] }) {
               </div>
               <div className="mt-2.5 border-t border-line">
                 {block.fixtures.map((f) => (
-                  <FixtureRow key={f.id} fixture={f} />
+                  <FixtureRow key={f.id} fixture={f} stale={stale.has(f.id)} />
                 ))}
               </div>
             </section>
@@ -85,7 +87,7 @@ export function PosterWeek({ blocks }: { blocks: PosterBlock[] }) {
             </div>
             <div className="mt-1.5 border-t border-line">
               {block.fixtures.map((f) => (
-                <FixtureRow key={f.id} fixture={f} />
+                <FixtureRow key={f.id} fixture={f} stale={stale.has(f.id)} />
               ))}
             </div>
           </section>

@@ -31,6 +31,14 @@ sessions get prior findings only as a sealed "verify independently" appendix, ne
 conclusions; model routing that worked — Fable 5 **High** for design/build, **Extra** for the
 review pass.
 
+**Generated prompts are never hand-wrapped — see `../Sportsbooks/CLAUDE.md`, "Generated copy-paste
+content is NEVER hand-wrapped" (5 Sep 2026), which is the owning copy.** In short: one line per
+paragraph in every Claude Design / Claude Code prompt delivered in chat, however long that line
+runs, and a four-backtick outer fence when the block carries its own ```-fenced sub-blocks. It does
+NOT apply to files in this repo — `docs/`, `CLAUDE.md`, `README.md` and `CHANGELOG.md` keep their
+existing wrapped style.
+
+
 ## Verification discipline (from that v0.0.3-doc-cycle / v0.1.0-release review)
 
 - `npm run typecheck` and `npm test` green at every commit; data-honesty test assertions are
@@ -90,8 +98,10 @@ no copy in this repo promises "every three hours". It opens or updates one rolli
 **Since v0.2.2 the PR merges itself when nothing in it needs a human first, and is held
 otherwise.** The verdict is `mergeVerdict` in `scripts/diff.ts` — hold when anything is
 urgent (inside −6 h..+72 h, or a postponement/cancellation at any horizon), when any
-`DISAPPEARED` or `HOME_AWAY_INVERTED` line appears at any horizon, or when the standings
-fetch failed; auto otherwise — printed on the report line as `merge=auto|hold` and only
+`DISAPPEARED` or `HOME_AWAY_INVERTED` line appears at any horizon; auto otherwise
+for current successful reports. The legacy `standings=failed` report also holds defensively,
+but current standings failures exit 2 before any report or PR update. A successful run prints
+`merge=auto|hold` on its report line; the verdict is only
 obeyed by the workflow (`gh pr merge --squash --auto`, gated by the rulesets' required
 `verify` check; needs the repo's "Allow auto-merge" setting on, else the PR is left open with
 a warning). **A held PR stays held**: the workflow labels it `hold: human` and disarms

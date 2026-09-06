@@ -16,7 +16,7 @@ export function StalenessBanner() {
     <div
       className={[
         'mb-4 rounded border px-3.5 py-2.5 text-[11.5px] leading-relaxed',
-        stale ? 'border-accent bg-accent/10 text-accent' : 'border-floodlight bg-floodlight-bg text-floodlight',
+        stale ? 'border-accent bg-accent/10 text-accent-strong' : 'border-floodlight bg-floodlight-bg text-floodlight-strong',
       ].join(' ')}
     >
       <b>{stale ? 'Data is stale.' : 'Data may have moved.'}</b> Last synced{' '}

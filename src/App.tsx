@@ -102,7 +102,7 @@ export default function App() {
         <div className="leading-none">
           <span className="font-display block text-[34px] font-bold tracking-wide uppercase">Kickoff</span>
           <span className="label-caps block text-[13px] text-pitch">Brooklyn · ET</span>
-          <span className="label-caps mt-1 block text-[10px] text-floodlight">
+          <span className="label-caps mt-1 block text-[10px] text-floodlight-strong">
             v{__APP_VERSION__} · {META.total} fixtures · synced {SYNC_STAMP}
           </span>
         </div>
