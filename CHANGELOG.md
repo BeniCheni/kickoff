@@ -8,6 +8,53 @@ releases.
 
 ## [Unreleased]
 
+## [0.2.5] — 2026-09-05
+
+The resilience patch: a sync publishes only a complete authoritative snapshot, and a failed
+view has a way back. Paper trail: `docs/v0.2.5-proposal.md`.
+
+### Added
+
+- A render-error boundary below the persistent header and navigation, with **Reload** and
+  **Reset view**. Changing tab or lens starts a fresh view. Errors during snapshot module
+  import, before React mounts, remain outside this boundary.
+- DOM coverage for recovery, URL normalization and OS theme changes, plus provider and sync
+  integration tests that verify rejection before snapshot writes.
+
+### Changed
+
+- **Fixtures + standings form one authoritative snapshot boundary.** Both must fetch and
+  validate successfully before publication; either failing aborts with exit 2. A standings
+  outage intentionally delays otherwise valid fixture updates. Future ancillary datasets
+  do not join this boundary automatically.
+- Theme boot is a classic inline head script generated from the shared theme decision.
+  Unset preferences follow OS changes during the session; explicit choices retain priority,
+  including when storage is blocked. Broadcast retains its separate memory and dark default.
+
+### Fixed
+
+- Malformed provider events and standings entries now fail loudly with competition, available
+  identity and a reason. A missing event ID cannot become the string `"undefined"` or disappear
+  during deduplication; enough other valid rows no longer excuse a malformed standings row.
+- Sync window edges use Brooklyn dates, matching the provider's Eastern date range.
+- URL codecs and setters retain stable references; Back reads fresh date defaults. Owned
+  parameters normalize on load, unknown parameters and hashes survive, and `?date=<today>`
+  becomes unpinned as specified.
+- Poster day headers name the `N TBC` fixtures their first-kickoff time cannot describe.
+  NEXT gains a day/date qualifier for a later Brooklyn day. Hero clocks consume structured
+  formatter parts, and the shared Poster day title lives in the time library.
+
+### Deliberately not done
+
+- No data refresh, dependency addition, Playwright, palette repaint, stale-LIVE design,
+  marquee-speed change or reduced-motion-control redesign. The hero's TBC segment already
+  shipped in v0.2.2 and remains covered by its original assertions.
+- Missing `timeValid` still implies an exact time; null scores still coerce to zero in the
+  provider mapper. These reproduced audit findings are explicit follow-up candidates in
+  `docs/v0.2.6-ideas.md`, not silently folded into this patch.
+- No result/name diff expansion, stamp-only sync, hold-history or auto-merge sequencing work;
+  the v0.3.0 scope remains separate. Beni alone merges, tags and changes repository rulesets.
+
 ## [0.2.4] — 2026-09-05
 
 Tests reach the wiring: a jsdom project beside the node suite, so the component seam every

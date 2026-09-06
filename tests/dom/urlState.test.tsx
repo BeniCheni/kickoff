@@ -1,9 +1,10 @@
-import { afterEach, describe, expect, it } from 'vitest'
+import { StrictMode } from 'react'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { act, render, renderHook, screen } from '@testing-library/react'
 import App from '../../src/App'
 import { useUrlState } from '../../src/lib/useUrlState'
 import { COMPETITION_KEYS } from '../../src/lib/competitions'
-import { edt, popTo, primeClock } from './rig'
+import { edt, popTo, primeClock, tick, wake } from './rig'
 
 /**
  * Affordance 2 — URL state without navigating — and the `?date=` crash the v0.1.0 review
@@ -22,6 +23,44 @@ const encodeTab = (v: Tab) => (v === 'fixtures' ? null : v)
 const decodeTab = (s: string): Tab => (s === 'table' ? 'table' : 'fixtures')
 
 describe('useUrlState — the popstate handler (affordance 2)', () => {
+  it('keeps the setter and popstate subscription stable across unrelated renders', () => {
+    const add = vi.spyOn(window, 'addEventListener')
+    const remove = vi.spyOn(window, 'removeEventListener')
+    try {
+      const hook = renderHook(() => useUrlState<Tab>('tab', 'fixtures', encodeTab, decodeTab), { wrapper: StrictMode })
+      const setter = hook.result.current[1]
+      const subscriptions = add.mock.calls.filter(([name]) => name === 'popstate').length
+      hook.rerender()
+      hook.rerender()
+      expect(hook.result.current[1]).toBe(setter)
+      expect(add.mock.calls.filter(([name]) => name === 'popstate')).toHaveLength(subscriptions)
+      hook.unmount()
+      expect(remove.mock.calls.filter(([name]) => name === 'popstate')).toHaveLength(subscriptions)
+    } finally { add.mockRestore(); remove.mockRestore() }
+  })
+
+  it('reads the latest initial and decoder without resubscribing', () => {
+    const { result, rerender } = renderHook(({ initial }) => useUrlState('n', initial, String, (raw) => {
+      if (raw === 'bad') throw new Error('bad')
+      return Number(raw) + initial
+    }), { initialProps: { initial: 10 } })
+    rerender({ initial: 20 })
+    act(() => popTo('/?n=2'))
+    expect(result.current[0]).toBe(22)
+    act(() => popTo('/?n=bad'))
+    expect(result.current[0]).toBe(20)
+    act(() => popTo('/'))
+    expect(result.current[0]).toBe(20)
+  })
+
+  it('preserves the pathname and hash when a query is present and when it empties', () => {
+    window.history.replaceState(null, '', '/kickoff/?tab=table#fixtures')
+    const { result } = renderHook(() => useUrlState<Tab>('tab', 'fixtures', encodeTab, decodeTab))
+    act(() => result.current[1]('table'))
+    expect(window.location.pathname + window.location.search + window.location.hash).toBe('/kickoff/?tab=table#fixtures')
+    act(() => result.current[1]('fixtures'))
+    expect(window.location.pathname + window.location.search + window.location.hash).toBe('/kickoff/#fixtures')
+  })
   it('re-reads its key on a synthetic PopStateEvent; a missing key means the initial', () => {
     window.history.replaceState(null, '', '/?tab=table')
     const { result } = renderHook(() => useUrlState<Tab>('tab', 'fixtures', encodeTab, decodeTab, 'push'))
@@ -60,6 +99,41 @@ describe('useUrlState — the popstate handler (affordance 2)', () => {
     act(() => replaced.result.current[1]('month'))
     expect(window.location.search).toBe('?view=month')
     expect(window.history.length).toBe(before + 2)
+  })
+})
+
+describe('App normalizes once on load', () => {
+  it('normalizes junk and inactive-page keys, preserving the hash and unknown query values without a push', () => {
+    release = primeClock(edt('2026-09-05T12:00:00'))
+    window.history.replaceState(null, '', '/kickoff/?lens=BROADCAST&date=2026-13-45&league=bad&only=&ref=friend#fixtures')
+    const before = window.history.length
+    render(<StrictMode><App /></StrictMode>)
+    expect(window.location.pathname + window.location.search + window.location.hash).toBe('/kickoff/?only=&ref=friend#fixtures')
+    expect(window.history.length).toBe(before)
+    expect(document.documentElement.dataset.lens).toBe('poster')
+    expect(screen.getByText(`0 of ${COMPETITION_KEYS.length} competitions shown`)).toBeTruthy()
+  })
+
+  it('?date=<today> unpins on load and follows the next midnight', () => {
+    release = primeClock(edt('2026-09-13T23:59:00'))
+    window.history.replaceState(null, '', '/?date=2026-09-13#keep')
+    render(<App />)
+    expect(window.location.search).toBe('')
+    tick(61_000)
+    expect(screen.getByText('Sep 14 – September 20, 2026')).toBeTruthy()
+    expect(window.location.hash).toBe('#keep')
+  })
+
+  it('Back to an absent or invalid date after rollover uses the new today', () => {
+    release = primeClock(edt('2026-09-13T23:59:00'))
+    render(<App />)
+    wake(edt('2026-09-14T08:00:00'))
+    act(() => popTo('/?date=2026-10-07'))
+    expect(screen.getByText('Oct 5 – October 11, 2026')).toBeTruthy()
+    act(() => popTo('/?date=bad'))
+    expect(screen.getByText('Sep 14 – September 20, 2026')).toBeTruthy()
+    act(() => popTo('/'))
+    expect(screen.getByText('Sep 14 – September 20, 2026')).toBeTruthy()
   })
 })
 

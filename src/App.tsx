@@ -2,14 +2,16 @@ import { useEffect, useRef, useState } from 'react'
 import { useNow } from './lib/useNow'
 import { META, SYNC_STAMP } from './lib/fixtures'
 import { useUrlState } from './lib/useUrlState'
+import { canonicalSearch, encodeTab, parseTab } from './lib/urlCodecs'
 import { DEFAULT_LENS, encodeLens, parseLens, type Lens } from './lib/lens'
-import { resolveThemeFromEnvironment, themeStorageKey, writeStoredTheme, type Theme } from './lib/theme'
+import { readStoredTheme, resolveThemeFromEnvironment, themeStorageKey, writeStoredTheme, type Theme } from './lib/theme'
 import { TabNav, type Tab } from './components/TabNav'
 import { LensSwitcher } from './components/LensSwitcher'
 import { FixturesPage } from './components/FixturesPage'
 import { TablePage } from './components/TablePage'
 import { StalenessBanner } from './components/StalenessBanner'
 import { TickerStrip } from './components/TickerStrip'
+import { ViewBoundary } from './components/ViewBoundary'
 
 export default function App() {
   const { today } = useNow()
@@ -22,16 +24,27 @@ export default function App() {
   // history entry — Back returns to the previous tab, not out of the site.
   const [tab, setTab] = useUrlState<Tab>(
     'tab', 'fixtures',
-    (v) => (v === 'fixtures' ? null : v),
-    (s) => (s === 'table' ? 'table' : 'fixtures'),
+    encodeTab, parseTab,
     'push',
   )
 
   // The lens is a view preference, not navigation — replace history, default omitted.
   const [lens, setLens] = useUrlState<Lens>('lens', DEFAULT_LENS, encodeLens, parseLens, 'replace')
 
+  const normalized = useRef(false)
+  useEffect(() => {
+    if (normalized.current) return
+    normalized.current = true
+    const search = canonicalSearch(window.location.search, today)
+    if (search !== window.location.search) {
+      window.history.replaceState(window.history.state, '', window.location.pathname + search + window.location.hash)
+    }
+  }, [today])
+
   const prevLens = useRef<Lens | null>(null)
   const fadeTimer = useRef<number | undefined>(undefined)
+  // Explicit choices remain authoritative in this session even if storage is blocked.
+  const sessionThemes = useRef<Partial<Record<ReturnType<typeof themeStorageKey>, Theme>>>({})
 
   // The single lens → DOM sync point. Covers switcher clicks and Back/Forward alike
   // (useUrlState's popstate handler re-renders us). Re-resolving the theme here is what
@@ -39,7 +52,7 @@ export default function App() {
   useEffect(() => {
     const root = document.documentElement
     root.dataset.lens = lens
-    const next = resolveThemeFromEnvironment(lens)
+    const next = sessionThemes.current[themeStorageKey(lens)] ?? resolveThemeFromEnvironment(lens)
     root.dataset.theme = next
     setTheme(next)
     if (
@@ -62,9 +75,23 @@ export default function App() {
     }
   }, [lens])
 
+  useEffect(() => {
+    const media = window.matchMedia('(prefers-color-scheme: dark)')
+    const key = themeStorageKey(lens)
+    const onChange = () => {
+      if (sessionThemes.current[key] || readStoredTheme(key)) return
+      const next = resolveThemeFromEnvironment(lens)
+      document.documentElement.dataset.theme = next
+      setTheme(next)
+    }
+    media.addEventListener('change', onChange)
+    return () => media.removeEventListener('change', onChange)
+  }, [lens])
+
   const toggleTheme = () => {
     const next = theme === 'dark' ? 'light' : 'dark'
     document.documentElement.dataset.theme = next
+    sessionThemes.current[themeStorageKey(lens)] = next
     writeStoredTheme(themeStorageKey(lens), next)
     setTheme(next)
   }
@@ -91,11 +118,13 @@ export default function App() {
         <LensSwitcher lens={lens} onSelect={setLens} />
       </TabNav>
 
-      {lens === 'broadcast' && tab === 'fixtures' && <TickerStrip />}
+      <ViewBoundary key={`${tab}:${lens}`}>
+        {lens === 'broadcast' && tab === 'fixtures' && <TickerStrip />}
 
-      <StalenessBanner />
+        <StalenessBanner />
 
-      {tab === 'table' ? <TablePage /> : <FixturesPage today={today} lens={lens} />}
+        {tab === 'table' ? <TablePage /> : <FixturesPage today={today} lens={lens} />}
+      </ViewBoundary>
     </div>
   )
 }

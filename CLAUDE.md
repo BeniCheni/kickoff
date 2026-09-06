@@ -57,6 +57,29 @@ review pass.
 
 ## Scheduled sync (v0.2.0, amended v0.2.2)
 
+**Since v0.2.5, fixtures + standings are one authoritative snapshot boundary.** A fetch or
+validation failure in either aborts with exit 2 before snapshot writes. A standings outage
+intentionally delays otherwise valid fixtures; the earlier soft-failure exception is retired.
+Future ancillary datasets do not join this boundary automatically. `standings=failed` remains
+a legacy report value understood by the merge policy below; current failures abort instead.
+A failed run produces a red `sync.yml` run and diagnostics in Actions, but creates or updates
+no sync PR, label or commit; an existing PR is left as it was. Step 0's re-read of the same
+committed app cannot discover a fixture change withheld during a standings outage. The header
+stamp and the 24/72-hour banner report snapshot age, not failed checks; there is no failure
+signal in the app or Step 0's PR queue. A later successful, change-bearing run can propose an
+update, and the app advances only when that update merges. PR #23's Pass 2 recommended
+blocking release until failure runs have an explicit reader; see the proposal's review
+resolutions.
+
+**Adjudicated 5 Sep 2026 (Beni).** The boundary ships as built; the reader is a *procedure*, not
+an app component, and it lives in `../Sportsbooks/CLAUDE.md` ("Check the sync run succeeded BEFORE
+trusting the app") — that is the owning copy, do not restate the rule here. In short: before any
+Step 0 that a position depends on, confirm the latest `sync.yml` run on `main` succeeded; a failed
+run means every open position gets independent primary-source re-verification rather than a re-read
+of this app. The basis for deferring the built reader: 30 sync runs since 1 Sep 2026, zero
+failures — an in-product surface would be designed against an event with no observed base rate.
+`docs/v0.2.6-ideas.md` row 15 holds that work until the rate justifies it.
+
 `.github/workflows/sync.yml` runs `npm run sync` on a cron of `23 1,4,7,10,13,16,19,22 * * *`
 — every three hours *as scheduled*, keeping 00:23 and 12:23 EDT in the set, an hour early
 under EST because GitHub's cron is UTC. What is scheduled is not what is delivered: GitHub's
@@ -177,9 +200,12 @@ downstream.
 
 ## Roadmap pointers
 
-`docs/v0.3.0-ideas.md` (written cold 2 Sep 2026 by the session that reviewed and landed PR #8)
-is the **current** ranked candidate list — 15 rows, several carried forward from
-`docs/v0.2.0-ideas.md`, whose text stays the fuller description for the rows it originated.
+`docs/v0.2.6-ideas.md` is the **current** ranked candidate list, written cold after the v0.2.5
+build. It carries open rows from `docs/v0.3.0-ideas.md` with their original numbers, the two
+new provider candidates, and this build's verification lessons. Read its process notes
+together with that earlier file's tail and `docs/v0.2.0-ideas.md`, whose text stays the fuller
+description for the rows it originated. `docs/v0.2.5-proposal.md` is the inherited spec for
+the next session, including the authoritative snapshot boundary and its accepted cost.
 `docs/v0.2.1-proposal.md` ("The train") is the release plan that turns that list into a train
 of patches and the v0.3.0 minor, with the deferred rows and their reasons — **amended on
 numbering by `docs/v0.2.2-proposal.md`** (4 Sep 2026: v0.2.2 is "the front door") **and again

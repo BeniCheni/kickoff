@@ -5,10 +5,36 @@ import { currentSeasonStartYear, normalizeStandingEntry } from '../scripts/provi
 import { standingRowSchema, type Fixture, type StandingRow } from '../src/lib/schema'
 import type { CompetitionKey } from '../src/lib/competitions'
 import { tableFor } from '../src/lib/standings'
+import { normalizeEvent } from '../scripts/providers/espn'
 
 const entries = JSON.parse(
   readFileSync(resolve(import.meta.dirname, 'fixtures', 'espn-laliga-standings.json'), 'utf8'),
 ).entries
+
+describe('provider team identities at the fixture/table join', () => {
+  it('rejects an array that would borrow a valid row identity and invent form or a next opponent', () => {
+    const event = JSON.parse(readFileSync(new URL('./fixtures/espn-ligue1-md1.json', import.meta.url), 'utf8')).events[0]
+    const row = normalizeStandingEntry(entries[0])!
+    const home = event.competitions[0].competitors.find((c: any) => c.homeAway === 'home')
+    const away = event.competitions[0].competitors.find((c: any) => c.homeAway === 'away')
+    home.team.id = [row.teamId] // JSON-valid; String([id]) falsely matches the table row.
+    expect(home.team.displayName).not.toBe(row.name)
+    for (const status of ['STATUS_SCHEDULED', 'STATUS_FULL_TIME']) {
+      event.status.type.name = status
+      home.score = '2'
+      away.score = '1'
+      const fixture = normalizeEvent(event, 'laliga', '2026-08-21T12:00:00.000Z')
+      const joined = tableFor('laliga', '2026-08-01', [row], fixture ? [fixture] : [])[0]!
+      expect(joined.next).toBeNull()
+      expect(joined.form).toEqual([])
+      expect(fixture).toBeNull()
+    }
+    // A scalar provider identity still supports the legitimate join.
+    home.team.id = row.teamId
+    const valid = normalizeEvent(event, 'laliga', '2026-08-21T12:00:00.000Z')!
+    expect(tableFor('laliga', '2026-08-01', [row], [valid])[0]!.form).toEqual(['W'])
+  })
+})
 
 describe('normalizeStandingEntry', () => {
   it('produces schema-valid rows from a real payload', () => {

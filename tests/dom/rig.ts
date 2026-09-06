@@ -19,31 +19,52 @@ export function edt(local: string): Date {
 /**
  * jsdom has no `matchMedia`. The stub answers the two queries the app asks —
  * `prefers-color-scheme: dark` (theme.ts) and `prefers-reduced-motion: reduce` (App's lens
- * cross-fade) — and nothing else matches. Listener methods exist and do nothing, so a
- * future `change` listener (docs/v0.3.0-ideas.md row 12) can be installed without a crash;
- * a test of that listener will want to replace this with something that can fire.
+ * cross-fade) — and nothing else matches. The returned controls dispatch changes to the
+ * same MediaQueryLists the app subscribed to; listenerCount checks cleanup.
  */
-export function installMatchMedia({ dark = false, reducedMotion = false } = {}): void {
+export function installMatchMedia({ dark = false, reducedMotion = false } = {}) {
+  const queries = new Map<string, MediaQueryList>()
+  const listeners = new Map<string, Set<EventListenerOrEventListenerObject>>()
+  const matches = (query: string) => query.includes('prefers-color-scheme: dark')
+    ? dark : query.includes('prefers-reduced-motion') ? reducedMotion : false
   const stub = (query: string): MediaQueryList => {
-    const matches = query.includes('prefers-color-scheme: dark')
-      ? dark
-      : query.includes('prefers-reduced-motion')
-        ? reducedMotion
-        : false
-    return {
-      matches,
+    const existing = queries.get(query)
+    if (existing) return existing
+    const callbacks = new Set<EventListenerOrEventListenerObject>()
+    listeners.set(query, callbacks)
+    const media = {
+      get matches() { return matches(query) },
       media: query,
       onchange: null,
-      addEventListener() {},
-      removeEventListener() {},
+      addEventListener(type: string, fn: EventListenerOrEventListenerObject) { if (type === 'change') callbacks.add(fn) },
+      removeEventListener(type: string, fn: EventListenerOrEventListenerObject) { if (type === 'change') callbacks.delete(fn) },
       addListener() {},
       removeListener() {},
-      dispatchEvent() {
-        return false
+      dispatchEvent(event: Event) {
+        for (const fn of callbacks) typeof fn === 'function' ? fn.call(media, event) : fn.handleEvent(event)
+        media.onchange?.call(media, event as MediaQueryListEvent)
+        return true
       },
     } as unknown as MediaQueryList
+    queries.set(query, media)
+    return media
   }
   Object.defineProperty(globalThis, 'matchMedia', { value: stub, configurable: true, writable: true })
+  const change = (update: () => void) => {
+    act(() => {
+      const before = new Map([...queries].map(([q, m]) => [q, m.matches]))
+      update()
+      for (const [query, media] of queries) {
+        if (media.matches === before.get(query)) continue
+        media.dispatchEvent(Object.assign(new Event('change'), { matches: media.matches, media: query }))
+      }
+    })
+  }
+  return {
+    setDark: (value: boolean) => change(() => { dark = value }),
+    setReducedMotion: (value: boolean) => change(() => { reducedMotion = value }),
+    listenerCount: () => [...listeners.values()].reduce((n, list) => n + list.size, 0),
+  }
 }
 
 /**

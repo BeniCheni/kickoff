@@ -92,7 +92,7 @@ jobs:
       - name: Fail loudly on a hard sync failure
         if: steps.sync.outputs.sync_exit == '2'
         run: |
-          echo "::error::npm run sync exited 2 — a hard failure before any write (unmapped ESPN status, a truncated response, an implausibly shrunk league, or a row the schema rejects). Nothing written, no PR opened. See the 'Run the sync' step's log above."
+          echo "::error::npm run sync exited 2 — a hard failure. Fixture and standings fetch/validation failures refuse all snapshot writes; no commit or PR is made from a failed run. See the 'Run the sync' step's log above."
           exit 1
 
       # "Changed" is the diff engine's verdict, not git's. Every run rewrites 959 per-row

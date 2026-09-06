@@ -17,8 +17,8 @@ export function themeStorageKey(lens: Lens): 'kickoff-theme' | 'kickoff-theme-br
 }
 
 /**
- * The one theme decision, used identically by the pre-paint bootstrap in main.tsx and
- * by App's lens-change effect so the two can never disagree.
+ * The shared stored/default theme decision for the generated bootstrap and App.
+ * App also retains explicit session choices when storage is unavailable.
  */
 export function resolveTheme(
   lens: Lens,
@@ -62,7 +62,7 @@ export function writeStoredTheme(key: ThemeKey, theme: Theme): void {
 }
 
 /**
- * resolveTheme fed from the live environment — the single call both the pre-paint
+ * resolveTheme fed from the live environment — the single call both the inline
  * bootstrap and App's lens effect use, with the storage keys coming from
  * themeStorageKey so no caller ever spells a key literal again.
  */

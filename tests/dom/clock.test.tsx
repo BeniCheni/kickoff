@@ -48,11 +48,14 @@ describe('useNow reads the clock the test drives (affordance 1)', () => {
 
 describe('the pinned-date rollover (v0.2.0 review; the effect tests the URL, not the anchor)', () => {
   it('?date=<the day that is ending> survives midnight — a pin is navigation, not a stale default', () => {
-    release = primeClock(edt('2026-09-12T23:59:00'))
+    // Pin a nondefault date on arrival, then let that date become today. Normalizing
+    // ?date=<today> on arrival intentionally unpins it in v0.2.5; this is the other path.
+    release = primeClock(edt('2026-09-11T23:59:00'))
     window.history.replaceState(null, '', '/?date=2026-09-12')
     render(<App />)
     expect(screen.getByText(WEEK_OF_SEP_7)).toBeTruthy()
 
+    wake(edt('2026-09-12T23:59:00'))
     tick(61_000)
 
     expect(clock.getSnapshot().today).toBe('2026-09-13')
@@ -61,10 +64,11 @@ describe('the pinned-date rollover (v0.2.0 review; the effect tests the URL, not
   })
 
   it('…and the second midnight, into a new week, still does not move a pinned reader', () => {
-    release = primeClock(edt('2026-09-12T23:59:00'))
+    release = primeClock(edt('2026-09-11T23:59:00'))
     window.history.replaceState(null, '', '/?date=2026-09-12')
     render(<App />)
 
+    wake(edt('2026-09-12T23:59:00'))
     tick(61_000)
     wake(edt('2026-09-14T00:00:00'))
 

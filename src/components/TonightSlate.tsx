@@ -1,10 +1,9 @@
 import { useMemo } from 'react'
 import { COMPETITIONS, type CompetitionKey } from '../lib/competitions'
-import { fixtureTimes } from '../lib/time'
+import { fixtureTimes, posterDayTitle } from '../lib/time'
 import { planSlate } from '../lib/fixtures'
 import { useNow } from '../lib/useNow'
 import { dominantCompetition, slateSubLine } from '../lib/lensSelectors'
-import { posterDayTitle } from './PosterWeek'
 import type { Fixture } from '../lib/schema'
 
 /** "1:30 PM" → big clock, small meridiem — the Poster template's own split. */
@@ -12,12 +11,11 @@ function SlateTime({ fixture }: { fixture: Fixture }) {
   if (fixture.timeConfidence !== 'exact') {
     return <span className="font-mono text-[13px] font-medium text-floodlight italic">TBC</span>
   }
-  const time = fixtureTimes(fixture.kickoffUtc, fixture.venueTz).brooklyn.time
-  const at = time.lastIndexOf(' ')
+  const { clock, meridiem } = fixtureTimes(fixture.kickoffUtc, fixture.venueTz).brooklyn
   return (
     <>
-      <span className="font-mono text-[24px] leading-none font-semibold">{time.slice(0, at)}</span>
-      <span className="font-mono text-[10px] font-medium text-ink-muted">{time.slice(at + 1)}</span>
+      <span className="font-mono text-[24px] leading-none font-semibold">{clock}</span>
+      {meridiem && <span className="font-mono text-[10px] font-medium text-ink-muted">{meridiem}</span>}
     </>
   )
 }

@@ -1,6 +1,6 @@
 import type { Fixture } from './schema'
 import { COMPETITIONS, competitionRank, type CompetitionKey } from './competitions'
-import { brooklynDate, fixtureTimes } from './time'
+import { brooklynDate, fixtureTimes, posterDayTitle } from './time'
 
 /**
  * Pure per-lens data shaping. Everything here takes fixtures as arguments (never importing
@@ -91,6 +91,21 @@ export function slateSubLine(slate: readonly Fixture[], isTonight: boolean): str
   return parts.join(' · ')
 }
 
+/** Poster day headers count all shown fixtures, while FIRST can only name a league-set
+ * time. State the TBC count explicitly, using the same confidence rule as the hero. */
+export function posterSubLine(fixtures: readonly Fixture[]): string {
+  const leagues = new Set(fixtures.map((f) => f.competition)).size
+  const parts = [
+    `${fixtures.length} ${fixtures.length === 1 ? 'MATCH' : 'MATCHES'}`,
+    `${leagues} ${leagues === 1 ? 'LEAGUE' : 'LEAGUES'}`,
+  ]
+  const tbc = fixtures.filter((f) => f.timeConfidence !== 'exact').length
+  if (tbc > 0) parts.push(`${tbc} TBC`)
+  const bounds = kickoffBounds(fixtures)
+  if (bounds) parts.push(`FIRST KICKOFF ${fixtureTimes(bounds.first.kickoffUtc, bounds.first.venueTz).brooklyn.time}`)
+  return parts.join(' · ')
+}
+
 /**
  * The next kickoff: the earliest still-scheduled fixture after `nowUtcIso` whose time the
  * league has actually set. Placeholder times are never "next" — that would be a guess.
@@ -161,8 +176,9 @@ export function tickerSegments(
   const nextId = nextKickoffId(fixtures, nowUtcIso)
   const next = nextId !== null ? fixtures.find((f) => f.id === nextId) : undefined
   if (next) {
-    const time = fixtureTimes(next.kickoffUtc, next.venueTz).brooklyn.time
-    segments.push({ keyword: 'NEXT', text: `${time} ${next.home.name} v ${next.away.name}` })
+    const { time, isoDate } = fixtureTimes(next.kickoffUtc, next.venueTz).brooklyn
+    const when = isoDate === todayBrooklyn ? time : `${posterDayTitle(isoDate)} · ${time}`
+    segments.push({ keyword: 'NEXT', text: `${when} ${next.home.name} v ${next.away.name}` })
   }
   for (const f of fixtures) {
     if (f.status !== 'full_time' || !f.result) continue

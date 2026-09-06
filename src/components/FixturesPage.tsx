@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from 'react'
 import { COMPETITION_KEYS, COMPETITIONS, type CompetitionKey } from '../lib/competitions'
 import { addDays, addMonths, niceDate, shortDate, startOfWeek } from '../lib/time'
 import { useUrlState } from '../lib/useUrlState'
-import { parseDateParam, parseOnlyParam } from '../lib/urlCodecs'
+import { encodeDate, encodeOnly, encodeView, parseDateParam, parseOnlyParam, parseView } from '../lib/urlCodecs'
 import type { Lens } from '../lib/lens'
 import { NextUpStrip } from './NextUpStrip'
 import { TonightSlate } from './TonightSlate'
@@ -21,13 +21,13 @@ const ALL = new Set(COMPETITION_KEYS)
 export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
   const [view, setView] = useUrlState<'week' | 'month'>(
     'view', 'week',
-    (v) => (v === 'week' ? null : v),
-    (s) => (s === 'month' ? 'month' : 'week'),
+    encodeView, parseView,
   )
+  const encodeAnchor = useCallback((v: string) => encodeDate(v, today), [today])
+  const decodeAnchor = useCallback((s: string) => parseDateParam(s, today), [today])
   const [anchor, setAnchor] = useUrlState<string>(
     'date', today,
-    (v) => (v === today ? null : v),
-    (s) => parseDateParam(s, today),
+    encodeAnchor, decodeAnchor,
   )
 
   // today ticks (useNow, in App) — when it rolls to a new day, follow it, but only while
@@ -44,7 +44,7 @@ export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
   }, [today, setAnchor])
   const [active, setActive] = useUrlState<ReadonlySet<CompetitionKey>>(
     'only', ALL,
-    (v) => (v.size === COMPETITION_KEYS.length ? null : [...v].join(',')),
+    encodeOnly,
     parseOnlyParam,
   )
 
