@@ -26,6 +26,9 @@ actual backgrounds. Paper trail: `docs/design-cycle-proposal.md`; release number
   negative values on its hover ground and the actual 72h banner tint.
 - Retired standings-failure hold descriptions and the adjudicated failed-sync-reader candidate.
   The wanted generated-prompt formatting paragraph is carried into the project instructions.
+- The empty marquee's static line is a named region (`role="region"`, "Ticker"): Chrome's
+  accessibility tree had exposed the Tab stop as a nameless generic. Found by the PR #26 Pass 1
+  review; the DOM test asserts the name.
 
 ### Deliberately not done
 

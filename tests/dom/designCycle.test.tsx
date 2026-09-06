@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { FIXTURES, META } from '../../src/lib/fixtures'
 import { COMPETITION_KEYS } from '../../src/lib/competitions'
-import { brooklynDate, posterDayTitle, startOfWeek } from '../../src/lib/time'
+import { brooklynDate, niceDate, posterDayTitle, startOfWeek } from '../../src/lib/time'
 import { LIVE_WINDOW_MS } from '../../src/lib/lensSelectors'
 import { WeekView } from '../../src/components/WeekView'
 import { MonthView } from '../../src/components/MonthView'
@@ -15,7 +15,13 @@ afterEach(() => {
   cleanup()
   release?.()
   release = undefined
-  FIXTURES.forEach((f, i) => Object.assign(f, originals[i]))
+  // Object.assign alone leaves behind any key a test added (a `result` on a fixture that had
+  // none); strip those first so the restore is the original object, not a superset of it.
+  FIXTURES.forEach((f, i) => {
+    const original = originals[i]!
+    for (const key of Object.keys(f)) if (!(key in original)) delete (f as unknown as Record<string, unknown>)[key]
+    Object.assign(f, original)
+  })
 })
 const active = new Set(COMPETITION_KEYS)
 
@@ -33,7 +39,9 @@ describe('synthetic frozen snapshot through the real selector and clock wiring',
           render(<WeekView weekStart={startOfWeek(today)} active={active} today={today} lens={lens} />)
         } else {
           render(<MonthView monthStart={`${today.slice(0, 7)}-01`} active={active} today={today} />)
-          const cell = screen.getAllByRole('button').find((b) => b.getAttribute('aria-label')?.includes('match'))!
+          // The fixture's own day, by its aria-label — not the month's first match-day, which
+          // only coincides with it while the snapshot's first exact fixture opens the window.
+          const cell = screen.getByRole('button', { name: (n) => n.startsWith(`${niceDate(today)}, `) })
           fireEvent.click(cell)
         }
         expect(screen.getByText('LIVE')).toBeTruthy()
@@ -71,6 +79,9 @@ describe('ticker mounted/static contract', () => {
     expect(strip?.textContent).toBe(`NEXT — nothing scheduled in this snapshot · window ends ${posterDayTitle(META.window.to)}`)
     expect(screen.queryByRole('button')).toBeNull()
     expect(container.querySelector('.ticker-track')).toBeNull()
+    // The static line is a Tab stop: it must expose a role and a name, not a nameless generic.
+    expect(screen.getByRole('region', { name: 'Ticker' })).toBe(strip?.firstElementChild)
+    expect(strip?.firstElementChild?.getAttribute('tabindex')).toBe('0')
   })
   it('renders one italic TBC time slot per track for a placeholder NEXT', () => {
     FIXTURES.forEach((f) => { f.status = 'cancelled' })

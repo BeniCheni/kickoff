@@ -54,8 +54,11 @@ export function TickerStrip() {
     >
       {empty ? (
         // inline-block preserves the moving track's line box (and strip height). Keep
-        // the one-line instrument pannable by touch/keyboard when its copy is wider.
+        // the one-line instrument pannable by touch/keyboard when its copy is wider — a
+        // focusable region needs a role and a name, or the Tab stop announces nothing.
         <div
+          role="region"
+          aria-label="Ticker"
           tabIndex={0}
           className="font-mono inline-block w-full overflow-x-auto px-5 text-[11px] font-medium whitespace-nowrap text-ink-secondary"
           style={{ scrollbarWidth: 'none' }}
