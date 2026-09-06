@@ -4,6 +4,7 @@
 [![version](https://img.shields.io/badge/version-0.2.5-1d4ed8)](CHANGELOG.md)
 [![license](https://img.shields.io/badge/license-MIT-16a34a)](LICENSE)
 [![built with](https://img.shields.io/badge/built%20with-Claude%20Code-D97757)](CLAUDE.md)
+[![built with](https://img.shields.io/badge/built%20with-Codex-000000)](https://openai.com/codex/)
 
 ```
 ╔════════════════════════════╗
