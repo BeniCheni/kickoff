@@ -67,9 +67,18 @@ no sync PR, label or commit; an existing PR is left as it was. Step 0's re-read 
 committed app cannot discover a fixture change withheld during a standings outage. The header
 stamp and the 24/72-hour banner report snapshot age, not failed checks; there is no failure
 signal in the app or Step 0's PR queue. A later successful, change-bearing run can propose an
-update, and the app advances only when that update merges. PR #23's Pass 2 therefore recommends
+update, and the app advances only when that update merges. PR #23's Pass 2 recommended
 blocking release until failure runs have an explicit reader; see the proposal's review
-resolutions. The atomic boundary stays; its operational acceptance is Beni's adjudication.
+resolutions.
+
+**Adjudicated 5 Sep 2026 (Beni).** The boundary ships as built; the reader is a *procedure*, not
+an app component, and it lives in `../Sportsbooks/CLAUDE.md` ("Check the sync run succeeded BEFORE
+trusting the app") — that is the owning copy, do not restate the rule here. In short: before any
+Step 0 that a position depends on, confirm the latest `sync.yml` run on `main` succeeded; a failed
+run means every open position gets independent primary-source re-verification rather than a re-read
+of this app. The basis for deferring the built reader: 30 sync runs since 1 Sep 2026, zero
+failures — an in-product surface would be designed against an event with no observed base rate.
+`docs/v0.2.6-ideas.md` row 15 holds that work until the rate justifies it.
 
 `.github/workflows/sync.yml` runs `npm run sync` on a cron of `23 1,4,7,10,13,16,19,22 * * *`
 — every three hours *as scheduled*, keeping 00:23 and 12:23 EDT in the set, an hour early
