@@ -150,13 +150,14 @@ async function main() {
 
   // The verdict sync.yml reads. Printed last, in both modes, after the standings outcome
   // is known — a failed standings fetch aborts before reaching this report. The merge
-  // verdict's reasons print just above it, so a held PR's body says why it is held.
+  // verdict's reasons print just above it, and land in the PR body: since PR #28 they say
+  // which lines are time-sensitive, not that anything is waiting for a human.
   const reportFor = (standings: StandingsOutcome): string => {
     const merge = mergeVerdict(changes, standings.status)
     const why =
       merge.verdict === 'hold'
-        ? `hold for a human:\n${merge.reasons.map((r) => `  - ${r}`).join('\n')}\n`
-        : 'no hold reasons — a change-bearing PR from this run may merge itself.\n'
+        ? `time-sensitive lines (merge=hold) — reported, not a gate; this PR still merges once verify is green:\n${merge.reasons.map((r) => `  - ${r}`).join('\n')}\n`
+        : 'no time-sensitive lines (merge=auto).\n'
     return (
       why +
       formatReportLine({

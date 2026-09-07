@@ -107,8 +107,14 @@ reader-facing signal in the PR report, not a release gate. The legacy `standings
 report remains visible for compatibility, although current standings failures exit 2 before
 any report or PR update. The workflow uses `gh pr merge --squash --auto`, gated by the
 rulesets' required `verify` check; it needs the repo's "Allow auto-merge" setting on, else
-the PR is left open with a warning. Any legacy `hold: human` label is removed by the workflow
-so previously held sync PRs, including PR #27, can join the same CI-gated auto-merge path.
+the PR is left open with a warning. **This is not a pausable path.** `hold: human` is a dead
+label the workflow no longer writes or reads — PR #27 merged carrying it — so re-adding it to
+a sync PR does nothing. Closing the PR by hand stops *that* PR only: the next run re-runs the
+sync against `main`, finds the same diff, force-pushes the rolling branch and opens a **new**
+PR that merges itself, so a close buys one cron interval, not a hold. The only durable stops
+are repo-level: turn off "Allow auto-merge" (the run warns and leaves the PR open) or disable
+the `sync.yml` workflow. Deciding a snapshot must not land is therefore a repo-settings act,
+not a PR act; a per-PR pause that survives the next run is `docs/v0.2.6-ideas.md` row 24.
 
 **The Step 0 contract with the betting pipeline:** a merged sync PR is not evidence that a
 fixture change was read. Before relying on the app for an open position, re-read the app and

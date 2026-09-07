@@ -91,13 +91,15 @@ Rules the cycle runs on:
 - **Never run `npm run sync` during a review.** It writes `src/data/*.json`, and a data refresh
   is not a release. `npm run sync -- --check` is the only form allowed.
 - Leave the bot's open `sync/scheduled` PR alone — and know what it is. It is the rolling data
-  PR; when it carries the `hold: human` label, the sync's merge verdict held it (something
-  inside −6 h..+72 h moved, a postponement or cancellation, a `DISAPPEARED` or
-  `HOME_AWAY_INVERTED` line — `CLAUDE.md`, "Scheduled sync"), and
-  every sync PR left open is a Track A Step 0 re-verification trigger for every open position
-  in the betting track. Beni alone clears it, by merging it or by removing the label. This
-  skill neither reviews nor merges it. Current standings failures abort with exit 2 before
-  any report or PR update; `standings=failed` is only a legacy defensive hold value.
+  PR, and since PR #28 (6 Sep 2026) it **merges itself** once `verify` is green, urgent lines
+  included; you will more often find it already merged than open. `merge=hold` in its report
+  still names the time-sensitive lines (inside −6 h..+72 h, a postponement or cancellation, a
+  `DISAPPEARED` or `HOME_AWAY_INVERTED` line — `CLAUDE.md`, "Scheduled sync") but gates
+  nothing, and `hold: human` is a dead label: the workflow neither writes nor reads it, and
+  PR #27 merged carrying it. A merged sync PR is therefore **not** evidence anyone read it —
+  Track A Step 0 re-verifies every relevant line against the source for every open position,
+  merged or not. This skill neither reviews nor merges it. Current standings failures abort
+  with exit 2 before any report or PR update; `standings=failed` is only a legacy value.
 - Repo ground truth beats any description of it, including the PR body and this skill.
 - **`--pass 2.5` changes the starting point, not the standard.** Read Pass 1's and Pass 2's
   comments first, then the head's full diff against `origin/main` and each rebuttal commit on
