@@ -25,10 +25,18 @@ The scheduled sync stopped asking permission.
 
 ### Fixed
 
-- In the Table lens, `next` now gates on kickoff instant and a scheduled fixture with exact kickoff
-  time that has started but not been marked `full_time` appears in a new `underway` lane instead.
-  The NEXT cell now renders `KICKED OFF` for that state in all table layouts, and the row label
-  preserves it for screen-reader parity with sighted rendering.
+- **The Table's NEXT lane tells the time the way every other lens does** (#30). It gated on the
+  Brooklyn calendar date and never received an instant, so on 7 Sep it advertised
+  `NEXT · Mon · CEL (H) · 1:00 PM EDT` for Getafe through the whole of Getafe–Celta while the
+  heroes had already dropped the match. `tableFor` now takes the app's instant — and never reads
+  the clock itself — and splits the lane in two: `next`, still to kick off on the shared gate, and
+  `underway`, a fixture whose league-set kickoff has passed while the snapshot still says
+  `scheduled`, rendered **KICKED OFF** — the word v0.3.0 gave to "kicked off, outcome unknown to
+  this snapshot" — in all three table layouts and in the row's accessible name. The match
+  underway outranks the club's following fixture in every layout, so opponent and state never
+  come from two different matches; it is the club's *most recent* such match, not the oldest a
+  sync outage left unresolved; and it stays until a sync resolves it. A placeholder still retires
+  by its Brooklyn date, never its UTC one.
 
 ### Removed
 
