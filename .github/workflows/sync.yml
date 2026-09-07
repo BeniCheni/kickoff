@@ -5,9 +5,9 @@ name: Scheduled sync
 # straight to main. Every successful change-bearing PR merges itself once `verify` is green.
 # scripts/diff.ts still reports merge=auto|hold so urgent or structural changes stay visible
 # in the report, but that signal is no longer a release gate. Current standings failures abort
-# with exit 2 before any report or PR update; standings=failed is legacy-only. A legacy
-# `hold: human` label is cleared by this workflow. npm run sync itself is the honesty gate: an
-# unmapped ESPN status,
+# with exit 2 before any report or PR update; standings=failed is legacy-only. The workflow
+# neither writes nor reads the legacy `hold: human` label: no label gates a merge, and PR #27
+# merged carrying it. npm run sync itself is the honesty gate: an unmapped ESPN status,
 # a truncated response, or an implausibly shrunk league all abort with exit 2 before anything
 # is written, which this workflow turns into a failed, unmissable run rather than a silent
 # bad commit. Reasoning: docs/v0.2.2-proposal.md §C; the original no-auto-merge decision and
@@ -36,7 +36,7 @@ on:
         type: boolean
         default: false
 
-# contents: push the rolling branch · pull-requests: open/edit/remove-label/auto-merge the PR ·
+# contents: push the rolling branch · pull-requests: open/edit/auto-merge the PR ·
 # actions: approve the PR's held verify run through the Actions API (it once dispatched ci.yml
 # instead; that check never counted in the merge box — docs/v0.2.0-proposal.md, "The
 # residual")
@@ -139,7 +139,7 @@ jobs:
             echo
             echo "Nothing written, no commit, no PR. The sync log is everything this run did."
             echo
-            echo "Merge verdict this run would have obeyed: \`merge=${{ steps.report.outputs.merge }}\` (auto = the PR may merge itself; hold = a human reads it first)."
+            echo "Merge verdict this run would have reported: \`merge=${{ steps.report.outputs.merge }}\` (auto = nothing time-sensitive; hold = time-sensitive lines, named in the report). Neither gates the merge: a change-bearing PR merges once \`verify\` is green."
           } >> "$GITHUB_STEP_SUMMARY"
           echo "Dry run (--check): the report above is everything this run did. Nothing written, no commit, no PR. Verdict: merge=${{ steps.report.outputs.merge }}."
 
@@ -233,29 +233,34 @@ jobs:
             echo "$URL"
           } >> "$GITHUB_STEP_SUMMARY"
 
-      # Reset a prior auto-merge request before approving a time-sensitive update, then arm
-      # auto-merge for the current snapshot below. Reading state back makes a failed reset
-      # visible instead of allowing an earlier request to merge the new head prematurely.
-      - name: Disarm auto-merge on a held PR
+      # Reset a prior run's auto-merge request before this run's verify is approved, then
+      # re-arm it below against the head this run pushed. Nothing is held any more, so this is
+      # narrowing a window, not a gate: it stops an older request from acting on a new head.
+      # Reading the state back makes a failed reset visible instead of silent.
+      - name: Reset a stale auto-merge request (time-sensitive run)
         if: steps.mode.outputs.dry_run == 'false' && steps.report.outputs.changed == 'true' && steps.report.outputs.merge == 'hold'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           N="${{ steps.pr.outputs.number }}"
           if [ -z "$N" ]; then
-            echo "::error::no PR number captured — cannot disarm auto-merge on a PR this run cannot name; nothing was approved or armed."
+            echo "::error::no PR number captured — cannot reset auto-merge on a PR this run cannot name; nothing was approved or armed."
             exit 1
           fi
           gh pr merge "$N" --disable-auto || echo "(nothing was armed, or the request failed — the state is read back next)"
+          # Both readings below are reported, never fatal. Under the pre-v0.3.x policy a still-armed
+          # PR was the failure this step existed to prevent; now an armed auto-merge is the intended
+          # end state, so killing the job here would block the time-sensitive runs it was meant to
+          # protect — and would leave verify unapproved on a PR the next step is about to re-arm.
           ARMED=$(gh pr view "$N" --json autoMergeRequest --jq '.autoMergeRequest != null') || {
-            echo "::error::could not read PR #$N's auto-merge state — refusing to call it held. Its verify run is left unapproved, so it cannot merge; check the PR by hand."
-            exit 1
+            echo "::warning::could not read PR #$N's auto-merge state; continuing — the merge step below re-arms it against this run's head."
+            ARMED=unread
           }
           if [ "$ARMED" != "false" ]; then
-            echo "::error::PR #$N still has auto-merge armed after --disable-auto — it would merge itself once verify went green. Its verify run is left unapproved; disarm it by hand: gh pr merge $N --disable-auto"
-            exit 1
+            echo "::warning::PR #$N still reads as armed after --disable-auto ($ARMED); continuing — the merge step below re-arms it against this run's head."
+          else
+            echo "PR #$N: auto-merge is not armed."
           fi
-          echo "PR #$N: auto-merge is not armed."
 
       # Observed on the first real runs (PR #9, 2 Sep 2026): the bot's PR *does* get a
       # `pull_request` run of ci.yml, but GitHub holds it for approval — github-actions[bot]
@@ -288,30 +293,19 @@ jobs:
           fi
 
       # Merge every successful generated snapshot. `merge=hold` remains in the report for
-      # visibility, while GitHub's required `verify` check remains the release gate. Clear any
-      # legacy hold label so an existing held PR can join the same CI-gated auto-merge path.
-      - name: Obey the merge verdict
+      # visibility, while GitHub's required `verify` check remains the release gate. Labels gate
+      # nothing and this step no longer touches them: PR #27 merged carrying `hold: human`, so
+      # reading or clearing it bought nothing and cost a token scope plus two failure paths.
+      - name: Merge the snapshot once verify is green
         if: steps.mode.outputs.dry_run == 'false' && steps.report.outputs.changed == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           REPORT_LINE: ${{ steps.report.outputs.line }}
-          HOLD_LABEL: 'hold: human'
         run: |
           N="${{ steps.pr.outputs.number }}"
           if [ -z "$N" ]; then
-            echo "::error::no PR number captured — cannot obey the verdict; the PR (if any) is left as it is."
+            echo "::error::no PR number captured — cannot merge; the PR (if any) is left as it is."
             exit 1
-          fi
-          LABELS=$(gh pr view "$N" --json labels --jq '.labels[].name') || {
-            echo "::error::could not read PR #$N's labels — refusing to clear a legacy hold label. Nothing was armed; the PR is left open."
-            exit 1
-          }
-          if printf '%s\n' "$LABELS" | grep -Fxq "$HOLD_LABEL"; then
-            gh pr edit "$N" --remove-label "$HOLD_LABEL" || {
-              echo "::error::could not remove legacy label '$HOLD_LABEL' from PR #$N; nothing was armed."
-              exit 1
-            }
-            echo "cleared legacy label '$HOLD_LABEL' from PR #$N."
           fi
           TITLE=$(gh pr view "$N" --json title --jq .title)
           if gh pr merge "$N" --squash --auto --subject "$TITLE" --body "$REPORT_LINE"; then
