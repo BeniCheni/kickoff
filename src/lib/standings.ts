@@ -2,7 +2,8 @@ import rawStandings from '../data/standings.json'
 import { standingsFileSchema, type Fixture, type StandingRow } from './schema'
 import { zoneFor, type CompetitionKey, type Zone } from './competitions'
 import { FIXTURES } from './fixtures'
-import { brooklynDate, fixtureTimes, hoursSince, weekdayShort, type FixtureTimes } from './time'
+import { fixtureTimes, hoursSince, weekdayShort, type FixtureTimes } from './time'
+import { hasKickedOff, stillToKickOff } from './lensSelectors'
 
 /**
  * The league table plus everything the Table view derives around it.
@@ -28,6 +29,16 @@ export type TableRow = StandingRow & {
   /** Last league results, oldest -> newest, at most 5. Only fixtures inside the sync window. */
   form: FormResult[]
   next: {
+    opponent: string
+    /** The opponent's table code ("OSA") when they are in the same table; else a short name. */
+    opponentAbbrev: string
+    /** True when this club is at home. */
+    home: boolean
+    weekday: string
+  times: FixtureTimes
+  timeConfidence: Fixture['timeConfidence']
+  } | null
+  underway: {
     opponent: string
     /** The opponent's table code ("OSA") when they are in the same table; else a short name. */
     opponentAbbrev: string
@@ -69,6 +80,7 @@ function fixturesByTeam(key: CompetitionKey, fixtures: readonly Fixture[]): Map<
 export function tableFor(
   key: CompetitionKey,
   today: string,
+  nowUtcIso: string = new Date().toISOString(),
   rows: readonly StandingRow[] = STANDINGS.leagues[key] ?? [],
   fixtures: readonly Fixture[] = FIXTURES,
 ): TableRow[] {
@@ -91,14 +103,19 @@ export function tableFor(
         return us > them ? 'W' : us === them ? 'D' : 'L'
       })
 
-    // Compare Brooklyn calendar dates on both sides — slicing the raw UTC string would
-    // keep advertising a Saturday-night kickoff as "next" through Sunday (see time.ts).
-    const upcoming = mine.find(
-      (f) => f.status === 'scheduled' && brooklynDate(f.kickoffUtc) >= today,
-    )
-
-    const isHome = upcoming?.home.sourceId === r.teamId
+    const upcoming = mine.find((f) => {
+      return stillToKickOff(f, nowUtcIso) && f.kickoffUtc >= `${today}T00:00:00.000Z`
+    })
+    const underwayFixture = mine.find((f) => hasKickedOff(f, nowUtcIso))
     const nextTimes = upcoming ? fixtureTimes(upcoming.kickoffUtc, upcoming.venueTz) : null
+    const underwayTimes = underwayFixture ? fixtureTimes(underwayFixture.kickoffUtc, underwayFixture.venueTz) : null
+
+    const nextIsHome = upcoming?.home.sourceId === r.teamId
+    const underwayIsHome = underwayFixture?.home.sourceId === r.teamId
+    const opponentAbbrev = (f: Fixture, isHome: boolean | undefined) =>
+      isHome
+        ? abbrevById.get(f.away.sourceId ?? '') ?? f.away.name.slice(0, 3).toUpperCase()
+        : abbrevById.get(f.home.sourceId ?? '') ?? f.home.name.slice(0, 3).toUpperCase()
     return {
       ...r,
       gd: r.gf - r.ga,
@@ -108,14 +125,22 @@ export function tableFor(
       form,
       next: upcoming && nextTimes
         ? {
-            opponent: isHome ? upcoming.away.name : upcoming.home.name,
-            opponentAbbrev:
-              abbrevById.get((isHome ? upcoming.away.sourceId : upcoming.home.sourceId) ?? '') ??
-              (isHome ? upcoming.away.name : upcoming.home.name).slice(0, 3).toUpperCase(),
-            home: isHome,
+            opponent: nextIsHome ? upcoming!.away.name : upcoming!.home.name,
+            opponentAbbrev: opponentAbbrev(upcoming!, nextIsHome),
+            home: nextIsHome,
             weekday: weekdayShort(nextTimes.brooklyn.isoDate),
             times: nextTimes,
             timeConfidence: upcoming.timeConfidence,
+          }
+        : null,
+      underway: underwayFixture && underwayTimes
+        ? {
+            opponent: underwayIsHome ? underwayFixture.away.name : underwayFixture.home.name,
+            opponentAbbrev: opponentAbbrev(underwayFixture, underwayIsHome),
+            home: underwayIsHome,
+            weekday: weekdayShort(underwayTimes.brooklyn.isoDate),
+            times: underwayTimes,
+            timeConfidence: underwayFixture.timeConfidence,
           }
         : null,
     }

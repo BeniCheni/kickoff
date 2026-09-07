@@ -23,6 +23,13 @@ The scheduled sync stopped asking permission.
 - The Step 0 contract with the betting track is narrower and stated louder: a merged sync PR is
   not evidence that anyone read it. Re-read the app and verify every moved line at its source.
 
+### Fixed
+
+- In the Table lens, `next` now gates on kickoff instant and a scheduled fixture with exact kickoff
+  time that has started but not been marked `full_time` appears in a new `underway` lane instead.
+  The NEXT cell now renders `KICKED OFF` for that state in all table layouts, and the row label
+  preserves it for screen-reader parity with sighted rendering.
+
 ### Removed
 
 - `issues: write` from `sync.yml`'s token, and the label read-and-clear it existed for (#29).

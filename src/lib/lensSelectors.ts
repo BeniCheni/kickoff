@@ -121,6 +121,16 @@ export function stillToKickOff(f: Fixture, nowUtcIso: string): boolean {
 }
 
 /**
+ * A scheduled fixture whose kickoff instant has passed. The snapshot does not yet know the
+ * score or whether it has ended — only that it is no longer in the future. The exact
+ * complement of stillToKickOff over scheduled fixtures: a placeholder kickoff time can never
+ * tell us a match started, so `exact` is required on both sides.
+ */
+export function hasKickedOff(f: Fixture, nowUtcIso: string): boolean {
+  return f.status === 'scheduled' && f.timeConfidence === 'exact' && f.kickoffUtc <= nowUtcIso
+}
+
+/**
  * The next kickoff: the earliest still-scheduled fixture after `nowUtcIso` whose time the
  * league has actually set. Placeholder times are never "next" — that would be a guess.
  */
