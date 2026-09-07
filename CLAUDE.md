@@ -99,33 +99,22 @@ cron has run three to four and a half hours late here, so runs may bunch or go m
 no copy in this repo promises "every three hours". It opens or updates one rolling PR
 (`sync/scheduled` → `main`) carrying the diff report — it never pushes straight to `main`.
 
-**Since v0.2.2 the PR merges itself when nothing in it needs a human first, and is held
-otherwise.** The verdict is `mergeVerdict` in `scripts/diff.ts` — hold when anything is
-urgent (inside −6 h..+72 h, or a postponement/cancellation at any horizon), when any
-`DISAPPEARED` or `HOME_AWAY_INVERTED` line appears at any horizon; auto otherwise
-for current successful reports. The legacy `standings=failed` report also holds defensively,
-but current standings failures exit 2 before any report or PR update. A successful run prints
-`merge=auto|hold` on its report line; the verdict is only
-obeyed by the workflow (`gh pr merge --squash --auto`, gated by the rulesets' required
-`verify` check; needs the repo's "Allow auto-merge" setting on, else the PR is left open with
-a warning). **A held PR stays held**: the workflow labels it `hold: human` and disarms
-auto-merge, and no later run arms it while the label is present, whatever that run's verdict
-— urgency expires six hours after kickoff, and a line Beni never read must not be swept in
-by a quieter run. Only a human clears it, by merging or by removing the label.
+**Every successful change-bearing sync PR merges itself after `verify` is green.** The
+`mergeVerdict` in `scripts/diff.ts` still reports `hold` when anything is urgent (inside
+−6 h..+72 h, or a postponement/cancellation at any horizon), or when any `DISAPPEARED` or
+`HOME_AWAY_INVERTED` line appears at any horizon; it reports `auto` otherwise. This is a
+reader-facing signal in the PR report, not a release gate. The legacy `standings=failed`
+report remains visible for compatibility, although current standings failures exit 2 before
+any report or PR update. The workflow uses `gh pr merge --squash --auto`, gated by the
+rulesets' required `verify` check; it needs the repo's "Allow auto-merge" setting on, else
+the PR is left open with a warning. Any legacy `hold: human` label is removed by the workflow
+so previously held sync PRs, including PR #27, can join the same CI-gated auto-merge path.
 
-**The Step 0 contract with the betting pipeline, as of v0.2.2:** every sync PR *left open for
-you* is a Track A Step 0 re-verification trigger — read every DATE_MOVED / TIME_CHANGED /
-HOME_AWAY_INVERTED / STATUS_CHANGED / DISAPPEARED line against any open position. A PR that
-merged itself moved no fixture the app already knew inside −6 h..+72 h of the run, and
-carried no DISAPPEARED and no HOME_AWAY_INVERTED line at any horizon. Three things can still
-land unread through an auto-merge, so Step 0 keeps re-reading the app for every open position
-rather than waiting for a PR: a `NEW` fixture inside 72 h (NEW is never urgent — no position
-was placed off this app on a fixture it had not listed, and a recreated fixture arrives with a
-DISAPPEARED line that holds); a result correction or a team rename (invisible to the diff
-engine either way — `docs/v0.3.0-ideas.md` row 1); and a DATE_MOVED or TIME_CHANGED more than
-72 h out, which is where a position placed early lives — 53 DATE_MOVED lines rode one
-`merge=auto` report on 4 Sep 2026. (Before v0.2.2 every sync PR was a trigger;
-`docs/v0.2.2-proposal.md` §C and its review resolutions.)
+**The Step 0 contract with the betting pipeline:** a merged sync PR is not evidence that a
+fixture change was read. Before relying on the app for an open position, re-read the app and
+independently verify every DATE_MOVED / TIME_CHANGED / HOME_AWAY_INVERTED / STATUS_CHANGED /
+DISAPPEARED line relevant to that position. The report remains the audit trail for urgent and
+structural changes, but CI-green generated snapshots merge without a manual release action.
 
 Mechanics that have not changed: `workflow_dispatch` (with a `dry_run` input mapped to
 `npm run sync -- --check`) tests the workflow without waiting for the schedule, and its
