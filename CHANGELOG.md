@@ -6,6 +6,36 @@ All notable changes to Kickoff. The format loosely follows
 diverge (the v0.1.0 release shipped from the v0.0.3 doc cycle) — this file tracks
 releases.
 
+## [Unreleased]
+
+The scheduled sync stopped asking permission.
+
+### Changed
+
+- **Every successful change-bearing sync PR merges itself once `verify` is green** (#28) —
+  urgent lines included. `mergeVerdict` still prints `merge=auto|hold`, but the verdict is a
+  reader-facing signal in the report, not a gate: the rulesets' required `verify` check is now
+  the only thing between a generated snapshot and `main`.
+- `hold: human` is a dead label. The workflow neither writes nor reads it, and PR #27 merged
+  carrying it. Six places had still described a PR that waits for a human — the sync PR body,
+  the dry-run summary, the sync report's own wording, `docs/HONESTY.md`, `docs/ARCHITECTURE.md`
+  and `/kickoff-pr-review` — and all six now say what actually happens (#29).
+- The Step 0 contract with the betting track is narrower and stated louder: a merged sync PR is
+  not evidence that anyone read it. Re-read the app and verify every moved line at its source.
+
+### Removed
+
+- `issues: write` from `sync.yml`'s token, and the label read-and-clear it existed for (#29).
+  Two failure paths that could stall a sync run went with it.
+
+### Deliberately not done
+
+- **A replacement pause.** Closing a sync PR stops that PR and nothing else: the next run
+  rebuilds the same diff and opens a new one, so a close buys one cron interval. The only
+  durable stops are repo-level — "Allow auto-merge" off, or the workflow disabled — and they
+  stop every PR, not the one in question. A per-PR pause that survives the next run is
+  `docs/v0.2.6-ideas.md` row 24. Nothing here pretends to be one.
+
 ## [0.3.0] — 2026-09-06
 
 Snapshot states say what is known. Paper trail: `docs/design-cycle-proposal.md`.
