@@ -1,3 +1,6 @@
+import { stillToKickOff } from './lensSelectors'
+export { stillToKickOff } from './lensSelectors'
+
 import rawFixtures from '../data/fixtures.json'
 import rawMeta from '../data/meta.json'
 import { fixturesFileSchema, metaSchema, type Fixture } from './schema'
@@ -46,20 +49,6 @@ export function fixturesOn(date: string, active: ReadonlySet<CompetitionKey>): F
 /** Total on a date regardless of filters — lets the UI say "hidden by filters" vs "nothing on". */
 export function totalOn(date: string): number {
   return BY_DATE.get(date)?.length ?? 0
-}
-
-/**
- * The one gate for "not yet kicked off", shared by every hero (v0.2.2): Ledger's Next-up
- * strip through `upcoming`, Poster's Tonight's slate through `planSlate`. Two heroes with two
- * clocks was the bug (docs/v0.3.0-ideas.md row 3); two copies of one gate would be the same
- * bug in disguise. Scheduled only — a postponed or cancelled match has no honest kickoff to
- * promise, and an in-play match (a snapshot's or a real one) has kicked off. A league-set
- * time must still be ahead of `nowUtcIso`, so a fixture drops out at its kickoff minute; a
- * placeholder (TBC) time is trusted only to the day and is never evicted by arithmetic on an
- * instant the league never set — the caller's date filter is what retires it.
- */
-export function stillToKickOff(f: Fixture, nowUtcIso: string): boolean {
-  return f.status === 'scheduled' && (f.timeConfidence !== 'exact' || f.kickoffUtc > nowUtcIso)
 }
 
 /** Kickoffs still ahead from `fromDate` on, earliest first — see stillToKickOff. */

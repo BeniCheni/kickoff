@@ -9,7 +9,7 @@
 @custom-variant broadcast (&:where([data-lens='broadcast'], [data-lens='broadcast'] *));
 
 /*
- * The palette is carried over unchanged from the V5 prototype — a hand-tuned "floodlit
+ * The palette extends the V5 prototype — a hand-tuned "floodlit
  * pitch" scheme. Semantic variables are declared here and swapped wholesale for dark mode;
  * `@theme inline` below points Tailwind's generated utilities at those variables rather
  * than at literal colours, so `bg-surface` follows the theme automatically.
@@ -22,12 +22,14 @@
   --border-strong: rgb(22 33 27 / 0.22);
   --text: #16211b;
   --text-secondary: #55614f;
-  --text-muted: #8a9284;
+  --text-muted: #646c61;
   --pitch: #2c7a4b;
   --pitch-deep: #1e5636;
   --floodlight: #c98a00;
+  --floodlight-strong: #8a5f00; /* text: >=4.69:1 on all four light grounds */
   --floodlight-bg: #fbefd3;
   --accent: #d85a30;
+  --accent-strong: #b4431e; /* 5.58:1 white fill; 4.64:1 text on surface-alt */
   /* Broadcast-only outer glow — floodlight at 18% alpha (the lens system). */
   --glow: rgb(201 138 0 / 0.18);
   /*
@@ -76,12 +78,14 @@
   --border-strong: rgb(231 239 233 / 0.26);
   --text: #e7efe9;
   --text-secondary: #a9b9ac;
-  --text-muted: #6e8074;
+  --text-muted: #8a9c8e;
   --pitch: #56c083;
   --pitch-deep: #2f7a4d;
   --floodlight: #f7c948;
+  --floodlight-strong: var(--floodlight);
   --floodlight-bg: rgb(247 201 72 / 0.14);
   --accent: #f7a864;
+  --accent-strong: var(--accent);
   --glow: rgb(247 201 72 / 0.18);
 }
 
@@ -92,7 +96,7 @@
  */
 [data-lens='broadcast']:not([data-theme='dark']) {
   --on-accent-lead: var(--text);
-  --accent-lead-strong: #966700; /* floodlight deepened to 4.5:1+ on --bg and --surface */
+  --accent-lead-strong: var(--floodlight-strong);
 }
 
 @theme inline {
@@ -107,8 +111,10 @@
   --color-pitch: var(--pitch);
   --color-pitch-deep: var(--pitch-deep);
   --color-floodlight: var(--floodlight);
+  --color-floodlight-strong: var(--floodlight-strong);
   --color-floodlight-bg: var(--floodlight-bg);
   --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
   --color-accent-lead: var(--accent-lead);
   --color-accent-lead-strong: var(--accent-lead-strong);
   --color-on-accent-lead: var(--on-accent-lead);

@@ -22,7 +22,12 @@ of it as unreliable:
 4. `docs/vX.Y.Z-review-prompt.md` — the adversarial review + merge instructions. Since v0.2.1
    the method lives in the repo skill `/kickoff-pr-review` (`.claude/skills/kickoff-pr-review/`;
    `/beni-pr-review` until v0.2.4); the archived prompt for a release is the per-PR part —
-   number, spec files, human-review items, the sealed appendix — not the method.
+   number, spec files, human-review items, the sealed appendix — not the method. Since v0.3.0
+   the skill also carries the **six-pass 360 cycle** for a release built by one vendor and
+   reviewed by another — Pass 0 brief → 1 cold review → 1.5 rebuttal brief → 2 rebuttal →
+   2.5 synthesis and Executive Summary Brief → 3 Beni's adjudication — with the Pass 2.5
+   merge gate that decides auto-merge versus escalation; the pipeline skill's B1.6 is the
+   PM-side copy of the same cycle.
 
 Rules that earned their place: **spec precedence is template > design brief > implementation
 prompt** (note every resolution in the PR); every prompt is delivered in the chat message in a
@@ -30,6 +35,13 @@ fenced block, ready to paste — the `docs/` copy is the archive, never the deli
 sessions get prior findings only as a sealed "verify independently" appendix, never as
 conclusions; model routing that worked — Fable 5 **High** for design/build, **Extra** for the
 review pass.
+
+**Generated prompts are never hand-wrapped — see `../Sportsbooks/CLAUDE.md`, "Generated copy-paste
+content is NEVER hand-wrapped" (5 Sep 2026), which is the owning copy.** In short: one line per
+paragraph in every Claude Design / Claude Code prompt delivered in chat, however long that line
+runs, and a four-backtick outer fence when the block carries its own ```-fenced sub-blocks. It does
+NOT apply to files in this repo — `docs/`, `CLAUDE.md`, `README.md` and `CHANGELOG.md` keep their
+existing wrapped style.
 
 ## Verification discipline (from that v0.0.3-doc-cycle / v0.1.0-release review)
 
@@ -90,8 +102,10 @@ no copy in this repo promises "every three hours". It opens or updates one rolli
 **Since v0.2.2 the PR merges itself when nothing in it needs a human first, and is held
 otherwise.** The verdict is `mergeVerdict` in `scripts/diff.ts` — hold when anything is
 urgent (inside −6 h..+72 h, or a postponement/cancellation at any horizon), when any
-`DISAPPEARED` or `HOME_AWAY_INVERTED` line appears at any horizon, or when the standings
-fetch failed; auto otherwise — printed on the report line as `merge=auto|hold` and only
+`DISAPPEARED` or `HOME_AWAY_INVERTED` line appears at any horizon; auto otherwise
+for current successful reports. The legacy `standings=failed` report also holds defensively,
+but current standings failures exit 2 before any report or PR update. A successful run prints
+`merge=auto|hold` on its report line; the verdict is only
 obeyed by the workflow (`gh pr merge --squash --auto`, gated by the rulesets' required
 `verify` check; needs the repo's "Allow auto-merge" setting on, else the PR is left open with
 a warning). **A held PR stays held**: the workflow labels it `hold: human` and disarms
@@ -123,7 +137,7 @@ standings row — so a quiet run leaves no commit and no PR. Consequence, accept
 `synced` stamp and staleness banner measure time since the last *change-bearing* merged
 sync, and go amber then red through an international break even though the bot verified
 nothing moved; a higher cadence does not change that. The fix (auto-merging an empty report)
-is v0.3.0's, behind the diff engine's two blind spots — see `docs/v0.2.0-proposal.md`'s
+is v0.4.0's, behind the diff engine's two blind spots — see `docs/v0.2.0-proposal.md`'s
 "Review resolutions" and `docs/v0.3.0-ideas.md` rows 1–2. The bot's PR does trigger
 `ci.yml`'s `pull_request` run, but GitHub holds it for approval (github-actions[bot] is not
 a collaborator) and the merge box counts only that run — a `workflow_dispatch` check on the
@@ -207,10 +221,12 @@ together with that earlier file's tail and `docs/v0.2.0-ideas.md`, whose text st
 description for the rows it originated. `docs/v0.2.5-proposal.md` is the inherited spec for
 the next session, including the authoritative snapshot boundary and its accepted cost.
 `docs/v0.2.1-proposal.md` ("The train") is the release plan that turns that list into a train
-of patches and the v0.3.0 minor, with the deferred rows and their reasons — **amended on
+of patches and the v0.4.0 sync minor, with the deferred rows and their reasons — **amended on
 numbering by `docs/v0.2.2-proposal.md`** (4 Sep 2026: v0.2.2 is "the front door") **and again
 by the v0.2.3 hotfix** (same day, `CHANGELOG.md` `[0.2.3]`, Node 24 actions; Beni's call): the
-jsdom rig is v0.2.4, the resilience patch v0.2.5, v0.3.0 unchanged; `/kickoff-pr-review`
+jsdom rig is v0.2.4, the resilience patch v0.2.5; **amended again by v0.3.0**
+(`docs/design-cycle-proposal.md`, Beni's 6 Sep ruling): the design cycle takes v0.3.0,
+the sync theme becomes v0.4.0, and the earlier proposals stay as historical records; `/kickoff-pr-review`
 (`.claude/skills/kickoff-pr-review/`, shipped in v0.2.1, renamed in v0.2.4, planned in
 `docs/v0.2.1-pr-review-skill-plan.md`) is ladder step 4 as a command.
 Separately, `README.md`'s "Beyond" section names the standing bridge to the betting track:

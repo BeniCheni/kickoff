@@ -11,7 +11,7 @@ const EMPTY: ReadonlySet<string> = new Set()
  * "hidden by filters" note). Broadcast reuses this skeleton wholesale: its amber numerals,
  * tighter rows and glow are CSS-only (`broadcast:` variants and `data-hot`).
  */
-export function LedgerWeek({ days, hot = EMPTY }: { days: DayInfo[]; hot?: ReadonlySet<string> }) {
+export function LedgerWeek({ days, hot = EMPTY, stale = EMPTY }: { days: DayInfo[]; hot?: ReadonlySet<string>; stale?: ReadonlySet<string> }) {
   return (
     <div>
       {days.map(({ date, shown, total, isToday }) => {
@@ -60,7 +60,7 @@ export function LedgerWeek({ days, hot = EMPTY }: { days: DayInfo[]; hot?: Reado
             </div>
             <div className="border-t border-line">
               {shown.map((f) => (
-                <FixtureRow key={f.id} fixture={f} hot={hot.has(f.id)} />
+                <FixtureRow key={f.id} fixture={f} hot={hot.has(f.id)} stale={stale.has(f.id)} />
               ))}
             </div>
           </section>

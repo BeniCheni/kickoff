@@ -3,7 +3,7 @@ import { COMPETITIONS, type CompetitionKey } from '../lib/competitions'
 import { addDays, startOfWeek, niceDate } from '../lib/time'
 import { useNow } from '../lib/useNow'
 import { FIXTURES, fixturesOn, totalOn } from '../lib/fixtures'
-import { hotFixtureIds, monthCellSummary } from '../lib/lensSelectors'
+import { hotFixtureIds, staleLiveIds, monthCellSummary } from '../lib/lensSelectors'
 import { FixtureRow } from './FixtureRow'
 
 /**
@@ -23,6 +23,7 @@ export function MonthView({
 }) {
   const [selected, setSelected] = useState<string | null>(null)
   const { nowUtcIso } = useNow()
+  const stale = useMemo(() => staleLiveIds(FIXTURES, nowUtcIso), [nowUtcIso])
   const hot = useMemo(() => hotFixtureIds(FIXTURES, nowUtcIso), [nowUtcIso])
 
   const month = monthStart.slice(0, 7)
@@ -137,7 +138,7 @@ export function MonthView({
               <div className="text-[12px] text-ink-secondary">{niceDate(activeSelection)}</div>
               <div className="mt-1 border-t border-line">
                 {selectedList.map((f) => (
-                  <FixtureRow key={f.id} fixture={f} hot={hot.has(f.id)} />
+                  <FixtureRow key={f.id} fixture={f} hot={hot.has(f.id)} stale={stale.has(f.id)} />
                 ))}
               </div>
             </div>

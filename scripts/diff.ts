@@ -282,7 +282,8 @@ export type MergeVerdict = 'auto' | 'hold'
  *     horizon (the same rule as exit code 1);
  *   - a DISAPPEARED or HOME_AWAY_INVERTED line at any horizon — a vanished fixture and an
  *     inverted moneyline are the two that cost money far out;
- *   - a failed standings fetch — the previous table was kept, and the report is partial.
+ *   - legacy standings=failed input — held defensively. Since v0.2.5, current standings
+ *     failures abort with exit 2 before any snapshot write or report, never reaching here.
  *
  * The verdict is decided here and printed on the report line; sync.yml obeys it and never
  * spells the policy in bash. A held PR stays held across later runs (the workflow's sticky

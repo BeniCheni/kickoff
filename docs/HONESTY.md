@@ -117,7 +117,7 @@ One honest cost, written down rather than hidden: the scheduled sync commits onl
 diff engine reports a change, so through an international break the banner measures time
 since the last *change-bearing* sync and goes amber even though the bot verified nothing
 moved. The fix (a verified "nothing changed" that still advances the stamp) is planned for
-v0.3.0, after the diff engine learns to see result corrections and team renames — the two
+v0.4.0, after the diff engine learns to see result corrections and team renames — the two
 things it is still blind to today.
 
 ## 8. The snapshot is committed

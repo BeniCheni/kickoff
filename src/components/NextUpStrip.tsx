@@ -36,7 +36,7 @@ function Card({ fixture, today }: { fixture: Fixture; today: string }) {
       </div>
       <div className="font-mono mt-0.5 text-[15px] font-semibold">
         {placeholder ? (
-          <span className="text-floodlight italic">TBC</span>
+          <span className="text-floodlight-strong italic">TBC</span>
         ) : (
           <SplitTime time={fixtureTimes(fixture.kickoffUtc, fixture.venueTz).brooklyn} />
         )}

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { FIXTURES } from '../lib/fixtures'
+import { FIXTURES, META } from '../lib/fixtures'
 import { useNow } from '../lib/useNow'
 import { tickerSegments, type TickerSegment } from '../lib/lensSelectors'
 
@@ -10,7 +10,9 @@ function Track({ segments, decorative }: { segments: TickerSegment[]; decorative
       {segments.map((s, i) => (
         <span key={i}>
           {i > 0 && ' · '}
-          <span className="font-semibold text-floodlight">{s.keyword}</span> {s.text}
+          <span className="font-semibold text-floodlight-strong">{s.keyword}</span>{' '}
+          {s.tbc && <>{s.tbc.date} · <i className="text-floodlight-strong">TBC</i>{' '}</>}
+          {s.text}
         </span>
       ))}
     </span>
@@ -29,41 +31,60 @@ export function TickerStrip() {
   const [hovered, setHovered] = useState(false)
   const [pinned, setPinned] = useState(false)
   const { today, nowUtcIso } = useNow()
-  const segments = useMemo(() => tickerSegments(FIXTURES, today, nowUtcIso), [today, nowUtcIso])
+  const segments = useMemo(() => tickerSegments(FIXTURES, today, nowUtcIso, META.window.to), [today, nowUtcIso])
 
-  if (segments.length === 0) return null
+  const empty = segments.length === 1 && segments[0]!.emptyNext === true
 
   const paused = hovered || pinned
 
   return (
     <div
+      data-ticker={empty ? 'empty' : 'active'}
       className="relative -mx-5 -mt-5 mb-5 overflow-hidden border-b border-line bg-surface py-[7px]"
       onPointerEnter={(e) => e.pointerType === 'mouse' && setHovered(true)}
       onPointerLeave={(e) => e.pointerType === 'mouse' && setHovered(false)}
       onPointerDown={(e) => {
         // A touch tap toggles the pause and stays paused — pause-while-held is useless
         // one-handed. Taps on the button are its own click's business.
-        if (e.pointerType !== 'mouse' && !(e.target as Element).closest('button')) {
+        if (!empty && e.pointerType !== 'mouse' && !(e.target as Element).closest('button')) {
           setPinned((p) => !p)
         }
       }}
     >
-      <div
-        className="ticker-track font-mono inline-flex text-[11px] font-medium whitespace-nowrap text-ink-secondary"
-        style={paused ? { animationPlayState: 'paused' } : undefined}
-      >
-        <Track segments={segments} />
-        <Track segments={segments} decorative />
-      </div>
-      <button
-        type="button"
-        onClick={() => setPinned((p) => !p)}
-        aria-pressed={pinned}
-        aria-label={pinned ? 'Resume ticker' : 'Pause ticker'}
-        className="font-mono absolute inset-y-0 right-0 cursor-pointer border-l border-line bg-surface px-2 text-[11px] text-ink-secondary"
-      >
-        <span aria-hidden>{pinned ? '›' : '‖'}</span>
-      </button>
+      {empty ? (
+        // inline-block preserves the moving track's line box (and strip height). Keep
+        // the one-line instrument pannable by touch/keyboard when its copy is wider — a
+        // focusable region needs a role and a name, or the Tab stop announces nothing.
+        <div
+          role="region"
+          aria-label="Ticker"
+          tabIndex={0}
+          className="font-mono inline-block w-full overflow-x-auto px-5 text-[11px] font-medium whitespace-nowrap text-ink-secondary"
+          style={{ scrollbarWidth: 'none' }}
+        >
+          <span className="font-semibold text-floodlight-strong">NEXT</span>{' '}
+          {segments[0]!.text}
+        </div>
+      ) : (
+        <>
+          <div
+            className="ticker-track font-mono inline-flex text-[11px] font-medium whitespace-nowrap text-ink-secondary"
+            style={paused ? { animationPlayState: 'paused' } : undefined}
+          >
+            <Track segments={segments} />
+            <Track segments={segments} decorative />
+          </div>
+          <button
+            type="button"
+            onClick={() => setPinned((p) => !p)}
+            aria-pressed={pinned}
+            aria-label={pinned ? 'Resume ticker' : 'Pause ticker'}
+            className="font-mono absolute inset-y-0 right-0 cursor-pointer border-l border-line bg-surface px-2 text-[11px] text-ink-secondary"
+          >
+            <span aria-hidden>{pinned ? '›' : '‖'}</span>
+          </button>
+        </>
+      )}
     </div>
   )
 }

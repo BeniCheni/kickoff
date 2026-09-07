@@ -1,0 +1,50 @@
+--- a/tokens/colors.css
++++ b/tokens/colors.css
+@@ -9,12 +9,14 @@
+   --line-strong:rgb(22 33 27 / 0.22);
+   --ink:#16211b;
+   --ink-secondary:#55614f;
+-  --ink-muted:#8a9284;
++  --ink-muted:#646c61;
+   --pitch:#2c7a4b;
+   --pitch-deep:#1e5636;
+   --floodlight:#c98a00;
++  --floodlight-strong:#8a5f00;
+   --floodlight-bg:#fbefd3;
+   --accent:#d85a30;
++  --accent-strong:#b4431e;
+   --glow:rgb(201 138 0 / 0.18);
+   /* Marquee ticker gradient — the only gradient in the system */
+   --marquee-from:#3A2A6B;
+@@ -35,12 +37,14 @@
+   --line-strong:rgb(231 239 233 / 0.26);
+   --ink:#e7efe9;
+   --ink-secondary:#a9b9ac;
+-  --ink-muted:#6e8074;
++  --ink-muted:#8a9c8e;
+   --pitch:#56c083;
+   --pitch-deep:#2f7a4d;
+   --floodlight:#f7c948;
++  --floodlight-strong:var(--floodlight);
+   --floodlight-bg:rgb(247 201 72 / 0.14);
+   --accent:#f7a864;
++  --accent-strong:var(--accent);
+   --glow:rgb(247 201 72 / 0.18);
+   color-scheme:dark;
+ }
+--- a/tokens/tokens.json
++++ b/tokens/tokens.json
+@@ -9,10 +9,12 @@
+     "line-strong":  { "$type": "color", "$value": "rgb(22 33 27 / 0.22)", "$extensions": { "dark": "rgb(231 239 233 / 0.26)" } },
+     "ink":          { "$type": "color", "$value": "#16211b", "$extensions": { "dark": "#e7efe9" }, "$description": "Primary text." },
+     "ink-secondary":{ "$type": "color", "$value": "#55614f", "$extensions": { "dark": "#a9b9ac" } },
+-    "ink-muted":    { "$type": "color", "$value": "#8a9284", "$extensions": { "dark": "#6e8074" } },
++    "ink-muted":    { "$type": "color", "$value": "#646c61", "$extensions": { "dark": "#8a9c8e" } },
+     "pitch":        { "$type": "color", "$value": "#2c7a4b", "$extensions": { "dark": "#56c083" }, "$description": "Primary accent — the pitch. Tab underline, Today pill, Brooklyn clock." },
+     "pitch-deep":   { "$type": "color", "$value": "#1e5636", "$extensions": { "dark": "#2f7a4d" }, "$description": "Ticker card fill." },
+     "floodlight":   { "$type": "color", "$value": "#c98a00", "$extensions": { "dark": "#f7c948" }, "$description": "Provenance and caution — the amber. Data-freshness lines, time-TBC, marquee rails." },
++    "floodlight-strong": { "$type": "color", "$value": "#8a5f00", "$extensions": { "dark": "#f7c948" }, "$description": "Text-safe data-trust voice; base fills stay floodlight." },
++    "accent-strong": { "$type": "color", "$value": "#b4431e", "$extensions": { "dark": "#f7a864" }, "$description": "White LIVE fill and alarm text, including surface-alt." },
+     "floodlight-bg":{ "$type": "color", "$value": "#fbefd3", "$extensions": { "dark": "rgb(247 201 72 / 0.14)" } },
+     "accent":       { "$type": "color", "$value": "#d85a30", "$extensions": { "dark": "#f7a864" }, "$description": "Alarm — LIVE pill, postponed/cancelled, stale-data banner." },
+     "glow":         { "$type": "color", "$value": "rgb(201 138 0 / 0.18)", "$extensions": { "dark": "rgb(247 201 72 / 0.18)" }, "$description": "PROPOSED for v0.0.3 Broadcast lens only — derived from floodlight at 18% alpha; outer glow on LIVE and next-up rows." },
