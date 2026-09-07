@@ -260,9 +260,12 @@ export function TablePage() {
 
         {rows.map((r, i) => {
           const open = openRow === r.teamId
-          const matchLane = r.next ?? r.underway
+          // One fixture per row: the match underway outranks the one after it, so the opponent
+          // line and the state beneath it never describe different matches. Whether the lane
+          // should show the next fixture as well is a product call, not this component's.
+          const matchLane = r.underway ?? r.next
           const matchLabel = r.underway
-            ? `in-progress league fixture vs ${r.underway.opponentAbbrev} (${r.underway.home ? 'H' : 'A'})`
+            ? `Kicked off: ${r.underway.opponentAbbrev} ${r.underway.home ? 'H' : 'A'}`
             : r.next
               ? `Next match: ${r.next.opponentAbbrev} ${r.next.home ? 'H' : 'A'}`
               : 'No scheduled league match'
@@ -291,7 +294,7 @@ export function TablePage() {
                     {r.gamesInHand > 0 && <InHandChip n={r.gamesInHand} />}
                   </div>
                   <div className="mt-1 flex items-center gap-1.5">
-                  <FormPips form={r.form} />
+                    <FormPips form={r.form} />
                     {matchLane && (
                       <span className="truncate text-[10px] text-ink-muted">
                         {matchLane.weekday} · {matchLane.opponentAbbrev} ({matchLane.home ? 'H' : 'A'})
@@ -407,7 +410,7 @@ export function TablePage() {
         </div>
 
         {sorted.map((r, i) => {
-          const matchLane = r.next ?? r.underway
+          const matchLane = r.underway ?? r.next // same precedence as the mobile rows above
           return (
             <div key={r.teamId}>
               {showZonesDesktop && isZoneStart(sorted, i) && r.zone && (
