@@ -37,8 +37,9 @@ ESPN scoreboard API ──▶ normalizeEvent ──▶ Zod at the boundary ─�
    fixture updates; future ancillary datasets do not join this boundary automatically.
 7. **Commit and PR.** `.github/workflows/sync.yml` runs the script on a schedule, commits
    only when the report line says something changed, force-pushes one rolling branch, opens
-   or updates one PR, and obeys the merge verdict: `gh pr merge --auto` behind the required
-   CI check, or a sticky `hold: human` label.
+   or updates one PR, and merges it with `gh pr merge --squash --auto` behind the required CI
+   check. The `merge=auto|hold` verdict rides along in the report as a reader-facing signal;
+   since 6 Sep 2026 it gates nothing, and no label holds a PR.
 8. **Deploy.** `.github/workflows/pages.yml` rebuilds and redeploys the demo on every push to
    `main`, so a merged sync is live within minutes.
 9. **Render.** The app imports the snapshot, validates it again at module load (a schema

@@ -285,10 +285,11 @@ export type MergeVerdict = 'auto' | 'hold'
  *   - legacy standings=failed input — held defensively. Since v0.2.5, current standings
  *     failures abort with exit 2 before any snapshot write or report, never reaching here.
  *
- * The verdict is decided here and printed on the report line; sync.yml obeys it and never
- * spells the policy in bash. A held PR stays held across later runs (the workflow's sticky
- * label), so an urgent change that ages past the horizon before anyone reads it is still
- * merged by a human, never by the bot.
+ * The verdict is decided here and printed on the report line; sync.yml never spells the policy
+ * in bash. Since PR #28 (6 Sep 2026) it no longer *obeys* the verdict either: every
+ * change-bearing PR merges once `verify` is green, `hold` included. What `hold` still does is
+ * name the time-sensitive lines in the report a reader gets, so keep these reasons specific —
+ * they are the whole remaining value of the verdict.
  */
 export function mergeVerdict(
   changes: readonly Change[],

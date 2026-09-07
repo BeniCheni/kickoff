@@ -123,8 +123,11 @@ things it is still blind to today.
 ## 8. The snapshot is committed
 
 `src/data/*.json` lives in git, so the history of every fixture change is `git log`. The
-scheduled sync never pushes to `main`; it opens a pull request carrying the full diff report,
-and anything a human must read stays held until a human reads it.
+scheduled sync never pushes to `main`; it opens a pull request carrying the full diff report.
+Since 6 Sep 2026 that PR merges itself once CI is green, urgent lines included — the report is
+the audit trail, not a gate. So the honest claim is narrower than it was: every change is
+*written down*, not every change is *read first*. Anyone betting on a fixture re-reads the app
+and verifies the moved line at the source; a merged PR is not evidence that anyone read it.
 
 ---
 
