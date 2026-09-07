@@ -36,16 +36,14 @@ on:
         type: boolean
         default: false
 
-# contents: push the rolling branch · pull-requests: open/edit/label/auto-merge the PR ·
+# contents: push the rolling branch · pull-requests: open/edit/remove-label/auto-merge the PR ·
 # actions: approve the PR's held verify run through the Actions API (it once dispatched ci.yml
 # instead; that check never counted in the merge box — docs/v0.2.0-proposal.md, "The
-# residual") · issues: create the `hold: human` label on first use (labels are an issues
-# resource; adding one to a PR is covered by pull-requests).
+# residual")
 permissions:
   contents: write
   pull-requests: write
   actions: write
-  issues: write
 
 concurrency:
   group: sync
@@ -210,12 +208,12 @@ jobs:
             cat sync-output.txt
             echo '````'
             echo
-            echo "## Reviewer checklist (a held PR — betting pipeline Step 0)"
+            echo "## Reviewer checklist (betting pipeline Step 0; informational)"
             echo "- [ ] Every DATE_MOVED / TIME_CHANGED / HOME_AWAY_INVERTED line checked against any open position on that fixture."
             echo "- [ ] STATUS_CHANGED lines to postponed/cancelled reconciled with any open position."
             echo "- [ ] DISAPPEARED lines are cup fixtures leaving the window, not a real loss."
             echo "- [ ] Standings rank moves agree with the FT results in this report; a failed standings fetch is stated in the log."
-            echo "- [ ] This PR was held on an earlier run too? The latest run's reasons are above; earlier runs' reasons are in the Actions log."
+            echo "- [ ] Step 0 re-reads the app after this merge before any position decision."
           } > pr-body.md
 
           EXISTING=$(gh pr list --head sync/scheduled --base main --state open --json number --jq '.[0].number // empty')
@@ -300,7 +298,6 @@ jobs:
           HOLD_LABEL: 'hold: human'
         run: |
           N="${{ steps.pr.outputs.number }}"
-          VERDICT="${{ steps.report.outputs.merge }}"
           if [ -z "$N" ]; then
             echo "::error::no PR number captured — cannot obey the verdict; the PR (if any) is left as it is."
             exit 1
