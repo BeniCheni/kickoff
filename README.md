@@ -1,7 +1,7 @@
 # ⚽ Kickoff
 
 [![CI](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml/badge.svg)](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml)
-[![version](https://img.shields.io/badge/version-0.3.0-1d4ed8)](CHANGELOG.md)
+[![version](https://img.shields.io/badge/version-0.3.1-1d4ed8)](CHANGELOG.md)
 [![license](https://img.shields.io/badge/license-MIT-16a34a)](LICENSE)
 [![built with](https://img.shields.io/badge/built%20with-Claude%20Code-D97757)](CLAUDE.md)
 [![built with](https://img.shields.io/badge/built%20with-Codex-000000)](https://openai.com/codex/)
@@ -73,7 +73,7 @@ the fix, and the house rule got carved over the door:
 
 ### Never a confident lie.
 
-## ⏱️ What it does (v0.3.0)
+## ⏱️ What it does (v0.3.1)
 
 La Liga, the Premier League, Serie A, Ligue 1, the Bundesliga, their domestic super cups and
 the UEFA Super Cup; full league tables; one fixture skeleton read through three lenses.
@@ -218,6 +218,9 @@ One subject line per release. The honours board:
   failed views can recover, URL state stays honest, and theme boot runs before paint.
 - **v0.3.0** *(6 Sep 2026)* — snapshot states say what is known: a frozen LIVE admits its
   age, NEXT names the first matchday it knows, and an empty schedule keeps its provenance.
+- **v0.3.1** *(8 Sep 2026)* — the Table tells the time like every other lens: a kicked-off
+  match reads KICKED OFF, never as the next kickoff, and the scheduled sync merges itself once
+  `verify` is green.
 
 The paper trail for every release — proposals, design briefs, build specs and review
 prompts — is indexed in [docs/README.md](docs/README.md). The design system it's built

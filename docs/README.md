@@ -8,7 +8,7 @@ to here, filed by release. Two things a cold reader needs first:
 
 - **Doc-cycle names and release numbers diverge on purpose.** The v0.1.0 release shipped
   from the v0.0.3 design cycle and kept its working name; v0.2.1's proposal plans v0.2.2
-  through v0.3.0. Never infer one from the other — the table says which release each file
+  through v0.3.1. Never infer one from the other — the table says which release each file
   belongs to.
 - **The rungs.** (1) *proposal* — an audit and the spec of record, written from a fresh read
   of the repo; (2) *design prompt* — the Claude Design brief, on real tokens and data;
@@ -49,6 +49,8 @@ to here, filed by release. Two things a cold reader needs first:
 | `Kickoff Standings.html` | v0.0.2 | reference | The standings design reference the Table was built from — the one hand-made artefact left, kept as history. |
 | `screenshots/v0.0.3/` | v0.1.0 | evidence | The six-combo matrix (lens × theme, 390 px) as v0.1.0 shipped. |
 | `screenshots/v0.2.2/` | v0.2.2 | evidence | The same six cells at v0.2.2, Poster as default. |
+| `pr30-pass-2.5-executive-brief.md` | v0.3.1 | executive brief (Pass 2.5) | The synthesis of PR #30's six-pass 360: corroboration of both vendors, the merge gate, and the escalation to Beni. |
+| `pr30-pass-3-adjudication-prompt.md` | v0.3.1 | adjudication handoff (Pass 3) | Beni's five rulings, the non-release and release paths, the squash body, closure evidence, and the row-28 hotfix task. |
 
 Counts drift; `ls docs` is the truth. Ideas files are ranked candidate lists, not release
 scopes — turning one into a release is the proposal's job, and the deferral reasons in each

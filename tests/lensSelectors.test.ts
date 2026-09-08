@@ -6,6 +6,7 @@ import {
   LIVE_WINDOW_MS,
   nextMatchdaySelection,
   stillToKickOff,
+  hasKickedOff,
   believablyLive,
   staleLiveIds,
   dominantCompetition,
@@ -477,4 +478,34 @@ it('switches both NEXT instruments at Brooklyn midnight, including shuffled mixe
     ])
     expect(hotFixtureIds(list, after)).toEqual(new Set([first.id]))
   }
+})
+
+describe('hasKickedOff — the complement of stillToKickOff over scheduled fixtures', () => {
+  const K = '2026-09-07T17:00:00.000Z'
+  const instants = ['2026-09-07T16:59:59.999Z', K, '2026-09-07T17:00:00.001Z']
+
+  it('flips at the kickoff instant for a league-set time: −1 ms is next, 0 and +1 ms have kicked off', () => {
+    const f = fx({ competition: 'laliga', kickoffUtc: K })
+    for (const now of instants) {
+      expect(hasKickedOff(f, now)).toBe(now >= K)
+      expect(stillToKickOff(f, now)).toBe(now < K)
+      expect(stillToKickOff(f, now)).not.toBe(hasKickedOff(f, now))
+    }
+  })
+
+  it('never treats a placeholder as kicked off — a filler instant cannot say a match started', () => {
+    for (const timeConfidence of ['round_placeholder', 'tbd'] as const) {
+      const f = fx({ competition: 'laliga', kickoffUtc: K, timeConfidence })
+      for (const now of [...instants, '2026-12-25T12:00:00.000Z']) {
+        expect(hasKickedOff(f, now)).toBe(false)
+        expect(stillToKickOff(f, now)).toBe(true)
+      }
+    }
+  })
+
+  it('is scheduled-only: a stored in_play, full_time, postponed or cancelled status is never re-derived from the clock', () => {
+    for (const status of ['in_play', 'full_time', 'postponed', 'cancelled'] as const) {
+      expect(hasKickedOff(fx({ competition: 'laliga', kickoffUtc: K, status }), '2026-09-07T17:40:00.000Z')).toBe(false)
+    }
+  })
 })

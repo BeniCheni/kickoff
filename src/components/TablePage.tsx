@@ -149,7 +149,7 @@ export function TablePage() {
   const [sort, setSort] = useState<SortKey>('pts')
   const { today, nowUtcIso } = useNow()
 
-  const rows = useMemo(() => tableFor(league, today), [league, today])
+  const rows = useMemo(() => tableFor(league, today, nowUtcIso), [league, today, nowUtcIso])
   const meta = LEAGUE_TABLES[league]!
   const comp = COMPETITIONS[league]
   const progress = matchdayProgress(rows)
@@ -260,13 +260,22 @@ export function TablePage() {
 
         {rows.map((r, i) => {
           const open = openRow === r.teamId
+          // One fixture per row: the match underway outranks the one after it, so the opponent
+          // line and the state beneath it never describe different matches. Whether the lane
+          // should show the next fixture as well is a product call, not this component's.
+          const matchLane = r.underway ?? r.next
+          const matchLabel = r.underway
+            ? `Kicked off: ${r.underway.opponentAbbrev} ${r.underway.home ? 'H' : 'A'}`
+            : r.next
+              ? `Next match: ${r.next.opponentAbbrev} ${r.next.home ? 'H' : 'A'}`
+              : 'No scheduled league match'
           return (
             <div key={r.teamId}>
               {zonesCurrent && isZoneStart(rows, i) && r.zone && <ZoneDivider zone={r.zone} />}
               <button
                 onClick={() => setOpenRow(open ? null : r.teamId)}
                 aria-expanded={open}
-                aria-label={`${r.rank}. ${r.name}, ${r.pts} points from ${r.played} played`}
+                aria-label={`${r.rank}. ${r.name}, ${r.pts} points from ${r.played} played, ${matchLabel}`}
                 className={`grid min-h-[54px] w-full cursor-pointer ${MOBILE_COLS} items-center border-b border-line bg-surface pr-3.5 text-left`}
               >
                 <div className="self-stretch" style={{ background: zonesCurrent ? (r.zone?.color ?? 'transparent') : 'transparent' }} />
@@ -286,9 +295,9 @@ export function TablePage() {
                   </div>
                   <div className="mt-1 flex items-center gap-1.5">
                     <FormPips form={r.form} />
-                    {r.next && (
+                    {matchLane && (
                       <span className="truncate text-[10px] text-ink-muted">
-                        {r.next.weekday} · {r.next.opponentAbbrev} ({r.next.home ? 'H' : 'A'})
+                        {matchLane.weekday} · {matchLane.opponentAbbrev} ({matchLane.home ? 'H' : 'A'})
                       </span>
                     )}
                   </div>
@@ -323,7 +332,20 @@ export function TablePage() {
                       </div>
                     ))}
                   </div>
-                  {r.next && (
+                  {r.underway && (
+                    <div className="mt-2.5 rounded-[5px] border border-line border-l-3 border-l-pitch bg-surface px-2.5 py-2">
+                      <div className="label-caps text-[8.5px] text-ink-muted">Current league match</div>
+                      <div className="mt-0.5 text-[12px] font-semibold">
+                        {r.underway.home ? 'vs' : 'away at'} {r.underway.opponent} · {r.underway.weekday}
+                      </div>
+                      <div className="mt-px text-[10.5px] text-ink-secondary">
+                        <span className="font-mono text-[10.5px] font-medium text-floodlight-strong">
+                          KICKED OFF
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                  {r.next && !r.underway && (
                     <div className="mt-2.5 rounded-[5px] border border-line border-l-3 border-l-pitch bg-surface px-2.5 py-2">
                       <div className="label-caps text-[8.5px] text-ink-muted">Next league match</div>
                       <div className="mt-0.5 text-[12px] font-semibold">
@@ -388,6 +410,7 @@ export function TablePage() {
         </div>
 
         {sorted.map((r, i) => {
+          const matchLane = r.underway ?? r.next // same precedence as the mobile rows above
           return (
             <div key={r.teamId}>
               {showZonesDesktop && isZoneStart(sorted, i) && r.zone && (
@@ -421,15 +444,17 @@ export function TablePage() {
                   <FormPips form={r.form} size={16} />
                 </div>
                 <div className="min-w-0 pl-1.5">
-                  {r.next && (
+                  {matchLane && (
                     <>
                       <div className="truncate text-[11.5px] font-semibold">
-                        {r.next.weekday} · {r.next.opponentAbbrev} ({r.next.home ? 'H' : 'A'})
+                        {matchLane.weekday} · {matchLane.opponentAbbrev} ({matchLane.home ? 'H' : 'A'})
                       </div>
                       <div className="mt-px font-mono text-[9.5px] text-ink-muted">
-                        {r.next.timeConfidence === 'exact'
-                          ? `${r.next.times.brooklyn.time} ${r.next.times.abbrev}`
-                          : 'time TBC'}
+                        {r.underway
+                          ? <span className="text-floodlight-strong">KICKED OFF</span>
+                          : r.next?.timeConfidence === 'exact'
+                            ? `${r.next.times.brooklyn.time} ${r.next.times.abbrev}`
+                            : 'time TBC'}
                       </div>
                     </>
                   )}

@@ -3,6 +3,7 @@ import { standingsFileSchema, type Fixture, type StandingRow } from './schema'
 import { zoneFor, type CompetitionKey, type Zone } from './competitions'
 import { FIXTURES } from './fixtures'
 import { brooklynDate, fixtureTimes, hoursSince, weekdayShort, type FixtureTimes } from './time'
+import { hasKickedOff, stillToKickOff } from './lensSelectors'
 
 /**
  * The league table plus everything the Table view derives around it.
@@ -18,6 +19,19 @@ export const STANDINGS = standingsFileSchema.parse(rawStandings)
 
 export type FormResult = 'W' | 'D' | 'L'
 
+/** One league fixture as the Table's NEXT lane shows it — the same shape for both lanes, so a
+ *  renderer holds one of these and never mixes an opponent from one with a state from another. */
+export type TableLane = {
+  opponent: string
+  /** The opponent's table code ("OSA") when they are in the same table; else a short name. */
+  opponentAbbrev: string
+  /** True when this club is at home. */
+  home: boolean
+  weekday: string
+  times: FixtureTimes
+  timeConfidence: Fixture['timeConfidence']
+}
+
 export type TableRow = StandingRow & {
   gd: number
   /** Points per game to 2dp — the honest comparator while clubs have games in hand. */
@@ -27,16 +41,12 @@ export type TableRow = StandingRow & {
   zone: Zone | null
   /** Last league results, oldest -> newest, at most 5. Only fixtures inside the sync window. */
   form: FormResult[]
-  next: {
-    opponent: string
-    /** The opponent's table code ("OSA") when they are in the same table; else a short name. */
-    opponentAbbrev: string
-    /** True when this club is at home. */
-    home: boolean
-    weekday: string
-    times: FixtureTimes
-    timeConfidence: Fixture['timeConfidence']
-  } | null
+  /** The club's next league match: still to kick off on the shared gate, on or after today. */
+  next: TableLane | null
+  /** The club's most recent league match whose league-set kickoff has passed while the snapshot
+   *  still says `scheduled` — kicked off, outcome unknown to this snapshot. Stays until a sync
+   *  resolves it: KICKED OFF is the state LIVE expires into (FixtureRow), not one that expires. */
+  underway: TableLane | null
 }
 
 /** One league's fixtures grouped by team id, in kickoff order — one pass, reused per row. */
@@ -60,15 +70,16 @@ function fixturesByTeam(key: CompetitionKey, fixtures: readonly Fixture[]): Map<
 }
 
 /**
- * The table for one league, or [] when the snapshot has none (non-domestic keys). `today`
- * decides "next match" — a caller-supplied instant, never read internally, so this stays
- * exactly as ticking as the app around it (see useNow()) and exactly as testable with
- * synthetic data as the rest of the pure layer. `rows`/`fixtures` default to the loaded
- * snapshot; tests inject their own.
+ * The table for one league, or [] when the snapshot has none (non-domestic keys). `today` and
+ * `nowUtcIso` decide "next" and "underway" — one caller-supplied instant in two shapes, never
+ * read internally (no default reads the clock), so this stays exactly as ticking as the app
+ * around it (see useNow()) and exactly as testable with synthetic data as the rest of the pure
+ * layer. `rows`/`fixtures` default to the loaded snapshot; tests inject their own.
  */
 export function tableFor(
   key: CompetitionKey,
   today: string,
+  nowUtcIso: string,
   rows: readonly StandingRow[] = STANDINGS.leagues[key] ?? [],
   fixtures: readonly Fixture[] = FIXTURES,
 ): TableRow[] {
@@ -91,14 +102,26 @@ export function tableFor(
         return us > them ? 'W' : us === them ? 'D' : 'L'
       })
 
-    // Compare Brooklyn calendar dates on both sides — slicing the raw UTC string would
-    // keep advertising a Saturday-night kickoff as "next" through Sunday (see time.ts).
+    // Next: the shared gate retires a league-set time at its kickoff minute; only a placeholder
+    // reaches the date floor. Compare Brooklyn calendar dates on both sides — a UTC-midnight
+    // floor would keep advertising a Sunday-night placeholder as "next" through Monday (see
+    // time.ts).
     const upcoming = mine.find(
-      (f) => f.status === 'scheduled' && brooklynDate(f.kickoffUtc) >= today,
+      (f) => stillToKickOff(f, nowUtcIso) && brooklynDate(f.kickoffUtc) >= today,
     )
-
-    const isHome = upcoming?.home.sourceId === r.teamId
+    // Underway: the *last* qualifying fixture — `mine` is in kickoff order, and a stale row an
+    // outage left `scheduled` weeks ago must not outrank the match that kicked off today.
+    let underwayFixture: Fixture | undefined
+    for (const f of mine) if (hasKickedOff(f, nowUtcIso)) underwayFixture = f
     const nextTimes = upcoming ? fixtureTimes(upcoming.kickoffUtc, upcoming.venueTz) : null
+    const underwayTimes = underwayFixture ? fixtureTimes(underwayFixture.kickoffUtc, underwayFixture.venueTz) : null
+
+    const nextIsHome = upcoming?.home.sourceId === r.teamId
+    const underwayIsHome = underwayFixture?.home.sourceId === r.teamId
+    const opponentAbbrev = (f: Fixture, isHome: boolean | undefined) =>
+      isHome
+        ? abbrevById.get(f.away.sourceId ?? '') ?? f.away.name.slice(0, 3).toUpperCase()
+        : abbrevById.get(f.home.sourceId ?? '') ?? f.home.name.slice(0, 3).toUpperCase()
     return {
       ...r,
       gd: r.gf - r.ga,
@@ -108,14 +131,22 @@ export function tableFor(
       form,
       next: upcoming && nextTimes
         ? {
-            opponent: isHome ? upcoming.away.name : upcoming.home.name,
-            opponentAbbrev:
-              abbrevById.get((isHome ? upcoming.away.sourceId : upcoming.home.sourceId) ?? '') ??
-              (isHome ? upcoming.away.name : upcoming.home.name).slice(0, 3).toUpperCase(),
-            home: isHome,
+            opponent: nextIsHome ? upcoming!.away.name : upcoming!.home.name,
+            opponentAbbrev: opponentAbbrev(upcoming!, nextIsHome),
+            home: nextIsHome,
             weekday: weekdayShort(nextTimes.brooklyn.isoDate),
             times: nextTimes,
             timeConfidence: upcoming.timeConfidence,
+          }
+        : null,
+      underway: underwayFixture && underwayTimes
+        ? {
+            opponent: underwayIsHome ? underwayFixture.away.name : underwayFixture.home.name,
+            opponentAbbrev: opponentAbbrev(underwayFixture, underwayIsHome),
+            home: underwayIsHome,
+            weekday: weekdayShort(underwayTimes.brooklyn.isoDate),
+            times: underwayTimes,
+            timeConfidence: underwayFixture.timeConfidence,
           }
         : null,
     }
