@@ -8,7 +8,12 @@ releases.
 
 ## [Unreleased]
 
-The scheduled sync stopped asking permission.
+## [0.3.1] — 2026-09-08
+
+The Table tells the time like every other lens, and the scheduled sync stopped asking
+permission. Paper trail: `docs/pr30-pass-2.5-executive-brief.md` and
+`docs/pr30-pass-3-adjudication-prompt.md`; Beni's rulings, 8 Sep 2026: keep / now /
+released / accept.
 
 ### Changed
 
@@ -50,6 +55,30 @@ The scheduled sync stopped asking permission.
   durable stops are repo-level — "Allow auto-merge" off, or the workflow disabled — and they
   stop every PR, not the one in question. A per-PR pause that survives the next run is
   `docs/v0.2.6-ideas.md` row 24. Nothing here pretends to be one.
+- **"Both" in the NEXT lane.** While a club's match is underway the lane shows that match,
+  and the club's genuine next fixture is not in the column until a sync resolves it. Both
+  vendors of the 360 prefer "Both, next first" as the end state; it needs a design pass
+  against the desktop grid's 773 px minimum in a 740 px container, implementation,
+  regression coverage and a fresh review — `docs/v0.2.6-ideas.md` row 26. Beni's ruling:
+  ship now, design after.
+- **The card heading.** The expanded mobile card still says "Current league match" above
+  KICKED OFF; Beni kept it. The accessible name already says `Kicked off`; if the heading
+  ever changes, the label follows for parity.
+- **An expiry for `underway`.** KICKED OFF is the state LIVE expires *into* and does not
+  itself expire, on the Table as in the Fixtures rows. Decision A, accepted.
+- **The Fixtures lens's own third state.** A `scheduled` row past its kickoff still shows a
+  bare kickoff time with no pill while the Table beside it says KICKED OFF. Designer's row —
+  `docs/v0.2.6-ideas.md` row 25.
+- **A formatter.** `verify` runs typecheck, tests and build; nothing checks whitespace.
+  Row 27.
+- **The sync's own verify step during a live match.** `tests/dom/designCycle.test.tsx`
+  queries LIVE unscoped and throws when the snapshot carries a genuine `in_play` row; the
+  20:00Z sync on 7 Sep was the first red `sync.yml` run in 39. One-file hotfix, its own PR —
+  row 28.
+- **Auto-merged sync PRs do not redeploy Pages.** PR #31, the first sync PR the bot merged
+  itself, landed on `main` at 00:31Z on 8 Sep and no Pages run followed: a push made with the
+  workflow's own token does not trigger `pages.yml`, so the public demo stays at the last
+  human merge until someone redeploys by hand. A workflow change, its own PR — row 29.
 
 ## [0.3.0] — 2026-09-06
 
