@@ -8,6 +8,10 @@ releases.
 
 ## [Unreleased]
 
+## [0.3.2] — 2026-09-09
+
+The sync's verify step survives a live match. Paper trail: `docs/v0.3.2-fast-track-brief.md`; Beni's rulings, 8–9 Sep 2026: v0.3.2, fast-track, fix the handles now.
+
 ### Changed
 
 - `/kickoff-pr-review` §4 and `browser-matrix.md` no longer claim the snapshot holds zero
@@ -31,6 +35,12 @@ releases.
   a new case renders two in-play rows on one kickoff: the document-wide query still throws, the
   scoped one picks each row. `docs/v0.2.6-ideas.md` row 28; the "zero in-play fixtures"
   assumption is struck from `browser-matrix.md` and `/kickoff-pr-review` §4.
+
+### Deliberately not done
+
+- **A `FIXTURES` mock for the designCycle file.** The scoped queries and a date-fixed input close row 28 without one; a mock in that file would take the six real-snapshot tests and the ticker tests with it.
+- **The browser matrix.** No `src/` or `index.css` change; the smoke pass at 390 and 1000 px is what the method owes a test-and-docs diff.
+- **Auto-merged sync PRs still do not reach Pages.** Row 29; a workflow change, its own PR.
 
 ## [0.3.1] — 2026-09-08
 
