@@ -8,6 +8,17 @@ releases.
 
 ## [Unreleased]
 
+### Changed
+
+- `/kickoff-pr-review` §4 and `browser-matrix.md` no longer claim the snapshot holds zero
+  in-play fixtures: a test that mutates a real-snapshot row must scope every query to that row
+  and must not pick its rows by `status` or `result`; fabricated-fixture unit tests remain the
+  durable coverage (#33).
+- The pipeline skill is named by its live handle, `/anthropic-skills:football-soccer-deity`, in
+  `/kickoff-pr-review`'s Pass 0 row (was `…football-soccer-god`) and in `CLAUDE.md` (was
+  `/beni-betting-pipeline`, the skill's name until 7 Sep 2026). Archived `docs/` keep the names
+  they were written under (#33).
+
 ### Fixed
 
 - **The sync's own verify step no longer fails during a live match** (#33).
