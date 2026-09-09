@@ -16,7 +16,8 @@ region header the table ruling rests on is not reachable on the Table's current 
 (finding 2); and three of the canvas's own measurements are wrong at the margin (findings 3, 4,
 9). Everything else the canvas asserts about the repo either held at the head or moved only
 because the sync moved. Handles corrected and ideas row 17 closed in `8ed3b0d`; paper trail in
-`67bdc69`; this document in the commit after it.
+`67bdc69`; this document in the commit after it. The review PR is BeniCheni/kickoff#34, opened
+`--no-merge`; its one PR comment is the review's record on GitHub.
 
 ## Pre-flight, environment, baseline
 

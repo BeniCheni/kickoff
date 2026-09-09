@@ -53,7 +53,7 @@ to here, filed by release. Two things a cold reader needs first:
 | `pr30-pass-3-adjudication-prompt.md` | v0.3.1 | adjudication handoff (Pass 3) | Beni's five rulings, the non-release and release paths, the squash body, closure evidence, and the row-28 hotfix task. |
 | `design-cycle-ucl-brief.md` | open (item f) | design brief | The European week, the league-phase table and the Moment gallery, as the artifacts that consumed the brief restate it — the brief's own text was not available to the archiving session and is to be pasted in. Release number deliberately unclaimed. |
 | `design-cycle-ucl-spec.md` | open (item f) | design spec | Transcription of the local-only Claude Design canvas (eight artboards, SHA-256 recorded): the four rulings, the two rule amendments verbatim, the data-shape findings F1–F8, per-state tokens, and the seven not-decided items. |
-| `design-cycle-ucl-review-pass-1.md` | open (item f) | design review (Round 1) | The cold review of that canvas against the repo — hunt classes D1–D10, the findings table with the Round 2 handoff column, what remains unresolved ranked, and the retro that seeds a `/kickoff-design-review` skill. |
+| `design-cycle-ucl-review-pass-1.md` | open (item f) | design review (Round 1) | PR #34. The cold review of that canvas against the repo — hunt classes D1–D10, the findings table with the Round 2 handoff column, what remains unresolved ranked, and the retro that seeds a `/kickoff-design-review` skill. |
 
 Counts drift; `ls docs` is the truth. Ideas files are ranked candidate lists, not release
 scopes — turning one into a release is the proposal's job, and the deferral reasons in each
