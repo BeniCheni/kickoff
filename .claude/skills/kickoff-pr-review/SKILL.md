@@ -212,9 +212,10 @@ then Added / Changed / Fixed, then **Deliberately not done**.
 - **Re-run whatever the PR's own verification matrix promised.** Read it out of the proposal;
   do not trust the PR body's account of it. With no proposal (§1.2 tolerates that), the PR
   body's promise is all there is — run it, and say in the comment that no spec backed it.
-- **Latent paths need synthetic data.** The snapshot holds zero postponed, cancelled or
-  in-play fixtures; no manual QA reaches those branches. Fabricated-fixture unit tests are
-  their only coverage.
+- **Latent paths need synthetic data.** The snapshot usually holds zero postponed, cancelled or
+in-play fixtures, but weekend windows can still carry live rows. Prefer to scope every query to
+the fixture row under test when asserting those branches; fabricate rows in a local, uncommitted
+copy of `src/data/fixtures.json` and revert to see those branches live.
 - **A workflow changed:** `gh workflow run sync.yml --ref <branch> -f dry_run=true` is its
   unit test — but `workflow_dispatch` resolves the workflow *path* on `main`, so a brand-new
   workflow file cannot be dispatched until something with that name lands there. A real

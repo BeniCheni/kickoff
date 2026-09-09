@@ -8,6 +8,12 @@ releases.
 
 ## [Unreleased]
 
+### Fixed
+
+- `tests/dom/designCycle.test.tsx` used unscoped `getByText`/`queryByText` assertions and the
+  20:00Z scheduled sync run on weekends could fail verification whenever committed data already
+  contained an `in_play` fixture, blocking `verify` and pausing the sync PR.
+
 ## [0.3.1] — 2026-09-08
 
 The Table tells the time like every other lens, and the scheduled sync stopped asking

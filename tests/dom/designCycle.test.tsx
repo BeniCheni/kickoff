@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import { FIXTURES, META } from '../../src/lib/fixtures'
 import { COMPETITION_KEYS } from '../../src/lib/competitions'
-import { brooklynDate, niceDate, posterDayTitle, startOfWeek } from '../../src/lib/time'
+import { brooklynDate, fixtureTimes, niceDate, posterDayTitle, startOfWeek } from '../../src/lib/time'
 import { LIVE_WINDOW_MS } from '../../src/lib/lensSelectors'
 import { WeekView } from '../../src/components/WeekView'
 import { MonthView } from '../../src/components/MonthView'
@@ -27,6 +27,20 @@ afterEach(() => {
 })
 const active = new Set(COMPETITION_KEYS)
 
+function fixtureRowFor(fixture: {
+  kickoffUtc: string
+  venueTz: string
+  home: { name: string }
+  away: { name: string }
+  timeConfidence: 'exact' | 'round_placeholder' | 'tbd'
+}) {
+  const { brooklyn } = fixtureTimes(fixture.kickoffUtc, fixture.venueTz)
+  const time = fixture.timeConfidence === 'exact' ? brooklyn.time : '—'
+  return screen.getByRole('button', {
+    name: (name) => name.includes(time) && name.includes(fixture.home.name) && name.includes(fixture.away.name),
+  })
+}
+
 describe('synthetic frozen snapshot through the real selector and clock wiring', () => {
   for (const lens of ['ledger', 'poster', 'broadcast'] as const) {
     for (const view of ['week', 'month']) {
@@ -46,13 +60,15 @@ describe('synthetic frozen snapshot through the real selector and clock wiring',
           const cell = screen.getByRole('button', { name: (n) => n.startsWith(`${niceDate(today)}, `) })
           fireEvent.click(cell)
         }
-        expect(screen.getByText('LIVE')).toBeTruthy()
+        const row = fixtureRowFor(fixture)
+        const scope = within(row)
+        expect(scope.getByText('LIVE')).toBeTruthy()
         wake(new Date(kickoff + LIVE_WINDOW_MS + 1))
         // The app's existing clock floors to minutes; the pure selector tests pin +1ms.
-        expect(screen.getByText('LIVE')).toBeTruthy()
+        expect(scope.getByText('LIVE')).toBeTruthy()
         wake(new Date(kickoff + LIVE_WINDOW_MS + 60_000))
-        expect(screen.queryByText('LIVE')).toBeNull()
-        const pill = screen.getByText('KICKED OFF')
+        expect(scope.queryByText('LIVE')).toBeNull()
+        const pill = scope.getByText('KICKED OFF')
         expect(pill.className).toContain('border-floodlight-strong')
         expect(pill.closest('[data-hot]')).toBeNull()
         expect(within(pill.closest('button')!).getByText('1–0').className).toContain('text-pitch')
@@ -62,6 +78,30 @@ describe('synthetic frozen snapshot through the real selector and clock wiring',
       })
     }
   }
+
+  it('scopes LIVE and KICKED OFF assertions to a mutated fixture when one in-play row already exists', () => {
+    const firstLive = FIXTURES.find((f) => f.status === 'in_play')
+    const preexisting = firstLive ?? FIXTURES.find((f) => f.timeConfidence === 'exact' && !f.result)!
+    preexisting.status = 'in_play'
+    preexisting.result = { home: 0, away: 0 }
+    const fixture = FIXTURES.find((f) => f !== preexisting && f.timeConfidence === 'exact' && !f.result)!
+    fixture.status = 'in_play'
+    fixture.result = { home: 1, away: 0 }
+    fixture.kickoffUtc = preexisting.kickoffUtc
+    const kickoff = Date.parse(preexisting.kickoffUtc)
+    const today = brooklynDate(preexisting.kickoffUtc)
+    release = primeClock(new Date(kickoff + LIVE_WINDOW_MS))
+    render(<WeekView weekStart={startOfWeek(today)} active={active} today={today} lens="ledger" />)
+    const row = fixtureRowFor(fixture)
+    const scope = within(row)
+    expect(scope.getByText('LIVE')).toBeTruthy()
+    wake(new Date(kickoff + LIVE_WINDOW_MS + 60_000))
+    expect(scope.queryByText('LIVE')).toBeNull()
+    const pill = scope.getByText('KICKED OFF')
+    expect(pill.className).toContain('border-floodlight-strong')
+    fireEvent.click(pill.closest('button')!)
+    expect(pill.closest('button')?.getAttribute('aria-expanded')).toBe('true')
+  })
 })
 
 describe('ticker mounted/static contract', () => {
