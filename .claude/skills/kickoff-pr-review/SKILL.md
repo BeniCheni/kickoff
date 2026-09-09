@@ -35,7 +35,7 @@ session is running; the default is Pass 1.
 
 | Pass | Seat | Reads | Leaves behind |
 |---|---|---|---|
-| **0 — brief the cold review** | PM: a Claude Code session, Fable 5.1 High, with the pipeline skill (`/anthropic-skills:football-soccer-god`) loaded | the PR and the repo, read fresh; the executives' goals for the release | the Pass 1 prompt — `/kickoff-pr-review <N> --no-merge` plus tailored context and the sealed appendix — delivered in chat and archived as `docs/<version>-review-prompt.md` |
+| **0 — brief the cold review** | PM: a Claude Code session, Fable 5.1 High, with the pipeline skill (`/anthropic-skills:football-soccer-deity`) loaded | the PR and the repo, read fresh; the executives' goals for the release | the Pass 1 prompt — `/kickoff-pr-review <N> --no-merge` plus tailored context and the sealed appendix — delivered in chat and archived as `docs/<version>-review-prompt.md` |
 | **1 — cold review** | the vendor that did not build it: Claude Code, Fable 5.1 Extra, a fresh session | Pass 0's prompt, then the repo (§1–§4) | fix commits for what it reproduced, one PR comment (`pr-comment.md`); stops at the comment |
 | **1.5 — rebuttal brief** | the PM seat again | Pass 1's comment | the Pass 2 prompt: every finding for the builder to accept / contest / accept-but-contest-the-characterisation, with the evidence needed to reproduce each; Beni's rulings so far travel in it, named as his |
 | **2 — rebuttal** | the builder: Codex, GPT-6 Astra Extra High | Pass 1.5's prompt, then the head | fix commits, one PR comment in the same table shape; may prepare the release only when a ruling on the number travelled in the prompt |
@@ -212,9 +212,12 @@ then Added / Changed / Fixed, then **Deliberately not done**.
 - **Re-run whatever the PR's own verification matrix promised.** Read it out of the proposal;
   do not trust the PR body's account of it. With no proposal (§1.2 tolerates that), the PR
   body's promise is all there is — run it, and say in the comment that no spec backed it.
-- **Latent paths need synthetic data.** The snapshot holds zero postponed, cancelled or
-  in-play fixtures; no manual QA reaches those branches. Fabricated-fixture unit tests are
-  their only coverage.
+- **Latent paths need synthetic data.** The snapshot usually holds zero postponed, cancelled or
+  in-play fixtures, but a weekend sync writes live rows. A test that mutates a real-snapshot row
+  must scope every query to that row (`within`), and must not pick its rows by `status` or
+  `result` — those move with every sync, and a pick that lands in another week finds no row at
+  all. Fabricated-fixture unit tests are the durable coverage; to see a branch in the browser,
+  stub a row in a local, uncommitted copy of `src/data/fixtures.json` and revert.
 - **A workflow changed:** `gh workflow run sync.yml --ref <branch> -f dry_run=true` is its
   unit test — but `workflow_dispatch` resolves the workflow *path* on `main`, so a brand-new
   workflow file cannot be dispatched until something with that name lands there. A real

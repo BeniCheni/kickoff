@@ -1,8 +1,9 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
-import { FIXTURES, META } from '../../src/lib/fixtures'
+import { BY_DATE, FIXTURES, META } from '../../src/lib/fixtures'
+import type { Fixture } from '../../src/lib/schema'
 import { COMPETITION_KEYS } from '../../src/lib/competitions'
-import { brooklynDate, niceDate, posterDayTitle, startOfWeek } from '../../src/lib/time'
+import { brooklynDate, fixtureTimes, niceDate, posterDayTitle, startOfWeek } from '../../src/lib/time'
 import { LIVE_WINDOW_MS } from '../../src/lib/lensSelectors'
 import { WeekView } from '../../src/components/WeekView'
 import { MonthView } from '../../src/components/MonthView'
@@ -27,6 +28,21 @@ afterEach(() => {
 })
 const active = new Set(COMPETITION_KEYS)
 
+/**
+ * The row for one exact-time fixture, by its accessible name: a FixtureRow's button carries no
+ * aria-label, so the name is its content in render order — the Brooklyn time first, then
+ * "home vs away". Anchoring on both keeps a 12:30 PM row from answering for a 2:30 PM one
+ * (`includes` alone would) and a venue string from answering for a pairing. The month grid's
+ * day cells are buttons too, but their aria-label names a date and competitions, never a club.
+ * Placeholder rows render "—" in the time slot and are not this helper's job.
+ */
+function fixtureRowFor(fixture: Fixture) {
+  const { brooklyn } = fixtureTimes(fixture.kickoffUtc, fixture.venueTz)
+  return screen.getByRole('button', {
+    name: (name) => name.startsWith(brooklyn.time) && name.includes(`${fixture.home.name} vs ${fixture.away.name}`),
+  })
+}
+
 describe('synthetic frozen snapshot through the real selector and clock wiring', () => {
   for (const lens of ['ledger', 'poster', 'broadcast'] as const) {
     for (const view of ['week', 'month']) {
@@ -46,13 +62,15 @@ describe('synthetic frozen snapshot through the real selector and clock wiring',
           const cell = screen.getByRole('button', { name: (n) => n.startsWith(`${niceDate(today)}, `) })
           fireEvent.click(cell)
         }
-        expect(screen.getByText('LIVE')).toBeTruthy()
+        const row = fixtureRowFor(fixture)
+        const scope = within(row)
+        expect(scope.getByText('LIVE')).toBeTruthy()
         wake(new Date(kickoff + LIVE_WINDOW_MS + 1))
         // The app's existing clock floors to minutes; the pure selector tests pin +1ms.
-        expect(screen.getByText('LIVE')).toBeTruthy()
+        expect(scope.getByText('LIVE')).toBeTruthy()
         wake(new Date(kickoff + LIVE_WINDOW_MS + 60_000))
-        expect(screen.queryByText('LIVE')).toBeNull()
-        const pill = screen.getByText('KICKED OFF')
+        expect(scope.queryByText('LIVE')).toBeNull()
+        const pill = scope.getByText('KICKED OFF')
         expect(pill.className).toContain('border-floodlight-strong')
         expect(pill.closest('[data-hot]')).toBeNull()
         expect(within(pill.closest('button')!).getByText('1–0').className).toContain('text-pitch')
@@ -62,6 +80,40 @@ describe('synthetic frozen snapshot through the real selector and clock wiring',
       })
     }
   }
+
+  it('two in-play rows on one kickoff: the document-wide query throws, the row-scoped one resolves each row', () => {
+    // The input is fixed by construction, not by what the sync last wrote: the snapshot's first
+    // Brooklyn date carrying two league-set kickoffs, whatever their stored states, both
+    // overridden in memory. A pair picked by `status` or `result` moves with every sync, and on
+    // a Sunday-evening snapshot — or with a postponed row anywhere in the file — the second pick
+    // lands in another week and no row renders (docs/v0.2.6-ideas.md row 28, the review of #33).
+    const day = [...BY_DATE.values()]
+      .map((list) => list.filter((f) => f.timeConfidence === 'exact'))
+      .find((list) => list.length >= 2)!
+    const preexisting = day[0]!
+    const fixture = day[1]!
+    preexisting.status = 'in_play'
+    preexisting.result = { home: 0, away: 0 }
+    fixture.status = 'in_play'
+    fixture.result = { home: 1, away: 0 }
+    fixture.kickoffUtc = preexisting.kickoffUtc // the time no longer discriminates; only the clubs do
+    const kickoff = Date.parse(preexisting.kickoffUtc)
+    const today = brooklynDate(preexisting.kickoffUtc)
+    release = primeClock(new Date(kickoff + LIVE_WINDOW_MS))
+    render(<WeekView weekStart={startOfWeek(today)} active={active} today={today} lens="ledger" />)
+    // The query row 28 broke on must still be ambiguous here, or this case proves nothing.
+    expect(() => screen.getByText('LIVE')).toThrow(/multiple elements/)
+    const row = fixtureRowFor(fixture)
+    expect(row).not.toBe(fixtureRowFor(preexisting))
+    const scope = within(row)
+    expect(scope.getByText('LIVE')).toBeTruthy()
+    expect(scope.getByText('1–0')).toBeTruthy()
+    expect(within(fixtureRowFor(preexisting)).getByText('0–0')).toBeTruthy()
+    wake(new Date(kickoff + LIVE_WINDOW_MS + 60_000))
+    expect(() => screen.getByText('KICKED OFF')).toThrow(/multiple elements/)
+    expect(scope.queryByText('LIVE')).toBeNull()
+    expect(scope.getByText('KICKED OFF').className).toContain('border-floodlight-strong')
+  })
 })
 
 describe('ticker mounted/static contract', () => {
