@@ -105,6 +105,9 @@ Regulations of the UEFA Champions League, 2026/27 season, at `documents.uefa.com
 
 ## The one-word questions Beni's evidence changed
 
+✅ **Ruled 9 Sep 2026, 15:24 EDT: yes, A, yes, curated, degrade with a report line.** The record, with what
+each ruling fixes for the build and the canvas, is `design-cycle-ucl-round-3-rulings.md`.
+
 1. **Q1 fallback** — no `venueTz`, "local time not known" pill, sync report count: **yes or no.** Evidence that changed it: the app already prints the viewer's zone as the stadium clock when the zone is absent, so "do nothing" is not the safe default.
 2. **Q2 policy** — **A, B or C.** Evidence that changed it: UEFA's next-day rule makes the honest absence state the common case and the silent case the rare one, which favours A over B.
 3. **Q3 / item (g)** — desktop sticky: **yes or no.** Evidence: 736 px overflows 700 and 800 viewports and fits 900; the desktop header is static today.
