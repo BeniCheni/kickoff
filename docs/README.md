@@ -54,6 +54,7 @@ to here, filed by release. Two things a cold reader needs first:
 | `design-cycle-ucl-brief.md` | open (item f) | design brief | The European week, the league-phase table and the Moment gallery, as the artifacts that consumed the brief restate it — the brief's own text was not available to the archiving session and is to be pasted in. Release number deliberately unclaimed. |
 | `design-cycle-ucl-spec.md` | open (item f) | design spec | Transcription of the local-only Claude Design canvas (eight artboards, SHA-256 recorded): the four rulings, the two rule amendments verbatim, the data-shape findings F1–F8, per-state tokens, and the seven not-decided items. |
 | `design-cycle-ucl-review-pass-1.md` | open (item f) | design review (Round 1) | PR #34. The cold review of that canvas against the repo — hunt classes D1–D10, the findings table with the Round 2 handoff column, what remains unresolved ranked, and the retro that seeds a `/kickoff-design-review` skill. |
+| `design-cycle-ucl-round-1.5-brief.md` | open (item f) | executive brief (Round 1 → PM) | The Round 1 reviewer's handoff to the Chief TPM / Product seat: the seventeen findings condensed with what overturns each, ten logistics decisions for Round 2 with recommendations, the reproduction recipes Round 2 re-runs, and the shape the Round 2 prompt must take. |
 
 Counts drift; `ls docs` is the truth. Ideas files are ranked candidate lists, not release
 scopes — turning one into a release is the proposal's job, and the deferral reasons in each
