@@ -113,9 +113,10 @@ would not.
 
 ## Latent paths
 
-The snapshot has zero postponed, cancelled or in-play fixtures. To see those branches in a
-browser you stub a row in a local, uncommitted copy of `src/data/fixtures.json` and revert —
-never commit hand-edited data. Unit tests with fabricated fixtures are the durable coverage.
+The snapshot usually has zero postponed, cancelled or in-play fixtures, but weekend windows can
+still carry a live row. Tests reading the committed snapshot must scope their queries to the
+target fixture row. To see those branches in a browser you stub a row in a local, uncommitted
+copy of `src/data/fixtures.json` and revert — never commit hand-edited data.
 
 ## Zero-slack points
 

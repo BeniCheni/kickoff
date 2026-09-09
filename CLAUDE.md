@@ -2,12 +2,12 @@
 
 Big-5 European football fixtures + standings tracker, Brooklyn time (`README.md` has the data
 philosophy: **generated and diffed, never typed**). This project is the **build track** of the
-unified `/football-soccer-deity` skill — the same skill that runs the betting work in
-`../Sportsbooks/` also generates the prompts and reviews that build this app. Kickoff is also
-that pipeline's Step 0 fixture source (`http://localhost:5173/`, the `?only=` competition
-filter and the `&date=` week anchor), so data honesty here is betting-grade: never render a
-kickoff time the league hasn't set, never invent matchday numbers, both clocks derive from one
-UTC instant.
+unified `/anthropic-skills:football-soccer-deity` skill (`/beni-betting-pipeline` until 7 Sep
+2026) — the same skill that runs the betting work in `../Sportsbooks/` also generates the
+prompts and reviews that build this app. Kickoff is also that pipeline's Step 0 fixture source
+(`http://localhost:5173/`, the `?only=` competition filter and the `&date=` week anchor), so
+data honesty here is betting-grade: never render a kickoff time the league hasn't set, never
+invent matchday numbers, both clocks derive from one UTC instant.
 
 ## How this repo gets built (the prompt ladder, proven on the v0.0.3 doc cycle — shipped as
 release v0.1.0; doc-ladder naming and release semver diverge, don't assume they match)
@@ -153,7 +153,7 @@ mirrors them, not the reverse.
 
 The prompt ladder above says how a version gets *built*. This section says how one gets *scoped*,
 because the roles are now explicit: Beni is CEO, Claude Design is the designer, a Claude Code
-session in this repo is the CTO, and the Cowork session running `/football-soccer-deity` is
+session in this repo is the CTO, and the Cowork session running `/anthropic-skills:football-soccer-deity` is
 Product Manager / TPM. Since PR #24 (5 Sep 2026) implementation is routed per task shape between
 Claude Code and Codex — `README.md`'s "Two builders, one repo" table is the owning copy of that
 routing, and the six-pass 360 above is how a release built by one vendor is reviewed by the

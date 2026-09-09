@@ -8,6 +8,40 @@ releases.
 
 ## [Unreleased]
 
+## [0.3.2] — 2026-09-09
+
+The sync's verify step survives a live match. Paper trail: `docs/v0.3.2-fast-track-brief.md`; Beni's rulings, 8–9 Sep 2026: v0.3.2, fast-track, fix the handles now.
+
+### Changed
+
+- `/kickoff-pr-review` §4 and `browser-matrix.md` no longer claim the snapshot holds zero
+  in-play fixtures: a test that mutates a real-snapshot row must scope every query to that row
+  and must not pick its rows by `status` or `result`; fabricated-fixture unit tests remain the
+  durable coverage (#33).
+- The pipeline skill is named by its live handle, `/anthropic-skills:football-soccer-deity`, in
+  `/kickoff-pr-review`'s Pass 0 row (was `…football-soccer-god`) and in `CLAUDE.md` (was
+  `/beni-betting-pipeline`, the skill's name until 7 Sep 2026). Archived `docs/` keep the names
+  they were written under (#33).
+
+### Fixed
+
+- **The sync's own verify step no longer fails during a live match** (#33).
+  `tests/dom/designCycle.test.tsx` mutated one snapshot fixture to `in_play` and then asked the
+  whole document for `LIVE`; a snapshot that already carried a genuine live match rendered two
+  pills and the query threw "Found multiple elements". The 20:00Z scheduled sync on 7 Sep (run
+  34157750491) fetched cleanly and failed exactly that way — six tests red, no commit, no PR —
+  leaving `main`'s snapshot at 00:02Z through all of Monday's matches. Every LIVE / KICKED OFF
+  assertion is now scoped to the mutated fixture's own row, resolved by its accessible name, and
+  a new case renders two in-play rows on one kickoff: the document-wide query still throws, the
+  scoped one picks each row. `docs/v0.2.6-ideas.md` row 28; the "zero in-play fixtures"
+  assumption is struck from `browser-matrix.md` and `/kickoff-pr-review` §4.
+
+### Deliberately not done
+
+- **A `FIXTURES` mock for the designCycle file.** The scoped queries and a date-fixed input close row 28 without one; a mock in that file would take the six real-snapshot tests and the ticker tests with it.
+- **The browser matrix.** No `src/` or `index.css` change; the smoke pass at 390 and 1000 px is what the method owes a test-and-docs diff.
+- **Auto-merged sync PRs still do not reach Pages.** Row 29; a workflow change, its own PR.
+
 ## [0.3.1] — 2026-09-08
 
 The Table tells the time like every other lens, and the scheduled sync stopped asking
