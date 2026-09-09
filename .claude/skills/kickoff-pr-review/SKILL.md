@@ -213,9 +213,11 @@ then Added / Changed / Fixed, then **Deliberately not done**.
   do not trust the PR body's account of it. With no proposal (§1.2 tolerates that), the PR
   body's promise is all there is — run it, and say in the comment that no spec backed it.
 - **Latent paths need synthetic data.** The snapshot usually holds zero postponed, cancelled or
-in-play fixtures, but weekend windows can still carry live rows. Prefer to scope every query to
-the fixture row under test when asserting those branches; fabricate rows in a local, uncommitted
-copy of `src/data/fixtures.json` and revert to see those branches live.
+  in-play fixtures, but a weekend sync writes live rows. A test that mutates a real-snapshot row
+  must scope every query to that row (`within`), and must not pick its rows by `status` or
+  `result` — those move with every sync, and a pick that lands in another week finds no row at
+  all. Fabricated-fixture unit tests are the durable coverage; to see a branch in the browser,
+  stub a row in a local, uncommitted copy of `src/data/fixtures.json` and revert.
 - **A workflow changed:** `gh workflow run sync.yml --ref <branch> -f dry_run=true` is its
   unit test — but `workflow_dispatch` resolves the workflow *path* on `main`, so a brand-new
   workflow file cannot be dispatched until something with that name lands there. A real
