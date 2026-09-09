@@ -103,7 +103,7 @@ consequence: a February UCL reshape no longer freezes Step 0's domestic data.
 
 | Item | Status |
 |---|---|
-| (a) provider; round-string precedence | Open: decision D5 (packet section 8, item 5) is a one-word confirm |
+| (a) provider; round-string precedence | **Closed: ESPN; a future provider round string outranks the derived window** (ruling 8) |
 | (b) tie-break sentence | Sourced (Q8, Article 18); rides to build acceptance |
 | (c) Moments location | **Closed: `src/curated/`** |
 | (d) Moments history push | Designer's; push by construction |
@@ -114,18 +114,39 @@ consequence: a February UCL reshape no longer freezes Step 0's domestic data.
 | VERIFY Saturday 12 Sep league count | Recount at the build head (D11) |
 | VERIFY UEFA windows shift for a rescheduled tie | **Closed by Articles 23 and 27 plus option A**; the window dates stay ESTIMATE until Annex C |
 
-## What is still open before the VIP correction prompt can be written
+## The second set: the packet's section 8 items, ruled the same afternoon
 
-The packet's section 5 sequences the VIP correction and sign-off packet behind D1–D10. After
-these five rulings the remaining one-word items from section 8 are: **D1** (uphold the scoped
-sticky rule; ruling 3 above presumes it), **D2** (reword the games-in-hand callout for phase
-competitions), **D3** (close finding 12 for this cycle), **D5** (ESPN is the provider and a future
-provider round string outranks the derived window), **D9** (sixth chip last with a third row at
-360; the 65 px nav with three tabs), **D12** (v0.4.0 stays the sync theme), the **curl-line
-removal** confirmation (section 8, item 10), and the **brief paste** (item 9, an action). D1, D2,
-D5, D9 and the curl line shape the canvas corrections and gate the prompt; D3 and D12 are
-release-side and can follow. D10's contrast plan needs no ruling: the CTO's options are in Q6 and
-the designer chooses within design-system rule B4.
+Ruled Wed 9 Sep 2026, about 15:35 EDT, in the same session, answering the five one-word items the
+first set left open. Quoted verbatim; "closes" is the CTO's reading.
+
+| # | Item (decision packet, section 8) | Ruling | Closes |
+|---|---|---|---|
+| 6 | D1 — uphold the scoped sticky rule (deeper than eight rows only; domestic tables unchanged) | **Yes.** | Decision D1; finding 2's characterisation; ideas row 32 (design side) |
+| 7 | D2 — reword the games-in-hand callout for phase competitions | **Yes.** | Decision D2; finding 16; ideas row 41 |
+| 8 | D5 — ESPN is the provider, and a future provider round string outranks the derived window | **Confirm.** | Decision D5; item (a); finding 1; ideas rows 30 and 39 |
+| 9 | D9 — sixth chip last with a third row at 360; the 65 px nav with three tabs | **Approve.** | Decision D9; findings 3, 4 and 14; ideas rows 33 and 34 |
+| 10 | Remove the "Beni's curl check, 8 Sep" line from the canvas | **Yes.** | Section 8 item 10; the attribution inside finding 1 |
+
+**What each fixes.** Ruling 6: per-band grouping is the build path on both widths and the CSS-only
+recipe (`display: contents` wrappers, every divider sticky and opaque) is recorded as a different
+design, not adopted; with ruling 3 the same `> 8` threshold governs mobile and desktop. Ruling 7:
+for competitions with `phase` set, the callout states the games-in-hand fact and drops "sort by PPG
+to compare like with like"; the designer supplies the copy and the build carries it as an
+acceptance criterion. Ruling 8: item (a) closes on ESPN's `uefa.champions` in the normaliser's
+shape; the precedence sentence is recorded for a provider that does not exist yet, so the derived
+window is the only matchday source this cycle; the canvas drops F1's premise. Ruling 9: the picker
+sorts explicitly (an S build item, `competitionRank` descending) so ⭐ renders last; a third picker
+row at 360 and a 65 px tab row at 390 and 375 are accepted as drawn; the 1g caption ("under ~375")
+and 1e's "pixel-identical" are corrected. Ruling 10: the header block and 1h lose the attribution,
+and F1 is rewritten from the Round 2 receipts.
+
+## What remains open, and none of it gates the VIP correction prompt
+
+D3 (close finding 12 for this cycle) and D12 (v0.4.0 stays the sync theme; the European week is
+the next minor after it, number provisional) are release-side and wait for Beni's word; neither
+touches the canvas. The brief paste (section 8, item 9) is an action, not a ruling; until it lands,
+`design-cycle-ucl-spec.md` is what the VIP prompt cites. The VIP correction and sign-off prompt is
+`design-cycle-ucl-round-3-vip-correction-prompt.md`, written from these rulings.
 
 ## Artboards the rulings change
 
