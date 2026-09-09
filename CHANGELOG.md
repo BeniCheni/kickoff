@@ -10,9 +10,16 @@ releases.
 
 ### Fixed
 
-- `tests/dom/designCycle.test.tsx` used unscoped `getByText`/`queryByText` assertions and the
-  20:00Z scheduled sync run on weekends could fail verification whenever committed data already
-  contained an `in_play` fixture, blocking `verify` and pausing the sync PR.
+- **The sync's own verify step no longer fails during a live match** (#33).
+  `tests/dom/designCycle.test.tsx` mutated one snapshot fixture to `in_play` and then asked the
+  whole document for `LIVE`; a snapshot that already carried a genuine live match rendered two
+  pills and the query threw "Found multiple elements". The 20:00Z scheduled sync on 7 Sep (run
+  34157750491) fetched cleanly and failed exactly that way — six tests red, no commit, no PR —
+  leaving `main`'s snapshot at 00:02Z through all of Monday's matches. Every LIVE / KICKED OFF
+  assertion is now scoped to the mutated fixture's own row, resolved by its accessible name, and
+  a new case renders two in-play rows on one kickoff: the document-wide query still throws, the
+  scoped one picks each row. `docs/v0.2.6-ideas.md` row 28; the "zero in-play fixtures"
+  assumption is struck from `browser-matrix.md` and `/kickoff-pr-review` §4.
 
 ## [0.3.1] — 2026-09-08
 
