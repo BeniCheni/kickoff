@@ -35,7 +35,7 @@ session is running; the default is Pass 1.
 
 | Pass | Seat | Reads | Leaves behind |
 |---|---|---|---|
-| **0 — brief the cold review** | PM: a Claude Code session, Fable 5.1 High, with the pipeline skill (`/anthropic-skills:football-soccer-god`) loaded | the PR and the repo, read fresh; the executives' goals for the release | the Pass 1 prompt — `/kickoff-pr-review <N> --no-merge` plus tailored context and the sealed appendix — delivered in chat and archived as `docs/<version>-review-prompt.md` |
+| **0 — brief the cold review** | PM: a Claude Code session, Fable 5.1 High, with the pipeline skill (`/football-soccer-deity`) loaded | the PR and the repo, read fresh; the executives' goals for the release | the Pass 1 prompt — `/kickoff-pr-review <N> --no-merge` plus tailored context and the sealed appendix — delivered in chat and archived as `docs/<version>-review-prompt.md` |
 | **1 — cold review** | the vendor that did not build it: Claude Code, Fable 5.1 Extra, a fresh session | Pass 0's prompt, then the repo (§1–§4) | fix commits for what it reproduced, one PR comment (`pr-comment.md`); stops at the comment |
 | **1.5 — rebuttal brief** | the PM seat again | Pass 1's comment | the Pass 2 prompt: every finding for the builder to accept / contest / accept-but-contest-the-characterisation, with the evidence needed to reproduce each; Beni's rulings so far travel in it, named as his |
 | **2 — rebuttal** | the builder: Codex, GPT-6 Astra Extra High | Pass 1.5's prompt, then the head | fix commits, one PR comment in the same table shape; may prepare the release only when a ruling on the number travelled in the prompt |

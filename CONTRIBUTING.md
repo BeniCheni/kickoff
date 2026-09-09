@@ -74,14 +74,15 @@ Wrong fixture data is this repo's signature issue type: open one with the
 the app shows and what the league says. A bug report that starts with "what did the app
 claim, and what was actually true" is already halfway to a test.
 
-## 🤖 Why the commits are authored by Claude
+## 🤖 Why the commits are authored by the model that wrote them
 
-Kickoff is built by Claude Code sessions working from written specifications, with a human
-(Beni) as the product owner who scopes releases, reads the changes, and clicks every release
-merge. Branch commits are authored `Claude <noreply@anthropic.com>` so the attribution is
-honest: the code was written by the model, the decisions were made by the person, and a
-reader of `git log` should be able to tell which is which. Your PR's commits are authored by
-you, for the same reason.
+Kickoff is built by Claude Code and Codex sessions working from written specifications — routed
+per task shape, as the "Two builders, one repo" table in [README.md](README.md) records — with a
+human (Beni) as the product owner who scopes releases, reads the changes, and clicks every
+release merge. Branch commits are authored by whichever model wrote them (`Claude
+<noreply@anthropic.com>`, `Codex <noreply@openai.com>`) so the attribution is honest: the code
+was written by a model, the decisions were made by the person, and a reader of `git log` should
+be able to tell which is which. Your PR's commits are authored by you, for the same reason.
 
 The disciplined version of "AI-driven" is the only one this repo practices: typecheck and
 tests green at every commit, browser verification before anything is declared done, and an

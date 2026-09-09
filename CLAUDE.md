@@ -2,7 +2,7 @@
 
 Big-5 European football fixtures + standings tracker, Brooklyn time (`README.md` has the data
 philosophy: **generated and diffed, never typed**). This project is the **build track** of the
-unified `/beni-betting-pipeline` skill — the same skill that runs the betting work in
+unified `/football-soccer-deity` skill — the same skill that runs the betting work in
 `../Sportsbooks/` also generates the prompts and reviews that build this app. Kickoff is also
 that pipeline's Step 0 fixture source (`http://localhost:5173/`, the `?only=` competition
 filter and the `&date=` week anchor), so data honesty here is betting-grade: never render a
@@ -153,10 +153,12 @@ mirrors them, not the reverse.
 
 The prompt ladder above says how a version gets *built*. This section says how one gets *scoped*,
 because the roles are now explicit: Beni is CEO, Claude Design is the designer, a Claude Code
-session in this repo is the CTO, and the Cowork session running `/beni-betting-pipeline` is
-Product Manager / TPM. Beni has said plainly that he has not read the generated `docs/` logs in
-detail and is relying on those roles to have read them — so nothing here is answerable from
-recollection.
+session in this repo is the CTO, and the Cowork session running `/football-soccer-deity` is
+Product Manager / TPM. Since PR #24 (5 Sep 2026) implementation is routed per task shape between
+Claude Code and Codex — `README.md`'s "Two builders, one repo" table is the owning copy of that
+routing, and the six-pass 360 above is how a release built by one vendor is reviewed by the
+other. Beni has said plainly that he has not read the generated `docs/` logs in detail and is
+relying on those roles to have read them — so nothing here is answerable from recollection.
 
 **Ground truth for "what has shipped" is four things read together**, never one of them alone:
 `package.json`'s `version`, `git tag` (annotated tags start at v0.2.0 — v0.0.1 through v0.1.1
