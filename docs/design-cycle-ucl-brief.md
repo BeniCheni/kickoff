@@ -46,10 +46,16 @@ reserved for data-trust provenance; the four-hour LIVE window (v0.3.0); the `?on
 URL contract the betting pipeline's Step 0 reads; and the 390 px judge, 360 px jury, ~1000 px
 desktop check.
 
-## The claim the brief carried in
+## Round 2 correction — the claim the canvas added
 
-The canvas leads with a blocking finding attributed to Beni's curl check — that ESPN publishes no
-`uefa.champions`, `uefa.europa` or `uefa.europa.conf` scoreboard — and the Round 1 prompt notes that
-this reached the design as *routed* evidence: the generating session's container had
-`site.api.espn.com` refused by egress policy, and nothing Claude ran had verified it. The Round 1
-review re-ran the check with network; `docs/design-cycle-ucl-review-pass-1.md` has the result.
+The full brief is still unavailable in this archive. The user-supplied Round 2 prompt quotes
+its network ruling: whether ESPN publishes these competitions and a round number is
+**ESTIMATE, not CONFIRMED**, because that session could not reach ESPN. It supplied a curl
+command for a later check. It did not report a negative result.
+
+The same prompt supplies Beni's account that he never ran the earlier command. Thus the
+canvas's attribution to "Beni's curl check, 8 Sep" is unsupported provenance, not a competing
+network receipt. These are supplied passages and testimony, not a recovered full brief.
+Round 2 independently fetched the three competitions; the exact requests, corrected JSON
+paths, and limits are in [the rebuttal](design-cycle-ucl-review-pass-2.md#provider-receipts-presence-paths-semantics).
+The historical summary above remains a placeholder until the original brief is pasted.

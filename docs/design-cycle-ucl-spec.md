@@ -7,6 +7,18 @@ one. The canvas itself is local-only and unreleased, like `../Fergie Time Design
 this file is a transcription of its decisions, not a copy of the artifact; the artboards stay
 where they are.
 
+## Round 2 correction notice
+
+This file preserves what the canvas said, including its false provider premise; it is not
+approval to implement those claims. [Round 2](design-cycle-ucl-review-pass-2.md) supersedes
+its factual assertions where measured: ESPN serves all three UEFA club competitions in
+probed matchday windows, and the earlier human curl attribution was never established.
+The original canvas remains unchanged. Its 1g Moments location conflicts with item (c);
+its `--media` ratio is 1.097506:1 (1.10), not 1.14. The sync age at the stated illustrative
+"today" is 38.5 hours, not 3. The build must also resolve venue time zones before activating
+UCL; the current normalizer assigns Zurich to every venue. These corrections do not choose
+items (a)–(g), the VERIFY items, or a release number.
+
 ## The artifact
 
 - `../Kickoff European week design/UCL League Phase - Design Cycle.dc.html`, 138306 bytes,
