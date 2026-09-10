@@ -168,3 +168,16 @@ export function clubsInHand(rows: TableRow[]): number {
 export function hoursSinceStandingsSync(now = new Date()): number {
   return hoursSince(STANDINGS.fetchedAt, now)
 }
+
+/** Contiguous bands contain their own divider so sticky headers release at the band end.
+ * A sorted or stale-season table becomes one unlabelled group; canonical rank stays intact. */
+export function groupTableRows(rows: TableRow[], showZones: boolean): Array<{ zone: Zone | null; rows: TableRow[] }> {
+  const groups: Array<{ zone: Zone | null; rows: TableRow[] }> = []
+  for (const row of rows) {
+    const zone = showZones ? row.zone : null
+    const last = groups.at(-1)
+    if (last && last.zone === zone) last.rows.push(row)
+    else groups.push({ zone, rows: [row] })
+  }
+  return groups
+}

@@ -10,6 +10,9 @@ releases.
 
 ### Added
 
+- The league-phase table groups its three outcome bands, with region headers that stick
+  beneath the columns and release at their own band boundary on phones and desktop.
+
 - Champions League fixtures and the 36-club league-phase table join ESPN sync, with eight
   matches per club and first-seen matchday baselines from UEFA's calendar. Reschedules keep
   their original baseline; a first sighting outside the windows stays unnumbered.
