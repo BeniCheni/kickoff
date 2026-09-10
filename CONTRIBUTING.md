@@ -21,7 +21,15 @@ npm run sync             # refresh src/data/*.json; exits 1 if something inside 
 ```
 
 `sync` takes `--from=YYYY-MM-DD` and `--to=YYYY-MM-DD`; the default window is −30 to +150
-days. It needs no key and no account — ESPN's scoreboard and standings endpoints are public.
+days. For a generated-data merge conflict, export the pre-merge branch's `fixtures.json`
+and `standings.json` with `git show <commit>:src/data/<file>` into a temporary directory,
+then use `npm run sync -- --baseline-dir=/absolute/path/to/that/directory`. The baseline
+preserves first-seen rounds and notes and supplies the diff/shrink checks; it is schema-
+validated and missing explicit baseline files fail closed. It changes input reads only:
+the three conflict-marked files in `src/data/` are replaced exclusively by fresh, validated
+sync output. Never use `--ours`/`--theirs` or hand-edit a generated file to resolve it.
+
+The sync needs no key and no account — ESPN's scoreboard and standings endpoints are public.
 
 You'll want Node 24 (that's what CI runs) — 24.15 or a later 24.x, to be exact; 22.22.2 or a
 later 22.x, or any 26+, clear it too. That is jsdom 30's engine floor

@@ -20,6 +20,18 @@ describe('seasonLabel', () => {
 })
 
 describe('normalizeEvent', () => {
+  it('omits unused domestic phase/season evidence but retains the league-phase guard', () => {
+    const domestic = { ...ligue1[0], season: { slug: '2026-27-french-ligue-1', year: 2026 } }
+    expect(normalizeEvent(domestic, 'ligue1', AT)).not.toHaveProperty('phase')
+    expect(normalizeEvent(domestic, 'ligue1', AT)).not.toHaveProperty('season')
+    const ucl = load('espn/ucl-md1.json').events[0]
+    expect(normalizeEvent(ucl, 'ucl', AT)).toMatchObject({ phase: 'league-phase', season: 2026, round: '1' })
+    const qualifier = { ...ucl, season: { slug: 'qualifying', year: 2026 } }
+    expect(normalizeEvent(qualifier, 'ucl', AT)).not.toHaveProperty('phase')
+    expect(normalizeEvent(qualifier, 'ucl', AT)).not.toHaveProperty('season')
+    expect(normalizeEvent(qualifier, 'ucl', AT)).not.toHaveProperty('round')
+  })
+
   it('produces a schema-valid fixture from a real payload', () => {
     for (const e of ligue1) {
       const f = normalizeEvent(e, 'ligue1', AT)

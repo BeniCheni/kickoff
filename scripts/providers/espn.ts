@@ -187,8 +187,11 @@ export function normalizeEvent(
     if (Number.isFinite(h) && Number.isFinite(a)) fixture.result = { home: h, away: a }
   }
 
-  if (typeof event.season?.slug === 'string' && event.season.slug) fixture.phase = event.season.slug
-  if (Number.isInteger(event.season?.year)) fixture.season = event.season.year
+  // Only phase-window consumers need this evidence; domestic season slugs are unused.
+  if (event.season?.slug === 'league-phase') {
+    fixture.phase = event.season.slug
+    if (Number.isInteger(event.season.year)) fixture.season = event.season.year
+  }
   // Only league-phase fixtures have these windows. Domestic rounds remain unset.
   // This candidate is used once; sync's preserve step carries the stored baseline by id.
   if (fixture.phase === 'league-phase' && fixture.season !== undefined) {

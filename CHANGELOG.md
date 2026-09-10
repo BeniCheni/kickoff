@@ -32,6 +32,11 @@ releases.
 
 ### Changed
 
+- Fixture phase and season evidence is retained only for league-phase events; unused
+  domestic season slugs no longer inflate the snapshot (PR #39, Pass 2).
+- The sync can read an exported pre-merge baseline with `--baseline-dir` while regenerating
+  conflicted snapshot files; round identity and validation survive the recovery.
+
 - Fixture competition names use readable muted ink. Shared competition chips keep their
   hues, choose a readable foreground on filled states, and retain legible unselected text.
 

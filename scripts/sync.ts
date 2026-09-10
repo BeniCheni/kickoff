@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 import { readFileSync, writeFileSync, existsSync } from 'node:fs'
-import { resolve, dirname } from 'node:path'
+import { resolve, dirname, basename } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { espnProvider } from './providers/espn'
 import { fetchStandings } from './providers/espn-standings'
@@ -66,8 +66,9 @@ export function preserveContext(previous: readonly Fixture[], fetched: Fixture[]
 type StandingsOutcome = { status: SyncReport['standings']; rankMoves: number; data: StandingsFile }
 
 async function prepareStandings(): Promise<StandingsOutcome> {
-  const previous: StandingsFile | null = existsSync(STANDINGS)
-    ? standingsFileSchema.parse(JSON.parse(readFileSync(STANDINGS, 'utf8')))
+  const baseline = previousPath(STANDINGS)
+  const previous: StandingsFile | null = existsSync(baseline)
+    ? standingsFileSchema.parse(JSON.parse(readFileSync(baseline, 'utf8')))
     : null
 
   const standings = standingsFileSchema.parse(await fetchStandings())
@@ -94,6 +95,16 @@ const arg = (name: string, fallback: string) => {
   return hit ? hit.slice(name.length + 3) : fallback
 }
 
+/** Read an exported, validated pre-merge baseline while conflict-marked output files await
+ * regeneration. This option changes reads only: every write still targets src/data/. */
+function previousPath(output: string): string {
+  const directory = arg('baseline-dir', '')
+  if (!directory) return output
+  const path = resolve(directory, basename(output))
+  if (!existsSync(path)) throw new Error(`Missing explicit sync baseline: ${path}`)
+  return path
+}
+
 async function main() {
   const from = arg('from', addDays(todayIso(), -30))
   const to = arg('to', addDays(todayIso(), 150))
@@ -102,8 +113,9 @@ async function main() {
   console.log(`\nKickoff sync · ${from} .. ${to} · provider=${espnProvider.name}`)
   if (check) console.log('(--check: reporting only, nothing will be written)')
 
-  const previous: Fixture[] = existsSync(FIXTURES)
-    ? fixturesFileSchema.parse(JSON.parse(readFileSync(FIXTURES, 'utf8')))
+  const baseline = previousPath(FIXTURES)
+  const previous: Fixture[] = existsSync(baseline)
+    ? fixturesFileSchema.parse(JSON.parse(readFileSync(baseline, 'utf8')))
     : []
 
   const { fixtures: fetched, counts } = await espnProvider.fetchWindow(from, to)
