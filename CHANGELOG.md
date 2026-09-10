@@ -17,6 +17,12 @@ releases.
   only; the app is unchanged. Reviewed cold by Claude, rebutted by Codex, resolved by Claude,
   ruled by Beni.
 
+### Fixed
+
+- Stadium clocks use the venue country and venue-id overrides, with an explicit unknown state
+  instead of the viewer's clock. Zone changes are recorded in the sync report; unknown zones
+  are counted. The workflow grammar is tested against the report printer.
+
 ## [0.3.2] — 2026-09-09
 
 The sync's verify step survives a live match. Paper trail: `docs/v0.3.2-fast-track-brief.md`; Beni's rulings, 8–9 Sep 2026: v0.3.2, fast-track, fix the handles now.

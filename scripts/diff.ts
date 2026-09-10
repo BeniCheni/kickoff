@@ -20,6 +20,7 @@ export type ChangeKind =
   | 'TIME_CHANGED'
   | 'STATUS_CHANGED'
   | 'VENUE_CHANGED'
+  | 'VENUE_TZ_CHANGED'
   | 'TIME_CONFIDENCE_CHANGED'
 
 export type Change = {
@@ -129,6 +130,12 @@ export function diffFixtures(
         detail: `${before.venue ?? '(none)'} -> ${after.venue ?? '(none)'}`,
       })
     }
+    if (before.venueTz !== after.venueTz) {
+      changes.push({
+        kind: 'VENUE_TZ_CHANGED', id, label: label(after), urgent: false,
+        detail: `${before.venueTz ?? '(unknown)'} -> ${after.venueTz ?? '(unknown)'}`,
+      })
+    }
     if (before.timeConfidence !== after.timeConfidence) {
       changes.push({
         kind: 'TIME_CONFIDENCE_CHANGED', id, label: label(after), urgent: false,
@@ -175,7 +182,7 @@ export function diffFixtures(
 
   const RANK: Record<ChangeKind, number> = {
     HOME_AWAY_INVERTED: 0, DATE_MOVED: 1, STATUS_CHANGED: 2, TIME_CHANGED: 3,
-    VENUE_CHANGED: 4, DISAPPEARED: 5, NEW: 6, TIME_CONFIDENCE_CHANGED: 7,
+    VENUE_CHANGED: 4, DISAPPEARED: 5, NEW: 6, TIME_CONFIDENCE_CHANGED: 7, VENUE_TZ_CHANGED: 8,
   }
   return changes.sort(
     (a, b) => Number(b.urgent) - Number(a.urgent) || RANK[a.kind] - RANK[b.kind],
@@ -267,6 +274,8 @@ export type SyncReport = {
   /** `failed` keeps the previous table and is never a reason to commit. */
   standings: 'changed' | 'unchanged' | 'failed'
   rankMoves: number
+  zonesUnknown?: number
+  standingsDegraded?: readonly string[]
   /** Whether the PR this run would open may merge itself — see mergeVerdict. */
   merge: MergeVerdict
 }
@@ -327,6 +336,7 @@ export function reportSaysChanged(r: SyncReport): boolean {
 export function formatReportLine(r: SyncReport): string {
   return (
     `report: changed=${reportSaysChanged(r)} changes=${r.changes} urgent=${r.urgent} ` +
-    `standings=${r.standings} rank-moves=${r.rankMoves} merge=${r.merge}`
+    `standings=${r.standings} rank-moves=${r.rankMoves} merge=${r.merge} ` +
+    `zones-unknown=${r.zonesUnknown ?? 0} standings-degraded=${r.standingsDegraded?.length ? [...r.standingsDegraded].sort().join(',') : 'none'}`
   )
 }

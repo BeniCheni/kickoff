@@ -1,8 +1,7 @@
 /**
  * Competition metadata. `espnCode` is the path segment in ESPN's public scoreboard API;
- * `tz` is the IANA zone of the competition's home country, used to render stadium-local
- * kickoff times. Competitions without an `espnCode` are reference-only (their fixtures are
- * not published yet, e.g. UEFA draws) and carry hand-authored placeholder rows.
+ * `tz` is the competition's reference zone, never a fixture's stadium clock. Competitions
+ * without an `espnCode` are reference-only: no fixture rows are hand-authored for them.
  */
 const RAW = {
   supercup:     { name: 'UEFA Super Cup',        group: 'europe',   tz: 'Europe/Vienna', flag: '⭐', color: '#C4272F', tv: 'Paramount+ · CBS', espnCode: 'uefa.super_cup' },
@@ -61,6 +60,35 @@ export const GROUP_LABELS = [
 ] as const
 
 export const BROOKLYN_TZ = 'America/New_York'
+
+/** Venue reference data, keyed on ESPN's country spelling; cities are not reliable keys.
+ * IANA zone.tab: https://data.iana.org/time-zones/tzdb/zone.tab
+ * Mainland defaults for the countries in the European feeds; island/neutral exceptions
+ * belong in the venue-id map below. Kazakhstan has shared UTC+5 since March 2024.
+ */
+export const VENUE_TZ_BY_COUNTRY: Readonly<Record<string, string>> = {
+  England: 'Europe/London', Spain: 'Europe/Madrid', Germany: 'Europe/Berlin',
+  France: 'Europe/Paris', Italy: 'Europe/Rome', Netherlands: 'Europe/Amsterdam',
+  Portugal: 'Europe/Lisbon', Belgium: 'Europe/Brussels', Greece: 'Europe/Athens',
+  Türkiye: 'Europe/Istanbul', Czechia: 'Europe/Prague', Norway: 'Europe/Oslo',
+  Austria: 'Europe/Vienna', Denmark: 'Europe/Copenhagen', Poland: 'Europe/Warsaw',
+  Cyprus: 'Asia/Nicosia', Romania: 'Europe/Bucharest', Bulgaria: 'Europe/Sofia',
+  Scotland: 'Europe/London', Croatia: 'Europe/Zagreb', Switzerland: 'Europe/Zurich',
+  Slovakia: 'Europe/Bratislava', Armenia: 'Asia/Yerevan', Slovenia: 'Europe/Ljubljana',
+  Hungary: 'Europe/Budapest', Albania: 'Europe/Tirane', Finland: 'Europe/Helsinki',
+  Sweden: 'Europe/Stockholm', Latvia: 'Europe/Riga', Kazakhstan: 'Asia/Almaty',
+  Georgia: 'Asia/Tbilisi', Andorra: 'Europe/Andorra', Lithuania: 'Europe/Vilnius',
+  Serbia: 'Europe/Belgrade', 'Bosnia and Herzegovina': 'Europe/Sarajevo',
+  Gibraltar: 'Europe/Gibraltar',
+}
+
+/** ESPN venue id → zone. A Canary/Madeira ground or a neutral venue can override a country. */
+export const VENUE_TZ_OVERRIDES: Readonly<Record<string, string>> = {}
+
+export function venueTimeZone(country?: string, venueId?: string): string | undefined {
+  if (venueId && Object.hasOwn(VENUE_TZ_OVERRIDES, venueId)) return VENUE_TZ_OVERRIDES[venueId]
+  return country && Object.hasOwn(VENUE_TZ_BY_COUNTRY, country) ? VENUE_TZ_BY_COUNTRY[country] : undefined
+}
 
 /* ------------------------------- league table metadata ------------------------------- */
 

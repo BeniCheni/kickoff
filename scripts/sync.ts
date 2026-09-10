@@ -166,6 +166,7 @@ async function main() {
         standings: standings.status,
         rankMoves: standings.rankMoves,
         merge: merge.verdict,
+        zonesUnknown: valid.filter((f) => f.venueTz === undefined).length,
       })
     )
   }

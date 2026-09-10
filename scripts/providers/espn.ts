@@ -1,4 +1,4 @@
-import { SYNCABLE, COMPETITIONS, type CompetitionKey } from '../../src/lib/competitions'
+import { SYNCABLE, venueTimeZone, type CompetitionKey } from '../../src/lib/competitions'
 import { fixtureId, type Fixture, type FixtureStatus } from '../../src/lib/schema'
 import { addDays } from '../../src/lib/time'
 import { identityContext, providerIdentity } from './identity'
@@ -159,11 +159,17 @@ export function normalizeEvent(
   // presenting an unscheduled Clásico as a confirmed 16:15 kickoff.
   const timeConfidence = comp.timeValid === false ? 'round_placeholder' : 'exact'
 
+  const venueId = providerIdentity(comp.venue?.id) ?? undefined
+  const country = comp.venue?.address?.country
+  const venueCountry = typeof country === 'string' && country.trim() ? country : undefined
+
   const fixture: Fixture = {
     id: fixtureId(competition, sourceId),
     competition,
     kickoffUtc: new Date(event.date).toISOString(),
-    venueTz: COMPETITIONS[competition].tz,
+    venueTz: venueTimeZone(venueCountry, venueId),
+    ...(venueId ? { venueId } : {}),
+    ...(venueCountry ? { venueCountry } : {}),
     home: { name: home, sourceId: providerIdentity(homeC.team.id)! },
     away: { name: away, sourceId: providerIdentity(awayC.team.id)! },
     status,

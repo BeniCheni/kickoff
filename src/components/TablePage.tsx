@@ -354,8 +354,8 @@ export function TablePage() {
                       <div className="mt-px text-[10.5px] text-ink-secondary">
                         {r.next.timeConfidence === 'exact' ? (
                           <>
-                            🗽 {r.next.times.brooklyn.time} {r.next.times.abbrev} ·{' '}
-                            {r.next.times.local.time} local
+                            🗽 {r.next.times.brooklyn.time} {r.next.times.abbrev}
+                            {r.next.times.local && <> · {r.next.times.local.time} local</>}
                           </>
                         ) : (
                           <i className="text-floodlight-strong">

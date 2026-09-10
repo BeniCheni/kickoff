@@ -17,6 +17,13 @@ export const teamSchema = z.object({
   sourceId: z.string().optional(),
 })
 
+export const venueTzSchema = z.string().min(1).refine((zone) => {
+  try {
+    new Intl.DateTimeFormat('en-US', { timeZone: zone }).format(0)
+    return true
+  } catch { return false }
+}, 'a valid IANA time zone')
+
 export const fixtureSchema = z.object({
   /** Stable across syncs. The join key for later betting overlays (positions, tokens). */
   id: z.string().min(1),
@@ -24,8 +31,11 @@ export const fixtureSchema = z.object({
   /** ISO-8601 instant, always UTC. The one authoritative time fact. */
   kickoffUtc: z.iso.datetime(),
   /** IANA zone of the stadium, for rendering the local kickoff. */
-  venueTz: z.string().min(1),
+  venueTz: venueTzSchema.optional(),
   venue: z.string().optional(),
+  /** Provider venue evidence retained so the country/override mapping can be audited. */
+  venueId: z.string().min(1).optional(),
+  venueCountry: z.string().min(1).optional(),
   home: teamSchema,
   away: teamSchema,
   status: z.enum(['scheduled', 'in_play', 'full_time', 'postponed', 'cancelled']),

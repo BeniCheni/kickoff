@@ -112,7 +112,7 @@ jobs:
             echo "::error::the sync output has no 'report:' line — refusing to guess whether anything changed."
             exit 1
           fi
-          if ! printf '%s\n' "$LINE" | grep -Eqx 'report: changed=(true|false) changes=[0-9]+ urgent=[0-9]+ standings=(changed|unchanged|failed) rank-moves=[0-9]+ merge=(auto|hold)'; then
+          if ! printf '%s\n' "$LINE" | grep -Eqx 'report: changed=(true|false) changes=[0-9]+ urgent=[0-9]+ standings=(changed|unchanged|failed) rank-moves=[0-9]+ merge=(auto|hold) zones-unknown=[0-9]+ standings-degraded=(none|[a-z0-9]+(,[a-z0-9]+)*)'; then
             echo "::error::malformed report line: $LINE"
             exit 1
           fi

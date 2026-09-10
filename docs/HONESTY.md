@@ -46,7 +46,7 @@ Matchday numbers are not invented either. The provider exposes none, so the app 
 
 `scripts/diff.ts` compares the fresh fetch with the committed file, fixture by fixture, and
 reports what moved: `DATE_MOVED`, `TIME_CHANGED`, `VENUE_CHANGED`, `STATUS_CHANGED`,
-`TIME_CONFIDENCE_CHANGED`, `NEW`, `DISAPPEARED`, and `HOME_AWAY_INVERTED` — the last one is
+`VENUE_TZ_CHANGED` (non-urgent), `TIME_CONFIDENCE_CHANGED`, `NEW`, `DISAPPEARED`, and `HOME_AWAY_INVERTED` — the last one is
 the PSG–Rennes case, and it is detected both when the provider keeps the event id and swaps
 the roles, and when it recreates the event as its mirror image within ten days. Anything
 inside −6 h..+72 h of now is **urgent**, and so is any postponement or cancellation at any
@@ -91,7 +91,7 @@ decision. This supersedes the earlier standings soft-failure exception.
 Every sync that completes fetching and validation ends with one machine-readable line:
 
 ```
-report: changed=true changes=2 urgent=0 standings=changed rank-moves=8 merge=auto
+report: changed=true changes=2 urgent=0 standings=changed rank-moves=8 merge=auto zones-unknown=0 standings-degraded=none
 ```
 
 "Changed" is the diff engine's verdict, never `git diff`'s — per-row fetch stamps move on
@@ -99,6 +99,8 @@ every run and are not changes. `merge=` is whether the PR this run opens may mer
 `hold` when anything is urgent, when any fixture vanished or inverted at any horizon, or when
 the standings fetch failed; `auto` otherwise. `standings=failed` remains a supported legacy
 report value; current fetch failures abort with exit 2 before a report instead.
+`zones-unknown` counts fixtures without a mapped stadium zone; Brooklyn still renders, the
+stadium clock does not. `standings-degraded` names structurally ended phase tables, or `none`.
 The format is pinned verbatim in a test, the
 workflow validates it with the same regex, and a missing or malformed line fails the run
 rather than falling through to a guess.
