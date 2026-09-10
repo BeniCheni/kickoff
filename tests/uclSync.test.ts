@@ -28,8 +28,9 @@ beforeEach(() => {
 afterEach(() => { process.argv = args; vi.restoreAllMocks(); vi.unstubAllGlobals(); vi.useRealTimers() })
 describe('an ended UCL table does not freeze domestic snapshots', () => {
   it.each(['child', 'name', 'count'])('degrades only UCL on a validated %s reshape, records meta and reports it', async change => {
+    // 'child': the phase child is gone and two others stand in its place; 'name': one child, renamed; 'count': the phase child lost a row.
     mutate = body => {
-      if (change === 'child') body.children.push(structuredClone(body.children[0]))
+      if (change === 'child') { const gone = structuredClone(body.children[0]); gone.name = 'Knockout Phase'; body.children = [gone, { name: 'Final', standings: { entries: [] } }] }
       if (change === 'name') body.children[0].name = 'Knockout Phase'
       if (change === 'count') body.children[0].standings.entries.pop()
     }
@@ -60,5 +61,24 @@ describe('an ended UCL table does not freeze domestic snapshots', () => {
     vi.stubGlobal('fetch', vi.fn(async () => ({ ok: false, status: 503 })))
     expect(await runSync()).toBe(2)
     expect(mocks.write).not.toHaveBeenCalled()
+  })
+})
+
+describe('an intact league-phase child survives extra children (cold review, PR #39)', () => {
+  it('a second, differently named child during the phase does not abort the snapshot while the phase child is intact', async () => {
+    vi.setSystemTime(new Date('2026-09-10T12:00:00Z'))
+    mutate = body => { body.children.push({ name: 'Knockout Phase', standings: { entries: [] } }) }
+    expect(await runSync()).toBe(0)
+    const writes = Object.fromEntries(mocks.write.mock.calls.map(([p, json]) => [p.split('/').at(-1), JSON.parse(json)]))
+    expect(Object.keys(writes['standings.json'].leagues).sort()).toEqual(['bundesliga', 'laliga', 'ligue1', 'pl', 'seriea', 'ucl'])
+    expect(writes['standings.json'].leagues.ucl).toHaveLength(36)
+    expect(writes['meta.json'].standingsDegraded).toEqual([])
+  })
+  it('the phase child is found by name, not by position', async () => {
+    vi.setSystemTime(new Date('2026-09-10T12:00:00Z'))
+    mutate = body => { body.children.unshift({ name: 'Knockout Phase', standings: { entries: [] } }) }
+    expect(await runSync()).toBe(0)
+    const writes = Object.fromEntries(mocks.write.mock.calls.map(([p, json]) => [p.split('/').at(-1), JSON.parse(json)]))
+    expect(writes['standings.json'].leagues.ucl).toHaveLength(36)
   })
 })

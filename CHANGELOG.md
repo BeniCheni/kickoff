@@ -40,6 +40,11 @@ releases.
 
 ### Fixed
 
+- An extra child in ESPN's league-phase standings response no longer aborts the whole
+  snapshot while the phase child is intact: the sync reads the child that carries the phase's
+  name, names any others in its log, and still refuses to write when that child is missing,
+  short a row or malformed (cold review of #39).
+
 - Stadium clocks use the venue country and venue-id overrides, with an explicit unknown state
   instead of the viewer's clock. Zone changes are recorded in the sync report; unknown zones
   are counted. The workflow grammar is tested against the report printer.

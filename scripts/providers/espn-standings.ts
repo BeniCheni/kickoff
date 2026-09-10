@@ -79,15 +79,27 @@ export async function fetchStandings(season = currentSeasonStartYear(), now = ne
       const children: any[] = body?.children
       if (!Array.isArray(children) || !children.length) throw new Error(`ESPN standings ${code}: missing children array`)
       const phase = LEAGUE_TABLES[key]!.phase
-      // Validate every returned entry before classifying a structural phase change.
+      // Validate every returned child before classifying a structural phase change.
       // A malformed extra child must not become a successful 'ended' response.
       for (const child of (phase ? children : children.slice(0, 1))) {
         if (!Array.isArray(child?.standings?.entries)) throw new Error(`ESPN standings ${code}: missing entries array`)
       }
-      const entries: any[] = phase ? children.flatMap((c) => c.standings.entries) : children[0].standings.entries
+      // A phase competition's table is the child that carries the phase's name, wherever the
+      // provider files it. An extra child beside an intact phase child (a knockout bracket
+      // published early) is noise, not a structural end; it is named in the log and ignored.
+      const phaseChild = phase
+        ? children.find((c) => typeof c?.name === 'string' && c.name.toLowerCase() === phase)
+        : children[0]
+      if (phase && children.length > 1) {
+        console.warn(`ESPN standings ${code}: ${children.length} children returned; reading "${phaseChild?.name ?? '(none)'}" as the ${phase} table`)
+      }
+      // Every entry in every returned child is validated: a malformed child after the phase is a
+      // validation failure, never an "ended" signal. Rows are taken from the phase child alone.
+      const entries: Array<[any, boolean]> = (phase ? children : children.slice(0, 1))
+        .flatMap((child) => (child.standings.entries as any[]).map((entry): [any, boolean] => [entry, child === phaseChild]))
       const rows: StandingRow[] = []
       const rejected: string[] = []
-      for (const [index, entry] of entries.entries()) {
+      for (const [index, [entry, ofPhaseChild]] of entries.entries()) {
         const context = `${code} entry ${index + 1}, team ${identityContext(entry?.team?.id)}`
         const row = normalizeStandingEntry(entry)
         if (!row) {
@@ -95,8 +107,8 @@ export async function fetchStandings(season = currentSeasonStartYear(), now = ne
           continue
         }
         const parsed = standingRowSchema.safeParse(row)
-        if (parsed.success) rows.push(parsed.data)
-        else rejected.push(`  ! ${context}: ${parsed.error.issues.map((i) => `${i.path.join('.')} — ${i.message}`).join('; ')}`)
+        if (!parsed.success) rejected.push(`  ! ${context}: ${parsed.error.issues.map((i) => `${i.path.join('.')} — ${i.message}`).join('; ')}`)
+        else if (ofPhaseChild) rows.push(parsed.data)
       }
       if (rejected.length) throw new Error(`ESPN standings: ${rejected.length} rejected entries:\n${rejected.join('\n')}`)
 
@@ -105,8 +117,7 @@ export async function fetchStandings(season = currentSeasonStartYear(), now = ne
       // games-in-hand and the matchday label). The previous snapshot survives either way,
       // because the throw happens before anything is written.
       const expected = LEAGUE_TABLES[key]!.teams
-      const phaseChanged = !!phase && (children.length !== 1 ||
-        typeof children[0].name !== 'string' || children[0].name.toLowerCase() !== phase || rows.length !== expected)
+      const phaseChanged = !!phase && (!phaseChild || rows.length !== expected)
       if (phaseChanged && afterPhaseWindows(key, season, now)) {
         return { key, rows: null } as const
       }
