@@ -1,10 +1,17 @@
-import { afterEach, expect, it } from 'vitest'
+import { afterEach, beforeEach, expect, it } from 'vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { META } from '../../src/lib/fixtures'
 import { TABLE_LEAGUES } from '../../src/lib/competitions'
 import { StalenessBanner } from '../../src/components/StalenessBanner'
 import { TablePage } from '../../src/components/TablePage'
+import { STANDINGS } from '../../src/lib/standings'
+import { normalizeStandingEntry } from '../../scripts/providers/espn-standings'
+import recorded from '../fixtures/espn/ucl-standings.json'
 import { primeClock } from './rig'
+
+const originalUcl = STANDINGS.leagues.ucl
+beforeEach(() => { STANDINGS.leagues.ucl = recorded.children[0]!.standings.entries.map((entry) => normalizeStandingEntry(entry)!) })
+afterEach(() => { if (originalUcl) STANDINGS.leagues.ucl = originalUcl; else delete STANDINGS.leagues.ucl })
 
 let release: (() => void) | undefined
 afterEach(() => { cleanup(); release?.(); release = undefined })

@@ -16,7 +16,7 @@ function installResponse(change: (entries: any[], code: string) => any[]) {
       row.stats.find((s: any) => s.name === 'rank').value = i + 1
       return row
     })
-    return { ok: true, json: async () => ({ children: [{ standings: { entries: change(rows, league.code) } }] }) }
+    return { ok: true, json: async () => ({ children: [{ name: league.key === 'ucl' ? 'League Phase' : league.code, standings: { entries: change(rows, league.code) } }] }) }
   }))
 }
 afterEach(() => vi.unstubAllGlobals())
@@ -25,7 +25,7 @@ describe('standings reject every bad entry, regardless of the remaining row coun
   it('accepts complete, valid league responses', async () => {
     installResponse((rows) => rows)
     const data = await fetchStandings(2026)
-    expect(Object.keys(data.leagues)).toHaveLength(5)
+    expect(Object.keys(data.leagues)).toHaveLength(6)
     expect(data.leagues.laliga).toHaveLength(20)
     expect(data.leagues.ligue1).toHaveLength(18)
   })

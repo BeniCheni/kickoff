@@ -45,6 +45,19 @@ const FIXTURES = resolve(ROOT, 'src/data/fixtures.json')
 const META = resolve(ROOT, 'src/data/meta.json')
 const STANDINGS = resolve(ROOT, 'src/data/standings.json')
 
+/** Preserve first-seen round identity, including a first sighting outside every window.
+ * Checking for a prior fixture, not a truthy round, is what keeps absence stable. */
+export function preserveContext(previous: readonly Fixture[], fetched: Fixture[]): void {
+  const byId = new Map(previous.map((f) => [f.id, f]))
+  for (const f of fetched) {
+    const stored = byId.get(f.id)
+    if (!stored) continue
+    if (stored.note) f.note = stored.note
+    if (stored.round !== undefined) f.round = stored.round
+    else delete f.round
+  }
+}
+
 /**
  * Fixtures + standings are the authoritative snapshot boundary. Fetch and validate both
  * before writing either; even a standings outage intentionally delays fixture updates.
@@ -60,6 +73,7 @@ async function prepareStandings(): Promise<StandingsOutcome> {
   const standings = standingsFileSchema.parse(await fetchStandings())
 
   const { rowsChanged, moves } = diffStandings(previous, standings)
+  const phaseChanged = JSON.stringify(previous?.degraded ?? []) !== JSON.stringify(standings.degraded ?? [])
   console.log(
     `\nstandings: ${Object.entries(standings.leagues)
       .map(([k, v]) => `${k} ${v.length}`)
@@ -72,7 +86,7 @@ async function prepareStandings(): Promise<StandingsOutcome> {
       : 'standings unchanged vs last snapshot',
   )
 
-  return { status: rowsChanged > 0 ? 'changed' : 'unchanged', rankMoves: moves.length, data: standings }
+  return { status: rowsChanged > 0 || phaseChanged ? 'changed' : 'unchanged', rankMoves: moves.length, data: standings }
 }
 
 const arg = (name: string, fallback: string) => {
@@ -109,11 +123,7 @@ async function main() {
 
   // Hand-authored notes are Beni's context (venue quirks, postponement reasons, why a
   // fixture matters). The provider knows nothing about them, so carry them forward by id.
-  const notes = new Map(previous.filter((f) => f.note).map((f) => [f.id, f.note!]))
-  for (const f of valid) {
-    const carried = notes.get(f.id)
-    if (carried) f.note = carried
-  }
+  preserveContext(previous, valid)
 
   valid.sort((a, b) => a.kickoffUtc.localeCompare(b.kickoffUtc) || a.id.localeCompare(b.id))
 
@@ -167,6 +177,7 @@ async function main() {
         rankMoves: standings.rankMoves,
         merge: merge.verdict,
         zonesUnknown: valid.filter((f) => f.venueTz === undefined).length,
+        standingsDegraded: standings.data.degraded,
       })
     )
   }
@@ -185,6 +196,7 @@ async function main() {
     window: { from, to },
     counts,
     total: valid.length,
+    standingsDegraded: standings.data.degraded ?? [],
   })
 
   // All provider work, schema checks and serialization precede the first write.

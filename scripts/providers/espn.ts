@@ -1,6 +1,7 @@
 import { SYNCABLE, venueTimeZone, type CompetitionKey } from '../../src/lib/competitions'
 import { fixtureId, type Fixture, type FixtureStatus } from '../../src/lib/schema'
 import { addDays } from '../../src/lib/time'
+import { resolveMatchday } from '../../src/lib/matchdays'
 import { identityContext, providerIdentity } from './identity'
 
 /**
@@ -186,10 +187,14 @@ export function normalizeEvent(
     if (Number.isFinite(h) && Number.isFinite(a)) fixture.result = { home: h, away: a }
   }
 
-  // Deliberately NOT setting `round`: ESPN exposes no matchday number for these leagues,
-  // and a round cannot be inferred from the date alone — La Liga's 2026-27 opening round is
-  // spread across Aug 15-27 and interleaves with matchday 2. Inventing one would be exactly
-  // the kind of plausible-but-unverified data this rewrite exists to eliminate.
+  if (typeof event.season?.slug === 'string' && event.season.slug) fixture.phase = event.season.slug
+  if (Number.isInteger(event.season?.year)) fixture.season = event.season.year
+  // Only league-phase fixtures have these windows. Domestic rounds remain unset.
+  // This candidate is used once; sync's preserve step carries the stored baseline by id.
+  if (fixture.phase === 'league-phase' && fixture.season !== undefined) {
+    const md = resolveMatchday(competition, fixture.kickoffUtc, fixture.season)
+    if (md !== null) fixture.round = String(md)
+  }
 
   return fixture
 }

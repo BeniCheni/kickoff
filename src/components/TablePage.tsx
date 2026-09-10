@@ -19,6 +19,7 @@ import {
 import { useUrlState } from '../lib/useUrlState'
 import { encodeLeague, parseLeague } from '../lib/urlCodecs'
 import { useNow } from '../lib/useNow'
+import { META } from '../lib/fixtures'
 import { CompetitionChip } from './CompetitionChip'
 
 /**
@@ -152,7 +153,7 @@ export function TablePage() {
   const rows = useMemo(() => tableFor(league, today, nowUtcIso), [league, today, nowUtcIso])
   const meta = LEAGUE_TABLES[league]!
   const comp = COMPETITIONS[league]
-  const progress = matchdayProgress(rows)
+  const progress = matchdayProgress(rows, meta)
   const inHand = clubsInHand(rows)
   // Zone bands only paint when the hand-authored ranges describe the synced season —
   // last season's allocations over this season's table would be confidently wrong.
@@ -171,7 +172,9 @@ export function TablePage() {
   if (!rows.length) {
     return (
       <div className="rounded border border-line bg-surface px-3.5 py-3 text-[13px] text-ink-muted">
-        No table in the snapshot for {comp.name} — run <code className="font-mono">npm run sync</code>.
+        No table in the snapshot for {comp.name} — {META.standingsDegraded?.includes(league)
+          ? 'the provider no longer supplies the configured league-phase table.'
+          : <>run <code className="font-mono">npm run sync</code>.</>}
       </div>
     )
   }
@@ -188,7 +191,7 @@ export function TablePage() {
       {/* freshness + games-in-hand callout */}
       <div className="mb-2.5 rounded-[5px] border border-line border-l-3 border-l-floodlight bg-floodlight-bg px-2.5 py-2">
         <div className="label-caps text-[9.5px] text-floodlight-strong">
-          {progress ? `As of matchday ${progress.played} of ${progress.of}` : 'League table'} · {syncedAgo(new Date(nowUtcIso))}
+          {progress ? `As of matchday ${progress.played} of ${progress.of}${meta.phase ? ` · ${meta.phase}` : ''}` : 'League table'} · {syncedAgo(new Date(nowUtcIso))}
         </div>
         {inHand > 0 && (
           <div className="mt-0.5 text-[11px] leading-normal text-ink-secondary">

@@ -40,7 +40,10 @@ midnight, and is never evicted by arithmetic on an instant the league never set 
 slate's sub-line says how many of its count are TBC, so a count never quietly outruns the
 FIRST/LAST range drawn from the league-set times.
 
-Matchday numbers are not invented either. The provider exposes none, so the app shows none.
+Matchday numbers are not invented either. Where the provider exposes none, the app derives the number once, from the governing body's published windows, on the day it first sees the fixture, labels it computed, and keeps it; a fixture whose date later leaves that window is shown as rescheduled from it, and a fixture first seen outside every window is shown without a number. A fixture already moved between windows before the app first saw it is numbered by the window it was found in, and that is the one case this rule cannot detect.
+
+A future provider's round string outranks the derived window. This cycle ESPN supplies none;
+its phase and season guard the window derivation, so qualifying ties receive no league-phase number.
 
 ## 4. Every sync diffs against the last snapshot
 
@@ -84,7 +87,11 @@ whether a check failed, and the app advances only after a change-bearing update 
 successful quiet run does not advance it). PR #23's Pass 2 treats a verified failure reader
 as an unresolved release gate, not a cost that documentation alone settles.
 Future ancillary data does not automatically join this boundary; membership needs an explicit
-decision. This supersedes the earlier standings soft-failure exception.
+decision. A structurally ended phase table is different from a failed fetch: after its final
+configured matchday window, a validated response whose child name, child count or row count
+no longer matches the configured phase is dropped for that competition only. The report and
+metadata name it; every fetch or entry-validation failure still aborts the whole snapshot.
+Unknown seasons cannot use this exception. This supersedes the earlier standings soft-failure exception.
 
 ## 6. The report line is an API
 

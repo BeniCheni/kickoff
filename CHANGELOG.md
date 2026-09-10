@@ -10,12 +10,21 @@ releases.
 
 ### Added
 
+- Champions League fixtures and the 36-club league-phase table join ESPN sync, with eight
+  matches per club and first-seen matchday baselines from UEFA's calendar. Reschedules keep
+  their original baseline; a first sighting outside the windows stays unnumbered.
+
 - The UCL league-phase design cycle's record under `docs/` (#34): the brief archive and the
   canvas transcription, the Round 1 cold review, the Round 2 rebuttal, the Round 3 decision
   packet, technical resolution and rulings, and the two prompts the cycle produced, the VIP
   correction pass and the implementation brief for "Kickoff learns the European week". Docs
   only; the app is unchanged. Reviewed cold by Claude, rebutted by Codex, resolved by Claude,
   ruled by Beni.
+
+### Changed
+
+- A structurally ended league-phase table is omitted with an explicit report and metadata
+  reason. Fetch failures and invalid entries still prevent every snapshot write.
 
 ### Fixed
 

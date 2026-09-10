@@ -49,6 +49,9 @@ export const fixtureSchema = z.object({
    */
   timeConfidence: z.enum(['exact', 'round_placeholder', 'tbd']),
   round: z.string().optional(),
+  /** ESPN phase evidence prevents league-phase windows labelling qualifying/knockout ties. */
+  phase: z.string().min(1).optional(),
+  season: z.number().int().optional(),
   result: z.object({ home: z.number().int(), away: z.number().int() }).optional(),
   /** Hand-authored context. Preserved across syncs by fixture id — the sync never clobbers it. */
   note: z.string().optional(),
@@ -68,6 +71,7 @@ export const metaSchema = z.object({
   window: z.object({ from: z.string(), to: z.string() }),
   counts: z.record(z.string(), z.number().int()),
   total: z.number().int(),
+  standingsDegraded: z.array(z.enum(COMPETITION_KEYS as [CompetitionKey, ...CompetitionKey[]])).optional(),
 })
 
 export const fixturesFileSchema = z.array(fixtureSchema)
@@ -106,6 +110,7 @@ export const standingsFileSchema = z.object({
   /** Season start year: 2026 means 2026-27. */
   season: z.number().int(),
   leagues: z.record(z.string(), z.array(standingRowSchema)),
+  degraded: z.array(z.enum(COMPETITION_KEYS as [CompetitionKey, ...CompetitionKey[]])).optional(),
 })
 
 export type Team = z.infer<typeof teamSchema>
