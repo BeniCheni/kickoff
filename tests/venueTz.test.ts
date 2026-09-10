@@ -42,6 +42,13 @@ describe('stadium clocks follow the venue, never the competition or viewer', () 
   it.each(['', 'Europe/Nonsense'])('rejects %j before rendering', (venueTz) => {
     expect(fixtureSchema.safeParse({ ...fixtures[0], venueTz }).success).toBe(false)
   })
+  it('remembers only the zones Intl accepted: a bad zone after a good one still fails, in either order', () => {
+    expect(venueTzSchema.safeParse('Europe/London').success).toBe(true)
+    expect(venueTzSchema.safeParse('Europe/Nonsense').success).toBe(false)
+    expect(venueTzSchema.safeParse('Europe/Nonsense').success).toBe(false)
+    expect(venueTzSchema.safeParse('Europe/London').success).toBe(true)
+    expect(venueTzSchema.safeParse('europe/london').success).toBe(venueTzSchema.safeParse('europe/london').success) // stable across calls
+  })
   it('reports a zone change as non-urgent even at kickoff', () => {
     const before = fixtures[0]!
     const after = { ...before, venueTz: undefined }

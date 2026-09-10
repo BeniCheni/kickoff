@@ -17,9 +17,16 @@ export const teamSchema = z.object({
   sourceId: z.string().optional(),
 })
 
+// Zones that have already passed `Intl` this session. The snapshot names about fifteen zones
+// across twelve hundred rows, and constructing a DateTimeFormat per row cost the app's boot
+// ~30 ms in Node (three cold parses, 10 Sep 2026); only successes are remembered, so an
+// invalid zone is rejected every time it appears.
+const KNOWN_ZONES = new Set<string>()
 export const venueTzSchema = z.string().min(1).refine((zone) => {
+  if (KNOWN_ZONES.has(zone)) return true
   try {
     new Intl.DateTimeFormat('en-US', { timeZone: zone }).format(0)
+    KNOWN_ZONES.add(zone)
     return true
   } catch { return false }
 }, 'a valid IANA time zone')
