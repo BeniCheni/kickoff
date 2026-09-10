@@ -8,6 +8,7 @@ import { readStoredTheme, resolveThemeFromEnvironment, themeStorageKey, writeSto
 import { TabNav, type Tab } from './components/TabNav'
 import { LensSwitcher } from './components/LensSwitcher'
 import { FixturesPage } from './components/FixturesPage'
+import { MomentsPage } from './components/MomentsPage'
 import { TablePage } from './components/TablePage'
 import { StalenessBanner } from './components/StalenessBanner'
 import { TickerStrip } from './components/TickerStrip'
@@ -19,8 +20,8 @@ export default function App() {
     document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light',
   )
 
-  // `/` is Fixtures; `/?tab=table` is the league table. The header and tab row persist
-  // across both, so each view is always one tap from the other. Tab switches push a
+  // `/` is Fixtures; Table and Moments use `?tab=`. The header and tab row persist
+  // across all three, so each view is always one tap from the others. Tab switches push a
   // history entry — Back returns to the previous tab, not out of the site.
   const [tab, setTab] = useUrlState<Tab>(
     'tab', 'fixtures',
@@ -121,9 +122,9 @@ export default function App() {
       <ViewBoundary key={`${tab}:${lens}`}>
         {lens === 'broadcast' && tab === 'fixtures' && <TickerStrip />}
 
-        <StalenessBanner />
+        {tab !== 'moments' && <StalenessBanner />}
 
-        {tab === 'table' ? <TablePage /> : <FixturesPage today={today} lens={lens} />}
+        {tab === 'moments' ? <MomentsPage /> : tab === 'table' ? <TablePage /> : <FixturesPage today={today} lens={lens} />}
       </ViewBoundary>
     </div>
   )

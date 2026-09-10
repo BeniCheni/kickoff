@@ -10,6 +10,9 @@ releases.
 
 ### Added
 
+- Moments becomes the third tab: an empty-first, hand-curated set of links to rights
+  holders, validated against fixture facts and preserved outside the sync boundary.
+
 - Each European matchday carries computed, absent or rescheduled provenance in all three
   fixture lenses; mixed days can show more than one matchday.
 

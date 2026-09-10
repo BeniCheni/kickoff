@@ -9,8 +9,8 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
-    "build:single": "tsc -b && vite build --mode single",
+    "build": "tsx scripts/validate-moments.ts && tsc -b && vite build",
+    "build:single": "tsx scripts/validate-moments.ts && tsc -b && vite build --mode single",
     "preview": "vite preview",
     "sync": "tsx scripts/sync.ts",
     "test": "vitest run",
