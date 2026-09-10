@@ -8,6 +8,15 @@ releases.
 
 ## [Unreleased]
 
+### Added
+
+- The UCL league-phase design cycle's record under `docs/` (#34): the brief archive and the
+  canvas transcription, the Round 1 cold review, the Round 2 rebuttal, the Round 3 decision
+  packet, technical resolution and rulings, and the two prompts the cycle produced, the VIP
+  correction pass and the implementation brief for "Kickoff learns the European week". Docs
+  only; the app is unchanged. Reviewed cold by Claude, rebutted by Codex, resolved by Claude,
+  ruled by Beni.
+
 ## [0.3.2] — 2026-09-09
 
 The sync's verify step survives a live match. Paper trail: `docs/v0.3.2-fast-track-brief.md`; Beni's rulings, 8–9 Sep 2026: v0.3.2, fast-track, fix the handles now.

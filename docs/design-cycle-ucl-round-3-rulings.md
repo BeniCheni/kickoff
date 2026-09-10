@@ -155,3 +155,20 @@ touches the canvas. The brief paste (section 8, item 9) is an action, not a ruli
 location, `src/curated/moments.json`, ruling 4); 1h (F4 gains the first-seen baseline policy and
 the rule 3 sentence above, ruling 2). Ruling 5 changes no artboard; it lands in HONESTY rule 5
 and the sync report. Everything else the VIP revision touches is in the packet's section 5.
+
+## Design approval (CEO seat), Thu 10 Sep 2026, about 11:00 EDT
+
+Beni, after reading PR #34 and its three rounds of comments: "LGTM to start cooking", with the
+instruction to merge PR #34 and to brief the builder. Recorded as the design approval the packet's
+section 5 defines: the policies and behaviour are unambiguous enough to specify; it is not a claim
+that a build is correct, which the release's own review and CI decide.
+
+**What the approval covers.** The canvas at SHA-256 `7fcd3695…` (138,306 bytes) as corrected by the
+ten rulings above and by the correction list in `design-cycle-ucl-round-3-vip-correction-prompt.md`.
+
+**What did not happen, by the CEO's decision to proceed.** The corrected canvas revision was not
+saved: at 11:01 EDT the file on disk was unchanged since 8 Sep. The designer's fidelity sign-off and
+the CTO's re-read against a corrected revision were therefore not performed; the corrections travel
+as requirements in `design-cycle-ucl-implementation-prompt.md` instead, and a corrected canvas may
+land later without changing the build. D3 and D12 remain open and release-side; the brief paste
+remains an action. PR #34 was squash-merged by the CTO seat on this instruction.
