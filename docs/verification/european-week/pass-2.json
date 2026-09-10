@@ -1,0 +1,3104 @@
+{
+  "headAtBrowserCheck": "1832b2c504ff5d259d251458e85e2ef3f4fb60d2",
+  "mainMerged": "782613ba964d49a7029ccdbfc0ef31610767430c",
+  "baseline": "f1ab7f38b5c620f34418cae259a2df22f18c0c5d",
+  "recount": {
+    "differences": {
+      "source": 1199,
+      "phase": 1055,
+      "season": 1055
+    },
+    "before": {
+      "raw": 759584,
+      "gzip": 57105
+    },
+    "after": {
+      "raw": 697671,
+      "gzip": 53763
+    },
+    "fixtureTotal": 1199,
+    "metaTotal": 1199,
+    "domestic": 1051,
+    "domesticFields": 0,
+    "roundChanges": 0,
+    "tables": [
+      [
+        "ucl",
+        36
+      ],
+      [
+        "laliga",
+        20
+      ],
+      [
+        "pl",
+        20
+      ],
+      [
+        "seriea",
+        20
+      ],
+      [
+        "ligue1",
+        18
+      ],
+      [
+        "bundesliga",
+        18
+      ]
+    ]
+  },
+  "metadataOnlySaving": {
+    "rows": 1055,
+    "rawBytes": 61913,
+    "gzipBytes": 3348
+  },
+  "build": {
+    "before": {
+      "jsKB": 913.54,
+      "gzipKB": 147.9
+    },
+    "after": {
+      "jsKB": 864.28,
+      "gzipKB": 145.78
+    }
+  },
+  "chipContrast": {
+    "fills": [
+      {
+        "key": "supercup",
+        "fill": "#C4272F",
+        "white": 5.708992606278245,
+        "ink": "#ffffff",
+        "current": 5.708992606278245
+      },
+      {
+        "key": "shield",
+        "fill": "#6B4226",
+        "white": 8.63332798045084,
+        "ink": "#ffffff",
+        "current": 8.63332798045084
+      },
+      {
+        "key": "tdc",
+        "fill": "#C05780",
+        "white": 4.271527514746602,
+        "ink": "#000000",
+        "current": 4.916274079354906
+      },
+      {
+        "key": "dflsupercup",
+        "fill": "#2F4B7C",
+        "white": 8.683622536604384,
+        "ink": "#ffffff",
+        "current": 8.683622536604384
+      },
+      {
+        "key": "supercoppa",
+        "fill": "#1B4B5A",
+        "white": 9.542547576896046,
+        "ink": "#ffffff",
+        "current": 9.542547576896046
+      },
+      {
+        "key": "supercopa",
+        "fill": "#8B1E3F",
+        "white": 8.916140893220504,
+        "ink": "#ffffff",
+        "current": 8.916140893220504
+      },
+      {
+        "key": "ucl",
+        "fill": "#8B6FE8",
+        "white": 3.7927987981279974,
+        "ink": "#000000",
+        "current": 5.536808335407858
+      },
+      {
+        "key": "uel",
+        "fill": "#FF7A00",
+        "white": 2.613301085130387,
+        "ink": "#000000",
+        "current": 8.0358134466363
+      },
+      {
+        "key": "uecl",
+        "fill": "#2FB8C4",
+        "white": 2.393389353888892,
+        "ink": "#000000",
+        "current": 8.77416788283035
+      },
+      {
+        "key": "laliga",
+        "fill": "#D85A30",
+        "white": 3.8710164293357634,
+        "ink": "#000000",
+        "current": 5.42493176749535
+      },
+      {
+        "key": "pl",
+        "fill": "#7F77DD",
+        "white": 3.7599187273579617,
+        "ink": "#000000",
+        "current": 5.5852271080221945
+      },
+      {
+        "key": "seriea",
+        "fill": "#1D9E75",
+        "white": 3.3871749222916594,
+        "ink": "#000000",
+        "current": 6.199856955067451
+      },
+      {
+        "key": "ligue1",
+        "fill": "#378ADD",
+        "white": 3.5947035731047703,
+        "ink": "#000000",
+        "current": 5.841928151494883
+      },
+      {
+        "key": "bundesliga",
+        "fill": "#BA7517",
+        "white": 3.720298116960312,
+        "ink": "#000000",
+        "current": 5.644708929175319
+      }
+    ],
+    "inactive": [
+      {
+        "theme": "light",
+        "ground": "bg",
+        "foreground": "#55614f",
+        "background": "#f7f5ee",
+        "current": 5.998805938354926,
+        "faded": 2.1523891257258203
+      },
+      {
+        "theme": "light",
+        "ground": "surface",
+        "foreground": "#55614f",
+        "background": "#ffffff",
+        "current": 6.544014657613658,
+        "faded": 2.215809918253105
+      },
+      {
+        "theme": "dark",
+        "ground": "bg",
+        "foreground": "#a9b9ac",
+        "background": "#0e1c15",
+        "current": 8.549914314073622,
+        "faded": 3.097156373742083
+      },
+      {
+        "theme": "dark",
+        "ground": "surface",
+        "foreground": "#a9b9ac",
+        "background": "#142a1f",
+        "current": 7.403621894473362,
+        "faded": 2.9372809293008806
+      }
+    ]
+  },
+  "zoneBenchmark": {
+    "node": "v24.15.0",
+    "runs": {
+      "before": {
+        "runs": [
+          {
+            "cold": 42.893249999999995,
+            "warm": 28.462417000000016,
+            "rows": 1199,
+            "zones": 15,
+            "vals": [
+              false,
+              true,
+              false
+            ]
+          },
+          {
+            "cold": 44.168375,
+            "warm": 30.329832999999994,
+            "rows": 1199,
+            "zones": 15,
+            "vals": [
+              false,
+              true,
+              false
+            ]
+          },
+          {
+            "cold": 41.955957999999995,
+            "warm": 29.334082999999993,
+            "rows": 1199,
+            "zones": 15,
+            "vals": [
+              false,
+              true,
+              false
+            ]
+          },
+          {
+            "cold": 42.291,
+            "warm": 28.871791999999985,
+            "rows": 1199,
+            "zones": 15,
+            "vals": [
+              false,
+              true,
+              false
+            ]
+          },
+          {
+            "cold": 43.637083,
+            "warm": 29.12358300000001,
+            "rows": 1199,
+            "zones": 15,
+            "vals": [
+              false,
+              true,
+              false
+            ]
+          },
+          {
+            "cold": 43.98283299999999,
+            "warm": 29.458375000000004,
+            "rows": 1199,
+            "zones": 15,
+            "vals": [
+              false,
+              true,
+              false
+            ]
+          },
+          {
+            "cold": 42.894667000000005,
+            "warm": 29.404291999999998,
+            "rows": 1199,
+            "zones": 15,
+            "vals": [
+              false,
+              true,
+              false
+            ]
+          }
+        ],
+        "medianCold": 42.894667000000005,
+        "medianWarm": 29.334082999999993
+      },
+      "after": {
+        "runs": [
+          {
+            "cold": 15.878333000000005,
+            "warm": 1.8410420000000016,
+            "rows": 1199,
+            "zones": 15,
+            "vals": [
+              false,
+              true,
+              false
+            ]
+          },
+          {
+            "cold": 15.466334000000003,
+            "warm": 1.7954579999999964,
+            "rows": 1199,
+            "zones": 15,
+            "vals": [
+              false,
+              true,
+              false
+            ]
+          },
+          {
+            "cold": 15.766415999999992,
+            "warm": 1.8248750000000058,
+            "rows": 1199,
+            "zones": 15,
+            "vals": [
+              false,
+              true,
+              false
+            ]
+          },
+          {
+            "cold": 15.667500000000004,
+            "warm": 1.8117500000000035,
+            "rows": 1199,
+            "zones": 15,
+            "vals": [
+              false,
+              true,
+              false
+            ]
+          },
+          {
+            "cold": 15.906917,
+            "warm": 1.784957999999989,
+            "rows": 1199,
+            "zones": 15,
+            "vals": [
+              false,
+              true,
+              false
+            ]
+          },
+          {
+            "cold": 15.249874999999996,
+            "warm": 1.8847919999999903,
+            "rows": 1199,
+            "zones": 15,
+            "vals": [
+              false,
+              true,
+              false
+            ]
+          },
+          {
+            "cold": 16.124584000000006,
+            "warm": 1.6207920000000087,
+            "rows": 1199,
+            "zones": 15,
+            "vals": [
+              false,
+              true,
+              false
+            ]
+          }
+        ],
+        "medianCold": 15.766415999999992,
+        "medianWarm": 1.8117500000000035
+      }
+    }
+  },
+  "browser": {
+    "engine": "HeadlessChrome 153, macOS",
+    "launchFlag": "--force-device-scale-factor=2",
+    "emulatedDeviceScaleFactor": 1,
+    "height": 850,
+    "fixedNow": "2026-09-10T16:00:00Z",
+    "cells": [
+      {
+        "width": 360,
+        "lens": "ledger",
+        "theme": "light",
+        "tab": "Fixtures",
+        "scroll": 360,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": [
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP"
+        ]
+      },
+      {
+        "width": 360,
+        "lens": "ledger",
+        "theme": "light",
+        "tab": "Table",
+        "scroll": 360,
+        "nav": 65,
+        "bands": [
+          {
+            "dom": "mobile",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          },
+          {
+            "dom": "desktop",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          }
+        ],
+        "picker": {
+          "height": 96.75,
+          "rows": 3
+        },
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 360,
+        "lens": "ledger",
+        "theme": "light",
+        "tab": "Moments",
+        "scroll": 360,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": true,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 360,
+        "lens": "ledger",
+        "theme": "dark",
+        "tab": "Fixtures",
+        "scroll": 360,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": [
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP"
+        ]
+      },
+      {
+        "width": 360,
+        "lens": "ledger",
+        "theme": "dark",
+        "tab": "Table",
+        "scroll": 360,
+        "nav": 65,
+        "bands": [
+          {
+            "dom": "mobile",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          },
+          {
+            "dom": "desktop",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          }
+        ],
+        "picker": {
+          "height": 96.75,
+          "rows": 3
+        },
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 360,
+        "lens": "ledger",
+        "theme": "dark",
+        "tab": "Moments",
+        "scroll": 360,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": true,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 360,
+        "lens": "poster",
+        "theme": "light",
+        "tab": "Fixtures",
+        "scroll": 360,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": [
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP"
+        ]
+      },
+      {
+        "width": 360,
+        "lens": "poster",
+        "theme": "light",
+        "tab": "Table",
+        "scroll": 360,
+        "nav": 65,
+        "bands": [
+          {
+            "dom": "mobile",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          },
+          {
+            "dom": "desktop",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          }
+        ],
+        "picker": {
+          "height": 96.75,
+          "rows": 3
+        },
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 360,
+        "lens": "poster",
+        "theme": "light",
+        "tab": "Moments",
+        "scroll": 360,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": true,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 360,
+        "lens": "poster",
+        "theme": "dark",
+        "tab": "Fixtures",
+        "scroll": 360,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": [
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP"
+        ]
+      },
+      {
+        "width": 360,
+        "lens": "poster",
+        "theme": "dark",
+        "tab": "Table",
+        "scroll": 360,
+        "nav": 65,
+        "bands": [
+          {
+            "dom": "mobile",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          },
+          {
+            "dom": "desktop",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          }
+        ],
+        "picker": {
+          "height": 96.75,
+          "rows": 3
+        },
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 360,
+        "lens": "poster",
+        "theme": "dark",
+        "tab": "Moments",
+        "scroll": 360,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": true,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 360,
+        "lens": "broadcast",
+        "theme": "light",
+        "tab": "Fixtures",
+        "scroll": 360,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": [
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP"
+        ]
+      },
+      {
+        "width": 360,
+        "lens": "broadcast",
+        "theme": "light",
+        "tab": "Table",
+        "scroll": 360,
+        "nav": 65,
+        "bands": [
+          {
+            "dom": "mobile",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          },
+          {
+            "dom": "desktop",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          }
+        ],
+        "picker": {
+          "height": 96.75,
+          "rows": 3
+        },
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 360,
+        "lens": "broadcast",
+        "theme": "light",
+        "tab": "Moments",
+        "scroll": 360,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": true,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 360,
+        "lens": "broadcast",
+        "theme": "dark",
+        "tab": "Fixtures",
+        "scroll": 360,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": [
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP"
+        ]
+      },
+      {
+        "width": 360,
+        "lens": "broadcast",
+        "theme": "dark",
+        "tab": "Table",
+        "scroll": 360,
+        "nav": 65,
+        "bands": [
+          {
+            "dom": "mobile",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          },
+          {
+            "dom": "desktop",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          }
+        ],
+        "picker": {
+          "height": 96.75,
+          "rows": 3
+        },
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 360,
+        "lens": "broadcast",
+        "theme": "dark",
+        "tab": "Moments",
+        "scroll": 360,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": true,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 375,
+        "lens": "ledger",
+        "theme": "light",
+        "tab": "Fixtures",
+        "scroll": 375,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": [
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP"
+        ]
+      },
+      {
+        "width": 375,
+        "lens": "ledger",
+        "theme": "light",
+        "tab": "Table",
+        "scroll": 375,
+        "nav": 65,
+        "bands": [
+          {
+            "dom": "mobile",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          },
+          {
+            "dom": "desktop",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          }
+        ],
+        "picker": {
+          "height": 62.5,
+          "rows": 2
+        },
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 375,
+        "lens": "ledger",
+        "theme": "light",
+        "tab": "Moments",
+        "scroll": 375,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": true,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 375,
+        "lens": "ledger",
+        "theme": "dark",
+        "tab": "Fixtures",
+        "scroll": 375,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": [
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP"
+        ]
+      },
+      {
+        "width": 375,
+        "lens": "ledger",
+        "theme": "dark",
+        "tab": "Table",
+        "scroll": 375,
+        "nav": 65,
+        "bands": [
+          {
+            "dom": "mobile",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          },
+          {
+            "dom": "desktop",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          }
+        ],
+        "picker": {
+          "height": 62.5,
+          "rows": 2
+        },
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 375,
+        "lens": "ledger",
+        "theme": "dark",
+        "tab": "Moments",
+        "scroll": 375,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": true,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 375,
+        "lens": "poster",
+        "theme": "light",
+        "tab": "Fixtures",
+        "scroll": 375,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": [
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP"
+        ]
+      },
+      {
+        "width": 375,
+        "lens": "poster",
+        "theme": "light",
+        "tab": "Table",
+        "scroll": 375,
+        "nav": 65,
+        "bands": [
+          {
+            "dom": "mobile",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          },
+          {
+            "dom": "desktop",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          }
+        ],
+        "picker": {
+          "height": 62.5,
+          "rows": 2
+        },
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 375,
+        "lens": "poster",
+        "theme": "light",
+        "tab": "Moments",
+        "scroll": 375,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": true,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 375,
+        "lens": "poster",
+        "theme": "dark",
+        "tab": "Fixtures",
+        "scroll": 375,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": [
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP"
+        ]
+      },
+      {
+        "width": 375,
+        "lens": "poster",
+        "theme": "dark",
+        "tab": "Table",
+        "scroll": 375,
+        "nav": 65,
+        "bands": [
+          {
+            "dom": "mobile",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          },
+          {
+            "dom": "desktop",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          }
+        ],
+        "picker": {
+          "height": 62.5,
+          "rows": 2
+        },
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 375,
+        "lens": "poster",
+        "theme": "dark",
+        "tab": "Moments",
+        "scroll": 375,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": true,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 375,
+        "lens": "broadcast",
+        "theme": "light",
+        "tab": "Fixtures",
+        "scroll": 375,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": [
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP"
+        ]
+      },
+      {
+        "width": 375,
+        "lens": "broadcast",
+        "theme": "light",
+        "tab": "Table",
+        "scroll": 375,
+        "nav": 65,
+        "bands": [
+          {
+            "dom": "mobile",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          },
+          {
+            "dom": "desktop",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          }
+        ],
+        "picker": {
+          "height": 62.5,
+          "rows": 2
+        },
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 375,
+        "lens": "broadcast",
+        "theme": "light",
+        "tab": "Moments",
+        "scroll": 375,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": true,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 375,
+        "lens": "broadcast",
+        "theme": "dark",
+        "tab": "Fixtures",
+        "scroll": 375,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": [
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP"
+        ]
+      },
+      {
+        "width": 375,
+        "lens": "broadcast",
+        "theme": "dark",
+        "tab": "Table",
+        "scroll": 375,
+        "nav": 65,
+        "bands": [
+          {
+            "dom": "mobile",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          },
+          {
+            "dom": "desktop",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          }
+        ],
+        "picker": {
+          "height": 62.5,
+          "rows": 2
+        },
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 375,
+        "lens": "broadcast",
+        "theme": "dark",
+        "tab": "Moments",
+        "scroll": 375,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": true,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 390,
+        "lens": "ledger",
+        "theme": "light",
+        "tab": "Fixtures",
+        "scroll": 390,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": [
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP"
+        ]
+      },
+      {
+        "width": 390,
+        "lens": "ledger",
+        "theme": "light",
+        "tab": "Table",
+        "scroll": 390,
+        "nav": 65,
+        "bands": [
+          {
+            "dom": "mobile",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          },
+          {
+            "dom": "desktop",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          }
+        ],
+        "picker": {
+          "height": 62.5,
+          "rows": 2
+        },
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 390,
+        "lens": "ledger",
+        "theme": "light",
+        "tab": "Moments",
+        "scroll": 390,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": true,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 390,
+        "lens": "ledger",
+        "theme": "dark",
+        "tab": "Fixtures",
+        "scroll": 390,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": [
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP"
+        ]
+      },
+      {
+        "width": 390,
+        "lens": "ledger",
+        "theme": "dark",
+        "tab": "Table",
+        "scroll": 390,
+        "nav": 65,
+        "bands": [
+          {
+            "dom": "mobile",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          },
+          {
+            "dom": "desktop",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          }
+        ],
+        "picker": {
+          "height": 62.5,
+          "rows": 2
+        },
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 390,
+        "lens": "ledger",
+        "theme": "dark",
+        "tab": "Moments",
+        "scroll": 390,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": true,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 390,
+        "lens": "poster",
+        "theme": "light",
+        "tab": "Fixtures",
+        "scroll": 390,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": [
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP"
+        ]
+      },
+      {
+        "width": 390,
+        "lens": "poster",
+        "theme": "light",
+        "tab": "Table",
+        "scroll": 390,
+        "nav": 65,
+        "bands": [
+          {
+            "dom": "mobile",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          },
+          {
+            "dom": "desktop",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          }
+        ],
+        "picker": {
+          "height": 62.5,
+          "rows": 2
+        },
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 390,
+        "lens": "poster",
+        "theme": "light",
+        "tab": "Moments",
+        "scroll": 390,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": true,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 390,
+        "lens": "poster",
+        "theme": "dark",
+        "tab": "Fixtures",
+        "scroll": 390,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": [
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP"
+        ]
+      },
+      {
+        "width": 390,
+        "lens": "poster",
+        "theme": "dark",
+        "tab": "Table",
+        "scroll": 390,
+        "nav": 65,
+        "bands": [
+          {
+            "dom": "mobile",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          },
+          {
+            "dom": "desktop",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          }
+        ],
+        "picker": {
+          "height": 62.5,
+          "rows": 2
+        },
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 390,
+        "lens": "poster",
+        "theme": "dark",
+        "tab": "Moments",
+        "scroll": 390,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": true,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 390,
+        "lens": "broadcast",
+        "theme": "light",
+        "tab": "Fixtures",
+        "scroll": 390,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": [
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP"
+        ]
+      },
+      {
+        "width": 390,
+        "lens": "broadcast",
+        "theme": "light",
+        "tab": "Table",
+        "scroll": 390,
+        "nav": 65,
+        "bands": [
+          {
+            "dom": "mobile",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          },
+          {
+            "dom": "desktop",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          }
+        ],
+        "picker": {
+          "height": 62.5,
+          "rows": 2
+        },
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 390,
+        "lens": "broadcast",
+        "theme": "light",
+        "tab": "Moments",
+        "scroll": 390,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": true,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 390,
+        "lens": "broadcast",
+        "theme": "dark",
+        "tab": "Fixtures",
+        "scroll": 390,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": [
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP"
+        ]
+      },
+      {
+        "width": 390,
+        "lens": "broadcast",
+        "theme": "dark",
+        "tab": "Table",
+        "scroll": 390,
+        "nav": 65,
+        "bands": [
+          {
+            "dom": "mobile",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          },
+          {
+            "dom": "desktop",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          }
+        ],
+        "picker": {
+          "height": 62.5,
+          "rows": 2
+        },
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 390,
+        "lens": "broadcast",
+        "theme": "dark",
+        "tab": "Moments",
+        "scroll": 390,
+        "nav": 65,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": true,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 1000,
+        "lens": "ledger",
+        "theme": "light",
+        "tab": "Fixtures",
+        "scroll": 1000,
+        "nav": 37.5,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": [
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP"
+        ]
+      },
+      {
+        "width": 1000,
+        "lens": "ledger",
+        "theme": "light",
+        "tab": "Table",
+        "scroll": 1000,
+        "nav": 37.5,
+        "bands": [
+          {
+            "dom": "mobile",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          },
+          {
+            "dom": "desktop",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          }
+        ],
+        "picker": {
+          "height": 28.25,
+          "rows": 1
+        },
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 1000,
+        "lens": "ledger",
+        "theme": "light",
+        "tab": "Moments",
+        "scroll": 1000,
+        "nav": 37.5,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": true,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 1000,
+        "lens": "ledger",
+        "theme": "dark",
+        "tab": "Fixtures",
+        "scroll": 1000,
+        "nav": 37.5,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": [
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP"
+        ]
+      },
+      {
+        "width": 1000,
+        "lens": "ledger",
+        "theme": "dark",
+        "tab": "Table",
+        "scroll": 1000,
+        "nav": 37.5,
+        "bands": [
+          {
+            "dom": "mobile",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          },
+          {
+            "dom": "desktop",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          }
+        ],
+        "picker": {
+          "height": 28.25,
+          "rows": 1
+        },
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 1000,
+        "lens": "ledger",
+        "theme": "dark",
+        "tab": "Moments",
+        "scroll": 1000,
+        "nav": 37.5,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": true,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 1000,
+        "lens": "poster",
+        "theme": "light",
+        "tab": "Fixtures",
+        "scroll": 1000,
+        "nav": 37.5,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": [
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP"
+        ]
+      },
+      {
+        "width": 1000,
+        "lens": "poster",
+        "theme": "light",
+        "tab": "Table",
+        "scroll": 1000,
+        "nav": 37.5,
+        "bands": [
+          {
+            "dom": "mobile",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          },
+          {
+            "dom": "desktop",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          }
+        ],
+        "picker": {
+          "height": 28.25,
+          "rows": 1
+        },
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 1000,
+        "lens": "poster",
+        "theme": "light",
+        "tab": "Moments",
+        "scroll": 1000,
+        "nav": 37.5,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": true,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 1000,
+        "lens": "poster",
+        "theme": "dark",
+        "tab": "Fixtures",
+        "scroll": 1000,
+        "nav": 37.5,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": [
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP"
+        ]
+      },
+      {
+        "width": 1000,
+        "lens": "poster",
+        "theme": "dark",
+        "tab": "Table",
+        "scroll": 1000,
+        "nav": 37.5,
+        "bands": [
+          {
+            "dom": "mobile",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          },
+          {
+            "dom": "desktop",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          }
+        ],
+        "picker": {
+          "height": 28.25,
+          "rows": 1
+        },
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 1000,
+        "lens": "poster",
+        "theme": "dark",
+        "tab": "Moments",
+        "scroll": 1000,
+        "nav": 37.5,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": true,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 1000,
+        "lens": "broadcast",
+        "theme": "light",
+        "tab": "Fixtures",
+        "scroll": 1000,
+        "nav": 37.5,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": [
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP"
+        ]
+      },
+      {
+        "width": 1000,
+        "lens": "broadcast",
+        "theme": "light",
+        "tab": "Table",
+        "scroll": 1000,
+        "nav": 37.5,
+        "bands": [
+          {
+            "dom": "mobile",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          },
+          {
+            "dom": "desktop",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          }
+        ],
+        "picker": {
+          "height": 28.25,
+          "rows": 1
+        },
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 1000,
+        "lens": "broadcast",
+        "theme": "light",
+        "tab": "Moments",
+        "scroll": 1000,
+        "nav": 37.5,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": true,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 1000,
+        "lens": "broadcast",
+        "theme": "dark",
+        "tab": "Fixtures",
+        "scroll": 1000,
+        "nav": 37.5,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": [
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP",
+          "MATCHDAY 1 \u00b7 COMPUTED \u2014 UEFA WINDOW 8\u201310 SEP"
+        ]
+      },
+      {
+        "width": 1000,
+        "lens": "broadcast",
+        "theme": "dark",
+        "tab": "Table",
+        "scroll": 1000,
+        "nav": 37.5,
+        "bands": [
+          {
+            "dom": "mobile",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          },
+          {
+            "dom": "desktop",
+            "bands": [
+              {
+                "name": "Round of 16",
+                "rows": 8
+              },
+              {
+                "name": "Knockout play-offs",
+                "rows": 16
+              },
+              {
+                "name": "Eliminated",
+                "rows": 12
+              }
+            ]
+          }
+        ],
+        "picker": {
+          "height": 28.25,
+          "rows": 1
+        },
+        "cards": 0,
+        "empty": false,
+        "error": false,
+        "matchdays": []
+      },
+      {
+        "width": 1000,
+        "lens": "broadcast",
+        "theme": "dark",
+        "tab": "Moments",
+        "scroll": 1000,
+        "nav": 37.5,
+        "bands": [],
+        "picker": null,
+        "cards": 0,
+        "empty": true,
+        "error": false,
+        "matchdays": []
+      }
+    ]
+  },
+  "layoutComparisons": [
+    {
+      "launchFlag": "default",
+      "width": 360,
+      "scroll": 360,
+      "dpr": 1,
+      "visual": 360,
+      "picker": {
+        "top": 202.5,
+        "width": 320,
+        "height": 93.75
+      },
+      "nav": {
+        "top": 119,
+        "width": 320,
+        "height": 63.5
+      },
+      "chips": [
+        {
+          "text": "\ud83c\uddea\ud83c\uddf8 La Liga",
+          "top": 202.5,
+          "width": 78.21875,
+          "height": 27.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1px"
+          }
+        },
+        {
+          "text": "\ud83c\udff4 Premier League",
+          "top": 202.5,
+          "width": 126.125,
+          "height": 27.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1px"
+          }
+        },
+        {
+          "text": "\ud83c\uddee\ud83c\uddf9 Serie A",
+          "top": 202.5,
+          "width": 78.90625,
+          "height": 27.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1px"
+          }
+        },
+        {
+          "text": "\ud83c\uddeb\ud83c\uddf7 Ligue 1",
+          "top": 235.75,
+          "width": 77.21875,
+          "height": 27.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1px"
+          }
+        },
+        {
+          "text": "\ud83c\udde9\ud83c\uddea Bundesliga",
+          "top": 235.75,
+          "width": 100.6875,
+          "height": 27.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1px"
+          }
+        },
+        {
+          "text": "\u2b50 Champions League",
+          "top": 269,
+          "width": 145.875,
+          "height": 27.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1px"
+          }
+        }
+      ]
+    },
+    {
+      "launchFlag": "default",
+      "width": 375,
+      "scroll": 375,
+      "dpr": 1,
+      "visual": 375,
+      "picker": {
+        "top": 202.5,
+        "width": 335,
+        "height": 93.75
+      },
+      "nav": {
+        "top": 119,
+        "width": 335,
+        "height": 63.5
+      },
+      "chips": [
+        {
+          "text": "\ud83c\uddea\ud83c\uddf8 La Liga",
+          "top": 202.5,
+          "width": 78.21875,
+          "height": 27.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1px"
+          }
+        },
+        {
+          "text": "\ud83c\udff4 Premier League",
+          "top": 202.5,
+          "width": 126.125,
+          "height": 27.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1px"
+          }
+        },
+        {
+          "text": "\ud83c\uddee\ud83c\uddf9 Serie A",
+          "top": 202.5,
+          "width": 78.90625,
+          "height": 27.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1px"
+          }
+        },
+        {
+          "text": "\ud83c\uddeb\ud83c\uddf7 Ligue 1",
+          "top": 235.75,
+          "width": 77.21875,
+          "height": 27.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1px"
+          }
+        },
+        {
+          "text": "\ud83c\udde9\ud83c\uddea Bundesliga",
+          "top": 235.75,
+          "width": 100.6875,
+          "height": 27.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1px"
+          }
+        },
+        {
+          "text": "\u2b50 Champions League",
+          "top": 269,
+          "width": 145.875,
+          "height": 27.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1px"
+          }
+        }
+      ]
+    },
+    {
+      "launchFlag": "default",
+      "width": 390,
+      "scroll": 390,
+      "dpr": 1,
+      "visual": 390,
+      "picker": {
+        "top": 202.5,
+        "width": 350,
+        "height": 60.5
+      },
+      "nav": {
+        "top": 119,
+        "width": 350,
+        "height": 63.5
+      },
+      "chips": [
+        {
+          "text": "\ud83c\uddea\ud83c\uddf8 La Liga",
+          "top": 202.5,
+          "width": 78.21875,
+          "height": 27.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1px"
+          }
+        },
+        {
+          "text": "\ud83c\udff4 Premier League",
+          "top": 202.5,
+          "width": 126.125,
+          "height": 27.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1px"
+          }
+        },
+        {
+          "text": "\ud83c\uddee\ud83c\uddf9 Serie A",
+          "top": 202.5,
+          "width": 78.90625,
+          "height": 27.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1px"
+          }
+        },
+        {
+          "text": "\ud83c\uddeb\ud83c\uddf7 Ligue 1",
+          "top": 235.75,
+          "width": 77.21875,
+          "height": 27.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1px"
+          }
+        },
+        {
+          "text": "\ud83c\udde9\ud83c\uddea Bundesliga",
+          "top": 235.75,
+          "width": 100.6875,
+          "height": 27.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1px"
+          }
+        },
+        {
+          "text": "\u2b50 Champions League",
+          "top": 235.75,
+          "width": 145.875,
+          "height": 27.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1px"
+          }
+        }
+      ]
+    },
+    {
+      "launchFlag": "--force-device-scale-factor=2",
+      "width": 360,
+      "scroll": 360,
+      "dpr": 1,
+      "visual": 360,
+      "picker": {
+        "top": 204,
+        "width": 320,
+        "height": 96.75
+      },
+      "nav": {
+        "top": 119,
+        "width": 320,
+        "height": 65
+      },
+      "chips": [
+        {
+          "text": "\ud83c\uddea\ud83c\uddf8 La Liga",
+          "top": 204,
+          "width": 77.2109375,
+          "height": 28.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1.5px"
+          }
+        },
+        {
+          "text": "\ud83c\udff4 Premier League",
+          "top": 204,
+          "width": 125.1171875,
+          "height": 28.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1.5px"
+          }
+        },
+        {
+          "text": "\ud83c\uddee\ud83c\uddf9 Serie A",
+          "top": 204,
+          "width": 77.890625,
+          "height": 28.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1.5px"
+          }
+        },
+        {
+          "text": "\ud83c\uddeb\ud83c\uddf7 Ligue 1",
+          "top": 238.25,
+          "width": 76.2109375,
+          "height": 28.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1.5px"
+          }
+        },
+        {
+          "text": "\ud83c\udde9\ud83c\uddea Bundesliga",
+          "top": 238.25,
+          "width": 99.671875,
+          "height": 28.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1.5px"
+          }
+        },
+        {
+          "text": "\u2b50 Champions League",
+          "top": 272.5,
+          "width": 144.859375,
+          "height": 28.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1.5px"
+          }
+        }
+      ]
+    },
+    {
+      "launchFlag": "--force-device-scale-factor=2",
+      "width": 375,
+      "scroll": 375,
+      "dpr": 1,
+      "visual": 375,
+      "picker": {
+        "top": 204,
+        "width": 335,
+        "height": 62.5
+      },
+      "nav": {
+        "top": 119,
+        "width": 335,
+        "height": 65
+      },
+      "chips": [
+        {
+          "text": "\ud83c\uddea\ud83c\uddf8 La Liga",
+          "top": 204,
+          "width": 77.2109375,
+          "height": 28.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1.5px"
+          }
+        },
+        {
+          "text": "\ud83c\udff4 Premier League",
+          "top": 204,
+          "width": 125.1171875,
+          "height": 28.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1.5px"
+          }
+        },
+        {
+          "text": "\ud83c\uddee\ud83c\uddf9 Serie A",
+          "top": 204,
+          "width": 77.890625,
+          "height": 28.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1.5px"
+          }
+        },
+        {
+          "text": "\ud83c\uddeb\ud83c\uddf7 Ligue 1",
+          "top": 238.25,
+          "width": 76.2109375,
+          "height": 28.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1.5px"
+          }
+        },
+        {
+          "text": "\ud83c\udde9\ud83c\uddea Bundesliga",
+          "top": 238.25,
+          "width": 99.671875,
+          "height": 28.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1.5px"
+          }
+        },
+        {
+          "text": "\u2b50 Champions League",
+          "top": 238.25,
+          "width": 144.859375,
+          "height": 28.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1.5px"
+          }
+        }
+      ]
+    },
+    {
+      "launchFlag": "--force-device-scale-factor=2",
+      "width": 390,
+      "scroll": 390,
+      "dpr": 1,
+      "visual": 390,
+      "picker": {
+        "top": 204,
+        "width": 350,
+        "height": 62.5
+      },
+      "nav": {
+        "top": 119,
+        "width": 350,
+        "height": 65
+      },
+      "chips": [
+        {
+          "text": "\ud83c\uddea\ud83c\uddf8 La Liga",
+          "top": 204,
+          "width": 77.2109375,
+          "height": 28.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1.5px"
+          }
+        },
+        {
+          "text": "\ud83c\udff4 Premier League",
+          "top": 204,
+          "width": 125.1171875,
+          "height": 28.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1.5px"
+          }
+        },
+        {
+          "text": "\ud83c\uddee\ud83c\uddf9 Serie A",
+          "top": 204,
+          "width": 77.890625,
+          "height": 28.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1.5px"
+          }
+        },
+        {
+          "text": "\ud83c\uddeb\ud83c\uddf7 Ligue 1",
+          "top": 238.25,
+          "width": 76.2109375,
+          "height": 28.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1.5px"
+          }
+        },
+        {
+          "text": "\ud83c\udde9\ud83c\uddea Bundesliga",
+          "top": 238.25,
+          "width": 99.671875,
+          "height": 28.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1.5px"
+          }
+        },
+        {
+          "text": "\u2b50 Champions League",
+          "top": 238.25,
+          "width": 144.859375,
+          "height": 28.25,
+          "style": {
+            "fontFamily": "Inter, ui-sans-serif, system-ui, sans-serif",
+            "fontSize": "11.5px",
+            "lineHeight": "17.25px",
+            "fontWeight": "600",
+            "padding": "4px 10px",
+            "gap": "normal",
+            "borderWidth": "1.5px"
+          }
+        }
+      ]
+    }
+  ],
+  "clocks": [
+    {
+      "id": "ucl:401915452",
+      "home": "AEK Athens",
+      "away": "LASK Linz",
+      "kickoffUtc": "2026-09-08T16:45:00.000Z",
+      "venueTz": "Europe/Athens",
+      "text": "12:45 PM\nAEK Athens vs LASK Linz\n1\u20130\nFT\n\u2b50 Champions League \u00b7 OPAP Arena\n\u2b50\n7:45 PM local\n\ud83d\uddfd\n12:45 PM EDT\n\ud83d\udcfa\nDisney+ \u00b7 ABC (marquee)\nNEW"
+    },
+    {
+      "id": "ucl:401915425",
+      "home": "FC Porto",
+      "away": "Manchester City",
+      "kickoffUtc": "2026-09-08T19:00:00.000Z",
+      "venueTz": "Europe/Lisbon",
+      "text": "3:00 PM\nFC Porto vs Manchester City\n0\u20132\nFT\n\u2b50 Champions League \u00b7 Est\u00e1dio do Drag\u00e3o\n\u2b50\n8:00 PM local\n\ud83d\uddfd\n3:00 PM EDT\n\ud83d\udcfa\nDisney+ \u00b7 ABC (marquee)\nNEW"
+    },
+    {
+      "id": "ucl:401915446",
+      "home": "Liverpool",
+      "away": "Atl\u00e9tico Madrid",
+      "kickoffUtc": "2026-09-09T19:00:00.000Z",
+      "venueTz": "Europe/London",
+      "text": "3:00 PM\nLiverpool vs Atl\u00e9tico Madrid\n2\u20131\nFT\n\u2b50 Champions League \u00b7 Anfield\n\u2b50\n8:00 PM local\n\ud83d\uddfd\n3:00 PM EDT\n\ud83d\udcfa\nDisney+ \u00b7 ABC (marquee)\nNEW"
+    },
+    {
+      "id": "ucl:401915447",
+      "home": "Sporting CP",
+      "away": "Galatasaray",
+      "kickoffUtc": "2026-09-09T19:00:00.000Z",
+      "venueTz": "Europe/Lisbon",
+      "text": "3:00 PM\nSporting CP vs Galatasaray\n3\u20131\nFT\n\u2b50 Champions League \u00b7 Est\u00e1dio Jos\u00e9 Alvalade\n\u2b50\n8:00 PM local\n\ud83d\uddfd\n3:00 PM EDT\n\ud83d\udcfa\nDisney+ \u00b7 ABC (marquee)\nNEW"
+    },
+    {
+      "id": "ucl:401915444",
+      "home": "Fenerbahce",
+      "away": "AS Roma",
+      "kickoffUtc": "2026-09-10T16:45:00.000Z",
+      "venueTz": "Europe/Istanbul",
+      "text": "12:45 PM\nFenerbahce vs AS Roma\n\u2b50 Champions League \u00b7 Ulker Stadyumu\n\u2b50\n7:45 PM local\n\ud83d\uddfd\n12:45 PM EDT\n\ud83d\udcfa\nDisney+ \u00b7 ABC (marquee)\nNEW"
+    },
+    {
+      "id": "ucl:401915442",
+      "home": "Manchester United",
+      "away": "Sabah FK",
+      "kickoffUtc": "2026-09-10T19:00:00.000Z",
+      "venueTz": "Europe/London",
+      "text": "3:00 PM\nManchester United vs Sabah FK\n\u2b50 Champions League \u00b7 Old Trafford\n\u2b50\n8:00 PM local\n\ud83d\uddfd\n3:00 PM EDT\n\ud83d\udcfa\nDisney+ \u00b7 ABC (marquee)\nNEW"
+    }
+  ]
+}

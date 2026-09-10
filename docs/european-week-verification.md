@@ -55,7 +55,7 @@ Brooklyn clock through the real normalizer/time formatter test.
 | Fenerbahce | Europe/Istanbul | 7:45 PM | 12:45 PM EDT |
 | Manchester United | Europe/London | 8:00 PM | 3:00 PM EDT |
 
-## Matrix as run
+## Matrix as run (implementation head; Pass 2 correction below)
 
 **96 states**: 3 lenses × 2 themes × 3 tabs × 4 widths = 72, plus 24 populated Moments
 states. Widths: 360, 375, 390, 1000; height 850 for the base matrix. Six additional 390 × 2200
@@ -71,16 +71,26 @@ Synthetic records were injected through the loaded browser module only; the comm
 Moments file remains `[]`, and no fixture JSON was edited for testing. The illustrative
 still is an original test SVG, not match footage. Browser Back preserves both `only` and `date`.
 
+**Pass 2 correction (10 Sep 2026):** the unconditional “375 uses three rows” claim
+is withdrawn. A new 72-cell matrix at `1832b2c` reproduces the reviewer's values in all
+six lens × theme table cells at 375, with viewport set before capture and
+`scrollWidth === innerWidth` throughout:
+
 | Width | Tab row height | Table picker height | Chip rows |
 |---|---:|---:|---:|
-| 360 | 63.5 px | 93.75 px | 3 |
-| 375 | 63.5 px | 93.75 px | 3 |
-| 390 | 63.5 px | 60.5 px | 2 |
+| 360 | 65 px | 96.75 px | 3 |
+| 375 | 65 px | 62.5 px | 2 |
+| 390 | 65 px | 62.5 px | 2 |
 
-**Layout confirmation for the designer:** the live build measures 63.5 px rather than the
-canvas's 65 px, and 375 uses three picker rows rather than the expected two. The UCL chip is
-last and nothing overflows; existing chip dimensions and spacing are retained. These are
-reported as measured differences, not described as matching the canvas's numbers.
+The difference was not a narrower effective viewport. Both probes reported 375 for
+`innerWidth`, `visualViewport.width` and root `scrollWidth`, and 335 for picker width.
+Default headless Chrome on this Mac still reproduces the old 93.75 / 63.5 measurements
+(1 px computed chip borders); launching Chrome with `--force-device-scale-factor=2`
+reproduces 62.5 / 65 (1.5 px computed chip borders, with different glyph widths).
+Both used an emulated device scale factor of 1. This is a browser display-scale qualification,
+not a request to change chips or layout. The original raw receipts remain historical evidence;
+[Pass 2 measurements](verification/european-week/pass-2.json) and the
+[new 375 capture](screenshots/european-week/pass-2-375-ledger-light-table.png) supersede the blanket claim.
 
 Mobile dividers hold at **28 px** at three offsets at each phone width, then release around
 −8 px. Desktop holds at **34 px** at three offsets at 1000 × 700/800/900. At 700/800 the
@@ -162,10 +172,10 @@ contrast option (i) to these shared components, not the whole deferred colour in
 | Report fields | `scripts/diff.ts:336`, `.github/workflows/sync.yml:115` | Append `zones-unknown` and `standings-degraded` after the original six fields; cadence and approval/merge logic untouched. The printer is in diff.ts, and the existing regex mirror was extended. |
 | Window provenance | `src/lib/competitions.ts:137` | All eight windows confirmed against Annex C; retained season guard and computed label. |
 | Ended phase proof | `src/lib/matchdays.ts:18`, `scripts/providers/espn-standings.ts:108` | Require a validated structural change after the final configured window; unknown season and malformed/failing fetch stay closed. |
-| Extra fixture evidence | `src/lib/schema.ts:30`, `scripts/sync.ts:50` | Retain venue id/country plus phase/season for audit and phase guarding; preserve absent as well as present round. |
+| Extra fixture evidence | `src/lib/schema.ts:30`, `scripts/sync.ts:50` | Retain venue id/country; Pass 2 retains phase/season only for league-phase guarding. Preserve absent as well as present round. |
 | Curated clock contract | `src/lib/moments.ts:7` | Retain zone, time confidence and status at curation; compare current identity/instant/clock fields, allow normal status progression. |
 | Build validation | `package.json:12`, `scripts/validate-moments.ts:1` | Existing tsx validates the curated file before both build modes; no dependency added. |
-| Geometry differences | This record's matrix | 375 picker wraps to three rows; actual nav is 63.5 px; the 900-tall sticky probe needs temporary scroll space. |
+| Geometry differences | This record's matrix | Pass 2 corrects the unconditional 375 claim: two rows and 65 px nav at display scale 2; default headless scale remains different. The 900-tall sticky probe needs temporary scroll space. |
 
 ## Recount and validation at the implementation head
 
@@ -216,4 +226,8 @@ Open the six clock receipts and the same MD1 rows, then scroll the UCL play-off 
 end at 390 and 1000 × 800. Visit `?tab=moments` before looking at the synthetic populated
 captures. Run `tests/uclSync.test.ts`: malformed/failing provider data must still abort every
 write, while a valid ended-phase shape preserves the five domestic tables. Read the
-resolutions and the 375/900 geometry qualifications before adjudicating visual parity.
+resolutions and the corrected display-scale/900 geometry qualifications before adjudicating visual parity.
+
+The [Pass 2 rebuttal record](european-week-pass-2-rebuttal.md) recounts the refreshed snapshot,
+phase-guard reproduction, zone benchmark, chip case and current verification separately from
+this implementation-head record.
