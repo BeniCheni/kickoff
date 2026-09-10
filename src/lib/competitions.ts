@@ -79,7 +79,7 @@ export const VENUE_TZ_BY_COUNTRY: Readonly<Record<string, string>> = {
   Sweden: 'Europe/Stockholm', Latvia: 'Europe/Riga', Kazakhstan: 'Asia/Almaty',
   Georgia: 'Asia/Tbilisi', Andorra: 'Europe/Andorra', Lithuania: 'Europe/Vilnius',
   Serbia: 'Europe/Belgrade', 'Bosnia and Herzegovina': 'Europe/Sarajevo',
-  Gibraltar: 'Europe/Gibraltar',
+  Gibraltar: 'Europe/Gibraltar', Wales: 'Europe/London', Azerbaijan: 'Asia/Baku',
 }
 
 /** ESPN venue id → zone. A Canary/Madeira ground or a neutral venue can override a country. */
