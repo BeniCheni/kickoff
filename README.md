@@ -75,8 +75,8 @@ the fix, and the house rule got carved over the door:
 
 ## ⏱️ What it does (v0.3.2)
 
-The current release is v0.3.2; the European week below is implemented on the review branch
-and awaits Beni's release decision.
+v0.3.2 is the current release. The European week below is built and unreleased; the number it
+ships under is Beni's decision.
 
 La Liga, the Premier League, Serie A, Ligue 1, the Bundesliga and the Champions League;
 domestic super cups and the UEFA Super Cup; six tables; one fixture skeleton read through
