@@ -95,9 +95,10 @@ export function slateSubLine(slate: readonly Fixture[], isTonight: boolean): str
  * time. State the TBC count explicitly, using the same confidence rule as the hero. */
 export function posterSubLine(fixtures: readonly Fixture[]): string {
   const leagues = new Set(fixtures.map((f) => f.competition)).size
+  const noun = fixtures.every(f => COMPETITIONS[f.competition].group !== 'domestic') ? 'COMPETITION' : 'LEAGUE'
   const parts = [
     `${fixtures.length} ${fixtures.length === 1 ? 'MATCH' : 'MATCHES'}`,
-    `${leagues} ${leagues === 1 ? 'LEAGUE' : 'LEAGUES'}`,
+    `${leagues} ${noun}${leagues === 1 ? '' : 'S'}`,
   ]
   const tbc = fixtures.filter((f) => f.timeConfidence !== 'exact').length
   if (tbc > 0) parts.push(`${tbc} TBC`)

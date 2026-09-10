@@ -86,8 +86,8 @@ export function FixtureRow({ fixture, hot = false, stale = false }: { fixture: F
         </span>
 
         <span className="mt-0.5 block pl-[66px] text-[11px] text-ink-muted poster:pl-[92px] broadcast:font-mono broadcast:text-[10.5px] broadcast:font-medium">
-          <span style={{ color: comp.color }}>
-            <span aria-hidden>{comp.flag}</span> {comp.name}
+          <span className="text-ink-muted">
+            <span aria-hidden style={{ color: comp.color }}>{comp.flag}</span> {comp.name}
           </span>
           {fixture.venue && <> &middot; {fixture.venue}</>}
         </span>

@@ -10,6 +10,9 @@ releases.
 
 ### Added
 
+- Each European matchday carries computed, absent or rescheduled provenance in all three
+  fixture lenses; mixed days can show more than one matchday.
+
 - The league-phase table groups its three outcome bands, with region headers that stick
   beneath the columns and release at their own band boundary on phones and desktop.
 
@@ -25,6 +28,9 @@ releases.
   ruled by Beni.
 
 ### Changed
+
+- Fixture competition names use readable muted ink. Shared competition chips keep their
+  hues, choose a readable foreground on filled states, and retain legible unselected text.
 
 - A structurally ended league-phase table is omitted with an explicit report and metadata
   reason. Fetch failures and invalid entries still prevent every snapshot write.

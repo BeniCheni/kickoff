@@ -2,6 +2,7 @@ import { COMPETITIONS } from '../lib/competitions'
 import { posterDayTitle, weekdayShort } from '../lib/time'
 import { posterSubLine, type PosterBlock } from '../lib/lensSelectors'
 import { FixtureRow } from './FixtureRow'
+import { MatchdayLines } from './MatchdayLines'
 
 const EMPTY: ReadonlySet<string> = new Set()
 
@@ -64,6 +65,7 @@ export function PosterWeek({ blocks, stale = EMPTY }: { blocks: PosterBlock[]; s
                 <div className="font-mono mt-1.5 text-[11px] font-medium tracking-[0.06em] text-ink-secondary">
                   {posterSubLine(block.fixtures)}
                 </div>
+                <MatchdayLines fixtures={block.fixtures} className="mt-[3px]" />
               </div>
               <div className="mt-2.5 border-t border-line">
                 {block.fixtures.map((f) => (
@@ -76,13 +78,14 @@ export function PosterWeek({ blocks, stale = EMPTY }: { blocks: PosterBlock[]; s
 
         return (
           <section key={block.date}>
-            <div className="mt-[18px] flex items-baseline gap-2.5">
+            <div className="mt-[18px] flex flex-wrap items-baseline gap-2.5">
               <span className="font-display text-[16px] font-semibold tracking-[0.06em] uppercase">
                 {posterDayTitle(block.date)}
               </span>
               <span className="font-mono text-[10px] font-medium tracking-[0.06em] text-ink-muted">
                 {block.fixtures.length} {block.fixtures.length === 1 ? 'MATCH' : 'MATCHES'}
               </span>
+              <MatchdayLines fixtures={block.fixtures} />
               {block.isToday && <TodayPill />}
             </div>
             <div className="mt-1.5 border-t border-line">
