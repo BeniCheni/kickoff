@@ -44,6 +44,17 @@ releases.
   instead of the viewer's clock. Zone changes are recorded in the sync report; unknown zones
   are counted. The workflow grammar is tested against the report printer.
 
+### Deliberately not done
+
+- Europa and Conference League screens, domestic matchday markers, opponents or strength-of-
+  schedule lanes, a Results tab, new competition hues and in-app playback were not designed
+  for this milestone.
+- The broader competition-colour contrast inventory and a design-review skill stay open.
+  The separate sync theme keeps its cadence, approval and merge policy; only the report
+  grammar changes here.
+- No release number, version bump or tag. The still's letterbox tolerance and the new
+  callout/reschedule copy remain design confirmations; cover is the implemented default.
+
 ## [0.3.2] — 2026-09-09
 
 The sync's verify step survives a live match. Paper trail: `docs/v0.3.2-fast-track-brief.md`; Beni's rulings, 8–9 Sep 2026: v0.3.2, fast-track, fix the handles now.

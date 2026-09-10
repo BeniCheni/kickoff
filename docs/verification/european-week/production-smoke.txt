@@ -1,0 +1,25 @@
+{
+  url: 'http://127.0.0.1:5187/?league=ucl&only=ucl&date=2026-09-08',
+  tab: 'Fixtures',
+  width: 390,
+  scroll: 390,
+  empty: false,
+  total: true
+}
+{
+  url: 'http://127.0.0.1:5187/?tab=table&league=ucl&only=ucl&date=2026-09-08',
+  tab: 'Table',
+  width: 390,
+  scroll: 390,
+  empty: false,
+  total: true
+}
+{
+  url: 'http://127.0.0.1:5187/?tab=moments&league=ucl&only=ucl&date=2026-09-08',
+  tab: 'Moments',
+  width: 390,
+  scroll: 390,
+  empty: true,
+  total: true
+}
+{ single: 'file:', tab: 'Moments', empty: true, scroll: 390 }

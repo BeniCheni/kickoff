@@ -75,8 +75,25 @@ the fix, and the house rule got carved over the door:
 
 ## ⏱️ What it does (v0.3.2)
 
-La Liga, the Premier League, Serie A, Ligue 1, the Bundesliga, their domestic super cups and
-the UEFA Super Cup; full league tables; one fixture skeleton read through three lenses.
+The current release is v0.3.2; the European week below is implemented on the review branch
+and awaits Beni's release decision.
+
+La Liga, the Premier League, Serie A, Ligue 1, the Bundesliga and the Champions League;
+domestic super cups and the UEFA Super Cup; six tables; one fixture skeleton read through
+three lenses. The Champions League table groups 36 clubs into Round of 16, Knockout play-offs
+and Eliminated bands, with an eight-match league phase and contained sticky region headers.
+
+European fixture days show computed matchday provenance from UEFA's published windows. A
+rescheduled fixture keeps its first-seen number, and an out-of-window first sighting stays
+unnumbered. Venue country and venue-id overrides set the stadium clock; an unknown zone says
+"local time not known" while Brooklyn remains available.
+
+**Moments** is the third tab: hand-curated links to rights holders, never playback here.
+It opens empty. Beni curates `src/curated/moments.json`; each card retains its fixture facts,
+both clocks and a curation stamp after the fixture leaves the rolling snapshot. Builds and
+tests validate the file and flag disagreement with any matching snapshot fixture. No sync
+writes it, and its stamp is independent of snapshot freshness. `?tab=moments` preserves
+`?only=` and `&date=` through navigation and Back.
 
 Every kickoff traces to one stored UTC instant, so the stadium clock and the Brooklyn clock
 can't disagree. Every unset time is admitted out loud instead of guessed. Every sync is
@@ -97,7 +114,7 @@ state — is in **[docs/HONESTY.md](docs/HONESTY.md)**. The one-line version: fi
 The fixture list is one instrument; a **lens** is the volume knob, not a different product.
 A lens may change the atmosphere, the day-header scale, the row density and the hero at the
 top of Fixtures. Everything else — tabs, filters, the two-clock rendering, provenance and
-staleness callouts, the Table — is the same in all three.
+staleness callouts, the Table and Moments — is the same in all three.
 
 | Lens | The mood | Signature moves |
 |------|----------|-----------------|
@@ -190,8 +207,9 @@ that turns it into patches and the v0.4.0 sync minor is in
   diff engine, then a quiet run that keeps the staleness banner honest through a break.
 
 **Beyond**: betting overlays that join a positions file on fixture ids (the
-token-expiry-vs-kickoff map is the obvious first feature); a Results tab — the tab row already
-leaves it room.
+token-expiry-vs-kickoff map is the obvious first feature). Moments is the second reader of
+that identity through `fixtureId`; a future join can badge a fixture with its curated links.
+A Results tab remains a separate design decision.
 
 ## 🏆 Lineage
 

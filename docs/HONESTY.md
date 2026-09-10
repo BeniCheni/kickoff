@@ -26,7 +26,10 @@ cannot disagree with each other, and they cannot drift apart across a DST change
 moves its clocks on the last Sunday of October, the US on the first Sunday of November, and
 the week between is exactly where a "date plus local time" file falls over. Storing a date
 and a wall-clock string separately is what let a whole matchday sit one day early with
-nothing to contradict it.
+nothing to contradict it. Venue-id overrides take precedence over the provider's venue
+country reference table. An unmapped or missing venue leaves `venueTz` absent: the app says
+"local time not known" and keeps the Brooklyn clock. It never uses the viewer's system zone
+as a stadium clock; an invalid nonempty zone fails validation.
 
 ## 3. An unset kickoff stays unset
 
@@ -93,6 +96,13 @@ no longer matches the configured phase is dropped for that competition only. The
 metadata name it; every fetch or entry-validation failure still aborts the whole snapshot.
 Unknown seasons cannot use this exception. This supersedes the earlier standings soft-failure exception.
 
+**Moments do not join the authoritative snapshot boundary** (Beni's ruling 4):
+`src/curated/moments.json` is hand-curated, outside the diff engine and snapshot freshness
+clock. Its denormalised fixture facts survive the rolling window; matching snapshot facts
+must agree at validation, and its status is explicitly the status at curation. The tab shows
+`curatedAt`, never passes off the sync stamp as a content update, and links out to rights
+holders without playing media here.
+
 ## 6. The report line is an API
 
 Every sync that completes fetching and validation ends with one machine-readable line:
@@ -102,10 +112,11 @@ report: changed=true changes=2 urgent=0 standings=changed rank-moves=8 merge=aut
 ```
 
 "Changed" is the diff engine's verdict, never `git diff`'s — per-row fetch stamps move on
-every run and are not changes. `merge=` is whether the PR this run opens may merge itself:
+every run and are not changes. `merge=` records the diff engine’s advisory verdict:
 `hold` when anything is urgent, when any fixture vanished or inverted at any horizon, or when
 the standings fetch failed; `auto` otherwise. `standings=failed` remains a supported legacy
-report value; current fetch failures abort with exit 2 before a report instead.
+report value; current fetch failures abort with exit 2 before a report instead. The scheduled
+workflow follows rule 8’s CI gate, rather than treating this advisory field as a manual hold.
 `zones-unknown` counts fixtures without a mapped stadium zone; Brooklyn still renders, the
 stadium clock does not. `standings-degraded` names structurally ended phase tables, or `none`.
 The format is pinned verbatim in a test, the

@@ -1,0 +1,38 @@
+
+> kickoff@0.3.2 sync
+> tsx scripts/sync.ts
+
+
+Kickoff sync · 2026-08-11 .. 2027-02-07 · provider=espn
+
+fetched 1199 fixtures
+  supercup       1
+  shield         1
+  tdc            1
+  dflsupercup    1
+  ucl            144
+  laliga         230
+  pl             240
+  seriea         230
+  ligue1         171
+  bundesliga     180
+
+changes vs last snapshot:
+    VENUE_TZ_CHANGED         shield · Arsenal v Manchester City
+                             (unknown) -> Europe/London
+    VENUE_TZ_CHANGED         ucl · Sabah FK v Slavia Prague
+                             (unknown) -> Asia/Baku
+    VENUE_TZ_CHANGED         ucl · Sabah FK v Borussia Dortmund
+                             (unknown) -> Asia/Baku
+    VENUE_TZ_CHANGED         ucl · Sabah FK v Barcelona
+                             (unknown) -> Asia/Baku
+    VENUE_TZ_CHANGED         ucl · Sabah FK v Napoli
+                             (unknown) -> Asia/Baku
+
+standings: ucl 36 · laliga 20 · pl 20 · seriea 20 · ligue1 18 · bundesliga 18
+standings unchanged vs last snapshot
+
+wrote src/data/fixtures.json (1199), src/data/meta.json and src/data/standings.json
+
+no time-sensitive lines (merge=auto).
+report: changed=true changes=5 urgent=0 standings=unchanged rank-moves=0 merge=auto zones-unknown=0 standings-degraded=none

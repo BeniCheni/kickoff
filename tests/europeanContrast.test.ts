@@ -23,7 +23,7 @@ export function europeanContrastCases() {
       ['Moment meta / credit', 'text-muted', ['surface']],
       ['Moment provenance', 'floodlight-strong', ['surface']],
       ['Moment link', 'pitch', ['surface']],
-      ['inactive competition chip', 'text-secondary', ['bg']],
+      ['inactive competition chip', 'text-secondary', ['bg', 'surface']],
     ] as const
     for (const [role, fg, gs] of pairs) for (const ground of gs) cases.push({ theme, role, ground, ratio: ratio(color(fg), grounds[ground]!) })
   }

@@ -1,0 +1,2106 @@
+{
+  "before": 1055,
+  "after": 1199,
+  "totalChanges": 299,
+  "kinds": {
+    "DATE_MOVED": 37,
+    "TIME_CHANGED": 56,
+    "NEW": 144,
+    "TIME_CONFIDENCE_CHANGED": 62
+  },
+  "changes": [
+    {
+      "kind": "DATE_MOVED",
+      "id": "bundesliga:401884781",
+      "label": "bundesliga · Borussia Dortmund v Werder Bremen",
+      "urgent": false,
+      "detail": "2026-10-10 -> 2026-10-09 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "bundesliga:401884774",
+      "label": "bundesliga · FC Cologne v Borussia Mönchengladbach",
+      "urgent": false,
+      "detail": "2026-10-10 -> 2026-10-11 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "bundesliga:401884778",
+      "label": "bundesliga · SC Freiburg v Schalke 04",
+      "urgent": false,
+      "detail": "2026-10-10 -> 2026-10-11 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "bundesliga:401884770",
+      "label": "bundesliga · Eintracht Frankfurt v FC Cologne",
+      "urgent": false,
+      "detail": "2026-10-17 -> 2026-10-16 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "bundesliga:401884771",
+      "label": "bundesliga · Bayer Leverkusen v SC Freiburg",
+      "urgent": false,
+      "detail": "2026-10-17 -> 2026-10-18 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "bundesliga:401884768",
+      "label": "bundesliga · Borussia Mönchengladbach v TSG Hoffenheim",
+      "urgent": false,
+      "detail": "2026-10-17 -> 2026-10-18 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "bundesliga:401884761",
+      "label": "bundesliga · VfB Stuttgart v Borussia Mönchengladbach",
+      "urgent": false,
+      "detail": "2026-10-24 -> 2026-10-23 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "bundesliga:401884760",
+      "label": "bundesliga · TSG Hoffenheim v Bayer Leverkusen",
+      "urgent": false,
+      "detail": "2026-10-24 -> 2026-10-25 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "bundesliga:401884759",
+      "label": "bundesliga · SC Freiburg v Bayern Munich",
+      "urgent": false,
+      "detail": "2026-10-24 -> 2026-10-25 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "bundesliga:401884746",
+      "label": "bundesliga · SV Elversberg v Mainz",
+      "urgent": false,
+      "detail": "2026-10-31 -> 2026-10-30 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "bundesliga:401884750",
+      "label": "bundesliga · 1. FC Union Berlin v FC Cologne",
+      "urgent": false,
+      "detail": "2026-10-31 -> 2026-11-01 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "bundesliga:401884752",
+      "label": "bundesliga · Eintracht Frankfurt v Hamburger SV",
+      "urgent": false,
+      "detail": "2026-10-31 -> 2026-11-01 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "bundesliga:401884739",
+      "label": "bundesliga · Hamburger SV v Borussia Mönchengladbach",
+      "urgent": false,
+      "detail": "2026-11-07 -> 2026-11-06 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "bundesliga:401884738",
+      "label": "bundesliga · FC Cologne v Bayer Leverkusen",
+      "urgent": false,
+      "detail": "2026-11-07 -> 2026-11-08 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "bundesliga:401884741",
+      "label": "bundesliga · SC Freiburg v 1. FC Union Berlin",
+      "urgent": false,
+      "detail": "2026-11-07 -> 2026-11-08 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "bundesliga:401884742",
+      "label": "bundesliga · TSG Hoffenheim v Schalke 04",
+      "urgent": false,
+      "detail": "2026-11-07 -> 2026-11-08 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "bundesliga:401884736",
+      "label": "bundesliga · Bayern Munich v FC Cologne",
+      "urgent": false,
+      "detail": "2026-11-21 -> 2026-11-20 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "bundesliga:401884733",
+      "label": "bundesliga · FC Augsburg v Mainz",
+      "urgent": false,
+      "detail": "2026-11-21 -> 2026-11-22 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "bundesliga:401884730",
+      "label": "bundesliga · Werder Bremen v Hamburger SV",
+      "urgent": false,
+      "detail": "2026-11-21 -> 2026-11-22 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "bundesliga:401884720",
+      "label": "bundesliga · Werder Bremen v Borussia Mönchengladbach",
+      "urgent": false,
+      "detail": "2026-11-28 -> 2026-11-27 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "bundesliga:401884724",
+      "label": "bundesliga · SC Freiburg v RB Leipzig",
+      "urgent": false,
+      "detail": "2026-11-28 -> 2026-11-29 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "bundesliga:401884727",
+      "label": "bundesliga · Borussia Dortmund v Bayer Leverkusen",
+      "urgent": false,
+      "detail": "2026-11-28 -> 2026-11-29 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "pl:401878736",
+      "label": "pl · Coventry City v Chelsea",
+      "urgent": false,
+      "detail": "2026-12-26 -> 2026-12-27 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "pl:401879195",
+      "label": "pl · Manchester United v Nottingham Forest",
+      "urgent": false,
+      "detail": "2026-12-26 -> 2026-12-27 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "pl:401878735",
+      "label": "pl · Crystal Palace v Arsenal",
+      "urgent": false,
+      "detail": "2026-12-26 -> 2026-12-27 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "pl:401879186",
+      "label": "pl · Tottenham Hotspur v Brighton & Hove Albion",
+      "urgent": false,
+      "detail": "2026-12-30 -> 2026-12-29 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "pl:401879190",
+      "label": "pl · Hull City v Leeds United",
+      "urgent": false,
+      "detail": "2026-12-30 -> 2026-12-29 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "pl:401879192",
+      "label": "pl · Everton v Manchester City",
+      "urgent": false,
+      "detail": "2026-12-30 -> 2026-12-29 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "pl:401879182",
+      "label": "pl · Leeds United v Everton",
+      "urgent": false,
+      "detail": "2027-01-02 -> 2027-01-01 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "pl:401879183",
+      "label": "pl · Chelsea v Newcastle United",
+      "urgent": false,
+      "detail": "2027-01-02 -> 2027-01-03 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "pl:401879180",
+      "label": "pl · Manchester City v Tottenham Hotspur",
+      "urgent": false,
+      "detail": "2027-01-02 -> 2027-01-03 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "pl:401879169",
+      "label": "pl · Nottingham Forest v Hull City",
+      "urgent": false,
+      "detail": "2027-01-06 -> 2027-01-05 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "pl:401879174",
+      "label": "pl · Everton v Aston Villa",
+      "urgent": false,
+      "detail": "2027-01-06 -> 2027-01-05 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "pl:401879176",
+      "label": "pl · Brighton & Hove Albion v AFC Bournemouth",
+      "urgent": false,
+      "detail": "2027-01-06 -> 2027-01-05 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "pl:401879177",
+      "label": "pl · Arsenal v Brentford",
+      "urgent": false,
+      "detail": "2027-01-06 -> 2027-01-05 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "pl:401878727",
+      "label": "pl · Sunderland v Liverpool",
+      "urgent": false,
+      "detail": "2027-01-06 -> 2027-01-05 (ET)"
+    },
+    {
+      "kind": "DATE_MOVED",
+      "id": "pl:401879170",
+      "label": "pl · Manchester United v Newcastle United",
+      "urgent": false,
+      "detail": "2027-01-06 -> 2027-01-07 (ET)"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884773",
+      "label": "bundesliga · SC Paderborn 07 v VfB Stuttgart",
+      "urgent": false,
+      "detail": "2026-10-10T18:00:00.000Z -> 2026-10-10T13:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884775",
+      "label": "bundesliga · 1. FC Union Berlin v SV Elversberg",
+      "urgent": false,
+      "detail": "2026-10-10T18:00:00.000Z -> 2026-10-10T13:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884776",
+      "label": "bundesliga · Mainz v Bayer Leverkusen",
+      "urgent": false,
+      "detail": "2026-10-10T18:00:00.000Z -> 2026-10-10T13:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884777",
+      "label": "bundesliga · FC Augsburg v Bayern Munich",
+      "urgent": false,
+      "detail": "2026-10-10T18:00:00.000Z -> 2026-10-10T13:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884779",
+      "label": "bundesliga · TSG Hoffenheim v Hamburger SV",
+      "urgent": false,
+      "detail": "2026-10-10T18:00:00.000Z -> 2026-10-10T13:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884780",
+      "label": "bundesliga · RB Leipzig v Eintracht Frankfurt",
+      "urgent": false,
+      "detail": "2026-10-10T18:00:00.000Z -> 2026-10-10T16:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884764",
+      "label": "bundesliga · SV Elversberg v FC Augsburg",
+      "urgent": false,
+      "detail": "2026-10-17T18:00:00.000Z -> 2026-10-17T13:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884765",
+      "label": "bundesliga · Schalke 04 v Mainz",
+      "urgent": false,
+      "detail": "2026-10-17T18:00:00.000Z -> 2026-10-17T13:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884766",
+      "label": "bundesliga · Werder Bremen v SC Paderborn 07",
+      "urgent": false,
+      "detail": "2026-10-17T18:00:00.000Z -> 2026-10-17T13:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884767",
+      "label": "bundesliga · Hamburger SV v VfB Stuttgart",
+      "urgent": false,
+      "detail": "2026-10-17T18:00:00.000Z -> 2026-10-17T13:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884769",
+      "label": "bundesliga · 1. FC Union Berlin v Borussia Dortmund",
+      "urgent": false,
+      "detail": "2026-10-17T18:00:00.000Z -> 2026-10-17T13:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884772",
+      "label": "bundesliga · Bayern Munich v RB Leipzig",
+      "urgent": false,
+      "detail": "2026-10-17T18:00:00.000Z -> 2026-10-17T16:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884755",
+      "label": "bundesliga · SC Paderborn 07 v Hamburger SV",
+      "urgent": false,
+      "detail": "2026-10-24T18:00:00.000Z -> 2026-10-24T13:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884756",
+      "label": "bundesliga · FC Cologne v Schalke 04",
+      "urgent": false,
+      "detail": "2026-10-24T18:00:00.000Z -> 2026-10-24T13:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884757",
+      "label": "bundesliga · Mainz v Werder Bremen",
+      "urgent": false,
+      "detail": "2026-10-24T18:00:00.000Z -> 2026-10-24T13:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884758",
+      "label": "bundesliga · FC Augsburg v 1. FC Union Berlin",
+      "urgent": false,
+      "detail": "2026-10-24T18:00:00.000Z -> 2026-10-24T13:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884762",
+      "label": "bundesliga · RB Leipzig v SV Elversberg",
+      "urgent": false,
+      "detail": "2026-10-24T18:00:00.000Z -> 2026-10-24T13:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884763",
+      "label": "bundesliga · Borussia Dortmund v Eintracht Frankfurt",
+      "urgent": false,
+      "detail": "2026-10-24T18:00:00.000Z -> 2026-10-24T16:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884747",
+      "label": "bundesliga · Schalke 04 v RB Leipzig",
+      "urgent": false,
+      "detail": "2026-10-31T18:00:00.000Z -> 2026-10-31T14:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884748",
+      "label": "bundesliga · Werder Bremen v TSG Hoffenheim",
+      "urgent": false,
+      "detail": "2026-10-31T18:00:00.000Z -> 2026-10-31T14:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884749",
+      "label": "bundesliga · Borussia Mönchengladbach v SC Paderborn 07",
+      "urgent": false,
+      "detail": "2026-10-31T18:00:00.000Z -> 2026-10-31T14:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884751",
+      "label": "bundesliga · FC Augsburg v SC Freiburg",
+      "urgent": false,
+      "detail": "2026-10-31T18:00:00.000Z -> 2026-10-31T14:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884753",
+      "label": "bundesliga · Bayer Leverkusen v VfB Stuttgart",
+      "urgent": false,
+      "detail": "2026-10-31T18:00:00.000Z -> 2026-10-31T14:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884754",
+      "label": "bundesliga · Bayern Munich v Borussia Dortmund",
+      "urgent": false,
+      "detail": "2026-10-31T18:00:00.000Z -> 2026-10-31T17:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884737",
+      "label": "bundesliga · SC Paderborn 07 v Eintracht Frankfurt",
+      "urgent": false,
+      "detail": "2026-11-07T20:00:00.000Z -> 2026-11-07T14:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884740",
+      "label": "bundesliga · Mainz v Bayern Munich",
+      "urgent": false,
+      "detail": "2026-11-07T20:00:00.000Z -> 2026-11-07T14:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884744",
+      "label": "bundesliga · RB Leipzig v FC Augsburg",
+      "urgent": false,
+      "detail": "2026-11-07T20:00:00.000Z -> 2026-11-07T14:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884745",
+      "label": "bundesliga · Borussia Dortmund v SV Elversberg",
+      "urgent": false,
+      "detail": "2026-11-07T20:00:00.000Z -> 2026-11-07T14:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884743",
+      "label": "bundesliga · VfB Stuttgart v Werder Bremen",
+      "urgent": false,
+      "detail": "2026-11-07T20:00:00.000Z -> 2026-11-07T17:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884728",
+      "label": "bundesliga · SV Elversberg v SC Freiburg",
+      "urgent": false,
+      "detail": "2026-11-21T20:00:00.000Z -> 2026-11-21T14:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884731",
+      "label": "bundesliga · Borussia Mönchengladbach v Borussia Dortmund",
+      "urgent": false,
+      "detail": "2026-11-21T20:00:00.000Z -> 2026-11-21T14:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884732",
+      "label": "bundesliga · 1. FC Union Berlin v RB Leipzig",
+      "urgent": false,
+      "detail": "2026-11-21T20:00:00.000Z -> 2026-11-21T14:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884734",
+      "label": "bundesliga · Eintracht Frankfurt v TSG Hoffenheim",
+      "urgent": false,
+      "detail": "2026-11-21T20:00:00.000Z -> 2026-11-21T14:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884735",
+      "label": "bundesliga · Bayer Leverkusen v SC Paderborn 07",
+      "urgent": false,
+      "detail": "2026-11-21T20:00:00.000Z -> 2026-11-21T14:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884729",
+      "label": "bundesliga · Schalke 04 v VfB Stuttgart",
+      "urgent": false,
+      "detail": "2026-11-21T20:00:00.000Z -> 2026-11-21T17:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884719",
+      "label": "bundesliga · SC Paderborn 07 v Schalke 04",
+      "urgent": false,
+      "detail": "2026-11-28T20:00:00.000Z -> 2026-11-28T14:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884721",
+      "label": "bundesliga · FC Cologne v SV Elversberg",
+      "urgent": false,
+      "detail": "2026-11-28T20:00:00.000Z -> 2026-11-28T14:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884722",
+      "label": "bundesliga · Hamburger SV v Bayern Munich",
+      "urgent": false,
+      "detail": "2026-11-28T20:00:00.000Z -> 2026-11-28T14:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884723",
+      "label": "bundesliga · Mainz v 1. FC Union Berlin",
+      "urgent": false,
+      "detail": "2026-11-28T20:00:00.000Z -> 2026-11-28T14:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "bundesliga:401884726",
+      "label": "bundesliga · VfB Stuttgart v Eintracht Frankfurt",
+      "urgent": false,
+      "detail": "2026-11-28T20:00:00.000Z -> 2026-11-28T17:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "pl:401878737",
+      "label": "pl · Aston Villa v Leeds United",
+      "urgent": false,
+      "detail": "2026-12-26T15:00:00.000Z -> 2026-12-26T12:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "pl:401878733",
+      "label": "pl · Hull City v Liverpool",
+      "urgent": false,
+      "detail": "2026-12-26T15:00:00.000Z -> 2026-12-26T17:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "pl:401878732",
+      "label": "pl · Newcastle United v Manchester City",
+      "urgent": false,
+      "detail": "2026-12-26T15:00:00.000Z -> 2026-12-26T20:00:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "pl:401878730",
+      "label": "pl · Coventry City v Brentford",
+      "urgent": false,
+      "detail": "2026-12-30T20:00:00.000Z -> 2026-12-30T19:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "pl:401879187",
+      "label": "pl · Newcastle United v Nottingham Forest",
+      "urgent": false,
+      "detail": "2026-12-30T20:00:00.000Z -> 2026-12-30T19:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "pl:401879188",
+      "label": "pl · Manchester United v Sunderland",
+      "urgent": false,
+      "detail": "2026-12-30T20:00:00.000Z -> 2026-12-30T19:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "pl:401879191",
+      "label": "pl · Fulham v Arsenal",
+      "urgent": false,
+      "detail": "2026-12-30T20:00:00.000Z -> 2026-12-30T19:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "pl:401879193",
+      "label": "pl · Crystal Palace v AFC Bournemouth",
+      "urgent": false,
+      "detail": "2026-12-30T20:00:00.000Z -> 2026-12-30T19:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "pl:401879189",
+      "label": "pl · Ipswich Town v Chelsea",
+      "urgent": false,
+      "detail": "2026-12-30T20:00:00.000Z -> 2026-12-30T20:15:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "pl:401879194",
+      "label": "pl · Aston Villa v Liverpool",
+      "urgent": false,
+      "detail": "2026-12-30T20:00:00.000Z -> 2026-12-30T20:15:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "pl:401878728",
+      "label": "pl · Brighton & Hove Albion v Manchester United",
+      "urgent": false,
+      "detail": "2027-01-02T15:00:00.000Z -> 2027-01-02T12:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "pl:401878729",
+      "label": "pl · AFC Bournemouth v Aston Villa",
+      "urgent": false,
+      "detail": "2027-01-02T15:00:00.000Z -> 2027-01-02T17:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "pl:401879172",
+      "label": "pl · Ipswich Town v Coventry City",
+      "urgent": false,
+      "detail": "2027-01-06T20:00:00.000Z -> 2027-01-06T19:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "pl:401879173",
+      "label": "pl · Fulham v Tottenham Hotspur",
+      "urgent": false,
+      "detail": "2027-01-06T20:00:00.000Z -> 2027-01-06T19:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "pl:401879175",
+      "label": "pl · Crystal Palace v Chelsea",
+      "urgent": false,
+      "detail": "2027-01-06T20:00:00.000Z -> 2027-01-06T19:30:00.000Z"
+    },
+    {
+      "kind": "TIME_CHANGED",
+      "id": "pl:401879171",
+      "label": "pl · Leeds United v Manchester City",
+      "urgent": false,
+      "detail": "2027-01-06T20:00:00.000Z -> 2027-01-06T20:15:00.000Z"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915426",
+      "label": "ucl · Club Brugge v Aston Villa",
+      "urgent": false,
+      "detail": "2026-09-08 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915452",
+      "label": "ucl · AEK Athens v LASK Linz",
+      "urgent": false,
+      "detail": "2026-09-08 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915425",
+      "label": "ucl · FC Porto v Manchester City",
+      "urgent": false,
+      "detail": "2026-09-08 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915449",
+      "label": "ucl · Borussia Dortmund v Villarreal",
+      "urgent": false,
+      "detail": "2026-09-08 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915450",
+      "label": "ucl · LOSC Lille v Real Betis",
+      "urgent": false,
+      "detail": "2026-09-08 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915451",
+      "label": "ucl · Real Madrid v Inter Milan",
+      "urgent": false,
+      "detail": "2026-09-08 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915424",
+      "label": "ucl · Barcelona v Feyenoord Rotterdam",
+      "urgent": false,
+      "detail": "2026-09-09 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915448",
+      "label": "ucl · VfB Stuttgart v Viking FK",
+      "urgent": false,
+      "detail": "2026-09-09 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915423",
+      "label": "ucl · Napoli v Arsenal",
+      "urgent": false,
+      "detail": "2026-09-09 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915445",
+      "label": "ucl · Paris Saint-Germain v Slovan Bratislava",
+      "urgent": false,
+      "detail": "2026-09-09 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915446",
+      "label": "ucl · Liverpool v Atlético Madrid",
+      "urgent": false,
+      "detail": "2026-09-09 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915447",
+      "label": "ucl · Sporting CP v Galatasaray",
+      "urgent": false,
+      "detail": "2026-09-09 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915422",
+      "label": "ucl · PSV Eindhoven v Shakhtar Donetsk",
+      "urgent": false,
+      "detail": "2026-09-10 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915444",
+      "label": "ucl · Fenerbahce v AS Roma",
+      "urgent": false,
+      "detail": "2026-09-10 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915440",
+      "label": "ucl · Slavia Prague v RC Lens",
+      "urgent": false,
+      "detail": "2026-09-10 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915441",
+      "label": "ucl · Como v RB Leipzig",
+      "urgent": false,
+      "detail": "2026-09-10 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915442",
+      "label": "ucl · Manchester United v Sabah FK",
+      "urgent": false,
+      "detail": "2026-09-10 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915443",
+      "label": "ucl · Bayern Munich v Bodo/Glimt",
+      "urgent": false,
+      "detail": "2026-09-10 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915418",
+      "label": "ucl · RC Lens v Sporting CP",
+      "urgent": false,
+      "detail": "2026-10-13 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915436",
+      "label": "ucl · Sabah FK v Slavia Prague",
+      "urgent": false,
+      "detail": "2026-10-13 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915410",
+      "label": "ucl · Villarreal v Napoli",
+      "urgent": false,
+      "detail": "2026-10-13 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915411",
+      "label": "ucl · Viking FK v Bayern Munich",
+      "urgent": false,
+      "detail": "2026-10-13 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915412",
+      "label": "ucl · Atlético Madrid v Manchester United",
+      "urgent": false,
+      "detail": "2026-10-13 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915413",
+      "label": "ucl · Inter Milan v Club Brugge",
+      "urgent": false,
+      "detail": "2026-10-13 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915417",
+      "label": "ucl · Arsenal v LOSC Lille",
+      "urgent": false,
+      "detail": "2026-10-13 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915434",
+      "label": "ucl · RB Leipzig v PSV Eindhoven",
+      "urgent": false,
+      "detail": "2026-10-13 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915435",
+      "label": "ucl · Galatasaray v Barcelona",
+      "urgent": false,
+      "detail": "2026-10-13 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915415",
+      "label": "ucl · LASK Linz v Liverpool",
+      "urgent": false,
+      "detail": "2026-10-14 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915416",
+      "label": "ucl · Feyenoord Rotterdam v Como",
+      "urgent": false,
+      "detail": "2026-10-14 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915393",
+      "label": "ucl · Bodo/Glimt v Borussia Dortmund",
+      "urgent": false,
+      "detail": "2026-10-14 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915405",
+      "label": "ucl · Slovan Bratislava v VfB Stuttgart",
+      "urgent": false,
+      "detail": "2026-10-14 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915406",
+      "label": "ucl · Shakhtar Donetsk v AEK Athens",
+      "urgent": false,
+      "detail": "2026-10-14 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915407",
+      "label": "ucl · Manchester City v Paris Saint-Germain",
+      "urgent": false,
+      "detail": "2026-10-14 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915408",
+      "label": "ucl · Real Betis v FC Porto",
+      "urgent": false,
+      "detail": "2026-10-14 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915409",
+      "label": "ucl · Aston Villa v Fenerbahce",
+      "urgent": false,
+      "detail": "2026-10-14 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915414",
+      "label": "ucl · AS Roma v Real Madrid",
+      "urgent": false,
+      "detail": "2026-10-14 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915403",
+      "label": "ucl · Fenerbahce v Slavia Prague",
+      "urgent": false,
+      "detail": "2026-10-20 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915404",
+      "label": "ucl · Sabah FK v Borussia Dortmund",
+      "urgent": false,
+      "detail": "2026-10-20 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915392",
+      "label": "ucl · VfB Stuttgart v Atlético Madrid",
+      "urgent": false,
+      "detail": "2026-10-20 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915397",
+      "label": "ucl · Liverpool v Villarreal",
+      "urgent": false,
+      "detail": "2026-10-20 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915398",
+      "label": "ucl · FC Porto v PSV Eindhoven",
+      "urgent": false,
+      "detail": "2026-10-20 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915399",
+      "label": "ucl · Paris Saint-Germain v Barcelona",
+      "urgent": false,
+      "detail": "2026-10-20 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915400",
+      "label": "ucl · Napoli v Bodo/Glimt",
+      "urgent": false,
+      "detail": "2026-10-20 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915401",
+      "label": "ucl · Manchester City v AEK Athens",
+      "urgent": false,
+      "detail": "2026-10-20 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915402",
+      "label": "ucl · AS Roma v Slovan Bratislava",
+      "urgent": false,
+      "detail": "2026-10-20 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915395",
+      "label": "ucl · Como v Manchester United",
+      "urgent": false,
+      "detail": "2026-10-21 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915396",
+      "label": "ucl · LOSC Lille v Galatasaray",
+      "urgent": false,
+      "detail": "2026-10-21 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915312",
+      "label": "ucl · Bayern Munich v Arsenal",
+      "urgent": false,
+      "detail": "2026-10-21 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915313",
+      "label": "ucl · Real Madrid v RB Leipzig",
+      "urgent": false,
+      "detail": "2026-10-21 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915388",
+      "label": "ucl · Club Brugge v RC Lens",
+      "urgent": false,
+      "detail": "2026-10-21 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915389",
+      "label": "ucl · Real Betis v Feyenoord Rotterdam",
+      "urgent": false,
+      "detail": "2026-10-21 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915390",
+      "label": "ucl · Inter Milan v Shakhtar Donetsk",
+      "urgent": false,
+      "detail": "2026-10-21 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915391",
+      "label": "ucl · Sporting CP v LASK Linz",
+      "urgent": false,
+      "detail": "2026-10-21 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915394",
+      "label": "ucl · Aston Villa v Viking FK",
+      "urgent": false,
+      "detail": "2026-10-21 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915310",
+      "label": "ucl · Shakhtar Donetsk v Sporting CP",
+      "urgent": false,
+      "detail": "2026-11-03 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915311",
+      "label": "ucl · Galatasaray v VfB Stuttgart",
+      "urgent": false,
+      "detail": "2026-11-03 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915307",
+      "label": "ucl · Feyenoord Rotterdam v Inter Milan",
+      "urgent": false,
+      "detail": "2026-11-03 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915308",
+      "label": "ucl · Manchester United v AS Roma",
+      "urgent": false,
+      "detail": "2026-11-03 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915309",
+      "label": "ucl · Villarreal v Paris Saint-Germain",
+      "urgent": false,
+      "detail": "2026-11-03 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915384",
+      "label": "ucl · Bodo/Glimt v LOSC Lille",
+      "urgent": false,
+      "detail": "2026-11-03 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915385",
+      "label": "ucl · LASK Linz v Slovan Bratislava",
+      "urgent": false,
+      "detail": "2026-11-03 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915386",
+      "label": "ucl · Atlético Madrid v Bayern Munich",
+      "urgent": false,
+      "detail": "2026-11-03 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915387",
+      "label": "ucl · Barcelona v Aston Villa",
+      "urgent": false,
+      "detail": "2026-11-03 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915382",
+      "label": "ucl · Fenerbahce v Liverpool",
+      "urgent": false,
+      "detail": "2026-11-04 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915383",
+      "label": "ucl · AEK Athens v Real Madrid",
+      "urgent": false,
+      "detail": "2026-11-04 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915301",
+      "label": "ucl · FC Porto v Napoli",
+      "urgent": false,
+      "detail": "2026-11-04 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915302",
+      "label": "ucl · Viking FK v Sabah FK",
+      "urgent": false,
+      "detail": "2026-11-04 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915303",
+      "label": "ucl · PSV Eindhoven v Club Brugge",
+      "urgent": false,
+      "detail": "2026-11-04 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915304",
+      "label": "ucl · Borussia Dortmund v Real Betis",
+      "urgent": false,
+      "detail": "2026-11-04 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915305",
+      "label": "ucl · RC Lens v Como",
+      "urgent": false,
+      "detail": "2026-11-04 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915306",
+      "label": "ucl · RB Leipzig v Manchester City",
+      "urgent": false,
+      "detail": "2026-11-04 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915381",
+      "label": "ucl · Slavia Prague v Arsenal",
+      "urgent": false,
+      "detail": "2026-11-04 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915300",
+      "label": "ucl · Galatasaray v Aston Villa",
+      "urgent": false,
+      "detail": "2026-11-24 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915380",
+      "label": "ucl · Bodo/Glimt v LASK Linz",
+      "urgent": false,
+      "detail": "2026-11-24 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915294",
+      "label": "ucl · Feyenoord Rotterdam v FC Porto",
+      "urgent": false,
+      "detail": "2026-11-24 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915295",
+      "label": "ucl · Arsenal v Borussia Dortmund",
+      "urgent": false,
+      "detail": "2026-11-24 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915296",
+      "label": "ucl · Como v AEK Athens",
+      "urgent": false,
+      "detail": "2026-11-24 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915297",
+      "label": "ucl · Slovan Bratislava v Real Betis",
+      "urgent": false,
+      "detail": "2026-11-24 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915298",
+      "label": "ucl · Real Madrid v PSV Eindhoven",
+      "urgent": false,
+      "detail": "2026-11-24 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915299",
+      "label": "ucl · RB Leipzig v RC Lens",
+      "urgent": false,
+      "detail": "2026-11-24 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915379",
+      "label": "ucl · Manchester City v Napoli",
+      "urgent": false,
+      "detail": "2026-11-24 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915293",
+      "label": "ucl · Slavia Prague v Villarreal",
+      "urgent": false,
+      "detail": "2026-11-25 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915378",
+      "label": "ucl · Sabah FK v Barcelona",
+      "urgent": false,
+      "detail": "2026-11-25 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915291",
+      "label": "ucl · Atlético Madrid v Viking FK",
+      "urgent": false,
+      "detail": "2026-11-25 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915292",
+      "label": "ucl · Club Brugge v Liverpool",
+      "urgent": false,
+      "detail": "2026-11-25 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915373",
+      "label": "ucl · Sporting CP v Manchester United",
+      "urgent": false,
+      "detail": "2026-11-25 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915374",
+      "label": "ucl · Paris Saint-Germain v AS Roma",
+      "urgent": false,
+      "detail": "2026-11-25 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915375",
+      "label": "ucl · Shakhtar Donetsk v Fenerbahce",
+      "urgent": false,
+      "detail": "2026-11-25 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915376",
+      "label": "ucl · Inter Milan v VfB Stuttgart",
+      "urgent": false,
+      "detail": "2026-11-25 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915377",
+      "label": "ucl · LOSC Lille v Bayern Munich",
+      "urgent": false,
+      "detail": "2026-11-25 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915290",
+      "label": "ucl · Viking FK v Feyenoord Rotterdam",
+      "urgent": false,
+      "detail": "2026-12-08 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915372",
+      "label": "ucl · Villarreal v Sabah FK",
+      "urgent": false,
+      "detail": "2026-12-08 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915284",
+      "label": "ucl · Bayern Munich v Slavia Prague",
+      "urgent": false,
+      "detail": "2026-12-08 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915285",
+      "label": "ucl · Barcelona v Manchester City",
+      "urgent": false,
+      "detail": "2026-12-08 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915286",
+      "label": "ucl · Aston Villa v Paris Saint-Germain",
+      "urgent": false,
+      "detail": "2026-12-08 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915287",
+      "label": "ucl · Napoli v Club Brugge",
+      "urgent": false,
+      "detail": "2026-12-08 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915288",
+      "label": "ucl · AS Roma v Sporting CP",
+      "urgent": false,
+      "detail": "2026-12-08 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915289",
+      "label": "ucl · AEK Athens v Galatasaray",
+      "urgent": false,
+      "detail": "2026-12-08 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915371",
+      "label": "ucl · Manchester United v RB Leipzig",
+      "urgent": false,
+      "detail": "2026-12-08 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915282",
+      "label": "ucl · Slovan Bratislava v Shakhtar Donetsk",
+      "urgent": false,
+      "detail": "2026-12-09 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915283",
+      "label": "ucl · Real Betis v Como",
+      "urgent": false,
+      "detail": "2026-12-09 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915281",
+      "label": "ucl · LASK Linz v Fenerbahce",
+      "urgent": false,
+      "detail": "2026-12-09 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915365",
+      "label": "ucl · VfB Stuttgart v LOSC Lille",
+      "urgent": false,
+      "detail": "2026-12-09 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915366",
+      "label": "ucl · PSV Eindhoven v Atlético Madrid",
+      "urgent": false,
+      "detail": "2026-12-09 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915367",
+      "label": "ucl · Arsenal v Real Madrid",
+      "urgent": false,
+      "detail": "2026-12-09 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915368",
+      "label": "ucl · Borussia Dortmund v Inter Milan",
+      "urgent": false,
+      "detail": "2026-12-09 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915369",
+      "label": "ucl · Liverpool v FC Porto",
+      "urgent": false,
+      "detail": "2026-12-09 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915370",
+      "label": "ucl · RC Lens v Bodo/Glimt",
+      "urgent": false,
+      "detail": "2026-12-09 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915363",
+      "label": "ucl · Galatasaray v Feyenoord Rotterdam",
+      "urgent": false,
+      "detail": "2027-01-19 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915364",
+      "label": "ucl · Bodo/Glimt v Atlético Madrid",
+      "urgent": false,
+      "detail": "2027-01-19 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915278",
+      "label": "ucl · FC Porto v Slavia Prague",
+      "urgent": false,
+      "detail": "2027-01-19 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915279",
+      "label": "ucl · Aston Villa v Borussia Dortmund",
+      "urgent": false,
+      "detail": "2027-01-19 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915280",
+      "label": "ucl · Real Madrid v LASK Linz",
+      "urgent": false,
+      "detail": "2027-01-19 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915359",
+      "label": "ucl · VfB Stuttgart v Club Brugge",
+      "urgent": false,
+      "detail": "2027-01-19 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915360",
+      "label": "ucl · Inter Milan v Liverpool",
+      "urgent": false,
+      "detail": "2027-01-19 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915361",
+      "label": "ucl · LOSC Lille v Slovan Bratislava",
+      "urgent": false,
+      "detail": "2027-01-19 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915362",
+      "label": "ucl · AEK Athens v AS Roma",
+      "urgent": false,
+      "detail": "2027-01-19 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915277",
+      "label": "ucl · Fenerbahce v Villarreal",
+      "urgent": false,
+      "detail": "2027-01-20 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915358",
+      "label": "ucl · Sabah FK v Napoli",
+      "urgent": false,
+      "detail": "2027-01-20 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915272",
+      "label": "ucl · Viking FK v PSV Eindhoven",
+      "urgent": false,
+      "detail": "2027-01-20 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915273",
+      "label": "ucl · Como v Paris Saint-Germain",
+      "urgent": false,
+      "detail": "2027-01-20 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915274",
+      "label": "ucl · RC Lens v Manchester City",
+      "urgent": false,
+      "detail": "2027-01-20 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915275",
+      "label": "ucl · Real Betis v Arsenal",
+      "urgent": false,
+      "detail": "2027-01-20 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915276",
+      "label": "ucl · RB Leipzig v Shakhtar Donetsk",
+      "urgent": false,
+      "detail": "2027-01-20 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915356",
+      "label": "ucl · Sporting CP v Barcelona",
+      "urgent": false,
+      "detail": "2027-01-20 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915357",
+      "label": "ucl · Manchester United v Bayern Munich",
+      "urgent": false,
+      "detail": "2027-01-20 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915264",
+      "label": "ucl · Barcelona v Como",
+      "urgent": false,
+      "detail": "2027-01-27 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915265",
+      "label": "ucl · Borussia Dortmund v AEK Athens",
+      "urgent": false,
+      "detail": "2027-01-27 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915266",
+      "label": "ucl · Club Brugge v Bodo/Glimt",
+      "urgent": false,
+      "detail": "2027-01-27 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915267",
+      "label": "ucl · Paris Saint-Germain v Galatasaray",
+      "urgent": false,
+      "detail": "2027-01-27 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915268",
+      "label": "ucl · Napoli v Viking FK",
+      "urgent": false,
+      "detail": "2027-01-27 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915269",
+      "label": "ucl · Slovan Bratislava v Inter Milan",
+      "urgent": false,
+      "detail": "2027-01-27 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915270",
+      "label": "ucl · Shakhtar Donetsk v Real Madrid",
+      "urgent": false,
+      "detail": "2027-01-27 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915271",
+      "label": "ucl · Feyenoord Rotterdam v RB Leipzig",
+      "urgent": false,
+      "detail": "2027-01-27 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915346",
+      "label": "ucl · Arsenal v Sabah FK",
+      "urgent": false,
+      "detail": "2027-01-27 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915347",
+      "label": "ucl · Atlético Madrid v Fenerbahce",
+      "urgent": false,
+      "detail": "2027-01-27 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915348",
+      "label": "ucl · Bayern Munich v Real Betis",
+      "urgent": false,
+      "detail": "2027-01-27 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915349",
+      "label": "ucl · Villarreal v Manchester United",
+      "urgent": false,
+      "detail": "2027-01-27 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915350",
+      "label": "ucl · PSV Eindhoven v VfB Stuttgart",
+      "urgent": false,
+      "detail": "2027-01-27 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915351",
+      "label": "ucl · Slavia Prague v Aston Villa",
+      "urgent": false,
+      "detail": "2027-01-27 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915352",
+      "label": "ucl · Manchester City v Sporting CP",
+      "urgent": false,
+      "detail": "2027-01-27 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915353",
+      "label": "ucl · Liverpool v RC Lens",
+      "urgent": false,
+      "detail": "2027-01-27 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915354",
+      "label": "ucl · AS Roma v LOSC Lille",
+      "urgent": false,
+      "detail": "2027-01-27 ET"
+    },
+    {
+      "kind": "NEW",
+      "id": "ucl:401915355",
+      "label": "ucl · LASK Linz v FC Porto",
+      "urgent": false,
+      "detail": "2027-01-27 ET"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884781",
+      "label": "bundesliga · Borussia Dortmund v Werder Bremen",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884773",
+      "label": "bundesliga · SC Paderborn 07 v VfB Stuttgart",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884775",
+      "label": "bundesliga · 1. FC Union Berlin v SV Elversberg",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884776",
+      "label": "bundesliga · Mainz v Bayer Leverkusen",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884777",
+      "label": "bundesliga · FC Augsburg v Bayern Munich",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884779",
+      "label": "bundesliga · TSG Hoffenheim v Hamburger SV",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884780",
+      "label": "bundesliga · RB Leipzig v Eintracht Frankfurt",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884774",
+      "label": "bundesliga · FC Cologne v Borussia Mönchengladbach",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884778",
+      "label": "bundesliga · SC Freiburg v Schalke 04",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884770",
+      "label": "bundesliga · Eintracht Frankfurt v FC Cologne",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884764",
+      "label": "bundesliga · SV Elversberg v FC Augsburg",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884765",
+      "label": "bundesliga · Schalke 04 v Mainz",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884766",
+      "label": "bundesliga · Werder Bremen v SC Paderborn 07",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884767",
+      "label": "bundesliga · Hamburger SV v VfB Stuttgart",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884769",
+      "label": "bundesliga · 1. FC Union Berlin v Borussia Dortmund",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884772",
+      "label": "bundesliga · Bayern Munich v RB Leipzig",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884771",
+      "label": "bundesliga · Bayer Leverkusen v SC Freiburg",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884768",
+      "label": "bundesliga · Borussia Mönchengladbach v TSG Hoffenheim",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884761",
+      "label": "bundesliga · VfB Stuttgart v Borussia Mönchengladbach",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884755",
+      "label": "bundesliga · SC Paderborn 07 v Hamburger SV",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884756",
+      "label": "bundesliga · FC Cologne v Schalke 04",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884757",
+      "label": "bundesliga · Mainz v Werder Bremen",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884758",
+      "label": "bundesliga · FC Augsburg v 1. FC Union Berlin",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884762",
+      "label": "bundesliga · RB Leipzig v SV Elversberg",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884763",
+      "label": "bundesliga · Borussia Dortmund v Eintracht Frankfurt",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884760",
+      "label": "bundesliga · TSG Hoffenheim v Bayer Leverkusen",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884759",
+      "label": "bundesliga · SC Freiburg v Bayern Munich",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884746",
+      "label": "bundesliga · SV Elversberg v Mainz",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884747",
+      "label": "bundesliga · Schalke 04 v RB Leipzig",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884748",
+      "label": "bundesliga · Werder Bremen v TSG Hoffenheim",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884749",
+      "label": "bundesliga · Borussia Mönchengladbach v SC Paderborn 07",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884751",
+      "label": "bundesliga · FC Augsburg v SC Freiburg",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884753",
+      "label": "bundesliga · Bayer Leverkusen v VfB Stuttgart",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884754",
+      "label": "bundesliga · Bayern Munich v Borussia Dortmund",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884750",
+      "label": "bundesliga · 1. FC Union Berlin v FC Cologne",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884752",
+      "label": "bundesliga · Eintracht Frankfurt v Hamburger SV",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884739",
+      "label": "bundesliga · Hamburger SV v Borussia Mönchengladbach",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884737",
+      "label": "bundesliga · SC Paderborn 07 v Eintracht Frankfurt",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884740",
+      "label": "bundesliga · Mainz v Bayern Munich",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884744",
+      "label": "bundesliga · RB Leipzig v FC Augsburg",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884745",
+      "label": "bundesliga · Borussia Dortmund v SV Elversberg",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884743",
+      "label": "bundesliga · VfB Stuttgart v Werder Bremen",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884738",
+      "label": "bundesliga · FC Cologne v Bayer Leverkusen",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884741",
+      "label": "bundesliga · SC Freiburg v 1. FC Union Berlin",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884742",
+      "label": "bundesliga · TSG Hoffenheim v Schalke 04",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884736",
+      "label": "bundesliga · Bayern Munich v FC Cologne",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884728",
+      "label": "bundesliga · SV Elversberg v SC Freiburg",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884731",
+      "label": "bundesliga · Borussia Mönchengladbach v Borussia Dortmund",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884732",
+      "label": "bundesliga · 1. FC Union Berlin v RB Leipzig",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884734",
+      "label": "bundesliga · Eintracht Frankfurt v TSG Hoffenheim",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884735",
+      "label": "bundesliga · Bayer Leverkusen v SC Paderborn 07",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884729",
+      "label": "bundesliga · Schalke 04 v VfB Stuttgart",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884733",
+      "label": "bundesliga · FC Augsburg v Mainz",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884730",
+      "label": "bundesliga · Werder Bremen v Hamburger SV",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884720",
+      "label": "bundesliga · Werder Bremen v Borussia Mönchengladbach",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884719",
+      "label": "bundesliga · SC Paderborn 07 v Schalke 04",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884721",
+      "label": "bundesliga · FC Cologne v SV Elversberg",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884722",
+      "label": "bundesliga · Hamburger SV v Bayern Munich",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884723",
+      "label": "bundesliga · Mainz v 1. FC Union Berlin",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884726",
+      "label": "bundesliga · VfB Stuttgart v Eintracht Frankfurt",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884724",
+      "label": "bundesliga · SC Freiburg v RB Leipzig",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    },
+    {
+      "kind": "TIME_CONFIDENCE_CHANGED",
+      "id": "bundesliga:401884727",
+      "label": "bundesliga · Borussia Dortmund v Bayer Leverkusen",
+      "urgent": false,
+      "detail": "round_placeholder -> exact"
+    }
+  ]
+}

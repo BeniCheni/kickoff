@@ -1,0 +1,258 @@
+{
+  "text": [
+    {
+      "theme": "light",
+      "role": "matchday / unknown local",
+      "ground": "bg",
+      "ratio": 5.178266448791685
+    },
+    {
+      "theme": "light",
+      "role": "matchday / unknown local",
+      "ground": "surface",
+      "ratio": 5.648899446014529
+    },
+    {
+      "theme": "light",
+      "role": "matchday / unknown local",
+      "ground": "surface-alt",
+      "ratio": 4.691605399693819
+    },
+    {
+      "theme": "light",
+      "role": "matchday / unknown local",
+      "ground": "Broadcast hot",
+      "ratio": 5.648899446014529
+    },
+    {
+      "theme": "light",
+      "role": "divider range / competition name",
+      "ground": "bg",
+      "ratio": 4.987793016863305
+    },
+    {
+      "theme": "light",
+      "role": "divider range / competition name",
+      "ground": "surface",
+      "ratio": 5.441114606292391
+    },
+    {
+      "theme": "light",
+      "role": "divider range / competition name",
+      "ground": "Broadcast hot",
+      "ratio": 5.441114606292391
+    },
+    {
+      "theme": "light",
+      "role": "progress / Moments banner",
+      "ground": "floodlight-bg",
+      "ratio": 4.9465735122997625
+    },
+    {
+      "theme": "light",
+      "role": "Moment title",
+      "ground": "surface",
+      "ratio": 16.568261938758564
+    },
+    {
+      "theme": "light",
+      "role": "Moment meta / credit",
+      "ground": "surface",
+      "ratio": 5.441114606292391
+    },
+    {
+      "theme": "light",
+      "role": "Moment provenance",
+      "ground": "surface",
+      "ratio": 5.648899446014529
+    },
+    {
+      "theme": "light",
+      "role": "Moment link",
+      "ground": "surface",
+      "ratio": 5.259851765530648
+    },
+    {
+      "theme": "light",
+      "role": "inactive competition chip",
+      "ground": "bg",
+      "ratio": 5.998805938354926
+    },
+    {
+      "theme": "light",
+      "role": "inactive competition chip",
+      "ground": "surface",
+      "ratio": 6.544014657613658
+    },
+    {
+      "theme": "dark",
+      "role": "matchday / unknown local",
+      "ground": "bg",
+      "ratio": 11.210301253501719
+    },
+    {
+      "theme": "dark",
+      "role": "matchday / unknown local",
+      "ground": "surface",
+      "ratio": 9.707329074333554
+    },
+    {
+      "theme": "dark",
+      "role": "matchday / unknown local",
+      "ground": "surface-alt",
+      "ratio": 8.679801029805018
+    },
+    {
+      "theme": "dark",
+      "role": "matchday / unknown local",
+      "ground": "Broadcast hot",
+      "ratio": 9.707329074333554
+    },
+    {
+      "theme": "dark",
+      "role": "divider range / competition name",
+      "ground": "bg",
+      "ratio": 6.044349919786796
+    },
+    {
+      "theme": "dark",
+      "role": "divider range / competition name",
+      "ground": "surface",
+      "ratio": 5.233980103207675
+    },
+    {
+      "theme": "dark",
+      "role": "divider range / competition name",
+      "ground": "Broadcast hot",
+      "ratio": 5.233980103207675
+    },
+    {
+      "theme": "dark",
+      "role": "progress / Moments banner",
+      "ground": "floodlight-bg",
+      "ratio": 8.21716687074348
+    },
+    {
+      "theme": "dark",
+      "role": "Moment title",
+      "ground": "surface",
+      "ratio": 12.979514636170714
+    },
+    {
+      "theme": "dark",
+      "role": "Moment meta / credit",
+      "ground": "surface",
+      "ratio": 5.233980103207675
+    },
+    {
+      "theme": "dark",
+      "role": "Moment provenance",
+      "ground": "surface",
+      "ratio": 9.707329074333554
+    },
+    {
+      "theme": "dark",
+      "role": "Moment link",
+      "ground": "surface",
+      "ratio": 6.709040750383978
+    },
+    {
+      "theme": "dark",
+      "role": "inactive competition chip",
+      "ground": "bg",
+      "ratio": 8.549914314073622
+    },
+    {
+      "theme": "dark",
+      "role": "inactive competition chip",
+      "ground": "surface",
+      "ratio": 7.403621894473362
+    }
+  ],
+  "chips": [
+    {
+      "key": "supercup",
+      "fill": "#C4272F",
+      "ink": "#ffffff",
+      "ratio": 5.708992606278245
+    },
+    {
+      "key": "shield",
+      "fill": "#6B4226",
+      "ink": "#ffffff",
+      "ratio": 8.63332798045084
+    },
+    {
+      "key": "tdc",
+      "fill": "#C05780",
+      "ink": "#000000",
+      "ratio": 4.916274079354906
+    },
+    {
+      "key": "dflsupercup",
+      "fill": "#2F4B7C",
+      "ink": "#ffffff",
+      "ratio": 8.683622536604384
+    },
+    {
+      "key": "supercoppa",
+      "fill": "#1B4B5A",
+      "ink": "#ffffff",
+      "ratio": 9.542547576896046
+    },
+    {
+      "key": "supercopa",
+      "fill": "#8B1E3F",
+      "ink": "#ffffff",
+      "ratio": 8.916140893220504
+    },
+    {
+      "key": "ucl",
+      "fill": "#8B6FE8",
+      "ink": "#000000",
+      "ratio": 5.536808335407858
+    },
+    {
+      "key": "uel",
+      "fill": "#FF7A00",
+      "ink": "#000000",
+      "ratio": 8.0358134466363
+    },
+    {
+      "key": "uecl",
+      "fill": "#2FB8C4",
+      "ink": "#000000",
+      "ratio": 8.77416788283035
+    },
+    {
+      "key": "laliga",
+      "fill": "#D85A30",
+      "ink": "#000000",
+      "ratio": 5.42493176749535
+    },
+    {
+      "key": "pl",
+      "fill": "#7F77DD",
+      "ink": "#000000",
+      "ratio": 5.5852271080221945
+    },
+    {
+      "key": "seriea",
+      "fill": "#1D9E75",
+      "ink": "#000000",
+      "ratio": 6.199856955067451
+    },
+    {
+      "key": "ligue1",
+      "fill": "#378ADD",
+      "ink": "#000000",
+      "ratio": 5.841928151494883
+    },
+    {
+      "key": "bundesliga",
+      "fill": "#BA7517",
+      "ink": "#000000",
+      "ratio": 5.644708929175319
+    }
+  ]
+}

@@ -3,7 +3,7 @@ import { chipInk } from '../lib/chipInk'
 
 /**
  * The one competition pill, shared by the fixtures FilterBar and the Table's league
- * picker so the on/off treatment (fill colour, faded outline) can never drift between
+ * picker so the on/off treatment (fill colour, readable outline) can never drift between
  * the two surfaces that show the same competitions.
  */
 export function CompetitionChip({

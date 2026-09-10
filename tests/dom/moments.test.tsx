@@ -36,6 +36,7 @@ it('keeps the credited still in its frame and the solid link outside, with no pl
   const { container } = render(<MomentsPage />)
   const cards = container.querySelectorAll<HTMLElement>('[data-moment-card]')
   expect(cards).toHaveLength(2)
+  for (const frame of container.querySelectorAll('[data-moment-frame]')) expect(frame.textContent?.trim()).toBe('')
   const img = cards[0]!.querySelector('img')!
   expect(img.getAttribute('loading')).toBe('lazy')
   expect(img.classList.contains('object-cover')).toBe(true)

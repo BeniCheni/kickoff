@@ -1,0 +1,128 @@
+[
+  {
+    "width": 360,
+    "height": 850,
+    "expected": 28,
+    "holds": [
+      28,
+      28,
+      28
+    ],
+    "naturalRelease": {
+      "top": -7.5,
+      "bottom": 20,
+      "scrollY": 1786
+    },
+    "probeSpacer": false,
+    "release": {
+      "top": -7.5,
+      "bottom": 20,
+      "scrollY": 1786
+    }
+  },
+  {
+    "width": 375,
+    "height": 850,
+    "expected": 28,
+    "holds": [
+      28,
+      28,
+      28
+    ],
+    "naturalRelease": {
+      "top": -7.5,
+      "bottom": 20,
+      "scrollY": 1786
+    },
+    "probeSpacer": false,
+    "release": {
+      "top": -7.5,
+      "bottom": 20,
+      "scrollY": 1786
+    }
+  },
+  {
+    "width": 390,
+    "height": 850,
+    "expected": 28,
+    "holds": [
+      28,
+      28,
+      28
+    ],
+    "naturalRelease": {
+      "top": -7.75,
+      "bottom": 19.75,
+      "scrollY": 1753
+    },
+    "probeSpacer": false,
+    "release": {
+      "top": -7.75,
+      "bottom": 19.75,
+      "scrollY": 1753
+    }
+  },
+  {
+    "width": 1000,
+    "height": 700,
+    "expected": 34,
+    "holds": [
+      34,
+      34,
+      34
+    ],
+    "naturalRelease": {
+      "top": -4,
+      "bottom": 26.25,
+      "scrollY": 1481
+    },
+    "probeSpacer": false,
+    "release": {
+      "top": -4,
+      "bottom": 26.25,
+      "scrollY": 1481
+    }
+  },
+  {
+    "width": 1000,
+    "height": 800,
+    "expected": 34,
+    "holds": [
+      34,
+      34,
+      34
+    ],
+    "naturalRelease": {
+      "top": -4,
+      "bottom": 26.25,
+      "scrollY": 1481
+    },
+    "probeSpacer": false,
+    "release": {
+      "top": -4,
+      "bottom": 26.25,
+      "scrollY": 1481
+    }
+  },
+  {
+    "width": 1000,
+    "height": 900,
+    "expected": 34,
+    "holds": [
+      34,
+      34,
+      34
+    ],
+    "naturalRelease": {
+      "top": 34,
+      "bottom": 124.25,
+      "scrollY": 1383
+    },
+    "probeSpacer": true,
+    "release": {
+      "top": -4,
+      "bottom": 26.25,
+      "scrollY": 1481
+    }
+  }
+]

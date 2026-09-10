@@ -211,6 +211,13 @@ downstream.
 
 ## Roadmap pointers
 
+The European week is recorded by `docs/design-cycle-ucl-round-3-rulings.md`, the measured
+`docs/design-cycle-ucl-round-3-technical-resolution.md`, and the VIP correction list;
+`docs/design-cycle-ucl-implementation-prompt.md` is the approved builder brief.
+`docs/european-week-verification.md` records the implementation, source checks, browser
+matrix and open design confirmations. Its review PR carries no release number; Beni owns
+that decision, and the separate sync theme remains separate.
+
 `docs/v0.2.6-ideas.md` is the **current** ranked candidate list, written cold after the v0.2.5
 build. It carries open rows from `docs/v0.3.0-ideas.md` with their original numbers, the two
 new provider candidates, and this build's verification lessons. Read its process notes
