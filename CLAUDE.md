@@ -151,12 +151,14 @@ mirrors them, not the reverse.
 
 ## Release management — semver, the CHANGELOG, and who decides what (added 3 Sep 2026)
 
-The prompt ladder above says how a version gets *built*. This section says how one gets
-*scoped*, because the roles are now explicit: Beni is CEO, Claude Design is the designer, a
-Claude Code session in this repo is the CTO, and the Cowork session running
-`/anthropic-skills:football-soccer-deity` is Product Manager / TPM. Beni has said plainly that
-he has not read the generated `docs/` logs in detail and is relying on those roles to have read
-them — so nothing here is answerable from recollection.
+The prompt ladder above says how a version gets *built*. This section says how one gets *scoped*,
+because the roles are now explicit: Beni is CEO, Claude Design is the designer, a Claude Code
+session in this repo is the CTO, and the Cowork session running `/anthropic-skills:football-soccer-deity` is
+Product Manager / TPM. Since PR #24 (5 Sep 2026) implementation is routed per task shape between
+Claude Code and Codex — `README.md`'s "Two builders, one repo" table is the owning copy of that
+routing, and the six-pass 360 above is how a release built by one vendor is reviewed by the
+other. Beni has said plainly that he has not read the generated `docs/` logs in detail and is
+relying on those roles to have read them — so nothing here is answerable from recollection.
 
 **Ground truth for "what has shipped" is four things read together**, never one of them alone:
 `package.json`'s `version`, `git tag` (annotated tags start at v0.2.0 — v0.0.1 through v0.1.1
