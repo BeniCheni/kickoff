@@ -52,7 +52,7 @@ the PSG–Rennes case, and it is detected both when the provider keeps the event
 the roles, and when it recreates the event as its mirror image within ten days. Anything
 inside −6 h..+72 h of now is **urgent**, and so is any postponement or cancellation at any
 horizon. Corrections between two known final scores and changes to provider team identity
-are urgent at any horizon. Normal completion remains a status change; a team rename is
+are urgent at any horizon inside the sync window, which reaches 30 days back. Normal completion remains a status change; a team rename is
 never urgent and is reported once per competition/team identity. The sync exits 1 when something urgent moved, so an unattended run cannot update
 silently.
 
@@ -80,7 +80,8 @@ these failures abort with exit 2 before any snapshot is written:
 fetched and validated before publication; a failure in either publishes neither. A standings
 outage can therefore delay otherwise valid fixture updates — an explicitly accepted
 availability cost. The last committed snapshot remains the last completely successful one.
-A failed run creates or updates no sync PR, label or commit; an existing PR stays unchanged.
+A fetch or validation failure creates or updates no sync PR, label or commit; an existing PR
+stays unchanged.
 Its failure and diagnostics are in Actions. Re-reading the committed app cannot reveal a
 withheld fixture move. The header stamp and 24/72-hour banner describe snapshot age, not
 whether a check failed. The app advances after a successful snapshot PR merges and is

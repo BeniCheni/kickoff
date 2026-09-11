@@ -75,8 +75,6 @@ the fix, and the house rule got carved over the door:
 
 ## ⏱️ What it does (v0.4.0)
 
-Prepared for v0.4.0; release review, merge and tag are pending.
-
 La Liga, the Premier League, Serie A, Ligue 1, the Bundesliga, their domestic super cups and
 the UEFA Super Cup; full league tables; one fixture skeleton read through three lenses.
 
@@ -191,11 +189,8 @@ that turns it into patches and the v0.4.0 sync minor is in
 [docs/v0.2.5-proposal.md](docs/v0.2.5-proposal.md) and the v0.3.0 numbering ruling in
 [docs/design-cycle-proposal.md](docs/design-cycle-proposal.md). Next up:
 
-- **v0.4.0 — the sync tells the whole truth:** result corrections and team renames in the
-  diff engine, quiet verified publication, a change digest and Pages delivery. Built on this
-  branch; [scope and verification](docs/v0.4.0-proposal.md), release pending.
-- **v0.5.0 — Kickoff learns the European week:** PR #39 follows after v0.4.0 ships, by
-  Beni's 10 Sep ruling. Competition chips stay; the designer re-mirrors them after release.
+- **v0.5.0 — Kickoff learns the European week:** PR #39 follows now that v0.4.0 has shipped,
+  by Beni's 10 Sep ruling. Competition chips stay; the designer re-mirrors them after release.
 
 **Beyond**: betting overlays that join a positions file on fixture ids (the
 token-expiry-vs-kickoff map is the obvious first feature); a Results tab — the tab row already
@@ -230,8 +225,7 @@ One subject line per release. The honours board:
   match reads KICKED OFF, never as the next kickoff, and the scheduled sync merges itself once
   `verify` is green.
 - **v0.3.2** *(9 Sep 2026)* — the sync's verify step survives a live match: the designCycle DOM test scopes every LIVE / KICKED OFF query to its own row and fixes its input by date, so a genuine in-play row in the snapshot no longer turns `sync.yml`'s verify red; the pipeline skill is named by its live handle; nothing in the app changes.
-
-- **v0.4.0** *(release pending)* — the sync tells the whole truth: corrected scores and team
+- **v0.4.0** *(11 Sep 2026)* — the sync tells the whole truth: corrected scores and team
   identities are reported, quiet checks publish verified freshness, and merged snapshots bring
   their change digest and request Pages delivery.
 

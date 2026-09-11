@@ -74,8 +74,9 @@ validation failure in either aborts with exit 2 before snapshot writes. A standi
 intentionally delays otherwise valid fixtures; the earlier soft-failure exception is retired.
 Future ancillary datasets do not join this boundary automatically. `standings=failed` remains
 a legacy report value understood by the merge policy below; current failures abort instead.
-A failed run produces a red `sync.yml` run and diagnostics in Actions, but creates or updates
-no sync PR, label or commit; an existing PR is left as it was. Step 0's re-read of the same
+A fetch or validation failure produces a red `sync.yml` run and diagnostics in Actions, but
+creates or updates no sync PR, label or commit; an existing PR is left as it was. (Since
+v0.4.0 a run can also end red *after* publishing — see Pages delivery below.) Step 0's re-read of the same
 committed app cannot discover a fixture change withheld during a standings outage. The header
 stamp and the 24/72-hour banner report snapshot age, not failed checks; there is no failure
 signal in the app or Step 0's PR queue. A later successful run, including a quiet verification, can propose an
@@ -107,13 +108,16 @@ reader-facing signal in the PR report, not a release gate. The legacy `standings
 report remains visible for compatibility, although current standings failures exit 2 before
 any report or PR update. The workflow uses `gh pr merge --squash --auto`, gated by the
 rulesets' required `verify` check; it needs the repo's "Allow auto-merge" setting on, else
-the PR is left open with a warning. **This is not a pausable path.** `hold: human` is a dead
+the PR is left open with a warning and the run ends red when `scripts/finish-sync.sh`'s
+ten-minute wait for the merge expires. **This is not a pausable path.** `hold: human` is a dead
 label the workflow no longer writes or reads — PR #27 merged carrying it — so re-adding it to
 a sync PR does nothing. Closing the PR by hand stops *that* PR only: the next run re-runs the
 sync against `main`, finds the same diff, force-pushes the rolling branch and opens a **new**
 PR that merges itself, so a close buys one cron interval, not a hold. The only durable stops
-are repo-level: turn off "Allow auto-merge" (the run warns and leaves the PR open) or disable
-the `sync.yml` workflow. Deciding a snapshot must not land is therefore a repo-settings act,
+are repo-level: turn off "Allow auto-merge" (the run warns, leaves the PR open and ends red
+after the ten-minute merge wait — every run until it is turned back on, which the Sportsbooks
+failed-run check reads as a failure; `docs/v0.2.6-ideas.md` row 48) or disable the `sync.yml`
+workflow. Deciding a snapshot must not land is therefore a repo-settings act,
 not a PR act; a per-PR pause that survives the next run is `docs/v0.2.6-ideas.md` row 24.
 
 **The Step 0 contract with the betting pipeline:** a merged sync PR is not evidence that a

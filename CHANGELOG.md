@@ -8,20 +8,21 @@ releases.
 
 ## [Unreleased]
 
-## [0.4.0] — release pending
+## [0.4.0] — 2026-09-11
 
 The sync tells the whole truth: corrected scores and team identities are reported, quiet
 checks publish verified freshness, and merged snapshots carry a change digest and request
-Pages delivery. Built by Codex; independent cold review, merge and tag are pending.
+Pages delivery. Built and rebutted by Codex, reviewed cold by Grok, synthesised by Claude,
+ruled by Beni. Paper trail: `docs/v0.4.0-proposal.md`, `docs/v0.4.0-round-3-executive-brief.md`.
 
 ### Added
 
 - Result corrections and provider team identity changes enter the report as urgent at any
-  horizon; stable club renames are deduplicated per competition/team and never urgent.
+  horizon inside the sync window; stable club renames are deduplicated per competition/team
+  and never urgent.
 - A generated digest retains the latest 30 change-bearing snapshot reports, with bounded
   excerpts and full-log links. An entry reaches main with its snapshot, without implying
   anyone read it.
-
 - The UCL league-phase design cycle's record under `docs/` (#34): the brief archive and the
   canvas transcription, the Round 1 cold review, the Round 2 rebuttal, the Round 3 decision
   packet, technical resolution and rulings, and the two prompts the cycle produced, the VIP
@@ -42,7 +43,9 @@ Pages delivery. Built by Codex; independent cold review, merge and tag are pendi
   is observed merged. The next real sync retries missed main delivery. A timeout or rejected
   dispatch fails visibly; a deployment request is never reported as a completed deploy.
 - Legacy failed-standings reports cannot publish a fresh stamp. Provider text is indented
-  as code in reports and the digest, so embedded Markdown fences cannot escape it.
+  as code in reports and the digest, so embedded Markdown fences cannot escape it; the
+  digest also strips control characters, the PR body does not yet (`docs/v0.2.6-ideas.md`
+  row 45).
 
 ### Deliberately not done
 
@@ -51,6 +54,10 @@ Pages delivery. Built by Codex; independent cold review, merge and tag are pendi
   stay, with the designer's re-mirror after release.
 - Missing-score/time-confidence provider policies and an in-app failure reader remain
   deferred. Real quiet-run publication and Pages delivery still require post-merge proof.
+- The review's four small follow-ups — the write path's "inside 72h" line on any-horizon
+  corrections, a result compared across inverted roles, control characters in the PR body,
+  and the digest line joining the last checklist item — go to a patch, not this release
+  (`docs/v0.2.6-ideas.md` rows 43–46).
 
 ## [0.3.2] — 2026-09-09
 
