@@ -197,7 +197,7 @@ async function main() {
   console.log(`\nwrote src/data/fixtures.json (${valid.length}), src/data/meta.json and src/data/standings.json`)
 
   if (hasUrgentChanges(changes)) {
-    console.log('\n⚠  Something inside 72h moved. Re-check any open position on it.')
+    console.log('\n⚠  Urgent change reported. Re-check any open position on the fixtures named above.')
   }
   console.log(`\n${reportFor(standings)}`)
   return hasUrgentChanges(changes) ? 1 : 0

@@ -69,6 +69,14 @@ function inversionDetail(before: Fixture, after: Fixture): string {
   return `was ${before.home.name} at home, now ${after.home.name} at home${venue}`
 }
 
+function resultDetail(before: Fixture, after: Fixture): string {
+  if (!before.result || !after.result) return ''
+  if (isInversion(before, after)) {
+    return `${before.home.name} ${before.result.home} -> ${after.result.away}, ${before.away.name} ${before.result.away} -> ${after.result.home}`
+  }
+  return `${before.result.home}-${before.result.away} -> ${after.result.home}-${after.result.away}`
+}
+
 export type DiffOptions = {
   /** Kickoffs within this many hours of `now` are flagged urgent. Default 72. */
   urgentWithinHours?: number
@@ -134,11 +142,15 @@ export function diffFixtures(
 
     // Normal completion is already STATUS_CHANGED. A correction to two known scores
     // remains urgent even weeks later, because it can change a settled result.
-    if (before.result && after.result &&
-      (before.result.home !== after.result.home || before.result.away !== after.result.away)) {
+    const resultChanged = before.result && after.result
+      ? isInversion(before, after)
+        ? before.result.home !== after.result.away || before.result.away !== after.result.home
+        : before.result.home !== after.result.home || before.result.away !== after.result.away
+      : false
+    if (resultChanged) {
       changes.push({
         kind: 'RESULT_CHANGED', id, label: label(after), urgent: true,
-        detail: `${before.result.home}-${before.result.away} -> ${after.result.home}-${after.result.away}`,
+        detail: resultDetail(before, after),
       })
     }
 

@@ -112,6 +112,48 @@ describe('bug class 2 — home and away inverted', () => {
     expect(changes[0]!.urgent).toBe(true)
   })
 
+  it('does not report result lines when an inverted fixture keeps each team’s goals the same', () => {
+    const beforeInverted = [
+      fx({
+        id: 'ligue1:401876488', status: 'full_time',
+        home: { name: 'Alpha' }, away: { name: 'Beta' }, result: { home: 2, away: 1 },
+        venue: 'Parc des Princes', kickoffUtc: '2026-08-22T18:45:00.000Z',
+      }),
+    ]
+    const afterInverted = [
+      fx({
+        id: 'ligue1:401876488', status: 'full_time',
+        home: { name: 'Beta' }, away: { name: 'Alpha' }, result: { home: 1, away: 2 },
+        venue: 'Parc des Princes', kickoffUtc: '2026-08-22T18:45:00.000Z',
+      }),
+    ]
+    const changes = diffFixtures(beforeInverted, afterInverted, { now: NOW })
+    expect(changes.map((c) => c.kind)).toEqual(['HOME_AWAY_INVERTED'])
+  })
+
+  it('reports a genuine inverted correction as per-team result changes', () => {
+    const beforeInverted = [
+      fx({
+        id: 'ligue1:401876489', status: 'full_time',
+        home: { name: 'Alpha' }, away: { name: 'Beta' }, result: { home: 2, away: 1 },
+        venue: 'Parc des Princes', kickoffUtc: '2026-08-22T18:45:00.000Z',
+      }),
+    ]
+    const afterInverted = [
+      fx({
+        id: 'ligue1:401876489', status: 'full_time',
+        home: { name: 'Beta' }, away: { name: 'Alpha' }, result: { home: 1, away: 3 },
+        venue: 'Parc des Princes', kickoffUtc: '2026-08-22T18:45:00.000Z',
+      }),
+    ]
+    const changes = diffFixtures(beforeInverted, afterInverted, { now: NOW })
+    const result = changes.find((c) => c.kind === 'RESULT_CHANGED')
+    expect(result).toBeDefined()
+    expect(result).toMatchObject({ urgent: true })
+    expect(result!.detail).toBe('Alpha 2 -> 3, Beta 1 -> 1')
+    expect(changes).toHaveLength(2)
+  })
+
   it('names both the swap and the venue move', () => {
     const [c] = diffFixtures(before, after, { now: NOW })
     expect(c!.detail).toContain('was Paris Saint-Germain at home, now Stade Rennais at home')

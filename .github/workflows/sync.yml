@@ -84,6 +84,7 @@ jobs:
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
+          SYNC_RECOVERY_WARNING: '1'
         run: bash scripts/ensure-pages.sh
 
       - name: Timestamp
@@ -238,7 +239,7 @@ jobs:
             echo "\`$REPORT_LINE\`"
             echo
             echo "## Sync report"
-            sed 's/^/    /' sync-output.txt
+            tr -d '\000-\010\013-\037\177' < sync-output.txt | sed 's/^/    /'
             echo
             echo "## Reviewer checklist (betting pipeline Step 0; informational)"
             echo "- [ ] Every DATE_MOVED / TIME_CHANGED / HOME_AWAY_INVERTED / RESULT_CHANGED / TEAM_CHANGED / TEAM_RENAMED line checked against any open position on that fixture."
@@ -246,6 +247,7 @@ jobs:
             echo "- [ ] DISAPPEARED lines are cup fixtures leaving the window, not a real loss."
             echo "- [ ] Standings rank moves agree with the FT results in this report; a failed standings fetch is stated in the log."
             echo "- [ ] Step 0 re-reads the app after this merge before any position decision."
+            echo
             echo "[Recent change digest](https://github.com/${{ github.repository }}/blob/main/docs/sync-digest.md) — entries publish with changed snapshots. Quiet checks add no entry. Neither an entry nor its absence implies human review."
           } > pr-body.md
 
@@ -369,9 +371,44 @@ jobs:
           fi
 
       - name: Confirm merge and request Pages delivery
+        id: deliver
         if: steps.mode.outputs.dry_run == 'false'
         env:
           GH_TOKEN: ${{ github.token }}
           SYNC_PR_NUMBER: ${{ steps.pr.outputs.number }}
           SYNC_HEAD_SHA: ${{ steps.commit.outputs.head_sha }}
         run: bash scripts/finish-sync.sh
+
+      - name: Classify a red run
+        if: failure() && steps.mode.outputs.dry_run == 'false'
+        env:
+          DELIVERY: ${{ steps.deliver.outputs.delivery }}
+          DETAIL: ${{ steps.deliver.outputs.delivery_detail }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
+        run: |
+          if [ -z "$GITHUB_STEP_SUMMARY" ]; then
+            echo "GITHUB_STEP_SUMMARY is not available; cannot record classification details."
+            exit 0
+          fi
+          case "$DELIVERY" in
+            delivery_failed)
+              OUTCOME='DELIVERY FAILED'
+              DETAIL_TEXT="${DETAIL:-The snapshot is on main, but the Pages request failed; the live site may lag behind main.}"
+              ;;
+            *)
+              if [ "$DELIVERY" = 'merge_unconfirmed' ] || [ -n "$PR_NUMBER" ]; then
+                OUTCOME='MERGE UNCONFIRMED'
+                DETAIL_TEXT="Snapshot PR #${PR_NUMBER} exists but was not seen merged (closed, head moved, or still open after ten minutes); auto-merge may be off."
+              else
+                OUTCOME='DATA FAILED'
+                DETAIL_TEXT='Nothing was published: fetch, validation, verify, digest, commit or PR creation failed.'
+              fi
+              ;;
+          esac
+          MESSAGE="${OUTCOME} — ${DETAIL_TEXT}"
+          {
+            echo "## ${OUTCOME}"
+            echo
+            echo "$MESSAGE"
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "::error title=${OUTCOME}::${MESSAGE}"
