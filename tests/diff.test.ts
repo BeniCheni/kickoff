@@ -34,6 +34,49 @@ function fx(over: Partial<Fixture> & { id: string }): Fixture {
   }
 }
 
+describe('reported results and team identity', () => {
+  it('reports a settled score correction outside the kickoff horizon as urgent', () => {
+    const before = fx({ id: 'a', status: 'full_time', kickoffUtc: '2026-08-01T12:00:00.000Z', result: { home: 1, away: 0 } })
+    const changes = diffFixtures([before], [{ ...before, result: { home: 1, away: 1 } }], { now: NOW })
+    expect(changes).toMatchObject([{ kind: 'RESULT_CHANGED', urgent: true, detail: '1-0 -> 1-1' }])
+    expect(mergeVerdict(changes, 'unchanged').verdict).toBe('hold')
+  })
+
+  it('does not add a correction for ordinary completion or an equal score', () => {
+    const before = fx({ id: 'a' })
+    const final = { ...before, status: 'full_time' as const, result: { home: 0, away: 0 } }
+    expect(diffFixtures([before], [final], { now: NOW }).map((c) => c.kind)).toEqual(['STATUS_CHANGED'])
+    expect(diffFixtures([final], [{ ...final, result: { home: 0, away: 0 } }], { now: NOW })).toEqual([])
+  })
+
+  it('deduplicates a stable team rename across fixtures and home/away roles', () => {
+    const home = { name: 'Old name', sourceId: '42' }
+    const before = [fx({ id: 'a', home }), fx({ id: 'b', away: home })]
+    const after = [{ ...before[0]!, home: { ...home, name: 'New name' } }, { ...before[1]!, away: { ...home, name: 'New name' } }]
+    expect(diffFixtures(before, after, { now: NOW })).toMatchObject([{ kind: 'TEAM_RENAMED', urgent: false }])
+  })
+
+  it('keeps two renamed teams separate and preserves evidence without provider identity', () => {
+    const before = fx({ id: 'a' })
+    const changes = diffFixtures([before], [{ ...before, home: { name: 'Home renamed' }, away: { name: 'Away renamed' } }], { now: NOW })
+    expect(changes.map((c) => c.kind)).toEqual(['TEAM_RENAMED', 'TEAM_RENAMED'])
+    expect(changes.every((c) => !c.urgent)).toBe(true)
+  })
+
+  it('reports a team substitution even when its display name is unchanged', () => {
+    const before = fx({ id: 'a', home: { name: 'United', sourceId: '1' } })
+    const changes = diffFixtures([before], [{ ...before, home: { name: 'United', sourceId: '2' } }], { now: NOW })
+    expect(changes).toMatchObject([{ kind: 'TEAM_CHANGED', urgent: true }])
+    expect(changes[0]!.detail).toContain('id 1'); expect(changes[0]!.detail).toContain('id 2')
+  })
+
+  it('recognises a swap by provider identity even when the names also change', () => {
+    const before = fx({ id: 'a', home: { name: 'A', sourceId: '1' }, away: { name: 'B', sourceId: '2' } })
+    const after = { ...before, home: { name: 'B renamed', sourceId: '2' }, away: { name: 'A renamed', sourceId: '1' } }
+    expect(diffFixtures([before], [after], { now: NOW }).map((c) => c.kind)).toEqual(['HOME_AWAY_INVERTED'])
+  })
+})
+
 describe('bug class 1 — a whole matchday shifted a day', () => {
   it('reports DATE_MOVED and marks it urgent', () => {
     const before = [fx({ id: 'a', kickoffUtc: '2026-08-20T18:45:00.000Z' })]
@@ -302,7 +345,7 @@ describe('the merge verdict — hold only what a human must read (v0.2.2)', () =
   it('one urgent line of any kind holds the PR — the same rule as exit code 1', () => {
     const r = mergeVerdict([change('TIME_CHANGED', false), change('DATE_MOVED', true)], 'changed')
     expect(r.verdict).toBe('hold')
-    expect(r.reasons).toEqual(['1 urgent change(s) — inside 72h, or a postponement/cancellation'])
+    expect(r.reasons).toEqual(['1 urgent change(s) — inside 72h, a postponement/cancellation, or a result/team correction'])
   })
 
   it('an urgent NEW line is not a reason — NEW is never urgent, and hasUrgentChanges agrees', () => {

@@ -21,13 +21,16 @@ export type ChangeKind =
   | 'STATUS_CHANGED'
   | 'VENUE_CHANGED'
   | 'TIME_CONFIDENCE_CHANGED'
+  | 'RESULT_CHANGED'
+  | 'TEAM_RENAMED'
+  | 'TEAM_CHANGED'
 
 export type Change = {
   kind: ChangeKind
   id: string
   label: string
   detail: string
-  /** Kickoff is inside the urgency horizon — likely to have money on it. */
+  /** Inside the urgency horizon, or a correction/structural change requiring a read. */
   urgent: boolean
 }
 
@@ -44,12 +47,17 @@ function label(f: Fixture): string {
   return `${f.competition} · ${f.home.name} v ${f.away.name}`
 }
 
+/** Prefer provider identity over a mutable display name. */
+function sameTeam(a: Fixture['home'], b: Fixture['home']): boolean {
+  return a.sourceId && b.sourceId ? a.sourceId === b.sourceId : a.name === b.name
+}
+
 /** Same two clubs, opposite roles. */
 function isInversion(before: Fixture, after: Fixture): boolean {
   return (
     before.competition === after.competition &&
-    before.home.name === after.away.name &&
-    before.away.name === after.home.name
+    sameTeam(before.home, after.away) &&
+    sameTeam(before.away, after.home)
   )
 }
 
@@ -83,6 +91,7 @@ export function diffFixtures(
   }
 
   const consumed = new Set<string>()
+  const renames = new Set<string>()
 
   // Pass 1 — fixtures present in both, compared field by field.
   for (const [id, after] of curr) {
@@ -98,6 +107,38 @@ export function diffFixtures(
       changes.push({
         kind: 'HOME_AWAY_INVERTED', id, label: label(after), urgent,
         detail: inversionDetail(before, after),
+      })
+    } else {
+      for (const side of ['home', 'away'] as const) {
+        const oldTeam = before[side]
+        const newTeam = after[side]
+        if (oldTeam.sourceId !== newTeam.sourceId) {
+          changes.push({
+            kind: 'TEAM_CHANGED', id, label: label(after), urgent: true,
+            detail: `${side}: ${oldTeam.name} (id ${oldTeam.sourceId ?? 'unknown'}) -> ${newTeam.name} (id ${newTeam.sourceId ?? 'unknown'})`,
+          })
+        } else if (oldTeam.name !== newTeam.name) {
+          // A club rename can touch a whole season. Report it once per competition and
+          // provider identity; without identity, retain each affected fixture's evidence.
+          const key = JSON.stringify([after.competition, newTeam.sourceId ?? `${id}:${side}`, oldTeam.name, newTeam.name])
+          if (!renames.has(key)) {
+            renames.add(key)
+            changes.push({
+              kind: 'TEAM_RENAMED', id, label: label(after), urgent: false,
+              detail: `${oldTeam.name} -> ${newTeam.name} (team id ${newTeam.sourceId ?? 'unknown'}; may affect multiple fixtures)`,
+            })
+          }
+        }
+      }
+    }
+
+    // Normal completion is already STATUS_CHANGED. A correction to two known scores
+    // remains urgent even weeks later, because it can change a settled result.
+    if (before.result && after.result &&
+      (before.result.home !== after.result.home || before.result.away !== after.result.away)) {
+      changes.push({
+        kind: 'RESULT_CHANGED', id, label: label(after), urgent: true,
+        detail: `${before.result.home}-${before.result.away} -> ${after.result.home}-${after.result.away}`,
       })
     }
 
@@ -176,6 +217,7 @@ export function diffFixtures(
   const RANK: Record<ChangeKind, number> = {
     HOME_AWAY_INVERTED: 0, DATE_MOVED: 1, STATUS_CHANGED: 2, TIME_CHANGED: 3,
     VENUE_CHANGED: 4, DISAPPEARED: 5, NEW: 6, TIME_CONFIDENCE_CHANGED: 7,
+    RESULT_CHANGED: 0, TEAM_CHANGED: 0, TEAM_RENAMED: 8,
   }
   return changes.sort(
     (a, b) => Number(b.urgent) - Number(a.urgent) || RANK[a.kind] - RANK[b.kind],
@@ -262,12 +304,12 @@ export function diffStandings(
 export type SyncReport = {
   /** Lines the fixture diff engine produced, of every kind, urgent or not. */
   changes: number
-  /** Of those, the ones inside the urgency horizon (what exit code 1 means). */
+  /** Of those, urgent by horizon or correction override (what exit code 1 means). */
   urgent: number
   /** `failed` keeps the previous table and is never a reason to commit. */
   standings: 'changed' | 'unchanged' | 'failed'
   rankMoves: number
-  /** Whether the PR this run would open may merge itself — see mergeVerdict. */
+  /** Reader-facing urgency signal; every valid snapshot still requires PR verify. */
   merge: MergeVerdict
 }
 
@@ -278,7 +320,7 @@ export type MergeVerdict = 'auto' | 'hold'
  * merge itself unless one of these is true, each a line that has cost money in the betting
  * pipeline's Step 0 or would hide a partial report:
  *
- *   - anything urgent — inside −6 h..+72 h of now, or a postponement/cancellation at any
+ *   - anything urgent — inside −6 h..+72 h of now, or a result/team correction or postponement/cancellation at any
  *     horizon (the same rule as exit code 1);
  *   - a DISAPPEARED or HOME_AWAY_INVERTED line at any horizon — a vanished fixture and an
  *     inverted moneyline are the two that cost money far out;
@@ -297,7 +339,7 @@ export function mergeVerdict(
 ): { verdict: MergeVerdict; reasons: string[] } {
   const reasons: string[] = []
   const urgent = changes.filter((c) => c.urgent && c.kind !== 'NEW').length
-  if (urgent > 0) reasons.push(`${urgent} urgent change(s) — inside 72h, or a postponement/cancellation`)
+  if (urgent > 0) reasons.push(`${urgent} urgent change(s) — inside 72h, a postponement/cancellation, or a result/team correction`)
   const disappeared = changes.filter((c) => c.kind === 'DISAPPEARED').length
   if (disappeared > 0) reasons.push(`${disappeared} DISAPPEARED line(s), at any horizon`)
   const inverted = changes.filter((c) => c.kind === 'HOME_AWAY_INVERTED').length
@@ -307,11 +349,12 @@ export function mergeVerdict(
 }
 
 /**
- * Whether a sync produced anything worth committing. Per-row `fetchedAt` stamps and
+ * Whether a sync reported a fixture or standings change. Per-row `fetchedAt` stamps and
  * `lastSyncAt` move on every run by construction and are not changes — which is why the
  * scheduled workflow reads this verdict instead of `git diff` (a git-level test opened a PR
  * on every run, "no changes" or not). Any diff-engine line counts, NEW and
- * TIME_CONFIDENCE_CHANGED included: each is data the app renders.
+ * TIME_CONFIDENCE_CHANGED included: each is data the app renders. Since v0.4.0, a
+ * valid changed=false run also publishes its verified snapshot through the same PR check.
  */
 export function reportSaysChanged(r: SyncReport): boolean {
   return r.changes > 0 || r.standings === 'changed'
@@ -321,8 +364,8 @@ export function reportSaysChanged(r: SyncReport): boolean {
  * The last line every sync run prints — machine-readable, greppable, stable. sync.yml
  * extracts `changed=`, `standings=` and `merge=` from it with a fixed regex and refuses to
  * run the commit/PR half of the job when the line is missing or malformed, so: add fields at
- * the end if you must, never rename, reorder or drop these. `merge=` (v0.2.2) is the verdict
- * on the PR this run would open; on a `changed=false` run it is printed and nothing reads it.
+ * the end if you must, never rename, reorder or drop these. `merge=` (v0.2.2) remains
+ * a reading signal on both changed and quiet publications, never permission to skip verify.
  */
 export function formatReportLine(r: SyncReport): string {
   return (

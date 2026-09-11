@@ -24,6 +24,11 @@ to here, filed by release. Two things a cold reader needs first:
 | 📜 [HONESTY.md](HONESTY.md) | The house rules — the UTC instant, the diff engine, fail-loud guards, staleness as a state — as a first-class argument. Start here. |
 | 🗺️ [ARCHITECTURE.md](ARCHITECTURE.md) | The data flow ESPN → app, the file map, where the pure layer ends, one skeleton and three lenses, the two ESPN traps. |
 
+The current release sequence is **v0.4.0 sync first, v0.5.0 European week second**, ruled
+by Beni on 10 Sep 2026. Historical European-week rows marked "open (item f)" below retain
+the decision status of their original pass; the new ruling supersedes their numbering.
+See [v0.4.0-proposal.md](v0.4.0-proposal.md) for the separate sync build and release gate.
+
 ## 📚 The archive, by release
 
 | File | Release | Rung | Notes |
@@ -46,6 +51,8 @@ to here, filed by release. Two things a cold reader needs first:
 | `v0.2.5-proposal.md` | v0.2.5 | proposal | "The resilience patch": the authoritative snapshot boundary and its availability cost, implementation choices, test and browser evidence, and dispatch receipts. |
 | `design-cycle-proposal.md` | v0.3.0 | proposal | Snapshot states say what is known; design decisions, both review passes and the forward supersession of the sync theme to v0.4.0. |
 | `v0.2.6-ideas.md` | — | ideas | **The current ranked list**, with original row numbers, explicit provider follow-ups and process notes from the v0.2.5 build. A candidate list, not a new release scope. |
+| `v0.4.0-proposal.md` | v0.4.0 (pending) | proposal and build record | Beni's sync-first ruling, scope rows 3/4/7/29, implementation choices, verification and post-merge acceptance. |
+| `sync-digest.md` | v0.4.0 (pending) | generated reading record | Latest 30 change-bearing reports; entries publish with the snapshot, never as a substitute for reading the changes. |
 | `v0.3.2-fast-track-brief.md` | v0.3.2 | executive brief (fast-track) | The Pass 1 cold review of PR #33 and its rulings: what shipped, what the review found, the verification as re-run, and the release handoff. |
 | `Kickoff Standings.html` | v0.0.2 | reference | The standings design reference the Table was built from — the one hand-made artefact left, kept as history. |
 | `screenshots/v0.0.3/` | v0.1.0 | evidence | The six-combo matrix (lens × theme, 390 px) as v0.1.0 shipped. |

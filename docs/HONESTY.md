@@ -46,11 +46,14 @@ Matchday numbers are not invented either. The provider exposes none, so the app 
 
 `scripts/diff.ts` compares the fresh fetch with the committed file, fixture by fixture, and
 reports what moved: `DATE_MOVED`, `TIME_CHANGED`, `VENUE_CHANGED`, `STATUS_CHANGED`,
-`TIME_CONFIDENCE_CHANGED`, `NEW`, `DISAPPEARED`, and `HOME_AWAY_INVERTED` — the last one is
+`TIME_CONFIDENCE_CHANGED`, `RESULT_CHANGED`, `TEAM_RENAMED`, `TEAM_CHANGED`, `NEW`,
+`DISAPPEARED`, and `HOME_AWAY_INVERTED` — the last one is
 the PSG–Rennes case, and it is detected both when the provider keeps the event id and swaps
 the roles, and when it recreates the event as its mirror image within ten days. Anything
 inside −6 h..+72 h of now is **urgent**, and so is any postponement or cancellation at any
-horizon. The sync exits 1 when something urgent moved, so an unattended run cannot update
+horizon. Corrections between two known final scores and changes to provider team identity
+are urgent at any horizon. Normal completion remains a status change; a team rename is
+never urgent and is reported once per competition/team identity. The sync exits 1 when something urgent moved, so an unattended run cannot update
 silently.
 
 Fixture ids are the provider's own event id namespaced by competition, *not* built from team
@@ -80,8 +83,8 @@ availability cost. The last committed snapshot remains the last completely succe
 A failed run creates or updates no sync PR, label or commit; an existing PR stays unchanged.
 Its failure and diagnostics are in Actions. Re-reading the committed app cannot reveal a
 withheld fixture move. The header stamp and 24/72-hour banner describe snapshot age, not
-whether a check failed, and the app advances only after a change-bearing update merges (a
-successful quiet run does not advance it). PR #23's Pass 2 treats a verified failure reader
+whether a check failed. The app advances after a successful snapshot PR merges and is
+deployed or pulled locally; quiet verified runs now take that same path. PR #23's Pass 2 treats a verified failure reader
 as an unresolved release gate, not a cost that documentation alone settles.
 Future ancillary data does not automatically join this boundary; membership needs an explicit
 decision. This supersedes the earlier standings soft-failure exception.
@@ -95,10 +98,11 @@ report: changed=true changes=2 urgent=0 standings=changed rank-moves=8 merge=aut
 ```
 
 "Changed" is the diff engine's verdict, never `git diff`'s — per-row fetch stamps move on
-every run and are not changes. `merge=` is whether the PR this run opens may merge itself:
+every run and are not changes. `merge=` is a reader-facing signal, not an auto-merge gate:
 `hold` when anything is urgent, when any fixture vanished or inverted at any horizon, or when
 the standings fetch failed; `auto` otherwise. `standings=failed` remains a supported legacy
-report value; current fetch failures abort with exit 2 before a report instead.
+report value that publication refuses; current fetch failures abort with exit 2 before a
+report instead. Every valid snapshot PR still requires its own successful verify run.
 The format is pinned verbatim in a test, the
 workflow validates it with the same regex, and a missing or malformed line fails the run
 rather than falling through to a guess.
@@ -113,12 +117,16 @@ LIVE four hours after kickoff, because the app can no longer know. Two heroes on
 was a lie the app told from the day the lenses shipped (31 Aug 2026) until v0.2.2; since then
 both read one gate — *remaining* means not yet kicked off, on the same instant.
 
-One honest cost, written down rather than hidden: the scheduled sync commits only when the
-diff engine reports a change, so through an international break the banner measures time
-since the last *change-bearing* sync and goes amber even though the bot verified nothing
-moved. The fix (a verified "nothing changed" that still advances the stamp) is planned for
-v0.4.0, after the diff engine learns to see result corrections and team renames — the two
-things it is still blind to today.
+A successful quiet sync now publishes its verified snapshot through the same required PR
+check as a change-bearing run. It advances both fixture and standings freshness, paying off
+the earlier cost where an unchanged schedule looked unverified through an international
+break. A failed fetch, failed verification, unmerged PR or undeployed build does not earn a
+fresh stamp in the app. A local server still needs a pull after the merge.
+
+The [recent change digest](sync-digest.md) contains the latest 30 change-bearing reports;
+quiet checks add no entry. It is a record to read, never evidence of a human read. Automatic
+snapshot merges explicitly request a Pages deployment; the next real sync retries missed
+main delivery. A requested deployment is not a confirmed deployment.
 
 ## 8. The snapshot is committed
 

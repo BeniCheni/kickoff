@@ -78,7 +78,7 @@ A failed run produces a red `sync.yml` run and diagnostics in Actions, but creat
 no sync PR, label or commit; an existing PR is left as it was. Step 0's re-read of the same
 committed app cannot discover a fixture change withheld during a standings outage. The header
 stamp and the 24/72-hour banner report snapshot age, not failed checks; there is no failure
-signal in the app or Step 0's PR queue. A later successful, change-bearing run can propose an
+signal in the app or Step 0's PR queue. A later successful run, including a quiet verification, can propose an
 update, and the app advances only when that update merges. PR #23's Pass 2 recommended
 blocking release until failure runs have an explicit reader; see the proposal's review
 resolutions.
@@ -99,9 +99,9 @@ cron has run three to four and a half hours late here, so runs may bunch or go m
 no copy in this repo promises "every three hours". It opens or updates one rolling PR
 (`sync/scheduled` → `main`) carrying the diff report — it never pushes straight to `main`.
 
-**Every successful change-bearing sync PR merges itself after `verify` is green.** The
+**Every successful sync PR, including a quiet verification, merges after `verify` is green.** The
 `mergeVerdict` in `scripts/diff.ts` still reports `hold` when anything is urgent (inside
-−6 h..+72 h, or a postponement/cancellation at any horizon), or when any `DISAPPEARED` or
+−6 h..+72 h, or a postponement/cancellation or result/team correction at any horizon), or when any `DISAPPEARED` or
 `HOME_AWAY_INVERTED` line appears at any horizon; it reports `auto` otherwise. This is a
 reader-facing signal in the PR report, not a release gate. The legacy `standings=failed`
 report remains visible for compatibility, although current standings failures exit 2 before
@@ -126,14 +126,29 @@ Mechanics that have not changed: `workflow_dispatch` (with a `dry_run` input map
 `npm run sync -- --check`) tests the workflow without waiting for the schedule, and its
 summary now states the verdict the run would have obeyed. Needs the repo's "Allow GitHub
 Actions to create and approve pull requests" setting on (enabled 2026-09-01) — no secret, no
-PAT. The workflow commits only when the diff engine's report line (`report: changed=…`, the
-last line `npm run sync` prints) says something moved — a fixture change of any kind or a
-standings row — so a quiet run leaves no commit and no PR. Consequence, accepted: the app's
-`synced` stamp and staleness banner measure time since the last *change-bearing* merged
-sync, and go amber then red through an international break even though the bot verified
-nothing moved; a higher cadence does not change that. The fix (auto-merging an empty report)
-is v0.4.0's, behind the diff engine's two blind spots — see `docs/v0.2.0-proposal.md`'s
-"Review resolutions" and `docs/v0.3.0-ideas.md` rows 1–2. The bot's PR does trigger
+PAT. In v0.4.0, every successful real run publishes the generated fixture, meta and standings
+snapshot through `sync/scheduled`, including `changed=false` with `standings=unchanged`.
+A legacy `standings=failed` report fails closed. Quiet commits say `sync: verified unchanged`
+and carry the full report line; all three generated files move together to preserve the
+snapshot boundary and rolling-window counts. A failed or dry run publishes nothing.
+The header stamp advances after that PR merges and Pages deploys, or a local checkout pulls.
+The unchanged cron does not promise a delivery interval.
+
+`docs/sync-digest.md` keeps the latest 30 change-bearing reports on main, with bounded
+excerpts and full Actions-log links. It is generated in the snapshot PR, so proposed entries
+are not published on main until their snapshot merges. Quiet checks add no entry. Older
+entries remain in Git history; Actions log availability follows repository retention.
+The digest records changes, never an acknowledgement that anyone read them.
+
+GitHub suppresses push workflows for bot-token merges. `scripts/finish-sync.sh` waits up to
+ten minutes for the expected PR head to merge, then `scripts/ensure-pages.sh` dispatches
+`pages.yml` on main if the latest successful Pages run is behind. An unconfirmed merge or
+failed dispatch fails the run visibly. The next real sync also attempts recovery before
+fetching; recovery failure alone does not prevent the fresh fetch. Dispatch is not proof of
+deployment: check the Pages run and live header. Real publication is restricted to main;
+feature-branch dispatches use `dry_run=true`.
+
+The bot's PR does trigger
 `ci.yml`'s `pull_request` run, but GitHub holds it for approval (github-actions[bot] is not
 a collaborator) and the merge box counts only that run — a `workflow_dispatch` check on the
 same SHA never appears — so `sync.yml` approves the held run itself through the Actions API
@@ -210,6 +225,12 @@ public paper trail. A session that picks one silently has renumbered the roadmap
 downstream.
 
 ## Roadmap pointers
+
+Beni ruled on 10 Sep 2026: **sync first as v0.4.0; European week second as v0.5.0**.
+PR #39 keeps its readable competition chips; the designer re-mirrors them after release.
+`docs/v0.4.0-proposal.md` records the sync scope and implementation choices. The European-week
+PR stays unmerged until the sync release has shipped, then refreshes its generated data,
+merge-day date and exact-tip verification. Each release merge and tag remains Beni's.
 
 `docs/v0.2.6-ideas.md` is the **current** ranked candidate list, written cold after the v0.2.5
 build. It carries open rows from `docs/v0.3.0-ideas.md` with their original numbers, the two
