@@ -52,6 +52,7 @@ See [v0.4.0-proposal.md](v0.4.0-proposal.md) for the separate sync build and rel
 | `design-cycle-proposal.md` | v0.3.0 | proposal | Snapshot states say what is known; design decisions, both review passes and the forward supersession of the sync theme to v0.4.0. |
 | `v0.2.6-ideas.md` | — | ideas | **The current ranked list**, with original row numbers, explicit provider follow-ups and process notes from the v0.2.5 build. A candidate list, not a new release scope. |
 | `v0.4.0-proposal.md` | v0.4.0 | proposal and build record | Beni's sync-first ruling, scope rows 3/4/7/29, implementation choices, verification, review resolutions and post-merge acceptance. |
+| `v0.4.1-implementation-prompt.md` | v0.4.1 | implementation prompt | Builder brief for the deferred sync-review follow-ups, release pending. |
 | `v0.4.0-round-3-executive-brief.md` | v0.4.0 | executive brief (Pass 2.5) | Round 3 of PR #41's 360: both Pass 1 findings corroborated, the verification as re-run, the four deferred follow-ups and the release handoff. |
 | `sync-digest.md` | v0.4.0 | generated reading record | Latest 30 change-bearing reports; entries publish with the snapshot, never as a substitute for reading the changes. |
 | `v0.3.2-fast-track-brief.md` | v0.3.2 | executive brief (fast-track) | The Pass 1 cold review of PR #33 and its rulings: what shipped, what the review found, the verification as re-run, and the release handoff. |

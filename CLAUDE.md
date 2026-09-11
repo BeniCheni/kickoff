@@ -84,6 +84,11 @@ update, and the app advances only when that update merges. PR #23's Pass 2 recom
 blocking release until failure runs have an explicit reader; see the proposal's review
 resolutions.
 
+Since v0.4.1, a red run says which half failed: **DATA FAILED** means nothing was published
+(fetch, validation, verify, digest, commit or PR creation failed); **MERGE UNCONFIRMED** means
+a snapshot PR exists but was not seen merged; **DELIVERY FAILED** means the snapshot is on main
+but its Pages request failed, so the live site may lag.
+
 **Adjudicated 5 Sep 2026 (Beni).** The boundary ships as built; the reader is a *procedure*, not
 an app component, and it lives in `../Sportsbooks/CLAUDE.md` ("Check the sync run succeeded BEFORE
 trusting the app") — that is the owning copy, do not restate the rule here. In short: before any
@@ -232,6 +237,7 @@ downstream.
 ## Roadmap pointers
 
 Beni ruled on 10 Sep 2026: **sync first as v0.4.0; European week second as v0.5.0**.
+v0.4.1 (rows 43–48) ships before v0.5.0 (Beni, 11 Sep 2026).
 PR #39 keeps its readable competition chips; the designer re-mirrors them after release.
 `docs/v0.4.0-proposal.md` records the sync scope and implementation choices. The European-week
 PR stays unmerged until the sync release has shipped, then refreshes its generated data,

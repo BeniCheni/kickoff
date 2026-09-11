@@ -8,6 +8,29 @@ releases.
 
 ## [Unreleased]
 
+## [0.4.1] — release pending
+
+The small print tells the truth too: the deferred sync-review follow-ups now make urgent changes,
+inverted results, hostile provider text and red delivery outcomes explicit.
+
+### Fixed
+
+- The write-path warning names an urgent change without falsely calling every correction an
+  inside-72-hour move; inverted finished scores compare each team's goals, not its role.
+- The sync PR body strips non-tab C0 controls and separates its digest sentence from the last
+  checklist item; CI pins the committed digest preamble.
+- Red real runs classify exactly one outcome: `DATA FAILED`, `MERGE UNCONFIRMED`, or
+  `DELIVERY FAILED`.
+
+### Changed
+
+- A failed Pages dispatch now reports its delivery state and an earlier-merge recovery warns
+  visibly rather than exiting silently.
+
+### Deliberately not done
+
+- The schema-level R45 control-character refusal in `normalizeEvent` remains deferred to PR #39.
+
 ## [0.4.0] — 2026-09-11
 
 The sync tells the whole truth: corrected scores and team identities are reported, quiet
