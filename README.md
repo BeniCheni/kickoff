@@ -1,7 +1,7 @@
 # ⚽ Kickoff
 
 [![CI](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml/badge.svg)](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml)
-[![version](https://img.shields.io/badge/version-0.3.2-1d4ed8)](CHANGELOG.md)
+[![version](https://img.shields.io/badge/version-0.5.0-1d4ed8)](CHANGELOG.md)
 [![license](https://img.shields.io/badge/license-MIT-16a34a)](LICENSE)
 [![built with](https://img.shields.io/badge/built%20with-Claude%20Code-D97757)](CLAUDE.md)
 [![built with](https://img.shields.io/badge/built%20with-Codex-000000)](https://openai.com/codex/)
@@ -73,10 +73,9 @@ the fix, and the house rule got carved over the door:
 
 ### Never a confident lie.
 
-## ⏱️ What it does (v0.3.2)
+## ⏱️ What it does (v0.5.0)
 
-v0.3.2 is the current release. The European week below is built and unreleased; the number it
-ships under is Beni's decision.
+v0.5.0 is the current release. The European week is in and this update ships under this release.
 
 La Liga, the Premier League, Serie A, Ligue 1, the Bundesliga and the Champions League;
 domestic super cups and the UEFA Super Cup; six tables; one fixture skeleton read through
@@ -240,6 +239,7 @@ One subject line per release. The honours board:
   match reads KICKED OFF, never as the next kickoff, and the scheduled sync merges itself once
   `verify` is green.
 - **v0.3.2** *(9 Sep 2026)* — the sync's verify step survives a live match: the designCycle DOM test scopes every LIVE / KICKED OFF query to its own row and fixes its input by date, so a genuine in-play row in the snapshot no longer turns `sync.yml`'s verify red; the pipeline skill is named by its live handle; nothing in the app changes.
+- **v0.5.0** *(10 Sep 2026)* — the Champions League joins the schedule: 144 league-phase fixtures beside the domestic rows, every European day carrying provenance, venue clocks that follow the venue with honest unknown states, a 36-club league-phase table with contained sticky headers, and Moments as an empty-first third tab.
 
 The paper trail for every release — proposals, design briefs, build specs and review
 prompts — is indexed in [docs/README.md](docs/README.md). The design system it's built

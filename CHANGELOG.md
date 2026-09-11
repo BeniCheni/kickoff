@@ -8,6 +8,10 @@ releases.
 
 ## [Unreleased]
 
+## [0.5.0] — 2026-09-10
+
+The Champions League joins the schedule: 144 league-phase fixtures beside domestic rows, every European day carrying computed matchday provenance, stadium clocks that follow the venue with an honest unknown state, the 36-club league-phase table with contained sticky headers, and Moments as a curated, empty-first third tab outside the sync boundary. Built by Codex, reviewed cold by Claude, rebutted by Codex, synthesised by Claude, adjudicated by Beni.
+
 ### Added
 
 - Moments becomes the third tab: an empty-first, hand-curated set of links to rights
@@ -62,8 +66,7 @@ releases.
 - The broader competition-colour contrast inventory and a design-review skill stay open.
   The separate sync theme keeps its cadence, approval and merge policy; only the report
   grammar changes here.
-- No release number, version bump or tag. The still's letterbox tolerance and the new
-  callout/reschedule copy remain design confirmations; cover is the implemented default.
+- The competition chips were kept; the designer will re-mirror that treatment in Fergie Time.
 
 ## [0.3.2] — 2026-09-09
 
