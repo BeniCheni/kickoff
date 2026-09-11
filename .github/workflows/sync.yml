@@ -246,7 +246,7 @@ jobs:
             echo "- [ ] DISAPPEARED lines are cup fixtures leaving the window, not a real loss."
             echo "- [ ] Standings rank moves agree with the FT results in this report; a failed standings fetch is stated in the log."
             echo "- [ ] Step 0 re-reads the app after this merge before any position decision."
-            echo "[Recent change digest](https://github.com/${{ github.repository }}/blob/main/docs/sync-digest.md) — published with the snapshot; no entry implies a human read."
+            echo "[Recent change digest](https://github.com/${{ github.repository }}/blob/main/docs/sync-digest.md) — entries publish with changed snapshots. Quiet checks add no entry. Neither an entry nor its absence implies human review."
           } > pr-body.md
 
           EXISTING=$(gh pr list --head sync/scheduled --base main --state open --json number --jq '.[0].number // empty')

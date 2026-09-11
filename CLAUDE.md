@@ -119,8 +119,9 @@ not a PR act; a per-PR pause that survives the next run is `docs/v0.2.6-ideas.md
 **The Step 0 contract with the betting pipeline:** a merged sync PR is not evidence that a
 fixture change was read. Before relying on the app for an open position, re-read the app and
 independently verify every DATE_MOVED / TIME_CHANGED / HOME_AWAY_INVERTED / STATUS_CHANGED /
-DISAPPEARED line relevant to that position. The report remains the audit trail for urgent and
-structural changes, but CI-green generated snapshots merge without a manual release action.
+DISAPPEARED / RESULT_CHANGED / TEAM_CHANGED / TEAM_RENAMED line relevant to that position.
+The report remains the audit trail for urgent and structural changes, but CI-green generated
+snapshots merge without a manual release action.
 
 Mechanics that have not changed: `workflow_dispatch` (with a `dry_run` input mapped to
 `npm run sync -- --check`) tests the workflow without waiting for the schedule, and its
