@@ -1,8 +1,9 @@
 name: Pages
 
 # The app's public address (v0.2.2): https://benicheni.github.io/kickoff/. Every push to
-# main — a release, or a sync PR that merged itself — rebuilds dist/ and deploys it as the
-# GitHub Pages project site, so the demo is redeployed within minutes of the data landing.
+# main made by a human rebuilds dist/ and deploys the GitHub Pages project site.
+# Bot merges do not emit another push workflow: sync.yml explicitly dispatches this workflow
+# after observing its merge, and retries missed delivery at the next real sync.
 # What it serves is a point-in-time build: the header's synced stamp and the staleness banner
 # are the visitor's proof of how old the snapshot is, which is the whole point. No code
 # change was needed — vite.config.ts already builds with `base: './'` and every view lives in
