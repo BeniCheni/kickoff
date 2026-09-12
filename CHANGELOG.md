@@ -42,10 +42,14 @@ The Champions League joins the schedule: 144 league-phase fixtures beside domest
 
 ### Fixed
 
+- The publication gate's UCL layout tests use recorded standings when a live phase table
+  has ended. Venue audits allow honest unknown clocks while retaining recorded mapping
+  and domestic-clock checks, so these supported snapshots can pass verification.
+
 - An extra child in ESPN's league-phase standings response no longer aborts the whole
   snapshot while the phase child is intact: the sync reads the child that carries the phase's
-  name, names any others in its log, and still refuses to write when that child is missing,
-  short a row or malformed (cold review of #39).
+  name and logs the child count and selected name. During the phase, a missing or short
+  phase child still aborts; malformed entries always abort (cold review of #39).
 
 - Stadium clocks use the venue country and venue-id overrides, with an explicit unknown state
   instead of the viewer's clock. Zone changes are recorded in the sync report; unknown zones

@@ -1,13 +1,21 @@
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { TablePage } from '../../src/components/TablePage'
 import { STANDINGS } from '../../src/lib/standings'
 import { TABLE_LEAGUES, LEAGUE_TABLES } from '../../src/lib/competitions'
 import { META } from '../../src/lib/fixtures'
 import { primeClock } from './rig'
+import { normalizeStandingEntry } from '../../scripts/providers/espn-standings'
+import recorded from '../fixtures/espn/ucl-standings.json'
 const original = structuredClone(STANDINGS)
 const degraded = META.standingsDegraded
 let release: (() => void) | undefined
+// The publication gate must also pass when the live provider has degraded UCL out
+// of the snapshot. Exercise the populated layout with recorded league-phase rows.
+beforeEach(() => {
+  STANDINGS.leagues.ucl = recorded.children[0]!.standings.entries.map(entry => normalizeStandingEntry(entry)!)
+  META.standingsDegraded = []
+})
 afterEach(() => { cleanup(); release?.(); release = undefined; Object.assign(STANDINGS, structuredClone(original)); META.standingsDegraded = degraded })
 function mount(league = 'ucl') {
   window.history.replaceState(null, '', `/?league=${league}`)
@@ -17,7 +25,9 @@ function mount(league = 'ucl') {
 describe('the league-phase table extends the domestic language', () => {
   it('groups 8, 16 and 12 rows under first-child dividers, with only the deep bands sticky', () => {
     const { container } = mount()
-    for (const table of container.querySelectorAll('[data-table]')) {
+    const tables = container.querySelectorAll('[data-table]')
+    expect(tables).toHaveLength(2)
+    for (const table of tables) {
       const groups = [...table.querySelectorAll('[data-zone-band]')]
       expect(groups).toHaveLength(3)
       expect(groups.map(g => g.querySelectorAll('[data-table-row]').length)).toEqual([8, 16, 12])

@@ -1,0 +1,78 @@
+
+> kickoff@0.5.0 sync
+> tsx scripts/sync.ts --check
+
+
+Kickoff sync · 2026-08-13 .. 2027-02-09 · provider=espn
+(--check: reporting only, nothing will be written)
+
+fetched 1198 fixtures
+  supercup       0
+  shield         1
+  tdc            1
+  dflsupercup    1
+  ucl            144
+  laliga         230
+  pl             240
+  seriea         230
+  ligue1         171
+  bundesliga     180
+
+changes vs last snapshot:
+  ⚠ STATUS_CHANGED           seriea · Genoa v Frosinone
+                             in_play -> full_time
+  ⚠ STATUS_CHANGED           bundesliga · Mainz v Eintracht Frankfurt
+                             in_play -> full_time
+  ⚠ STATUS_CHANGED           bundesliga · FC Augsburg v Bayer Leverkusen
+                             in_play -> full_time
+  ⚠ STATUS_CHANGED           bundesliga · SC Freiburg v Borussia Mönchengladbach
+                             in_play -> full_time
+  ⚠ STATUS_CHANGED           bundesliga · TSG Hoffenheim v VfB Stuttgart
+                             in_play -> full_time
+  ⚠ STATUS_CHANGED           bundesliga · Borussia Dortmund v SC Paderborn 07
+                             in_play -> full_time
+  ⚠ STATUS_CHANGED           ligue1 · RC Strasbourg v AS Monaco
+                             scheduled -> in_play
+
+standings: ucl 36 · laliga 20 · pl 20 · seriea 20 · ligue1 18 · bundesliga 18
+rank changes vs last snapshot:
+  laliga       Espanyol: 13 -> 7
+  laliga       Atlético Madrid: 7 -> 8
+  laliga       Racing Santander: 8 -> 9
+  laliga       Osasuna: 9 -> 11
+  laliga       Athletic Club: 11 -> 12
+  laliga       Levante: 12 -> 13
+  pl           Ipswich Town: 14 -> 7
+  pl           Newcastle United: 7 -> 8
+  pl           Everton: 8 -> 9
+  pl           Leeds United: 9 -> 10
+  pl           Nottingham Forest: 16 -> 11
+  pl           Brighton & Hove Albion: 10 -> 12
+  pl           Manchester United: 11 -> 13
+  pl           Sunderland: 12 -> 14
+  pl           Crystal Palace: 13 -> 16
+  pl           Fulham: 19 -> 17
+  pl           Aston Villa: 17 -> 19
+  bundesliga   SC Freiburg: 2 -> 1
+  bundesliga   Borussia Dortmund: 3 -> 2
+  bundesliga   FC Augsburg: 1 -> 3
+  bundesliga   Bayern Munich: 6 -> 5
+  bundesliga   Bayer Leverkusen: 8 -> 6
+  bundesliga   Mainz: 5 -> 7
+  bundesliga   Eintracht Frankfurt: 14 -> 8
+  bundesliga   Schalke 04: 7 -> 9
+  bundesliga   RB Leipzig: 9 -> 10
+  bundesliga   TSG Hoffenheim: 16 -> 11
+  bundesliga   Werder Bremen: 11 -> 12
+  bundesliga   VfB Stuttgart: 10 -> 13
+  bundesliga   FC Cologne: 12 -> 14
+  bundesliga   SC Paderborn 07: 13 -> 15
+  bundesliga   1. FC Union Berlin: 15 -> 16
+  bundesliga   Hamburg SV: 18 -> 17
+  bundesliga   Borussia Mönchengladbach: 17 -> 18
+41 standings row(s) changed vs last snapshot
+
+--check: no files written.
+time-sensitive lines (merge=hold) — reported, not a gate; this PR still merges once verify is green:
+  - 7 urgent change(s) — inside 72h, a postponement/cancellation, or a result/team correction
+report: changed=true changes=7 urgent=7 standings=changed rank-moves=34 merge=hold zones-unknown=0 standings-degraded=none

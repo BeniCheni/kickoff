@@ -97,7 +97,8 @@ Future ancillary data does not automatically join this boundary; membership need
 decision. A structurally ended phase table is different from a failed fetch: after its final
 configured matchday window, a validated response in which no child carries the phase's name,
 or the phase child no longer has its row count, is dropped for that competition only; an extra
-child beside an intact phase child is noise, named in the log and ignored, during and after the phase. The report and
+child beside an intact phase child is ignored during and after the phase; the log records
+the child count and selected phase name. The report and
 metadata name it; every fetch or entry-validation failure still aborts the whole snapshot.
 Unknown seasons cannot use this exception. This supersedes the earlier standings soft-failure exception.
 

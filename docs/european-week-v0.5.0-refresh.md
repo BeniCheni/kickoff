@@ -65,7 +65,7 @@ the Pass 2.5 brief follow the new numbers. These remain historical findings, wit
 | Production build | Green; JS **864.17 kB / 145.89 kB gzip**, CSS 29.14 kB / 6.70 kB gzip (Vite figures) |
 | Single-file build | Green; HTML **895.02 kB / 153.22 kB gzip** (Vite figures) |
 | Browser matrix | **72 states**: three lenses × two themes × three tabs × 360/375/390/1000 px, height 850 |
-| Version / date | All seven version locations read **0.5.0**; prepared release date **12 Sep 2026** |
+| Version / date | Seven in-tree release-version strings read **0.5.0**; prepared release date **12 Sep 2026**. The annotated tag is intentionally absent until Beni releases. |
 
 Browser checks used the production preview from this worktree on port 5196 in Codex's
 in-app browser. Every cell had loaded fonts, the requested lens/theme, the v0.5.0 / 1,198

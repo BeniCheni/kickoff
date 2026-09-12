@@ -24,8 +24,14 @@ describe('stadium clocks follow the venue, never the competition or viewer', () 
   })
   it('keeps Brooklyn unchanged through the real normalizer for all eighteen recorded events', () => {
     expect(fixtures).toHaveLength(18) // recorded payload, never a live snapshot count
-    for (const f of fixtures) expect(fixtureTimes(f.kickoffUtc, f.venueTz).brooklyn)
-      .toEqual(fixtureTimes(f.kickoffUtc, 'Europe/Zurich').brooklyn)
+    for (const f of fixtures) {
+      // The recorded activation inventory must stay fully mapped; the live window
+      // may legitimately acquire an unknown venue after this acceptance sample.
+      expect(venueTimeZone(f.venueCountry, f.venueId), `${f.id}: unmapped ${f.venueCountry}`).toBeDefined()
+      expect(f.venueTz, f.id).toBe(venueTimeZone(f.venueCountry, f.venueId))
+      expect(fixtureTimes(f.kickoffUtc, f.venueTz).brooklyn)
+        .toEqual(fixtureTimes(f.kickoffUtc, 'Europe/Zurich').brooklyn)
+    }
   })
   it('validates every reference zone and Kazakhstan after its unification', () => {
     for (const zone of Object.values(VENUE_TZ_BY_COUNTRY)) expect(venueTzSchema.safeParse(zone).success).toBe(true)
@@ -38,6 +44,13 @@ describe('stadium clocks follow the venue, never the competition or viewer', () 
     expect(fixtureTimes(f.kickoffUtc, f.venueTz)).toMatchObject({ local: null, dayDelta: null })
     expect(fixtureTimes(f.kickoffUtc, f.venueTz).brooklyn.time).toBeTruthy()
     expect(formatReportLine({ changes: 0, urgent: 0, standings: 'unchanged', rankMoves: 0, merge: 'auto', zonesUnknown: [f].filter(f => !f.venueTz).length })).toContain('zones-unknown=1')
+    // Unknown countries can arrive with otherwise valid, retained venue evidence.
+    event.competitions[0].venue = { id: 'unmapped-venue', address: { country: 'Unknown' } }
+    const unmapped = fixtureSchema.parse(normalizeEvent(event, 'ucl', '2026-09-10T15:35:00.000Z'))
+    expect(unmapped).toMatchObject({ venueId: 'unmapped-venue', venueCountry: 'Unknown' })
+    expect(unmapped.venueTz).toBeUndefined()
+    expect(fixtureTimes(unmapped.kickoffUtc, unmapped.venueTz)).toMatchObject({ local: null, dayDelta: null })
+    expect(fixtureTimes(unmapped.kickoffUtc, unmapped.venueTz).brooklyn).toEqual(fixtureTimes(f.kickoffUtc, f.venueTz).brooklyn)
   })
   it.each(['', 'Europe/Nonsense'])('rejects %j before rendering', (venueTz) => {
     expect(fixtureSchema.safeParse({ ...fixtures[0], venueTz }).success).toBe(false)
@@ -56,14 +69,26 @@ describe('stadium clocks follow the venue, never the competition or viewer', () 
       expect.objectContaining({ kind: 'VENUE_TZ_CHANGED', urgent: false }),
     ])
   })
-  it('audits retained venue evidence and preserves every domestic snapshot clock', () => {
+  it.each([
+    ['laliga', 'Spain'], ['pl', 'England'], ['seriea', 'Italy'],
+    ['ligue1', 'France'], ['bundesliga', 'Germany'],
+  ] as const)('preserves the ordinary %s clock through the real normalizer', (competition, country) => {
+    const event = structuredClone(payload.events[0])
+    event.competitions[0].venue = { id: 'recorded-test-venue', address: { country } }
+    const f = fixtureSchema.parse(normalizeEvent(event, competition, '2026-09-10T15:35:00.000Z'))
+    expect(f.venueTz).toBe(COMPETITIONS[competition].tz)
+  })
+  it('uses a known neutral venue instead of assuming the domestic competition clock', () => {
+    const event = structuredClone(payload.events[0])
+    event.competitions[0].venue = { id: 'recorded-test-venue', address: { country: 'Portugal' } }
+    const f = fixtureSchema.parse(normalizeEvent(event, 'pl', '2026-09-10T15:35:00.000Z'))
+    expect(f.venueTz).toBe('Europe/Lisbon')
+  })
+  it('audits snapshot zones against venue evidence, including honest unknowns', () => {
     const snapshot = fixturesFileSchema.parse(JSON.parse(readFileSync(new URL('../src/data/fixtures.json', import.meta.url), 'utf8')))
     for (const f of snapshot) {
-      if (f.venueCountry || f.venueId) {
-        expect(venueTimeZone(f.venueCountry, f.venueId), `${f.id}: unmapped ${f.venueCountry}`).toBeDefined()
-        expect(f.venueTz, f.id).toBe(venueTimeZone(f.venueCountry, f.venueId))
-      }
-      if (COMPETITIONS[f.competition].group === 'domestic') expect(f.venueTz, f.id).toBe(COMPETITIONS[f.competition].tz)
+      expect(f.venueTz, f.id).toBe(venueTimeZone(f.venueCountry, f.venueId))
+      if (!f.venueTz) expect(fixtureTimes(f.kickoffUtc, f.venueTz).local, f.id).toBeNull()
     }
   })
   it('matches the workflow regex rather than maintaining a second grammar', () => {

@@ -17,6 +17,7 @@ beforeEach(() => {
   process.argv = ['node', 'scripts/sync.ts', '--from=2026-08-01', '--to=2027-02-01']
   vi.spyOn(console, 'log').mockImplementation(() => {})
   vi.spyOn(console, 'error').mockImplementation(() => {})
+  vi.spyOn(console, 'warn').mockImplementation(() => {})
   vi.stubGlobal('fetch', vi.fn(async (url: string) => {
     const { key } = SYNCABLE.find(c => url.includes(`/${c.code}/`))!
     const body = structuredClone(recorded)
@@ -73,6 +74,7 @@ describe('an intact league-phase child survives extra children (cold review, PR 
     expect(Object.keys(writes['standings.json'].leagues).sort()).toEqual(['bundesliga', 'laliga', 'ligue1', 'pl', 'seriea', 'ucl'])
     expect(writes['standings.json'].leagues.ucl).toHaveLength(36)
     expect(writes['meta.json'].standingsDegraded).toEqual([])
+    expect(vi.mocked(console.warn)).toHaveBeenCalledWith('ESPN standings uefa.champions: 2 children returned; reading "League Phase" as the league phase table')
   })
   it('the phase child is found by name, not by position', async () => {
     vi.setSystemTime(new Date('2026-09-10T12:00:00Z'))

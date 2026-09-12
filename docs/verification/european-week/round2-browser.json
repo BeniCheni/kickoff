@@ -1,0 +1,287 @@
+{
+  "implementationHead": "25b77a46981d19b157c7278c6a19a16b35f1aca8",
+  "server": {
+    "port": 5197,
+    "pid": 95141,
+    "cwd": "/Users/benicheni/Documents/Claude/Projects/Kickoff-European-Week-Refresh",
+    "proof": "lsof -a -p 95141 -d cwd -Fn"
+  },
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/153.0.8010.37",
+    "revision": "@b75a5a95ea1a1b55bdbfd6d9f42d47be7507fb8b",
+    "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36",
+    "jsVersion": "15.3.76.10"
+  },
+  "viewportHeight": 900,
+  "emulatedDeviceScaleFactor": 0,
+  "clock": "real wall clock; date=2026-10-13 selects the UCL fixture week",
+  "runtimeExceptions": [],
+  "fontFaces": [
+    {
+      "family": "IBM Plex Mono",
+      "status": "unloaded"
+    },
+    {
+      "family": "IBM Plex Mono",
+      "status": "unloaded"
+    },
+    {
+      "family": "IBM Plex Mono",
+      "status": "unloaded"
+    },
+    {
+      "family": "IBM Plex Mono",
+      "status": "unloaded"
+    },
+    {
+      "family": "IBM Plex Mono",
+      "status": "loaded"
+    },
+    {
+      "family": "IBM Plex Mono",
+      "status": "unloaded"
+    },
+    {
+      "family": "IBM Plex Mono",
+      "status": "unloaded"
+    },
+    {
+      "family": "IBM Plex Mono",
+      "status": "unloaded"
+    },
+    {
+      "family": "IBM Plex Mono",
+      "status": "unloaded"
+    },
+    {
+      "family": "IBM Plex Mono",
+      "status": "loaded"
+    },
+    {
+      "family": "Inter",
+      "status": "unloaded"
+    },
+    {
+      "family": "Inter",
+      "status": "unloaded"
+    },
+    {
+      "family": "Inter",
+      "status": "unloaded"
+    },
+    {
+      "family": "Inter",
+      "status": "unloaded"
+    },
+    {
+      "family": "Inter",
+      "status": "unloaded"
+    },
+    {
+      "family": "Inter",
+      "status": "unloaded"
+    },
+    {
+      "family": "Inter",
+      "status": "loaded"
+    },
+    {
+      "family": "Inter",
+      "status": "unloaded"
+    },
+    {
+      "family": "Inter",
+      "status": "unloaded"
+    },
+    {
+      "family": "Inter",
+      "status": "unloaded"
+    },
+    {
+      "family": "Inter",
+      "status": "unloaded"
+    },
+    {
+      "family": "Inter",
+      "status": "unloaded"
+    },
+    {
+      "family": "Inter",
+      "status": "unloaded"
+    },
+    {
+      "family": "Inter",
+      "status": "unloaded"
+    },
+    {
+      "family": "Inter",
+      "status": "unloaded"
+    },
+    {
+      "family": "Inter",
+      "status": "unloaded"
+    },
+    {
+      "family": "Inter",
+      "status": "unloaded"
+    },
+    {
+      "family": "Inter",
+      "status": "unloaded"
+    },
+    {
+      "family": "Inter",
+      "status": "unloaded"
+    },
+    {
+      "family": "Inter",
+      "status": "unloaded"
+    },
+    {
+      "family": "Inter",
+      "status": "loaded"
+    },
+    {
+      "family": "Oswald",
+      "status": "unloaded"
+    },
+    {
+      "family": "Oswald",
+      "status": "unloaded"
+    },
+    {
+      "family": "Oswald",
+      "status": "unloaded"
+    },
+    {
+      "family": "Oswald",
+      "status": "unloaded"
+    },
+    {
+      "family": "Oswald",
+      "status": "unloaded"
+    },
+    {
+      "family": "Oswald",
+      "status": "unloaded"
+    },
+    {
+      "family": "Oswald",
+      "status": "unloaded"
+    },
+    {
+      "family": "Oswald",
+      "status": "unloaded"
+    },
+    {
+      "family": "Oswald",
+      "status": "unloaded"
+    },
+    {
+      "family": "Oswald",
+      "status": "loaded"
+    },
+    {
+      "family": "Oswald",
+      "status": "unloaded"
+    },
+    {
+      "family": "Oswald",
+      "status": "unloaded"
+    },
+    {
+      "family": "Oswald",
+      "status": "unloaded"
+    },
+    {
+      "family": "Oswald",
+      "status": "unloaded"
+    },
+    {
+      "family": "Oswald",
+      "status": "loaded"
+    }
+  ],
+  "conditions": "Viewport set before navigation; requested lens/theme/tab and header asserted; document.fonts.ready and two animation frames awaited. Matrix uses real snapshot; no injected rows. Normal launch has no scale flag; scale2 launch uses --force-device-scale-factor=2.",
+  "cells": [
+    {"width":360,"height":900,"dpr":1,"scrollWidth":360,"lens":"ledger","theme":"light","tab":"fixtures","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:48.397Z","launch":"normal","state":"October 13 week, UCL only"},
+    {"width":360,"height":900,"dpr":1,"scrollWidth":360,"lens":"ledger","theme":"light","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:48.532Z","launch":"normal","pickerWidth":320,"pickerHeight":93.75,"pickerRows":3,"navHeight":63.5,"chipWidths":[78.21875,126.125,78.90625,77.21875,100.6875,145.875],"chipYs":[202.5,202.5,202.5,235.75,235.75,269],"chipBorder":"1px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":360,"height":900,"dpr":1,"scrollWidth":360,"lens":"ledger","theme":"light","tab":"moments","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:48.615Z","launch":"normal","state":"empty curated Moments"},
+    {"width":360,"height":900,"dpr":1,"scrollWidth":360,"lens":"ledger","theme":"dark","tab":"fixtures","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:48.715Z","launch":"normal","state":"October 13 week, UCL only"},
+    {"width":360,"height":900,"dpr":1,"scrollWidth":360,"lens":"ledger","theme":"dark","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:48.847Z","launch":"normal","pickerWidth":320,"pickerHeight":93.75,"pickerRows":3,"navHeight":63.5,"chipWidths":[78.21875,126.125,78.90625,77.21875,100.6875,145.875],"chipYs":[202.5,202.5,202.5,235.75,235.75,269],"chipBorder":"1px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":360,"height":900,"dpr":1,"scrollWidth":360,"lens":"ledger","theme":"dark","tab":"moments","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:48.931Z","launch":"normal","state":"empty curated Moments"},
+    {"width":360,"height":900,"dpr":1,"scrollWidth":360,"lens":"poster","theme":"light","tab":"fixtures","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:49.049Z","launch":"normal","state":"October 13 week, UCL only"},
+    {"width":360,"height":900,"dpr":1,"scrollWidth":360,"lens":"poster","theme":"light","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:49.180Z","launch":"normal","pickerWidth":320,"pickerHeight":93.75,"pickerRows":3,"navHeight":63.5,"chipWidths":[78.21875,126.125,78.90625,77.21875,100.6875,145.875],"chipYs":[202.5,202.5,202.5,235.75,235.75,269],"chipBorder":"1px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":360,"height":900,"dpr":1,"scrollWidth":360,"lens":"poster","theme":"light","tab":"moments","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:49.281Z","launch":"normal","state":"empty curated Moments"},
+    {"width":360,"height":900,"dpr":1,"scrollWidth":360,"lens":"poster","theme":"dark","tab":"fixtures","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:49.397Z","launch":"normal","state":"October 13 week, UCL only"},
+    {"width":360,"height":900,"dpr":1,"scrollWidth":360,"lens":"poster","theme":"dark","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:49.532Z","launch":"normal","pickerWidth":320,"pickerHeight":93.75,"pickerRows":3,"navHeight":63.5,"chipWidths":[78.21875,126.125,78.90625,77.21875,100.6875,145.875],"chipYs":[202.5,202.5,202.5,235.75,235.75,269],"chipBorder":"1px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":360,"height":900,"dpr":1,"scrollWidth":360,"lens":"poster","theme":"dark","tab":"moments","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:49.613Z","launch":"normal","state":"empty curated Moments"},
+    {"width":360,"height":900,"dpr":1,"scrollWidth":360,"lens":"broadcast","theme":"light","tab":"fixtures","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:49.731Z","launch":"normal","state":"October 13 week, UCL only"},
+    {"width":360,"height":900,"dpr":1,"scrollWidth":360,"lens":"broadcast","theme":"light","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:49.865Z","launch":"normal","pickerWidth":320,"pickerHeight":93.75,"pickerRows":3,"navHeight":63.5,"chipWidths":[78.21875,126.125,78.90625,77.21875,100.6875,145.875],"chipYs":[202.5,202.5,202.5,235.75,235.75,269],"chipBorder":"1px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":360,"height":900,"dpr":1,"scrollWidth":360,"lens":"broadcast","theme":"light","tab":"moments","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:49.948Z","launch":"normal","state":"empty curated Moments"},
+    {"width":360,"height":900,"dpr":1,"scrollWidth":360,"lens":"broadcast","theme":"dark","tab":"fixtures","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:50.064Z","launch":"normal","state":"October 13 week, UCL only"},
+    {"width":360,"height":900,"dpr":1,"scrollWidth":360,"lens":"broadcast","theme":"dark","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:50.198Z","launch":"normal","pickerWidth":320,"pickerHeight":93.75,"pickerRows":3,"navHeight":63.5,"chipWidths":[78.21875,126.125,78.90625,77.21875,100.6875,145.875],"chipYs":[202.5,202.5,202.5,235.75,235.75,269],"chipBorder":"1px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":360,"height":900,"dpr":1,"scrollWidth":360,"lens":"broadcast","theme":"dark","tab":"moments","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:50.280Z","launch":"normal","state":"empty curated Moments"},
+    {"width":375,"height":900,"dpr":1,"scrollWidth":375,"lens":"ledger","theme":"light","tab":"fixtures","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:50.398Z","launch":"normal","state":"October 13 week, UCL only"},
+    {"width":375,"height":900,"dpr":1,"scrollWidth":375,"lens":"ledger","theme":"light","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:50.565Z","launch":"normal","pickerWidth":335,"pickerHeight":93.75,"pickerRows":3,"navHeight":63.5,"chipWidths":[78.21875,126.125,78.90625,77.21875,100.6875,145.875],"chipYs":[202.5,202.5,202.5,235.75,235.75,269],"chipBorder":"1px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":375,"height":900,"dpr":1,"scrollWidth":375,"lens":"ledger","theme":"light","tab":"moments","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:50.682Z","launch":"normal","state":"empty curated Moments"},
+    {"width":375,"height":900,"dpr":1,"scrollWidth":375,"lens":"ledger","theme":"dark","tab":"fixtures","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:50.797Z","launch":"normal","state":"October 13 week, UCL only"},
+    {"width":375,"height":900,"dpr":1,"scrollWidth":375,"lens":"ledger","theme":"dark","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:50.930Z","launch":"normal","pickerWidth":335,"pickerHeight":93.75,"pickerRows":3,"navHeight":63.5,"chipWidths":[78.21875,126.125,78.90625,77.21875,100.6875,145.875],"chipYs":[202.5,202.5,202.5,235.75,235.75,269],"chipBorder":"1px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":375,"height":900,"dpr":1,"scrollWidth":375,"lens":"ledger","theme":"dark","tab":"moments","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:51.015Z","launch":"normal","state":"empty curated Moments"},
+    {"width":375,"height":900,"dpr":1,"scrollWidth":375,"lens":"poster","theme":"light","tab":"fixtures","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:51.130Z","launch":"normal","state":"October 13 week, UCL only"},
+    {"width":375,"height":900,"dpr":1,"scrollWidth":375,"lens":"poster","theme":"light","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:51.266Z","launch":"normal","pickerWidth":335,"pickerHeight":93.75,"pickerRows":3,"navHeight":63.5,"chipWidths":[78.21875,126.125,78.90625,77.21875,100.6875,145.875],"chipYs":[202.5,202.5,202.5,235.75,235.75,269],"chipBorder":"1px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":375,"height":900,"dpr":1,"scrollWidth":375,"lens":"poster","theme":"light","tab":"moments","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:51.346Z","launch":"normal","state":"empty curated Moments"},
+    {"width":375,"height":900,"dpr":1,"scrollWidth":375,"lens":"poster","theme":"dark","tab":"fixtures","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:51.464Z","launch":"normal","state":"October 13 week, UCL only"},
+    {"width":375,"height":900,"dpr":1,"scrollWidth":375,"lens":"poster","theme":"dark","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:51.598Z","launch":"normal","pickerWidth":335,"pickerHeight":93.75,"pickerRows":3,"navHeight":63.5,"chipWidths":[78.21875,126.125,78.90625,77.21875,100.6875,145.875],"chipYs":[202.5,202.5,202.5,235.75,235.75,269],"chipBorder":"1px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":375,"height":900,"dpr":1,"scrollWidth":375,"lens":"poster","theme":"dark","tab":"moments","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:51.682Z","launch":"normal","state":"empty curated Moments"},
+    {"width":375,"height":900,"dpr":1,"scrollWidth":375,"lens":"broadcast","theme":"light","tab":"fixtures","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:51.797Z","launch":"normal","state":"October 13 week, UCL only"},
+    {"width":375,"height":900,"dpr":1,"scrollWidth":375,"lens":"broadcast","theme":"light","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:51.931Z","launch":"normal","pickerWidth":335,"pickerHeight":93.75,"pickerRows":3,"navHeight":63.5,"chipWidths":[78.21875,126.125,78.90625,77.21875,100.6875,145.875],"chipYs":[202.5,202.5,202.5,235.75,235.75,269],"chipBorder":"1px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":375,"height":900,"dpr":1,"scrollWidth":375,"lens":"broadcast","theme":"light","tab":"moments","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:52.032Z","launch":"normal","state":"empty curated Moments"},
+    {"width":375,"height":900,"dpr":1,"scrollWidth":375,"lens":"broadcast","theme":"dark","tab":"fixtures","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:52.164Z","launch":"normal","state":"October 13 week, UCL only"},
+    {"width":375,"height":900,"dpr":1,"scrollWidth":375,"lens":"broadcast","theme":"dark","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:52.297Z","launch":"normal","pickerWidth":335,"pickerHeight":93.75,"pickerRows":3,"navHeight":63.5,"chipWidths":[78.21875,126.125,78.90625,77.21875,100.6875,145.875],"chipYs":[202.5,202.5,202.5,235.75,235.75,269],"chipBorder":"1px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":375,"height":900,"dpr":1,"scrollWidth":375,"lens":"broadcast","theme":"dark","tab":"moments","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:52.380Z","launch":"normal","state":"empty curated Moments"},
+    {"width":390,"height":900,"dpr":1,"scrollWidth":390,"lens":"ledger","theme":"light","tab":"fixtures","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:52.497Z","launch":"normal","state":"October 13 week, UCL only"},
+    {"width":390,"height":900,"dpr":1,"scrollWidth":390,"lens":"ledger","theme":"light","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:52.632Z","launch":"normal","pickerWidth":350,"pickerHeight":60.5,"pickerRows":2,"navHeight":63.5,"chipWidths":[78.21875,126.125,78.90625,77.21875,100.6875,145.875],"chipYs":[202.5,202.5,202.5,235.75,235.75,235.75],"chipBorder":"1px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":390,"height":900,"dpr":1,"scrollWidth":390,"lens":"ledger","theme":"light","tab":"moments","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:52.713Z","launch":"normal","state":"empty curated Moments"},
+    {"width":390,"height":900,"dpr":1,"scrollWidth":390,"lens":"ledger","theme":"dark","tab":"fixtures","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:52.815Z","launch":"normal","state":"October 13 week, UCL only"},
+    {"width":390,"height":900,"dpr":1,"scrollWidth":390,"lens":"ledger","theme":"dark","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:52.948Z","launch":"normal","pickerWidth":350,"pickerHeight":60.5,"pickerRows":2,"navHeight":63.5,"chipWidths":[78.21875,126.125,78.90625,77.21875,100.6875,145.875],"chipYs":[202.5,202.5,202.5,235.75,235.75,235.75],"chipBorder":"1px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":390,"height":900,"dpr":1,"scrollWidth":390,"lens":"ledger","theme":"dark","tab":"moments","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:53.030Z","launch":"normal","state":"empty curated Moments"},
+    {"width":390,"height":900,"dpr":1,"scrollWidth":390,"lens":"poster","theme":"light","tab":"fixtures","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:53.147Z","launch":"normal","state":"October 13 week, UCL only"},
+    {"width":390,"height":900,"dpr":1,"scrollWidth":390,"lens":"poster","theme":"light","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:53.282Z","launch":"normal","pickerWidth":350,"pickerHeight":60.5,"pickerRows":2,"navHeight":63.5,"chipWidths":[78.21875,126.125,78.90625,77.21875,100.6875,145.875],"chipYs":[202.5,202.5,202.5,235.75,235.75,235.75],"chipBorder":"1px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":390,"height":900,"dpr":1,"scrollWidth":390,"lens":"poster","theme":"light","tab":"moments","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:53.381Z","launch":"normal","state":"empty curated Moments"},
+    {"width":390,"height":900,"dpr":1,"scrollWidth":390,"lens":"poster","theme":"dark","tab":"fixtures","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:53.497Z","launch":"normal","state":"October 13 week, UCL only"},
+    {"width":390,"height":900,"dpr":1,"scrollWidth":390,"lens":"poster","theme":"dark","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:53.632Z","launch":"normal","pickerWidth":350,"pickerHeight":60.5,"pickerRows":2,"navHeight":63.5,"chipWidths":[78.21875,126.125,78.90625,77.21875,100.6875,145.875],"chipYs":[202.5,202.5,202.5,235.75,235.75,235.75],"chipBorder":"1px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":390,"height":900,"dpr":1,"scrollWidth":390,"lens":"poster","theme":"dark","tab":"moments","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:53.715Z","launch":"normal","state":"empty curated Moments"},
+    {"width":390,"height":900,"dpr":1,"scrollWidth":390,"lens":"broadcast","theme":"light","tab":"fixtures","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:53.848Z","launch":"normal","state":"October 13 week, UCL only"},
+    {"width":390,"height":900,"dpr":1,"scrollWidth":390,"lens":"broadcast","theme":"light","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:53.982Z","launch":"normal","pickerWidth":350,"pickerHeight":60.5,"pickerRows":2,"navHeight":63.5,"chipWidths":[78.21875,126.125,78.90625,77.21875,100.6875,145.875],"chipYs":[202.5,202.5,202.5,235.75,235.75,235.75],"chipBorder":"1px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":390,"height":900,"dpr":1,"scrollWidth":390,"lens":"broadcast","theme":"light","tab":"moments","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:54.082Z","launch":"normal","state":"empty curated Moments"},
+    {"width":390,"height":900,"dpr":1,"scrollWidth":390,"lens":"broadcast","theme":"dark","tab":"fixtures","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:54.198Z","launch":"normal","state":"October 13 week, UCL only"},
+    {"width":390,"height":900,"dpr":1,"scrollWidth":390,"lens":"broadcast","theme":"dark","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:54.371Z","launch":"normal","pickerWidth":350,"pickerHeight":60.5,"pickerRows":2,"navHeight":63.5,"chipWidths":[78.21875,126.125,78.90625,77.21875,100.6875,145.875],"chipYs":[202.5,202.5,202.5,235.75,235.75,235.75],"chipBorder":"1px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":390,"height":900,"dpr":1,"scrollWidth":390,"lens":"broadcast","theme":"dark","tab":"moments","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:54.449Z","launch":"normal","state":"empty curated Moments"},
+    {"width":1000,"height":900,"dpr":1,"scrollWidth":1000,"lens":"ledger","theme":"light","tab":"fixtures","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:54.565Z","launch":"normal","state":"October 13 week, UCL only"},
+    {"width":1000,"height":900,"dpr":1,"scrollWidth":1000,"lens":"ledger","theme":"light","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:54.697Z","launch":"normal","pickerWidth":740,"pickerHeight":27.25,"pickerRows":1,"navHeight":36,"chipWidths":[78.21875,126.125,78.90625,77.21875,100.6875,145.875],"chipYs":[165,165,165,165,165,165],"chipBorder":"1px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":1000,"height":900,"dpr":1,"scrollWidth":1000,"lens":"ledger","theme":"light","tab":"moments","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:54.780Z","launch":"normal","state":"empty curated Moments"},
+    {"width":1000,"height":900,"dpr":1,"scrollWidth":1000,"lens":"ledger","theme":"dark","tab":"fixtures","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:54.898Z","launch":"normal","state":"October 13 week, UCL only"},
+    {"width":1000,"height":900,"dpr":1,"scrollWidth":1000,"lens":"ledger","theme":"dark","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:55.032Z","launch":"normal","pickerWidth":740,"pickerHeight":27.25,"pickerRows":1,"navHeight":36,"chipWidths":[78.21875,126.125,78.90625,77.21875,100.6875,145.875],"chipYs":[165,165,165,165,165,165],"chipBorder":"1px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":1000,"height":900,"dpr":1,"scrollWidth":1000,"lens":"ledger","theme":"dark","tab":"moments","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:55.114Z","launch":"normal","state":"empty curated Moments"},
+    {"width":1000,"height":900,"dpr":1,"scrollWidth":1000,"lens":"poster","theme":"light","tab":"fixtures","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:55.230Z","launch":"normal","state":"October 13 week, UCL only"},
+    {"width":1000,"height":900,"dpr":1,"scrollWidth":1000,"lens":"poster","theme":"light","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:55.365Z","launch":"normal","pickerWidth":740,"pickerHeight":27.25,"pickerRows":1,"navHeight":36,"chipWidths":[78.21875,126.125,78.90625,77.21875,100.6875,145.875],"chipYs":[165,165,165,165,165,165],"chipBorder":"1px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":1000,"height":900,"dpr":1,"scrollWidth":1000,"lens":"poster","theme":"light","tab":"moments","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:55.448Z","launch":"normal","state":"empty curated Moments"},
+    {"width":1000,"height":900,"dpr":1,"scrollWidth":1000,"lens":"poster","theme":"dark","tab":"fixtures","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:55.565Z","launch":"normal","state":"October 13 week, UCL only"},
+    {"width":1000,"height":900,"dpr":1,"scrollWidth":1000,"lens":"poster","theme":"dark","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:55.698Z","launch":"normal","pickerWidth":740,"pickerHeight":27.25,"pickerRows":1,"navHeight":36,"chipWidths":[78.21875,126.125,78.90625,77.21875,100.6875,145.875],"chipYs":[165,165,165,165,165,165],"chipBorder":"1px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":1000,"height":900,"dpr":1,"scrollWidth":1000,"lens":"poster","theme":"dark","tab":"moments","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:55.782Z","launch":"normal","state":"empty curated Moments"},
+    {"width":1000,"height":900,"dpr":1,"scrollWidth":1000,"lens":"broadcast","theme":"light","tab":"fixtures","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:55.898Z","launch":"normal","state":"October 13 week, UCL only"},
+    {"width":1000,"height":900,"dpr":1,"scrollWidth":1000,"lens":"broadcast","theme":"light","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:56.032Z","launch":"normal","pickerWidth":740,"pickerHeight":27.25,"pickerRows":1,"navHeight":36,"chipWidths":[78.21875,126.125,78.90625,77.21875,100.6875,145.875],"chipYs":[165,165,165,165,165,165],"chipBorder":"1px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":1000,"height":900,"dpr":1,"scrollWidth":1000,"lens":"broadcast","theme":"light","tab":"moments","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:56.114Z","launch":"normal","state":"empty curated Moments"},
+    {"width":1000,"height":900,"dpr":1,"scrollWidth":1000,"lens":"broadcast","theme":"dark","tab":"fixtures","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:56.232Z","launch":"normal","state":"October 13 week, UCL only"},
+    {"width":1000,"height":900,"dpr":1,"scrollWidth":1000,"lens":"broadcast","theme":"dark","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:56.365Z","launch":"normal","pickerWidth":740,"pickerHeight":27.25,"pickerRows":1,"navHeight":36,"chipWidths":[78.21875,126.125,78.90625,77.21875,100.6875,145.875],"chipYs":[165,165,165,165,165,165],"chipBorder":"1px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":1000,"height":900,"dpr":1,"scrollWidth":1000,"lens":"broadcast","theme":"dark","tab":"moments","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:41:56.447Z","launch":"normal","state":"empty curated Moments"},
+    {"width":375,"height":900,"dpr":2,"scrollWidth":375,"lens":"ledger","theme":"light","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:42:44.382Z","launch":"scale2","pickerWidth":335,"pickerHeight":62.5,"pickerRows":2,"navHeight":65,"chipWidths":[77.2109375,125.1171875,77.890625,76.2109375,99.671875,144.859375],"chipYs":[204,204,204,238.25,238.25,238.25],"chipBorder":"1.5px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":375,"height":900,"dpr":2,"scrollWidth":375,"lens":"ledger","theme":"dark","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:42:44.599Z","launch":"scale2","pickerWidth":335,"pickerHeight":62.5,"pickerRows":2,"navHeight":65,"chipWidths":[77.2109375,125.1171875,77.890625,76.2109375,99.671875,144.859375],"chipYs":[204,204,204,238.25,238.25,238.25],"chipBorder":"1.5px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":375,"height":900,"dpr":2,"scrollWidth":375,"lens":"poster","theme":"light","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:42:44.746Z","launch":"scale2","pickerWidth":335,"pickerHeight":62.5,"pickerRows":2,"navHeight":65,"chipWidths":[77.2109375,125.1171875,77.890625,76.2109375,99.671875,144.859375],"chipYs":[204,204,204,238.25,238.25,238.25],"chipBorder":"1.5px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":375,"height":900,"dpr":2,"scrollWidth":375,"lens":"poster","theme":"dark","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:42:44.881Z","launch":"scale2","pickerWidth":335,"pickerHeight":62.5,"pickerRows":2,"navHeight":65,"chipWidths":[77.2109375,125.1171875,77.890625,76.2109375,99.671875,144.859375],"chipYs":[204,204,204,238.25,238.25,238.25],"chipBorder":"1.5px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":375,"height":900,"dpr":2,"scrollWidth":375,"lens":"broadcast","theme":"light","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCDark mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:42:45.014Z","launch":"scale2","pickerWidth":335,"pickerHeight":62.5,"pickerRows":2,"navHeight":65,"chipWidths":[77.2109375,125.1171875,77.890625,76.2109375,99.671875,144.859375],"chipYs":[204,204,204,238.25,238.25,238.25],"chipBorder":"1.5px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"},
+    {"width":375,"height":900,"dpr":2,"scrollWidth":375,"lens":"broadcast","theme":"dark","tab":"table","header":"KickoffBrooklyn \u00b7 ETv0.5.0 \u00b7 1198 fixtures \u00b7 synced 2026-09-12 14:50 UTCLight mode","fonts":"loaded","boundary":false,"measuredAt":"2026-09-12T16:42:45.147Z","launch":"scale2","pickerWidth":335,"pickerHeight":62.5,"pickerRows":2,"navHeight":65,"chipWidths":[77.2109375,125.1171875,77.890625,76.2109375,99.671875,144.859375],"chipYs":[204,204,204,238.25,238.25,238.25],"chipBorder":"1.5px","chipFont":"600 11.5px / 17.25px Inter, ui-sans-serif, system-ui, sans-serif","bands":[{"table":"mobile","rows":36,"bands":[8,16,12]},{"table":"desktop","rows":36,"bands":[8,16,12]}],"state":"UCL"}
+  ]
+}
