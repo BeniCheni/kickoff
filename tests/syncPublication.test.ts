@@ -183,7 +183,7 @@ describe('workflow publication gate', () => {
     const names = ['Verify the written snapshot', 'Commit and push the rolling sync branch', 'Open or update the sync PR', "Approve the PR's held verify run", 'Merge the snapshot once verify is green', 'Confirm merge and request Pages delivery', 'Classify a red run']
     for (const name of names) {
       const condition = name === 'Classify a red run'
-        ? "if: failure() && steps.mode.outputs.dry_run == 'false'\n"
+        ? "if: failure() && github.event.inputs.dry_run != 'true'\n"
         : "if: steps.mode.outputs.dry_run == 'false'\n"
       expect(step(name)).toContain(condition)
     }

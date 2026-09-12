@@ -380,7 +380,7 @@ jobs:
         run: bash scripts/finish-sync.sh
 
       - name: Classify a red run
-        if: failure() && steps.mode.outputs.dry_run == 'false'
+        if: failure() && github.event.inputs.dry_run != 'true'
         env:
           DELIVERY: ${{ steps.deliver.outputs.delivery }}
           DETAIL: ${{ steps.deliver.outputs.delivery_detail }}
