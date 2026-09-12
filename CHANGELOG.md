@@ -13,19 +13,19 @@ releases.
 The small print tells the truth too: the deferred sync-review follow-ups now make urgent changes,
 inverted results, hostile provider text and red delivery outcomes explicit.
 
-### Fixed
-
-- The write-path warning names an urgent change without falsely calling every correction an
-  inside-72-hour move; inverted finished scores compare each team's goals, not its role.
-- The sync PR body strips non-tab C0 controls and separates its digest sentence from the last
-  checklist item; CI pins the committed digest preamble.
-- Red real runs classify exactly one outcome: `DATA FAILED`, `MERGE UNCONFIRMED`, or
-  `DELIVERY FAILED`.
-
 ### Changed
 
 - A failed Pages dispatch now reports its delivery state and an earlier-merge recovery warns
   visibly rather than exiting silently.
+
+### Fixed
+
+- The write-path warning names an urgent change without falsely calling every correction an
+  inside-72-hour move; inverted finished scores compare each team's goals, not its role.
+- The sync PR body strips C0 controls except tab and newline, plus DEL, and separates its
+  digest sentence from the last checklist item; CI pins the committed digest preamble.
+- Red real runs classify exactly one outcome: `DATA FAILED`, `MERGE UNCONFIRMED`, or
+  `DELIVERY FAILED`.
 
 ### Deliberately not done
 
