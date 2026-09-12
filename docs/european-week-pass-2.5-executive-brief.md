@@ -47,7 +47,7 @@ with row 29) and placing this release after it, provisionally v0.5.0, and that r
 recommendation until he says the word. Two releases are therefore in flight on the roadmap, this one
 and the sync theme, and their order is D12. `docs/v0.2.6-ideas.md` already strikes rows 30–34,
 36–39, 41 and 42 as "implemented in #39; release pending"; rows 35 (the fourteen-hue contrast
-inventory) and 40 (the design-review skill) stay open, and this pass adds rows 43 and 44.
+inventory) and 40 (the design-review skill) stay open, and this pass adds rows 53 and 54 (renumbered on 12 Sep 2026).
 
 ## What the 360 found
 
@@ -84,7 +84,7 @@ assert those behaviours rather than their names: reads are limited to the two ba
 other read throws "Must not read conflict-marked output files"), writes go to the three `src/data`
 paths, the missing and corrupt cases exit 2 with no write and no fetch, and a present or absent
 round survives a later in-window move. The workflow does not use the flag. One observation, not a
-defect: an explicitly empty `--baseline-dir=` silently means "no baseline" (ideas row 43).
+defect: an explicitly empty `--baseline-dir=` silently means "no baseline" (ideas row 53).
 
 **What the sync commit establishes.** `1832b2c` differs from its first parent `f1ab7f3` in the three
 generated files only, and from `main` in the 91 files the branch carries. A diff cannot say how the
@@ -144,7 +144,7 @@ which is the commit title's 2:06 PM ET.
   65 px, 1.5 px border, 600.96 px**. The emulated device scale factor (1, 2 or 3) changes none of
   these. The pane at DPR 2 agrees with the second. Both vendors measured honestly under different
   host scales; a phone at DPR 2 or 3 gets two rows, a desktop window narrowed to 375 on a non-Retina
-  display gets three (ideas row 44).
+  display gets three (ideas row 54).
 - **Live provider, no write**: `npm run sync -- --check` at 15:56 EDT reported
   `changed=true changes=2 urgent=2 standings=changed rank-moves=11 merge=hold zones-unknown=0
   standings-degraded=none` (PSV v Shakhtar and Fenerbahce v Roma `scheduled → in_play`; eleven UCL
@@ -182,7 +182,7 @@ which is the commit title's 2:06 PM ET.
 - **Copy and still confirmations, the designer's**: "N clubs have played fewer matches"
   (`TablePage.tsx`); "MATCHDAY N · RESCHEDULED — NOW OUTSIDE ITS UEFA WINDOW" and "FIRST SEEN
   OUTSIDE" (`matchdays.ts`); the degraded-table sentence; the still's letterbox tolerance, item (e).
-- **Row 43**: an empty `--baseline-dir=` should fail closed. **Row 44**: the 375 px picker's zero
+- **Row 53**: an empty `--baseline-dir=` should fail closed. **Row 54**: the 375 px picker's zero
   slack. **Row 40**: the design-review skill. From Pass 1: `<main aria-label="Moments">` is the
   app's only `<main>` landmark.
 - **The PR body** still carries the builder's original "375 uses three rows" table; the Pass 2

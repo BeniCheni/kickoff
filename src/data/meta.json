@@ -1,12 +1,12 @@
 {
-  "lastSyncAt": "2026-09-10T18:06:15.099Z",
+  "lastSyncAt": "2026-09-12T14:50:30.423Z",
   "provider": "espn",
   "window": {
-    "from": "2026-08-11",
-    "to": "2027-02-07"
+    "from": "2026-08-13",
+    "to": "2027-02-09"
   },
   "counts": {
-    "supercup": 1,
+    "supercup": 0,
     "shield": 1,
     "tdc": 1,
     "dflsupercup": 1,
@@ -17,6 +17,6 @@
     "ligue1": 171,
     "bundesliga": 180
   },
-  "total": 1199,
+  "total": 1198,
   "standingsDegraded": []
 }

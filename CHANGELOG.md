@@ -8,7 +8,7 @@ releases.
 
 ## [Unreleased]
 
-## [0.5.0] — 2026-09-10
+## [0.5.0] — 2026-09-12
 
 The Champions League joins the schedule: 144 league-phase fixtures beside domestic rows, every European day carrying computed matchday provenance, stadium clocks that follow the venue with an honest unknown state, the 36-club league-phase table with contained sticky headers, and Moments as a curated, empty-first third tab outside the sync boundary. Built by Codex, reviewed cold by Claude, rebutted by Codex, synthesised by Claude, adjudicated by Beni.
 
@@ -26,13 +26,6 @@ The Champions League joins the schedule: 144 league-phase fixtures beside domest
 - Champions League fixtures and the 36-club league-phase table join ESPN sync, with eight
   matches per club and first-seen matchday baselines from UEFA's calendar. Reschedules keep
   their original baseline; a first sighting outside the windows stays unnumbered.
-
-- The UCL league-phase design cycle's record under `docs/` (#34): the brief archive and the
-  canvas transcription, the Round 1 cold review, the Round 2 rebuttal, the Round 3 decision
-  packet, technical resolution and rulings, and the two prompts the cycle produced, the VIP
-  correction pass and the implementation brief for "Kickoff learns the European week". Docs
-  only; the app is unchanged. Reviewed cold by Claude, rebutted by Codex, resolved by Claude,
-  ruled by Beni.
 
 ### Changed
 
@@ -67,6 +60,80 @@ The Champions League joins the schedule: 144 league-phase fixtures beside domest
   The separate sync theme keeps its cadence, approval and merge policy; only the report
   grammar changes here.
 - The competition chips were kept; the designer will re-mirror that treatment in Fergie Time.
+
+## [0.4.1] — 2026-09-12
+
+The small print tells the truth too: the deferred sync-review follow-ups now make urgent changes,
+inverted results, hostile provider text and red delivery outcomes explicit.
+
+### Changed
+
+- A failed Pages dispatch now reports its delivery state and an earlier-merge recovery warns
+  visibly rather than exiting silently.
+
+### Fixed
+
+- The write-path warning names an urgent change without falsely calling every correction an
+  inside-72-hour move; inverted finished scores compare each team's goals, not its role.
+- The sync PR body strips C0 controls except tab and newline, plus DEL, and separates its
+  digest sentence from the last checklist item; CI pins the committed digest preamble.
+- Red real runs classify exactly one outcome: `DATA FAILED`, `MERGE UNCONFIRMED`, or
+  `DELIVERY FAILED`.
+
+### Deliberately not done
+
+- The schema-level R45 control-character refusal in `normalizeEvent` remains deferred to PR #39.
+
+## [0.4.0] — 2026-09-11
+
+The sync tells the whole truth: corrected scores and team identities are reported, quiet
+checks publish verified freshness, and merged snapshots carry a change digest and request
+Pages delivery. Built and rebutted by Codex, reviewed cold by Grok, synthesised by Claude,
+ruled by Beni. Paper trail: `docs/v0.4.0-proposal.md`, `docs/v0.4.0-round-3-executive-brief.md`.
+
+### Added
+
+- Result corrections and provider team identity changes enter the report as urgent at any
+  horizon inside the sync window; stable club renames are deduplicated per competition/team
+  and never urgent.
+- A generated digest retains the latest 30 change-bearing snapshot reports, with bounded
+  excerpts and full-log links. An entry reaches main with its snapshot, without implying
+  anyone read it.
+- The UCL league-phase design cycle's record under `docs/` (#34): the brief archive and the
+  canvas transcription, the Round 1 cold review, the Round 2 rebuttal, the Round 3 decision
+  packet, technical resolution and rulings, and the two prompts the cycle produced, the VIP
+  correction pass and the implementation brief for "Kickoff learns the European week". Docs
+  only; the app is unchanged. Reviewed cold by Claude, rebutted by Codex, resolved by Claude,
+  ruled by Beni.
+
+### Changed
+
+- Successful quiet checks publish the validated fixture/meta/standings snapshot through
+  the same required PR check as change-bearing runs. Quiet commits say `sync: verified
+  unchanged`; all snapshot commits carry the full report line.
+- Real workflow publication runs only on main; feature-branch dispatches use dry-run mode.
+
+### Fixed
+
+- Automatic sync merges explicitly request a Pages deployment after the expected PR head
+  is observed merged. The next real sync retries missed main delivery. A timeout or rejected
+  dispatch fails visibly; a deployment request is never reported as a completed deploy.
+- Legacy failed-standings reports cannot publish a fresh stamp. Provider text is indented
+  as code in reports and the digest, so embedded Markdown fences cannot escape it; the
+  digest also strips control characters, the PR body does not yet (`docs/v0.2.6-ideas.md`
+  row 45).
+
+### Deliberately not done
+
+- No cron change, restored manual hold, dependency, secret or extra token permission.
+- The European week remains v0.5.0 / PR #39 and ships second, by Beni's ruling. Its chips
+  stay, with the designer's re-mirror after release.
+- Missing-score/time-confidence provider policies and an in-app failure reader remain
+  deferred. Real quiet-run publication and Pages delivery still require post-merge proof.
+- The review's four small follow-ups — the write path's "inside 72h" line on any-horizon
+  corrections, a result compared across inverted roles, control characters in the PR body,
+  and the digest line joining the last checklist item — go to a patch, not this release
+  (`docs/v0.2.6-ideas.md` rows 43–46).
 
 ## [0.3.2] — 2026-09-09
 

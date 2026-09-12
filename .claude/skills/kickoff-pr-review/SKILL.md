@@ -188,7 +188,10 @@ the marquee, nothing else); reduced-motion paths; no permanently enabled global 
 inputs that arrive as strings; permissions minimality; user-controlled text rendered as
 markdown; **read the previous run's log before believing a step is reachable**
 (`gh run list --workflow=<file>`, `gh run view <id> --log`); the report line is an API —
-format pinned in a test and mirrored in the workflow's regex.
+format pinned in a test and mirrored in the workflow's regex; and render any Markdown a
+workflow generates (`gh api markdown -f mode=gfm -F text=@body.md`, read-only) before
+believing its structure — PR #41's Pass 2.5 found a line after a task list joining the last
+task, and a carriage return in provider text ending an indented code block.
 
 **Docs** — `CHANGELOG.md`, `README.md`, `CLAUDE.md`, `docs/`: every claim is an assertion, and a
 claim about the current state of the code ("X happens today") belongs in the ideas file with
@@ -220,9 +223,9 @@ then Added / Changed / Fixed, then **Deliberately not done**.
   stub a row in a local, uncommitted copy of `src/data/fixtures.json` and revert.
 - **A workflow changed:** `gh workflow run sync.yml --ref <branch> -f dry_run=true` is its
   unit test — but `workflow_dispatch` resolves the workflow *path* on `main`, so a brand-new
-  workflow file cannot be dispatched until something with that name lands there. A real
-  (non-dry) dispatch against a feature branch opens a PR that inherits the whole tree and shows
-  CONFLICTING — expected; close it and say so.
+  workflow file cannot be dispatched until something with that name lands there. Since
+  v0.4.0 a real (non-dry) dispatch on any ref but `main` fails at "Publish only from main"
+  before the fetch, so it opens no PR; `dry_run=true` is the only feature-branch form.
 
 ## 5. Fix policy
 
@@ -290,11 +293,13 @@ to be read cold.
    the rule rather than a habit: `git tag -a vX.Y.Z -m "vX.Y.Z — <subject>"` on the squash
    commit, push the tag, pull `main`; typecheck, test and build must be green there. The
    session's last act on a release is the handoff block (step 8), never the tag.
-6. If `sync.yml` changed: watch the first scheduled run and report what the merge box does —
-   on a change-bearing day a clean data-only PR whose `verify` goes green hands-off; on a quiet
-   day "Nothing changed" and no PR — expected, and never yet observed in any run: count them
-   with `gh run list --workflow=sync.yml` when you write this up, never carry a number from a
-   document. Test the merge box itself; the first theory shipped was wrong.
+6. If `sync.yml` changed: watch the first scheduled run and report what the merge box does.
+   Since v0.4.0 every successful run opens a snapshot PR — `npm run sync <stamp>` when the
+   report changed (with a `docs/sync-digest.md` entry), `sync: verified unchanged — <stamp>`
+   when it did not — which merges once `verify` is green, after which the run requests a
+   Pages deploy. Observe one of each, and keep "merged", "deployment requested" and "deployed"
+   apart. Count runs with `gh run list --workflow=sync.yml` when you write this up, never carry
+   a number from a document. Test the merge box itself; the first theory shipped was wrong.
 7. Say where everything landed.
 8. **The handoff block.** On a release, end with one fenced, paste-ready block — Beni should
    paste, not compose (he tagged v0.2.3 fifty-eight seconds after merging it, which means he

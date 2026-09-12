@@ -31,13 +31,13 @@ import { inWindow } from './window'
  *
  *   fetch -> normalize -> validate -> preserve hand-authored notes -> diff -> write
  *
- * Exits non-zero when something inside the urgency horizon moved, so a scheduled run can
- * surface it rather than updating silently: 0 clean, 1 something inside 72 h moved (after
+ * Exits non-zero when an urgent change is reported, so a scheduled run can
+ * surface it rather than updating silently: 0 clean, 1 urgent change (after
  * writing), 2 failed. Fetch/validation failures occur before any snapshot write.
  * The last line of every successful fetch/validation run is the machine-readable report
  * (`report: changed=… … merge=…`, see formatReportLine) that sync.yml reads to decide whether
- * there is anything to commit — per-row fetchedAt stamps move on every run and are not
- * changes — and whether the PR it opens may merge itself (mergeVerdict).
+ * there are changes to digest — fetch stamps move on every run and are not changes.
+ * v0.4.0 publishes quiet verified snapshots too; mergeVerdict is a reading signal.
  */
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..')
@@ -222,7 +222,7 @@ async function main() {
   console.log(`\nwrote src/data/fixtures.json (${valid.length}), src/data/meta.json and src/data/standings.json`)
 
   if (hasUrgentChanges(changes)) {
-    console.log('\n⚠  Something inside 72h moved. Re-check any open position on it.')
+    console.log('\n⚠  Urgent change reported. Re-check any open position on the fixtures named above.')
   }
   console.log(`\n${reportFor(standings)}`)
   return hasUrgentChanges(changes) ? 1 : 0

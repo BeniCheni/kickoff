@@ -75,8 +75,6 @@ the fix, and the house rule got carved over the door:
 
 ## ⏱️ What it does (v0.5.0)
 
-v0.5.0 is the current release. The European week is in and this update ships under this release.
-
 La Liga, the Premier League, Serie A, Ligue 1, the Bundesliga and the Champions League;
 domestic super cups and the UEFA Super Cup; six tables; one fixture skeleton read through
 three lenses. The Champions League table groups 36 clubs into Round of 16, Knockout play-offs
@@ -97,7 +95,10 @@ writes it, and its stamp is independent of snapshot freshness. `?tab=moments` pr
 Every kickoff traces to one stored UTC instant, so the stadium clock and the Brooklyn clock
 can't disagree. Every unset time is admitted out loud instead of guessed. Every sync is
 diffed against the last one, so a moved kickoff or a swapped home side surfaces instead of
-rotting. The app knows how old its own data is, and says so in amber, then red.
+rotting. The app knows how old its own data is, and says so in amber, then red. Corrected scores and
+team changes are reported too. Successful quiet checks publish fresh verification stamps
+through the same required PR check; automatic merges request delivery to the live site.
+The [recent change digest](docs/sync-digest.md) collects the latest 30 change-bearing reports.
 
 Fixtures and standings publish together only after both validate. A failed provider run
 leaves the committed snapshot intact; a standings outage can deliberately delay fresh
@@ -146,10 +147,9 @@ ESPN → normalize → validate at the boundary → snapshot → diff against th
 commit → pull request → app. The pure layer (everything under `src/lib/` and `scripts/`) is
 unit-tested; the components render what it decides and decide nothing about time themselves.
 A scheduled workflow runs the sync every three hours *as scheduled* (GitHub's cron is a
-suggestion, not a promise), opens one rolling pull request with the diff, and since v0.2.2
-lets that PR merge itself when nothing in it needs a human first — no known fixture moved
-inside 72 hours, nothing vanished, nothing inverted. Anything that does is held for a person,
-and no later run lifts the hold.
+suggestion, not a promise), opens one rolling pull request with the diff, and merges every
+successful snapshot PR — quiet or change-bearing — once `verify` is green. `merge=hold` names
+time-sensitive or structural lines for readers; it does not hold the snapshot for a person.
 
 The map, the data flow, where the pure layer ends and the components begin, and the two ESPN
 traps worth knowing about are in **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**.
@@ -200,10 +200,7 @@ that turns it into patches and the v0.4.0 sync minor is in
 [docs/v0.2.1-proposal.md](docs/v0.2.1-proposal.md), amended by
 [docs/v0.2.2-proposal.md](docs/v0.2.2-proposal.md), with the completed resilience scope in
 [docs/v0.2.5-proposal.md](docs/v0.2.5-proposal.md) and the v0.3.0 numbering ruling in
-[docs/design-cycle-proposal.md](docs/design-cycle-proposal.md). Next up:
-
-- **v0.4.0 — the sync tells the whole truth:** result corrections and team renames in the
-  diff engine, then a quiet run that keeps the staleness banner honest through a break.
+[docs/design-cycle-proposal.md](docs/design-cycle-proposal.md).
 
 **Beyond**: betting overlays that join a positions file on fixture ids (the
 token-expiry-vs-kickoff map is the obvious first feature). Moments is the second reader of
@@ -239,7 +236,12 @@ One subject line per release. The honours board:
   match reads KICKED OFF, never as the next kickoff, and the scheduled sync merges itself once
   `verify` is green.
 - **v0.3.2** *(9 Sep 2026)* — the sync's verify step survives a live match: the designCycle DOM test scopes every LIVE / KICKED OFF query to its own row and fixes its input by date, so a genuine in-play row in the snapshot no longer turns `sync.yml`'s verify red; the pipeline skill is named by its live handle; nothing in the app changes.
-- **v0.5.0** *(10 Sep 2026)* — the Champions League joins the schedule: 144 league-phase fixtures beside the domestic rows, every European day carrying provenance, venue clocks that follow the venue with honest unknown states, a 36-club league-phase table with contained sticky headers, and Moments as an empty-first third tab.
+- **v0.4.0** *(11 Sep 2026)* — the sync tells the whole truth: corrected scores and team
+  identities are reported, quiet checks publish verified freshness, and merged snapshots bring
+  their change digest and request Pages delivery.
+- **v0.4.1** *(12 Sep 2026)* — the small print tells the truth too: every sync warning,
+  result correction, publication surface and red-run outcome says what actually happened.
+- **v0.5.0** *(12 Sep 2026)* — the Champions League joins the schedule: 144 league-phase fixtures beside the domestic rows, every European day carrying provenance, venue clocks that follow the venue with honest unknown states, a 36-club league-phase table with contained sticky headers, and Moments as an empty-first third tab.
 
 The paper trail for every release — proposals, design briefs, build specs and review
 prompts — is indexed in [docs/README.md](docs/README.md). The design system it's built

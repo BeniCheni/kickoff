@@ -5,6 +5,10 @@ PR [#39](https://github.com/BeniCheni/kickoff/pull/39), built by Codex on 10 Sep
 This is implementation evidence for the cold reviewer, not a second-vendor review or a
 release sign-off. No version bump, merge or tag is included.
 
+**Current release refresh:** [v0.5.0 recount and merge verification](european-week-v0.5.0-refresh.md)
+(12 Sep 2026) supersedes the implementation-head counts below. The original evidence remains
+dated to the pass that produced it.
+
 ## Scope and lineage
 
 The canvas SHA-256 is `7fcd369554f5b0dc87f61bfc20046a83286d330fd7558da80b2a7a89d2d95785`

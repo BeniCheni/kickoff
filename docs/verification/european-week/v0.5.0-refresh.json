@@ -1,0 +1,87 @@
+{
+  "baseline": "17c24b01aab97e8284901aff39b97e38b3edb028",
+  "mergedMain": "77c5dd23ae9c8a1b8ade41f58fe64336746cc019",
+  "baselineSha256": {
+    "fixtures.json": "ec480bfc3bc684bceee609599db2cb7e7bbf205d2503dcd60633c584654bea8c",
+    "meta.json": "19727248aa39cee42b8f339ef7bb4cd8699e597a6fa224e42fc8333d96899e22",
+    "standings.json": "44b340723eaea86fbd117978d0a60206535d7511645c9191bb8eed29e089aadf"
+  },
+  "fixtureTotal": 1198,
+  "uclFixtures": 144,
+  "standingsRows": {
+    "ucl": 36,
+    "laliga": 20,
+    "pl": 20,
+    "seriea": 20,
+    "ligue1": 18,
+    "bundesliga": 18
+  },
+  "snapshot": {
+    "lastSyncAt": "2026-09-12T14:50:30.423Z",
+    "provider": "espn",
+    "window": {
+      "from": "2026-08-13",
+      "to": "2027-02-09"
+    },
+    "counts": {
+      "supercup": 0,
+      "shield": 1,
+      "tdc": 1,
+      "dflsupercup": 1,
+      "ucl": 144,
+      "laliga": 230,
+      "pl": 240,
+      "seriea": 230,
+      "ligue1": 171,
+      "bundesliga": 180
+    },
+    "total": 1198,
+    "standingsDegraded": []
+  },
+  "preservedFirstSeen": {
+    "present": 144,
+    "absent": 1054,
+    "sharedFixtures": 1198
+  },
+  "sevenVersionLocations": "0.5.0",
+  "releaseDateBrooklyn": "2026-09-12",
+  "previousPathByteIdentical": true,
+  "applicationCodeByteIdentical": true,
+  "tests": {
+    "files": 39,
+    "tests": 500
+  },
+  "build": {
+    "javascriptFile": "index-DxcRsdy0.js",
+    "javascriptBytes": 864177,
+    "javascriptGzipBytes": 146800,
+    "singleHtmlBytes": 895023,
+    "singleHtmlGzipBytes": 153797
+  },
+  "browser": {
+    "cells": 72,
+    "widths": [
+      360,
+      375,
+      390,
+      1000
+    ],
+    "height": 850,
+    "allNoOverflow": true,
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "lenses": [
+      "ledger",
+      "poster",
+      "broadcast"
+    ],
+    "tabs": [
+      "fixtures",
+      "table",
+      "moments"
+    ]
+  },
+  "syncCheck": "report: changed=false changes=0 urgent=0 standings=unchanged rank-moves=0 merge=auto zones-unknown=0 standings-degraded=none"
+}
