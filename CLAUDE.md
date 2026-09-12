@@ -237,7 +237,7 @@ downstream.
 ## Roadmap pointers
 
 Beni ruled on 10 Sep 2026: **sync first as v0.4.0; European week second as v0.5.0**.
-v0.4.1 (rows 43–48) ships before v0.5.0 (Beni, 11 Sep 2026).
+v0.4.1 (rows 43–51) shipped 12 Sep 2026, before v0.5.0 (Beni, 11 Sep 2026).
 PR #39 keeps its readable competition chips; the designer re-mirrors them after release.
 `docs/v0.4.0-proposal.md` records the sync scope and implementation choices. The European-week
 PR stays unmerged until the sync release has shipped, then refreshes its generated data,

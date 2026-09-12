@@ -75,8 +75,6 @@ the fix, and the house rule got carved over the door:
 
 ## ⏱️ What it does (v0.4.1)
 
-Prepared for v0.4.1; release review, merge and tag are pending.
-
 La Liga, the Premier League, Serie A, Ligue 1, the Bundesliga, their domestic super cups and
 the UEFA Super Cup; full league tables; one fixture skeleton read through three lenses.
 
@@ -190,10 +188,8 @@ that turns it into patches and the v0.4.0 sync minor is in
 [docs/v0.2.5-proposal.md](docs/v0.2.5-proposal.md) and the v0.3.0 numbering ruling in
 [docs/design-cycle-proposal.md](docs/design-cycle-proposal.md). Next up:
 
-- **v0.4.1 — the small print tells the truth too:** this PR closes rows 43–48 before the next
-  minor release, by Beni's 11 Sep ruling.
-- **v0.5.0 — Kickoff learns the European week:** PR #39 follows v0.4.1. Competition chips stay;
-  the designer re-mirrors them after release.
+- **v0.5.0 — Kickoff learns the European week:** PR #39 follows now that v0.4.1 has shipped.
+  Competition chips stay; the designer re-mirrors them after release.
 
 **Beyond**: betting overlays that join a positions file on fixture ids (the
 token-expiry-vs-kickoff map is the obvious first feature); a Results tab — the tab row already
@@ -231,7 +227,7 @@ One subject line per release. The honours board:
 - **v0.4.0** *(11 Sep 2026)* — the sync tells the whole truth: corrected scores and team
   identities are reported, quiet checks publish verified freshness, and merged snapshots bring
   their change digest and request Pages delivery.
-- **v0.4.1** *(release pending)* — the small print tells the truth too: every sync warning,
+- **v0.4.1** *(12 Sep 2026)* — the small print tells the truth too: every sync warning,
   result correction, publication surface and red-run outcome says what actually happened.
 
 The paper trail for every release — proposals, design briefs, build specs and review

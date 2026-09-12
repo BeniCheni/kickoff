@@ -8,7 +8,7 @@ releases.
 
 ## [Unreleased]
 
-## [0.4.1] — release pending
+## [0.4.1] — 2026-09-12
 
 The small print tells the truth too: the deferred sync-review follow-ups now make urgent changes,
 inverted results, hostile provider text and red delivery outcomes explicit.
