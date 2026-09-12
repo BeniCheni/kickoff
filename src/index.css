@@ -18,6 +18,7 @@
   --bg: #f7f5ee;
   --surface: #ffffff;
   --surface-alt: #efead9;
+  --media: #e4e0d2; /* Decorative still ground; text stays on surface. */
   --border: rgb(22 33 27 / 0.12);
   --border-strong: rgb(22 33 27 / 0.22);
   --text: #16211b;
@@ -74,6 +75,7 @@
   --bg: #0e1c15;
   --surface: #142a1f;
   --surface-alt: #1a3325;
+  --media: #0a140f;
   --border: rgb(231 239 233 / 0.14);
   --border-strong: rgb(231 239 233 / 0.26);
   --text: #e7efe9;
@@ -103,6 +105,7 @@
   --color-bg: var(--bg);
   --color-surface: var(--surface);
   --color-surface-alt: var(--surface-alt);
+  --color-media: var(--media);
   --color-line: var(--border);
   --color-line-strong: var(--border-strong);
   --color-ink: var(--text);

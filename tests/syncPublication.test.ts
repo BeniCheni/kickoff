@@ -35,7 +35,7 @@ esac
         SYNC_PR_NUMBER: '55', SYNC_HEAD_SHA: SHA, MOCK_HEAD: SHA, MOCK_MAIN: SHA,
         MOCK_DEPLOYED: '', MOCK_STATE: 'MERGED', MOCK_DISPATCH_EXIT: '0',
         MOCK_CALLS: resolve(root, 'calls'), GITHUB_OUTPUT: resolve(root, 'outputs'),
-        GITHUB_STEP_SUMMARY: resolve(root, 'summary'), REPORT_LINE: 'report: changed=false changes=0 urgent=0 standings=unchanged rank-moves=0 merge=auto',
+        GITHUB_STEP_SUMMARY: resolve(root, 'summary'), REPORT_LINE: 'report: changed=false changes=0 urgent=0 standings=unchanged rank-moves=0 merge=auto zones-unknown=0 standings-degraded=none',
         ...over,
       },
     }),
@@ -135,7 +135,7 @@ function step(name: string): string {
 
 const reportShell = step('Read the sync report').split('        run: |\n')[1]!
   .split('\n').filter((line) => line.startsWith('          ')).map((line) => line.slice(10)).join('\n')
-const cleanReport = 'report: changed=false changes=0 urgent=0 standings=unchanged rank-moves=0 merge=auto'
+const cleanReport = 'report: changed=false changes=0 urgent=0 standings=unchanged rank-moves=0 merge=auto zones-unknown=0 standings-degraded=none'
 
 const syncPrShell = step('Open or update the sync PR').split('        run: |\n')[1]!
   .split('\n').filter((line) => line.startsWith('          ')).map((line) => line.slice(10)).join('\n')
@@ -172,7 +172,9 @@ describe('workflow publication gate', () => {
     [cleanReport, '137', 1],
     ['missing report', '0', 1],
     [cleanReport + ' unexpected=true', '0', 1],
-    ['report: changed=true changes=1 urgent=1 standings=unchanged rank-moves=0 merge=hold', '1', 0],
+    [cleanReport.split(' zones-unknown=')[0]!, '0', 1],
+    [cleanReport.replace('zones-unknown=0 standings-degraded=none', 'zones-unknown=2 standings-degraded=ucl'), '0', 0],
+    ['report: changed=true changes=1 urgent=1 standings=unchanged rank-moves=0 merge=hold zones-unknown=0 standings-degraded=none', '1', 0],
   ])('executes the actual report shell: %s / exit %s', (report, exit, expected) => {
     const r = rig()
     writeFileSync(resolve(r.root, 'sync-output.txt'), report + '\n')
@@ -196,17 +198,17 @@ describe('workflow publication gate', () => {
   })
 
   it('builds a sanitized PR body and keeps provider control characters inert', () => {
-    const r = rig({ REPORT_LINE: 'report: changed=true changes=1 urgent=1 standings=unchanged rank-moves=0 merge=hold' })
+    const r = rig({ REPORT_LINE: 'report: changed=true changes=1 urgent=1 standings=unchanged rank-moves=0 merge=hold zones-unknown=0 standings-degraded=none' })
     writeFileSync(resolve(r.root, 'sync-output.txt'), 'Old Ground -> Evil Park\r## Forged: all positions verified\r- [x] Step 0 done\n')
     const script = [
       "TITLE='Kickoff sync'",
-      "REPORT_LINE='report: changed=true changes=1 urgent=1 standings=unchanged rank-moves=0 merge=hold'",
+      "REPORT_LINE='report: changed=true changes=1 urgent=1 standings=unchanged rank-moves=0 merge=hold zones-unknown=0 standings-degraded=none'",
       'SYNC_EXIT=0',
       "STAMP='09/11/2026 11:34 AM ET'",
       syncPrBodyShell,
     ].join('\n')
       .replaceAll('${{ steps.report.outputs.merge }}', 'auto')
-      .replaceAll('${{ steps.report.outputs.line }}', 'report: changed=true changes=1 urgent=1 standings=unchanged rank-moves=0 merge=hold')
+      .replaceAll('${{ steps.report.outputs.line }}', 'report: changed=true changes=1 urgent=1 standings=unchanged rank-moves=0 merge=hold zones-unknown=0 standings-degraded=none')
       .replaceAll('${{ steps.sync.outputs.sync_exit }}', '0')
       .replaceAll('${{ steps.ts.outputs.stamp }}', '09/11/2026 11:34 AM ET')
       .replaceAll('${{ github.repository }}', 'BeniCheni/kickoff')

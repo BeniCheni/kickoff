@@ -77,19 +77,22 @@ export function brooklynAbbrev(instant: Date): 'EDT' | 'EST' {
 }
 
 export type FixtureTimes = {
-  local: ZonedParts
+  local: ZonedParts | null
   brooklyn: ZonedParts
   abbrev: 'EDT' | 'EST'
   /** -1, 0 or +1: Brooklyn's calendar date relative to the stadium's. */
-  dayDelta: -1 | 0 | 1
+  dayDelta: -1 | 0 | 1 | null
 }
 
-export function fixtureTimes(kickoffUtc: string, venueTz: string): FixtureTimes {
+export function fixtureTimes(kickoffUtc: string, venueTz: string): FixtureTimes & { local: ZonedParts; dayDelta: -1 | 0 | 1 }
+export function fixtureTimes(kickoffUtc: string, venueTz: string | undefined): FixtureTimes
+export function fixtureTimes(kickoffUtc: string, venueTz: string | undefined): FixtureTimes {
   const instant = new Date(kickoffUtc)
-  const local = zonedParts(instant, venueTz)
+  // Never let Intl's implicit host zone masquerade as a stadium clock.
+  const local = venueTz === undefined ? null : zonedParts(instant, venueTz)
   const brooklyn = zonedParts(instant, BROOKLYN_TZ)
   const dayDelta =
-    brooklyn.isoDate > local.isoDate ? 1 : brooklyn.isoDate < local.isoDate ? -1 : 0
+    local === null ? null : brooklyn.isoDate > local.isoDate ? 1 : brooklyn.isoDate < local.isoDate ? -1 : 0
   return { local, brooklyn, abbrev: brooklynAbbrev(instant), dayDelta }
 }
 

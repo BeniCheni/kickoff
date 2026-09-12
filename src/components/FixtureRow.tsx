@@ -86,8 +86,8 @@ export function FixtureRow({ fixture, hot = false, stale = false }: { fixture: F
         </span>
 
         <span className="mt-0.5 block pl-[66px] text-[11px] text-ink-muted poster:pl-[92px] broadcast:font-mono broadcast:text-[10.5px] broadcast:font-medium">
-          <span style={{ color: comp.color }}>
-            <span aria-hidden>{comp.flag}</span> {comp.name}
+          <span className="text-ink-muted">
+            <span aria-hidden style={{ color: comp.color }}>{comp.flag}</span> {comp.name}
           </span>
           {fixture.venue && <> &middot; {fixture.venue}</>}
         </span>
@@ -109,12 +109,12 @@ export function FixtureRow({ fixture, hot = false, stale = false }: { fixture: F
           <div className="pt-1.5 pl-[66px] poster:pl-[92px]">
             {!placeholder && (
               <div className="flex flex-wrap gap-x-2.5 gap-y-1 text-[11px] text-ink-secondary">
-                <span className="inline-flex items-center gap-1 rounded-full border border-line bg-surface px-2 py-0.5">
-                  <span aria-hidden>{comp.flag}</span> {t.local.time} local
+                <span className={`inline-flex items-center gap-1 rounded-full border border-line bg-surface px-2 py-0.5${t.local ? '' : ' font-mono text-[10px] font-medium tracking-[0.06em] uppercase text-floodlight-strong'}`}>
+                  {t.local ? <><span aria-hidden>{comp.flag}</span> {t.local.time} local</> : 'local time not known'}
                 </span>
                 <span className="inline-flex items-center gap-1 rounded-full border border-pitch bg-surface px-2 py-0.5 font-semibold text-pitch">
                   <span aria-hidden>🗽</span> {t.brooklyn.time} {t.abbrev}
-                  {t.dayDelta !== 0 && (
+                  {t.dayDelta !== null && t.dayDelta !== 0 && (
                     <span className="font-normal">
                       ({t.brooklyn.weekday}, {t.dayDelta === -1 ? 'prev.' : 'next'} day)
                     </span>

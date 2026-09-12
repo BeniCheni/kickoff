@@ -1,5 +1,6 @@
 import { weekdayShort } from '../lib/time'
 import { FixtureRow } from './FixtureRow'
+import { MatchdayLines } from './MatchdayLines'
 import type { DayInfo } from '../lib/lensSelectors'
 
 const EMPTY: ReadonlySet<string> = new Set()
@@ -58,10 +59,13 @@ export function LedgerWeek({ days, hot = EMPTY, stale = EMPTY }: { days: DayInfo
                 </span>
               )}
             </div>
-            <div className="border-t border-line">
+            <div className="min-w-0">
+              <MatchdayLines fixtures={shown} className="pb-[5px]" />
+              <div className="border-t border-line">
               {shown.map((f) => (
                 <FixtureRow key={f.id} fixture={f} hot={hot.has(f.id)} stale={stale.has(f.id)} />
               ))}
+              </div>
             </div>
           </section>
         )

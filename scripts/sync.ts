@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 import { readFileSync, writeFileSync, existsSync } from 'node:fs'
-import { resolve, dirname } from 'node:path'
+import { resolve, dirname, basename } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { espnProvider } from './providers/espn'
 import { fetchStandings } from './providers/espn-standings'
@@ -45,6 +45,19 @@ const FIXTURES = resolve(ROOT, 'src/data/fixtures.json')
 const META = resolve(ROOT, 'src/data/meta.json')
 const STANDINGS = resolve(ROOT, 'src/data/standings.json')
 
+/** Preserve first-seen round identity, including a first sighting outside every window.
+ * Checking for a prior fixture, not a truthy round, is what keeps absence stable. */
+export function preserveContext(previous: readonly Fixture[], fetched: Fixture[]): void {
+  const byId = new Map(previous.map((f) => [f.id, f]))
+  for (const f of fetched) {
+    const stored = byId.get(f.id)
+    if (!stored) continue
+    if (stored.note) f.note = stored.note
+    if (stored.round !== undefined) f.round = stored.round
+    else delete f.round
+  }
+}
+
 /**
  * Fixtures + standings are the authoritative snapshot boundary. Fetch and validate both
  * before writing either; even a standings outage intentionally delays fixture updates.
@@ -53,13 +66,15 @@ const STANDINGS = resolve(ROOT, 'src/data/standings.json')
 type StandingsOutcome = { status: SyncReport['standings']; rankMoves: number; data: StandingsFile }
 
 async function prepareStandings(): Promise<StandingsOutcome> {
-  const previous: StandingsFile | null = existsSync(STANDINGS)
-    ? standingsFileSchema.parse(JSON.parse(readFileSync(STANDINGS, 'utf8')))
+  const baseline = previousPath(STANDINGS)
+  const previous: StandingsFile | null = existsSync(baseline)
+    ? standingsFileSchema.parse(JSON.parse(readFileSync(baseline, 'utf8')))
     : null
 
   const standings = standingsFileSchema.parse(await fetchStandings())
 
   const { rowsChanged, moves } = diffStandings(previous, standings)
+  const phaseChanged = JSON.stringify(previous?.degraded ?? []) !== JSON.stringify(standings.degraded ?? [])
   console.log(
     `\nstandings: ${Object.entries(standings.leagues)
       .map(([k, v]) => `${k} ${v.length}`)
@@ -72,12 +87,22 @@ async function prepareStandings(): Promise<StandingsOutcome> {
       : 'standings unchanged vs last snapshot',
   )
 
-  return { status: rowsChanged > 0 ? 'changed' : 'unchanged', rankMoves: moves.length, data: standings }
+  return { status: rowsChanged > 0 || phaseChanged ? 'changed' : 'unchanged', rankMoves: moves.length, data: standings }
 }
 
 const arg = (name: string, fallback: string) => {
   const hit = process.argv.find((a) => a.startsWith(`--${name}=`))
   return hit ? hit.slice(name.length + 3) : fallback
+}
+
+/** Read an exported, validated pre-merge baseline while conflict-marked output files await
+ * regeneration. This option changes reads only: every write still targets src/data/. */
+function previousPath(output: string): string {
+  const directory = arg('baseline-dir', '')
+  if (!directory) return output
+  const path = resolve(directory, basename(output))
+  if (!existsSync(path)) throw new Error(`Missing explicit sync baseline: ${path}`)
+  return path
 }
 
 async function main() {
@@ -88,8 +113,9 @@ async function main() {
   console.log(`\nKickoff sync · ${from} .. ${to} · provider=${espnProvider.name}`)
   if (check) console.log('(--check: reporting only, nothing will be written)')
 
-  const previous: Fixture[] = existsSync(FIXTURES)
-    ? fixturesFileSchema.parse(JSON.parse(readFileSync(FIXTURES, 'utf8')))
+  const baseline = previousPath(FIXTURES)
+  const previous: Fixture[] = existsSync(baseline)
+    ? fixturesFileSchema.parse(JSON.parse(readFileSync(baseline, 'utf8')))
     : []
 
   const { fixtures: fetched, counts } = await espnProvider.fetchWindow(from, to)
@@ -109,11 +135,7 @@ async function main() {
 
   // Hand-authored notes are Beni's context (venue quirks, postponement reasons, why a
   // fixture matters). The provider knows nothing about them, so carry them forward by id.
-  const notes = new Map(previous.filter((f) => f.note).map((f) => [f.id, f.note!]))
-  for (const f of valid) {
-    const carried = notes.get(f.id)
-    if (carried) f.note = carried
-  }
+  preserveContext(previous, valid)
 
   valid.sort((a, b) => a.kickoffUtc.localeCompare(b.kickoffUtc) || a.id.localeCompare(b.id))
 
@@ -166,6 +188,8 @@ async function main() {
         standings: standings.status,
         rankMoves: standings.rankMoves,
         merge: merge.verdict,
+        zonesUnknown: valid.filter((f) => f.venueTz === undefined).length,
+        standingsDegraded: standings.data.degraded,
       })
     )
   }
@@ -184,6 +208,7 @@ async function main() {
     window: { from, to },
     counts,
     total: valid.length,
+    standingsDegraded: standings.data.degraded ?? [],
   })
 
   // All provider work, schema checks and serialization precede the first write.

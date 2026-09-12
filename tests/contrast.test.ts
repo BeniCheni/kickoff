@@ -20,7 +20,7 @@ it('keeps every floodlight tint site in the mounted inventory', () => {
       const count = [...readFileSync(new URL(p, root), 'utf8').matchAll(/\bbg-floodlight-bg\b/g)].length
       return count ? [[p, count]] : []
     })
-  expect(sites).toEqual([['components/StalenessBanner.tsx', 1], ['components/TablePage.tsx', 2]])
+  expect(sites).toEqual([['components/MomentsPage.tsx', 1], ['components/StalenessBanner.tsx', 1], ['components/TablePage.tsx', 2]])
 })
 
 it('reads changed token and component alphas instead of certifying yesterday’s fills', () => {

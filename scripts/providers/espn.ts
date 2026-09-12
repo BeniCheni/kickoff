@@ -1,6 +1,7 @@
-import { SYNCABLE, COMPETITIONS, type CompetitionKey } from '../../src/lib/competitions'
+import { SYNCABLE, venueTimeZone, type CompetitionKey } from '../../src/lib/competitions'
 import { fixtureId, type Fixture, type FixtureStatus } from '../../src/lib/schema'
 import { addDays } from '../../src/lib/time'
+import { resolveMatchday } from '../../src/lib/matchdays'
 import { identityContext, providerIdentity } from './identity'
 
 /**
@@ -159,11 +160,17 @@ export function normalizeEvent(
   // presenting an unscheduled Clásico as a confirmed 16:15 kickoff.
   const timeConfidence = comp.timeValid === false ? 'round_placeholder' : 'exact'
 
+  const venueId = providerIdentity(comp.venue?.id) ?? undefined
+  const country = comp.venue?.address?.country
+  const venueCountry = typeof country === 'string' && country.trim() ? country : undefined
+
   const fixture: Fixture = {
     id: fixtureId(competition, sourceId),
     competition,
     kickoffUtc: new Date(event.date).toISOString(),
-    venueTz: COMPETITIONS[competition].tz,
+    venueTz: venueTimeZone(venueCountry, venueId),
+    ...(venueId ? { venueId } : {}),
+    ...(venueCountry ? { venueCountry } : {}),
     home: { name: home, sourceId: providerIdentity(homeC.team.id)! },
     away: { name: away, sourceId: providerIdentity(awayC.team.id)! },
     status,
@@ -180,10 +187,17 @@ export function normalizeEvent(
     if (Number.isFinite(h) && Number.isFinite(a)) fixture.result = { home: h, away: a }
   }
 
-  // Deliberately NOT setting `round`: ESPN exposes no matchday number for these leagues,
-  // and a round cannot be inferred from the date alone — La Liga's 2026-27 opening round is
-  // spread across Aug 15-27 and interleaves with matchday 2. Inventing one would be exactly
-  // the kind of plausible-but-unverified data this rewrite exists to eliminate.
+  // Only phase-window consumers need this evidence; domestic season slugs are unused.
+  if (event.season?.slug === 'league-phase') {
+    fixture.phase = event.season.slug
+    if (Number.isInteger(event.season.year)) fixture.season = event.season.year
+  }
+  // Only league-phase fixtures have these windows. Domestic rounds remain unset.
+  // This candidate is used once; sync's preserve step carries the stored baseline by id.
+  if (fixture.phase === 'league-phase' && fixture.season !== undefined) {
+    const md = resolveMatchday(competition, fixture.kickoffUtc, fixture.season)
+    if (md !== null) fixture.round = String(md)
+  }
 
   return fixture
 }

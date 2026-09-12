@@ -1,0 +1,628 @@
+
+> kickoff@0.3.2 sync
+> tsx scripts/sync.ts
+
+
+Kickoff sync · 2026-08-11 .. 2027-02-07 · provider=espn
+
+fetched 1199 fixtures
+  supercup       1
+  shield         1
+  tdc            1
+  dflsupercup    1
+  ucl            144
+  laliga         230
+  pl             240
+  seriea         230
+  ligue1         171
+  bundesliga     180
+
+changes vs last snapshot:
+    DATE_MOVED               bundesliga · Borussia Dortmund v Werder Bremen
+                             2026-10-10 -> 2026-10-09 (ET)
+    DATE_MOVED               bundesliga · FC Cologne v Borussia Mönchengladbach
+                             2026-10-10 -> 2026-10-11 (ET)
+    DATE_MOVED               bundesliga · SC Freiburg v Schalke 04
+                             2026-10-10 -> 2026-10-11 (ET)
+    DATE_MOVED               bundesliga · Eintracht Frankfurt v FC Cologne
+                             2026-10-17 -> 2026-10-16 (ET)
+    DATE_MOVED               bundesliga · Bayer Leverkusen v SC Freiburg
+                             2026-10-17 -> 2026-10-18 (ET)
+    DATE_MOVED               bundesliga · Borussia Mönchengladbach v TSG Hoffenheim
+                             2026-10-17 -> 2026-10-18 (ET)
+    DATE_MOVED               bundesliga · VfB Stuttgart v Borussia Mönchengladbach
+                             2026-10-24 -> 2026-10-23 (ET)
+    DATE_MOVED               bundesliga · TSG Hoffenheim v Bayer Leverkusen
+                             2026-10-24 -> 2026-10-25 (ET)
+    DATE_MOVED               bundesliga · SC Freiburg v Bayern Munich
+                             2026-10-24 -> 2026-10-25 (ET)
+    DATE_MOVED               bundesliga · SV Elversberg v Mainz
+                             2026-10-31 -> 2026-10-30 (ET)
+    DATE_MOVED               bundesliga · 1. FC Union Berlin v FC Cologne
+                             2026-10-31 -> 2026-11-01 (ET)
+    DATE_MOVED               bundesliga · Eintracht Frankfurt v Hamburger SV
+                             2026-10-31 -> 2026-11-01 (ET)
+    DATE_MOVED               bundesliga · Hamburger SV v Borussia Mönchengladbach
+                             2026-11-07 -> 2026-11-06 (ET)
+    DATE_MOVED               bundesliga · FC Cologne v Bayer Leverkusen
+                             2026-11-07 -> 2026-11-08 (ET)
+    DATE_MOVED               bundesliga · SC Freiburg v 1. FC Union Berlin
+                             2026-11-07 -> 2026-11-08 (ET)
+    DATE_MOVED               bundesliga · TSG Hoffenheim v Schalke 04
+                             2026-11-07 -> 2026-11-08 (ET)
+    DATE_MOVED               bundesliga · Bayern Munich v FC Cologne
+                             2026-11-21 -> 2026-11-20 (ET)
+    DATE_MOVED               bundesliga · FC Augsburg v Mainz
+                             2026-11-21 -> 2026-11-22 (ET)
+    DATE_MOVED               bundesliga · Werder Bremen v Hamburger SV
+                             2026-11-21 -> 2026-11-22 (ET)
+    DATE_MOVED               bundesliga · Werder Bremen v Borussia Mönchengladbach
+                             2026-11-28 -> 2026-11-27 (ET)
+    DATE_MOVED               bundesliga · SC Freiburg v RB Leipzig
+                             2026-11-28 -> 2026-11-29 (ET)
+    DATE_MOVED               bundesliga · Borussia Dortmund v Bayer Leverkusen
+                             2026-11-28 -> 2026-11-29 (ET)
+    DATE_MOVED               pl · Coventry City v Chelsea
+                             2026-12-26 -> 2026-12-27 (ET)
+    DATE_MOVED               pl · Manchester United v Nottingham Forest
+                             2026-12-26 -> 2026-12-27 (ET)
+    DATE_MOVED               pl · Crystal Palace v Arsenal
+                             2026-12-26 -> 2026-12-27 (ET)
+    DATE_MOVED               pl · Tottenham Hotspur v Brighton & Hove Albion
+                             2026-12-30 -> 2026-12-29 (ET)
+    DATE_MOVED               pl · Hull City v Leeds United
+                             2026-12-30 -> 2026-12-29 (ET)
+    DATE_MOVED               pl · Everton v Manchester City
+                             2026-12-30 -> 2026-12-29 (ET)
+    DATE_MOVED               pl · Leeds United v Everton
+                             2027-01-02 -> 2027-01-01 (ET)
+    DATE_MOVED               pl · Chelsea v Newcastle United
+                             2027-01-02 -> 2027-01-03 (ET)
+    DATE_MOVED               pl · Manchester City v Tottenham Hotspur
+                             2027-01-02 -> 2027-01-03 (ET)
+    DATE_MOVED               pl · Nottingham Forest v Hull City
+                             2027-01-06 -> 2027-01-05 (ET)
+    DATE_MOVED               pl · Everton v Aston Villa
+                             2027-01-06 -> 2027-01-05 (ET)
+    DATE_MOVED               pl · Brighton & Hove Albion v AFC Bournemouth
+                             2027-01-06 -> 2027-01-05 (ET)
+    DATE_MOVED               pl · Arsenal v Brentford
+                             2027-01-06 -> 2027-01-05 (ET)
+    DATE_MOVED               pl · Sunderland v Liverpool
+                             2027-01-06 -> 2027-01-05 (ET)
+    DATE_MOVED               pl · Manchester United v Newcastle United
+                             2027-01-06 -> 2027-01-07 (ET)
+    TIME_CHANGED             bundesliga · SC Paderborn 07 v VfB Stuttgart
+                             2026-10-10T18:00:00.000Z -> 2026-10-10T13:30:00.000Z
+    TIME_CHANGED             bundesliga · 1. FC Union Berlin v SV Elversberg
+                             2026-10-10T18:00:00.000Z -> 2026-10-10T13:30:00.000Z
+    TIME_CHANGED             bundesliga · Mainz v Bayer Leverkusen
+                             2026-10-10T18:00:00.000Z -> 2026-10-10T13:30:00.000Z
+    TIME_CHANGED             bundesliga · FC Augsburg v Bayern Munich
+                             2026-10-10T18:00:00.000Z -> 2026-10-10T13:30:00.000Z
+    TIME_CHANGED             bundesliga · TSG Hoffenheim v Hamburger SV
+                             2026-10-10T18:00:00.000Z -> 2026-10-10T13:30:00.000Z
+    TIME_CHANGED             bundesliga · RB Leipzig v Eintracht Frankfurt
+                             2026-10-10T18:00:00.000Z -> 2026-10-10T16:30:00.000Z
+    TIME_CHANGED             bundesliga · SV Elversberg v FC Augsburg
+                             2026-10-17T18:00:00.000Z -> 2026-10-17T13:30:00.000Z
+    TIME_CHANGED             bundesliga · Schalke 04 v Mainz
+                             2026-10-17T18:00:00.000Z -> 2026-10-17T13:30:00.000Z
+    TIME_CHANGED             bundesliga · Werder Bremen v SC Paderborn 07
+                             2026-10-17T18:00:00.000Z -> 2026-10-17T13:30:00.000Z
+    TIME_CHANGED             bundesliga · Hamburger SV v VfB Stuttgart
+                             2026-10-17T18:00:00.000Z -> 2026-10-17T13:30:00.000Z
+    TIME_CHANGED             bundesliga · 1. FC Union Berlin v Borussia Dortmund
+                             2026-10-17T18:00:00.000Z -> 2026-10-17T13:30:00.000Z
+    TIME_CHANGED             bundesliga · Bayern Munich v RB Leipzig
+                             2026-10-17T18:00:00.000Z -> 2026-10-17T16:30:00.000Z
+    TIME_CHANGED             bundesliga · SC Paderborn 07 v Hamburger SV
+                             2026-10-24T18:00:00.000Z -> 2026-10-24T13:30:00.000Z
+    TIME_CHANGED             bundesliga · FC Cologne v Schalke 04
+                             2026-10-24T18:00:00.000Z -> 2026-10-24T13:30:00.000Z
+    TIME_CHANGED             bundesliga · Mainz v Werder Bremen
+                             2026-10-24T18:00:00.000Z -> 2026-10-24T13:30:00.000Z
+    TIME_CHANGED             bundesliga · FC Augsburg v 1. FC Union Berlin
+                             2026-10-24T18:00:00.000Z -> 2026-10-24T13:30:00.000Z
+    TIME_CHANGED             bundesliga · RB Leipzig v SV Elversberg
+                             2026-10-24T18:00:00.000Z -> 2026-10-24T13:30:00.000Z
+    TIME_CHANGED             bundesliga · Borussia Dortmund v Eintracht Frankfurt
+                             2026-10-24T18:00:00.000Z -> 2026-10-24T16:30:00.000Z
+    TIME_CHANGED             bundesliga · Schalke 04 v RB Leipzig
+                             2026-10-31T18:00:00.000Z -> 2026-10-31T14:30:00.000Z
+    TIME_CHANGED             bundesliga · Werder Bremen v TSG Hoffenheim
+                             2026-10-31T18:00:00.000Z -> 2026-10-31T14:30:00.000Z
+    TIME_CHANGED             bundesliga · Borussia Mönchengladbach v SC Paderborn 07
+                             2026-10-31T18:00:00.000Z -> 2026-10-31T14:30:00.000Z
+    TIME_CHANGED             bundesliga · FC Augsburg v SC Freiburg
+                             2026-10-31T18:00:00.000Z -> 2026-10-31T14:30:00.000Z
+    TIME_CHANGED             bundesliga · Bayer Leverkusen v VfB Stuttgart
+                             2026-10-31T18:00:00.000Z -> 2026-10-31T14:30:00.000Z
+    TIME_CHANGED             bundesliga · Bayern Munich v Borussia Dortmund
+                             2026-10-31T18:00:00.000Z -> 2026-10-31T17:30:00.000Z
+    TIME_CHANGED             bundesliga · SC Paderborn 07 v Eintracht Frankfurt
+                             2026-11-07T20:00:00.000Z -> 2026-11-07T14:30:00.000Z
+    TIME_CHANGED             bundesliga · Mainz v Bayern Munich
+                             2026-11-07T20:00:00.000Z -> 2026-11-07T14:30:00.000Z
+    TIME_CHANGED             bundesliga · RB Leipzig v FC Augsburg
+                             2026-11-07T20:00:00.000Z -> 2026-11-07T14:30:00.000Z
+    TIME_CHANGED             bundesliga · Borussia Dortmund v SV Elversberg
+                             2026-11-07T20:00:00.000Z -> 2026-11-07T14:30:00.000Z
+    TIME_CHANGED             bundesliga · VfB Stuttgart v Werder Bremen
+                             2026-11-07T20:00:00.000Z -> 2026-11-07T17:30:00.000Z
+    TIME_CHANGED             bundesliga · SV Elversberg v SC Freiburg
+                             2026-11-21T20:00:00.000Z -> 2026-11-21T14:30:00.000Z
+    TIME_CHANGED             bundesliga · Borussia Mönchengladbach v Borussia Dortmund
+                             2026-11-21T20:00:00.000Z -> 2026-11-21T14:30:00.000Z
+    TIME_CHANGED             bundesliga · 1. FC Union Berlin v RB Leipzig
+                             2026-11-21T20:00:00.000Z -> 2026-11-21T14:30:00.000Z
+    TIME_CHANGED             bundesliga · Eintracht Frankfurt v TSG Hoffenheim
+                             2026-11-21T20:00:00.000Z -> 2026-11-21T14:30:00.000Z
+    TIME_CHANGED             bundesliga · Bayer Leverkusen v SC Paderborn 07
+                             2026-11-21T20:00:00.000Z -> 2026-11-21T14:30:00.000Z
+    TIME_CHANGED             bundesliga · Schalke 04 v VfB Stuttgart
+                             2026-11-21T20:00:00.000Z -> 2026-11-21T17:30:00.000Z
+    TIME_CHANGED             bundesliga · SC Paderborn 07 v Schalke 04
+                             2026-11-28T20:00:00.000Z -> 2026-11-28T14:30:00.000Z
+    TIME_CHANGED             bundesliga · FC Cologne v SV Elversberg
+                             2026-11-28T20:00:00.000Z -> 2026-11-28T14:30:00.000Z
+    TIME_CHANGED             bundesliga · Hamburger SV v Bayern Munich
+                             2026-11-28T20:00:00.000Z -> 2026-11-28T14:30:00.000Z
+    TIME_CHANGED             bundesliga · Mainz v 1. FC Union Berlin
+                             2026-11-28T20:00:00.000Z -> 2026-11-28T14:30:00.000Z
+    TIME_CHANGED             bundesliga · VfB Stuttgart v Eintracht Frankfurt
+                             2026-11-28T20:00:00.000Z -> 2026-11-28T17:30:00.000Z
+    TIME_CHANGED             pl · Aston Villa v Leeds United
+                             2026-12-26T15:00:00.000Z -> 2026-12-26T12:30:00.000Z
+    TIME_CHANGED             pl · Hull City v Liverpool
+                             2026-12-26T15:00:00.000Z -> 2026-12-26T17:30:00.000Z
+    TIME_CHANGED             pl · Newcastle United v Manchester City
+                             2026-12-26T15:00:00.000Z -> 2026-12-26T20:00:00.000Z
+    TIME_CHANGED             pl · Coventry City v Brentford
+                             2026-12-30T20:00:00.000Z -> 2026-12-30T19:30:00.000Z
+    TIME_CHANGED             pl · Newcastle United v Nottingham Forest
+                             2026-12-30T20:00:00.000Z -> 2026-12-30T19:30:00.000Z
+    TIME_CHANGED             pl · Manchester United v Sunderland
+                             2026-12-30T20:00:00.000Z -> 2026-12-30T19:30:00.000Z
+    TIME_CHANGED             pl · Fulham v Arsenal
+                             2026-12-30T20:00:00.000Z -> 2026-12-30T19:30:00.000Z
+    TIME_CHANGED             pl · Crystal Palace v AFC Bournemouth
+                             2026-12-30T20:00:00.000Z -> 2026-12-30T19:30:00.000Z
+    TIME_CHANGED             pl · Ipswich Town v Chelsea
+                             2026-12-30T20:00:00.000Z -> 2026-12-30T20:15:00.000Z
+    TIME_CHANGED             pl · Aston Villa v Liverpool
+                             2026-12-30T20:00:00.000Z -> 2026-12-30T20:15:00.000Z
+    TIME_CHANGED             pl · Brighton & Hove Albion v Manchester United
+                             2027-01-02T15:00:00.000Z -> 2027-01-02T12:30:00.000Z
+    TIME_CHANGED             pl · AFC Bournemouth v Aston Villa
+                             2027-01-02T15:00:00.000Z -> 2027-01-02T17:30:00.000Z
+    TIME_CHANGED             pl · Ipswich Town v Coventry City
+                             2027-01-06T20:00:00.000Z -> 2027-01-06T19:30:00.000Z
+    TIME_CHANGED             pl · Fulham v Tottenham Hotspur
+                             2027-01-06T20:00:00.000Z -> 2027-01-06T19:30:00.000Z
+    TIME_CHANGED             pl · Crystal Palace v Chelsea
+                             2027-01-06T20:00:00.000Z -> 2027-01-06T19:30:00.000Z
+    TIME_CHANGED             pl · Leeds United v Manchester City
+                             2027-01-06T20:00:00.000Z -> 2027-01-06T20:15:00.000Z
+    NEW                      ucl · Club Brugge v Aston Villa
+                             2026-09-08 ET
+    NEW                      ucl · AEK Athens v LASK Linz
+                             2026-09-08 ET
+    NEW                      ucl · FC Porto v Manchester City
+                             2026-09-08 ET
+    NEW                      ucl · Borussia Dortmund v Villarreal
+                             2026-09-08 ET
+    NEW                      ucl · LOSC Lille v Real Betis
+                             2026-09-08 ET
+    NEW                      ucl · Real Madrid v Inter Milan
+                             2026-09-08 ET
+    NEW                      ucl · Barcelona v Feyenoord Rotterdam
+                             2026-09-09 ET
+    NEW                      ucl · VfB Stuttgart v Viking FK
+                             2026-09-09 ET
+    NEW                      ucl · Napoli v Arsenal
+                             2026-09-09 ET
+    NEW                      ucl · Paris Saint-Germain v Slovan Bratislava
+                             2026-09-09 ET
+    NEW                      ucl · Liverpool v Atlético Madrid
+                             2026-09-09 ET
+    NEW                      ucl · Sporting CP v Galatasaray
+                             2026-09-09 ET
+    NEW                      ucl · PSV Eindhoven v Shakhtar Donetsk
+                             2026-09-10 ET
+    NEW                      ucl · Fenerbahce v AS Roma
+                             2026-09-10 ET
+    NEW                      ucl · Slavia Prague v RC Lens
+                             2026-09-10 ET
+    NEW                      ucl · Como v RB Leipzig
+                             2026-09-10 ET
+    NEW                      ucl · Manchester United v Sabah FK
+                             2026-09-10 ET
+    NEW                      ucl · Bayern Munich v Bodo/Glimt
+                             2026-09-10 ET
+    NEW                      ucl · RC Lens v Sporting CP
+                             2026-10-13 ET
+    NEW                      ucl · Sabah FK v Slavia Prague
+                             2026-10-13 ET
+    NEW                      ucl · Villarreal v Napoli
+                             2026-10-13 ET
+    NEW                      ucl · Viking FK v Bayern Munich
+                             2026-10-13 ET
+    NEW                      ucl · Atlético Madrid v Manchester United
+                             2026-10-13 ET
+    NEW                      ucl · Inter Milan v Club Brugge
+                             2026-10-13 ET
+    NEW                      ucl · Arsenal v LOSC Lille
+                             2026-10-13 ET
+    NEW                      ucl · RB Leipzig v PSV Eindhoven
+                             2026-10-13 ET
+    NEW                      ucl · Galatasaray v Barcelona
+                             2026-10-13 ET
+    NEW                      ucl · LASK Linz v Liverpool
+                             2026-10-14 ET
+    NEW                      ucl · Feyenoord Rotterdam v Como
+                             2026-10-14 ET
+    NEW                      ucl · Bodo/Glimt v Borussia Dortmund
+                             2026-10-14 ET
+    NEW                      ucl · Slovan Bratislava v VfB Stuttgart
+                             2026-10-14 ET
+    NEW                      ucl · Shakhtar Donetsk v AEK Athens
+                             2026-10-14 ET
+    NEW                      ucl · Manchester City v Paris Saint-Germain
+                             2026-10-14 ET
+    NEW                      ucl · Real Betis v FC Porto
+                             2026-10-14 ET
+    NEW                      ucl · Aston Villa v Fenerbahce
+                             2026-10-14 ET
+    NEW                      ucl · AS Roma v Real Madrid
+                             2026-10-14 ET
+    NEW                      ucl · Fenerbahce v Slavia Prague
+                             2026-10-20 ET
+    NEW                      ucl · Sabah FK v Borussia Dortmund
+                             2026-10-20 ET
+    NEW                      ucl · VfB Stuttgart v Atlético Madrid
+                             2026-10-20 ET
+    NEW                      ucl · Liverpool v Villarreal
+                             2026-10-20 ET
+    NEW                      ucl · FC Porto v PSV Eindhoven
+                             2026-10-20 ET
+    NEW                      ucl · Paris Saint-Germain v Barcelona
+                             2026-10-20 ET
+    NEW                      ucl · Napoli v Bodo/Glimt
+                             2026-10-20 ET
+    NEW                      ucl · Manchester City v AEK Athens
+                             2026-10-20 ET
+    NEW                      ucl · AS Roma v Slovan Bratislava
+                             2026-10-20 ET
+    NEW                      ucl · Como v Manchester United
+                             2026-10-21 ET
+    NEW                      ucl · LOSC Lille v Galatasaray
+                             2026-10-21 ET
+    NEW                      ucl · Bayern Munich v Arsenal
+                             2026-10-21 ET
+    NEW                      ucl · Real Madrid v RB Leipzig
+                             2026-10-21 ET
+    NEW                      ucl · Club Brugge v RC Lens
+                             2026-10-21 ET
+    NEW                      ucl · Real Betis v Feyenoord Rotterdam
+                             2026-10-21 ET
+    NEW                      ucl · Inter Milan v Shakhtar Donetsk
+                             2026-10-21 ET
+    NEW                      ucl · Sporting CP v LASK Linz
+                             2026-10-21 ET
+    NEW                      ucl · Aston Villa v Viking FK
+                             2026-10-21 ET
+    NEW                      ucl · Shakhtar Donetsk v Sporting CP
+                             2026-11-03 ET
+    NEW                      ucl · Galatasaray v VfB Stuttgart
+                             2026-11-03 ET
+    NEW                      ucl · Feyenoord Rotterdam v Inter Milan
+                             2026-11-03 ET
+    NEW                      ucl · Manchester United v AS Roma
+                             2026-11-03 ET
+    NEW                      ucl · Villarreal v Paris Saint-Germain
+                             2026-11-03 ET
+    NEW                      ucl · Bodo/Glimt v LOSC Lille
+                             2026-11-03 ET
+    NEW                      ucl · LASK Linz v Slovan Bratislava
+                             2026-11-03 ET
+    NEW                      ucl · Atlético Madrid v Bayern Munich
+                             2026-11-03 ET
+    NEW                      ucl · Barcelona v Aston Villa
+                             2026-11-03 ET
+    NEW                      ucl · Fenerbahce v Liverpool
+                             2026-11-04 ET
+    NEW                      ucl · AEK Athens v Real Madrid
+                             2026-11-04 ET
+    NEW                      ucl · FC Porto v Napoli
+                             2026-11-04 ET
+    NEW                      ucl · Viking FK v Sabah FK
+                             2026-11-04 ET
+    NEW                      ucl · PSV Eindhoven v Club Brugge
+                             2026-11-04 ET
+    NEW                      ucl · Borussia Dortmund v Real Betis
+                             2026-11-04 ET
+    NEW                      ucl · RC Lens v Como
+                             2026-11-04 ET
+    NEW                      ucl · RB Leipzig v Manchester City
+                             2026-11-04 ET
+    NEW                      ucl · Slavia Prague v Arsenal
+                             2026-11-04 ET
+    NEW                      ucl · Galatasaray v Aston Villa
+                             2026-11-24 ET
+    NEW                      ucl · Bodo/Glimt v LASK Linz
+                             2026-11-24 ET
+    NEW                      ucl · Feyenoord Rotterdam v FC Porto
+                             2026-11-24 ET
+    NEW                      ucl · Arsenal v Borussia Dortmund
+                             2026-11-24 ET
+    NEW                      ucl · Como v AEK Athens
+                             2026-11-24 ET
+    NEW                      ucl · Slovan Bratislava v Real Betis
+                             2026-11-24 ET
+    NEW                      ucl · Real Madrid v PSV Eindhoven
+                             2026-11-24 ET
+    NEW                      ucl · RB Leipzig v RC Lens
+                             2026-11-24 ET
+    NEW                      ucl · Manchester City v Napoli
+                             2026-11-24 ET
+    NEW                      ucl · Slavia Prague v Villarreal
+                             2026-11-25 ET
+    NEW                      ucl · Sabah FK v Barcelona
+                             2026-11-25 ET
+    NEW                      ucl · Atlético Madrid v Viking FK
+                             2026-11-25 ET
+    NEW                      ucl · Club Brugge v Liverpool
+                             2026-11-25 ET
+    NEW                      ucl · Sporting CP v Manchester United
+                             2026-11-25 ET
+    NEW                      ucl · Paris Saint-Germain v AS Roma
+                             2026-11-25 ET
+    NEW                      ucl · Shakhtar Donetsk v Fenerbahce
+                             2026-11-25 ET
+    NEW                      ucl · Inter Milan v VfB Stuttgart
+                             2026-11-25 ET
+    NEW                      ucl · LOSC Lille v Bayern Munich
+                             2026-11-25 ET
+    NEW                      ucl · Viking FK v Feyenoord Rotterdam
+                             2026-12-08 ET
+    NEW                      ucl · Villarreal v Sabah FK
+                             2026-12-08 ET
+    NEW                      ucl · Bayern Munich v Slavia Prague
+                             2026-12-08 ET
+    NEW                      ucl · Barcelona v Manchester City
+                             2026-12-08 ET
+    NEW                      ucl · Aston Villa v Paris Saint-Germain
+                             2026-12-08 ET
+    NEW                      ucl · Napoli v Club Brugge
+                             2026-12-08 ET
+    NEW                      ucl · AS Roma v Sporting CP
+                             2026-12-08 ET
+    NEW                      ucl · AEK Athens v Galatasaray
+                             2026-12-08 ET
+    NEW                      ucl · Manchester United v RB Leipzig
+                             2026-12-08 ET
+    NEW                      ucl · Slovan Bratislava v Shakhtar Donetsk
+                             2026-12-09 ET
+    NEW                      ucl · Real Betis v Como
+                             2026-12-09 ET
+    NEW                      ucl · LASK Linz v Fenerbahce
+                             2026-12-09 ET
+    NEW                      ucl · VfB Stuttgart v LOSC Lille
+                             2026-12-09 ET
+    NEW                      ucl · PSV Eindhoven v Atlético Madrid
+                             2026-12-09 ET
+    NEW                      ucl · Arsenal v Real Madrid
+                             2026-12-09 ET
+    NEW                      ucl · Borussia Dortmund v Inter Milan
+                             2026-12-09 ET
+    NEW                      ucl · Liverpool v FC Porto
+                             2026-12-09 ET
+    NEW                      ucl · RC Lens v Bodo/Glimt
+                             2026-12-09 ET
+    NEW                      ucl · Galatasaray v Feyenoord Rotterdam
+                             2027-01-19 ET
+    NEW                      ucl · Bodo/Glimt v Atlético Madrid
+                             2027-01-19 ET
+    NEW                      ucl · FC Porto v Slavia Prague
+                             2027-01-19 ET
+    NEW                      ucl · Aston Villa v Borussia Dortmund
+                             2027-01-19 ET
+    NEW                      ucl · Real Madrid v LASK Linz
+                             2027-01-19 ET
+    NEW                      ucl · VfB Stuttgart v Club Brugge
+                             2027-01-19 ET
+    NEW                      ucl · Inter Milan v Liverpool
+                             2027-01-19 ET
+    NEW                      ucl · LOSC Lille v Slovan Bratislava
+                             2027-01-19 ET
+    NEW                      ucl · AEK Athens v AS Roma
+                             2027-01-19 ET
+    NEW                      ucl · Fenerbahce v Villarreal
+                             2027-01-20 ET
+    NEW                      ucl · Sabah FK v Napoli
+                             2027-01-20 ET
+    NEW                      ucl · Viking FK v PSV Eindhoven
+                             2027-01-20 ET
+    NEW                      ucl · Como v Paris Saint-Germain
+                             2027-01-20 ET
+    NEW                      ucl · RC Lens v Manchester City
+                             2027-01-20 ET
+    NEW                      ucl · Real Betis v Arsenal
+                             2027-01-20 ET
+    NEW                      ucl · RB Leipzig v Shakhtar Donetsk
+                             2027-01-20 ET
+    NEW                      ucl · Sporting CP v Barcelona
+                             2027-01-20 ET
+    NEW                      ucl · Manchester United v Bayern Munich
+                             2027-01-20 ET
+    NEW                      ucl · Barcelona v Como
+                             2027-01-27 ET
+    NEW                      ucl · Borussia Dortmund v AEK Athens
+                             2027-01-27 ET
+    NEW                      ucl · Club Brugge v Bodo/Glimt
+                             2027-01-27 ET
+    NEW                      ucl · Paris Saint-Germain v Galatasaray
+                             2027-01-27 ET
+    NEW                      ucl · Napoli v Viking FK
+                             2027-01-27 ET
+    NEW                      ucl · Slovan Bratislava v Inter Milan
+                             2027-01-27 ET
+    NEW                      ucl · Shakhtar Donetsk v Real Madrid
+                             2027-01-27 ET
+    NEW                      ucl · Feyenoord Rotterdam v RB Leipzig
+                             2027-01-27 ET
+    NEW                      ucl · Arsenal v Sabah FK
+                             2027-01-27 ET
+    NEW                      ucl · Atlético Madrid v Fenerbahce
+                             2027-01-27 ET
+    NEW                      ucl · Bayern Munich v Real Betis
+                             2027-01-27 ET
+    NEW                      ucl · Villarreal v Manchester United
+                             2027-01-27 ET
+    NEW                      ucl · PSV Eindhoven v VfB Stuttgart
+                             2027-01-27 ET
+    NEW                      ucl · Slavia Prague v Aston Villa
+                             2027-01-27 ET
+    NEW                      ucl · Manchester City v Sporting CP
+                             2027-01-27 ET
+    NEW                      ucl · Liverpool v RC Lens
+                             2027-01-27 ET
+    NEW                      ucl · AS Roma v LOSC Lille
+                             2027-01-27 ET
+    NEW                      ucl · LASK Linz v FC Porto
+                             2027-01-27 ET
+    TIME_CONFIDENCE_CHANGED  bundesliga · Borussia Dortmund v Werder Bremen
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · SC Paderborn 07 v VfB Stuttgart
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · 1. FC Union Berlin v SV Elversberg
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Mainz v Bayer Leverkusen
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · FC Augsburg v Bayern Munich
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · TSG Hoffenheim v Hamburger SV
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · RB Leipzig v Eintracht Frankfurt
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · FC Cologne v Borussia Mönchengladbach
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · SC Freiburg v Schalke 04
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Eintracht Frankfurt v FC Cologne
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · SV Elversberg v FC Augsburg
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Schalke 04 v Mainz
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Werder Bremen v SC Paderborn 07
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Hamburger SV v VfB Stuttgart
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · 1. FC Union Berlin v Borussia Dortmund
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Bayern Munich v RB Leipzig
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Bayer Leverkusen v SC Freiburg
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Borussia Mönchengladbach v TSG Hoffenheim
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · VfB Stuttgart v Borussia Mönchengladbach
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · SC Paderborn 07 v Hamburger SV
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · FC Cologne v Schalke 04
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Mainz v Werder Bremen
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · FC Augsburg v 1. FC Union Berlin
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · RB Leipzig v SV Elversberg
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Borussia Dortmund v Eintracht Frankfurt
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · TSG Hoffenheim v Bayer Leverkusen
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · SC Freiburg v Bayern Munich
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · SV Elversberg v Mainz
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Schalke 04 v RB Leipzig
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Werder Bremen v TSG Hoffenheim
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Borussia Mönchengladbach v SC Paderborn 07
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · FC Augsburg v SC Freiburg
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Bayer Leverkusen v VfB Stuttgart
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Bayern Munich v Borussia Dortmund
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · 1. FC Union Berlin v FC Cologne
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Eintracht Frankfurt v Hamburger SV
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Hamburger SV v Borussia Mönchengladbach
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · SC Paderborn 07 v Eintracht Frankfurt
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Mainz v Bayern Munich
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · RB Leipzig v FC Augsburg
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Borussia Dortmund v SV Elversberg
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · VfB Stuttgart v Werder Bremen
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · FC Cologne v Bayer Leverkusen
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · SC Freiburg v 1. FC Union Berlin
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · TSG Hoffenheim v Schalke 04
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Bayern Munich v FC Cologne
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · SV Elversberg v SC Freiburg
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Borussia Mönchengladbach v Borussia Dortmund
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · 1. FC Union Berlin v RB Leipzig
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Eintracht Frankfurt v TSG Hoffenheim
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Bayer Leverkusen v SC Paderborn 07
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Schalke 04 v VfB Stuttgart
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · FC Augsburg v Mainz
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Werder Bremen v Hamburger SV
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Werder Bremen v Borussia Mönchengladbach
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · SC Paderborn 07 v Schalke 04
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · FC Cologne v SV Elversberg
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Hamburger SV v Bayern Munich
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Mainz v 1. FC Union Berlin
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · VfB Stuttgart v Eintracht Frankfurt
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · SC Freiburg v RB Leipzig
+                             round_placeholder -> exact
+    TIME_CONFIDENCE_CHANGED  bundesliga · Borussia Dortmund v Bayer Leverkusen
+                             round_placeholder -> exact
+    VENUE_TZ_CHANGED         shield · Arsenal v Manchester City
+                             Europe/London -> (unknown)
+
+standings: ucl 36 · laliga 20 · pl 20 · seriea 20 · ligue1 18 · bundesliga 18
+36 standings row(s) changed vs last snapshot
+
+wrote src/data/fixtures.json (1199), src/data/meta.json and src/data/standings.json
+
+no time-sensitive lines (merge=auto).
+report: changed=true changes=300 urgent=0 standings=changed rank-moves=0 merge=auto zones-unknown=5 standings-degraded=none

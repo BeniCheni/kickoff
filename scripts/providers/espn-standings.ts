@@ -1,5 +1,6 @@
-import { LEAGUE_TABLES, SYNCABLE } from '../../src/lib/competitions'
+import { LEAGUE_TABLES, SYNCABLE, type CompetitionKey } from '../../src/lib/competitions'
 import { standingRowSchema, standingsFileSchema, type StandingRow, type StandingsFile } from '../../src/lib/schema'
+import { afterPhaseWindows } from '../../src/lib/matchdays'
 import { identityContext, providerIdentity } from './identity'
 
 /**
@@ -59,8 +60,8 @@ export function normalizeStandingEntry(entry: any): StandingRow | null {
   }
 }
 
-export async function fetchStandings(season = currentSeasonStartYear()): Promise<StandingsFile> {
-  const fetchedAt = new Date().toISOString()
+export async function fetchStandings(season = currentSeasonStartYear(), now = new Date()): Promise<StandingsFile> {
+  const fetchedAt = now.toISOString()
 
   // Await every league so one rejection does not hide diagnostics from the others.
   // A failure aborts the fixtures + standings snapshot before publication.
@@ -75,11 +76,30 @@ export async function fetchStandings(season = currentSeasonStartYear()): Promise
         throw new Error(`ESPN standings ${code}: ${err instanceof Error ? err.message : err}`)
       }
 
-      const entries: unknown = body?.children?.[0]?.standings?.entries
-      if (!Array.isArray(entries)) throw new Error(`ESPN standings ${code}: missing entries array`)
+      const children: any[] = body?.children
+      if (!Array.isArray(children) || !children.length) throw new Error(`ESPN standings ${code}: missing children array`)
+      const phase = LEAGUE_TABLES[key]!.phase
+      // Validate every returned child before classifying a structural phase change.
+      // A malformed extra child must not become a successful 'ended' response.
+      for (const child of (phase ? children : children.slice(0, 1))) {
+        if (!Array.isArray(child?.standings?.entries)) throw new Error(`ESPN standings ${code}: missing entries array`)
+      }
+      // A phase competition's table is the child that carries the phase's name, wherever the
+      // provider files it. An extra child beside an intact phase child (a knockout bracket
+      // published early) is noise, not a structural end; it is named in the log and ignored.
+      const phaseChild = phase
+        ? children.find((c) => typeof c?.name === 'string' && c.name.toLowerCase() === phase)
+        : children[0]
+      if (phase && children.length > 1) {
+        console.warn(`ESPN standings ${code}: ${children.length} children returned; reading "${phaseChild?.name ?? '(none)'}" as the ${phase} table`)
+      }
+      // Every entry in every returned child is validated: a malformed child after the phase is a
+      // validation failure, never an "ended" signal. Rows are taken from the phase child alone.
+      const entries: Array<[any, boolean]> = (phase ? children : children.slice(0, 1))
+        .flatMap((child) => (child.standings.entries as any[]).map((entry): [any, boolean] => [entry, child === phaseChild]))
       const rows: StandingRow[] = []
       const rejected: string[] = []
-      for (const [index, entry] of entries.entries()) {
+      for (const [index, [entry, ofPhaseChild]] of entries.entries()) {
         const context = `${code} entry ${index + 1}, team ${identityContext(entry?.team?.id)}`
         const row = normalizeStandingEntry(entry)
         if (!row) {
@@ -87,8 +107,8 @@ export async function fetchStandings(season = currentSeasonStartYear()): Promise
           continue
         }
         const parsed = standingRowSchema.safeParse(row)
-        if (parsed.success) rows.push(parsed.data)
-        else rejected.push(`  ! ${context}: ${parsed.error.issues.map((i) => `${i.path.join('.')} — ${i.message}`).join('; ')}`)
+        if (!parsed.success) rejected.push(`  ! ${context}: ${parsed.error.issues.map((i) => `${i.path.join('.')} — ${i.message}`).join('; ')}`)
+        else if (ofPhaseChild) rows.push(parsed.data)
       }
       if (rejected.length) throw new Error(`ESPN standings: ${rejected.length} rejected entries:\n${rejected.join('\n')}`)
 
@@ -97,15 +117,19 @@ export async function fetchStandings(season = currentSeasonStartYear()): Promise
       // games-in-hand and the matchday label). The previous snapshot survives either way,
       // because the throw happens before anything is written.
       const expected = LEAGUE_TABLES[key]!.teams
-      if (rows.length !== expected) {
+      const phaseChanged = !!phase && (!phaseChild || rows.length !== expected)
+      if (phaseChanged && afterPhaseWindows(key, season, now)) {
+        return { key, rows: null } as const
+      }
+      if (rows.length !== expected || phaseChanged) {
         throw new Error(
           `ESPN standings ${code}: got ${rows.length} rows, expected ${expected} — ` +
-            `payload shape changed; refusing to publish the authoritative snapshot`,
+            `payload shape changed (expected ${phase ?? 'league table'}); refusing to publish the authoritative snapshot`,
         )
       }
 
       rows.sort((a, b) => a.rank - b.rank)
-      return [key, rows] as const
+      return { key, rows } as const
     }),
   )
 
@@ -114,10 +138,13 @@ export async function fetchStandings(season = currentSeasonStartYear()): Promise
     throw new Error(failures.map((r) => r.reason instanceof Error ? r.reason.message : String(r.reason)).join('\n'))
   }
 
+  const results = perLeague.filter((r) => r.status === 'fulfilled').map((r) => r.value)
+  const degraded: CompetitionKey[] = results.filter((r) => r.rows === null).map((r) => r.key).sort()
   return standingsFileSchema.parse({
     fetchedAt,
     provider: 'espn',
     season,
-    leagues: Object.fromEntries(perLeague.filter((r) => r.status === 'fulfilled').map((r) => r.value)),
+    leagues: Object.fromEntries(results.filter((r) => r.rows !== null).map((r) => [r.key, r.rows])),
+    ...(degraded.length ? { degraded } : {}),
   })
 }

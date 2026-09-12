@@ -242,6 +242,19 @@ describe('other transitions', () => {
     expect(diffFixtures(same, structuredClone(same), { now: NOW })).toHaveLength(0)
   })
 
+  it('keeps team renames ahead of venue-zone changes regardless of fixture order', () => {
+    const before = [fx({ id: 'zone' }), fx({ id: 'rename', home: { name: 'Old name', sourceId: '42' } })]
+    const after = [
+      { ...before[0]!, venueTz: 'Europe/London' },
+      { ...before[1]!, home: { name: 'New name', sourceId: '42' } },
+    ]
+    for (const fixtures of [after, [...after].reverse()]) {
+      const changes = diffFixtures(before, fixtures, { now: NOW })
+      expect(changes.map((change) => change.kind)).toEqual(['TEAM_RENAMED', 'VENUE_TZ_CHANGED'])
+      expect(changes.every((change) => !change.urgent)).toBe(true)
+    }
+  })
+
   it('sorts urgent changes above the rest', () => {
     const before = [fx({ id: 'far', kickoffUtc: '2027-01-01T18:45:00.000Z' }), fx({ id: 'near' })]
     const after = [
@@ -320,16 +333,16 @@ describe('the sync report — "changed" is decided here, never by git diff', () 
   it('formats the one stable line sync.yml greps — pinned verbatim, because the workflow parses it', () => {
     expect(
       formatReportLine({ changes: 3, urgent: 1, standings: 'changed', rankMoves: 2, merge: 'hold' }),
-    ).toBe('report: changed=true changes=3 urgent=1 standings=changed rank-moves=2 merge=hold')
+    ).toBe('report: changed=true changes=3 urgent=1 standings=changed rank-moves=2 merge=hold zones-unknown=0 standings-degraded=none')
     expect(formatReportLine(quiet)).toBe(
-      'report: changed=false changes=0 urgent=0 standings=unchanged rank-moves=0 merge=auto',
+      'report: changed=false changes=0 urgent=0 standings=unchanged rank-moves=0 merge=auto zones-unknown=0 standings-degraded=none',
     )
   })
 
   it("matches the exact regex the workflow validates it against, and the fields it extracts", () => {
     // Mirror of sync.yml's `grep -Eqx` and its three `sed` extractions — if this drifts, the
     // workflow's "Read the sync report" step fails loudly rather than guessing.
-    const shape = /^report: changed=(true|false) changes=[0-9]+ urgent=[0-9]+ standings=(changed|unchanged|failed) rank-moves=[0-9]+ merge=(auto|hold)$/
+    const shape = /^report: changed=(true|false) changes=[0-9]+ urgent=[0-9]+ standings=(changed|unchanged|failed) rank-moves=[0-9]+ merge=(auto|hold) zones-unknown=[0-9]+ standings-degraded=(none|[a-z0-9]+(,[a-z0-9]+)*)$/
     const cases: SyncReport[] = [
       quiet,
       { ...quiet, changes: 12, urgent: 4, standings: 'failed', merge: 'hold' },

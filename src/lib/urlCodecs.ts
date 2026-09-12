@@ -31,10 +31,10 @@ export function parseOnlyParam(raw: string): ReadonlySet<CompetitionKey> {
   return keys.length > 0 ? new Set(keys) : new Set(COMPETITION_KEYS)
 }
 
-export type Tab = 'fixtures' | 'table'
+export type Tab = 'fixtures' | 'table' | 'moments'
 export type CalendarView = 'week' | 'month'
 export const encodeTab = (tab: Tab): string | null => tab === 'fixtures' ? null : tab
-export const parseTab = (raw: string): Tab => raw === 'table' ? 'table' : 'fixtures'
+export const parseTab = (raw: string): Tab => raw === 'table' || raw === 'moments' ? raw : 'fixtures'
 export const encodeView = (view: CalendarView): string | null => view === 'week' ? null : view
 export const parseView = (raw: string): CalendarView => raw === 'month' ? 'month' : 'week'
 export const encodeLeague = (league: CompetitionKey): string | null => league === 'laliga' ? null : league

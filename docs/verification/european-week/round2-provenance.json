@@ -1,0 +1,450 @@
+{
+  "counts": {
+    "laliga": 230,
+    "shield": 1,
+    "tdc": 1,
+    "ligue1": 171,
+    "pl": 240,
+    "seriea": 230,
+    "dflsupercup": 1,
+    "bundesliga": 180,
+    "ucl": 144
+  },
+  "total": 1198,
+  "meta": {
+    "lastSyncAt": "2026-09-12T14:50:30.423Z",
+    "provider": "espn",
+    "window": {
+      "from": "2026-08-13",
+      "to": "2027-02-09"
+    },
+    "counts": {
+      "supercup": 0,
+      "shield": 1,
+      "tdc": 1,
+      "dflsupercup": 1,
+      "ucl": 144,
+      "laliga": 230,
+      "pl": 240,
+      "seriea": 230,
+      "ligue1": 171,
+      "bundesliga": 180
+    },
+    "total": 1198,
+    "standingsDegraded": []
+  },
+  "standingRows": {
+    "ucl": 36,
+    "laliga": 20,
+    "pl": 20,
+    "seriea": 20,
+    "ligue1": 18,
+    "bundesliga": 18
+  },
+  "rounds": {
+    "1": 18,
+    "2": 18,
+    "3": 18,
+    "4": 18,
+    "5": 18,
+    "6": 18,
+    "7": 18,
+    "8": 18
+  },
+  "unknown": 0,
+  "zones": 15,
+  "status": {
+    "full_time": 172,
+    "in_play": 12,
+    "scheduled": 1014
+  },
+  "confidence": {
+    "exact": 796,
+    "round_placeholder": 402
+  },
+  "moments": [],
+  "domesticPhaseSeason": [],
+  "comparisons": {
+    "17c24b0": {
+      "shared": 1198,
+      "removed": [
+        {
+          "id": "supercup:401873624",
+          "competition": "supercup",
+          "kickoffUtc": "2026-08-12T19:00:00.000Z",
+          "venueTz": "Europe/Vienna",
+          "venue": "Red Bull Arena Salzburg",
+          "venueId": "5922",
+          "venueCountry": "Austria",
+          "home": {
+            "name": "Paris Saint-Germain",
+            "sourceId": "160"
+          },
+          "away": {
+            "name": "Aston Villa",
+            "sourceId": "362"
+          },
+          "status": "full_time",
+          "timeConfidence": "exact",
+          "result": {
+            "home": 2,
+            "away": 1
+          },
+          "source": {
+            "provider": "espn",
+            "sourceId": "401873624",
+            "fetchedAt": "2026-09-10T18:06:08.123Z"
+          }
+        }
+      ],
+      "fieldCounts": {
+        "result.away": 11,
+        "result.home": 11,
+        "source.fetchedAt": 1198,
+        "status": 23,
+        "venue": 4
+      },
+      "roundChanged": [],
+      "roundPresent": 144,
+      "roundAbsent": 1054,
+      "addedIds": []
+    },
+    "origin/main": {
+      "shared": 1054,
+      "removed": [],
+      "fieldCounts": {
+        "result.away": 1,
+        "result.home": 1,
+        "source.fetchedAt": 1054,
+        "status": 13,
+        "venueCountry": 1054,
+        "venueId": 1054
+      },
+      "roundChanged": [],
+      "roundPresent": 0,
+      "roundAbsent": 1054,
+      "addedIds": [
+        "ucl:401915264",
+        "ucl:401915265",
+        "ucl:401915266",
+        "ucl:401915267",
+        "ucl:401915268",
+        "ucl:401915269",
+        "ucl:401915270",
+        "ucl:401915271",
+        "ucl:401915272",
+        "ucl:401915273",
+        "ucl:401915274",
+        "ucl:401915275",
+        "ucl:401915276",
+        "ucl:401915277",
+        "ucl:401915278",
+        "ucl:401915279",
+        "ucl:401915280",
+        "ucl:401915281",
+        "ucl:401915282",
+        "ucl:401915283",
+        "ucl:401915284",
+        "ucl:401915285",
+        "ucl:401915286",
+        "ucl:401915287",
+        "ucl:401915288",
+        "ucl:401915289",
+        "ucl:401915290",
+        "ucl:401915291",
+        "ucl:401915292",
+        "ucl:401915293",
+        "ucl:401915294",
+        "ucl:401915295",
+        "ucl:401915296",
+        "ucl:401915297",
+        "ucl:401915298",
+        "ucl:401915299",
+        "ucl:401915300",
+        "ucl:401915301",
+        "ucl:401915302",
+        "ucl:401915303",
+        "ucl:401915304",
+        "ucl:401915305",
+        "ucl:401915306",
+        "ucl:401915307",
+        "ucl:401915308",
+        "ucl:401915309",
+        "ucl:401915310",
+        "ucl:401915311",
+        "ucl:401915312",
+        "ucl:401915313",
+        "ucl:401915346",
+        "ucl:401915347",
+        "ucl:401915348",
+        "ucl:401915349",
+        "ucl:401915350",
+        "ucl:401915351",
+        "ucl:401915352",
+        "ucl:401915353",
+        "ucl:401915354",
+        "ucl:401915355",
+        "ucl:401915356",
+        "ucl:401915357",
+        "ucl:401915358",
+        "ucl:401915359",
+        "ucl:401915360",
+        "ucl:401915361",
+        "ucl:401915362",
+        "ucl:401915363",
+        "ucl:401915364",
+        "ucl:401915365",
+        "ucl:401915366",
+        "ucl:401915367",
+        "ucl:401915368",
+        "ucl:401915369",
+        "ucl:401915370",
+        "ucl:401915371",
+        "ucl:401915372",
+        "ucl:401915373",
+        "ucl:401915374",
+        "ucl:401915375",
+        "ucl:401915376",
+        "ucl:401915377",
+        "ucl:401915378",
+        "ucl:401915379",
+        "ucl:401915380",
+        "ucl:401915381",
+        "ucl:401915382",
+        "ucl:401915383",
+        "ucl:401915384",
+        "ucl:401915385",
+        "ucl:401915386",
+        "ucl:401915387",
+        "ucl:401915388",
+        "ucl:401915389",
+        "ucl:401915390",
+        "ucl:401915391",
+        "ucl:401915392",
+        "ucl:401915393",
+        "ucl:401915394",
+        "ucl:401915395",
+        "ucl:401915396",
+        "ucl:401915397",
+        "ucl:401915398",
+        "ucl:401915399",
+        "ucl:401915400",
+        "ucl:401915401",
+        "ucl:401915402",
+        "ucl:401915403",
+        "ucl:401915404",
+        "ucl:401915405",
+        "ucl:401915406",
+        "ucl:401915407",
+        "ucl:401915408",
+        "ucl:401915409",
+        "ucl:401915410",
+        "ucl:401915411",
+        "ucl:401915412",
+        "ucl:401915413",
+        "ucl:401915414",
+        "ucl:401915415",
+        "ucl:401915416",
+        "ucl:401915417",
+        "ucl:401915418",
+        "ucl:401915422",
+        "ucl:401915423",
+        "ucl:401915424",
+        "ucl:401915425",
+        "ucl:401915426",
+        "ucl:401915434",
+        "ucl:401915435",
+        "ucl:401915436",
+        "ucl:401915440",
+        "ucl:401915441",
+        "ucl:401915442",
+        "ucl:401915443",
+        "ucl:401915444",
+        "ucl:401915445",
+        "ucl:401915446",
+        "ucl:401915447",
+        "ucl:401915448",
+        "ucl:401915449",
+        "ucl:401915450",
+        "ucl:401915451",
+        "ucl:401915452"
+      ]
+    }
+  },
+  "previousPathEqual": true,
+  "olderChangelogEqual": true,
+  "removedDuplicate": [
+    "- The UCL league-phase design cycle's record under `docs/` (#34): the brief archive and the"
+  ],
+  "duplicateExistsInMain": [
+    true
+  ],
+  "duplicateBytes": 478,
+  "duplicateSha256": "620be9366e8fc617b3425d35dfe0564adc9bad457e5c354fa8e732c174117a23",
+  "exactInV040": true,
+  "remainingExactDuplicates": [],
+  "olderSectionsIdentical": true,
+  "standings": {
+    "17c24b0": {
+      "sharedTeams": 132,
+      "changedRowFields": {
+        "rank": 65,
+        "pts": 13,
+        "w": 9,
+        "gf": 18,
+        "played": 22,
+        "ga": 18,
+        "l": 9,
+        "d": 4
+      },
+      "topFields": [
+        "fetchedAt"
+      ]
+    },
+    "origin/main": {
+      "sharedTeams": 96,
+      "changedRowFields": {
+        "ga": 2,
+        "l": 1,
+        "gf": 2,
+        "played": 2,
+        "rank": 6,
+        "pts": 1,
+        "w": 1
+      },
+      "topFields": [
+        "fetchedAt"
+      ]
+    }
+  },
+  "checkOnlyBefore": {
+    "files": {
+      "src/data/fixtures.json": {
+        "sha256": "a453dca043585b05c1d3924f2bef49863827b37676f982577210cd20e9e6eb32",
+        "mtimeNs": 1789224630428594519
+      },
+      "src/data/meta.json": {
+        "sha256": "97dc28196649b961e7d9e13d239f9a082b3f6a8538c579d0c1792aa7b087b937",
+        "mtimeNs": 1789224630428917313
+      },
+      "src/data/standings.json": {
+        "sha256": "f2ceca84708f055cbf9b7b4c05c1d47f0872d5691281aff1ebb585489855cfbc",
+        "mtimeNs": 1789224630429104148
+      }
+    },
+    "status": ""
+  },
+  "checkOnlyAfter": {
+    "files": {
+      "src/data/fixtures.json": {
+        "sha256": "a453dca043585b05c1d3924f2bef49863827b37676f982577210cd20e9e6eb32",
+        "mtimeNs": 1789224630428594519
+      },
+      "src/data/meta.json": {
+        "sha256": "97dc28196649b961e7d9e13d239f9a082b3f6a8538c579d0c1792aa7b087b937",
+        "mtimeNs": 1789224630428917313
+      },
+      "src/data/standings.json": {
+        "sha256": "f2ceca84708f055cbf9b7b4c05c1d47f0872d5691281aff1ebb585489855cfbc",
+        "mtimeNs": 1789224630429104148
+      }
+    },
+    "status": ""
+  },
+  "browserReceipt": "round2-browser.json",
+  "baseline": {
+    "head": "25b77a46981d19b157c7278c6a19a16b35f1aca8",
+    "base": "77c5dd23ae9c8a1b8ade41f58fe64336746cc019",
+    "tests": 500,
+    "testFiles": 39,
+    "verifyRun": 34700740910
+  },
+  "scope": {
+    "full": [
+      104,
+      29260,
+      9369
+    ],
+    "refresh": [
+      32,
+      3533,
+      1686
+    ],
+    "refreshOutsideDataDocs": [
+      16,
+      910,
+      106
+    ],
+    "sourceExcludingDataBytes": 0,
+    "differentFromBothParents": [
+      ".github/workflows/sync.yml",
+      "CHANGELOG.md",
+      "CONTRIBUTING.md",
+      "README.md",
+      "docs/HONESTY.md",
+      "docs/README.md",
+      "docs/european-week-pass-2.5-executive-brief.md",
+      "docs/european-week-v0.5.0-refresh.md",
+      "docs/european-week-verification.md",
+      "docs/v0.2.6-ideas.md",
+      "docs/verification/european-week/v0.5.0-refresh-check.txt",
+      "docs/verification/european-week/v0.5.0-refresh-sync.txt",
+      "docs/verification/european-week/v0.5.0-refresh.json",
+      "scripts/diff.ts",
+      "scripts/sync.ts",
+      "src/data/fixtures.json",
+      "src/data/meta.json",
+      "src/data/standings.json",
+      "tests/diff.test.ts",
+      "tests/sync.test.ts",
+      "tests/syncPublication.test.ts"
+    ]
+  },
+  "releaseVersionInventoryAtReviewedHead": [
+    "25b77a4:CHANGELOG.md:11:## [0.5.0] \u2014 2026-09-12",
+    "25b77a4:CHANGELOG.md:129:- The European week remains v0.5.0 / PR #39 and ships second, by Beni's ruling. Its chips",
+    "25b77a4:CLAUDE.md:239:Beni ruled on 10 Sep 2026: **sync first as v0.4.0; European week second as v0.5.0**.",
+    "25b77a4:CLAUDE.md:240:v0.4.1 (rows 43\u201351) shipped 12 Sep 2026, before v0.5.0 (Beni, 11 Sep 2026).",
+    "25b77a4:README.md:4:[![version](https://img.shields.io/badge/version-0.5.0-1d4ed8)](CHANGELOG.md)",
+    "25b77a4:README.md:76:## \u23f1\ufe0f What it does (v0.5.0)",
+    "25b77a4:README.md:244:- **v0.5.0** *(12 Sep 2026)* \u2014 the Champions League joins the schedule: 144 league-phase fixtures beside the domestic rows, every European day carrying provenance, venue clocks that follow the venue with honest unknown states, a 36-club league-phase table with contained sticky headers, and Moments as an empty-first third tab.",
+    "25b77a4:docs/README.md:27:The current release sequence is **v0.4.0 sync first, v0.5.0 European week second**, ruled",
+    "25b77a4:docs/README.md:31:Both v0.4.0 and v0.4.1 have shipped; PR #39 is refreshed for v0.5.0 with a prepared",
+    "25b77a4:docs/README.md:77:| `european-week-v0.5.0-refresh.md` | v0.5.0 (12 Sep 2026) | merge and release refresh (PR #39, Codex) | Current recount, baseline provenance, merge hazards and validation after v0.4.0 and v0.4.1; prepared release date, merge and tag pending. |",
+    "25b77a4:docs/design-cycle-ucl-round-3-decision-packet.md:24:Release placement, provisional: keep v0.4.0 as the sync theme Beni already ruled, and ship \"Kickoff learns the European week\" (the canvas's own title) as the next minor after it, provisionally v0.5.0, unified with Moments unless the CTO finds a concrete dependency that argues for staging. Ideas row 29 (auto-merged syncs never reach Pages) is a deploy-correctness prerequisite for any flagship release and belongs with v0.4.0's sync plumbing. The natural user-value date is UCL matchday 2, Tue 13 Oct 2026; no delivery date is promised until the implementing seat estimates.",
+    "25b77a4:docs/design-cycle-ucl-round-3-decision-packet.md:43:| D12 | **Release placement, item (f).** | See section 7. | v0.4.0 stays the sync theme; European week + Moments is the next minor after it, provisionally v0.5.0. | European week first as v0.4.0 and the sync theme renumbered to v0.5.0: a public roadmap change across `CLAUDE.md`, the ideas file and README's lineage. | Beni alone. | Beni's word, recorded in the proposal that scopes the release. | R |",
+    "25b77a4:docs/design-cycle-ucl-round-3-decision-packet.md:81:| (f) release number | Beni's | D12: provisional v0.5.0 after the v0.4.0 sync theme; Beni rules. |",
+    "25b77a4:docs/design-cycle-ucl-round-3-decision-packet.md:105:**Number, provisional.** v0.4.0 is already the sync theme by Beni's 6 Sep ruling (`CLAUDE.md`, the ideas file's v0.4.0 group: rows 3, 4, 7). Recommended: leave that ruling alone and place the European week as the next minor, provisionally v0.5.0. The alternative, European week first as v0.4.0 with the sync theme renumbered, is a public roadmap change and is Beni's to make; it is not recommended because the sync theme has no design dependency, can be built now by Codex in parallel from the ideas rows, and improves Step 0 honesty for the betting track, while the European week cannot start until D4 and D6 are ruled. No exact number is preselected; item (f) stays his.",
+    "25b77a4:docs/european-week-pass-2.5-executive-brief.md:46:with row 29) and placing this release after it, provisionally v0.5.0, and that remains a",
+    "25b77a4:docs/european-week-v0.5.0-refresh.md:1:# European week \u2014 v0.5.0 merge and release refresh",
+    "25b77a4:docs/european-week-v0.5.0-refresh.md:17:[the machine-readable recount](verification/european-week/v0.5.0-refresh.json).",
+    "25b77a4:docs/european-week-v0.5.0-refresh.md:28:reported `changed=false`. The [final regeneration output](verification/european-week/v0.5.0-refresh-sync.txt)",
+    "25b77a4:docs/european-week-v0.5.0-refresh.md:29:and [dry-run output](verification/european-week/v0.5.0-refresh-check.txt) are retained.",
+    "25b77a4:docs/european-week-v0.5.0-refresh.md:43:| Duplicate release notes | One `[0.5.0]` bullet re-announced PR #34's UCL design-cycle archive, already included in `[0.4.0]`. Removed it from `[0.5.0]`; the `[0.4.1]` section and every older section remain byte-identical to main. No other repeated shipped bullet was found. |",
+    "25b77a4:docs/european-week-v0.5.0-refresh.md:68:| Version / date | All seven version locations read **0.5.0**; prepared release date **12 Sep 2026** |",
+    "25b77a4:docs/european-week-v0.5.0-refresh.md:71:in-app browser. Every cell had loaded fonts, the requested lens/theme, the v0.5.0 / 1,198",
+    "25b77a4:docs/european-week-v0.5.0-refresh.md:78:`npm version 0.5.0 --no-git-tag-version` updated `package.json` and both lockfile versions.",
+    "25b77a4:docs/european-week-v0.5.0-refresh.md:79:The CHANGELOG heading, README badge, \"What it does\" heading and Lineage also read 0.5.0.",
+    "25b77a4:docs/european-week-v0.5.0-refresh.md:82:contained another v0.5.0 date to replace.",
+    "25b77a4:docs/european-week-verification.md:8:**Current release refresh:** [v0.5.0 recount and merge verification](european-week-v0.5.0-refresh.md)",
+    "25b77a4:docs/pr30-pass-2.5-executive-brief.md:17:No version is presumed: the entry sits under `CHANGELOG.md` `[Unreleased]` with #28 and #29, already written in the section's product voice at `cc143b3`. If released, this is patch-shaped under `CLAUDE.md` \"Release management\" \u2014 fixes, no new user-visible capability \u2014 and both vendors and Beni's stated fallback name **v0.3.1**. The public roadmap is unmoved: **v0.4.0 remains the sync theme** by Beni's 6 Sep ruling, and a minor here would have to be v0.4.0 and push sync to v0.5.0, a renumbering only Beni can make. Candidate scope for the same patch, from `docs/v0.2.6-ideas.md`: row 28 (new \u2014 the sync's own verify step fails during live matches), row 26 (what the NEXT lane shows mid-match \u2014 \"Both\"), row 25 (the Fixtures lens's third state, designer-owned).",
+    "25b77a4:docs/pr30-pass-3-adjudication-prompt.md:19:`v0.4.0` is already assigned: your 6 Sep ruling made the sync theme v0.4.0, and `CLAUDE.md`'s \"Scheduled sync\" section names the empty-report auto-merge as v0.4.0's. A minor for this PR would have to be v0.4.0 and push sync to v0.5.0 \u2014 a public-roadmap renumbering only you can make. Both vendors independently landed on patch, v0.3.1: this fixes a v0.3.0 defect and adds no capability the app did not already claim to have; a later \"Both\" layout that restores visibility of fixtures the app already carries is still a patch under `CLAUDE.md`'s own usage; and v0.4.0 stays sync.",
+    "25b77a4:docs/v0.2.6-ideas.md:25:v0.5.0. Rows 3, 4, 7 and 29 shipped in v0.4.0 (PR #41, 11 Sep 2026).",
+    "25b77a4:docs/v0.4.0-proposal.md:3:Beni's 10 Sep 2026 ruling: **\"Sync first as v0.4.0; European week second as v0.5.0.\"**",
+    "25b77a4:docs/v0.4.0-proposal.md:90:European fixtures, Moments and competition-chip work belong to PR #39 / v0.5.0.",
+    "25b77a4:docs/v0.4.0-round-3-executive-brief.md:44:European week second as v0.5.0\"). Scope is `docs/v0.2.6-ideas.md` rows 3, 4, 7 and 29. Next is",
+    "25b77a4:docs/v0.4.0-round-3-executive-brief.md:45:v0.5.0, \"Kickoff learns the European week\" (PR #39, chips kept); it stays unmerged until this",
+    "25b77a4:docs/v0.4.0-round-3-executive-brief.md:158:the text is in the handoff. Historical proposals and the planned v0.5.0 references are untouched.",
+    "25b77a4:docs/v0.4.0-round-3-executive-brief.md:176:- `README.md`: drop \"Prepared for v0.4.0\u2026\"; drop the shipped v0.4.0 \"Next up\" bullet (v0.5.0",
+    "25b77a4:docs/v0.4.1-implementation-prompt.md:3:You are the builder seat for Kickoff (github.com/BeniCheni/kickoff): Vite/React/TypeScript, Big-5 fixtures in Brooklyn time, data \"generated and diffed, never typed\" by an ESPN sync. v0.4.0 shipped Fri 11 Sep 2026 (squash b4b6699, tag v0.4.0). This patch ships its review's six deferred follow-ups, docs/v0.2.6-ideas.md rows 43\u201348, plus one false README paragraph. Beni ruled the number (v0.4.1) and the order (before v0.5.0) on 11 Sep 2026. PR #39 (v0.5.0) merges this patch into its branch next, so staying out of its files is part of the spec.",
+    "25b77a4:docs/v0.4.1-implementation-prompt.md:42:- README.md: badge 0.4.1; heading \"What it does (v0.4.1)\" with \"Prepared for v0.4.1; release review, merge and tag are pending.\" beneath it; Lineage line `- **v0.4.1** *(release pending)* \u2014 \u2026`; Next up lists v0.4.1 (this PR), then v0.5.0 (PR #39).",
+    "25b77a4:docs/v0.4.1-implementation-prompt.md:43:- CLAUDE.md: make the row-48 sentences in \"Scheduled sync\" describe the three outcomes, and add to Roadmap pointers \"v0.4.1 (rows 43\u201348) ships before v0.5.0 (Beni, 11 Sep 2026).\"",
+    "25b77a4:docs/verification/european-week/v0.5.0-refresh-check.txt:2:> kickoff@0.5.0 sync",
+    "25b77a4:docs/verification/european-week/v0.5.0-refresh-sync.txt:2:> kickoff@0.5.0 sync",
+    "25b77a4:docs/verification/european-week/v0.5.0-refresh.json:46:  \"sevenVersionLocations\": \"0.5.0\",",
+    "25b77a4:package-lock.json:3:  \"version\": \"0.5.0\",",
+    "25b77a4:package-lock.json:9:      \"version\": \"0.5.0\",",
+    "25b77a4:package-lock.json:3225:        \"@vitejs/devtools\": \"^0.4.0 || ^0.5.0\",",
+    "25b77a4:package.json:4:  \"version\": \"0.5.0\","
+  ]
+}

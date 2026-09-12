@@ -1,8 +1,9 @@
 import { COMPETITIONS, type CompetitionKey } from '../lib/competitions'
+import { chipInk } from '../lib/chipInk'
 
 /**
  * The one competition pill, shared by the fixtures FilterBar and the Table's league
- * picker so the on/off treatment (fill colour, faded outline) can never drift between
+ * picker so the on/off treatment (fill colour, readable outline) can never drift between
  * the two surfaces that show the same competitions.
  */
 export function CompetitionChip({
@@ -21,9 +22,9 @@ export function CompetitionChip({
       aria-pressed={on}
       className={[
         'cursor-pointer rounded-full border-[1.5px] px-2.5 py-1 text-[11.5px] font-semibold whitespace-nowrap transition-opacity',
-        on ? 'border-transparent text-white' : 'border-line-strong text-ink-secondary opacity-50',
+        on ? 'border-transparent' : 'border-line-strong text-ink-secondary',
       ].join(' ')}
-      style={on ? { background: c.color } : undefined}
+      style={on ? { background: c.color, color: chipInk(c.color) } : undefined}
     >
       {c.flag} {c.name}
     </button>

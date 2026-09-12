@@ -9,6 +9,7 @@ import {
 } from '../lib/competitions'
 import {
   clubsInHand,
+  groupTableRows,
   hoursSinceStandingsSync,
   matchdayProgress,
   STANDINGS,
@@ -19,6 +20,7 @@ import {
 import { useUrlState } from '../lib/useUrlState'
 import { encodeLeague, parseLeague } from '../lib/urlCodecs'
 import { useNow } from '../lib/useNow'
+import { META } from '../lib/fixtures'
 import { CompetitionChip } from './CompetitionChip'
 
 /**
@@ -36,12 +38,6 @@ type SortKey = 'pts' | 'pl' | 'gf' | 'ga' | 'gd' | 'ppg'
 const MOBILE_COLS = 'grid-cols-[3px_30px_34px_1fr_38px_38px]'
 const DESKTOP_COLS =
   'grid-cols-[3px_42px_32px_minmax(150px,1fr)_34px_28px_28px_28px_36px_36px_42px_46px_48px_100px_120px]'
-
-/** First row of a zone band: the previous row is in a different zone (or there is none). */
-function isZoneStart(rows: TableRow[], i: number): boolean {
-  const zone = rows[i]?.zone
-  return !!zone && rows[i - 1]?.zone?.name !== zone.name
-}
 
 const SORT_LABEL: Record<SortKey, string> = {
   pts: 'points', pl: 'matches played', gf: 'goals for', ga: 'goals against',
@@ -124,7 +120,7 @@ function ZoneDivider({
   wide?: boolean
 }) {
   return (
-    <div className={['flex items-center gap-2', wide ? 'pt-2.5 pb-1.5' : 'px-3.5 pt-2 pb-1.5'].join(' ')}>
+    <div data-zone-divider={zone.name} className={['flex items-center gap-2', wide ? 'pt-2.5 pb-1.5' : 'px-3.5 pt-2 pb-1.5', zone.to - zone.from + 1 > 8 ? `sticky z-[1] bg-bg ${wide ? 'top-[34px]' : 'top-7'}` : ''].join(' ')}>
       <span
         className={['h-[3px] rounded-[2px]', wide ? 'w-4' : 'w-3.5'].join(' ')}
         style={{ background: zone.color }}
@@ -132,6 +128,7 @@ function ZoneDivider({
       <span className={['label-caps text-ink-secondary', wide ? 'text-[9.5px]' : 'text-[9px]'].join(' ')}>
         {zone.name}
       </span>
+      <span className="font-mono text-[9px] font-medium text-ink-muted">· {zoneRange(zone)}</span>
       <span className="h-px flex-1 opacity-35" style={{ background: zone.color }} />
     </div>
   )
@@ -152,7 +149,7 @@ export function TablePage() {
   const rows = useMemo(() => tableFor(league, today, nowUtcIso), [league, today, nowUtcIso])
   const meta = LEAGUE_TABLES[league]!
   const comp = COMPETITIONS[league]
-  const progress = matchdayProgress(rows)
+  const progress = matchdayProgress(rows, meta)
   const inHand = clubsInHand(rows)
   // Zone bands only paint when the hand-authored ranges describe the synced season —
   // last season's allocations over this season's table would be confidently wrong.
@@ -168,32 +165,37 @@ export function TablePage() {
     setSort('pts')
   }
 
+  const picker = (
+    <div data-table-picker className="mb-2.5 flex flex-wrap gap-1.5">
+      {TABLE_LEAGUES.map((k) => (
+        <CompetitionChip key={k} competition={k} on={k === league} onClick={() => pickLeague(k)} />
+      ))}
+    </div>
+  )
   if (!rows.length) {
-    return (
+    return <div>{picker}
       <div className="rounded border border-line bg-surface px-3.5 py-3 text-[13px] text-ink-muted">
-        No table in the snapshot for {comp.name} — run <code className="font-mono">npm run sync</code>.
+        No table in the snapshot for {comp.name} — {META.standingsDegraded?.includes(league)
+          ? 'the provider no longer supplies the configured league-phase table.'
+          : <>run <code className="font-mono">npm run sync</code>.</>}
       </div>
-    )
+    </div>
   }
 
   return (
     <div>
-      {/* league picker */}
-      <div className="mb-2.5 flex flex-wrap gap-1.5">
-        {TABLE_LEAGUES.map((k) => (
-          <CompetitionChip key={k} competition={k} on={k === league} onClick={() => pickLeague(k)} />
-        ))}
-      </div>
+      {picker}
 
       {/* freshness + games-in-hand callout */}
       <div className="mb-2.5 rounded-[5px] border border-line border-l-3 border-l-floodlight bg-floodlight-bg px-2.5 py-2">
         <div className="label-caps text-[9.5px] text-floodlight-strong">
-          {progress ? `As of matchday ${progress.played} of ${progress.of}` : 'League table'} · {syncedAgo(new Date(nowUtcIso))}
+          {progress ? `As of matchday ${progress.played} of ${progress.of}${meta.phase ? ` · ${meta.phase}` : ''}` : 'League table'} · {syncedAgo(new Date(nowUtcIso))}
         </div>
         {inHand > 0 && (
           <div className="mt-0.5 text-[11px] leading-normal text-ink-secondary">
-            {inHand === 1 ? 'One club has' : `${inHand} clubs have`} a game in hand — sort by{' '}
-            <b>PPG</b> to compare like with like.
+            {inHand === 1 ? 'One club has' : `${inHand} clubs have`}{meta.phase
+              ? ' played fewer matches.'
+              : <> a game in hand — sort by <b>PPG</b> to compare like with like.</>}
           </div>
         )}
         {!zonesCurrent && (
@@ -238,9 +240,9 @@ export function TablePage() {
           <div className="label-caps mt-3.5 text-[10px] text-ink-muted">Columns</div>
           <div className="mt-1 text-[10.5px] leading-relaxed text-ink-secondary">
             <b>Pts</b> points · <b>Pl</b> played · <b>GD</b> goal difference · <b>PPG</b> points per
-            game — the honest comparator while clubs have games in hand · <b>Form</b> results oldest
+            game — {meta.phase ? 'different opponents limit the comparison' : 'the honest comparator while clubs have games in hand'} · <b>Form</b> results oldest
             to newest, W / D / L lettered, not colour alone · <b>Next</b> the club's next{' '}
-            <i>league</i> match — midweek European and cup ties are not shown here.
+            {meta.phase ? <>match in this competition; domestic and other cup ties are not shown here.</> : <><i>league</i> match — midweek European and cup ties are not shown here.</>}
           </div>
           <div className="label-caps mt-3.5 text-[10px] text-ink-muted">How ties are broken</div>
           <div className="mt-1 text-[10.5px] leading-relaxed text-ink-secondary">{meta.tieBreak}</div>
@@ -248,7 +250,7 @@ export function TablePage() {
       )}
 
       {/* -------- mobile table -------- */}
-      <div className="-mx-5 md:hidden">
+      <div data-table="mobile" className="-mx-5 md:hidden">
         <div className={`sticky top-0 z-10 grid h-7 ${MOBILE_COLS} items-center border-y border-t-line border-b-line-strong bg-surface-alt pr-3.5`}>
           <div />
           <div className="label-caps pl-2 text-[9px] text-ink-muted">Pos</div>
@@ -258,7 +260,10 @@ export function TablePage() {
           <div className="label-caps text-right text-[9px] text-ink">Pts</div>
         </div>
 
-        {rows.map((r, i) => {
+        {groupTableRows(rows, zonesCurrent).map((band) => (
+          <div key={band.rows[0]!.teamId} data-zone-band={band.zone?.name ?? 'none'}>
+            {band.zone && <ZoneDivider zone={band.zone} />}
+            {band.rows.map((r) => {
           const open = openRow === r.teamId
           // One fixture per row: the match underway outranks the one after it, so the opponent
           // line and the state beneath it never describe different matches. Whether the lane
@@ -268,10 +273,9 @@ export function TablePage() {
             ? `Kicked off: ${r.underway.opponentAbbrev} ${r.underway.home ? 'H' : 'A'}`
             : r.next
               ? `Next match: ${r.next.opponentAbbrev} ${r.next.home ? 'H' : 'A'}`
-              : 'No scheduled league match'
+              : `No scheduled ${meta.phase ? 'competition' : 'league'} match`
           return (
-            <div key={r.teamId}>
-              {zonesCurrent && isZoneStart(rows, i) && r.zone && <ZoneDivider zone={r.zone} />}
+            <div key={r.teamId} data-table-row={r.teamId}>
               <button
                 onClick={() => setOpenRow(open ? null : r.teamId)}
                 aria-expanded={open}
@@ -334,7 +338,7 @@ export function TablePage() {
                   </div>
                   {r.underway && (
                     <div className="mt-2.5 rounded-[5px] border border-line border-l-3 border-l-pitch bg-surface px-2.5 py-2">
-                      <div className="label-caps text-[8.5px] text-ink-muted">Current league match</div>
+                      <div className="label-caps text-[8.5px] text-ink-muted">Current {meta.phase ? 'competition' : 'league'} match</div>
                       <div className="mt-0.5 text-[12px] font-semibold">
                         {r.underway.home ? 'vs' : 'away at'} {r.underway.opponent} · {r.underway.weekday}
                       </div>
@@ -347,15 +351,15 @@ export function TablePage() {
                   )}
                   {r.next && !r.underway && (
                     <div className="mt-2.5 rounded-[5px] border border-line border-l-3 border-l-pitch bg-surface px-2.5 py-2">
-                      <div className="label-caps text-[8.5px] text-ink-muted">Next league match</div>
+                      <div className="label-caps text-[8.5px] text-ink-muted">Next {meta.phase ? 'competition' : 'league'} match</div>
                       <div className="mt-0.5 text-[12px] font-semibold">
                         {r.next.home ? 'vs' : 'away at'} {r.next.opponent} · {r.next.weekday}
                       </div>
                       <div className="mt-px text-[10.5px] text-ink-secondary">
                         {r.next.timeConfidence === 'exact' ? (
                           <>
-                            🗽 {r.next.times.brooklyn.time} {r.next.times.abbrev} ·{' '}
-                            {r.next.times.local.time} local
+                            🗽 {r.next.times.brooklyn.time} {r.next.times.abbrev}
+                            {r.next.times.local && <> · {r.next.times.local.time} local</>}
                           </>
                         ) : (
                           <i className="text-floodlight-strong">
@@ -369,18 +373,20 @@ export function TablePage() {
               )}
             </div>
           )
-        })}
+            })}
+          </div>
+        ))}
       </div>
 
       {/* -------- desktop table -------- */}
-      <div className="hidden md:block">
+      <div data-table="desktop" className="hidden md:block">
         {sort !== 'pts' && (
           <div className="mb-1 rounded border border-line bg-floodlight-bg px-3 py-2 text-[11.5px] text-ink-secondary">
             Sorted by {SORT_LABEL[sort]}. The Pos column still shows league position, and zone
             bands are hidden because they only describe the canonical order.
           </div>
         )}
-        <div className={`grid h-[34px] ${DESKTOP_COLS} items-center border-b border-line-strong`}>
+        <div className={`sticky top-0 z-10 bg-bg grid h-[34px] ${DESKTOP_COLS} items-center border-b border-line-strong`}>
           <div />
           <div className="label-caps pl-2 text-[9.5px] text-ink-muted">Pos</div>
           <div />
@@ -409,13 +415,13 @@ export function TablePage() {
           <div className="label-caps pl-1.5 text-[9.5px] text-ink-muted">Next</div>
         </div>
 
-        {sorted.map((r, i) => {
+        {groupTableRows(sorted, showZonesDesktop).map((band) => (
+          <div key={band.rows[0]!.teamId} data-zone-band={band.zone?.name ?? 'none'}>
+            {band.zone && <ZoneDivider zone={band.zone} wide />}
+            {band.rows.map((r) => {
           const matchLane = r.underway ?? r.next // same precedence as the mobile rows above
           return (
-            <div key={r.teamId}>
-              {showZonesDesktop && isZoneStart(sorted, i) && r.zone && (
-                <ZoneDivider zone={r.zone} wide />
-              )}
+            <div key={r.teamId} data-table-row={r.teamId}>
               <div className={`grid min-h-[46px] ${DESKTOP_COLS} items-center border-b border-line bg-surface hover:bg-surface-alt`}>
                 <div className="self-stretch" style={{ background: showZonesDesktop ? (r.zone?.color ?? 'transparent') : 'transparent' }} />
                 <div className="flex items-center gap-1 pl-2">
@@ -462,7 +468,9 @@ export function TablePage() {
               </div>
             </div>
           )
-        })}
+            })}
+          </div>
+        ))}
 
         <div className="mt-4 flex flex-wrap gap-x-6 gap-y-3 border-t border-line pt-3.5">
           {meta.zones.map((z) => (

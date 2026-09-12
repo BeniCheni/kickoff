@@ -76,7 +76,7 @@ describe('the sync entry point — fixtures + standings are one authoritative sn
     expect(mocks.write.mock.calls.map(([path]) => path.split('/').at(-1))).toEqual(['fixtures.json', 'meta.json', 'standings.json'])
     expect(JSON.parse(mocks.write.mock.calls[0]![1])).toEqual([fixture])
     expect(JSON.parse(mocks.write.mock.calls[2]![1])).toEqual(table)
-    expect(vi.mocked(console.log).mock.calls.at(-1)?.[0]).toMatch(/report: changed=true changes=1 urgent=0 standings=changed rank-moves=0 merge=auto$/)
+    expect(vi.mocked(console.log).mock.calls.at(-1)?.[0]).toMatch(/report: changed=true changes=1 urgent=0 standings=changed rank-moves=0 merge=auto zones-unknown=0 standings-degraded=none$/)
   })
 
   it('--check still fetches both datasets and reports without writes', async () => {

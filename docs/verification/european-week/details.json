@@ -1,0 +1,337 @@
+{
+  "clocks": [
+    {
+      "id": "ucl:401915452",
+      "home": "AEK Athens",
+      "away": "LASK Linz",
+      "kickoffUtc": "2026-09-08T16:45:00.000Z",
+      "venueTz": "Europe/Athens",
+      "text": "12:45 PM\nAEK Athens vs LASK Linz\n1–0\nFT\n⭐ Champions League · OPAP Arena\n⭐\n7:45 PM local\n🗽\n12:45 PM EDT\n📺\nDisney+ · ABC (marquee)\nNEW"
+    },
+    {
+      "id": "ucl:401915425",
+      "home": "FC Porto",
+      "away": "Manchester City",
+      "kickoffUtc": "2026-09-08T19:00:00.000Z",
+      "venueTz": "Europe/Lisbon",
+      "text": "3:00 PM\nFC Porto vs Manchester City\n0–2\nFT\n⭐ Champions League · Estádio do Dragão\n⭐\n8:00 PM local\n🗽\n3:00 PM EDT\n📺\nDisney+ · ABC (marquee)\nNEW"
+    },
+    {
+      "id": "ucl:401915446",
+      "home": "Liverpool",
+      "away": "Atlético Madrid",
+      "kickoffUtc": "2026-09-09T19:00:00.000Z",
+      "venueTz": "Europe/London",
+      "text": "3:00 PM\nLiverpool vs Atlético Madrid\n2–1\nFT\n⭐ Champions League · Anfield\n⭐\n8:00 PM local\n🗽\n3:00 PM EDT\n📺\nDisney+ · ABC (marquee)\nNEW"
+    },
+    {
+      "id": "ucl:401915447",
+      "home": "Sporting CP",
+      "away": "Galatasaray",
+      "kickoffUtc": "2026-09-09T19:00:00.000Z",
+      "venueTz": "Europe/Lisbon",
+      "text": "3:00 PM\nSporting CP vs Galatasaray\n3–1\nFT\n⭐ Champions League · Estádio José Alvalade\n⭐\n8:00 PM local\n🗽\n3:00 PM EDT\n📺\nDisney+ · ABC (marquee)\nNEW"
+    },
+    {
+      "id": "ucl:401915444",
+      "home": "Fenerbahce",
+      "away": "AS Roma",
+      "kickoffUtc": "2026-09-10T16:45:00.000Z",
+      "venueTz": "Europe/Istanbul",
+      "text": "12:45 PM\nFenerbahce vs AS Roma\n⭐ Champions League · Ulker Stadyumu\n⭐\n7:45 PM local\n🗽\n12:45 PM EDT\n📺\nDisney+ · ABC (marquee)\nNEW"
+    },
+    {
+      "id": "ucl:401915442",
+      "home": "Manchester United",
+      "away": "Sabah FK",
+      "kickoffUtc": "2026-09-10T19:00:00.000Z",
+      "venueTz": "Europe/London",
+      "text": "3:00 PM\nManchester United vs Sabah FK\n⭐ Champions League · Old Trafford\n⭐\n8:00 PM local\n🗽\n3:00 PM EDT\n📺\nDisney+ · ABC (marquee)\nNEW"
+    }
+  ],
+  "states": [
+    {
+      "lens": "ledger",
+      "state": "computed",
+      "lines": [
+        {
+          "state": "computed",
+          "text": "MATCHDAY 2 · COMPUTED — UEFA WINDOW 13–14 OCT"
+        },
+        {
+          "state": "computed",
+          "text": "MATCHDAY 2 · COMPUTED — UEFA WINDOW 13–14 OCT"
+        }
+      ],
+      "unknown": false,
+      "brooklyn": true
+    },
+    {
+      "lens": "ledger",
+      "state": "rescheduled",
+      "lines": [
+        {
+          "state": "rescheduled",
+          "text": "MATCHDAY 1 · RESCHEDULED — NOW OUTSIDE ITS UEFA WINDOW"
+        },
+        {
+          "state": "computed",
+          "text": "MATCHDAY 2 · COMPUTED — UEFA WINDOW 13–14 OCT"
+        }
+      ],
+      "unknown": false,
+      "brooklyn": true
+    },
+    {
+      "lens": "ledger",
+      "state": "absent",
+      "lines": [
+        {
+          "state": "absent",
+          "text": "MATCHDAY — · DATE OUTSIDE UEFA'S PUBLISHED WINDOWS"
+        }
+      ],
+      "unknown": false,
+      "brooklyn": true
+    },
+    {
+      "lens": "ledger",
+      "state": "unknown-local",
+      "lines": [
+        {
+          "state": "computed",
+          "text": "MATCHDAY 2 · COMPUTED — UEFA WINDOW 13–14 OCT"
+        },
+        {
+          "state": "computed",
+          "text": "MATCHDAY 2 · COMPUTED — UEFA WINDOW 13–14 OCT"
+        }
+      ],
+      "unknown": true,
+      "brooklyn": true
+    },
+    {
+      "lens": "poster",
+      "state": "computed",
+      "lines": [
+        {
+          "state": "computed",
+          "text": "MATCHDAY 2 · COMPUTED — UEFA WINDOW 13–14 OCT"
+        },
+        {
+          "state": "computed",
+          "text": "MATCHDAY 2 · COMPUTED — UEFA WINDOW 13–14 OCT"
+        }
+      ],
+      "unknown": false,
+      "brooklyn": true
+    },
+    {
+      "lens": "poster",
+      "state": "rescheduled",
+      "lines": [
+        {
+          "state": "rescheduled",
+          "text": "MATCHDAY 1 · RESCHEDULED — NOW OUTSIDE ITS UEFA WINDOW"
+        },
+        {
+          "state": "computed",
+          "text": "MATCHDAY 2 · COMPUTED — UEFA WINDOW 13–14 OCT"
+        }
+      ],
+      "unknown": false,
+      "brooklyn": true
+    },
+    {
+      "lens": "poster",
+      "state": "absent",
+      "lines": [
+        {
+          "state": "absent",
+          "text": "MATCHDAY — · DATE OUTSIDE UEFA'S PUBLISHED WINDOWS"
+        }
+      ],
+      "unknown": false,
+      "brooklyn": true
+    },
+    {
+      "lens": "poster",
+      "state": "unknown-local",
+      "lines": [
+        {
+          "state": "computed",
+          "text": "MATCHDAY 2 · COMPUTED — UEFA WINDOW 13–14 OCT"
+        },
+        {
+          "state": "computed",
+          "text": "MATCHDAY 2 · COMPUTED — UEFA WINDOW 13–14 OCT"
+        }
+      ],
+      "unknown": true,
+      "brooklyn": true
+    },
+    {
+      "lens": "broadcast",
+      "state": "computed",
+      "lines": [
+        {
+          "state": "computed",
+          "text": "MATCHDAY 2 · COMPUTED — UEFA WINDOW 13–14 OCT"
+        },
+        {
+          "state": "computed",
+          "text": "MATCHDAY 2 · COMPUTED — UEFA WINDOW 13–14 OCT"
+        }
+      ],
+      "unknown": false,
+      "brooklyn": true
+    },
+    {
+      "lens": "broadcast",
+      "state": "rescheduled",
+      "lines": [
+        {
+          "state": "rescheduled",
+          "text": "MATCHDAY 1 · RESCHEDULED — NOW OUTSIDE ITS UEFA WINDOW"
+        },
+        {
+          "state": "computed",
+          "text": "MATCHDAY 2 · COMPUTED — UEFA WINDOW 13–14 OCT"
+        }
+      ],
+      "unknown": false,
+      "brooklyn": true
+    },
+    {
+      "lens": "broadcast",
+      "state": "absent",
+      "lines": [
+        {
+          "state": "absent",
+          "text": "MATCHDAY — · DATE OUTSIDE UEFA'S PUBLISHED WINDOWS"
+        }
+      ],
+      "unknown": false,
+      "brooklyn": true
+    },
+    {
+      "lens": "broadcast",
+      "state": "unknown-local",
+      "lines": [
+        {
+          "state": "computed",
+          "text": "MATCHDAY 2 · COMPUTED — UEFA WINDOW 13–14 OCT"
+        },
+        {
+          "state": "computed",
+          "text": "MATCHDAY 2 · COMPUTED — UEFA WINDOW 13–14 OCT"
+        }
+      ],
+      "unknown": true,
+      "brooklyn": true
+    }
+  ],
+  "layout": [
+    {
+      "width": 360,
+      "navHeight": 63.5,
+      "pickerHeight": 93.75,
+      "chipRows": 3,
+      "chips": [
+        {
+          "text": "🇪🇸 La Liga",
+          "top": 202.5
+        },
+        {
+          "text": "🏴 Premier League",
+          "top": 202.5
+        },
+        {
+          "text": "🇮🇹 Serie A",
+          "top": 202.5
+        },
+        {
+          "text": "🇫🇷 Ligue 1",
+          "top": 235.75
+        },
+        {
+          "text": "🇩🇪 Bundesliga",
+          "top": 235.75
+        },
+        {
+          "text": "⭐ Champions League",
+          "top": 269
+        }
+      ]
+    },
+    {
+      "width": 375,
+      "navHeight": 63.5,
+      "pickerHeight": 93.75,
+      "chipRows": 3,
+      "chips": [
+        {
+          "text": "🇪🇸 La Liga",
+          "top": 202.5
+        },
+        {
+          "text": "🏴 Premier League",
+          "top": 202.5
+        },
+        {
+          "text": "🇮🇹 Serie A",
+          "top": 202.5
+        },
+        {
+          "text": "🇫🇷 Ligue 1",
+          "top": 235.75
+        },
+        {
+          "text": "🇩🇪 Bundesliga",
+          "top": 235.75
+        },
+        {
+          "text": "⭐ Champions League",
+          "top": 269
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "navHeight": 63.5,
+      "pickerHeight": 60.5,
+      "chipRows": 2,
+      "chips": [
+        {
+          "text": "🇪🇸 La Liga",
+          "top": 202.5
+        },
+        {
+          "text": "🏴 Premier League",
+          "top": 202.5
+        },
+        {
+          "text": "🇮🇹 Serie A",
+          "top": 202.5
+        },
+        {
+          "text": "🇫🇷 Ligue 1",
+          "top": 235.75
+        },
+        {
+          "text": "🇩🇪 Bundesliga",
+          "top": 235.75
+        },
+        {
+          "text": "⭐ Champions League",
+          "top": 235.75
+        }
+      ]
+    }
+  ],
+  "history": {
+    "old": "?only=ucl%2Cpl&date=2026-09-12",
+    "visited": "?only=ucl%2Cpl&date=2026-09-12&tab=moments",
+    "back": "?only=ucl%2Cpl&date=2026-09-12"
+  }
+}

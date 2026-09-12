@@ -1,0 +1,151 @@
+
+> kickoff@0.5.0 sync
+> tsx scripts/sync.ts --baseline-dir=/tmp/kickoff-pr39-refresh-baseline-17c24b0
+
+
+Kickoff sync · 2026-08-13 .. 2027-02-09 · provider=espn
+
+fetched 1198 fixtures
+  supercup       0
+  shield         1
+  tdc            1
+  dflsupercup    1
+  ucl            144
+  laliga         230
+  pl             240
+  seriea         230
+  ligue1         171
+  bundesliga     180
+
+changes vs last snapshot:
+  ⚠ STATUS_CHANGED           laliga · Racing Santander v Alavés
+                             scheduled -> full_time
+  ⚠ STATUS_CHANGED           seriea · Genoa v Frosinone
+                             scheduled -> in_play
+  ⚠ STATUS_CHANGED           bundesliga · Mainz v Eintracht Frankfurt
+                             scheduled -> in_play
+  ⚠ STATUS_CHANGED           bundesliga · FC Augsburg v Bayer Leverkusen
+                             scheduled -> in_play
+  ⚠ STATUS_CHANGED           bundesliga · SC Freiburg v Borussia Mönchengladbach
+                             scheduled -> in_play
+  ⚠ STATUS_CHANGED           bundesliga · TSG Hoffenheim v VfB Stuttgart
+                             scheduled -> in_play
+  ⚠ STATUS_CHANGED           bundesliga · Borussia Dortmund v SC Paderborn 07
+                             scheduled -> in_play
+  ⚠ STATUS_CHANGED           pl · Liverpool v Fulham
+                             scheduled -> in_play
+  ⚠ STATUS_CHANGED           pl · Crystal Palace v Ipswich Town
+                             scheduled -> in_play
+  ⚠ STATUS_CHANGED           pl · Chelsea v Hull City
+                             scheduled -> in_play
+  ⚠ STATUS_CHANGED           pl · Aston Villa v Nottingham Forest
+                             scheduled -> in_play
+  ⚠ STATUS_CHANGED           pl · AFC Bournemouth v Brentford
+                             scheduled -> in_play
+  ⚠ STATUS_CHANGED           laliga · Osasuna v Espanyol
+                             scheduled -> in_play
+    STATUS_CHANGED           ucl · PSV Eindhoven v Shakhtar Donetsk
+                             scheduled -> full_time
+    STATUS_CHANGED           ucl · Fenerbahce v AS Roma
+                             scheduled -> full_time
+    STATUS_CHANGED           ucl · Slavia Prague v RC Lens
+                             scheduled -> full_time
+    STATUS_CHANGED           ucl · Como v RB Leipzig
+                             scheduled -> full_time
+    STATUS_CHANGED           ucl · Manchester United v Sabah FK
+                             scheduled -> full_time
+    STATUS_CHANGED           ucl · Bayern Munich v Bodo/Glimt
+                             scheduled -> full_time
+    STATUS_CHANGED           bundesliga · 1. FC Union Berlin v Schalke 04
+                             scheduled -> full_time
+    STATUS_CHANGED           ligue1 · Stade Rennais v Olympique de Marseille
+                             scheduled -> full_time
+    STATUS_CHANGED           seriea · Venezia v Fiorentina
+                             scheduled -> full_time
+    STATUS_CHANGED           laliga · Sevilla v Valencia
+                             scheduled -> full_time
+    VENUE_CHANGED            ucl · Fenerbahce v AS Roma
+                             Ulker Stadyumu -> Şükrü Saracoğlu Stadium
+    VENUE_CHANGED            ucl · Fenerbahce v Slavia Prague
+                             Ulker Stadyumu -> Şükrü Saracoğlu Stadium
+    VENUE_CHANGED            ucl · Fenerbahce v Liverpool
+                             Ulker Stadyumu -> Şükrü Saracoğlu Stadium
+    VENUE_CHANGED            ucl · Fenerbahce v Villarreal
+                             Ulker Stadyumu -> Şükrü Saracoğlu Stadium
+
+standings: ucl 36 · laliga 20 · pl 20 · seriea 20 · ligue1 18 · bundesliga 18
+rank changes vs last snapshot:
+  ucl          Bayern Munich: 13 -> 2
+  ucl          Barcelona: 2 -> 3
+  ucl          Manchester United: 18 -> 4
+  ucl          Como: 15 -> 5
+  ucl          Sporting CP: 3 -> 6
+  ucl          VfB Stuttgart: 4 -> 7
+  ucl          Manchester City: 5 -> 8
+  ucl          Aston Villa: 6 -> 9
+  ucl          Lens: 17 -> 10
+  ucl          Real Betis: 7 -> 11
+  ucl          Borussia Dortmund: 8 -> 12
+  ucl          Liverpool: 9 -> 13
+  ucl          Real Madrid: 10 -> 14
+  ucl          Arsenal: 11 -> 15
+  ucl          AEK Athens: 12 -> 16
+  ucl          AS Roma: 21 -> 17
+  ucl          Shakhtar Donetsk: 23 -> 18
+  ucl          Fenerbahce: 16 -> 19
+  ucl          PSV Eindhoven: 19 -> 20
+  ucl          Villarreal: 25 -> 21
+  ucl          Club Brugge: 26 -> 22
+  ucl          Lille: 27 -> 23
+  ucl          Atlético Madrid: 28 -> 25
+  ucl          Internazionale: 29 -> 26
+  ucl          LASK Linz: 30 -> 27
+  ucl          Napoli: 31 -> 28
+  ucl          Galatasaray: 32 -> 29
+  ucl          Viking FK: 33 -> 30
+  ucl          FC Porto: 34 -> 31
+  ucl          RB Leipzig: 20 -> 32
+  ucl          Feyenoord Rotterdam: 35 -> 33
+  ucl          Sabah FK: 22 -> 34
+  ucl          Slovan Bratislava: 36 -> 35
+  ucl          Bodo/Glimt: 14 -> 36
+  laliga       Sevilla: 7 -> 3
+  laliga       Real Madrid: 3 -> 4
+  laliga       Real Betis: 4 -> 5
+  laliga       Deportivo: 5 -> 6
+  laliga       Atlético Madrid: 6 -> 7
+  laliga       Racing Santander: 13 -> 8
+  laliga       Osasuna: 8 -> 9
+  laliga       Real Sociedad: 9 -> 10
+  laliga       Athletic Club: 10 -> 11
+  laliga       Levante: 11 -> 12
+  laliga       Espanyol: 12 -> 13
+  seriea       Fiorentina: 20 -> 15
+  seriea       Bologna: 15 -> 16
+  seriea       Parma: 16 -> 17
+  seriea       Monza: 17 -> 18
+  seriea       Venezia: 18 -> 20
+  ligue1       Stade Rennais: 5 -> 1
+  ligue1       AS Monaco: 1 -> 2
+  ligue1       Paris FC: 2 -> 3
+  ligue1       Lyon: 3 -> 4
+  ligue1       Lille: 4 -> 5
+  ligue1       Lens: 11 -> 10
+  ligue1       Marseille: 10 -> 11
+  bundesliga   Schalke 04: 14 -> 7
+  bundesliga   Bayer Leverkusen: 7 -> 8
+  bundesliga   RB Leipzig: 8 -> 9
+  bundesliga   VfB Stuttgart: 9 -> 10
+  bundesliga   Werder Bremen: 10 -> 11
+  bundesliga   FC Cologne: 11 -> 12
+  bundesliga   SC Paderborn 07: 12 -> 13
+  bundesliga   Eintracht Frankfurt: 13 -> 14
+69 standings row(s) changed vs last snapshot
+
+wrote src/data/fixtures.json (1198), src/data/meta.json and src/data/standings.json
+
+⚠  Urgent change reported. Re-check any open position on the fixtures named above.
+
+time-sensitive lines (merge=hold) — reported, not a gate; this PR still merges once verify is green:
+  - 13 urgent change(s) — inside 72h, a postponement/cancellation, or a result/team correction
+report: changed=true changes=27 urgent=13 standings=changed rank-moves=65 merge=hold zones-unknown=0 standings-degraded=none

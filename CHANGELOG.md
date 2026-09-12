@@ -8,6 +8,63 @@ releases.
 
 ## [Unreleased]
 
+## [0.5.0] — 2026-09-12
+
+The Champions League joins the schedule: 144 league-phase fixtures beside domestic rows, every European day carrying computed matchday provenance, stadium clocks that follow the venue with an honest unknown state, the 36-club league-phase table with contained sticky headers, and Moments as a curated, empty-first third tab outside the sync boundary. Built by Codex, reviewed cold by Claude, rebutted by Codex, synthesised by Claude, adjudicated by Beni.
+
+### Added
+
+- Moments becomes the third tab: an empty-first, hand-curated set of links to rights
+  holders, validated against fixture facts and preserved outside the sync boundary.
+
+- Each European matchday carries computed, absent or rescheduled provenance in all three
+  fixture lenses; mixed days can show more than one matchday.
+
+- The league-phase table groups its three outcome bands, with region headers that stick
+  beneath the columns and release at their own band boundary on phones and desktop.
+
+- Champions League fixtures and the 36-club league-phase table join ESPN sync, with eight
+  matches per club and first-seen matchday baselines from UEFA's calendar. Reschedules keep
+  their original baseline; a first sighting outside the windows stays unnumbered.
+
+### Changed
+
+- Fixture phase and season evidence is retained only for league-phase events; unused
+  domestic season slugs no longer inflate the snapshot (PR #39, Pass 2).
+- The sync can read an exported pre-merge baseline with `--baseline-dir` while regenerating
+  conflicted snapshot files; round identity and validation survive the recovery.
+
+- Fixture competition names use readable muted ink. Shared competition chips keep their
+  hues, choose a readable foreground on filled states, and retain legible unselected text.
+
+- A structurally ended league-phase table is omitted with an explicit report and metadata
+  reason. Fetch failures and invalid entries still prevent every snapshot write.
+
+### Fixed
+
+- The publication gate's UCL layout tests use recorded standings when a live phase table
+  has ended. Venue audits allow honest unknown clocks while retaining recorded mapping
+  and domestic-clock checks, so these supported snapshots can pass verification.
+
+- An extra child in ESPN's league-phase standings response no longer aborts the whole
+  snapshot while the phase child is intact: the sync reads the child that carries the phase's
+  name and logs the child count and selected name. During the phase, a missing or short
+  phase child still aborts; malformed entries always abort (cold review of #39).
+
+- Stadium clocks use the venue country and venue-id overrides, with an explicit unknown state
+  instead of the viewer's clock. Zone changes are recorded in the sync report; unknown zones
+  are counted. The workflow grammar is tested against the report printer.
+
+### Deliberately not done
+
+- Europa and Conference League screens, domestic matchday markers, opponents or strength-of-
+  schedule lanes, a Results tab, new competition hues and in-app playback were not designed
+  for this milestone.
+- The broader competition-colour contrast inventory and a design-review skill stay open.
+  The separate sync theme keeps its cadence, approval and merge policy; only the report
+  grammar changes here.
+- The competition chips were kept; the designer will re-mirror that treatment in Fergie Time.
+
 ## [0.4.1] — 2026-09-12
 
 The small print tells the truth too: the deferred sync-review follow-ups now make urgent changes,

@@ -26,7 +26,10 @@ cannot disagree with each other, and they cannot drift apart across a DST change
 moves its clocks on the last Sunday of October, the US on the first Sunday of November, and
 the week between is exactly where a "date plus local time" file falls over. Storing a date
 and a wall-clock string separately is what let a whole matchday sit one day early with
-nothing to contradict it.
+nothing to contradict it. Venue-id overrides take precedence over the provider's venue
+country reference table. An unmapped or missing venue leaves `venueTz` absent: the app says
+"local time not known" and keeps the Brooklyn clock. It never uses the viewer's system zone
+as a stadium clock; an invalid nonempty zone fails validation.
 
 ## 3. An unset kickoff stays unset
 
@@ -40,13 +43,16 @@ midnight, and is never evicted by arithmetic on an instant the league never set 
 slate's sub-line says how many of its count are TBC, so a count never quietly outruns the
 FIRST/LAST range drawn from the league-set times.
 
-Matchday numbers are not invented either. The provider exposes none, so the app shows none.
+Matchday numbers are not invented either. Where the provider exposes none, the app derives the number once, from the governing body's published windows, on the day it first sees the fixture, labels it computed, and keeps it; a fixture whose date later leaves that window is shown as rescheduled from it, and a fixture first seen outside every window is shown without a number. A fixture already moved between windows before the app first saw it is numbered by the window it was found in, and that is the one case this rule cannot detect.
+
+A future provider's round string outranks the derived window. This cycle ESPN supplies none;
+its phase and season guard the window derivation, so qualifying ties receive no league-phase number.
 
 ## 4. Every sync diffs against the last snapshot
 
 `scripts/diff.ts` compares the fresh fetch with the committed file, fixture by fixture, and
 reports what moved: `DATE_MOVED`, `TIME_CHANGED`, `VENUE_CHANGED`, `STATUS_CHANGED`,
-`TIME_CONFIDENCE_CHANGED`, `RESULT_CHANGED`, `TEAM_RENAMED`, `TEAM_CHANGED`, `NEW`,
+`VENUE_TZ_CHANGED` (non-urgent), `TIME_CONFIDENCE_CHANGED`, `RESULT_CHANGED`, `TEAM_RENAMED`, `TEAM_CHANGED`, `NEW`,
 `DISAPPEARED`, and `HOME_AWAY_INVERTED` — the last one is
 the PSG–Rennes case, and it is detected both when the provider keeps the event id and swaps
 the roles, and when it recreates the event as its mirror image within ten days. Anything
@@ -88,14 +94,27 @@ whether a check failed. The app advances after a successful snapshot PR merges a
 deployed or pulled locally; quiet verified runs now take that same path. PR #23's Pass 2 treats a verified failure reader
 as an unresolved release gate, not a cost that documentation alone settles.
 Future ancillary data does not automatically join this boundary; membership needs an explicit
-decision. This supersedes the earlier standings soft-failure exception.
+decision. A structurally ended phase table is different from a failed fetch: after its final
+configured matchday window, a validated response in which no child carries the phase's name,
+or the phase child no longer has its row count, is dropped for that competition only; an extra
+child beside an intact phase child is ignored during and after the phase; the log records
+the child count and selected phase name. The report and
+metadata name it; every fetch or entry-validation failure still aborts the whole snapshot.
+Unknown seasons cannot use this exception. This supersedes the earlier standings soft-failure exception.
+
+**Moments do not join the authoritative snapshot boundary** (Beni's ruling 4):
+`src/curated/moments.json` is hand-curated, outside the diff engine and snapshot freshness
+clock. Its denormalised fixture facts survive the rolling window; matching snapshot facts
+must agree at validation, and its status is explicitly the status at curation. The tab shows
+`curatedAt`, never passes off the sync stamp as a content update, and links out to rights
+holders without playing media here.
 
 ## 6. The report line is an API
 
 Every sync that completes fetching and validation ends with one machine-readable line:
 
 ```
-report: changed=true changes=2 urgent=0 standings=changed rank-moves=8 merge=auto
+report: changed=true changes=2 urgent=0 standings=changed rank-moves=8 merge=auto zones-unknown=0 standings-degraded=none
 ```
 
 "Changed" is the diff engine's verdict, never `git diff`'s — per-row fetch stamps move on
@@ -104,6 +123,8 @@ every run and are not changes. `merge=` is a reader-facing signal, not an auto-m
 the standings fetch failed; `auto` otherwise. `standings=failed` remains a supported legacy
 report value that publication refuses; current fetch failures abort with exit 2 before a
 report instead. Every valid snapshot PR still requires its own successful verify run.
+`zones-unknown` counts fixtures without a mapped stadium zone; Brooklyn still renders, the
+stadium clock does not. `standings-degraded` names structurally ended phase tables, or `none`.
 The format is pinned verbatim in a test, the
 workflow validates it with the same regex, and a missing or malformed line fails the run
 rather than falling through to a guess.

@@ -1,0 +1,45 @@
+{
+  "fixtures": 1199,
+  "metaTotal": 1199,
+  "uclFixtures": 144,
+  "uclStandings": 36,
+  "tableKeys": [
+    "ucl",
+    "laliga",
+    "pl",
+    "seriea",
+    "ligue1",
+    "bundesliga"
+  ],
+  "satFixtures": 25,
+  "satCompetitions": [
+    "laliga",
+    "seriea",
+    "bundesliga",
+    "pl",
+    "ligue1"
+  ],
+  "zonesUnknown": 0,
+  "meta": {
+    "lastSyncAt": "2026-09-10T15:45:52.855Z",
+    "provider": "espn",
+    "window": {
+      "from": "2026-08-11",
+      "to": "2027-02-07"
+    },
+    "counts": {
+      "supercup": 1,
+      "shield": 1,
+      "tdc": 1,
+      "dflsupercup": 1,
+      "ucl": 144,
+      "laliga": 230,
+      "pl": 240,
+      "seriea": 230,
+      "ligue1": 171,
+      "bundesliga": 180
+    },
+    "total": 1199,
+    "standingsDegraded": []
+  }
+}

@@ -1,6 +1,6 @@
 import rawStandings from '../data/standings.json'
 import { standingsFileSchema, type Fixture, type StandingRow } from './schema'
-import { zoneFor, type CompetitionKey, type Zone } from './competitions'
+import { zoneFor, type LeagueTableMeta, type CompetitionKey, type Zone } from './competitions'
 import { FIXTURES } from './fixtures'
 import { brooklynDate, fixtureTimes, hoursSince, weekdayShort, type FixtureTimes } from './time'
 import { hasKickedOff, stillToKickOff } from './lensSelectors'
@@ -154,10 +154,10 @@ export function tableFor(
 }
 
 /** "3 of 38" style progress: most-played club vs a double round-robin season. */
-export function matchdayProgress(rows: TableRow[]): { played: number; of: number } | null {
+export function matchdayProgress(rows: TableRow[], meta?: LeagueTableMeta): { played: number; of: number } | null {
   if (!rows.length) return null
   const teams = rows.length
-  return { played: Math.max(...rows.map((r) => r.played)), of: (teams - 1) * 2 }
+  return { played: Math.max(...rows.map((r) => r.played)), of: meta?.matches ?? (teams - 1) * 2 }
 }
 
 /** Clubs a game (or more) behind the league's most-played — drives the callout. */
@@ -167,4 +167,17 @@ export function clubsInHand(rows: TableRow[]): number {
 
 export function hoursSinceStandingsSync(now = new Date()): number {
   return hoursSince(STANDINGS.fetchedAt, now)
+}
+
+/** Contiguous bands contain their own divider so sticky headers release at the band end.
+ * A sorted or stale-season table becomes one unlabelled group; canonical rank stays intact. */
+export function groupTableRows(rows: TableRow[], showZones: boolean): Array<{ zone: Zone | null; rows: TableRow[] }> {
+  const groups: Array<{ zone: Zone | null; rows: TableRow[] }> = []
+  for (const row of rows) {
+    const zone = showZones ? row.zone : null
+    const last = groups.at(-1)
+    if (last && last.zone === zone) last.rows.push(row)
+    else groups.push({ zone, rows: [row] })
+  }
+  return groups
 }

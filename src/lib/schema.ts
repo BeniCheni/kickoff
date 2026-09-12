@@ -17,6 +17,20 @@ export const teamSchema = z.object({
   sourceId: z.string().optional(),
 })
 
+// Zones that have already passed `Intl` this session. The snapshot names about fifteen zones
+// across twelve hundred rows, and constructing a DateTimeFormat per row cost the app's boot
+// ~30 ms in Node (three cold parses, 10 Sep 2026); only successes are remembered, so an
+// invalid zone is rejected every time it appears.
+const KNOWN_ZONES = new Set<string>()
+export const venueTzSchema = z.string().min(1).refine((zone) => {
+  if (KNOWN_ZONES.has(zone)) return true
+  try {
+    new Intl.DateTimeFormat('en-US', { timeZone: zone }).format(0)
+    KNOWN_ZONES.add(zone)
+    return true
+  } catch { return false }
+}, 'a valid IANA time zone')
+
 export const fixtureSchema = z.object({
   /** Stable across syncs. The join key for later betting overlays (positions, tokens). */
   id: z.string().min(1),
@@ -24,8 +38,11 @@ export const fixtureSchema = z.object({
   /** ISO-8601 instant, always UTC. The one authoritative time fact. */
   kickoffUtc: z.iso.datetime(),
   /** IANA zone of the stadium, for rendering the local kickoff. */
-  venueTz: z.string().min(1),
+  venueTz: venueTzSchema.optional(),
   venue: z.string().optional(),
+  /** Provider venue evidence retained so the country/override mapping can be audited. */
+  venueId: z.string().min(1).optional(),
+  venueCountry: z.string().min(1).optional(),
   home: teamSchema,
   away: teamSchema,
   status: z.enum(['scheduled', 'in_play', 'full_time', 'postponed', 'cancelled']),
@@ -39,6 +56,9 @@ export const fixtureSchema = z.object({
    */
   timeConfidence: z.enum(['exact', 'round_placeholder', 'tbd']),
   round: z.string().optional(),
+  /** ESPN phase evidence prevents league-phase windows labelling qualifying/knockout ties. */
+  phase: z.string().min(1).optional(),
+  season: z.number().int().optional(),
   result: z.object({ home: z.number().int(), away: z.number().int() }).optional(),
   /** Hand-authored context. Preserved across syncs by fixture id — the sync never clobbers it. */
   note: z.string().optional(),
@@ -58,6 +78,7 @@ export const metaSchema = z.object({
   window: z.object({ from: z.string(), to: z.string() }),
   counts: z.record(z.string(), z.number().int()),
   total: z.number().int(),
+  standingsDegraded: z.array(z.enum(COMPETITION_KEYS as [CompetitionKey, ...CompetitionKey[]])).optional(),
 })
 
 export const fixturesFileSchema = z.array(fixtureSchema)
@@ -96,6 +117,7 @@ export const standingsFileSchema = z.object({
   /** Season start year: 2026 means 2026-27. */
   season: z.number().int(),
   leagues: z.record(z.string(), z.array(standingRowSchema)),
+  degraded: z.array(z.enum(COMPETITION_KEYS as [CompetitionKey, ...CompetitionKey[]])).optional(),
 })
 
 export type Team = z.infer<typeof teamSchema>
