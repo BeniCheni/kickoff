@@ -20,8 +20,6 @@ const realFs = await vi.importActual<typeof import('node:fs')>('node:fs')
 const events = JSON.parse(realFs.readFileSync(new URL('./fixtures/espn-ligue1-md1.json', import.meta.url), 'utf8')).events
 const fixture = normalizeEvent(events[0], 'ligue1', '2026-09-05T12:00:00.000Z')!
 const table = JSON.parse(realFs.readFileSync(new URL('../src/data/standings.json', import.meta.url), 'utf8'))
-const committedFixtures = JSON.parse(realFs.readFileSync(new URL('../src/data/fixtures.json', import.meta.url), 'utf8'))
-const committedLigue1Fixture = committedFixtures.find((item: { competition: string }) => item.competition === 'ligue1')!
 const originalArgs = process.argv
 
 beforeEach(() => {
@@ -92,7 +90,7 @@ describe('the sync entry point — fixtures + standings are one authoritative sn
 
   it('prints the updated urgent-change message on a score correction regardless of horizon', async () => {
     const previous = {
-      ...committedLigue1Fixture,
+      ...fixture,
       status: 'full_time',
       kickoffUtc: '2026-08-22T18:00:00.000Z',
       result: { home: 1, away: 2 },
@@ -118,10 +116,10 @@ describe('the sync entry point — fixtures + standings are one authoritative sn
 
   it('prints the updated urgent-change message on a far-out team correction', async () => {
     const previous = {
-      ...committedLigue1Fixture,
+      ...fixture,
       kickoffUtc: '2026-11-15T18:00:00.000Z',
-      home: { ...committedLigue1Fixture.home, sourceId: '111', name: 'Alpha' },
-      away: { ...committedLigue1Fixture.away, sourceId: '222', name: 'Beta' },
+      home: { ...fixture.home, sourceId: '111', name: 'Alpha' },
+      away: { ...fixture.away, sourceId: '222', name: 'Beta' },
     }
     const fetched = {
       ...previous,
