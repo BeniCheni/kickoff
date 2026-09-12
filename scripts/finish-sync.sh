@@ -30,7 +30,7 @@ for ((SYNC_ATTEMPT=0; SYNC_ATTEMPT<60; SYNC_ATTEMPT++)); do
   fi
   case "$SYNC_STATUS" in
     MERGED)
-      bash scripts/ensure-pages.sh || fail_delivery "The snapshot is on main at ${SYNC_EXPECTED_HEAD}, but the Pages request failed; the live site may lag behind main."
+      bash scripts/ensure-pages.sh || fail_delivery "Snapshot PR #${SYNC_PR} (head ${SYNC_EXPECTED_HEAD}) merged into main, but the Pages request failed; the live site may lag behind main."
       record_delivery merged "Published snapshot ${SYNC_EXPECTED_HEAD} and requested a Pages deployment for main."
       exit 0
       ;;

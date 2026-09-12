@@ -84,6 +84,20 @@ describe('Pages delivery after sync', () => {
     expect(readOutputs(r.root).delivery).toBe('delivery_failed')
     expect(readOutputs(r.root).delivery_detail).toContain('Pages request')
   })
+  it('identifies the PR head without calling it the main commit after a squash merge', () => {
+    const r = rig({ MOCK_MAIN: 'b'.repeat(40), MOCK_DISPATCH_EXIT: '1', PR_NUMBER: '55' })
+    expect(r.run('bash scripts/finish-sync.sh').status).toBe(1)
+    const { delivery, delivery_detail: detail } = readOutputs(r.root)
+    if (!delivery || !detail) throw new Error('Missing delivery output')
+    expect(detail).toContain(`Snapshot PR #55 (head ${SHA}) merged into main`)
+    expect(detail).not.toContain(`on main at ${SHA}`)
+
+    const classification = rig({ DELIVERY: delivery, DETAIL: detail, PR_NUMBER: '55' })
+    const classified = classification.run(classifierShell)
+    expect(classified.status).toBe(0)
+    expect(classified.stdout).toContain(`::error title=DELIVERY FAILED::DELIVERY FAILED — ${detail}`)
+    expect(readFileSync(resolve(classification.root, 'summary'), 'utf8')).toContain(detail)
+  })
   it('refuses an unresolved main SHA', () => {
     const r = rig({ MOCK_MAIN: '' })
     expect(r.run('bash scripts/ensure-pages.sh').status).toBe(1)
