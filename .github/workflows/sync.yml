@@ -398,7 +398,7 @@ jobs:
             *)
               if [ "$DELIVERY" = 'merge_unconfirmed' ] || [ -n "$PR_NUMBER" ]; then
                 OUTCOME='MERGE UNCONFIRMED'
-                DETAIL_TEXT="Snapshot PR #${PR_NUMBER} exists but was not seen merged (closed, head moved, or still open after ten minutes); auto-merge may be off."
+                DETAIL_TEXT="${DETAIL:-Snapshot PR #${PR_NUMBER} exists but was not seen merged (closed, head moved, or still open after ten minutes); auto-merge may be off.}"
               else
                 OUTCOME='DATA FAILED'
                 DETAIL_TEXT='Nothing was published: fetch, validation, verify, digest, commit or PR creation failed.'

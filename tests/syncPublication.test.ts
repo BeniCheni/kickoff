@@ -237,6 +237,16 @@ describe('workflow publication gate', () => {
     expect(summary).toContain('auto-merge may be off')
   })
 
+  it('preserves the recorded merge-unconfirmed cause from finish-sync', () => {
+    const detail = `The sync PR head changed from ${SHA}; the expected snapshot is unconfirmed.`
+    const r = rig({ DELIVERY: 'merge_unconfirmed', DETAIL: detail, PR_NUMBER: '55' })
+    const status = runShell(r, `${classifierShell}\n`)
+    expect(status.status).toBe(0)
+    const summary = readFileSync(resolve(r.root, 'summary'), 'utf8')
+    expect(summary).toContain(detail)
+    expect(summary).not.toContain('auto-merge may be off')
+  })
+
   it('classifies missing delivery output as data-failed when no PR exists', () => {
     const r = rig({ DELIVERY: '', PR_NUMBER: '' })
     const status = runShell(r, `${classifierShell}\n`)
