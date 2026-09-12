@@ -103,6 +103,27 @@ describe('Pages delivery after sync', () => {
     expect(r.run('bash scripts/ensure-pages.sh').status).toBe(1)
     expect(r.calls()).not.toContain('workflow run')
   })
+  it.each([
+    ['', 'error'],
+    ['1', 'warning'],
+  ])('reports a rejected Pages dispatch with recovery flag %j as %s', (flag, severity) => {
+    const r = rig({ SYNC_RECOVERY_WARNING: flag, MOCK_DISPATCH_EXIT: '1' })
+    const result = r.run('bash scripts/ensure-pages.sh')
+    expect(result.status).toBe(1)
+    expect(result.stdout).toContain(`::${severity}::`)
+    expect(result.stdout).not.toContain(`::${severity === 'warning' ? 'error' : 'warning'}::`)
+    expect(result.stdout).not.toContain('Pages deployment requested')
+    expect(r.calls()).toContain('workflow run pages.yml --repo BeniCheni/kickoff --ref main')
+    if (flag === '1') expect(result.stdout).toContain('recovering an earlier merge')
+  })
+  it('does not warn or dispatch in recovery mode when main is already deployed', () => {
+    const r = rig({ SYNC_RECOVERY_WARNING: '1', MOCK_DEPLOYED: SHA, MOCK_DISPATCH_EXIT: '1' })
+    const result = r.run('bash scripts/ensure-pages.sh')
+    expect(result.status).toBe(0)
+    expect(result.stdout).toContain(`Pages already has main at ${SHA}`)
+    expect(result.stdout).not.toMatch(/::(?:warning|error)::/)
+    expect(r.calls()).not.toContain('workflow run')
+  })
 })
 
 function step(name: string): string {
@@ -132,6 +153,18 @@ const classifierShell = step('Classify a red run').split('        run: |\n')[1]!
   .split('\n').filter((line) => line.startsWith('          ')).map((line) => line.slice(10)).join('\n')
 
 describe('workflow publication gate', () => {
+  it('wires the recovery step to warn visibly while allowing the sync to continue', () => {
+    const recovery = step('Recover Pages delivery of an earlier merge')
+    expect(recovery).toContain('continue-on-error: true')
+    const flag = recovery.match(/^\s+SYNC_RECOVERY_WARNING: '(.*)'$/m)?.[1] ?? ''
+    const command = recovery.match(/^\s+run: (.+)$/m)?.[1]
+    if (!command) throw new Error('Missing recovery command')
+    const r = rig({ SYNC_RECOVERY_WARNING: flag, MOCK_DISPATCH_EXIT: '1' })
+    const result = r.run(command)
+    expect(result.status).toBe(1)
+    expect(result.stdout).toContain('::warning::Pages dispatch failed while recovering an earlier merge')
+    expect(result.stdout).not.toContain('::error::')
+  })
   it.each([
     [cleanReport, '0', 0],
     [cleanReport.replace('standings=unchanged', 'standings=failed'), '0', 1],
