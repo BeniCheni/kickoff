@@ -17,7 +17,7 @@ npm run typecheck        # tsc -b --noEmit
 npm run build            # static bundle in dist/
 npm run build:single     # one self-contained dist-single/index.html — opens by double-click
 npm run sync -- --check  # fetch and diff against the committed snapshot; write nothing
-npm run sync             # refresh src/data/*.json; exits 1 if something inside 72 h moved
+npm run sync             # refresh src/data/*.json; exits 1 when an urgent change is reported
 ```
 
 `sync` takes `--from=YYYY-MM-DD` and `--to=YYYY-MM-DD`; the default window is −30 to +150

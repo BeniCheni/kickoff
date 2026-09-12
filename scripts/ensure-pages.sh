@@ -12,6 +12,13 @@ SYNC_PAGES_SHA=$(gh run list --repo "$SYNC_REPOSITORY" --workflow pages.yml --br
 if [ "$SYNC_MAIN_SHA" = "$SYNC_PAGES_SHA" ]; then
   echo "Pages already has main at $SYNC_MAIN_SHA."
 else
-  gh workflow run pages.yml --repo "$SYNC_REPOSITORY" --ref main
+  if ! gh workflow run pages.yml --repo "$SYNC_REPOSITORY" --ref main; then
+    if [ "${SYNC_RECOVERY_WARNING:-}" = "1" ]; then
+      echo '::warning::Pages dispatch failed while recovering an earlier merge; the prior snapshot may already be on Pages.'
+    else
+      echo '::error::Could not dispatch the Pages deployment run for main; delivery is unresolved.'
+    fi
+    exit 1
+  fi
   echo "Pages deployment requested for main (observed $SYNC_MAIN_SHA); dispatch is not deployment confirmation."
 fi

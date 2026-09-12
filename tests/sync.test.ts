@@ -1,10 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { readFileSync } from 'node:fs'
 import { spawnSync } from 'node:child_process'
 import { runSync } from '../scripts/sync'
 import { normalizeEvent } from '../scripts/providers/espn'
 
-const mocks = vi.hoisted(() => ({ fixtures: vi.fn(), standings: vi.fn(), write: vi.fn() }))
+const mocks = vi.hoisted(() => ({ fixtures: vi.fn(), standings: vi.fn(), write: vi.fn(), read: vi.fn(), exists: vi.fn() }))
 vi.mock('../scripts/providers/espn', async (original) => ({
   ...await original<typeof import('../scripts/providers/espn')>(),
   espnProvider: { name: 'espn', fetchWindow: mocks.fixtures },
@@ -12,20 +11,24 @@ vi.mock('../scripts/providers/espn', async (original) => ({
 vi.mock('../scripts/providers/espn-standings', () => ({ fetchStandings: mocks.standings }))
 vi.mock('node:fs', async (original) => ({
   ...await original<typeof import('node:fs')>(),
-  existsSync: () => false,
+  existsSync: mocks.exists,
+  readFileSync: mocks.read,
   writeFileSync: mocks.write,
 }))
 
-const events = JSON.parse(readFileSync(new URL('./fixtures/espn-ligue1-md1.json', import.meta.url), 'utf8')).events
+const realFs = await vi.importActual<typeof import('node:fs')>('node:fs')
+const events = JSON.parse(realFs.readFileSync(new URL('./fixtures/espn-ligue1-md1.json', import.meta.url), 'utf8')).events
 const fixture = normalizeEvent(events[0], 'ligue1', '2026-09-05T12:00:00.000Z')!
-const table = JSON.parse(readFileSync(new URL('../src/data/standings.json', import.meta.url), 'utf8'))
+const table = JSON.parse(realFs.readFileSync(new URL('../src/data/standings.json', import.meta.url), 'utf8'))
 const originalArgs = process.argv
 
 beforeEach(() => {
   mocks.write.mockReset()
+  mocks.read.mockReset()
+  mocks.exists.mockReset().mockReturnValue(false)
   mocks.fixtures.mockReset().mockResolvedValue({ fixtures: [fixture], counts: { ligue1: 1 } })
   mocks.standings.mockReset().mockResolvedValue(structuredClone(table))
-  process.argv = ['node', 'scripts/sync.ts', '--from=2026-08-01', '--to=2026-09-01']
+  process.argv = ['node', 'scripts/sync.ts', '--from=2026-08-01', '--to=2026-12-31']
   vi.spyOn(console, 'log').mockImplementation(() => {})
   vi.spyOn(console, 'error').mockImplementation(() => {})
 })
@@ -83,5 +86,61 @@ describe('the sync entry point — fixtures + standings are one authoritative sn
     expect(mocks.standings).toHaveBeenCalledOnce()
     expect(mocks.write).not.toHaveBeenCalled()
     expect(vi.mocked(console.log).mock.calls.at(-1)?.[0]).toContain('report: changed=true')
+  })
+
+  it('prints the updated urgent-change message on a score correction regardless of horizon', async () => {
+    const previous = {
+      ...fixture,
+      status: 'full_time',
+      kickoffUtc: '2026-08-22T18:00:00.000Z',
+      result: { home: 1, away: 2 },
+    }
+    const fetched = { ...previous, result: { home: 1, away: 3 } }
+
+    mocks.exists.mockImplementation((path: unknown): boolean => {
+      return String(path).includes('src/data/fixtures.json')
+    })
+    mocks.read.mockImplementation((path: unknown) => {
+      if (String(path).includes('src/data/fixtures.json')) return JSON.stringify([previous])
+      throw new Error(`Unexpected read: ${String(path)}`)
+    })
+
+    mocks.fixtures.mockResolvedValue({ fixtures: [fetched], counts: { ligue1: 1 } })
+    expect(await runSync()).toBe(1)
+
+    const warning = vi.mocked(console.log).mock.calls.flat().find((line) => String(line).includes('Urgent change reported'))
+    expect(warning).toContain('⚠  Urgent change reported. Re-check any open position on the fixtures named above.')
+    expect(warning).not.toContain('72h')
+
+  })
+
+  it('prints the updated urgent-change message on a far-out team correction', async () => {
+    const previous = {
+      ...fixture,
+      kickoffUtc: '2026-11-15T18:00:00.000Z',
+      home: { ...fixture.home, sourceId: '111', name: 'Alpha' },
+      away: { ...fixture.away, sourceId: '222', name: 'Beta' },
+    }
+    const fetched = {
+      ...previous,
+      away: { ...previous.away, sourceId: '333', name: 'Beta' },
+    }
+
+    mocks.exists.mockImplementation((path: unknown): boolean => {
+      return String(path).includes('src/data/fixtures.json')
+    })
+    mocks.read.mockImplementation((path: unknown) => {
+      if (String(path).includes('src/data/fixtures.json')) return JSON.stringify([previous])
+      throw new Error(`Unexpected read: ${String(path)}`)
+    })
+
+    process.argv = ['node', 'scripts/sync.ts', '--from=2026-08-01', '--to=2026-12-31']
+    mocks.fixtures.mockResolvedValue({ fixtures: [fetched], counts: { ligue1: 1 } })
+    expect(await runSync()).toBe(1)
+
+    const warning = vi.mocked(console.log).mock.calls.flat().find((line) => String(line).includes('Urgent change reported'))
+    expect(warning).toContain('⚠  Urgent change reported. Re-check any open position on the fixtures named above.')
+    expect(warning).not.toContain('72h')
+
   })
 })

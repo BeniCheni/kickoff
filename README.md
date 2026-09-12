@@ -1,7 +1,7 @@
 # ⚽ Kickoff
 
 [![CI](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml/badge.svg)](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml)
-[![version](https://img.shields.io/badge/version-0.4.0-1d4ed8)](CHANGELOG.md)
+[![version](https://img.shields.io/badge/version-0.4.1-1d4ed8)](CHANGELOG.md)
 [![license](https://img.shields.io/badge/license-MIT-16a34a)](LICENSE)
 [![built with](https://img.shields.io/badge/built%20with-Claude%20Code-D97757)](CLAUDE.md)
 [![built with](https://img.shields.io/badge/built%20with-Codex-000000)](https://openai.com/codex/)
@@ -73,7 +73,7 @@ the fix, and the house rule got carved over the door:
 
 ### Never a confident lie.
 
-## ⏱️ What it does (v0.4.0)
+## ⏱️ What it does (v0.4.1)
 
 La Liga, the Premier League, Serie A, Ligue 1, the Bundesliga, their domestic super cups and
 the UEFA Super Cup; full league tables; one fixture skeleton read through three lenses.
@@ -133,10 +133,9 @@ ESPN → normalize → validate at the boundary → snapshot → diff against th
 commit → pull request → app. The pure layer (everything under `src/lib/` and `scripts/`) is
 unit-tested; the components render what it decides and decide nothing about time themselves.
 A scheduled workflow runs the sync every three hours *as scheduled* (GitHub's cron is a
-suggestion, not a promise), opens one rolling pull request with the diff, and since v0.2.2
-lets that PR merge itself when nothing in it needs a human first — no known fixture moved
-inside 72 hours, nothing vanished, nothing inverted. Anything that does is held for a person,
-and no later run lifts the hold.
+suggestion, not a promise), opens one rolling pull request with the diff, and merges every
+successful snapshot PR — quiet or change-bearing — once `verify` is green. `merge=hold` names
+time-sensitive or structural lines for readers; it does not hold the snapshot for a person.
 
 The map, the data flow, where the pure layer ends and the components begin, and the two ESPN
 traps worth knowing about are in **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**.
@@ -189,8 +188,8 @@ that turns it into patches and the v0.4.0 sync minor is in
 [docs/v0.2.5-proposal.md](docs/v0.2.5-proposal.md) and the v0.3.0 numbering ruling in
 [docs/design-cycle-proposal.md](docs/design-cycle-proposal.md). Next up:
 
-- **v0.5.0 — Kickoff learns the European week:** PR #39 follows now that v0.4.0 has shipped,
-  by Beni's 10 Sep ruling. Competition chips stay; the designer re-mirrors them after release.
+- **v0.5.0 — Kickoff learns the European week:** PR #39 follows now that v0.4.1 has shipped.
+  Competition chips stay; the designer re-mirrors them after release.
 
 **Beyond**: betting overlays that join a positions file on fixture ids (the
 token-expiry-vs-kickoff map is the obvious first feature); a Results tab — the tab row already
@@ -228,6 +227,8 @@ One subject line per release. The honours board:
 - **v0.4.0** *(11 Sep 2026)* — the sync tells the whole truth: corrected scores and team
   identities are reported, quiet checks publish verified freshness, and merged snapshots bring
   their change digest and request Pages delivery.
+- **v0.4.1** *(12 Sep 2026)* — the small print tells the truth too: every sync warning,
+  result correction, publication surface and red-run outcome says what actually happened.
 
 The paper trail for every release — proposals, design briefs, build specs and review
 prompts — is indexed in [docs/README.md](docs/README.md). The design system it's built

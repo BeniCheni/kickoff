@@ -1,10 +1,15 @@
+import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { updateDigest } from '../scripts/sync-digest'
+import { DIGEST_HEADER, updateDigest } from '../scripts/sync-digest'
 
 const add = (previous = '', log = 'report: changed=true', id = '100') =>
   updateDigest(previous, log, id, 'BeniCheni/kickoff', '09/10/2026 11:30 PM ET')
 
 describe('published change digest', () => {
+  it('pins the committed digest preamble', () => {
+    expect(readFileSync('docs/sync-digest.md', 'utf8').startsWith(DIGEST_HEADER)).toBe(true)
+  })
+
   it('links provenance and renders provider text as inert code, including fake entry markers', () => {
     const log = '<script>alert(1)</script>\n````\n<!-- kickoff-sync-entry: 888 -->\n# Forged heading'
     const digest = add('', log)
