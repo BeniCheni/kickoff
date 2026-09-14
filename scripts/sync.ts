@@ -25,6 +25,7 @@ import {
 import { addDays, todayIso } from '../src/lib/time'
 import { validateFixtures } from './validate'
 import { inWindow } from './window'
+import { summarizeSync } from './sync-pr-body'
 
 /**
  * The only writer of fixture data. Run it with `npm run sync`.
@@ -63,7 +64,7 @@ export function preserveContext(previous: readonly Fixture[], fetched: Fixture[]
  * before writing either; even a standings outage intentionally delays fixture updates.
  * Ancillary datasets added later do not automatically join this boundary.
  */
-type StandingsOutcome = { status: SyncReport['standings']; rankMoves: number; data: StandingsFile }
+type StandingsOutcome = { status: SyncReport['standings']; rankMoves: number; rowsChanged: number; data: StandingsFile }
 
 async function prepareStandings(): Promise<StandingsOutcome> {
   const baseline = previousPath(STANDINGS)
@@ -87,7 +88,7 @@ async function prepareStandings(): Promise<StandingsOutcome> {
       : 'standings unchanged vs last snapshot',
   )
 
-  return { status: rowsChanged > 0 || phaseChanged ? 'changed' : 'unchanged', rankMoves: moves.length, data: standings }
+  return { status: rowsChanged > 0 || phaseChanged ? 'changed' : 'unchanged', rankMoves: moves.length, rowsChanged, data: standings }
 }
 
 const arg = (name: string, fallback: string) => {
@@ -180,18 +181,20 @@ async function main() {
       merge.verdict === 'hold'
         ? `time-sensitive lines (merge=hold) — reported, not a gate; this PR still merges once verify is green:\n${merge.reasons.map((r) => `  - ${r}`).join('\n')}\n`
         : 'no time-sensitive lines (merge=auto).\n'
-    return (
-      why +
-      formatReportLine({
-        changes: changes.length,
-        urgent: changes.filter((c) => c.urgent && c.kind !== 'NEW').length,
-        standings: standings.status,
-        rankMoves: standings.rankMoves,
-        merge: merge.verdict,
-        zonesUnknown: valid.filter((f) => f.venueTz === undefined).length,
-        standingsDegraded: standings.data.degraded,
-      })
-    )
+    const report: SyncReport = {
+      changes: changes.length,
+      urgent: changes.filter((c) => c.urgent && c.kind !== 'NEW').length,
+      standings: standings.status,
+      rankMoves: standings.rankMoves,
+      merge: merge.verdict,
+      zonesUnknown: valid.filter((f) => f.venueTz === undefined).length,
+      standingsDegraded: standings.data.degraded,
+    }
+    // Optional workflow artifact, outside src/data; no provider prose is parsed for copy.
+    if (!check && process.env.SYNC_SUMMARY_PATH) {
+      writeFileSync(process.env.SYNC_SUMMARY_PATH, JSON.stringify(summarizeSync(report, changes, standings.rowsChanged)))
+    }
+    return why + formatReportLine(report)
   }
 
   const standings = await prepareStandings()
