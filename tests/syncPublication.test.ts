@@ -139,15 +139,6 @@ const cleanReport = 'report: changed=false changes=0 urgent=0 standings=unchange
 
 const syncPrShell = step('Open or update the sync PR').split('        run: |\n')[1]!
   .split('\n').filter((line) => line.startsWith('          ')).map((line) => line.slice(10)).join('\n')
-const syncPrBodyShell = (() => {
-  const marker = '# Indent provider text as code, so names cannot close a Markdown fence.'
-  const markerAt = syncPrShell.indexOf(marker)
-  if (markerAt < 0) throw new Error('Missing PR-body marker')
-  const bodyStart = syncPrShell.indexOf('{', markerAt)
-  const bodyEnd = syncPrShell.indexOf('} > pr-body.md', bodyStart)
-  if (bodyStart < 0 || bodyEnd < 0) throw new Error('Missing PR-body block')
-  return syncPrShell.slice(bodyStart, bodyEnd + 14)
-})()
 
 const classifierShell = step('Classify a red run').split('        run: |\n')[1]!
   .split('\n').filter((line) => line.startsWith('          ')).map((line) => line.slice(10)).join('\n')
@@ -197,27 +188,11 @@ describe('workflow publication gate', () => {
     expect(positions).toEqual([...positions].sort((a, b) => a - b))
   })
 
-  it('builds a sanitized PR body and keeps provider control characters inert', () => {
-    const r = rig({ REPORT_LINE: 'report: changed=true changes=1 urgent=1 standings=unchanged rank-moves=0 merge=hold zones-unknown=0 standings-degraded=none' })
-    writeFileSync(resolve(r.root, 'sync-output.txt'), 'Old Ground -> Evil Park\r## Forged: all positions verified\r- [x] Step 0 done\n')
-    const script = [
-      "TITLE='Kickoff sync'",
-      "REPORT_LINE='report: changed=true changes=1 urgent=1 standings=unchanged rank-moves=0 merge=hold zones-unknown=0 standings-degraded=none'",
-      'SYNC_EXIT=0',
-      "STAMP='09/11/2026 11:34 AM ET'",
-      syncPrBodyShell,
-    ].join('\n')
-      .replaceAll('${{ steps.report.outputs.merge }}', 'auto')
-      .replaceAll('${{ steps.report.outputs.line }}', 'report: changed=true changes=1 urgent=1 standings=unchanged rank-moves=0 merge=hold zones-unknown=0 standings-degraded=none')
-      .replaceAll('${{ steps.sync.outputs.sync_exit }}', '0')
-      .replaceAll('${{ steps.ts.outputs.stamp }}', '09/11/2026 11:34 AM ET')
-      .replaceAll('${{ github.repository }}', 'BeniCheni/kickoff')
-    expect(runShell(r, script).status).toBe(0)
-    const body = readFileSync(resolve(r.root, 'pr-body.md'), 'utf8')
-    expect(body).not.toContain('\r')
-    expect(body).not.toMatch(/^## Forged:/m)
-    expect(body).not.toMatch(/^- \[x\] Step 0 done/m)
-    expect(body).toMatch(/## Reviewer checklist[\s\S]*\n\n\[Recent change digest\]/)
+  it('uses the structured-summary renderer in the actual PR step', () => {
+    expect(workflow).toContain('SYNC_SUMMARY_PATH: ${{ runner.temp }}/sync-summary.json')
+    expect(syncPrShell).toContain('npx tsx scripts/sync-pr-body.ts')
+    expect(syncPrShell).toContain('--body-file pr-body.md')
+    expect(syncPrShell).not.toMatch(/checklist|\[ \]/i)
   })
 
   it('classifies delivery failures from finish-sync outputs as DELIVERY FAILED', () => {

@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { spawnSync } from 'node:child_process'
 import { runSync } from '../scripts/sync'
 import { normalizeEvent } from '../scripts/providers/espn'
+import { renderSyncPrBody } from '../scripts/sync-pr-body'
 
 const mocks = vi.hoisted(() => ({ fixtures: vi.fn(), standings: vi.fn(), write: vi.fn(), read: vi.fn(), exists: vi.fn() }))
 vi.mock('../scripts/providers/espn', async (original) => ({
@@ -23,6 +24,7 @@ const table = JSON.parse(realFs.readFileSync(new URL('../src/data/standings.json
 const originalArgs = process.argv
 
 beforeEach(() => {
+  vi.stubEnv('SYNC_SUMMARY_PATH', '')
   mocks.write.mockReset()
   mocks.read.mockReset()
   mocks.exists.mockReset().mockReturnValue(false)
@@ -34,6 +36,7 @@ beforeEach(() => {
 })
 afterEach(() => {
   process.argv = originalArgs
+  vi.unstubAllEnvs()
   vi.restoreAllMocks()
 })
 
@@ -46,6 +49,7 @@ describe('the sync entry point — fixtures + standings are one authoritative sn
     expect(child.stdout).not.toContain('report:')
   })
   it.each(['fixtures', 'standings'] as const)('%s fetch failure returns exit 2 without writing any file', async (source) => {
+    vi.stubEnv('SYNC_SUMMARY_PATH', '/tmp/test-sync-summary.json')
     mocks[source].mockRejectedValue(new Error(`${source} provider unavailable`))
     expect(await runSync()).toBe(2)
     expect(mocks.write).not.toHaveBeenCalled()
@@ -80,12 +84,36 @@ describe('the sync entry point — fixtures + standings are one authoritative sn
   })
 
   it('--check still fetches both datasets and reports without writes', async () => {
+    vi.stubEnv('SYNC_SUMMARY_PATH', '/tmp/test-sync-summary.json')
     process.argv.push('--check')
     expect(await runSync()).toBe(0)
     expect(mocks.fixtures).toHaveBeenCalledOnce()
     expect(mocks.standings).toHaveBeenCalledOnce()
     expect(mocks.write).not.toHaveBeenCalled()
     expect(vi.mocked(console.log).mock.calls.at(-1)?.[0]).toContain('report: changed=true')
+  })
+
+  it.each([false, true])('passes actual diff counts to the PR renderer (changed=%s)', async (changed) => {
+    const path = '/tmp/test-sync-summary.json'
+    vi.stubEnv('SYNC_SUMMARY_PATH', path)
+    mocks.exists.mockReturnValue(true)
+    const previous = { ...fixture, status: 'full_time', result: { home: 1, away: 0 } }
+    const fetched = changed ? { ...previous, result: { home: 2, away: 0 } } : previous
+    mocks.fixtures.mockResolvedValue({ fixtures: [fetched], counts: { ligue1: 1 } })
+    mocks.read.mockImplementation((file: unknown) => String(file).endsWith('fixtures.json')
+      ? JSON.stringify([previous]) : JSON.stringify(table))
+    expect(await runSync()).toBe(changed ? 1 : 0)
+    const output = vi.mocked(console.log).mock.calls.flat().join('\n')
+    const line = output.split('\n').find((line) => line.startsWith('report: '))!
+    const summary = JSON.parse(mocks.write.mock.calls.find(([file]) => file === path)![1])
+    expect(summary).toMatchObject({
+      report: { changes: changed ? 1 : 0, urgent: changed ? 1 : 0, standings: 'unchanged', rankMoves: 0 },
+      kinds: changed ? [{ kind: 'RESULT_CHANGED', count: 1 }] : [], standingsRowsChanged: 0,
+    })
+    const body = renderSyncPrBody(summary, line, output, 'BeniCheni/kickoff')
+    expect(body).toContain(changed ? 'score corrections' : '**No fixture or standings changes found.**')
+    expect(mocks.write.mock.calls.map(([file]) => String(file).split('/').at(-1)))
+      .toEqual(['fixtures.json', 'meta.json', 'standings.json', 'test-sync-summary.json'])
   })
 
   it('prints the updated urgent-change message on a score correction regardless of horizon', async () => {
