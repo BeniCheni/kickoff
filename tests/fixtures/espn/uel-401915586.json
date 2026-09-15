@@ -1,0 +1,61 @@
+{
+  "events": [
+    {
+      "id": "401915586",
+      "date": "2026-09-16T19:00Z",
+      "name": "Benfica at AC Milan",
+      "shortName": "SLB @ MIL",
+      "season": {
+        "year": 2026,
+        "type": 14540,
+        "slug": "league-phase"
+      },
+      "competitions": [
+        {
+          "id": "401915586",
+          "date": "2026-09-16T19:00Z",
+          "timeValid": true,
+          "venue": {
+            "id": "26",
+            "fullName": "San Siro",
+            "address": {
+              "city": "Milano",
+              "country": "Italy"
+            }
+          },
+          "competitors": [
+            {
+              "id": "103",
+              "homeAway": "home",
+              "team": {
+                "id": "103",
+                "displayName": "AC Milan"
+              }
+            },
+            {
+              "id": "1929",
+              "homeAway": "away",
+              "team": {
+                "id": "1929",
+                "displayName": "Benfica"
+              }
+            }
+          ]
+        }
+      ],
+      "status": {
+        "clock": 0,
+        "displayClock": "0'",
+        "type": {
+          "id": "1",
+          "name": "STATUS_SCHEDULED",
+          "state": "pre",
+          "completed": false,
+          "description": "Scheduled",
+          "detail": "Wed, September 16th at 3:00 PM EDT",
+          "shortDetail": "Scheduled"
+        }
+      }
+    }
+  ]
+}

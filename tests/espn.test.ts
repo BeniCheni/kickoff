@@ -9,6 +9,7 @@ const load = (name: string) =>
 
 const ligue1 = load('espn-ligue1-md1.json').events
 const placeholder = load('espn-laliga-placeholder.json').events
+const milanBenfica = load('espn/uel-401915586.json').events[0]
 
 const AT = '2026-08-21T12:00:00.000Z'
 
@@ -48,6 +49,21 @@ describe('normalizeEvent', () => {
     expect(f.home.name).toBe('Olympique de Marseille')
     expect(f.away.name).toBe('RC Strasbourg')
     expect(f.timeConfidence).toBe('exact')
+  })
+
+  it('normalizes ESPN event 401915586 through the Europa League path', () => {
+    const f = normalizeEvent(milanBenfica, 'uel', AT)!
+    expect(() => fixtureSchema.parse(f)).not.toThrow()
+    expect(f).toMatchObject({
+      id: 'uel:401915586',
+      competition: 'uel',
+      kickoffUtc: '2026-09-16T19:00:00.000Z',
+      venueTz: 'Europe/Rome',
+      home: { name: 'AC Milan' },
+      away: { name: 'Benfica' },
+      status: 'scheduled',
+      timeConfidence: 'exact',
+    })
   })
 
   it('records Rennes as the home side against PSG', () => {

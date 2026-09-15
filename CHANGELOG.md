@@ -8,6 +8,12 @@ releases.
 
 ## [Unreleased]
 
+### Fixed
+
+- Europa League, Conference League, Italian Supercoppa and Spanish Supercopa now enter the
+  existing ESPN sync path; the generated snapshot reflects every fixture the provider currently
+  publishes without inventing rows for competitions that honestly return none.
+
 ## [0.5.0] — 2026-09-12
 
 The Champions League joins the schedule: 144 league-phase fixtures beside domestic rows, every European day carrying computed matchday provenance, stadium clocks that follow the venue with an honest unknown state, the 36-club league-phase table with contained sticky headers, and Moments as a curated, empty-first third tab outside the sync boundary. Built by Codex, reviewed cold by Claude, rebutted by Codex, synthesised by Claude, adjudicated by Beni.
