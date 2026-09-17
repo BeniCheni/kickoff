@@ -8,11 +8,21 @@ releases.
 
 ## [Unreleased]
 
+## [0.5.1] — 2026-09-17
+
+A hotfix restoring four competitions that were silently absent from the sync path.
+
 ### Fixed
 
 - Europa League, Conference League, Italian Supercoppa and Spanish Supercopa now enter the
   existing ESPN sync path; the generated snapshot reflects every fixture the provider currently
   publishes without inventing rows for competitions that honestly return none.
+
+### Deliberately not done
+
+- No second provider, authored fixture rows, UEL/UECL standings, matchday-window metadata, or
+  UI redesign. Italian Supercoppa's zero and the two Spanish Supercopa placeholder kickoffs are
+  preserved exactly as ESPN currently publishes them.
 
 ## [0.5.0] — 2026-09-12
 
