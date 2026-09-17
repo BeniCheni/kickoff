@@ -10,19 +10,18 @@ releases.
 
 ## [0.5.1] — 2026-09-17
 
-A hotfix restoring four competitions that were silently absent from the sync path.
+Hotfix: ESPN's scoreboard API broke on 2026-09-15, returning 400 for all date-range requests. This hotfix restores the sync workflow by switching from chunked 28-day date ranges to single-day fetching. Data is honest: four ESPN codes that return 400 (supercup/shield/tdc/dflsupercup) remove their espnCode field; two that still work (supercoppa/supercopa) keep theirs.
 
-### Fixed
+### Changed
 
-- Europa League, Conference League, Italian Supercoppa and Spanish Supercopa now enter the
-  existing ESPN sync path; the generated snapshot reflects every fixture the provider currently
-  publishes without inventing rows for competitions that honestly return none.
+- ESPN provider now fetches day-by-day instead of 28-day chunks (API change on 2026-09-15).
+- Default sync lookback window reduced from 30 days to today (trade-off for daily API efficiency).
+- Four non-working ESPN codes removed from competitions roster: UEFA Super Cup, Community Shield, Trophée des Champions, German Super Cup.
 
 ### Deliberately not done
 
-- No second provider, authored fixture rows, UEL/UECL standings, matchday-window metadata, or
-  UI redesign. Italian Supercoppa's zero and the two Spanish Supercopa placeholder kickoffs are
-  preserved exactly as ESPN currently publishes them.
+- Historical lookback. The 30-day default is now today; re-running a full monthly backfill is a separate operation if needed.
+- Cross-provider validation. ESPN is the sole source; a second provider belongs in a later release.
 
 ## [0.5.0] — 2026-09-12
 
