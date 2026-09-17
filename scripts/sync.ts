@@ -107,7 +107,7 @@ function previousPath(output: string): string {
 }
 
 async function main() {
-  const from = arg('from', addDays(todayIso(), -30))
+  const from = arg('from', todayIso())
   const to = arg('to', addDays(todayIso(), 150))
   const check = process.argv.includes('--check')
 
