@@ -3,6 +3,7 @@ import { spawnSync } from 'node:child_process'
 import { runSync } from '../scripts/sync'
 import { normalizeEvent } from '../scripts/providers/espn'
 import { renderSyncPrBody } from '../scripts/sync-pr-body'
+import { addDays, todayIso } from '../src/lib/time'
 
 const mocks = vi.hoisted(() => ({ fixtures: vi.fn(), standings: vi.fn(), write: vi.fn(), read: vi.fn(), exists: vi.fn() }))
 vi.mock('../scripts/providers/espn', async (original) => ({
@@ -81,6 +82,12 @@ describe('the sync entry point — fixtures + standings are one authoritative sn
     expect(JSON.parse(mocks.write.mock.calls[0]![1])).toEqual([fixture])
     expect(JSON.parse(mocks.write.mock.calls[2]![1])).toEqual(table)
     expect(vi.mocked(console.log).mock.calls.at(-1)?.[0]).toMatch(/report: changed=true changes=1 urgent=0 standings=changed rank-moves=0 merge=auto zones-unknown=0 standings-degraded=none$/)
+  })
+
+  it('with no --from/--to, fetches the 30-day-back .. 150-day-forward window by default', async () => {
+    process.argv = ['node', 'scripts/sync.ts']
+    expect(await runSync()).toBe(0)
+    expect(mocks.fixtures).toHaveBeenCalledWith(addDays(todayIso(), -30), addDays(todayIso(), 150))
   })
 
   it('--check still fetches both datasets and reports without writes', async () => {
