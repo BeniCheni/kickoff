@@ -211,38 +211,38 @@ A Results tab remains a separate design decision.
 
 One subject line per release. The honours board:
 
-- **v0.0.1** *(23 Aug 2026)* — the rewrite: generated-and-diffed data replaces the hand-typed
-  dashboard.
-- **v0.0.2** *(26 Aug 2026)* — the Table: full standings synced from ESPN.
-- **v0.1.0** *(31 Aug 2026)* — the lens system: Ledger, Poster, Broadcast over one skeleton;
-  hardened by an adversarial review.
-- **v0.1.1** *(1 Sep 2026)* — the public-repo milestone: security sweep, license, CI.
-- **v0.2.0** *(2 Sep 2026)* — the app learns to tell time: a clock that ticks, a sync that
-  fails loudly, a scheduled refresh that opens its own PR.
-- **v0.2.1** *(3 Sep 2026)* — the review becomes a command: `/beni-pr-review` as a repo skill
-  (renamed `/kickoff-pr-review` in v0.2.4).
-- **v0.2.2** *(4 Sep 2026)* — the front door: Poster by default, a hero that tells the time, a
-  sync that merges its own boring news, an address, and these docs.
-- **v0.2.3** *(4 Sep 2026)* — a hotfix: the workflows on Node 24 actions, so no run warns that
-  Node 20 is deprecated. The train slides again — the rig is v0.2.4, the resilience patch v0.2.5.
-- **v0.2.4** *(5 Sep 2026)* — tests reach the wiring: a jsdom project beside the node suite, the two
-  browser-found bugs reproduced as tests that fail against their pre-fix logic, and the review
-  command renamed `/kickoff-pr-review`.
-- **v0.2.5** *(5 Sep 2026)* — the resilience patch: fixtures and standings publish together,
-  failed views can recover, URL state stays honest, and theme boot runs before paint.
-- **v0.3.0** *(6 Sep 2026)* — snapshot states say what is known: a frozen LIVE admits its
-  age, NEXT names the first matchday it knows, and an empty schedule keeps its provenance.
-- **v0.3.1** *(8 Sep 2026)* — the Table tells the time like every other lens: a kicked-off
-  match reads KICKED OFF, never as the next kickoff, and the scheduled sync merges itself once
-  `verify` is green.
-- **v0.3.2** *(9 Sep 2026)* — the sync's verify step survives a live match: the designCycle DOM test scopes every LIVE / KICKED OFF query to its own row and fixes its input by date, so a genuine in-play row in the snapshot no longer turns `sync.yml`'s verify red; the pipeline skill is named by its live handle; nothing in the app changes.
+- **v0.5.1** *(17 Sep 2026)* — hotfix: Europa League, Conference League, Italian Supercoppa and Spanish Supercopa restored to the ESPN sync path after being silently absent from it.
+- **v0.5.0** *(12 Sep 2026)* — the Champions League joins the schedule: 144 league-phase fixtures beside the domestic rows, every European day carrying provenance, venue clocks that follow the venue with honest unknown states, a 36-club league-phase table with contained sticky headers, and Moments as an empty-first third tab.
+- **v0.4.1** *(12 Sep 2026)* — the small print tells the truth too: every sync warning,
+  result correction, publication surface and red-run outcome says what actually happened.
 - **v0.4.0** *(11 Sep 2026)* — the sync tells the whole truth: corrected scores and team
   identities are reported, quiet checks publish verified freshness, and merged snapshots bring
   their change digest and request Pages delivery.
-- **v0.4.1** *(12 Sep 2026)* — the small print tells the truth too: every sync warning,
-  result correction, publication surface and red-run outcome says what actually happened.
-- **v0.5.1** *(17 Sep 2026)* — hotfix: ESPN's API broke on 2026-09-15, returning 400 for date-range requests. The sync is restored with day-by-day fetching, reduced lookback to today for efficiency, and four broken ESPN codes (supercup/shield/tdc/dflsupercup) removed from the roster — data honesty over attempted fetch.
-- **v0.5.0** *(12 Sep 2026)* — the Champions League joins the schedule: 144 league-phase fixtures beside the domestic rows, every European day carrying provenance, venue clocks that follow the venue with honest unknown states, a 36-club league-phase table with contained sticky headers, and Moments as an empty-first third tab.
+- **v0.3.2** *(9 Sep 2026)* — the sync's verify step survives a live match: the designCycle DOM test scopes every LIVE / KICKED OFF query to its own row and fixes its input by date, so a genuine in-play row in the snapshot no longer turns `sync.yml`'s verify red; the pipeline skill is named by its live handle; nothing in the app changes.
+- **v0.3.1** *(8 Sep 2026)* — the Table tells the time like every other lens: a kicked-off
+  match reads KICKED OFF, never as the next kickoff, and the scheduled sync merges itself once
+  `verify` is green.
+- **v0.3.0** *(6 Sep 2026)* — snapshot states say what is known: a frozen LIVE admits its
+  age, NEXT names the first matchday it knows, and an empty schedule keeps its provenance.
+- **v0.2.5** *(5 Sep 2026)* — the resilience patch: fixtures and standings publish together,
+  failed views can recover, URL state stays honest, and theme boot runs before paint.
+- **v0.2.4** *(5 Sep 2026)* — tests reach the wiring: a jsdom project beside the node suite, the two
+  browser-found bugs reproduced as tests that fail against their pre-fix logic, and the review
+  command renamed `/kickoff-pr-review`.
+- **v0.2.3** *(4 Sep 2026)* — a hotfix: the workflows on Node 24 actions, so no run warns that
+  Node 20 is deprecated. The train slides again — the rig is v0.2.4, the resilience patch v0.2.5.
+- **v0.2.2** *(4 Sep 2026)* — the front door: Poster by default, a hero that tells the time, a
+  sync that merges its own boring news, an address, and these docs.
+- **v0.2.1** *(3 Sep 2026)* — the review becomes a command: `/beni-pr-review` as a repo skill
+  (renamed `/kickoff-pr-review` in v0.2.4).
+- **v0.2.0** *(2 Sep 2026)* — the app learns to tell time: a clock that ticks, a sync that
+  fails loudly, a scheduled refresh that opens its own PR.
+- **v0.1.1** *(1 Sep 2026)* — the public-repo milestone: security sweep, license, CI.
+- **v0.1.0** *(31 Aug 2026)* — the lens system: Ledger, Poster, Broadcast over one skeleton;
+  hardened by an adversarial review.
+- **v0.0.2** *(26 Aug 2026)* — the Table: full standings synced from ESPN.
+- **v0.0.1** *(23 Aug 2026)* — the rewrite: generated-and-diffed data replaces the hand-typed
+  dashboard.
 
 The paper trail for every release — proposals, design briefs, build specs and review
 prompts — is indexed in [docs/README.md](docs/README.md). The design system it's built
