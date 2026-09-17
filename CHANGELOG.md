@@ -8,6 +8,31 @@ releases.
 
 ## [Unreleased]
 
+## [0.5.2] — 2026-09-17
+
+Hotfix to the hotfix: v0.5.1 kept sync alive after ESPN's date-range API broke, but its
+efficiency trade-off ("lookback reduced from 30 days to today") deleted every past fixture and
+result on the very next scheduled sync (PR #67) — the live site lost 30 days of history it used
+to carry. This release restores the 30-day historical lookback while keeping v0.5.1's day-by-day
+fetching, which is what the broken ESPN API actually requires; the two changes were never in
+tension. The four ESPN codes removed in v0.5.1 (UEFA Super Cup, Community Shield, Trophée des
+Champions, DFL-Supercup) are left removed — that part of v0.5.1 was a genuine 400-response
+finding, not the source of the data loss.
+
+### Fixed
+
+- Default sync lookback window restored to 30 days back (was reduced to today-only in v0.5.1,
+  which was never necessary for the day-by-day fetch fix and cost the app its recent fixture
+  and result history on the next sync).
+
+### Deliberately not done
+
+- Re-adding the four ESPN codes removed in v0.5.1 (supercup/shield/tdc/dflsupercup). Those
+  return 400 from ESPN's scoreboard API independent of the date-range/day-by-day question this
+  release addresses; re-verifying them is separate work.
+- Cross-provider validation. ESPN is the sole source; a second provider belongs in a later
+  release.
+
 ## [0.5.1] — 2026-09-17
 
 Hotfix: ESPN's scoreboard API broke on 2026-09-15, returning 400 for all date-range requests. This hotfix restores the sync workflow by switching from chunked 28-day date ranges to single-day fetching. Data is honest: four ESPN codes that return 400 (supercup/shield/tdc/dflsupercup) remove their espnCode field; two that still work (supercoppa/supercopa) keep theirs.

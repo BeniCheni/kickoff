@@ -1,7 +1,7 @@
 # ⚽ Kickoff
 
 [![CI](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml/badge.svg)](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml)
-[![version](https://img.shields.io/badge/version-0.5.1-1d4ed8)](CHANGELOG.md)
+[![version](https://img.shields.io/badge/version-0.5.2-1d4ed8)](CHANGELOG.md)
 [![license](https://img.shields.io/badge/license-MIT-16a34a)](LICENSE)
 [![built with](https://img.shields.io/badge/built%20with-Claude%20Code-D97757)](CLAUDE.md)
 [![built with](https://img.shields.io/badge/built%20with-Codex-000000)](https://openai.com/codex/)
@@ -73,7 +73,7 @@ the fix, and the house rule got carved over the door:
 
 ### Never a confident lie.
 
-## ⏱️ What it does (v0.5.1)
+## ⏱️ What it does (v0.5.2)
 
 La Liga, the Premier League, Serie A, Ligue 1, the Bundesliga and the Champions League;
 domestic super cups and the UEFA Super Cup; six tables; one fixture skeleton read through
@@ -211,6 +211,7 @@ A Results tab remains a separate design decision.
 
 One subject line per release. The honours board:
 
+- **v0.5.2** *(17 Sep 2026)* — hotfix to the hotfix: v0.5.1's lookback cut (30 days back → today-only) deleted the app's recent fixture and result history on the next sync; this restores the 30-day lookback while keeping v0.5.1's necessary day-by-day ESPN fetch.
 - **v0.5.1** *(17 Sep 2026)* — hotfix: Europa League, Conference League, Italian Supercoppa and Spanish Supercopa restored to the ESPN sync path after being silently absent from it.
 - **v0.5.0** *(12 Sep 2026)* — the Champions League joins the schedule: 144 league-phase fixtures beside the domestic rows, every European day carrying provenance, venue clocks that follow the venue with honest unknown states, a 36-club league-phase table with contained sticky headers, and Moments as an empty-first third tab.
 - **v0.4.1** *(12 Sep 2026)* — the small print tells the truth too: every sync warning,
