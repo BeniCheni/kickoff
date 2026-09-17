@@ -86,26 +86,11 @@ const ALIAS: Record<string, string> = {
 const compact = (iso: string) => iso.replace(/-/g, '')
 
 /**
- * ESPN caps a scoreboard response at 100 events and gives NO indication that it truncated —
- * a 4-month range for La Liga silently returns only the first 100 fixtures. Silent truncation
- * is indistinguishable from "there are no more fixtures", which is precisely the kind of
- * quiet data loss this project exists to prevent, so the window is always requested in
- * chunks small enough that a cap is impossible, and a chunk that comes back at the cap is
- * reported loudly.
+ * ESPN caps a scoreboard response at 100 events per day and gives NO indication that it
+ * truncated. A day with 100+ events silently returns only the first 100. If this happens,
+ * refuse to write from that day's fetch — a loud error is better than silent data loss.
  */
-const CHUNK_DAYS = 28
 const ESPN_PAGE_CAP = 100
-
-function chunkWindow(from: string, to: string): Array<[string, string]> {
-  const chunks: Array<[string, string]> = []
-  let cursor = from
-  while (cursor <= to) {
-    const end = addDays(cursor, CHUNK_DAYS - 1)
-    chunks.push([cursor, end > to ? to : end])
-    cursor = addDays(cursor, CHUNK_DAYS)
-  }
-  return chunks
-}
 
 /** Season label from ESPN's start year: 2026 -> "2026-27". */
 export function seasonLabel(year: number): string {
@@ -216,33 +201,34 @@ export const espnProvider: FixtureProvider = {
 
     for (const { key, code } of SYNCABLE) {
       let ok = 0
-      for (const [chunkFrom, chunkTo] of chunkWindow(from, to)) {
-        const url = `${BASE}/${code}/scoreboard?dates=${compact(chunkFrom)}-${compact(chunkTo)}`
+      let current = from
+      while (current <= to) {
+        const url = `${BASE}/${code}/scoreboard?dates=${compact(current)}`
         let body: any
         try {
           const res = await fetch(url)
           if (!res.ok) throw new Error(`responded ${res.status}`)
           body = await res.json()
         } catch (err) {
-          throw new Error(`ESPN ${code} ${chunkFrom}..${chunkTo}: ${err instanceof Error ? err.message : err}`)
+          throw new Error(`ESPN ${code} ${current}: ${err instanceof Error ? err.message : err}`)
         }
         if (!Array.isArray(body?.events)) {
-          throw new Error(`ESPN ${code} ${chunkFrom}..${chunkTo}: missing or invalid events array`)
+          throw new Error(`ESPN ${code} ${current}: missing or invalid events array`)
         }
         const events: any[] = body.events
 
         if (events.length >= ESPN_PAGE_CAP) {
           // A warning nobody reads is the same as no warning once this runs unattended —
-          // a chunk at the cap may be silently missing rows, so refuse to write from it.
+          // a single day at the cap may be silently missing rows, so refuse to write from it.
           throw new Error(
-            `${code} ${chunkFrom}..${chunkTo} returned ${events.length} events — at or above ` +
-              `ESPN's ${ESPN_PAGE_CAP}-event cap, so this chunk may be truncated. Lower CHUNK_DAYS ` +
-              `and re-run; refusing to write a fixture list that might be missing rows.`,
+            `${code} ${current} returned ${events.length} events — at or above ` +
+              `ESPN's ${ESPN_PAGE_CAP}-event cap, so this day may be truncated. ` +
+              `refusing to write a fixture list that might be missing rows.`,
           )
         }
 
         for (const [index, event] of events.entries()) {
-          const context = `${code} ${chunkFrom}..${chunkTo} entry ${index + 1}, event ` +
+          const context = `${code} ${current} entry ${index + 1}, event ` +
             `${identityContext(event?.id)} (${event?.date ?? 'no date'})`
           let fixture: Fixture | null
           try {
@@ -255,12 +241,13 @@ export const espnProvider: FixtureProvider = {
             rejected.push(`  ! ${context}: ${eventProblem(event)}`)
             continue
           }
-          // Chunk boundaries are inclusive on both ends, so a fixture can arrive twice.
+          // Same fixture can arrive on multiple days if it's listed in upcoming matches.
           if (seen.has(fixture.id)) continue
           seen.add(fixture.id)
           fixtures.push(fixture)
           ok++
         }
+        current = addDays(current, 1)
       }
       counts[key] = ok
     }

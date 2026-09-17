@@ -4,10 +4,10 @@
  * without an `espnCode` are reference-only: no fixture rows are hand-authored for them.
  */
 const RAW = {
-  supercup:     { name: 'UEFA Super Cup',        group: 'europe',   tz: 'Europe/Vienna', flag: '⭐', color: '#C4272F', tv: 'Paramount+ · CBS', espnCode: 'uefa.super_cup' },
-  shield:       { name: 'FA Community Shield',   group: 'supercup', tz: 'Europe/London', flag: '🏴', color: '#6B4226', tv: 'ESPN · ESPN+',     espnCode: 'eng.charity' },
-  tdc:          { name: 'Trophée des Champions', group: 'supercup', tz: 'Europe/Paris',  flag: '🇫🇷', color: '#C05780', tv: 'beIN Sports',      espnCode: 'fra.super_cup' },
-  dflsupercup:  { name: 'DFL-Supercup',          group: 'supercup', tz: 'Europe/Berlin', flag: '🇩🇪', color: '#2F4B7C', tv: 'USA Network · Fandango', espnCode: 'ger.super_cup' },
+  supercup:     { name: 'UEFA Super Cup',        group: 'europe',   tz: 'Europe/Vienna', flag: '⭐', color: '#C4272F', tv: 'Paramount+ · CBS' },
+  shield:       { name: 'FA Community Shield',   group: 'supercup', tz: 'Europe/London', flag: '🏴', color: '#6B4226', tv: 'ESPN · ESPN+' },
+  tdc:          { name: 'Trophée des Champions', group: 'supercup', tz: 'Europe/Paris',  flag: '🇫🇷', color: '#C05780', tv: 'beIN Sports' },
+  dflsupercup:  { name: 'DFL-Supercup',          group: 'supercup', tz: 'Europe/Berlin', flag: '🇩🇪', color: '#2F4B7C', tv: 'USA Network · Fandango' },
   supercoppa:   { name: 'Supercoppa Italiana',   group: 'supercup', tz: 'Asia/Riyadh',   flag: '🇮🇹', color: '#1B4B5A', tv: 'Paramount+ · CBS Sports Golazo', espnCode: 'ita.super_cup' },
   supercopa:    { name: 'Supercopa de España',   group: 'supercup', tz: 'Asia/Riyadh',   flag: '🇪🇸', color: '#8B1E3F', tv: 'ESPN+',            espnCode: 'esp.super_cup' },
   ucl:          { name: 'Champions League',      group: 'europe',   tz: 'Europe/Zurich', flag: '⭐', color: '#8B6FE8', tv: 'Disney+ · ABC (marquee)', tvNew: true, espnCode: 'uefa.champions' },
