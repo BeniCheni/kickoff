@@ -1,26 +1,22 @@
 {
-  "lastSyncAt": "2026-09-15T03:48:05.194Z",
+  "lastSyncAt": "2026-09-17T16:28:09.207Z",
   "provider": "espn",
   "window": {
-    "from": "2026-08-16",
-    "to": "2027-02-12"
+    "from": "2026-09-17",
+    "to": "2027-02-14"
   },
   "counts": {
-    "supercup": 0,
-    "shield": 1,
-    "tdc": 1,
-    "dflsupercup": 1,
     "supercoppa": 0,
     "supercopa": 2,
-    "ucl": 144,
-    "uel": 144,
+    "ucl": 126,
+    "uel": 135,
     "uecl": 108,
-    "laliga": 228,
-    "pl": 250,
-    "seriea": 230,
-    "ligue1": 171,
-    "bundesliga": 180
+    "laliga": 183,
+    "pl": 210,
+    "seriea": 200,
+    "ligue1": 144,
+    "bundesliga": 162
   },
-  "total": 1460,
+  "total": 1270,
   "standingsDegraded": []
 }
