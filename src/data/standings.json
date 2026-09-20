@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-09-20T06:28:15.457Z",
+  "fetchedAt": "2026-09-20T12:31:56.340Z",
   "provider": "espn",
   "season": 2026,
   "leagues": {
@@ -1271,11 +1271,26 @@
         "pts": 7
       },
       {
+        "teamId": "114",
+        "name": "Napoli",
+        "shortName": "Napoli",
+        "abbrev": "NAP",
+        "rank": 9,
+        "rankChange": 0,
+        "played": 5,
+        "w": 2,
+        "d": 1,
+        "l": 2,
+        "gf": 7,
+        "ga": 6,
+        "pts": 7
+      },
+      {
         "teamId": "3997",
         "name": "Sassuolo",
         "shortName": "Sassuolo",
         "abbrev": "SAS",
-        "rank": 9,
+        "rank": 10,
         "rankChange": 0,
         "played": 5,
         "w": 2,
@@ -1284,21 +1299,6 @@
         "gf": 9,
         "ga": 9,
         "pts": 7
-      },
-      {
-        "teamId": "114",
-        "name": "Napoli",
-        "shortName": "Napoli",
-        "abbrev": "NAP",
-        "rank": 10,
-        "rankChange": 0,
-        "played": 4,
-        "w": 2,
-        "d": 0,
-        "l": 2,
-        "gf": 6,
-        "ga": 5,
-        "pts": 6
       },
       {
         "teamId": "105",
@@ -1382,13 +1382,13 @@
         "abbrev": "FIO",
         "rank": 16,
         "rankChange": 0,
-        "played": 4,
+        "played": 5,
         "w": 1,
-        "d": 0,
+        "d": 1,
         "l": 3,
-        "gf": 5,
-        "ga": 11,
-        "pts": 3
+        "gf": 6,
+        "ga": 12,
+        "pts": 4
       },
       {
         "teamId": "107",
