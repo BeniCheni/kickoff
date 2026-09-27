@@ -15,7 +15,8 @@
     "sync": "tsx scripts/sync.ts",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc -b --noEmit"
+    "typecheck": "tsc -b --noEmit",
+    "matrix": "tsx scripts/matrix/run.ts"
   },
   "dependencies": {
     "react": "^19.2.8",
