@@ -114,8 +114,9 @@ curation stays empty. Existing link-only records require no rewrite.
   while retaining the original record. Error 150 means an owner block, not a territory claim.
 - Optional `source.permissions` stores one current decision per intended use, checked date,
   basis and optional expiry. Missing means unknown. `hasEmbedPermission` requires declared
-  identity/content, described or watched content, affirmative current embed permission and no
-  known expiry. It is a permission/content gate, **not a playback guarantee or publication
+  identity/content, described or watched content, an affirmative embed permission checked at or
+  before the instant asked about, and no expiry at or before that instant. It is a
+  permission/content gate, **not a playback guarantee or publication
   approval**. A played observation grants no rights; revoked/denied/expired rights grant no
   eligibility. A known block remains a labelled recovery/link entry, never a promise to play.
 
