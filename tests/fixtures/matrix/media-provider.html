@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="data:," />
+    <title>Media-provider probe</title>
+    <style>
+      html, body { margin: 0; font: 14px sans-serif; }
+    </style>
+  </head>
+  <body>
+    <p>This image is a media-provider host. The runner blocks it; the request still counts.</p>
+    <!-- A failed or blocked load is still a request. No iframe, no video. -->
+    <img alt="" src="https://i.ytimg.com/vi/kickoff-matrix-probe/hqdefault.jpg" />
+  </body>
+</html>
