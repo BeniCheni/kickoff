@@ -39,7 +39,13 @@ Google Fonts, separately: **317 requests per build** (73 fonts.googleapis.com st
 requests, 244 fonts.gstatic.com font requests), including the initial warm-up page. These are
 expected from the unchanged index.html. No other external requests or request failures recorded.
 
-The compact checked-in JSON has all cell results, capture hashes and build/source identities.
+These are the original builder run's results, not a guarantee of byte-identical future captures.
+Pass 1's independent rerun recorded 72/72 equal text hashes but only 69/72 equal PNG hashes on
+first capture: Poster 360 light Moments, 360 dark Fixtures and 390 dark Table differed. The
+reviewer reported matching hashes on both subsequent recaptures of all three cells. Preserve
+that flake alongside the original receipt rather than rewriting its historical measurements.
+
+The compact checked-in JSON has all original cell results, capture hashes and build/source identities.
 Raw PNGs, contact sheets and the full request ledger are local under
 `/tmp/moments-foundation-browser/`; they are not published as design artifacts.
 
@@ -54,13 +60,16 @@ node docs/verification/moments-foundation/check-browser.mjs \
 ```
 
 The script only measures/captures; it does not build, install, sync, mutate source data or access
-a provider. A nonidentical capture/text result, media-provider attempt, page error or overflow
-fails. Fonts remain an expected external dependency. Use the script from this PR against both
+a provider. A nonidentical text result, media-provider or unexpected-host attempt, external
+request failure, page error or overflow fails. PNG identity is advisory: recapture mismatches
+and visually inspect persistent differences; text identity alone cannot establish layout parity.
+Fonts remain an expected external dependency. Use the script from this PR against both
 builds, not R3's sealed scripts.
 
 ## Not verified
 
-Independent Claude implementation review; independent R3 review; populated future gallery/Cinema;
+This original receipt did not verify independent review. Pass 1 and Pass 2 results are recorded
+separately in PR #113's comments. Still not verified: independent R3 review; populated future gallery/Cinema;
 integrated stable-owner/player-host behavior; genuine provider playback, completion, continuity,
 seek, ads/audio/captions/focus; current asset availability/rights/territory; physical phones;
 Safari/other engines; actual screen readers; normal-motion/zoom acceptance; production performance;

@@ -10,6 +10,7 @@ const browser=await chromium.launch({executablePath:chrome,headless:true});
 const requests=[], errors=[], cells=[];
 const hash=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
 const provider=host=>['youtube.com','youtube-nocookie.com','ytimg.com','googlevideo.com'].some(domain=>host===domain||host.endsWith('.'+domain));
+const fonts=host=>['fonts.googleapis.com','fonts.gstatic.com'].includes(host);
 for(const build of ['base','foundation']) {
  const context=await browser.newContext({deviceScaleFactor:1,reducedMotion:'reduce'});
  await context.addInitScript(()=>{
@@ -20,7 +21,7 @@ for(const build of ['base','foundation']) {
    const url=new URL(route.request().url());
    if(!['127.0.0.1','localhost'].includes(url.hostname)) {
      requests.push({build,url:url.href,mediaProvider:provider(url.hostname)});
-     if(provider(url.hostname)||!['fonts.googleapis.com','fonts.gstatic.com'].includes(url.hostname)) return route.abort();
+     if(provider(url.hostname)||!fonts(url.hostname)) return route.abort();
    }
    return route.continue();
  });
@@ -51,4 +52,5 @@ const result={browser:browser.version(),dateUtc:new Date().toISOString(),clockFi
 await fs.writeFile(`${root}/matrix.json`,JSON.stringify(result,null,2));
 console.log(JSON.stringify({browser:result.browser,cells:compared.length,identicalScreenshots:compared.filter(c=>c.identicalScreenshot).length,identicalText:compared.filter(c=>c.identicalText).length,mediaProviderRequests:requests.filter(r=>r.mediaProvider).length,externalRequests:requests.length,errors,mismatches:compared.filter(c=>!c.identicalScreenshot).map(c=>c.name)}));
 await browser.close();
-if(errors.length||requests.some(r=>r.mediaProvider)||compared.some(c=>!c.identicalScreenshot||!c.identicalText)) process.exitCode=1;
+// PNG drift is reported for recapture/visual inspection; text and network claims are gates.
+if(errors.length||requests.some(r=>r.mediaProvider||r.failed||!fonts(new URL(r.url).hostname))||compared.some(c=>!c.identicalText)) process.exitCode=1;
