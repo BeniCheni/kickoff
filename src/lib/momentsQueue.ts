@@ -7,6 +7,8 @@ export type ItemMedia = {
   completed: boolean
   attempt: number
   failure?: MediaFailure
+  /** Evidence may survive a retry's unknown outcome; keep its originating attempt. */
+  failureAttempt?: number
 }
 type OrderMode = 'editorial' | 'custom' | 'shuffle'
 type OrderSnapshot = { remainder: readonly string[]; mode: OrderMode; seed: string | null }
@@ -146,11 +148,12 @@ export function momentsQueueReducer(state: MomentsQueue, action: QueueAction): M
         // One terminal diagnosis per attempt. A timeout may gain known evidence, but
         // conflicting known failures require an explicit Retry, just like provider events.
         if (['blocked', 'timeout', 'failed'].includes(prior.status)
-          && !(prior.failure?.kind === 'unknown' && failure.kind !== 'unknown')) return state
+          && !((prior.failure?.kind === 'unknown' || prior.failureAttempt !== action.attempt)
+            && failure.kind !== 'unknown')) return state
         if (failure.kind === 'unknown' && prior.failure?.kind === 'owner-blocked') {
           return { ...state, media: { ...state.media, [action.id]: { ...prior, status: 'blocked' } } }
         }
-        return { ...state, media: { ...state.media, [action.id]: { ...prior, failure,
+        return { ...state, media: { ...state.media, [action.id]: { ...prior, failure, failureAttempt: action.attempt,
           status: failure.kind === 'owner-blocked' ? 'blocked' : failure.kind === 'unknown' ? 'timeout' : 'failed' } } }
       }
       // Terminal/error callbacks cannot revive an item; only a new explicit play can.
@@ -160,7 +163,7 @@ export function momentsQueueReducer(state: MomentsQueue, action: QueueAction): M
       const status = action.event === 'position' ? prior.status : action.event
       // Only actual playback/completion disproves an earlier block. A position sample or
       // pause acknowledgement during loading says nothing about whether playback succeeded.
-      const { failure: _disproved, ...live } = prior
+      const { failure: _disproved, failureAttempt: _origin, ...live } = prior
       const evidence = action.event === 'playing' || action.event === 'ended' ? live : prior
       return { ...state, media: { ...state.media, [action.id]: { ...evidence, position, status,
         completed: prior.completed || action.event === 'ended' } } }

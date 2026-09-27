@@ -256,3 +256,17 @@ it('a terminal attempt accepts only unknown-to-known failure upgrades; Retry may
     expect(unknown.media['1']!.status).toBe(failure.kind === 'owner-blocked' ? 'blocked' : 'failed')
   }
 })
+
+it('a retry timeout retaining an older block may still upgrade to its own known failure', () => {
+  let s = run(createMomentsQueue(ids), open('1'), { type: 'play' })
+  s = reduce(s, { type: 'failure', id: '1', attempt: s.media['1']!.attempt,
+    failure: { kind: 'owner-blocked', providerError: 150 } })
+  s = reduce(s, { type: 'play' })
+  const attempt = s.media['1']!.attempt
+  s = reduce(s, { type: 'failure', id: '1', attempt, failure: { kind: 'unknown' } })
+  expect(s.media['1']!.failure?.providerError).toBe(150)
+  s = reduce(s, { type: 'failure', id: '1', attempt, failure: { kind: 'unavailable', providerError: 100 } })
+  expect(s.media['1']!.status).toBe('failed')
+  expect(s.media['1']!.failure).toEqual({ kind: 'unavailable', providerError: 100 })
+  expect(reduce(s, { type: 'failure', id: '1', attempt, failure: { kind: 'owner-blocked', providerError: 150 } })).toBe(s)
+})
