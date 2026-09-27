@@ -193,6 +193,10 @@ active modal when applicable. A later successful full-set write persists the cur
 and clears the warning. Queue updates consume returned IDs but never recreate the queue. The
 reducer's `saved` holds that full set unfiltered, references to missing edition items included,
 so writing `state.saved` back never erases a bookmark; eligibility reads only the pool.
+There is no application-level count or byte cap. References can accumulate across editions
+until the user removes them or storage refuses a write; refusal retains the visit's intent.
+Deduplication prevents repeat full-set writes from growing the set. Any future limit needs an
+explicit retention/export policy, not silent pruning of missing-edition references.
 
 ## Acceptance map and remaining risks
 
