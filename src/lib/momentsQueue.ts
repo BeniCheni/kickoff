@@ -1,3 +1,5 @@
+import { momentReferences } from './momentsReferences'
+
 /** Pure visit state. No browser, storage, clock, random or provider side effects. */
 export type MediaStatus = 'ready' | 'loading' | 'playing' | 'paused' | 'ended' | 'blocked' | 'timeout' | 'failed'
 export type MediaFailure = { kind: 'owner-blocked' | 'unknown' | 'unavailable'; providerError?: number }
@@ -106,7 +108,7 @@ export function momentsQueueReducer(state: MomentsQueue, action: QueueAction): M
     case 'filter': return { ...state, pool: state.canonical.filter(id => action.ids.includes(id)), savedOnly: action.savedOnly }
     // Saved is the full reference set, edition members or not: a bookmark to an item missing
     // from this edition must survive the next full-set write. Eligibility reads only the pool.
-    case 'saved': return { ...state, saved: unique(action.ids) }
+    case 'saved': return { ...state, saved: momentReferences(action.ids) }
     case 'order': {
       const remainder = unique([...action.ids, ...state.canonical])
         .filter(id => state.canonical.includes(id) && !state.history.includes(id))
