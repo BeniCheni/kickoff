@@ -214,3 +214,24 @@ it('D-09: a block the visit already disproved cannot classify a later timeout as
   expect(s.media['1']!.status).toBe('timeout')
   expect(s.media['1']!.failure).toEqual({ kind: 'unknown' })
 })
+
+it.each(['paused', 'position'] as const)('D-09: %s on a loading retry is not evidence of playback', event => {
+  let s = run(createMomentsQueue(ids), open('1'), { type: 'play' })
+  s = reduce(s, { type: 'failure', id: '1', attempt: s.media['1']!.attempt,
+    failure: { kind: 'owner-blocked', providerError: 150 } })
+  s = provider(reduce(s, { type: 'play' }), event, 0)
+  s = reduce(s, { type: 'failure', id: '1', attempt: s.media['1']!.attempt, failure: { kind: 'unknown' } })
+  expect(s.media['1']!.status).toBe('blocked')
+  expect(s.media['1']!.failure).toEqual({ kind: 'owner-blocked', providerError: 150 })
+})
+
+it.each(['playing', 'ended'] as const)('D-09: genuine %s clears the visit block before a later retry', event => {
+  let s = run(createMomentsQueue(ids), open('1'), { type: 'play' })
+  s = reduce(s, { type: 'failure', id: '1', attempt: s.media['1']!.attempt,
+    failure: { kind: 'owner-blocked', providerError: 150 } })
+  s = provider(reduce(s, { type: 'play' }), event, 0)
+  expect(s.media['1']!.failure).toBeUndefined()
+  s = reduce(s, { type: 'play' })
+  s = reduce(s, { type: 'failure', id: '1', attempt: s.media['1']!.attempt, failure: { kind: 'unknown' } })
+  expect(s.media['1']!.status).toBe('timeout')
+})

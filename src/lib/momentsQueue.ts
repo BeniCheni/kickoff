@@ -154,11 +154,11 @@ export function momentsQueueReducer(state: MomentsQueue, action: QueueAction): M
       const position = action.position !== undefined && Number.isFinite(action.position) && action.position >= 0
         ? action.position : prior.position
       const status = action.event === 'position' ? prior.status : action.event
-      // The provider produced this event for this source and attempt, so any earlier failure is
-      // disproved for the visit; a later unknown must not resurrect it as a block. The authored
-      // availability log, not visit state, keeps history.
+      // Only actual playback/completion disproves an earlier block. A position sample or
+      // pause acknowledgement during loading says nothing about whether playback succeeded.
       const { failure: _disproved, ...live } = prior
-      return { ...state, media: { ...state.media, [action.id]: { ...live, position, status,
+      const evidence = action.event === 'playing' || action.event === 'ended' ? live : prior
+      return { ...state, media: { ...state.media, [action.id]: { ...evidence, position, status,
         completed: prior.completed || action.event === 'ended' } } }
     }
   }

@@ -160,9 +160,10 @@ that a live request survived. Explicit re-entry Play must issue a new attempt.
 The future adapter captures `(item ID, attempt)` and rejects stale callbacks at its boundary;
 the reducer also rejects wrong-item/generation/hidden-surface events. Error and terminal states
 cannot be revived by playing/position callbacks; an explicit new attempt is required. Unknown
-failure cannot overwrite that item's recorded owner block. Any provider event accepted for a new
-attempt clears the visit's failure record for that item: the visit has disproved the block, and a
-later unknown outcome reports a timeout, not a resurrected block. The authored availability log,
+failure cannot overwrite that item's recorded owner block. An accepted `playing` or `ended`
+event clears the visit's failure record for that item: actual playback disproves the block, and
+a later unknown outcome reports a timeout, not a resurrected block. A `paused` acknowledgement
+or `position` sample during loading does not prove playback and retains the record. The authored availability log,
 not visit state, keeps the historical evidence. Reducer provider actions are
 trusted adapter inputs, not a public user-controlled event bus; slice 3 must verify origin,
 instance, source and event semantics before dispatching completion.
