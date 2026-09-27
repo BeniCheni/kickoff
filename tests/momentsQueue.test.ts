@@ -235,3 +235,24 @@ it.each(['playing', 'ended'] as const)('D-09: genuine %s clears the visit block 
   s = reduce(s, { type: 'failure', id: '1', attempt: s.media['1']!.attempt, failure: { kind: 'unknown' } })
   expect(s.media['1']!.status).toBe('timeout')
 })
+
+it('a terminal attempt accepts only unknown-to-known failure upgrades; Retry may replace known evidence', () => {
+  const fail = (s: MomentsQueue, failure: { kind: 'owner-blocked' | 'unavailable' | 'unknown'; providerError?: number }) =>
+    reduce(s, { type: 'failure', id: '1', attempt: s.media['1']!.attempt, failure })
+  let s = run(createMomentsQueue(ids), open('1'), { type: 'play' })
+  s = fail(s, { kind: 'owner-blocked', providerError: 150 })
+  expect(fail(s, { kind: 'unavailable', providerError: 100 })).toBe(s)
+  expect(fail(s, { kind: 'unknown' })).toBe(s)
+  s = fail(reduce(s, { type: 'play' }), { kind: 'unavailable', providerError: 100 })
+  expect(s.media['1']!.status).toBe('failed')
+  expect(s.media['1']!.failure).toEqual({ kind: 'unavailable', providerError: 100 })
+  expect(fail(s, { kind: 'owner-blocked', providerError: 150 })).toBe(s)
+  expect(fail(s, { kind: 'unknown' })).toBe(s)
+  for (const failure of [{ kind: 'owner-blocked', providerError: 150 }, { kind: 'unavailable', providerError: 100 }] as const) {
+    let unknown = fail(reduce(s, { type: 'play' }), { kind: 'unknown' })
+    expect(unknown.media['1']!.status).toBe('timeout')
+    unknown = fail(unknown, failure)
+    expect(unknown.media['1']!.failure).toEqual(failure)
+    expect(unknown.media['1']!.status).toBe(failure.kind === 'owner-blocked' ? 'blocked' : 'failed')
+  }
+})

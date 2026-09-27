@@ -160,6 +160,8 @@ that a live request survived. Explicit re-entry Play must issue a new attempt.
 The future adapter captures `(item ID, attempt)` and rejects stale callbacks at its boundary;
 the reducer also rejects wrong-item/generation/hidden-surface events. Error and terminal states
 cannot be revived by playing/position callbacks; an explicit new attempt is required. Unknown
+terminal failures may upgrade to a known diagnosis on the same attempt; other terminal failure
+updates are ignored. A new explicit Retry may establish different known evidence. Unknown
 failure cannot overwrite that item's recorded owner block. An accepted `playing` or `ended`
 event clears the visit's failure record for that item: actual playback disproves the block, and
 a later unknown outcome reports a timeout, not a resurrected block. A `paused` acknowledgement

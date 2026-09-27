@@ -143,6 +143,10 @@ export function momentsQueueReducer(state: MomentsQueue, action: QueueAction): M
       if (prior.status === 'ready' || prior.status === 'ended') return state
       if (action.type === 'failure') {
         const failure = action.failure.providerError === 150 ? { ...action.failure, kind: 'owner-blocked' as const } : action.failure
+        // One terminal diagnosis per attempt. A timeout may gain known evidence, but
+        // conflicting known failures require an explicit Retry, just like provider events.
+        if (['blocked', 'timeout', 'failed'].includes(prior.status)
+          && !(prior.failure?.kind === 'unknown' && failure.kind !== 'unknown')) return state
         if (failure.kind === 'unknown' && prior.failure?.kind === 'owner-blocked') {
           return { ...state, media: { ...state.media, [action.id]: { ...prior, status: 'blocked' } } }
         }
