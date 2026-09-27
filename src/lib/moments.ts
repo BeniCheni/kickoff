@@ -87,7 +87,7 @@ export const momentSchema = z.object({
   fixtureId: z.string().min(1),
   title: z.string().trim().min(1),
   source: sourceSchema,
-  still: z.object({ url: webUrl, credit: z.string().trim().min(1) }).optional(),
+  still: z.object({ url: webUrl, credit: z.string().trim().min(1) }).strict().optional(),
   curatedAt: z.iso.datetime(),
   fixture: momentFixtureSchema,
   editorial: z.object({ note: text, neutralTitle: text.optional(), neutralNote: text.optional() }).strict().optional(),

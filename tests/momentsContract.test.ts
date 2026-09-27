@@ -63,3 +63,11 @@ it('D-09: historical observations stay with their source and unknown does not er
   expect(latestKnownAvailability([])).toBeUndefined()
   expect(() => momentSchema.parse({ ...moment, source: { ...moment.source, availability: [{ ...unknown, providerError: 150 }] } })).toThrow('owner block')
 })
+
+it('authored stills reject unknown keys; archived fixtures keep their sync projection contract', () => {
+  const still = { url: 'https://example.com/still.jpg', credit: 'Synthetic credit' }
+  expect(momentSchema.safeParse({ ...moment, still }).success).toBe(true)
+  expect(momentSchema.safeParse({ ...moment, still: { ...still, extra: true } }).success).toBe(false)
+  expect(momentSchema.parse({ ...moment, fixture: { ...moment.fixture, extra: true } }).fixture)
+    .not.toHaveProperty('extra')
+})

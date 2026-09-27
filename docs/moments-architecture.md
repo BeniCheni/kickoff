@@ -89,7 +89,16 @@ not seamless continuity. Actual seek success must be observed. Nothing in slice 
 
 Keep the existing array and existing required fields (`id`, category, fixtureId, title, source
 name/URL, curatedAt, fixture). Keep optional credited stills. `[]` remains valid and production
-curation stays empty. Existing link-only records require no rewrite.
+curation stays empty. Existing link-only records using only recognized authored keys require no
+rewrite. Root/source/still strictness is an intentional increase over the base's key stripping;
+records relying on ignored extra keys must remove or migrate them. Empty production curation
+proves there is no current record migration, not compatibility with every previously accepted input.
+
+Authored root, source metadata, still, editorial and collection objects reject unknown keys.
+The archived fixture deliberately remains a projection of the sync fixture schema (including
+its non-strict team objects). A complete sync fixture may be supplied: fields outside the
+archived shape are stripped. Making this pick strict would reject those valid full-fixture
+inputs; this exception does not change the sync schema or relax fixture cross-validation.
 
 - Editorial title/category/notes and the archived fixture snapshot are durable authored facts.
   `editorial` optionally adds note and neutral spoiler text. Missing neutral copy is not a
