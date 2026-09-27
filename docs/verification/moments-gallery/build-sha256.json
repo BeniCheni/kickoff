@@ -1,0 +1,17 @@
+{
+  "sourceCommit": "721fb3104b1070aa231bac66337d0fb2474c46da",
+  "files": {
+    "dist/favicon-192.png": "4308e7ecd71fc2b2f693631dd495d6ff3959705b08a0fd6e78c4226204ffacec",
+    "dist/index.html": "a1680c0aa0b45d10f31c0ebb85dc06ab6e9a70992f1248e8c83686f488bf0b3a",
+    "dist/favicon-64.png": "4372588d93f02f6dbae63197a59e7ae6f2fd92264241a5eb20fc568de8cd4239",
+    "dist/favicon-32.png": "7029b21dccbb0090b5905c82f8135f0eea68987602e512076b4b9e3c7186cd4c",
+    "dist/favicon-512.png": "832162dda57344b5bf62bb0070a07ff1a2907057ed4059f7097f07d369fb7008",
+    "dist/assets/index-DbyXD9l4.js": "c475f573c04eaabfa32f6af7f7ced3413eb14814e9c380a79eb313d86695bac1",
+    "dist/assets/index-nTiFYhx7.css": "01a528d27f013b62e117f9254f7bd96506bb16a54932e63bf3916561b2e9c603",
+    "dist-single/favicon-192.png": "4308e7ecd71fc2b2f693631dd495d6ff3959705b08a0fd6e78c4226204ffacec",
+    "dist-single/index.html": "062e2c2e607673eef685b6f07cd7f66b4c21c179fbe30c4a394868e7e815ebed",
+    "dist-single/favicon-64.png": "4372588d93f02f6dbae63197a59e7ae6f2fd92264241a5eb20fc568de8cd4239",
+    "dist-single/favicon-32.png": "7029b21dccbb0090b5905c82f8135f0eea68987602e512076b4b9e3c7186cd4c",
+    "dist-single/favicon-512.png": "832162dda57344b5bf62bb0070a07ff1a2907057ed4059f7097f07d369fb7008"
+  }
+}

@@ -1,0 +1,122 @@
+[
+  {
+    "name": "360-ledger-light-moments",
+    "captures": [
+      {
+        "build": "base",
+        "repeat": 1,
+        "path": "/tmp/moments-gallery-inert-final/recapture-base-360-ledger-light-moments-1.png",
+        "sha256": "b641e3b5a3abd3cc737d10719e89e28e7cfa80ca9fcf067ec5add8e8a5d2cee9"
+      },
+      {
+        "build": "base",
+        "repeat": 2,
+        "path": "/tmp/moments-gallery-inert-final/recapture-base-360-ledger-light-moments-2.png",
+        "sha256": "b641e3b5a3abd3cc737d10719e89e28e7cfa80ca9fcf067ec5add8e8a5d2cee9"
+      },
+      {
+        "build": "foundation",
+        "repeat": 1,
+        "path": "/tmp/moments-gallery-inert-final/recapture-foundation-360-ledger-light-moments-1.png",
+        "sha256": "b641e3b5a3abd3cc737d10719e89e28e7cfa80ca9fcf067ec5add8e8a5d2cee9"
+      },
+      {
+        "build": "foundation",
+        "repeat": 2,
+        "path": "/tmp/moments-gallery-inert-final/recapture-foundation-360-ledger-light-moments-2.png",
+        "sha256": "b641e3b5a3abd3cc737d10719e89e28e7cfa80ca9fcf067ec5add8e8a5d2cee9"
+      }
+    ],
+    "identical": true
+  },
+  {
+    "name": "360-poster-light-table",
+    "captures": [
+      {
+        "build": "base",
+        "repeat": 1,
+        "path": "/tmp/moments-gallery-inert-final/recapture-base-360-poster-light-table-1.png",
+        "sha256": "791d1c6cdd6b0df05a110f2bae03affa72aaebfc7187fe70f149b43b3b90a33f"
+      },
+      {
+        "build": "base",
+        "repeat": 2,
+        "path": "/tmp/moments-gallery-inert-final/recapture-base-360-poster-light-table-2.png",
+        "sha256": "791d1c6cdd6b0df05a110f2bae03affa72aaebfc7187fe70f149b43b3b90a33f"
+      },
+      {
+        "build": "foundation",
+        "repeat": 1,
+        "path": "/tmp/moments-gallery-inert-final/recapture-foundation-360-poster-light-table-1.png",
+        "sha256": "791d1c6cdd6b0df05a110f2bae03affa72aaebfc7187fe70f149b43b3b90a33f"
+      },
+      {
+        "build": "foundation",
+        "repeat": 2,
+        "path": "/tmp/moments-gallery-inert-final/recapture-foundation-360-poster-light-table-2.png",
+        "sha256": "791d1c6cdd6b0df05a110f2bae03affa72aaebfc7187fe70f149b43b3b90a33f"
+      }
+    ],
+    "identical": true
+  },
+  {
+    "name": "390-poster-light-table",
+    "captures": [
+      {
+        "build": "base",
+        "repeat": 1,
+        "path": "/tmp/moments-gallery-inert-final/recapture-base-390-poster-light-table-1.png",
+        "sha256": "9e19ca4ac2f2994df3b84e8dbb5859d7c9fc6131e849a90034812961baa5d205"
+      },
+      {
+        "build": "base",
+        "repeat": 2,
+        "path": "/tmp/moments-gallery-inert-final/recapture-base-390-poster-light-table-2.png",
+        "sha256": "9e19ca4ac2f2994df3b84e8dbb5859d7c9fc6131e849a90034812961baa5d205"
+      },
+      {
+        "build": "foundation",
+        "repeat": 1,
+        "path": "/tmp/moments-gallery-inert-final/recapture-foundation-390-poster-light-table-1.png",
+        "sha256": "9e19ca4ac2f2994df3b84e8dbb5859d7c9fc6131e849a90034812961baa5d205"
+      },
+      {
+        "build": "foundation",
+        "repeat": 2,
+        "path": "/tmp/moments-gallery-inert-final/recapture-foundation-390-poster-light-table-2.png",
+        "sha256": "9e19ca4ac2f2994df3b84e8dbb5859d7c9fc6131e849a90034812961baa5d205"
+      }
+    ],
+    "identical": true
+  },
+  {
+    "name": "390-broadcast-light-fixtures",
+    "captures": [
+      {
+        "build": "base",
+        "repeat": 1,
+        "path": "/tmp/moments-gallery-inert-final/recapture-base-390-broadcast-light-fixtures-1.png",
+        "sha256": "1595c44e1ff78bf3854da6db573f5ab2962e50d96b622d025901425e1dc3194c"
+      },
+      {
+        "build": "base",
+        "repeat": 2,
+        "path": "/tmp/moments-gallery-inert-final/recapture-base-390-broadcast-light-fixtures-2.png",
+        "sha256": "1595c44e1ff78bf3854da6db573f5ab2962e50d96b622d025901425e1dc3194c"
+      },
+      {
+        "build": "foundation",
+        "repeat": 1,
+        "path": "/tmp/moments-gallery-inert-final/recapture-foundation-390-broadcast-light-fixtures-1.png",
+        "sha256": "1e3309c51701d4283400cc63aeeb6f2c9cf221537c2f6d8837e6da344d5751a7"
+      },
+      {
+        "build": "foundation",
+        "repeat": 2,
+        "path": "/tmp/moments-gallery-inert-final/recapture-foundation-390-broadcast-light-fixtures-2.png",
+        "sha256": "1595c44e1ff78bf3854da6db573f5ab2962e50d96b622d025901425e1dc3194c"
+      }
+    ],
+    "identical": false
+  }
+]
