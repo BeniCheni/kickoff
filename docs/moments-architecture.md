@@ -226,3 +226,136 @@ performance and live release are not verified by this foundation.
 No design conflict requires a focused Beni ruling in slice 1. The stable-host approach is a
 routine implementation decision under the delegated authority, with its real continuity claim
 explicitly deferred to slice 3/4 acceptance.
+
+## Slice 2 implementation decisions (27 September 2026)
+
+This section extends the slice-1 plan above with the gallery landing. Beni keeps it a
+non-release foundation: production curation remains `[]`, the visible empty route stays
+identical, and there is no version bump, release section or tag. The independent cold-review
+seat remains Claude Code; these tests and receipts are builder acceptance evidence only.
+
+### Authority recovered without touching the main checkout
+
+The three design inputs were extracted read-only with `git archive` from local
+`wip/main-checkout-2026-09-27` (`e26e7e95902b800669fc153bce13725ecbcb2360`) to
+`/tmp/kickoff-moments-inputs.qxAdt8`. They were not copied into this worktree or committed.
+The extracted R3 package passed all 56 manifest entries and both hashes recorded above.
+Its `review.html`, decision brief and evidence index, the 25 September handoff, and the
+independent R3 cold review govern this work. The old main-checkout/untracked locations in
+slice 1 are historical. The archived slice-2 prompt was applied from `f47b888` as the first
+commit; this session's correction about input recovery supersedes its original paths.
+
+### Visit and recovery
+
+`MomentsSessionProvider` mounts once in App above the tab/lens-keyed route boundary. A lazy
+initializer reads saved references through `readSavedReferences` and creates an independent
+queue for that mounted visit. React may call that initializer twice in development StrictMode;
+there are no initializer writes, subscriptions or shared visit state. Separate app mounts are
+independent. The edition input is a visit snapshot; changing editions requires a new visit,
+not a filter/lens/tab remount.
+
+The owner also keeps filters, spoiler preference and action-local feedback. Tab departure
+from Moments dispatches `leave` once; a lens transition does not. A route failure notifies the
+owner with `leave` to invalidate future media attempts, preserving history, active ID and
+saved references. The existing ViewBoundary had no Retry, so an opt-in Retry button now resets
+only the Moments route boundary. Other tabs keep their existing recovery controls and copy.
+The separate owner boundary says the visit may be lost; Retry visit creates a new owner and
+re-reads disk without claiming it retained a visit it no longer holds.
+
+Save writes occur only in event handlers, outside React state updaters/effects, to avoid
+StrictMode replaying a storage write. The owner consumes all three returned fields: IDs update
+the reducer, persistence controls the visit-only label, and reason selects the adjacent feedback.
+A current-state ref keeps same-turn full-set writes from using a stale saved set. A failed unsave
+applies for this visit while warning that the stored reference may return. Selection clears old
+action feedback; a successful full write clears the refusal. Saved-only projects membership,
+while Save with that filter off preserves remainder order and Undo.
+
+Row 58 is resolved by `momentsReferences.ts`: one nonempty/already-trimmed string predicate
+feeds both boundaries. Invalid input returns its valid unique subset as visit-only with
+`invalid-data`, never touches storage, and never throws. The reducer uses that same subset.
+IDs are not trimmed into different identities. The dedicated commit's regression failed on
+main's throwing implementation and passed afterward; row 58 records the resolution in place.
+
+### Edition input, covers and unshipped harness
+
+App's `momentsEdition` defaults to the validated production MOMENTS array. Tests and
+`tests/harness/moments.html` inject isolated inputs from `tests/fixtures/moments/gallery.ts`.
+The source order of that supplied edition is the canonical editorial order. An edition curator
+selecting an explicit collection must supply its members in authored collection order; this
+slice does not guess a collection from multiple memberships or invent an initial edition.
+
+The gallery's input union admits explicitly labelled, unlinked queue examples without a fixture,
+competition, category, source, or authored cover. Their chronology is illustrative test data;
+production always comes from the strict Moment contract. The six examples therefore cannot
+borrow real competition identities or VOICES/SEVEN/TOGETHER families. Historical R3 archival
+examples stay in the fixture module. Their date-only clock placeholders are `tbd`, not verified
+kickoff instants, and never enter Newest's confirmed-fixture ordering. Historical provider
+observations remain historical, without permission or present-availability claims.
+
+A small authored-contract extension, `editorial.cover`, explicitly chooses `voices`, `seven`
+or `together`; a missing choice uses neutral MOMENTS art. This avoids guessing a revealing
+SEVEN cover from a highlights category or shipping an ID-to-sample lookup. Original SVG
+geometry and HTML typography use existing app tokens and loaded Oswald 500/600/700 only.
+No font, thumbnail or still is fetched by the gallery. The optional authored still remains a
+valid record field but this slice renders original covers instead of remotely loading it.
+
+The harness is a separate Vite dev HTML entry. Neither the production `src/main.tsx` import
+graph nor either build configuration imports it; both build commands use only root index.html.
+The harness entry, fixture strings, all three archival source IDs and the storage/error switches
+must be absent from both build outputs. The receipt includes the grep and file inventory proof.
+Harness files are typechecked in the existing DOM TypeScript project, excluded from the node
+project. There is no new dependency or production URL parameter. Harness-only query parameters
+belong to its separate HTML page; the app's tab/lens/only/date codecs are unchanged.
+
+### Inert path and selected anchor
+
+With an empty edition the provider renders no DOM and MomentsPage returns exactly the prior
+banner and sentence. No gallery class, controls, statuses or media elements exist on that path.
+The existing 9.5px banner is preserved by the explicit inert ruling; the new gallery content
+has a 10px minimum, including its original-art disclosure. The shared 780px shell never changes
+between tabs. Only `.moments-gallery` outdents: a maximum 1120px content area plus the existing
+20px page gutters gives the scoped 1160px gallery. Ledger is the base, with Tailwind `poster:`
+and `broadcast:` variants layered on top; no Ledger override cascade or new token was added.
+
+Opening a card updates active ID and first-open history, then shows a selected reference view.
+It focuses the selected heading in flow. That view's `data-moments-stage-anchor` is a true 16:9
+box containing only original cover art and its honesty label. The source link is its primary
+action, opens a new tab, and sets no completion flag. There is no media element, simulated
+player, Play action, progress, Cinema, adapter or media request. Queue Previous/Next and their
+names use `queueNeighbours`; disabled buttons name no destination. Slice 3 can measure this
+anchor while keeping its one persistent player host outside the keyed boundary.
+
+Beni's D-16 remedy (a) is encoded now: the stage and queue stack through 887px; at 888px they
+become two columns. At that threshold, the content width is 848px minus a 300px list and 28px
+gutter, leaving a 520 × 292.5 anchor; wherever side by side, it is at least 480 × 270. No
+minimum-height workaround defeats the aspect ratio. A short, single-line Selected moment
+label replaces the prototype's wrapping stage-top pill.
+
+The lead primary label is Open selection. Save reference keeps its visible and accessible
+name stable, with state in `aria-pressed` and separate saved/visit-only text. Feedback occupies
+its own reserved row under both actions and writes to only the affected live region. Selection
+names are not followed by generated terminal punctuation. Filter/no-results text explicitly
+accounts for no active item versus a retained item outside the filter. Spoiler-light neutralizes
+category labels as well as titles, scope, notes, evidence and cover motifs; fixture/date/source
+identity stays visible and the disclosure identifies external-page limits.
+
+### Verification and later ownership
+
+`docs/verification/moments-gallery/` records the two receipts and exact tested source/build
+identities. UI tests extend `tests/dom/rig.ts` and cover the owner above a real App boundary,
+StrictMode writes, two mounts, route Retry, queue interactions, refused read/write/unsave,
+spoiler-light, identical text across lenses and the inert DOM. The browser receipt supplies
+layout, hit-testing, real keyboard events and geometry; jsdom does not prove those.
+
+Two populated link-only UI tests changed, by name:
+`renders only populated categories in their fixed order and uses the curation stamp` now
+asserts authored gallery order, category filtering and selected curation attribution;
+`keeps the credited still in its frame and the solid link outside, with no playback` now
+asserts labelled original art, no remote image and unchanged source-link/clock semantics.
+The original empty-state, missing-zone, unknown-clock, URL, and pure data-honesty assertions
+are unchanged. The old saved-reference throw assertion alone changes for row 58's explicit
+returned refusal.
+
+H-C (Cinema history/back behavior), H-G (duplicate playback recovery controls), D-06/D-15
+(real player geometry/focus), D-09/D-14 provider journeys and in-modal live regions remain
+slice 3/4 work. There is no provider validation or first-edition proposal in this landing.

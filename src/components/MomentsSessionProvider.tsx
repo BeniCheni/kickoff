@@ -1,0 +1,91 @@
+import { Component, createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
+import { MOMENTS } from '../lib/moments'
+import { ALL_MOMENTS, matchesMoment, newestMoments, type GalleryFilters, type GalleryMoment } from '../lib/momentsGallery'
+import { createMomentsQueue, momentsQueueReducer, type MomentsQueue, type QueueAction } from '../lib/momentsQueue'
+import { readSavedReferences, writeSavedReferences, type SavedReferences, type StorageAccess } from '../lib/momentsSaved'
+import type { Tab } from './TabNav'
+
+type Notice = { target: string; text: string } | null
+type Visit = {
+  edition: readonly GalleryMoment[]
+  queue: MomentsQueue
+  saved: SavedReferences
+  filters: GalleryFilters
+  spoiler: boolean
+  notice: Notice
+}
+type Session = Visit & {
+  dispatch: (action: QueueAction) => void
+  setFilters: (filters: GalleryFilters) => void
+  setSpoiler: (spoiler: boolean) => void
+  setOrder: (order: string) => void
+  toggleSave: (id: string, target: string) => void
+}
+const Context = createContext<Session | null>(null)
+export const useMomentsSession = () => useContext(Context)
+
+/** No key, global singleton, effect-driven writes or remount-based visit lifecycle. */
+export function MomentsSessionProvider({ children, edition = MOMENTS, tab = 'moments', storage }: {
+  children: ReactNode
+  edition?: readonly GalleryMoment[]
+  tab?: Tab
+  storage?: StorageAccess
+}) {
+  const [visit, setVisit] = useState<Visit>(() => {
+    const saved = readSavedReferences(storage)
+    return { edition, saved, filters: ALL_MOMENTS, spoiler: false, notice: saved.reason ? { target: 'initial-read', text: '' } : null,
+      queue: momentsQueueReducer(createMomentsQueue(edition.map(m => m.id)), { type: 'saved', ids: saved.ids }) }
+  })
+  // The event handler writes once, outside a React updater (StrictMode may replay updaters).
+  // This ref also makes two same-turn controls consume the latest full saved set.
+  const current = useRef(visit)
+  const update = (next: Visit) => { current.current = next; setVisit(next) }
+  const dispatch = (action: QueueAction) => {
+    const prior = current.current
+    const queue = momentsQueueReducer(prior.queue, action)
+    const selectionChanged = queue.active !== prior.queue.active
+    update({ ...prior, queue, notice: selectionChanged ? null : prior.notice })
+  }
+  const previousTab = useRef(tab)
+  useEffect(() => {
+    if (previousTab.current === 'moments' && tab !== 'moments') {
+      const prior = current.current
+      update({ ...prior, queue: momentsQueueReducer(prior.queue, { type: 'leave' }), notice: null })
+    }
+    previousTab.current = tab
+  }, [tab])
+  const setFilters = (filters: GalleryFilters) => {
+    const prior = current.current
+    const ids = prior.edition.filter(m => matchesMoment(m, filters)).map(m => m.id)
+    update({ ...prior, filters, notice: null,
+      queue: momentsQueueReducer(prior.queue, { type: 'filter', ids, savedOnly: filters.savedOnly }) })
+  }
+  const setOrder = (order: string) => dispatch(order === 'newest'
+    ? { type: 'order', ids: newestMoments(current.current.edition) } : { type: 'restore' })
+  const toggleSave = (id: string, target: string) => {
+    const prior = current.current
+    const wasSaved = prior.queue.saved.includes(id)
+    const ids = wasSaved ? prior.queue.saved.filter(value => value !== id) : [...prior.queue.saved, id]
+    const saved = writeSavedReferences(ids, storage)
+    const text = saved.persistence === 'local' ? (wasSaved ? 'Reference removed from this browser.' : 'Reference saved in this browser.')
+      : saved.reason === 'invalid-data' ? 'Invalid reference refused. Changes are visit-only; stored references were not changed.'
+      : wasSaved ? 'Removed for this visit only. The stored reference may return next visit.'
+      : 'Saved for this visit only. Browser storage refused the update.'
+    update({ ...prior, saved, queue: momentsQueueReducer(prior.queue, { type: 'saved', ids: saved.ids }), notice: { target, text } })
+  }
+  return <Context.Provider value={{ ...visit, dispatch, setFilters, setOrder, toggleSave,
+    setSpoiler: spoiler => update({ ...current.current, spoiler, notice: null }) }}>{children}</Context.Provider>
+}
+
+/** Owner failures are outside route recovery. Never promise retention after owner loss. */
+export class MomentsSessionBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false }
+  static getDerivedStateFromError() { return { failed: true } }
+  render() {
+    return this.state.failed ? <div role="alert" className="mx-auto max-w-[780px] p-5">
+      <p className="font-display text-[22px]">This visit couldn’t be restored.</p>
+      <p className="my-3 text-[13px]">Your Moments visit may be lost. Browser-saved references will be read again when you retry.</p>
+      <button className="rounded border border-ink px-3 py-2" onClick={() => this.setState({ failed: false })}>Retry visit</button>
+    </div> : this.props.children
+  }
+}

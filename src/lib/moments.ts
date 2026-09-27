@@ -90,7 +90,7 @@ export const momentSchema = z.object({
   still: z.object({ url: webUrl, credit: z.string().trim().min(1) }).strict().optional(),
   curatedAt: z.iso.datetime(),
   fixture: momentFixtureSchema,
-  editorial: z.object({ note: text, neutralTitle: text.optional(), neutralNote: text.optional() }).strict().optional(),
+  editorial: z.object({ note: text, neutralTitle: text.optional(), neutralNote: text.optional(), cover: z.enum(['voices', 'seven', 'together']).optional() }).strict().optional(),
   collections: z.array(z.object({ id: text, order: z.number().int().nonnegative() }).strict()).optional(),
 }).strict()
 export const momentsSchema = z.array(momentSchema).superRefine((moments, ctx) => {

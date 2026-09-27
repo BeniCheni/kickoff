@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useNow } from './lib/useNow'
 import { META, SYNC_STAMP } from './lib/fixtures'
 import { useUrlState } from './lib/useUrlState'
@@ -12,9 +12,24 @@ import { MomentsPage } from './components/MomentsPage'
 import { TablePage } from './components/TablePage'
 import { StalenessBanner } from './components/StalenessBanner'
 import { TickerStrip } from './components/TickerStrip'
+import { MOMENTS } from './lib/moments'
+import type { GalleryMoment } from './lib/momentsGallery'
+import type { StorageAccess } from './lib/momentsSaved'
+import { MomentsSessionBoundary, MomentsSessionProvider, useMomentsSession } from './components/MomentsSessionProvider'
 import { ViewBoundary } from './components/ViewBoundary'
 
-export default function App() {
+// A route-level seam allows the isolated harness to exercise the real shell and boundary.
+function MomentsRouteBoundary({ boundaryKey, children }: { boundaryKey: string; children: ReactNode }) {
+  const session = useMomentsSession()!
+  return <ViewBoundary key={boundaryKey} onFailure={() => session.dispatch({ type: 'leave' })}
+    allowRetry>{children}</ViewBoundary>
+}
+
+export default function App({ momentsEdition = MOMENTS, momentsStorage, momentsRoute }: {
+  momentsEdition?: readonly GalleryMoment[]
+  momentsStorage?: StorageAccess
+  momentsRoute?: ReactNode
+} = {}) {
   const { today } = useNow()
   const [theme, setTheme] = useState<Theme>(() =>
     document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light',
@@ -98,6 +113,8 @@ export default function App() {
   }
 
   return (
+    <MomentsSessionBoundary>
+    <MomentsSessionProvider edition={momentsEdition} tab={tab} storage={momentsStorage}>
     <div className="mx-auto max-w-[780px] px-5 pt-7 pb-16">
       <header className="mb-4 flex items-start justify-between pb-1">
         <div className="leading-none">
@@ -119,13 +136,17 @@ export default function App() {
         <LensSwitcher lens={lens} onSelect={setLens} />
       </TabNav>
 
-      <ViewBoundary key={`${tab}:${lens}`}>
+      {tab === 'moments' ? <MomentsRouteBoundary boundaryKey={`${tab}:${lens}`}>
+        {momentsRoute ?? <MomentsPage />}
+      </MomentsRouteBoundary> : <ViewBoundary key={`${tab}:${lens}`}>
         {lens === 'broadcast' && tab === 'fixtures' && <TickerStrip />}
 
-        {tab !== 'moments' && <StalenessBanner />}
+        <StalenessBanner />
 
-        {tab === 'moments' ? <MomentsPage /> : tab === 'table' ? <TablePage /> : <FixturesPage today={today} lens={lens} />}
-      </ViewBoundary>
+        {tab === 'table' ? <TablePage /> : <FixturesPage today={today} lens={lens} />}
+      </ViewBoundary>}
     </div>
+    </MomentsSessionProvider>
+    </MomentsSessionBoundary>
   )
 }

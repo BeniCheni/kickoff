@@ -126,3 +126,22 @@ export function popTo(url: string): void {
   window.history.replaceState(null, '', url)
   window.dispatchEvent(new PopStateEvent('popstate'))
 }
+
+/** Scroll/focus affordance used by the selected Moments heading. Layout stays browser QA. */
+export function installSelectionScroll() {
+  Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', { configurable: true, value: vi.fn() })
+}
+
+/** Read/write refusal independently, preserving a real serialized disk copy across attempts. */
+export function referenceStorageRig(initial: string | null = null) {
+  let raw = initial
+  let readRefused = false
+  let writeRefused = false
+  const storage = {
+    getItem: vi.fn(() => { if (readRefused) throw new Error('read refused'); return raw }),
+    setItem: vi.fn((_key: string, value: string) => { if (writeRefused) throw new Error('write refused'); raw = value }),
+  }
+  return { access: () => storage, storage, disk: () => raw,
+    refuseRead: (value: boolean) => { readRefused = value },
+    refuseWrite: (value: boolean) => { writeRefused = value } }
+}
