@@ -8,6 +8,12 @@ releases.
 
 ## [Unreleased]
 
+### Fixed
+
+- Moments still metadata now rejects unknown fields instead of silently discarding them.
+  This validation change reaches the app bundle; production curation remains empty and no
+  player or new Moments interface is enabled.
+
 ## [0.5.2] — 2026-09-17
 
 Hotfix to the hotfix: v0.5.1 kept sync alive after ESPN's date-range API broke, but its
