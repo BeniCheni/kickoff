@@ -202,3 +202,15 @@ it('late failure cannot replace completion or create a failed attempt before pla
   s = provider(reduce(s, { type: 'play' }), 'ended', 15)
   expect(failure(s)).toBe(s)
 })
+
+it('D-09: a block the visit already disproved cannot classify a later timeout as blocked', () => {
+  let s = run(createMomentsQueue(ids), open('1'), { type: 'play' })
+  s = reduce(s, { type: 'failure', id: '1', attempt: s.media['1']!.attempt, failure: { kind: 'owner-blocked', providerError: 150 } })
+  expect(s.media['1']!.status).toBe('blocked')
+  s = provider(reduce(s, { type: 'play' }), 'playing', 0) // Retry genuinely played this source.
+  expect(s.media['1']!.status).toBe('playing')
+  s = reduce(s, { type: 'play' })
+  s = reduce(s, { type: 'failure', id: '1', attempt: s.media['1']!.attempt, failure: { kind: 'unknown' } })
+  expect(s.media['1']!.status).toBe('timeout')
+  expect(s.media['1']!.failure).toEqual({ kind: 'unknown' })
+})

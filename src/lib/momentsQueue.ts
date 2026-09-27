@@ -152,7 +152,11 @@ export function momentsQueueReducer(state: MomentsQueue, action: QueueAction): M
       const position = action.position !== undefined && Number.isFinite(action.position) && action.position >= 0
         ? action.position : prior.position
       const status = action.event === 'position' ? prior.status : action.event
-      return { ...state, media: { ...state.media, [action.id]: { ...prior, position, status,
+      // The provider produced this event for this source and attempt, so any earlier failure is
+      // disproved for the visit; a later unknown must not resurrect it as a block. The authored
+      // availability log, not visit state, keeps history.
+      const { failure: _disproved, ...live } = prior
+      return { ...state, media: { ...state.media, [action.id]: { ...live, position, status,
         completed: prior.completed || action.event === 'ended' } } }
     }
   }
