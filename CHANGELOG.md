@@ -8,6 +8,10 @@ releases.
 
 ## [Unreleased]
 
+### Added
+
+- A browser matrix (`npm run matrix`) drives the Mac's installed Chrome over the DevTools Protocol, with no new packages, and checks every lens, theme and tab at the review widths — including whether a player stays inside its column and whether a covered control can still be hit.
+
 ## [0.5.2] — 2026-09-17
 
 Hotfix to the hotfix: v0.5.1 kept sync alive after ESPN's date-range API broke, but its
