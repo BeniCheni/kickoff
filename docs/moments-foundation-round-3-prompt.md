@@ -34,7 +34,7 @@ HARD LIMITS
 
 STOP CONDITIONS
 
-Halt, change nothing further, and report the exact state if any of these happens: a step 1 precondition fails; a command in steps 2 to 4 fails; verify is red or its run belongs to a different SHA; a commit, comment or review appears on #113 that this prompt does not predict; the merge is refused or conflicts; the bundle proof in step 4 does not match; a v0.5.3 tag already exists anywhere; the Pages deploy fails. On a stop, do not retry the write, work around it or repair it.
+Halt, change nothing further, and report the exact state if any of these happens: a step 1 precondition fails; a command in steps 0 to 4 fails; verify is red or its run belongs to a different SHA; a commit, comment or review appears on #113 that this prompt does not predict; the merge is refused or conflicts; the bundle proof in step 4 does not match; a v0.5.3 tag already exists anywhere; the Pages deploy fails. On a stop, do not retry the write, work around it or repair it.
 
 STEP 0 — WORKSPACE
 
@@ -50,7 +50,7 @@ Open /Users/benicheni/Documents/Claude/Projects/Kickoff-round3-pr113 as the work
 STEP 1 — PRECONDITIONS (all must hold)
 
 - `gh pr view 113 --json state,isDraft,headRefOid,mergeable,mergeStateStatus` reads OPEN, not draft, MERGEABLE, CLEAN, and headRefOid equals `git rev-parse HEAD`.
-- The head is the Claude commit that archived this prompt: `git rev-parse HEAD^` is 1e2101abd4293a9c0c5afd7d5e35791c206087d3, `git diff --name-only HEAD^ HEAD` lists exactly docs/README.md and docs/moments-foundation-round-3-prompt.md, and `git log --oneline origin/main..HEAD` lists 14 commits, the last line 4a71331.
+- The head is the Claude commit that archived the final text of this prompt: `git rev-parse HEAD^` is fae5ebf0df9fd8dec7115b7982ee9bb363655589 (the first archive, which also indexed the Moments docs), `git diff --name-only HEAD^ HEAD` lists exactly docs/moments-foundation-round-3-prompt.md, `git rev-parse HEAD~2` is 1e2101abd4293a9c0c5afd7d5e35791c206087d3, and `git log --oneline origin/main..HEAD` lists 15 commits, the last line 4a71331.
 - `gh api repos/BeniCheni/kickoff/issues/113/comments --jq '.[].id'` lists exactly 5852382063, 5852508554 and 5852656329, and `gh api repos/BeniCheni/kickoff/pulls/113/reviews --jq length` is 0.
 - `gh run list --workflow=ci.yml --branch codex/moments-foundation --limit 1 --json headSha,conclusion` shows your HEAD and success.
 - `node -p "require('./package.json').version"` is 0.5.2. `git tag -l 'v0.5.*'` lists v0.5.0, v0.5.1 and v0.5.2 only. `git ls-remote --tags origin 'v0.5.3*'` prints nothing.
@@ -121,7 +121,7 @@ Cursor.
 - **v0.5.3** *(LINEAGE_DATE)* — groundwork for Moments: the record, visit queue and saved list the gallery and player will stand on; the Moments tab still opens empty and nothing new appears on screen.
 ```
 
-- Check before committing: `git diff --stat` lists exactly CHANGELOG.md, README.md, package.json and package-lock.json; `git diff package-lock.json` changes exactly two "version" lines; `grep -c '0\.5\.3'` gives package.json 1, package-lock.json 2, README.md 3 and CHANGELOG.md 1; `grep -n 'RELEASE_DATE\|LINEAGE_DATE' CHANGELOG.md README.md` prints nothing.
+- Check before committing: `git diff --stat` lists exactly CHANGELOG.md, README.md, package.json and package-lock.json; `git diff package-lock.json` changes exactly two "version" lines (two removed, two added, nothing else); `grep -c '0\.5\.3'` gives package.json 1, package-lock.json 2, README.md 3 and CHANGELOG.md 1; `grep -n 'RELEASE_DATE\|LINEAGE_DATE' CHANGELOG.md README.md` prints nothing.
 - Commit under the identity Cursor already uses in this repo:
 
 ```bash
@@ -142,7 +142,7 @@ shasum -a 256 ~/kickoff-round3-pr113/head.js
 
 The count is at least 1 and the two hashes are identical. That proves the release bundle is the Pass 2.5-verified bundle with only the version literal changed, which is why the 72-cell comparison carries over and a nine-read smoke pass is enough here. Different hashes: stop.
 
-Smoke pass on the release build, because the header text changed. Serve it with `npx vite preview --host 127.0.0.1 --port 4317 --strictPort` (without `--host` it binds only [::1] on this Mac). Write this script to ~/kickoff-round3-pr113/smoke.mjs. It uses the Playwright runtime and Chrome already on the Mac, installs nothing, and sets each viewport before the page loads:
+Smoke pass on the release build, because the header text changed. Serve it in a background terminal with `npx vite preview --host 127.0.0.1 --port 4317 --strictPort` (without `--host` it binds only [::1] on this Mac). Write this script to ~/kickoff-round3-pr113/smoke.mjs. It uses the Playwright runtime and Chrome already on the Mac, installs nothing, and sets each viewport before the page loads:
 
 ```js
 const base = process.argv[2]
@@ -171,7 +171,7 @@ gh pr checks 113 --watch
 gh run list --workflow=ci.yml --branch codex/moments-foundation --limit 1 --json databaseId,headSha,conclusion
 ```
 
-headSha must equal `git rev-parse HEAD` and conclusion must be success. The main ruleset does not require the branch to be up to date, so sync commits on main need no update-branch. If GitHub reports the PR as BEHIND or BLOCKED anyway, stop.
+If `gh pr checks` answers that no checks are reported, the run has not registered yet: wait twenty seconds and run it again. headSha must equal `git rev-parse HEAD` and conclusion must be success. The main ruleset does not require the branch to be up to date, so sync commits on main need no update-branch. If GitHub reports the PR as BEHIND or BLOCKED anyway, stop.
 
 STEP 6 — MERGE
 
@@ -202,7 +202,7 @@ gh pr merge 113 --squash --match-head-commit "$(git rev-parse HEAD)" --subject "
 gh pr view 113 --json state,mergedAt,mergeCommit
 ```
 
-State must be MERGED. SQUASH is mergeCommit.oid.
+State must be MERGED. Then set `SQUASH=$(gh pr view 113 --json mergeCommit --jq .mergeCommit.oid)`.
 
 STEP 7 — TAG
 
