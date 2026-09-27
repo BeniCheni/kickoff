@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="data:," />
+    <title>D-06 good — player stays in its column</title>
+    <style>
+      html, body { margin: 0; padding: 0; }
+      *, *::before, *::after { box-sizing: border-box; }
+      .board {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 240px;
+        width: 100%;
+        align-items: start;
+      }
+      .column { min-width: 0; background: #d5dbe3; }
+      /*
+        Same min-height and aspect-ratio as the bad page. The width is the column,
+        so the ratio resolves height instead of pushing the box over the queue.
+      */
+      .player {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        min-height: 54vw;
+        aspect-ratio: 16 / 9;
+        height: auto;
+        background: #1f6b4a;
+      }
+      .queue {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 8px;
+        background: #e7f2ea;
+      }
+      .cue { height: 48px; width: 100%; font: 14px sans-serif; }
+    </style>
+  </head>
+  <body>
+    <div class="board">
+      <div class="column" id="column"><div class="player" id="player"></div></div>
+      <div class="queue" id="queue">
+        <button class="cue" type="button">Queue 1</button>
+        <button class="cue" type="button">Queue 2</button>
+        <button class="cue" type="button">Queue 3</button>
+        <button class="cue" type="button">Queue 4</button>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="data:," />
+    <title>D-06 bad — player overruns its column</title>
+    <style>
+      html, body { margin: 0; padding: 0; }
+      *, *::before, *::after { box-sizing: border-box; }
+      /* The board stays inside the viewport. The player does not widen the page. */
+      .board {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 240px;
+        width: 100%;
+        align-items: start;
+      }
+      .column {
+        position: relative;
+        min-width: 0;
+        min-height: 54vw;
+        background: #d5dbe3;
+      }
+      /*
+        min-height is the size the player is built to hold. A definite block size
+        of that same length lets aspect-ratio 16/9 resolve the width (about 96% of
+        the viewport). That is wider than the column at 768 and at 1000, and still
+        short of the viewport, so document scrollWidth stays equal to innerWidth
+        while the player covers the queue. Absolute positioning keeps the overrun
+        from stretching the grid track. z-index puts the player above the buttons.
+      */
+      .player {
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 2;
+        min-height: 54vw;
+        height: 54vw;
+        aspect-ratio: 16 / 9;
+        width: calc(54vw * 16 / 9);
+        background: #9b1c1c;
+      }
+      .queue {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 8px;
+        background: #e7f2ea;
+      }
+      .cue { height: 48px; width: 100%; font: 14px sans-serif; }
+    </style>
+  </head>
+  <body>
+    <div class="board">
+      <div class="column" id="column"><div class="player" id="player"></div></div>
+      <div class="queue" id="queue">
+        <button class="cue" type="button">Queue 1</button>
+        <button class="cue" type="button">Queue 2</button>
+        <button class="cue" type="button">Queue 3</button>
+        <button class="cue" type="button">Queue 4</button>
+      </div>
+    </div>
+  </body>
+</html>
