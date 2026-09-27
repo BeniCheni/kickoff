@@ -102,7 +102,9 @@ export function momentsQueueReducer(state: MomentsQueue, action: QueueAction): M
       return id === null ? state : open(state, id)
     }
     case 'filter': return { ...state, pool: state.canonical.filter(id => action.ids.includes(id)), savedOnly: action.savedOnly }
-    case 'saved': return { ...state, saved: unique(action.ids).filter(id => state.canonical.includes(id)) }
+    // Saved is the full reference set, edition members or not: a bookmark to an item missing
+    // from this edition must survive the next full-set write. Eligibility reads only the pool.
+    case 'saved': return { ...state, saved: unique(action.ids) }
     case 'order': {
       const remainder = unique([...action.ids, ...state.canonical])
         .filter(id => state.canonical.includes(id) && !state.history.includes(id))

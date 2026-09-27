@@ -177,7 +177,9 @@ invalid saved payloads return reportable visit-only state. A refused write still
 requested full set for the visit, including unsave, and returns `write-refused`; the old disk
 copy may reappear next visit. Future UI must say this next to the affected action, inside the
 active modal when applicable. A later successful full-set write persists the current intent
-and clears the warning. Queue updates consume returned IDs but never recreate the queue.
+and clears the warning. Queue updates consume returned IDs but never recreate the queue. The
+reducer's `saved` holds that full set unfiltered, references to missing edition items included,
+so writing `state.saved` back never erases a bookmark; eligibility reads only the pool.
 
 ## Acceptance map and remaining risks
 
