@@ -1,5 +1,9 @@
 # Moments slice 2 — builder verification receipt
 
+The original slice-2 receipt below is preserved at its historical revisions. See
+[PR #118 Pass 2 evidence](pass2.md) for the later rebuttal, exact-main DOM probes and
+measured classic-scrollbar check; the Pass 2 PR comment records its final head and CI run.
+
 This is implementation evidence for the independent Pass 1 review, not approval or release proof.
 Production curation remains `[]`; the live-site reader would see the existing floodlight banner
 and “No moments curated yet.” after this foundation lands. The isolated development harness

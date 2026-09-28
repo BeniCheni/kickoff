@@ -14,6 +14,9 @@ releases.
   permissions, collection order and editorial cover choices, and rejects unknown authored
   fields while preserving the archived fixture projection. Production curation remains
   empty; the interface readers see is unchanged.
+- Confined the inactive Moments visit owner's failure fallback to the Moments route,
+  preserving shared navigation and other tabs if that owner fails. This records latent
+  error isolation for future curation; the empty production edition gains no visible feature.
 
 ## [0.5.2] — 2026-09-17
 

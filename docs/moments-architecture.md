@@ -37,8 +37,10 @@ not its own review or approval. No merge, version, tag or deployment belongs to 
 
 ## Decision 1: visit ownership outside the keyed boundary
 
-Mount a future `MomentsSessionProvider` once inside `App`, above both the existing
-`ViewBoundary key={tab + ':' + lens}` and the future player host. Use its reducer for queue,
+Mount `MomentsSessionProvider` once inside `App`, above both the Moments route's
+`ViewBoundary key={tab + ':' + lens}` and the future player host. Fixtures and Table retain
+their own keyed boundary outside the owner; the shared header and navigation are outside it
+too. Use its reducer for queue,
 first-open history, active item, positions, completion and view state. It must not be keyed by
 lens, tab or selection, and must not be conditionally mounted with Moments. This avoids the
 current `App.tsx` remount discarding the visit on each lens/tab switch.
@@ -71,6 +73,24 @@ the application becomes inert. Focus containment must account for a cross-origin
 controls and provider attribution stay unobscured. Stage-anchor movement/resize and scroll
 need geometry tests, especially D-06/D-15. At gallery-only or a different app tab, hide the host
 and pause; preserve its DOM instance when safe. This plan is not proof of iframe continuity.
+
+**Slice-2 placement clarification (PR #118 Pass 2).** The owner now sits inside the shared
+780px shell, after navigation. Slice 3 mounts its unkeyed player error boundary and
+`MomentsPlayerHost` there, under the owner as a sibling of `MomentsRouteBoundary`, outside
+the `tab === 'moments'` condition. The host's stable DOM subtree contains both the one iframe
+and Cinema controls; it becomes the accessible dialog while Cinema is open. Neither tab/lens
+changes nor Cinema entry/exit may key, reparent or replace that host. A host recovery may
+recreate the player, as described below.
+
+With that nesting, "the rest of the application" means the shared header/navigation, the
+ordinary Moments route content, and any other active route content. Apply `inert` to those
+background subtrees, **never to the 780px shell, `#root`, `body`, or any ancestor of the
+dialog**: an inert ancestor would disable the player and Cinema controls as well. The
+slice-3 coordinator must restore background interactivity on close, tab departure and
+owner/player failure or unmount, and restore focus to a surviving appropriate control.
+The gallery anchor may remain inside an inert background subtree while the fixed host
+occupies Cinema. This specifies a buildable placement and cleanup contract, not implemented
+Cinema, focus containment or provider continuity; slice 3 must verify each in the browser.
 
 Cache the last **finite, nonnegative provider-reported position for the owning item and
 attempt**, including zero. Do not estimate from wall time, elapsed loading, duration, or a
