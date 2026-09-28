@@ -10,9 +10,13 @@ releases.
 
 ### Fixed
 
-- Moments still metadata now rejects unknown fields instead of silently discarding them.
-  This validation change reaches the app bundle; production curation remains empty and no
-  player or new Moments interface is enabled.
+- The authored Moments contract validates source identity, content, dated evidence,
+  permissions, collection order and editorial cover choices, and rejects unknown authored
+  fields while preserving the archived fixture projection. Production curation remains
+  empty; the interface readers see is unchanged.
+- Confined the inactive Moments visit owner's failure fallback to the Moments route,
+  preserving shared navigation and other tabs if that owner fails. This records latent
+  error isolation for future curation; the empty production edition gains no visible feature.
 
 ## [0.5.2] — 2026-09-17
 

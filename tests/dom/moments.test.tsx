@@ -24,24 +24,21 @@ it('renders the empty-first banner and one sentence, without cards, categories o
   const tint = container.querySelector('.bg-floodlight-bg')!
   expect(tint.querySelector('[class*="text-ink-muted"]')).toBeNull()
 })
-it('renders only populated categories in their fixed order and uses the curation stamp', () => {
+it('renders a nonempty edition in authored order with category filters and a selected curation stamp', () => {
   MOMENTS.push(moment, { ...moment, id: 'preview', category: 'prematch', curatedAt: '2026-09-10T01:00:00Z' })
   const { container } = render(<MomentsPage />)
-  expect([...container.querySelectorAll('h2')].map(h => h.textContent)).toEqual(['Pre-match', 'Highlights'])
-  expect(screen.getByText('Last curated 2026-09-10 01:00 UTC')).toBeTruthy()
-  expect(screen.queryByText('Celebrations')).toBeNull()
+  expect([...container.querySelectorAll('[data-moment-id]')].map(h => h.getAttribute('data-moment-id'))).toEqual(['illustrative', 'preview'])
+  expect(screen.getByRole('combobox', { name: 'Category', hidden: true })).toBeTruthy()
+  fireEvent.click(within(container.querySelectorAll<HTMLElement>('[data-moment-card]')[1]!).getByRole('button', { name: 'Open selection' }))
+  expect(screen.getByText('Rights holder · curated 2026-09-10 01:00 UTC')).toBeTruthy()
 })
-it('keeps the credited still in its frame and the solid link outside, with no playback', () => {
+it('uses labelled original covers and source links without fetching authored stills or media', () => {
   MOMENTS.push({ ...moment, still: { url: 'https://example.com/still.jpg', credit: 'Rights holder' } }, { ...moment, id: 'without-still' })
   const { container } = render(<MomentsPage />)
   const cards = container.querySelectorAll<HTMLElement>('[data-moment-card]')
   expect(cards).toHaveLength(2)
-  for (const frame of container.querySelectorAll('[data-moment-frame]')) expect(frame.textContent?.trim()).toBe('')
-  const img = cards[0]!.querySelector('img')!
-  expect(img.getAttribute('loading')).toBe('lazy')
-  expect(img.classList.contains('object-cover')).toBe(true)
-  expect(cards[1]!.querySelector('img')).toBeNull()
-  expect(within(cards[0]!).getByText('Still: Rights holder').closest('[data-moment-frame]')).toBeNull()
+  expect(container.querySelectorAll('img')).toHaveLength(0)
+  expect(within(cards[0]!).getByText('Original typographic art · not a match still')).toBeTruthy()
   const link = within(cards[0]!).getByRole('link', { name: /Open at Rights holder/ })
   expect(link.getAttribute('href')).toBe(moment.source.url)
   expect(link.getAttribute('target')).toBe('_blank')

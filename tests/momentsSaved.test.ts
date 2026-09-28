@@ -27,7 +27,7 @@ it.each(['{', '{}', '[1]', '[""]', '[" padded "]'])('corrupt stored references a
 it('empty storage, duplicate references and invalid write arguments have explicit results', () => {
   expect(readSavedReferences(() => ({ getItem: () => null, setItem() {} })).persistence).toBe('local')
   expect(readSavedReferences(() => ({ getItem: () => '["1","1"]', setItem() {} })).ids).toEqual(['1'])
-  expect(() => writeSavedReferences([''])).toThrow('trimmed IDs')
+  expect(writeSavedReferences([''])).toEqual({ ids: [], persistence: 'visit-only', reason: 'invalid-data' })
 })
 
 it('a reference to an item missing from this edition survives the reducer round trip and the next write', () => {
@@ -63,4 +63,18 @@ it('large foreign saved sets persist uniquely without entering Saved-only naviga
   const refused = writeSavedReferences(s.saved, () => ({ getItem: () => raw, setItem: deny }))
   expect(refused.reason).toBe('write-refused')
   expect(refused.ids).toEqual(s.saved)
+})
+
+
+it('row 58: invalid caller references are refused without throwing or writing; reducer shares the predicate', () => {
+  let writes = 0
+  const access = () => ({ getItem: () => null, setItem() { writes++ } })
+  const input = ['1', '', ' padded ', '  ', 'missing', '1']
+  const result = writeSavedReferences(input, access)
+  expect(result).toEqual({ ids: ['1', 'missing'], persistence: 'visit-only', reason: 'invalid-data' })
+  expect(writes).toBe(0)
+  const state = reduce(createMomentsQueue(['1']), { type: 'saved', ids: input })
+  expect(state.saved).toEqual(result.ids)
+  expect(writeSavedReferences(state.saved, access).reason).toBeNull()
+  expect(writes).toBe(1)
 })

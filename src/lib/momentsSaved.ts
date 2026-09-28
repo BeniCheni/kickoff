@@ -1,3 +1,5 @@
+import { isMomentReference, momentReferences } from './momentsReferences'
+
 /** Only reference IDs cross reloads; visit queues and provider state never do. */
 export const SAVED_MOMENTS_KEY = 'kickoff-moments-saved-v1'
 export type SavedReferences = {
@@ -7,10 +9,10 @@ export type SavedReferences = {
 }
 export type ReferenceStorage = { getItem(key: string): string | null; setItem(key: string, value: string): void }
 // Access the property inside try: even the localStorage getter can throw.
-type StorageAccess = () => ReferenceStorage | undefined
+export type StorageAccess = () => ReferenceStorage | undefined
 const browserStorage: StorageAccess = () => (globalThis as { localStorage?: ReferenceStorage }).localStorage
 const validIds = (value: unknown): value is string[] => Array.isArray(value)
-  && value.every(id => typeof id === 'string' && id.trim().length > 0 && id === id.trim())
+  && value.every(isMomentReference)
 
 export function readSavedReferences(access: StorageAccess = browserStorage): SavedReferences {
   try {
@@ -26,9 +28,10 @@ export function readSavedReferences(access: StorageAccess = browserStorage): Sav
 }
 
 /** Persist the full current set. A refused unsave changes the visit, not the stored copy. */
-export function writeSavedReferences(ids: readonly string[], access: StorageAccess = browserStorage): SavedReferences {
-  if (!validIds(ids)) throw new Error('Saved references must be nonempty, trimmed IDs')
-  const next = [...new Set(ids)]
+export function writeSavedReferences(ids: unknown, access: StorageAccess = browserStorage): SavedReferences {
+  const next = momentReferences(ids)
+  // An invalid caller set never reaches disk. Valid members remain usable for this visit.
+  if (!validIds(ids)) return { ids: next, persistence: 'visit-only', reason: 'invalid-data' }
   try {
     const storage = access()
     if (!storage) return { ids: next, persistence: 'visit-only', reason: 'write-refused' }

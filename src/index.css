@@ -195,3 +195,148 @@
   text-transform: uppercase;
   letter-spacing: 0.12em;
 }
+
+/* Moments is the only region that outdents the persistent 780px shell.
+   1160 includes the same 20px page gutters; no viewport-width overflow band. */
+.moments-gallery {
+  width: min(calc(100vw - 40px), 1120px);
+  margin-inline: calc((100% - min(calc(100vw - 40px), 1120px)) / 2);
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.moments-gallery h1, .moments-gallery h2, .moments-gallery h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.12;
+}
+.moments-gallery h1 { font-size: 38px; }
+.moments-gallery h2 { font-size: 27px; }
+.moments-gallery h3 { font-size: 28px; }
+.moments-edition-head {
+  display: flex; justify-content: space-between; align-items: end; gap: 16px;
+  border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px;
+  @variant poster { border-bottom: 3px solid var(--lens-accent); padding-bottom: 16px; }
+  @variant broadcast { border-top: 3px solid var(--accent-lead-strong); border-bottom: 0; padding: 16px; background: var(--surface-alt); }
+}
+.moments-edition-head h1 {
+  @variant poster { font-size: 48px; }
+  @variant broadcast { font-size: 60px; }
+}
+.moments-eyebrow, .moments-source, .moments-art-label {
+  font-family: var(--font-mono); font-size: 10px; line-height: 1.5;
+}
+.moments-eyebrow { text-transform: uppercase; letter-spacing: .05em; }
+.moments-source { color: var(--text-secondary); }
+.moments-small { font-size: 11px; color: var(--text-secondary); }
+.moments-facts { font-size: 11px; color: var(--text-secondary); }
+.moments-facts p + p { margin-top: 3px; }
+.moments-note { font-size: 12px; color: var(--text-secondary); }
+.moments-card { border: 1px solid var(--border-strong); border-radius: 4px; background: var(--surface); min-width: 0; margin-bottom: 16px; }
+.moments-lead {
+  display: grid; grid-template-columns: .85fr 1.15fr;
+  @variant poster { grid-template-columns: 1.12fr 1fr; border-top: 4px solid var(--lens-accent); }
+  @variant broadcast { grid-template-columns: 1.2fr 1fr; border-top: 4px solid var(--lens-accent); }
+}
+.moments-card-body { display: flex; flex-direction: column; gap: 9px; padding: 18px; min-width: 0;
+  @variant poster { padding: 24px; gap: 12px; }
+  @variant broadcast { padding: 24px; gap: 12px; }
+}
+.moments-lead h2 { font-size: 31px;
+  @variant poster { font-size: clamp(31px, 3.8vw, 47px); }
+  @variant broadcast { font-size: clamp(31px, 3.8vw, 47px); }
+}
+.moments-cover { position: relative; overflow: hidden; min-width: 0; height: 160px; background: var(--media); border-radius: 3px 3px 0 0; }
+.moments-cover svg { position: absolute; width: 100%; height: 100%; }
+.moments-cover-word { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font: 600 clamp(38px, 8vw, 90px)/1 var(--font-display); letter-spacing: -.04em; }
+.moments-art-label { position: absolute; bottom: 8px; left: 8px; right: 8px; width: fit-content;
+  max-width: calc(100% - 16px); padding: 3px 5px; background: var(--bg); color: var(--text); }
+.moments-lead .moments-cover { height: 100%; min-height: 240px; }
+.moments-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.moments-lead, .moments-browse-controls { grid-column: 1 / -1; }
+.moments-card:not(.moments-lead) { display: flex; flex-direction: column; }
+.moments-card:not(.moments-lead) .moments-cover { height: 180px; min-height: 160px; }
+.moments-actions { width: 100%; margin-top: auto; }
+.moments-action-row { display: flex; gap: 8px; align-items: start; }
+.moments-button, .moments-gallery select {
+  min-height: 44px; border: 1px solid var(--border-strong); border-radius: 4px; background: var(--surface); color: var(--text);
+  padding: 10px 12px; font-size: 12px; line-height: 1.5; cursor: pointer; max-width: 100%;
+}
+.moments-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-align: center; }
+.moments-button:disabled { opacity: .55; cursor: default; }
+.moments-primary { background: var(--text); color: var(--bg); border-color: var(--text); font-weight: 600; }
+.moments-save { flex: none; }
+.moments-save[aria-pressed=true] { border-color: var(--pitch); box-shadow: inset 0 -3px var(--pitch); }
+.moments-save-state { font-size: 10px; margin-top: 5px; color: var(--text-secondary); }
+.moments-feedback { min-height: 33px; font-size: 11px; line-height: 1.5; color: var(--accent-lead-strong); margin-top: 3px; }
+.moments-source-link { font-size: 11px; text-decoration: underline; text-underline-offset: 3px; min-height: 30px; display: inline-flex; align-items: center; gap: 4px; width: fit-content; }
+.moments-filters { margin-block: 16px; border-block: 1px solid var(--border-strong); padding-block: 10px; }
+.moments-gallery summary { cursor: pointer; min-height: 36px; font-weight: 600; padding-block: 7px; }
+.moments-filters summary span { font: 11px var(--font-mono); margin-left: 8px; }
+.moments-filter-fields { display: flex; flex-wrap: wrap; gap: 12px; padding-block: 12px; }
+.moments-filter-fields label { display: grid; gap: 5px; font-size: 12px; min-width: 0; }
+.moments-filter-fields select { width: 100%; }
+.moments-filter-fields .moments-check { display: flex; align-items: center; gap: 8px; min-height: 44px; }
+.moments-check input { width: 18px; height: 18px; accent-color: var(--pitch); }
+.moments-order-controls { display: flex; flex-wrap: wrap; gap: 8px; margin-block: 12px; }
+.moments-order-controls p { flex-basis: 100%; }
+.moments-resume, .moments-empty { padding: 16px; background: var(--surface-alt); margin-block: 14px; }
+.moments-empty h2, .moments-empty p { margin-bottom: 12px; }
+.moments-resume { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.moments-stage-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; gap: 8px; }
+.moments-stage-top span { white-space: nowrap; font-size: 11px; }
+.moments-selected-heading { margin-bottom: 18px;
+  @variant broadcast { border-left: 4px solid var(--accent-lead-strong); padding-left: 16px; }
+}
+.moments-selected-heading h1 { font-size: 32px; margin-bottom: 8px;
+  @variant poster { font-size: clamp(32px, 4.2vw, 48px); }
+}
+.moments-stage-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; }
+.moments-stage-main, .moments-queue { min-width: 0; }
+.moments-stage-anchor { width: 100%; aspect-ratio: 16 / 9; position: relative; }
+.moments-stage-anchor .moments-cover { position: absolute; inset: 0; height: 100%; }
+.moments-stage-main > .moments-facts, .moments-stage-main > .moments-actions, .moments-stage-main > .moments-note { margin-top: 14px; }
+.moments-stage-main > .moments-note { border-left: 3px solid var(--accent-lead-strong); padding-left: 12px; }
+.moments-provenance { margin-top: 16px; border-top: 1px solid var(--border); }
+.moments-provenance p { margin-block: 10px; }
+.moments-neighbours { display: flex; gap: 8px; margin-top: 16px; }
+.moments-neighbours button { flex: 1; flex-direction: column; align-items: start; text-align: left; }
+.moments-neighbour-title { font-size: 10px; }
+.moments-queue { border-top: 3px solid var(--accent-lead-strong); padding-top: 12px;
+  @variant broadcast { background: var(--surface); }
+}
+.moments-queue ol { margin-block: 14px; }
+.moments-queue li { border-top: 1px solid var(--border); }
+.moments-queue li button { width: 100%; min-height: 44px; display: grid; grid-template-columns: 24px 1fr; gap: 6px; text-align: left;
+  padding: 10px 8px; cursor: pointer;
+  @variant poster { padding-block: 14px; }
+  @variant broadcast { padding-block: 14px; }
+}
+.moments-queue li button[aria-current=true] { background: var(--surface-alt); box-shadow: inset 3px 0 var(--accent-lead-strong); }
+.moments-queue li strong { font-size: 12px; font-weight: 600; }
+.moments-queue li small { grid-column: 2; font-size: 10px; color: var(--text-secondary); }
+.moments-queue .moments-filter-fields { flex-direction: column; }
+@media (min-width: 888px) {
+  /* At 888: (888 - 40) - 300 - 28 = 520px, safely above 480 × 270. */
+  .moments-stage-layout { grid-template-columns: minmax(480px, 1fr) 300px; gap: 28px; }
+}
+@media (max-width: 760px) {
+  .moments-cards { grid-template-columns: minmax(0, 1fr); }
+  .moments-gallery h1 { font-size: 32px; }
+  .moments-edition-head { align-items: start; padding-bottom: 8px; margin-bottom: 12px;
+    @variant broadcast { padding: 8px 10px; }
+  }
+  .moments-edition-head h1 { @variant poster { font-size: 39px; } @variant broadcast { font-size: 39px; } }
+  .moments-edition-head > p { display: none; }
+  .moments-lead, .moments-card:not(.moments-lead) { display: flex; flex-direction: column; }
+  .moments-lead .moments-cover { height: 150px; min-height: 0;
+    @variant poster { height: 166px; } @variant broadcast { height: 166px; }
+  }
+  .moments-card:not(.moments-lead) .moments-cover { height: 160px; }
+  .moments-card-body { padding: 14px; gap: 7px; }
+  .moments-lead h2 { font-size: 31px; }
+  .moments-filter-fields > label { width: 100%; }
+  .moments-resume { flex-direction: column; align-items: start; }
+  .moments-button { padding-inline: 10px; font-size: 11px; }
+}

@@ -14,5 +14,5 @@
     "types": ["node"]
   },
   "include": ["scripts", "tests", "vite.config.ts"],
-  "exclude": ["tests/dom"]
+  "exclude": ["tests/dom", "tests/harness"]
 }

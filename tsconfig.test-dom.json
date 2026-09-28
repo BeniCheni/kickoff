@@ -16,5 +16,5 @@
     "skipLibCheck": true,
     "isolatedModules": true
   },
-  "include": ["tests/dom", "src/vite-env.d.ts"]
+  "include": ["tests/dom", "tests/harness", "src/vite-env.d.ts"]
 }
