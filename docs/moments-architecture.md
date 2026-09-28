@@ -101,7 +101,9 @@ archived shape are stripped. Making this pick strict would reject those valid fu
 inputs; this exception does not change the sync schema or relax fixture cross-validation.
 
 - Editorial title/category/notes and the archived fixture snapshot are durable authored facts.
-  `editorial` optionally adds note and neutral spoiler text. Missing neutral copy is not a
+  `editorial` optionally adds note and neutral spoiler text and, since slice 2, an explicit
+  `cover` family (`voices` | `seven` | `together`; any other value fails validation, absent
+  means the neutral MOMENTS art — never guessed from title, category or ID). Missing neutral copy is not a
   licence to expose a revealing title in a future spoiler-light view.
 - Optional `source.identity` is `{ provider: 'youtube', videoId }`. The ID is exactly 11 allowed
   characters; its source URL must be HTTPS `youtube.com/watch?v=ID`, `www.youtube.com/watch?v=ID`
@@ -247,7 +249,12 @@ commit; this session's correction about input recovery supersedes its original p
 
 ### Visit and recovery
 
-`MomentsSessionProvider` mounts once in App above the tab/lens-keyed route boundary. A lazy
+`MomentsSessionProvider` mounts once in App above the tab/lens-keyed Moments route boundary,
+whatever the tab, and is never keyed. Only the Moments route sits under it: Fixtures and Table
+render outside both Moments boundaries, so an owner failure cannot take the shell or another tab
+down, and their error paths are exactly main's (Pass 1 of PR #118 moved the owner from around the
+whole shell to around the route after demonstrating that a throw in the owner replaced the
+header, tabs, Fixtures and Table on every tab). A lazy
 initializer reads saved references through `readSavedReferences` and creates an independent
 queue for that mounted visit. React may call that initializer twice in development StrictMode;
 there are no initializer writes, subscriptions or shared visit state. Separate app mounts are
@@ -260,7 +267,8 @@ owner with `leave` to invalidate future media attempts, preserving history, acti
 saved references. The existing ViewBoundary had no Retry, so an opt-in Retry button now resets
 only the Moments route boundary. Other tabs keep their existing recovery controls and copy.
 The separate owner boundary says the visit may be lost; Retry visit creates a new owner and
-re-reads disk without claiming it retained a visit it no longer holds.
+re-reads disk without claiming it retained a visit it no longer holds. Its fallback renders only
+while the Moments tab is active; on any other tab a failed owner renders nothing.
 
 Save writes occur only in event handlers, outside React state updaters/effects, to avoid
 StrictMode replaying a storage write. The owner consumes all three returned fields: IDs update

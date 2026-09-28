@@ -77,15 +77,21 @@ export function MomentsSessionProvider({ children, edition = MOMENTS, tab = 'mom
     setSpoiler: spoiler => update({ ...current.current, spoiler, notice: null }) }}>{children}</Context.Provider>
 }
 
-/** Owner failures are outside route recovery. Never promise retention after owner loss. */
-export class MomentsSessionBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+/** Owner failures are outside route recovery. Never promise retention after owner loss.
+ * The fallback shows only while the Moments tab is active (`active`); on any other tab a failed
+ * owner renders nothing, so Fixtures and Table stay reachable and unchanged. */
+export class MomentsSessionBoundary extends Component<{ children: ReactNode; active?: boolean }, { failed: boolean }> {
   state = { failed: false }
   static getDerivedStateFromError() { return { failed: true } }
   render() {
-    return this.state.failed ? <div role="alert" className="mx-auto max-w-[780px] p-5">
-      <p className="font-display text-[22px]">This visit couldn’t be restored.</p>
-      <p className="my-3 text-[13px]">Your Moments visit may be lost. Browser-saved references will be read again when you retry.</p>
-      <button className="rounded border border-ink px-3 py-2" onClick={() => this.setState({ failed: false })}>Retry visit</button>
-    </div> : this.props.children
+    if (!this.state.failed) return this.props.children
+    if (this.props.active === false) return null
+    return <div role="alert" className="rounded border border-line-strong bg-surface p-4 text-ink">
+      <p className="font-display text-[22px] font-semibold">This visit couldn’t be restored.</p>
+      <p className="mt-1 text-[13px] text-ink-secondary">Your Moments visit may be lost. Browser-saved references will be read again when you retry.</p>
+      <div className="mt-4 flex flex-wrap gap-3">
+        <button className="label-caps cursor-pointer rounded border border-ink px-3 py-2 text-[12px]" onClick={() => this.setState({ failed: false })}>Retry visit</button>
+      </div>
+    </div>
   }
 }

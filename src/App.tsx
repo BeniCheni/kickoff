@@ -113,8 +113,6 @@ export default function App({ momentsEdition = MOMENTS, momentsStorage, momentsR
   }
 
   return (
-    <MomentsSessionBoundary>
-    <MomentsSessionProvider edition={momentsEdition} tab={tab} storage={momentsStorage}>
     <div className="mx-auto max-w-[780px] px-5 pt-7 pb-16">
       <header className="mb-4 flex items-start justify-between pb-1">
         <div className="leading-none">
@@ -136,9 +134,19 @@ export default function App({ momentsEdition = MOMENTS, momentsStorage, momentsR
         <LensSwitcher lens={lens} onSelect={setLens} />
       </TabNav>
 
-      {tab === 'moments' ? <MomentsRouteBoundary boundaryKey={`${tab}:${lens}`}>
-        {momentsRoute ?? <MomentsPage />}
-      </MomentsRouteBoundary> : <ViewBoundary key={`${tab}:${lens}`}>
+      {/* The Moments visit owner (Decision 1) is mounted once and never keyed, whatever the tab,
+          so the visit survives tab and lens changes — but only the Moments route sits under it.
+          Fixtures and Table render outside both Moments boundaries: an owner failure cannot take
+          the shell or another tab down, and their error paths stay exactly what main renders. */}
+      <MomentsSessionBoundary active={tab === 'moments'}>
+        <MomentsSessionProvider edition={momentsEdition} tab={tab} storage={momentsStorage}>
+          {tab === 'moments' && <MomentsRouteBoundary boundaryKey={`${tab}:${lens}`}>
+            {momentsRoute ?? <MomentsPage />}
+          </MomentsRouteBoundary>}
+        </MomentsSessionProvider>
+      </MomentsSessionBoundary>
+
+      {tab !== 'moments' && <ViewBoundary key={`${tab}:${lens}`}>
         {lens === 'broadcast' && tab === 'fixtures' && <TickerStrip />}
 
         <StalenessBanner />
@@ -146,7 +154,5 @@ export default function App({ momentsEdition = MOMENTS, momentsStorage, momentsR
         {tab === 'table' ? <TablePage /> : <FixturesPage today={today} lens={lens} />}
       </ViewBoundary>}
     </div>
-    </MomentsSessionProvider>
-    </MomentsSessionBoundary>
   )
 }
