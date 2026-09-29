@@ -465,6 +465,11 @@ finishes, on a lens or theme change, and when the surface or the active item cha
 font can move the anchor without resizing it; the stage column and the header catch that.
 There is no document scroll listener. The slice-3 receipt records the 360 and 390 scroll check.
 
+Cinema’s save notice, after a visit whose stored set could not be read, says the
+successful write replaces that unreadable set. Beni confirmed this on 29 Sep 2026
+(ideas file row 61). The gallery lead keeps its existing sentences. A later write,
+once the set is readable, uses the ordinary saved or removed sentence.
+
 Cinema pushes no history entry. One Next control, the transport’s, is fed only by
 `queueNeighbours`. Recovery copy names that item, or says there is no next selection, and does
 not add a second button. Recovery sits below the frame, not over it. Cinema content is at most

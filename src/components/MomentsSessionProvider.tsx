@@ -121,7 +121,10 @@ export function MomentsSessionProvider({ children, edition = MOMENTS, tab = 'mom
     const wasSaved = prior.queue.saved.includes(id)
     const ids = wasSaved ? prior.queue.saved.filter(value => value !== id) : [...prior.queue.saved, id]
     const saved = writeSavedReferences(ids, storage)
-    const text = saved.persistence === 'local' ? (wasSaved ? 'Reference removed from this browser.' : 'Reference saved in this browser.')
+    const replacedUnreadable = target === 'cinema' && saved.persistence === 'local'
+      && (prior.saved.reason === 'read-refused' || prior.saved.reason === 'invalid-data')
+    const text = saved.persistence === 'local'
+      ? `${wasSaved ? 'Reference removed from this browser.' : 'Reference saved in this browser.'}${replacedUnreadable ? ' This write replaces the unreadable stored set.' : ''}`
       : saved.reason === 'invalid-data' ? 'Invalid reference refused. Changes are visit-only; stored references were not changed.'
       : wasSaved ? 'Removed for this visit only. The stored reference may return next visit.'
       : 'Saved for this visit only. Browser storage refused the update.'

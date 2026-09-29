@@ -228,6 +228,23 @@ it('D-19/D-07/H-C: Cinema has one live region, a stable Save name, and no histor
   expect(media(archivalEdition[0]!.id)).toMatchObject({ status: 'paused', position: 1 })
 })
 
+it.each(['read-refused', 'invalid-data'] as const)('row 61: a Cinema write after %s says it replaces the unreadable stored set', reason => {
+  const storage = referenceStorageRig(reason === 'invalid-data' ? 'broken JSON' : '["old-reference"]')
+  if (reason === 'read-refused') storage.refuseRead(true)
+  render(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsStorage={storage.access}
+    momentsRoute={<><MomentsPage /><Probe /></>} />)
+  openCard(archivalEdition[0]!.id)
+  click('Enter Cinema')
+  const cinema = screen.getByRole('dialog', { name: 'Cinema' })
+  fireEvent.click(within(cinema).getByRole('button', { name: /Save reference/ }))
+  const status = within(cinema).getByRole('status').textContent ?? ''
+  expect(status).toBe('Reference saved in this browser. This write replaces the unreadable stored set.')
+  expect(status).not.toMatch(/\.\.|\?\.|!\.|”\./)
+  expect(storage.disk()).toBe(JSON.stringify([archivalEdition[0]!.id]))
+  fireEvent.click(within(cinema).getByRole('button', { name: /Save reference/ }))
+  expect(within(cinema).getByRole('status').textContent).toBe('Reference removed from this browser.')
+})
+
 it('H-C/D-15: Escape and cancel leave Cinema, and a lower queue row focuses its primary action', () => {
   renderVisit(); openCard(archivalEdition[0]!.id)
   const opener = screen.getByRole('button', { name: 'Enter Cinema' })
