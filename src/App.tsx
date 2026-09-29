@@ -15,8 +15,10 @@ import { TickerStrip } from './components/TickerStrip'
 import { MOMENTS } from './lib/moments'
 import type { GalleryMoment } from './lib/momentsGallery'
 import type { StorageAccess } from './lib/momentsSaved'
+import { MomentsPlayerBoundary } from './components/MomentsPlayerHost'
 import { MomentsSessionBoundary, MomentsSessionProvider, useMomentsSession } from './components/MomentsSessionProvider'
 import { ViewBoundary } from './components/ViewBoundary'
+import type { MomentsPlayerFactory } from './lib/momentsPlayer'
 
 // A route-level seam allows the isolated harness to exercise the real shell and boundary.
 function MomentsRouteBoundary({ boundaryKey, children }: { boundaryKey: string; children: ReactNode }) {
@@ -25,10 +27,12 @@ function MomentsRouteBoundary({ boundaryKey, children }: { boundaryKey: string; 
     allowRetry>{children}</ViewBoundary>
 }
 
-export default function App({ momentsEdition = MOMENTS, momentsStorage, momentsRoute }: {
+export default function App({ momentsEdition = MOMENTS, momentsStorage, momentsRoute, momentsPlayer, momentsPlayerFault = false }: {
   momentsEdition?: readonly GalleryMoment[]
   momentsStorage?: StorageAccess
   momentsRoute?: ReactNode
+  momentsPlayer?: MomentsPlayerFactory
+  momentsPlayerFault?: boolean
 } = {}) {
   const { today } = useNow()
   const [theme, setTheme] = useState<Theme>(() =>
@@ -114,7 +118,7 @@ export default function App({ momentsEdition = MOMENTS, momentsStorage, momentsR
 
   return (
     <div className="mx-auto max-w-[780px] px-5 pt-7 pb-16">
-      <header className="mb-4 flex items-start justify-between pb-1">
+      <header data-moments-background="header" className="mb-4 flex items-start justify-between pb-1">
         <div className="leading-none">
           <span className="font-display block text-[34px] font-bold tracking-wide uppercase">Kickoff</span>
           <span className="label-caps block text-[13px] text-pitch">Brooklyn · ET</span>
@@ -140,19 +144,20 @@ export default function App({ momentsEdition = MOMENTS, momentsStorage, momentsR
           the shell or another tab down, and their error paths stay exactly what main renders. */}
       <MomentsSessionBoundary active={tab === 'moments'}>
         <MomentsSessionProvider edition={momentsEdition} tab={tab} storage={momentsStorage}>
-          {tab === 'moments' && <MomentsRouteBoundary boundaryKey={`${tab}:${lens}`}>
+          {tab === 'moments' && <div data-moments-background="route"><MomentsRouteBoundary boundaryKey={`${tab}:${lens}`}>
             {momentsRoute ?? <MomentsPage />}
-          </MomentsRouteBoundary>}
+          </MomentsRouteBoundary></div>}
+          <MomentsPlayerBoundary factory={momentsPlayer} fault={momentsPlayerFault} />
         </MomentsSessionProvider>
       </MomentsSessionBoundary>
 
-      {tab !== 'moments' && <ViewBoundary key={`${tab}:${lens}`}>
+      {tab !== 'moments' && <div data-moments-background="route"><ViewBoundary key={`${tab}:${lens}`}>
         {lens === 'broadcast' && tab === 'fixtures' && <TickerStrip />}
 
         <StalenessBanner />
 
         {tab === 'table' ? <TablePage /> : <FixturesPage today={today} lens={lens} />}
-      </ViewBoundary>}
+      </ViewBoundary></div>}
     </div>
   )
 }

@@ -356,7 +356,11 @@ anchor while keeping its one persistent player host outside the keyed boundary.
 Beni's D-16 remedy (a) is encoded now: the stage and queue stack through 887px; at 888px they
 become two columns. At that threshold, the content width is 848px minus a 300px list and 28px
 gutter, leaving a 520 × 292.5 anchor; wherever side by side, it is at least 480 × 270. No
-minimum-height workaround defeats the aspect ratio. A short, single-line Selected moment
+minimum-height workaround defeats the aspect ratio. Slice 3 amends that sentence for phone
+widths only: on 28 Sep 2026 Beni ruled that the stage anchor and the player host keep full
+width and grow in normal flow to at least 200px tall, `height = max(width × 9/16, 200px)`,
+so the list is pushed down and never covered. At 888px and above the 16:9 column is already
+taller than 200px, so the floor does not change that ratio. A short, single-line Selected moment
 label replaces the prototype's wrapping stage-top pill.
 
 The lead primary label is Open selection. Save reference keeps its visible and accessible
@@ -387,3 +391,87 @@ returned refusal.
 H-C (Cinema history/back behavior), H-G (duplicate playback recovery controls), D-06/D-15
 (real player geometry/focus), D-09/D-14 provider journeys and in-modal live regions remain
 slice 3/4 work. There is no provider validation or first-edition proposal in this landing.
+Slice 3 implementation decisions, below, is where those player items landed. Real provider
+behaviour stays slice 4.
+
+## Slice 3 implementation decisions
+
+The visit owner now lives inside the 780px shell, after the header and the tab row, and it
+wraps only the Moments route. Slice 3 mounts `MomentsPlayerBoundary` and `MomentsPlayerHost`
+under that owner as a sibling of `MomentsRouteBoundary`, outside `tab === 'moments'`. Fixtures
+and Table stay in the other route, outside the owner. An empty edition renders no player: the
+boundary returns null, and the page keeps the banner and the sentence. The host is one element
+for the whole visit. Stage and Cinema share it by measuring the in-flow
+`data-moments-stage-anchor` or the Cinema slot; the iframe is never inside the keyed route,
+never portaled, and never reparented. `App` takes an optional player factory. `src/main.tsx`
+passes nothing, so production uses the YouTube adapter. The harness and the DOM tests pass
+the mock.
+
+Cinema does not mark the shell, `#root`, `body`, or any ancestor of the dialog `inert`. It
+marks four subtrees, each with `data-moments-background`: the header, the tab row, the Moments
+route while that tab is showing, and the Fixtures or Table route while one of those tabs is
+showing. Closing Cinema, leaving the tab, or unmounting the host or the player boundary
+removes that inert state. A player render failure shows “The player could not be shown.” and
+“Retry player” inside the owner. The shell, the tabs, Fixtures and Table stay up. The owner’s
+own fallback copy is unchanged.
+
+Beni’s phone ruling is the minimum height on `.moments-stage-anchor` and
+`.moments-cinema-slot`: full width, `aspect-ratio: 16 / 9`, and `min-height: 200px`. At 360px
+that box is 320 × 200. The queue stays in normal flow below it. Side by side, from 888px, the
+column is already at least 480 × 270, so the floor does not replace 16:9 there. Whether a
+provider letterboxes the 16:10 phone frame is unverified until slice 4.
+
+The adapter is not React and adds no dependency. Nothing is requested before an explicit Play:
+no API script, no iframe, no preconnect, no thumbnail. `index.html` keeps only its Google Fonts
+preconnects. The first Play inserts `https://www.youtube.com/iframe_api` and builds one
+`youtube-nocookie.com` iframe, with `enablejsapi=1`, `playsinline=1`, and
+`origin: window.location.origin`, and passes that element to `YT.Player`. `controls` stays at
+the provider default. `modestbranding` is not set. One instance lasts the visit. `pauseVideo`
+parks and leaves; `stopVideo` and `cueVideoById` are not used. `destroy()` runs only when the
+host unmounts. A hung load stays `loading` until the visitor leaves or a provider event
+arrives. `onAutoplayBlocked` stays on `loading`, records no failure, and shows that the
+control inside the player can start playback. Callbacks carry the item, the attempt, and the
+instance. A stale target, a video id that does not match on `playing` or `ended`, or a second
+terminal code on the same attempt is dropped at the adapter. Codes 101 and 150 are
+owner-blocked, 2, 5 and 100 are unavailable, and 153 or any other integer is unknown.
+`getCurrentTime()` is sampled on pause, on ended, and before retire; only a finite number at
+least 0, zero included, is dispatched. A different loaded id uses `loadVideoById` without
+`startSeconds`, then `seekTo(position, true)` on ready or cued. “Resuming from the last known
+position.” appears only after a finite, nonnegative sample. Navigation does not wait on a
+cross-origin reply.
+
+Stage keeps the same `<dialog>` open once a frame exists, because a closed dialog is
+`display: none` and would hide the iframe. While the visitor is on the stage the dialog’s
+explicit role is `region` and its name is Player, so it is not exposed as a modal dialog;
+`aria-modal` is absent. Cinema removes that role override, sets `aria-modal="true"`, and names
+the dialog Cinema. The host stays after the route in DOM order, outside the keyed boundary.
+Play moves focus to “Back to selection”, the first stop in the player region, which returns
+focus to the stage’s primary action. An in-anchor “Player” control sends Tab into that region
+and sends Shift+Tab from later in the route to the iframe. “Continue past the player” returns
+focus under the picture. The iframe is not reparented. Shift+Tab from inside the frame does
+not bubble, so when that key moves focus onto the dialog itself, Cinema sends it to the last
+control in the dialog. Escape is a capture-phase `keydown` on
+the document, which does not depend on `closedby`. Cinema also sets `closedby="closerequest"`
+and handles `cancel`, calling `preventDefault` so the dialog stays open. If a user agent
+closes it anyway while a frame exists, the host calls `show()` again in that turn and does
+not destroy the instance. Gallery and other tabs pause and park: the dialog stays open, clipped
+to a fixed 0×0 box, `inert`, `aria-hidden`, and `pointer-events: none`.
+
+The stage dialog is `position: absolute`. Its top and left are the anchor’s document
+coordinates, minus a positioned ancestor’s document origin when one exists. It scrolls with
+the page. It is measured again on a resize of the anchor, the stage column, the header, the
+gallery, the Cinema slot, or the document, on `visualViewport` resize, when font loading
+finishes, on a lens or theme change, and when the surface or the active item changes. A late
+font can move the anchor without resizing it; the stage column and the header catch that.
+There is no document scroll listener. The slice-3 receipt records the 360 and 390 scroll check.
+
+Cinema pushes no history entry. One Next control, the transport’s, is fed only by
+`queueNeighbours`. Recovery copy names that item, or says there is no next selection, and does
+not add a second button. Recovery sits below the frame, not over it. Cinema content is at most
+1440px wide inside a full-viewport dialog. The shared header stays in the 780px shell. The
+breakpoint remains 888, not the template’s 760. Activating a lower queue row scrolls the dialog
+until the player and the primary action are inside its visible box, then focuses that action
+with `preventScroll: true`.
+
+The inert receipt’s base is the merge base `8cb9d87c531ffce3c609f98e0da557c26027d432`. The
+tip is built from that same snapshot, without a rebase onto later sync commits.

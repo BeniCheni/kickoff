@@ -31,6 +31,7 @@ export function TabNav({
   return (
     <nav
       aria-label="Primary"
+      data-moments-background="tabs"
       className="mb-5 flex flex-wrap-reverse items-start gap-x-4 border-b-[1.5px] border-line"
     >
       <div className="flex gap-x-4">
