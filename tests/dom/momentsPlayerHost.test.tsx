@@ -265,6 +265,12 @@ it('H-C/D-15: Escape and cancel leave Cinema, and a lower queue row focuses its 
   fireEvent.click(row)
   expect(document.activeElement?.hasAttribute('data-primary-action')).toBe(true)
   expect(within(openCinema).getByRole('heading', { level: 1 }).textContent).toContain('Stay for the celebration')
+  // The frame still holds the first selection, so on this one it is clipped and is no focus stop.
+  const lastUnplayed = [...openCinema.querySelectorAll<HTMLElement>('button:not([disabled]), a[href]')].at(-1)!
+  lastUnplayed.focus()
+  fireEvent.keyDown(lastUnplayed, { key: 'Tab' })
+  expect(document.activeElement?.hasAttribute('data-cinema-exit')).toBe(true)
+  fireEvent.click(within(openCinema).getByRole('button', { name: 'Play' }))
   const last = [...openCinema.querySelectorAll<HTMLElement>('button:not([disabled]), a[href], iframe')].at(-1)!
   last.focus()
   fireEvent.keyDown(last, { key: 'Tab' })
@@ -360,4 +366,45 @@ it('H-B/H-E: the header shell stays 780 and empty copy is unchanged', () => {
   expect(screen.getByText('No moments curated yet.')).toBeTruthy()
   expect(screen.getByText(/Hand-curated · linked to rights holders · never played here/)).toBeTruthy()
   expect(screen.queryByText('Choose the archival sample')).toBeNull()
+})
+
+it('the frame shows only on the selection it was asked to play', () => {
+  renderVisit(); const [first, second] = archivalEdition
+  openCard(first!.id); click('Play'); emitPlaying(3)
+  const dialog = document.querySelector<HTMLElement>('[data-moments-player-dialog]')!
+  const host = document.querySelector<HTMLElement>('[data-moments-player-host]')!
+  expect(dialog.getAttribute('data-placement')).toBe('stage')
+  expect(document.querySelector('[data-player-sentinel]')).toBeTruthy()
+
+  click(/^Next:/)
+  expect(state().active).toBe(second!.id)
+  expect(media(second!.id).status).toBe('ready')
+  expect(dialog.getAttribute('data-placement')).toBe('parked')
+  expect(dialog.hasAttribute('inert')).toBe(true)
+  expect(document.querySelector('[data-player-sentinel]')).toBeNull()
+  expect(host.querySelectorAll('[data-player-return]:not([hidden]), [data-player-continue]:not([hidden])')).toHaveLength(0)
+  expect(document.querySelectorAll('iframe')).toHaveLength(1)
+
+  click('Enter Cinema')
+  expect(dialog.getAttribute('data-placement')).toBe('cinema')
+  expect(host.hasAttribute('inert')).toBe(true)
+  const last = [...dialog.querySelectorAll<HTMLElement>('button:not([disabled]), a[href]')].at(-1)!
+  last.focus()
+  fireEvent.keyDown(last, { key: 'Tab' })
+  expect(document.activeElement?.tagName).not.toBe('IFRAME')
+  click('Exit Cinema')
+
+  click(/^Previous:/)
+  expect(state().active).toBe(first!.id)
+  expect(dialog.getAttribute('data-placement')).toBe('stage')
+  expect(document.querySelector('[data-player-sentinel]')).toBeTruthy()
+
+  click(/^Next:/); click('Enter Cinema')
+  fireEvent.click(within(dialog).getByRole('button', { name: 'Play' }))
+  expect(lastPlay().itemId).toBe(second!.id)
+  expect(host.hasAttribute('inert')).toBe(false)
+  click('Exit Cinema')
+  expect(dialog.getAttribute('data-placement')).toBe('stage')
+  click(/^Previous:/)
+  expect(dialog.getAttribute('data-placement')).toBe('parked')
 })

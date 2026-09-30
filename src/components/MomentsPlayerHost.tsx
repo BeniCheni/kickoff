@@ -86,7 +86,7 @@ function containingOrigin(element: HTMLElement) {
   return { top: 0, left: 0 }
 }
 
-function place(dialog: HTMLDialogElement, host: HTMLElement, placement: Placement) {
+function place(dialog: HTMLDialogElement, host: HTMLElement, placement: Placement, shown: boolean) {
   if (placement === 'cinema') {
     dialog.style.top = ''
     dialog.style.left = ''
@@ -98,8 +98,10 @@ function place(dialog: HTMLDialogElement, host: HTMLElement, placement: Placemen
     const dialogRect = dialog.getBoundingClientRect()
     host.style.top = `${slotRect.top - dialogRect.top + dialog.scrollTop}px`
     host.style.left = `${slotRect.left - dialogRect.left + dialog.scrollLeft}px`
-    host.style.width = `${slotRect.width}px`
-    host.style.height = `${slotRect.height}px`
+    // Another selection's frame is clipped away, never display:none, so the slot shows this
+    // selection's cover and the instance stays alive.
+    host.style.width = shown ? `${slotRect.width}px` : '0px'
+    host.style.height = shown ? `${slotRect.height}px` : '0px'
     return
   }
   if (placement === 'parked') {
@@ -156,10 +158,16 @@ export function MomentsPlayerHost({ factory, fault = false }: { factory?: Moment
   const wasCinema = useRef(false)
   const seenActive = useRef(session.queue.active)
   const [live, setLive] = useState(false)
+  const [owner, setOwner] = useState<string | null>(null)
   sessionRef.current = session
   factoryRef.current = factory
   const surface = session.queue.surface
-  const placement: Placement = surface === 'cinema' ? 'cinema' : live && surface === 'stage' ? 'stage' : live ? 'parked' : 'idle'
+  // The frame belongs to the selection it was last asked to play. On any other selection the
+  // stage and the Cinema slot show that selection's cover, as they do before a first Play.
+  const shown = live && owner !== null && owner === session.queue.active
+  const shownRef = useRef(shown)
+  shownRef.current = shown
+  const placement: Placement = surface === 'cinema' ? 'cinema' : shown && surface === 'stage' ? 'stage' : live ? 'parked' : 'idle'
   placementRef.current = placement
   const hooks = useRef<PlayerHooks>(null)
   if (!hooks.current) hooks.current = {
@@ -201,13 +209,15 @@ export function MomentsPlayerHost({ factory, fault = false }: { factory?: Moment
     sessionRef.current.registerPlayer({
       play(request: PlayRequest) {
         setLive(true)
+        setOwner(request.itemId)
         sessionRef.current.setPlayerLive(true)
         const dialog = dialogRef.current
         const host = hostRef.current
         if (dialog && host) {
           dialog.hidden = false
           const next = sessionRef.current.queue.surface === 'cinema' ? 'cinema' : 'stage'
-          place(dialog, host, next)
+          host.removeAttribute('inert')
+          place(dialog, host, next, true)
           ensureOpen(dialog)
         }
         ensureAdapter()?.play(request)
@@ -226,6 +236,7 @@ export function MomentsPlayerHost({ factory, fault = false }: { factory?: Moment
       const inside = !!dialog && document.activeElement instanceof Node && dialog.contains(document.activeElement)
       playerRef.current?.dispose()
       playerRef.current = null
+      sessionRef.current.setPlayerLive(false)
       if (inside) document.querySelector<HTMLElement>('nav[aria-label="Primary"] button')?.focus()
     }
   }, [])
@@ -250,7 +261,9 @@ export function MomentsPlayerHost({ factory, fault = false }: { factory?: Moment
       ensureClosed(dialog)
       return
     }
-    place(dialog, host, placement)
+    // In Cinema a clipped frame must not stay a focus stop.
+    host.toggleAttribute('inert', placement === 'cinema' && !shown)
+    place(dialog, host, placement, shown)
     ensureOpen(dialog)
     if (placement === 'cinema') dialog.setAttribute('closedby', 'closerequest')
     else dialog.removeAttribute('closedby')
@@ -258,7 +271,12 @@ export function MomentsPlayerHost({ factory, fault = false }: { factory?: Moment
       stageFocus.current = false
       host.querySelector<HTMLElement>('[data-player-return]')?.focus()
     }
-  }, [placement, session.queue.active, live])
+  }, [placement, session.queue.active, live, shown])
+
+  // The in-anchor "Player" stop exists only while the frame is on this selection.
+  useLayoutEffect(() => {
+    sessionRef.current.setPlayerLive(shown)
+  }, [shown])
 
   useEffect(() => {
     if (placement === 'idle') return
@@ -266,7 +284,7 @@ export function MomentsPlayerHost({ factory, fault = false }: { factory?: Moment
       const dialog = dialogRef.current
       const host = hostRef.current
       if (!dialog || !host || placementRef.current === 'idle') return
-      place(dialog, host, placementRef.current)
+      place(dialog, host, placementRef.current, shownRef.current)
     }
     const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(measure)
     const anchor = document.querySelector('[data-moments-stage-anchor]')
@@ -367,7 +385,7 @@ export function MomentsPlayerHost({ factory, fault = false }: { factory?: Moment
     const dialog = dialogRef.current
     if (!dialog) return
     const controls = [...dialog.querySelectorAll<HTMLElement>('button:not([disabled]), a[href], iframe, input:not([disabled]), select:not([disabled]), summary')]
-      .filter(element => !element.hasAttribute('hidden') && !element.closest('[hidden]'))
+      .filter(element => !element.closest('[hidden], [inert]'))
     const first = controls[0]
     const last = controls.at(-1)
     if (!first || !last) return
@@ -396,7 +414,7 @@ export function MomentsPlayerHost({ factory, fault = false }: { factory?: Moment
       const fromOutside = !(related instanceof Node) || !dialog.contains(related)
       if (!fromFrame && !fromOutside) return
       const controls = [...dialog.querySelectorAll<HTMLElement>('button:not([disabled]), a[href], iframe, input:not([disabled]), select:not([disabled]), summary')]
-        .filter(element => !element.hasAttribute('hidden') && !element.closest('[hidden]'))
+        .filter(element => !element.closest('[hidden], [inert]'))
       const next = fromFrame ? controls.at(-1) : controls[0]
       next?.focus()
     }}
