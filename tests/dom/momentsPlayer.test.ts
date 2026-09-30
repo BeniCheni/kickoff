@@ -24,7 +24,7 @@ type Fake = {
   getCurrentTime: () => number
   getVideoUrl: () => string
   getIframe: () => HTMLIFrameElement
-  loadVideoById: (videoId: string) => void
+  loadVideoById: (request: { videoId: string; startSeconds: number }) => void
   cueVideoById: (videoId: string) => void
   playVideo: () => void
   pauseVideo: () => Promise<void>
@@ -59,9 +59,12 @@ class FakePlayer implements Fake {
   getIframe() { return this.iframe }
   getCurrentTime() { return this.time }
   getVideoUrl() { return this.url }
-  loadVideoById(videoId: string) {
-    this.loadArgs.push(videoId)
-    this.url = `https://www.youtube.com/watch?v=${videoId}`
+  loadVideoById(request: { videoId: string; startSeconds: number }) {
+    this.loadArgs.push(request)
+    this.url = `https://www.youtube.com/watch?v=${request.videoId}`
+    this.time = 0
+    for (const data of [-1, 3]) this.options.events.onStateChange({ target: this, data })
+    this.time = request.startSeconds
   }
   cueVideoById() { this.cueCount += 1 }
   playVideo() { this.playCount += 1 }
@@ -139,6 +142,8 @@ it('constructs once when the API is already present and passes the measured box'
   expect(fake.iframe.width).toBe('480')
   expect(fake.iframe.height).toBe('270')
   expect(fake.iframe.parentNode).toBe(host)
+  expect(fake.iframe.getAttribute('allow')).toBe('autoplay; encrypted-media')
+  expect(fake.iframe.getAttribute('referrerpolicy')).toBe('strict-origin-when-cross-origin')
   const src = new URL(fake.iframe.src)
   expect(src.host).toBe('www.youtube-nocookie.com')
   expect(src.pathname).toBe('/embed/aaaaaaaaaaa')
@@ -216,6 +221,7 @@ it('keeps a zero sample and drops negative and NaN samples', () => {
   const player = createYouTubePlayer(mount(), hooks)
   player.play(request())
   const fake = fakes[0]!
+  fake.options.events.onReady({ target: fake, data: 0 })
   fake.url = 'https://www.youtube.com/watch?v=aaaaaaaaaaa'
   for (const time of [Number.NaN, -1, Number.POSITIVE_INFINITY]) {
     fake.time = time
@@ -228,28 +234,103 @@ it('keeps a zero sample and drops negative and NaN samples', () => {
   expect(events.at(-1)).toMatchObject({ event: 'paused', position: 0 })
 })
 
-it('loads a different video without startSeconds and labels resume only after a finite sample', () => {
+it('loads with startSeconds, ignores pre-play samples and labels only an observed resume', () => {
   installYT()
   const { hooks, events, labels } = harness()
   const player = createYouTubePlayer(mount(), hooks)
   player.play(request())
   const fake = fakes[0]!
-  fake.url = 'https://www.youtube.com/watch?v=aaaaaaaaaaa'
-  fake.getCurrentTime = () => Number.NaN
-  player.play(request({ itemId: 'item-b', attempt: 3, videoId: 'bbbbbbbbbbb', position: 12, resume: true }))
-  expect(fake.loadArgs).toEqual(['bbbbbbbbbbb'])
+  fake.options.events.onReady({ target: fake, data: 0 })
+  player.play(request({ itemId: 'item-b', attempt: 3, videoId: 'bbbbbbbbbbb', position: 42, resume: true }))
+  expect(fake.loadArgs).toEqual([{ videoId: 'bbbbbbbbbbb', startSeconds: 42 }])
   expect(fake.seekArgs).toEqual([])
-  fake.options.events.onStateChange({ target: fake, data: 5 })
-  expect(fake.seekArgs).toEqual([[12, true]])
+  expect(events.filter(event => event.itemId === 'item-b')).toEqual([])
   expect(labels).not.toContain(true)
-  expect(events.some(event => event.event === 'failure')).toBe(false)
-  fake.getCurrentTime = () => fake.time
-  player.play(request({ itemId: 'item-a', attempt: 4, videoId: 'aaaaaaaaaaa', position: 0, resume: true }))
-  fake.options.events.onStateChange({ target: fake, data: 5 })
-  expect(fake.loadArgs.at(-1)).toBe('aaaaaaaaaaa')
-  expect(typeof fake.loadArgs.at(-1)).toBe('string')
-  expect(labels).toContain(true)
-  expect(events.some(event => event.event === 'position' && event.position === 0)).toBe(true)
+  fake.getCurrentTime = () => Number.NaN
+  fake.options.events.onStateChange({ target: fake, data: 1 })
+  expect(labels).not.toContain(true)
+  fake.getCurrentTime = () => 41.5
+  fake.options.events.onStateChange({ target: fake, data: 3 })
+  expect(events.at(-1)).toMatchObject({ event: 'position', position: 41.5 })
+  expect(labels.at(-1)).toBe(true)
+})
+
+it('fresh construction seeks then plays, and does not sample the requested target as proof', () => {
+  installLateYT()
+  const { hooks, events, labels } = harness()
+  const player = createYouTubePlayer(mount(), hooks)
+  player.play(request({ position: 42, resume: true }))
+  const provider = late[0]!
+  provider.ready()
+  expect(provider.calls).toEqual(['seekTo(42)', 'playVideo'])
+  expect(events).toEqual([])
+  expect(labels).not.toContain(true)
+  provider.options.events.onStateChange({ target: provider as unknown as Fake, data: 1 })
+  expect(events).toContainEqual({ itemId: 'item-a', attempt: 1, event: 'position', position: 42 })
+  expect(labels.at(-1)).toBe(true)
+})
+
+it('retiring a pending reload cannot overwrite the cached position with a pre-seek zero', () => {
+  installYT()
+  const { hooks, events } = harness()
+  const player = createYouTubePlayer(mount(), hooks)
+  player.play(request())
+  const fake = fakes[0]!
+  fake.options.events.onReady({ target: fake, data: 0 })
+  player.play(request({ videoId: 'bbbbbbbbbbb', position: 42, resume: true }))
+  fake.time = 0
+  player.pause()
+  player.retire()
+  expect(events.filter(event => 'position' in event)).toEqual([])
+})
+
+it('pre-ready methods cannot send commands or replace a cached resume position', () => {
+  installYT()
+  const { hooks, events } = harness()
+  const player = createYouTubePlayer(mount(), hooks)
+  player.play(request({ position: 42, resume: true }))
+  const fake = fakes[0]!
+  player.pause()
+  player.retire()
+  expect(fake.pauseCount).toBe(0)
+  expect(events).toEqual([])
+})
+
+it('a rejected reload retains the cached position until matching playback starts', () => {
+  installYT()
+  const { hooks, events, labels } = harness()
+  const player = createYouTubePlayer(mount(), hooks)
+  player.play(request())
+  const fake = fakes[0]!
+  fake.options.events.onReady({ target: fake, data: 0 })
+  fake.loadVideoById = () => { throw new Error('provider unavailable') }
+  player.play(request({ videoId: 'bbbbbbbbbbb', position: 42, resume: true }))
+  player.pause()
+  player.retire()
+  expect(events.filter(event => 'position' in event)).toEqual([])
+  expect(labels).not.toContain(true)
+})
+
+it('a replay requested before ready is loaded from zero at ready', () => {
+  installLateYT()
+  const { hooks } = harness()
+  const player = createYouTubePlayer(mount(), hooks)
+  player.play(request())
+  player.play(request({ attempt: 2, replay: true }))
+  late[0]!.ready()
+  expect(late[0]!.calls).toEqual(['loadVideoById(aaaaaaaaaaa,0)'])
+})
+
+it('a zero-position retry that never played does not claim to resume', () => {
+  installYT()
+  const { hooks, labels } = harness()
+  const player = createYouTubePlayer(mount(), hooks)
+  player.play(request({ resume: true }))
+  const fake = fakes[0]!
+  fake.options.events.onReady({ target: fake, data: 0 })
+  fake.options.events.onStateChange({ target: fake, data: 1 })
+  expect(fake.seekArgs).toEqual([])
+  expect(labels).not.toContain(true)
 })
 
 it('does not label a same-source play or a replay', () => {
@@ -264,7 +345,7 @@ it('does not label a same-source play or a replay', () => {
   expect(fake.playCount).toBe(2)
   expect(fake.loadArgs).toEqual([])
   player.play(request({ attempt: 3, replay: true, position: 0 }))
-  expect(fake.loadArgs).toEqual(['aaaaaaaaaaa'])
+  expect(fake.loadArgs).toEqual([{ videoId: 'aaaaaaaaaaa', startSeconds: 0 }])
   expect(fake.seekArgs).toEqual([])
   expect(labels).not.toContain(true)
   expect(fake.cueCount).toBe(0)
@@ -276,6 +357,7 @@ it('pause does not return the provider promise; destroy runs on dispose and not 
   const player = createYouTubePlayer(mount(), hooks)
   player.play(request())
   const fake = fakes[0]!
+  fake.options.events.onReady({ target: fake, data: 0 })
   fake.time = 4
   expect(player.pause()).toBeUndefined()
   expect(fake.pauseCount).toBe(1)
@@ -329,6 +411,7 @@ it('rejects playing and ended when the loaded video id does not match the attemp
   const player = createYouTubePlayer(mount(), hooks)
   player.play(request())
   const fake = fakes[0]!
+  fake.options.events.onReady({ target: fake, data: 0 })
   fake.url = 'https://www.youtube.com/watch?v=bbbbbbbbbbb'
   fake.options.events.onStateChange({ target: fake, data: 1 })
   fake.options.events.onStateChange({ target: fake, data: 0 })
@@ -362,7 +445,7 @@ it('a retired in-flight script does not construct, and StrictMode cleanup leaves
 })
 
 /** The reference's contract, not the fake's convenience: `onReady` is when a player "is ready
- *  to begin receiving API calls", so its command methods do not exist before that. */
+ *  to begin receiving API calls", so this conservative stress stub withholds command methods until then. Their absence is not specified. */
 class LatePlayer {
   iframe: HTMLIFrameElement
   options: Fake['options']
@@ -371,7 +454,7 @@ class LatePlayer {
   url: string
   playVideo?: () => void
   pauseVideo?: () => void
-  loadVideoById?: (videoId: string) => void
+  loadVideoById?: (request: { videoId: string; startSeconds: number }) => void
   seekTo?: (seconds: number, allow: boolean) => void
   getCurrentTime?: () => number
   getVideoUrl?: () => string
@@ -386,7 +469,7 @@ class LatePlayer {
   ready() {
     this.playVideo = () => { this.calls.push('playVideo') }
     this.pauseVideo = () => { this.calls.push('pauseVideo') }
-    this.loadVideoById = videoId => { this.calls.push(`loadVideoById(${videoId})`); this.url = `https://www.youtube.com/watch?v=${videoId}` }
+    this.loadVideoById = request => { this.calls.push(`loadVideoById(${request.videoId},${request.startSeconds})`); this.url = `https://www.youtube.com/watch?v=${request.videoId}`; this.time = request.startSeconds }
     this.seekTo = seconds => { this.calls.push(`seekTo(${seconds})`); this.time = seconds }
     this.getCurrentTime = () => this.time
     this.getVideoUrl = () => this.url
@@ -422,9 +505,9 @@ it('at onReady the current attempt loads its own video, not the one the frame wa
   const provider = late[0]!
   expect(provider.iframe.src).toContain('/embed/aaaaaaaaaaa')
   provider.ready()
-  expect(provider.calls).toEqual(['loadVideoById(bbbbbbbbbbb)'])
+  expect(provider.calls).toEqual(['loadVideoById(bbbbbbbbbbb,0)'])
   provider.options.events.onStateChange({ target: provider as unknown as Fake, data: 1 })
-  expect(events).toEqual([{ itemId: 'item-b', attempt: 1, event: 'playing' }])
+  expect(events).toEqual([{ itemId: 'item-b', attempt: 1, event: 'position', position: 0 }, { itemId: 'item-b', attempt: 1, event: 'playing' }])
 })
 
 it('an attempt retired before onReady does not start at onReady', () => {

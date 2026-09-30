@@ -52,12 +52,13 @@ type Ticket = PlayRequest & {
   retired: boolean
   failed: boolean
   instanceId: number
+  started: boolean
 }
 
 type YTPlayer = {
   playVideo: () => void
   pauseVideo: () => unknown
-  loadVideoById: (videoId: string) => void
+  loadVideoById: (request: { videoId: string; startSeconds: number }) => void
   seekTo: (seconds: number, allowSeekAhead: boolean) => void
   getCurrentTime: () => number
   getVideoUrl: () => string
@@ -145,12 +146,14 @@ export function createYouTubePlayer(host: HTMLElement, hooks: PlayerHooks): Mome
   let instanceId = 0
   let current: Ticket | null = null
   let rememberedId: string | null = null
-  let pendingSeek: number | null = null
-  let pendingTicket: Ticket | null = null
+  let ready = false
+  let awaitingPlayback: Ticket | null = null
+  let pendingLabel: Ticket | null = null
   let rejected = false
 
-  /** False when the provider did not take the command (not ready yet, or destroyed). */
+  /** Reports local dispatch only; a returned call does not acknowledge provider playback. */
   const sent = (command: () => unknown): boolean => {
+    if (!ready) return false
     try { command(); return true } catch { return false }
   }
 
@@ -189,48 +192,44 @@ export function createYouTubePlayer(host: HTMLElement, hooks: PlayerHooks): Mome
     return ticket
   }
 
-  const settleSeek = (ticket: Ticket) => {
-    if (!player || pendingTicket !== ticket || pendingSeek === null) return false
-    const target = pendingSeek
-    pendingSeek = null
-    pendingTicket = null
-    player.seekTo(target, true)
-    const position = sample()
-    if (position !== null) {
-      dispatchPosition(ticket, position)
+  // A load/seek is asynchronous. Buffering and unstarted samples can still describe
+  // the old timeline; retain the cache until matching playback has begun.
+  const sampleFor = (ticket: Ticket): number | null => {
+    if (!ready || (awaitingPlayback === ticket && !ticket.started)) return null
+    return sample()
+  }
+  const observePosition = (ticket: Ticket): number | null => {
+    const position = sampleFor(ticket)
+    if (position !== null && pendingLabel === ticket && ticket.started) {
+      pendingLabel = null
       hooks.onResumeLabel(true)
     }
-    return true
+    return position
   }
 
   const onReady = (event: YTEvent, builtId: number) => {
+    if (builtId !== instanceId || event.target !== player) return
+    ready = true
     const ticket = accept(event, builtId)
-    if (!ticket || !player) return
-    // The frame was built for the first Play. A Play for another selection may have
-    // arrived before the provider took commands; load that one, never the built one.
-    if (loadedId() !== ticket.videoId) { command(ticket); return }
-    const live = player
-    if (!settleSeek(ticket)) sent(() => live.playVideo())
+    if (ticket) command(ticket, true)
   }
 
   const onState = (event: YTEvent, builtId: number) => {
     const ticket = accept(event, builtId)
     if (!ticket || !player || !isInteger(event.data) || !STATE.has(event.data)) return
-    if (event.data === 5) {
-      settleSeek(ticket)
-      dispatchPosition(ticket, sample())
-      return
-    }
-    if (event.data === -1 || event.data === 3) {
-      dispatchPosition(ticket, sample())
+    if (loadedId() !== ticket.videoId) return
+    if (event.data === -1 || event.data === 3 || event.data === 5) {
+      dispatchPosition(ticket, observePosition(ticket))
       return
     }
     if ((event.data === 0 || event.data === 1) && loadedId() !== ticket.videoId) return
     if (event.data === 1) {
+      ticket.started = true
+      if (awaitingPlayback === ticket) dispatchPosition(ticket, observePosition(ticket))
       hooks.dispatch({ itemId: ticket.itemId, attempt: ticket.attempt, event: 'playing' })
       return
     }
-    const position = sample()
+    const position = observePosition(ticket)
     if (event.data === 0) {
       hooks.dispatch({ itemId: ticket.itemId, attempt: ticket.attempt, event: 'ended', ...(position === null ? {} : { position }) })
       return
@@ -264,6 +263,8 @@ export function createYouTubePlayer(host: HTMLElement, hooks: PlayerHooks): Mome
     iframe.title = 'YouTube video player'
     iframe.tabIndex = 0
     iframe.setAttribute('allowfullscreen', '')
+    iframe.setAttribute('allow', 'autoplay; encrypted-media')
+    iframe.setAttribute('referrerpolicy', 'strict-origin-when-cross-origin')
     if (width > 0) iframe.width = String(width)
     if (height > 0) iframe.height = String(height)
     const params = new URLSearchParams({
@@ -314,34 +315,43 @@ export function createYouTubePlayer(host: HTMLElement, hooks: PlayerHooks): Mome
     })
   }
 
-  const command = (ticket: Ticket) => {
-    if (!player) return
+  const command = (ticket: Ticket, initial = false) => {
+    if (!player || !ready) return
     const live = player
+    const resume = !ticket.replay && ticket.resume && finitePosition(ticket.position) !== null && ticket.position > 0
     const loaded = loadedId()
     if (ticket.replay || loaded !== ticket.videoId) {
-      pendingSeek = !ticket.replay && ticket.resume && finitePosition(ticket.position) !== null ? ticket.position : null
-      pendingTicket = pendingSeek === null ? null : ticket
-      if (sent(() => live.loadVideoById(ticket.videoId))) rememberedId = ticket.videoId
+      awaitingPlayback = ticket
+      pendingLabel = resume ? ticket : null
+      const accepted = sent(() => live.loadVideoById({ videoId: ticket.videoId, startSeconds: resume ? ticket.position : 0 }))
+      if (accepted) rememberedId = ticket.videoId
+      else pendingLabel = null
       return
     }
-    pendingSeek = null
-    pendingTicket = null
+    if (initial && resume) {
+      awaitingPlayback = ticket
+      pendingLabel = ticket
+      if (!sent(() => live.seekTo(ticket.position, true))) {
+        pendingLabel = null
+      }
+    }
+    // Seeking alone does not establish a playing state on a newly constructed player.
     sent(() => live.playVideo())
   }
 
   return {
     play(request) {
       if (current) current.retired = true
-      const ticket: Ticket = { ...request, retired: false, failed: false, instanceId }
+      const ticket: Ticket = { ...request, retired: false, failed: false, instanceId, started: false }
       current = ticket
+      awaitingPlayback = null
+      pendingLabel = null
       hooks.onResumeLabel(false)
       if (rejected) {
         fail(ticket, { kind: 'unknown' })
         return
       }
       if (!player) {
-        pendingSeek = !ticket.replay && ticket.resume && finitePosition(ticket.position) !== null ? ticket.position : null
-        pendingTicket = pendingSeek === null ? null : ticket
         boot(ticket)
         return
       }
@@ -350,7 +360,7 @@ export function createYouTubePlayer(host: HTMLElement, hooks: PlayerHooks): Mome
     pause() {
       const ticket = current
       if (!player || !ticket || ticket.retired) return
-      const position = sample()
+      const position = sampleFor(ticket)
       const live = player
       if (!sent(() => live.pauseVideo())) return
       if (position !== null) {
@@ -360,7 +370,7 @@ export function createYouTubePlayer(host: HTMLElement, hooks: PlayerHooks): Mome
     retire() {
       const ticket = current
       if (player && ticket && !ticket.retired) {
-        const position = sample()
+        const position = sampleFor(ticket)
         if (position !== null) {
           hooks.dispatch({ itemId: ticket.itemId, attempt: ticket.attempt, event: 'position', position })
         }
@@ -368,15 +378,16 @@ export function createYouTubePlayer(host: HTMLElement, hooks: PlayerHooks): Mome
         sent(() => live.pauseVideo())
       }
       if (ticket) ticket.retired = true
-      pendingSeek = null
-      pendingTicket = null
+      awaitingPlayback = null
+      pendingLabel = null
     },
     dispose() {
       if (current) current.retired = true
-      pendingSeek = null
-      pendingTicket = null
+      awaitingPlayback = null
+      pendingLabel = null
       const dying = player
       player = null
+      ready = false
       rememberedId = null
       instanceId += 1
       try { dying?.destroy() } catch { /* unmount still drops the instance */ }

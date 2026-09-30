@@ -228,14 +228,21 @@ it('D-19/D-07/H-C: Cinema has one live region, a stable Save name, and no histor
   expect(media(archivalEdition[0]!.id)).toMatchObject({ status: 'paused', position: 1 })
 })
 
-it.each(['read-refused', 'invalid-data'] as const)('row 61: a Cinema write after %s says it replaces the unreadable stored set', reason => {
+const saveSurfaces = ['selected', 'card', 'cinema'] as const
+function saveArea(target: typeof saveSurfaces[number], id: string) {
+  if (target === 'card') return document.querySelector<HTMLElement>(`[data-moment-id="${id}"]`)!
+  openCard(id)
+  if (target === 'cinema') { click('Enter Cinema'); return screen.getByRole('dialog', { name: 'Cinema' }) }
+  return document.querySelector<HTMLElement>('.moments-stage-main')!
+}
+const badReadSurfaces = saveSurfaces.flatMap(target => (['read-refused', 'invalid-data'] as const).map(reason => ({ target, reason })))
+
+it.each(badReadSurfaces)('row 61: a $target write after $reason says it replaces the unreadable stored set', ({ target, reason }) => {
   const storage = referenceStorageRig(reason === 'invalid-data' ? 'broken JSON' : '["old-reference"]')
   if (reason === 'read-refused') storage.refuseRead(true)
   render(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsStorage={storage.access}
     momentsRoute={<><MomentsPage /><Probe /></>} />)
-  openCard(archivalEdition[0]!.id)
-  click('Enter Cinema')
-  const cinema = screen.getByRole('dialog', { name: 'Cinema' })
+  const cinema = saveArea(target, archivalEdition[0]!.id)
   fireEvent.click(within(cinema).getByRole('button', { name: /Save reference/ }))
   const status = within(cinema).getByRole('status').textContent ?? ''
   expect(status).toBe('Reference saved in this browser. This write replaces the unreadable stored set.')
@@ -245,15 +252,14 @@ it.each(['read-refused', 'invalid-data'] as const)('row 61: a Cinema write after
   expect(within(cinema).getByRole('status').textContent).toBe('Reference removed from this browser.')
 })
 
-it.each(['read-refused', 'invalid-data'] as const)('row 61: after %s, a refused write does not use up the sentence; the first write that persists says it, once', reason => {
+it.each(badReadSurfaces)('row 61: $target after $reason, a refused write does not use up the sentence', ({ target, reason }) => {
   const storage = referenceStorageRig(reason === 'invalid-data' ? 'broken JSON' : '["old-reference"]')
   if (reason === 'read-refused') storage.refuseRead(true)
   render(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsStorage={storage.access}
     momentsRoute={<><MomentsPage /><Probe /></>} />)
   const before = storage.disk()
   storage.refuseWrite(true)
-  openCard(archivalEdition[0]!.id); click('Enter Cinema')
-  const cinema = screen.getByRole('dialog', { name: 'Cinema' })
+  const cinema = saveArea(target, archivalEdition[0]!.id)
   const save = within(cinema).getByRole('button', { name: /Save reference/ })
   const status = () => within(cinema).getByRole('status').textContent
   fireEvent.click(save)
@@ -267,18 +273,18 @@ it.each(['read-refused', 'invalid-data'] as const)('row 61: after %s, a refused 
   expect(status()).toBe('Reference saved in this browser.')
 })
 
-it('row 61: a write refused for an invalid reference is not an unreadable stored set', () => {
+it.each(saveSurfaces)('row 61: %s refuses an invalid reference without claiming an unreadable stored set', target => {
   const storage = referenceStorageRig('["old-reference"]')
   const edition = archivalEdition.map((item, index) => index === 0 ? { ...item, id: ' padded ' } : item)
   render(<App momentsEdition={edition} momentsPlayer={createMockMomentsPlayer} momentsStorage={storage.access}
     momentsRoute={<><MomentsPage /><Probe /></>} />)
-  openCard(' padded '); click('Enter Cinema')
-  const cinema = screen.getByRole('dialog', { name: 'Cinema' })
+  let cinema = saveArea(target, ' padded ')
   const status = () => within(cinema).getByRole('status').textContent
   fireEvent.click(within(cinema).getByRole('button', { name: /Save reference/ }))
   expect(status()).toBe('Invalid reference refused. Changes are visit-only; stored references were not changed.')
   expect(storage.disk()).toBe('["old-reference"]')
-  fireEvent.click(within(cinema).getByRole('button', { name: /^Next:/ }))
+  if (target === 'card') cinema = saveArea(target, edition[1]!.id)
+  else fireEvent.click(within(cinema).getByRole('button', { name: /^Next:/ }))
   fireEvent.click(within(cinema).getByRole('button', { name: /Save reference/ }))
   expect(status()).toBe('Reference saved in this browser.')
   expect(JSON.parse(storage.disk()!)).toEqual(['old-reference', edition[1]!.id])
@@ -331,7 +337,7 @@ it('stage focus order reaches the player without leaving the iframe inside the r
   expect(document.activeElement?.tagName).toBe('IFRAME')
   const back = document.querySelector<HTMLElement>('[data-player-return]')!
   fireEvent.keyDown(back, { key: 'Tab', shiftKey: true })
-  expect(document.activeElement?.textContent).toContain('Gallery')
+  expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Enter Cinema' }))
   fireEvent.focus(document.querySelector('[data-player-continue]')!)
   expect(document.activeElement).toBe(primary)
   expect(document.querySelector('[data-moments-player-dialog]')?.getAttribute('role')).toBe('region')
@@ -512,4 +518,59 @@ it('D-18: under spoiler-light the recovery names the neutral title and still end
   expect(stage).not.toMatch(/\.\.|\?\.|!\.|[.?!]”\./)
   click('Enter Cinema')
   expect(within(screen.getByRole('dialog', { name: 'Cinema' })).getByText(/Next opens/).textContent).toBe(stage)
+})
+
+
+it.each(['selected', 'card', 'cinema'].flatMap(target => ['read-refused', 'invalid-data'].map(reason => ({ target, reason }))))('row 61: $target after $reason, refused writes and tab departure preserve the first-write notice', ({ target, reason }) => {
+  const storage = referenceStorageRig(reason === 'invalid-data' ? 'broken JSON' : '["old-reference"]')
+  if (reason === 'read-refused') storage.refuseRead(true)
+  render(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsStorage={storage.access}
+    momentsRoute={<><MomentsPage /><Probe /></>} />)
+  click('Fixtures'); click('Moments')
+  const first = archivalEdition[0]!
+  if (target !== 'card') openCard(first.id)
+  if (target === 'cinema') click('Enter Cinema')
+  const area = target === 'card' ? document.querySelector<HTMLElement>(`[data-moment-id="${first.id}"]`)!
+    : target === 'cinema' ? screen.getByRole('dialog', { name: 'Cinema' }) : document.querySelector<HTMLElement>('.moments-stage-main')!
+  const save = within(area).getByRole('button', { name: /Save reference/ })
+  const before = storage.disk()
+  storage.refuseWrite(true); fireEvent.click(save)
+  expect(storage.disk()).toBe(before)
+  expect(within(area).getByRole('status').textContent).not.toContain('replaces')
+  storage.refuseWrite(false); fireEvent.click(save)
+  expect(within(area).getByRole('status').textContent).toBe('Reference removed from this browser. This write replaces the unreadable stored set.')
+  expect(area.textContent).not.toContain('Saved references could not be read.')
+  fireEvent.click(save)
+  expect(within(area).getByRole('status').textContent).toBe('Reference saved in this browser.')
+})
+
+it('Shift+Tab from Back to selection reaches Enter Cinema', () => {
+  renderVisit(); openCard(archivalEdition[0]!.id); click('Play')
+  const back = screen.getByRole('button', { name: 'Back to selection' })
+  back.focus()
+  fireEvent.keyDown(back, { key: 'Tab', shiftKey: true })
+  expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Enter Cinema' }))
+})
+
+it.each(['stage', 'cinema'] as const)('player failure on %s invalidates playback and Retry waits for Play', surface => {
+  const error = vi.spyOn(console, 'error').mockImplementation(() => {})
+  const app = (fault = false) => <App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer}
+    momentsPlayerFault={fault} momentsRoute={<><MomentsPage /><Probe /></>} />
+  const view = render(app())
+  openCard(archivalEdition[0]!.id); click('Play'); emitPlaying(7)
+  if (surface === 'cinema') click('Enter Cinema')
+  const before = state()
+  view.rerender(app(true))
+  expect(state().surface).toBe('stage')
+  expect(media()).toMatchObject({ status: 'paused', position: 7, attempt: before.media[before.active!]!.attempt + 1 })
+  expect(state().history).toEqual(before.history)
+  expect(state().remainder).toEqual(before.remainder)
+  view.rerender(app()); click('Retry player')
+  expect(document.querySelectorAll('iframe')).toHaveLength(0)
+  expect(screen.queryByRole('dialog', { name: 'Cinema' })).toBeNull()
+  expect(screen.queryByRole('button', { name: 'Pause' })).toBeNull()
+  click('Play')
+  expect(lastPlay()).toMatchObject({ position: 7, resume: true })
+  expect(document.querySelectorAll('iframe')).toHaveLength(1)
+  expect(error).toHaveBeenCalled()
 })

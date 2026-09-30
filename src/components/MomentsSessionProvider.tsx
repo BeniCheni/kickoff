@@ -91,10 +91,10 @@ export function MomentsSessionProvider({ children, edition = MOMENTS, tab = 'mom
     const playing = action.type === 'provider' && action.event === 'playing'
     const settled = action.type === 'failure' || (action.type === 'provider' && (action.event === 'playing' || action.event === 'ended'))
     update({ ...prior, queue,
-      notice: selectionChanged || (settled && prior.notice?.target === 'playback') ? null : prior.notice,
+      notice: action.type === 'player-lost' || selectionChanged || (settled && prior.notice?.target === 'playback') ? null : prior.notice,
       playerNotice: {
-        resume: selectionChanged ? false : prior.playerNotice.resume,
-        autoplayBlocked: selectionChanged || playing ? false : prior.playerNotice.autoplayBlocked,
+        resume: action.type === 'player-lost' || selectionChanged ? false : prior.playerNotice.resume,
+        autoplayBlocked: action.type === 'player-lost' || selectionChanged || playing ? false : prior.playerNotice.autoplayBlocked,
       } })
   }
   const setPlayerNotice = (partial: Partial<PlayerNoticeState>) => {
@@ -127,7 +127,7 @@ export function MomentsSessionProvider({ children, edition = MOMENTS, tab = 'mom
     const wasSaved = prior.queue.saved.includes(id)
     const ids = wasSaved ? prior.queue.saved.filter(value => value !== id) : [...prior.queue.saved, id]
     const saved = writeSavedReferences(ids, storage)
-    const replacedUnreadable = target === 'cinema' && saved.persistence === 'local' && prior.unread
+    const replacedUnreadable = saved.persistence === 'local' && prior.unread
     const text = saved.persistence === 'local'
       ? `${wasSaved ? 'Reference removed from this browser.' : 'Reference saved in this browser.'}${replacedUnreadable ? ' This write replaces the unreadable stored set.' : ''}`
       : saved.reason === 'invalid-data' ? 'Invalid reference refused. Changes are visit-only; stored references were not changed.'
@@ -155,7 +155,7 @@ export function MomentsSessionProvider({ children, edition = MOMENTS, tab = 'mom
     if (!media) return
     bridge.current?.play({
       itemId: active, attempt: media.attempt, videoId, position: media.position, replay,
-      resume: !replay && (before.status !== 'ready' || before.position > 0),
+      resume: !replay && before.position > 0,
     })
   }
   const enterCinema = (control: HTMLElement) => {

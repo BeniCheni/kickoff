@@ -1,5 +1,6 @@
 # Moments slice 3 — the build prompt for Cursor on Grok 4.7 (archived by the PM seat, Mon 28 Sep 2026, TZ=America/New_York)
 
+> Amendment, 29 September 2026: the Pass 2 rulings and current reload/resume, permissions, storage-notice and player-failure contracts are recorded in `docs/moments-architecture.md`; this file remains the original archive.
 The third rung for slice 3: the player host, the YouTube adapter and Cinema. It was written from a
 fresh read of `origin/main` at `1045db0` (the #118 squash; re-verified at `8cb9d87`, two docs-only commits later, with `src/` and `tests/` byte-identical): `src/App.tsx`, the provider, the page,
 the merged stage CSS, `docs/moments-architecture.md` with its Pass 2 Cinema contract, the ideas

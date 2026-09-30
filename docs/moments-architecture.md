@@ -435,9 +435,12 @@ instance. A stale target, a video id that does not match on `playing` or `ended`
 terminal code on the same attempt is dropped at the adapter. Codes 101 and 150 are
 owner-blocked, 2, 5 and 100 are unavailable, and 153 or any other integer is unknown.
 `getCurrentTime()` is sampled on pause, on ended, and before retire; only a finite number at
-least 0, zero included, is dispatched. A different loaded id uses `loadVideoById` without
-`startSeconds`, then `seekTo(position, true)` on ready or cued. “Resuming from the last known
-position.” appears only after a finite, nonnegative sample. Navigation does not wait on a
+least 0, zero included, is dispatched. Beni’s 29 September 2026 ruling supersedes the archived ready-or-cued specification:
+a different loaded id uses `loadVideoById({ videoId, startSeconds })`. A fresh instance
+seeks at ready and then calls `playVideo()`. Samples before matching playback begins do not
+replace the cached position. “Resuming from the last known position.” requires a positive
+cached position and a finite, nonnegative provider sample after playback begins, not the
+requested target; this is last-known recovery, not proof of an exact seek. Navigation does not wait on a
 cross-origin reply.
 
 Stage keeps the same `<dialog>` open once a frame exists, because a closed dialog is
@@ -465,10 +468,11 @@ finishes, on a lens or theme change, and when the surface or the active item cha
 font can move the anchor without resizing it; the stage column and the header catch that.
 There is no document scroll listener. The slice-3 receipt records the 360 and 390 scroll check.
 
-Cinema’s save notice, after a visit whose stored set could not be read, says the
-successful write replaces that unreadable set. Beni confirmed this on 29 Sep 2026
-(ideas file row 61). The gallery lead keeps its existing sentences. A later write,
-once the set is readable, uses the ordinary saved or removed sentence.
+The first successful save or unsave from the stage, any gallery card or Cinema after an
+unreadable opening read says “This write replaces the unreadable stored set.” Beni widened
+row 61 to every surface on 29 September 2026. Refused writes and tab departure do not
+consume the notice; the first persisted write does, for the whole visit. Subsequent writes
+use the ordinary sentence. Feedback replaces the initial warning in the same live region.
 
 Cinema pushes no history entry. One Next control, the transport’s, is fed only by
 `queueNeighbours`. Recovery copy names that item, or says there is no next selection, and does
@@ -520,9 +524,10 @@ the frame reaches Exit Cinema. This is a limit, not a defect that can be fixed f
 parent, and the parent does not pull focus out of the frame on a timer. Measured with the
 mock's same-origin frame, whose key events do not reach the parent either.
 
-**Leaving the tab happens before paint.** The owner's tab watcher is a layout effect. As a
-passive effect it left one painted frame in which the player's box, still placed, was drawn
-over Fixtures or Table.
+**Leaving the tab.** The owner’s tab watcher uses a layout effect. Pass 1’s eight
+click/Back browser cases observed no player box on the other tab after this change; the
+passive-effect version had exposed one. This is sampled evidence, not a universal timing
+guarantee for every navigation or provider. The effect also sends the guarded retire command.
 
 **Recovery punctuation.** A quoted title that ends its own sentence keeps that mark and gains
 none (D-18). Any other title, every spoiler-light neutral title among them, gets the full
@@ -533,27 +538,70 @@ archive” The official source is also available.`
 and cleared by a write that persists. `saved.reason` could not carry it: a refused write
 overwrites it, and a write refused for an invalid reference returns `invalid-data` too.
 
-**What the inert path changes in the markup.** With the empty edition the body text and the
-pixels of all 72 cells equal the merge base's. The markup does not: `header` carries
+**What the inert path changes in the markup.** The builder’s 72-cell empty-edition run reported equal body text and PNGs. Pass 1’s
+re-runs kept equal text but had first-capture PNG noise; PNG identity is advisory. The markup does not: `header` carries
 `data-moments-background="header"`, the tab row carries `data-moments-background="tabs"`, and
 the route content of Fixtures and Table sits inside one
 `<div data-moments-background="route">`. Removing exactly those three from the head's
 `outerHTML` gives the merge base's, byte for byte, in 12 shell cells, 12 route-error cells
-and 5 `?only=` / `&date=` cells, and every element's box is equal at six scroll offsets in 30
-cells, the sticky Table header and zone dividers included. This is the accepted cost of
-marking the background per subtree; whether it is accepted is Beni's.
+and 5 `?only=` / `&date=` cells, The builder’s layout comparison was equal at six scroll offsets in 30 cells, including
+sticky headers and zone dividers; Pass 1 later recorded 0.03px subpixel noise. Current
+Pass 2 measurements are in the verification addendum. These exact three differences on Fixtures and Table were accepted by Beni, 29 Sep 2026.
+The empty Moments tab has the same three differences; his wording named Fixtures and Table.
+No fourth markup difference is covered by that ruling.
 
-**Open, and not decided here.**
+**Pass 2 amendments (Beni’s rulings, 29 September 2026).** The archived plan and build
+prompt retain their original text with dated pointers here. Beni’s ruling outranks the sealed
+package, handoff and plan where they differ.
 
-- Reload-and-seek. `loadVideoById` "loads and plays"; the reference gives state `5` to
-  `cueVideoById` only, and `onReady` belongs to the player, not to a load. On a player that
-  already exists, neither event follows a load, so the pending seek is never applied: the
-  returning selection starts at zero, the `-1` and `3` samples overwrite its cached position
-  with zero, and the resume label never shows. The build prompt said "on ready or cued", so
-  the defect is the specification's. `startSeconds`, or a seek on the attempt's first
-  `playing`, would apply it. Beni rules; slice 4 observes.
-- The frame carries `allowfullscreen` and no `allow`. A cross-origin frame without autoplay
-  delegation treats `playVideo()` from the parent as scripted playback, so a first Play may
-  always land on "Playback has not started." Neither the reference nor the plan decides it.
-- Opened from a `file:` URL, the single-file build's `location.origin` is `file://` in Chrome
-  154, which becomes the `origin` parameter. With the empty edition nothing is requested.
+- **Reload/resume (row 62, with row 67).** The current adapter contract above replaces
+  ready-or-cued seeking. State 5 is no longer used as a seek-completion proxy. The reference
+  documents cued state for cueing and does not promise it after loading, nor provide a
+  seek-complete event. Commands wait for ready and the current ticket is reconciled there,
+  including a replay requested before ready. A malformed/absent sample preserves the cache.
+  The label requires a positive cached position; a failed initial load at zero cannot resume.
+- **Iframe permissions and identity (row 63).** Only after explicit Play, construction adds
+  `allow="autoplay; encrypted-media"` and
+  `referrerpolicy="strict-origin-when-cross-origin"`, retaining `allowfullscreen` and the
+  existing attributes. No sandbox or loading attribute is added. The two-item delegation is
+  the [official privacy-enhanced embed example](https://support.google.com/youtube/answer/171780).
+  The earlier seven-item claim in row 63 was not sourced by Pass 1 and is corrected. Neither
+  the [API reference](https://developers.google.com/youtube/iframe_api_reference) nor the
+  [parameters page](https://developers.google.com/youtube/player_parameters) supplied that list.
+  Permission delegation is not proof of autoplay: browser/user policy and the provider still
+  decide whether playback starts.
+- YouTube’s [minimum functionality](https://developers.google.com/youtube/terms/required-minimum-functionality)
+  recommends the chosen referrer policy. Leaving the attribute unset would currently inherit
+  browser/page defaults; `no-referrer` or `same-origin` would suppress cross-origin identity;
+  `unsafe-url` would disclose more than the origin. The chosen value is explicit and sends
+  only the origin cross-origin, except on a security downgrade. Under the
+  [Referrer Policy specification](https://w3c.github.io/webappsec-referrer-policy/), §§3.9,
+  4.3 and 10.2, an explicit element policy can be less restrictive than the document policy;
+  it controls the iframe navigation request, not every subsequent request inside the loaded
+  third-party document. Browser privacy controls can still suppress referrers. No page-level
+  policy is set by the app. Source-link `rel="noopener noreferrer"` is unchanged.
+- **Still open: row 68.** A local `file:` source has no HTTP referrer; this attribute cannot
+  manufacture one. Whether the single-file build offers Play once curated remains a slice-4
+  decision. Deployed Pages Referer/error 153, one-press playback, and whether the API retains
+  these attributes remain unverified until explicitly authorized provider observation.
+- **Player failure (rows 69–70).** `componentDidCatch` reports `player-lost` to the stable owner.
+  It invalidates the active attempt, changes playing/loading to paused, preserves position,
+  completion, history, saved references and queue order, and returns Cinema to the stage.
+  It leaves a gallery surface as gallery. Retry recreates only the host; another explicit Play
+  is required to create a frame. This preserves the plan’s reason for retaining the visit
+  without retaining the false claim that a destroyed player is playing. The fallback says
+  “Retry the player, then press Play when you are ready.”
+- **Keyboard (row 65).** Stage Shift+Tab from Back to selection now targets Enter Cinema.
+  Cinema’s different visual and focus orders remain a design/accessibility follow-up: changing
+  the persistent frame ancestry would need a separate continuity decision and verification.
+
+**Review qualifications.** The late-method stub is a conservative stress case, not evidence
+that the real provider omits methods before ready. Its synchronous load/state sequence and
+exact seek are also simplifications: the reference permits nearest-keyframe starts. The
+adapter still catches synchronous command exceptions; a refused command is not proof of a
+provider failure code and no loading timer is invented. Global focus lookup and inert cleanup
+assume the app’s single host; no multi-player support is claimed. Parking preserves the DOM
+instance, not verified decoding or playback continuity. Escape key events within an iframe do
+not bubble into this document; the existing parent key listener cannot handle them. The real
+provider’s keyboard handling and browser close requests remain slice-4 observations, so the
+Pass 1 statement that the parent can never fix this is broader than the evidence.

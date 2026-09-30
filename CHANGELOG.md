@@ -21,6 +21,13 @@ releases.
 
 ### Fixed
 
+- The inactive Moments player carries a returning selection’s last-known position with its
+  load, waits for observed playback before resume feedback, and explicitly sets its embed
+  permissions and referrer policy. A player failure preserves the visit but clears active
+  playback and returns Cinema to the stage. The first persisted reference write after an
+  unreadable read explains replacement on every surface; stage keyboard return reaches
+  Enter Cinema. The empty production edition still exposes none of these player controls.
+
 - The authored Moments contract validates source identity, content, dated evidence,
   permissions, collection order and editorial cover choices, and rejects unknown authored
   fields while preserving the archived fixture projection. Production curation remains

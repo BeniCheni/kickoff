@@ -1,5 +1,6 @@
 ---
 name: Moments slice 3
+> Amendment, 29 September 2026: the Pass 2 rulings and current reload/resume, permissions, storage-notice and player-failure contracts are recorded in `docs/moments-architecture.md`; this file remains the original archive.
 overview: "Implementation plan for Moments slice 3: one fixed player host and a typed YouTube adapter under the existing visit owner, Cinema as a modal that shares that host, and deterministic mocks only. No code in this session. Slice 3 is assumed to land as a non-release while src/curated/moments.json stays empty."
 todos:
   - id: adapter

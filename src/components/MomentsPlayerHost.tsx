@@ -45,7 +45,7 @@ function seedPlayerHost(host: HTMLElement) {
   back.addEventListener('keydown', event => {
     if (event.key === 'Tab' && event.shiftKey) {
       event.preventDefault()
-      document.querySelector<HTMLElement>('.moments-stage-top button')?.focus()
+      document.querySelector<HTMLElement>('[data-cinema-enter]')?.focus()
     }
   })
   const slot = document.createElement('div')
@@ -471,14 +471,15 @@ export function MomentsPlayerHost({ factory, fault = false }: { factory?: Moment
   </dialog>
 }
 
-export class MomentsPlayerErrorBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+export class MomentsPlayerErrorBoundary extends Component<{ children: ReactNode; onFailure: () => void }, { failed: boolean }> {
   state = { failed: false }
   static getDerivedStateFromError() { return { failed: true } }
+  componentDidCatch() { this.props.onFailure() }
   render() {
     if (!this.state.failed) return this.props.children
     return <div role="alert" data-moments-player-fallback className="rounded border border-line-strong bg-surface p-4 text-ink">
       <p className="font-display text-[22px] font-semibold">The player could not be shown.</p>
-      <p className="mt-1 text-[13px] text-ink-secondary">Retry the player to mount it again. This visit’s other pages stay available.</p>
+      <p className="mt-1 text-[13px] text-ink-secondary">Retry the player, then press Play when you are ready. This visit’s other pages stay available.</p>
       <div className="mt-4"><button type="button" className="label-caps cursor-pointer rounded border border-ink px-3 py-2 text-[12px]"
         onClick={() => this.setState({ failed: false })}>Retry player</button></div>
     </div>
@@ -488,5 +489,5 @@ export class MomentsPlayerErrorBoundary extends Component<{ children: ReactNode 
 export function MomentsPlayerBoundary({ factory, fault = false }: { factory?: MomentsPlayerFactory; fault?: boolean }) {
   const session = useMomentsSession()
   if (!session || session.edition.length === 0) return null
-  return <MomentsPlayerErrorBoundary><MomentsPlayerHost factory={factory} fault={fault} /></MomentsPlayerErrorBoundary>
+  return <MomentsPlayerErrorBoundary onFailure={() => session.dispatch({ type: 'player-lost' })}><MomentsPlayerHost factory={factory} fault={fault} /></MomentsPlayerErrorBoundary>
 }
