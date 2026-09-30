@@ -360,3 +360,106 @@ it('a retired in-flight script does not construct, and StrictMode cleanup leaves
   expect(firstHooks.events).toEqual([])
   expect(secondHooks.events).toEqual([])
 })
+
+/** The reference's contract, not the fake's convenience: `onReady` is when a player "is ready
+ *  to begin receiving API calls", so its command methods do not exist before that. */
+class LatePlayer {
+  iframe: HTMLIFrameElement
+  options: Fake['options']
+  calls: string[] = []
+  time = 0
+  url: string
+  playVideo?: () => void
+  pauseVideo?: () => void
+  loadVideoById?: (videoId: string) => void
+  seekTo?: (seconds: number, allow: boolean) => void
+  getCurrentTime?: () => number
+  getVideoUrl?: () => string
+  constructor(element: HTMLElement, options: Fake['options']) {
+    this.iframe = element as HTMLIFrameElement
+    this.options = options
+    this.url = `https://www.youtube.com/watch?v=${new URL(this.iframe.src).pathname.split('/').pop()}`
+    late.push(this)
+  }
+  getIframe() { return this.iframe }
+  destroy() { this.calls.push('destroy'); this.iframe.remove() }
+  ready() {
+    this.playVideo = () => { this.calls.push('playVideo') }
+    this.pauseVideo = () => { this.calls.push('pauseVideo') }
+    this.loadVideoById = videoId => { this.calls.push(`loadVideoById(${videoId})`); this.url = `https://www.youtube.com/watch?v=${videoId}` }
+    this.seekTo = seconds => { this.calls.push(`seekTo(${seconds})`); this.time = seconds }
+    this.getCurrentTime = () => this.time
+    this.getVideoUrl = () => this.url
+    this.options.events.onReady({ target: this as unknown as Fake, data: 0 })
+  }
+}
+const late: LatePlayer[] = []
+afterEach(() => { late.splice(0) })
+function installLateYT() {
+  window.YT = { Player: LatePlayer as unknown as NonNullable<Window['YT']>['Player'] }
+}
+
+it('before onReady, pause, retire and another Play send nothing and do not throw', () => {
+  installLateYT()
+  const { hooks, events } = harness()
+  const player = createYouTubePlayer(mount(), hooks)
+  player.play(request())
+  expect(() => player.pause()).not.toThrow()
+  expect(() => player.play(request({ attempt: 2 }))).not.toThrow()
+  expect(() => player.play(request({ itemId: 'item-b', attempt: 1, videoId: 'bbbbbbbbbbb' }))).not.toThrow()
+  expect(() => player.retire()).not.toThrow()
+  expect(late).toHaveLength(1)
+  expect(late[0]!.calls).toEqual([])
+  expect(events).toEqual([])
+})
+
+it('at onReady the current attempt loads its own video, not the one the frame was built with', () => {
+  installLateYT()
+  const { hooks, events } = harness()
+  const player = createYouTubePlayer(mount(), hooks)
+  player.play(request())
+  player.play(request({ itemId: 'item-b', attempt: 1, videoId: 'bbbbbbbbbbb' }))
+  const provider = late[0]!
+  expect(provider.iframe.src).toContain('/embed/aaaaaaaaaaa')
+  provider.ready()
+  expect(provider.calls).toEqual(['loadVideoById(bbbbbbbbbbb)'])
+  provider.options.events.onStateChange({ target: provider as unknown as Fake, data: 1 })
+  expect(events).toEqual([{ itemId: 'item-b', attempt: 1, event: 'playing' }])
+})
+
+it('an attempt retired before onReady does not start at onReady', () => {
+  installLateYT()
+  const { hooks, events } = harness()
+  const player = createYouTubePlayer(mount(), hooks)
+  player.play(request())
+  player.retire()
+  late[0]!.ready()
+  expect(late[0]!.calls).toEqual([])
+  expect(events).toEqual([])
+})
+
+it('drops a state change that arrives for a retired attempt', () => {
+  installYT()
+  const { hooks, events } = harness()
+  const player = createYouTubePlayer(mount(), hooks)
+  player.play(request())
+  const fake = fakes[0]!
+  fake.url = 'https://www.youtube.com/watch?v=aaaaaaaaaaa'
+  fake.getCurrentTime = () => Number.NaN
+  player.retire()
+  for (const data of [1, 2, 0]) fake.options.events.onStateChange({ target: fake, data })
+  expect(events).toEqual([])
+})
+
+it('removes a failed API script, so a Retry leaves one script element', async () => {
+  const { hooks, events } = harness()
+  const player = createYouTubePlayer(mount(), hooks)
+  player.play(request())
+  const script = document.querySelector<HTMLScriptElement>('script[data-moments-youtube-api]')!
+  script.onerror?.call(script, new Event('error'))
+  await Promise.resolve()
+  expect(apiScripts()).toHaveLength(0)
+  player.play(request({ attempt: 2 }))
+  expect(apiScripts()).toHaveLength(1)
+  expect(events).toHaveLength(1)
+})

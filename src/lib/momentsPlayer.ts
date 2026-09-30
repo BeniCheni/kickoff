@@ -2,7 +2,10 @@
  * The YouTube IFrame adapter and the port the deterministic mock implements.
  * No React and no dependency. A callback is accepted only for the attempt that
  * captured it: item, attempt, player instance, and — for playing and ended —
- * the loaded video id. Navigation never waits on a cross-origin reply.
+ * the loaded video id. Navigation never waits on a cross-origin reply, and a
+ * provider command never throws into it: the reference makes `onReady` the point
+ * where a player takes API calls, so a command sent earlier is dropped here and
+ * the attempt that is current at `onReady` is the one that runs.
  */
 
 export type PlayerFailure = {
@@ -128,6 +131,8 @@ function loadApi(): Promise<void> {
     script.dataset.momentsYoutubeApi = 'true'
     script.onerror = () => {
       apiLoader = null
+      // A Retry inserts a fresh element; the failed one must not pile up beside it.
+      script.remove()
       reject(new Error('youtube-iframe-api'))
     }
     document.head.append(script)
@@ -143,6 +148,11 @@ export function createYouTubePlayer(host: HTMLElement, hooks: PlayerHooks): Mome
   let pendingSeek: number | null = null
   let pendingTicket: Ticket | null = null
   let rejected = false
+
+  /** False when the provider did not take the command (not ready yet, or destroyed). */
+  const sent = (command: () => unknown): boolean => {
+    try { command(); return true } catch { return false }
+  }
 
   const sample = (): number | null => {
     if (!player) return null
@@ -196,7 +206,11 @@ export function createYouTubePlayer(host: HTMLElement, hooks: PlayerHooks): Mome
   const onReady = (event: YTEvent, builtId: number) => {
     const ticket = accept(event, builtId)
     if (!ticket || !player) return
-    if (!settleSeek(ticket)) player.playVideo()
+    // The frame was built for the first Play. A Play for another selection may have
+    // arrived before the provider took commands; load that one, never the built one.
+    if (loadedId() !== ticket.videoId) { command(ticket); return }
+    const live = player
+    if (!settleSeek(ticket)) sent(() => live.playVideo())
   }
 
   const onState = (event: YTEvent, builtId: number) => {
@@ -302,17 +316,17 @@ export function createYouTubePlayer(host: HTMLElement, hooks: PlayerHooks): Mome
 
   const command = (ticket: Ticket) => {
     if (!player) return
+    const live = player
     const loaded = loadedId()
     if (ticket.replay || loaded !== ticket.videoId) {
       pendingSeek = !ticket.replay && ticket.resume && finitePosition(ticket.position) !== null ? ticket.position : null
       pendingTicket = pendingSeek === null ? null : ticket
-      player.loadVideoById(ticket.videoId)
-      rememberedId = ticket.videoId
+      if (sent(() => live.loadVideoById(ticket.videoId))) rememberedId = ticket.videoId
       return
     }
     pendingSeek = null
     pendingTicket = null
-    player.playVideo()
+    sent(() => live.playVideo())
   }
 
   return {
@@ -337,7 +351,8 @@ export function createYouTubePlayer(host: HTMLElement, hooks: PlayerHooks): Mome
       const ticket = current
       if (!player || !ticket || ticket.retired) return
       const position = sample()
-      player.pauseVideo()
+      const live = player
+      if (!sent(() => live.pauseVideo())) return
       if (position !== null) {
         hooks.dispatch({ itemId: ticket.itemId, attempt: ticket.attempt, event: 'paused', position })
       }
@@ -349,7 +364,8 @@ export function createYouTubePlayer(host: HTMLElement, hooks: PlayerHooks): Mome
         if (position !== null) {
           hooks.dispatch({ itemId: ticket.itemId, attempt: ticket.attempt, event: 'position', position })
         }
-        player.pauseVideo()
+        const live = player
+        sent(() => live.pauseVideo())
       }
       if (ticket) ticket.retired = true
       pendingSeek = null
