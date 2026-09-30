@@ -145,7 +145,7 @@ function Gallery() {
       <div className="moments-stage-top">
         <button className="moments-button" onClick={() => { session.dispatch({ type: 'surface', surface: 'gallery' }); focusHeading(galleryHeading) }}>← Gallery</button>
         <span className="label-caps">Selected moment</span>
-        <button type="button" className="moments-button" onClick={event => session.enterCinema(event.currentTarget)}>Enter Cinema</button>
+        <button type="button" className="moments-button" data-cinema-enter onClick={event => session.enterCinema(event.currentTarget)}>Enter Cinema</button>
       </div>
       <div className="moments-selected-heading">
         <h1 ref={selectedHeading} tabIndex={-1}>{momentTitle(active, spoiler)}</h1>

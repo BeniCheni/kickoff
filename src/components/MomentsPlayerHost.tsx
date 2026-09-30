@@ -62,6 +62,15 @@ function seedPlayerHost(host: HTMLElement) {
   host.append(back, slot, forward)
 }
 
+/** Where focus goes when the control that had it is gone: the stage's own Cinema button, the
+ *  gallery heading, then the tab that is showing. Each is outside the dialog and survives it. */
+function survivingControl(): HTMLElement | null {
+  return document.querySelector<HTMLElement>('[data-cinema-enter]')
+    ?? document.querySelector<HTMLElement>('.moments-edition-head h1')
+    ?? document.querySelector<HTMLElement>('nav[aria-label="Primary"] [aria-current="page"]')
+    ?? document.querySelector<HTMLElement>('nav[aria-label="Primary"] button')
+}
+
 function ensureClosed(dialog: HTMLDialogElement) {
   if (!dialog.open && !dialog.hasAttribute('open')) return
   try {
@@ -237,7 +246,10 @@ export function MomentsPlayerHost({ factory, fault = false }: { factory?: Moment
       playerRef.current?.dispose()
       playerRef.current = null
       sessionRef.current.setPlayerLive(false)
-      if (inside) document.querySelector<HTMLElement>('nav[aria-label="Primary"] button')?.focus()
+      if (!inside) return
+      // Cleanups run in order, and the inert one is later: an inert control cannot take focus.
+      for (const node of document.querySelectorAll('[data-moments-background][inert]')) node.removeAttribute('inert')
+      survivingControl()?.focus()
     }
   }, [])
 
@@ -325,9 +337,11 @@ export function MomentsPlayerHost({ factory, fault = false }: { factory?: Moment
     const cinema = surface === 'cinema'
     if (cinema && !wasCinema.current) dialogRef.current?.querySelector<HTMLElement>('[data-cinema-exit]')?.focus()
     if (!cinema && wasCinema.current) {
+      // The opener can be gone: a lens change remounts the stage, and a tab change or a route
+      // failure removes it.
       const control = session.cinemaOpener()
       if (control?.isConnected) control.focus()
-      else document.querySelector<HTMLElement>('.moments-edition-head h1')?.focus()
+      else survivingControl()?.focus()
     }
     wasCinema.current = cinema
   }, [surface, session])

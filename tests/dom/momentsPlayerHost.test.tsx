@@ -408,3 +408,56 @@ it('the frame shows only on the selection it was asked to play', () => {
   click(/^Previous:/)
   expect(dialog.getAttribute('data-placement')).toBe('parked')
 })
+
+it('leaving Cinema hands focus to a control that survives, and never to one that is still inert', () => {
+  // jsdom lets an inert control take focus; a browser does not. Record the state at the call.
+  const taken: Array<{ name: string; inert: boolean }> = []
+  const focus = HTMLElement.prototype.focus
+  vi.spyOn(HTMLElement.prototype, 'focus').mockImplementation(function (this: HTMLElement, options?: FocusOptions) {
+    taken.push({ name: this.textContent?.trim() ?? '', inert: !!this.closest('[inert]') })
+    focus.call(this, options)
+  })
+  const enterPlaying = () => { openCard(archivalEdition[0]!.id); click('Play'); emitPlaying(2); click('Enter Cinema'); taken.length = 0 }
+  const cinema = () => screen.getByRole('dialog', { name: 'Cinema' })
+  const error = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+  // A lens change through history remounts the stage, so the stored opener is detached.
+  renderVisit(); enterPlaying()
+  act(() => popTo('/?tab=moments&lens=broadcast'))
+  expect(state().surface).toBe('cinema')
+  fireEvent.click(within(cinema()).getByRole('button', { name: 'Exit Cinema' }))
+  expect(document.activeElement?.hasAttribute('data-cinema-enter')).toBe(true)
+  expect(document.activeElement?.isConnected).toBe(true)
+  cleanup()
+
+  // Back leaves the tab, not Cinema: the tab that is showing takes focus.
+  window.history.replaceState(null, '', '/?tab=moments')
+  renderVisit(); enterPlaying()
+  act(() => popTo('/?tab=table'))
+  expect(document.querySelector('[inert][data-moments-background]')).toBeNull()
+  expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Table' }))
+  cleanup()
+
+  // A route failure removes the stage and the gallery.
+  window.history.replaceState(null, '', '/?tab=moments')
+  let fail = false
+  function Route() { if (fail) throw new Error('contained test failure'); return <><MomentsPage /><Probe /></> }
+  const routed = render(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsRoute={<Route />} />)
+  enterPlaying()
+  fail = true; routed.rerender(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsRoute={<Route />} />)
+  expect(screen.getByText('This view couldn’t load.')).toBeTruthy()
+  expect(document.querySelector('[inert][data-moments-background]')).toBeNull()
+  expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Moments' }))
+  cleanup()
+
+  // A player failure unmounts the host while the background is still marked.
+  const faulted = renderVisit(); enterPlaying()
+  faulted.rerender(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsPlayerFault momentsRoute={<><MomentsPage /><Probe /></>} />)
+  expect(screen.getByRole('alert').textContent).toContain('The player could not be shown.')
+  expect(document.querySelector('[inert][data-moments-background]')).toBeNull()
+  expect(document.activeElement?.hasAttribute('data-cinema-enter')).toBe(true)
+  expect(document.querySelector('[data-player-sentinel]')).toBeNull()
+
+  expect(taken.filter(call => call.inert)).toEqual([])
+  expect(error).toHaveBeenCalled()
+})
