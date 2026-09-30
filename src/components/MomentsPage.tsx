@@ -5,6 +5,7 @@ import { ALL_MOMENTS, knownKickoff, momentNote, momentTitle, type GalleryMoment 
 import { eligibleIds, queueIds, queueNeighbours } from '../lib/momentsQueue'
 import { fixtureTimes, niceDate, syncStamp } from '../lib/time'
 import { MomentCover } from './MomentCover'
+import { PlaybackActions, SourceLink } from './MomentsPlayback'
 import { MomentsSessionProvider, useMomentsSession } from './MomentsSessionProvider'
 
 const CATEGORY_LABELS = { prematch: 'Pre-match', highlights: 'Highlights', celebrations: 'Celebrations' }
@@ -29,13 +30,6 @@ function SourceLine({ moment }: { moment: GalleryMoment }) {
   return <p className="moments-source" data-source-line>{moment.source.name}
     {moment.source.content && <> · {session.spoiler ? 'Source description hidden' : moment.source.content.description}</>}
   </p>
-}
-
-function SourceLink({ moment, primary = false }: { moment: GalleryMoment; primary?: boolean }) {
-  return moment.source ? <a data-primary-action={primary || undefined} className={primary ? 'moments-button moments-primary' : 'moments-source-link'}
-    href={moment.source.url} target="_blank" rel="noopener noreferrer">
-    Open at {moment.source.name} <span aria-hidden="true">↗</span><span className="sr-only"> (new tab)</span>
-  </a> : null
 }
 
 function Actions({ moment, target, onOpen, readNotice = false }: {
@@ -113,6 +107,21 @@ function NoResults({ onReturn }: { onReturn: () => void }) {
   </div>
 }
 
+export function MomentsQueueList({ onOpen }: { onOpen: (id: string) => void }) {
+  const session = useMomentsSession()!
+  const { edition, queue, spoiler } = session
+  const available = new Set(eligibleIds(queue))
+  const byId = new Map(edition.map(item => [item.id, item]))
+  return <ol>{queueIds(queue).map((id, index) => {
+    const item = byId.get(id)!
+    return <li key={id}><button type="button" data-queue-id={id} data-visited={queue.history.includes(id)}
+      aria-current={id === queue.active ? 'true' : undefined} onClick={() => onOpen(id)}>
+      <span>{index + 1}</span><strong>{momentTitle(item, spoiler)}</strong>
+      <small>{id === queue.active ? 'Active · ' : ''}{queue.history.includes(id) ? 'Opened' : 'Unvisited'}{!available.has(id) ? ' · outside current filters' : ''}</small>
+    </button></li>
+  })}</ol>
+}
+
 function Gallery() {
   const session = useMomentsSession()!
   const { edition, queue, spoiler } = session
@@ -123,7 +132,7 @@ function Gallery() {
   const byId = new Map(edition.map(m => [m.id, m]))
   const ordered = queueIds(queue).flatMap(id => { const m = byId.get(id); return m && available.has(id) ? [m] : [] })
   const active = queue.active ? byId.get(queue.active) : undefined
-  const selected = !!active && queue.surface === 'stage'
+  const selected = !!active && queue.surface !== 'gallery'
   const focusHeading = (ref: typeof selectedHeading) => requestAnimationFrame(() => {
     ref.current?.scrollIntoView({ block: 'start' }); ref.current?.focus({ preventScroll: true })
   })
@@ -136,6 +145,7 @@ function Gallery() {
       <div className="moments-stage-top">
         <button className="moments-button" onClick={() => { session.dispatch({ type: 'surface', surface: 'gallery' }); focusHeading(galleryHeading) }}>← Gallery</button>
         <span className="label-caps">Selected moment</span>
+        <button type="button" className="moments-button" data-cinema-enter onClick={event => session.enterCinema(event.currentTarget)}>Enter Cinema</button>
       </div>
       <div className="moments-selected-heading">
         <h1 ref={selectedHeading} tabIndex={-1}>{momentTitle(active, spoiler)}</h1>
@@ -143,9 +153,14 @@ function Gallery() {
       </div>
       <div className="moments-stage-layout">
         <section className="moments-stage-main" aria-label="Selected reference">
-          <div data-moments-stage-anchor className="moments-stage-anchor"><MomentCover moment={active} spoiler={spoiler} /></div>
+          <div data-moments-stage-anchor className="moments-stage-anchor">
+            <MomentCover moment={active} spoiler={spoiler} />
+            {session.playerLive && <button type="button" className="sr-only" data-player-sentinel
+              onFocus={event => session.focusPlayer(event.relatedTarget)}>Player</button>}
+          </div>
           <MomentFacts moment={active} />
-          <Actions moment={active} target="selected" readNotice />
+          <PlaybackActions moment={active} target="selected" readNotice
+            nextTitle={neighbours.next ? momentTitle(byId.get(neighbours.next)!, spoiler) : null} />
           <p className="moments-note">{momentNote(active, spoiler)}</p>
           {active.source && <details className="moments-provenance">
             <summary>Source &amp; curation</summary>
@@ -169,14 +184,7 @@ function Gallery() {
           <h2>Your evening</h2>
           <Filters />
           {!ordered.length && <NoResults onReturn={returnToSelection} />}
-          <ol>{queueIds(queue).map((id, index) => {
-            const item = byId.get(id)!
-            return <li key={id}><button data-queue-id={id} data-visited={queue.history.includes(id)}
-              aria-current={id === queue.active ? 'true' : undefined} onClick={() => open(id)}>
-              <span>{index + 1}</span><strong>{momentTitle(item, spoiler)}</strong>
-              <small>{id === queue.active ? 'Active · ' : ''}{queue.history.includes(id) ? 'Opened' : 'Unvisited'}{!available.has(id) ? ' · outside current filters' : ''}</small>
-            </button></li>
-          })}</ol>
+          <MomentsQueueList onOpen={open} />
           <OrderControls />
           <p className="moments-small">History keeps only selections you opened, in first-open order. Skipped selections remain reorderable. Opened does not mean watched.</p>
         </aside>

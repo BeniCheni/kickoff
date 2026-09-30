@@ -356,7 +356,11 @@ anchor while keeping its one persistent player host outside the keyed boundary.
 Beni's D-16 remedy (a) is encoded now: the stage and queue stack through 887px; at 888px they
 become two columns. At that threshold, the content width is 848px minus a 300px list and 28px
 gutter, leaving a 520 × 292.5 anchor; wherever side by side, it is at least 480 × 270. No
-minimum-height workaround defeats the aspect ratio. A short, single-line Selected moment
+minimum-height workaround defeats the aspect ratio. Slice 3 amends that sentence for phone
+widths only: on 28 Sep 2026 Beni ruled that the stage anchor and the player host keep full
+width and grow in normal flow to at least 200px tall, `height = max(width × 9/16, 200px)`,
+so the list is pushed down and never covered. At 888px and above the 16:9 column is already
+taller than 200px, so the floor does not change that ratio. A short, single-line Selected moment
 label replaces the prototype's wrapping stage-top pill.
 
 The lead primary label is Open selection. Save reference keeps its visible and accessible
@@ -387,3 +391,223 @@ returned refusal.
 H-C (Cinema history/back behavior), H-G (duplicate playback recovery controls), D-06/D-15
 (real player geometry/focus), D-09/D-14 provider journeys and in-modal live regions remain
 slice 3/4 work. There is no provider validation or first-edition proposal in this landing.
+Slice 3 implementation decisions, below, is where those player items landed. Real provider
+behaviour stays slice 4.
+
+## Slice 3 implementation decisions
+
+The visit owner now lives inside the 780px shell, after the header and the tab row, and it
+wraps only the Moments route. Slice 3 mounts `MomentsPlayerBoundary` and `MomentsPlayerHost`
+under that owner as a sibling of `MomentsRouteBoundary`, outside `tab === 'moments'`. Fixtures
+and Table stay in the other route, outside the owner. An empty edition renders no player: the
+boundary returns null, and the page keeps the banner and the sentence. The host is one element
+for the whole visit. Stage and Cinema share it by measuring the in-flow
+`data-moments-stage-anchor` or the Cinema slot; the iframe is never inside the keyed route,
+never portaled, and never reparented. `App` takes an optional player factory. `src/main.tsx`
+passes nothing, so production uses the YouTube adapter. The harness and the DOM tests pass
+the mock.
+
+Cinema does not mark the shell, `#root`, `body`, or any ancestor of the dialog `inert`. It
+marks four subtrees, each with `data-moments-background`: the header, the tab row, the Moments
+route while that tab is showing, and the Fixtures or Table route while one of those tabs is
+showing. Closing Cinema, leaving the tab, or unmounting the host or the player boundary
+removes that inert state. A player render failure shows “The player could not be shown.” and
+“Retry player” inside the owner. The shell, the tabs, Fixtures and Table stay up. The owner’s
+own fallback copy is unchanged.
+
+Beni’s phone ruling is the minimum height on `.moments-stage-anchor` and
+`.moments-cinema-slot`: full width, `aspect-ratio: 16 / 9`, and `min-height: 200px`. At 360px
+that box is 320 × 200. The queue stays in normal flow below it. Side by side, from 888px, the
+column is already at least 480 × 270, so the floor does not replace 16:9 there. Whether a
+provider letterboxes the 16:10 phone frame is unverified until slice 4.
+
+The adapter is not React and adds no dependency. Nothing is requested before an explicit Play:
+no API script, no iframe, no preconnect, no thumbnail. `index.html` keeps only its Google Fonts
+preconnects. The first Play inserts `https://www.youtube.com/iframe_api` and builds one
+`youtube-nocookie.com` iframe, with `enablejsapi=1`, `playsinline=1`, and
+`origin: window.location.origin`, and passes that element to `YT.Player`. `controls` stays at
+the provider default. `modestbranding` is not set. One instance lasts the visit. `pauseVideo`
+parks and leaves; `stopVideo` and `cueVideoById` are not used. `destroy()` runs only when the
+host unmounts. A hung load stays `loading` until the visitor leaves or a provider event
+arrives. `onAutoplayBlocked` stays on `loading`, records no failure, and shows that the
+control inside the player can start playback. Callbacks carry the item, the attempt, and the
+instance. A stale target, a video id that does not match on `playing` or `ended`, or a second
+terminal code on the same attempt is dropped at the adapter. Codes 101 and 150 are
+owner-blocked, 2, 5 and 100 are unavailable, and 153 or any other integer is unknown.
+`getCurrentTime()` is sampled on pause, on ended, and before retire; only a finite number at
+least 0, zero included, is dispatched. Beni’s 29 September 2026 ruling supersedes the archived ready-or-cued specification:
+a different loaded id uses `loadVideoById({ videoId, startSeconds })`. A fresh instance
+seeks at ready and then calls `playVideo()`. Samples before matching playback begins do not
+replace the cached position. “Resuming from the last known position.” requires a positive
+cached position and a provider sample greater than zero after playback begins, not the
+requested target. A sample of exactly zero stays a position and keeps the sentence pending
+until a later sample is greater than zero. Beni, 30 September 2026. This is last-known
+recovery, not proof of an exact seek. Navigation does not wait on a
+cross-origin reply.
+
+Stage keeps the same `<dialog>` open once a frame exists, because a closed dialog is
+`display: none` and would hide the iframe. While the visitor is on the stage the dialog’s
+explicit role is `region` and its name is Player, so it is not exposed as a modal dialog;
+`aria-modal` is absent. Cinema removes that role override, sets `aria-modal="true"`, and names
+the dialog Cinema. The host stays after the route in DOM order, outside the keyed boundary.
+Play moves focus to “Back to selection”, the first stop in the player region, which returns
+focus to the stage’s primary action. An in-anchor “Player” control sends Tab into that region
+and sends Shift+Tab from later in the route to the iframe. “Continue past the player” returns
+focus under the picture. The iframe is not reparented. Shift+Tab from inside the frame does
+not bubble, so when that key moves focus onto the dialog itself, Cinema sends it to the last
+control in the dialog. Escape is a capture-phase `keydown` on
+the document, which does not depend on `closedby`. Cinema also sets `closedby="closerequest"`
+and handles `cancel`, calling `preventDefault` so the dialog stays open. If a user agent
+closes it anyway while a frame exists, the host calls `show()` again in that turn and does
+not destroy the instance. Gallery and other tabs pause and park: the dialog stays open, clipped
+to a fixed 0×0 box, `inert`, `aria-hidden`, and `pointer-events: none`.
+
+The stage dialog is `position: absolute`. Its top and left are the anchor’s document
+coordinates, minus a positioned ancestor’s document origin when one exists. It scrolls with
+the page. It is measured again on a resize of the anchor, the stage column, the header, the
+gallery, the Cinema slot, or the document, on `visualViewport` resize, when font loading
+finishes, on a lens or theme change, and when the surface or the active item changes. A late
+font can move the anchor without resizing it; the stage column and the header catch that.
+There is no document scroll listener. The slice-3 receipt records the 360 and 390 scroll check.
+
+The first successful save or unsave from the stage, any gallery card or Cinema after an
+unreadable opening read says “This write replaces the unreadable stored set.” Beni widened
+row 61 to every surface on 29 September 2026. Refused writes and tab departure do not
+consume the notice; the first persisted write does, for the whole visit. Subsequent writes
+use the ordinary sentence. Feedback replaces the initial warning in the same live region.
+
+Cinema pushes no history entry. One Next control, the transport’s, is fed only by
+`queueNeighbours`. Recovery copy names that item, or says there is no next selection, and does
+not add a second button. Recovery sits below the frame, not over it. Cinema content is at most
+1440px wide inside a full-viewport dialog. The shared header stays in the 780px shell. The
+breakpoint remains 888, not the template’s 760. Activating a lower queue row scrolls the dialog
+until the player and the primary action are inside its visible box, then focuses that action
+with `preventScroll: true`.
+
+The inert receipt’s base is the merge base `8cb9d87c531ffce3c609f98e0da557c26027d432`. The
+tip is built from that same snapshot, without a rebase onto later sync commits.
+
+## Slice 3 review resolutions (PR #128, Pass 1, 29 September 2026)
+
+Pass 1 was the cold review by the seat that did not build slice 3. What it changed is recorded
+here with its cost; what it measured and left alone is in the PR conversation. Beni's rulings
+are not reopened. Where a sentence above says something this section amends, this section is
+the later one.
+
+**Provider commands before `onReady`.** The reference makes `onReady` the point where a player
+"is ready to begin receiving API calls". The adapter used to call `pauseVideo`, `playVideo` and
+`loadVideoById` as soon as `YT.Player` was constructed; against a stub that attaches those
+methods at ready, `retire()` threw from inside the owner's dispatch, Next, Previous, a queue
+row, the Gallery button and a second Play did nothing, and leaving the tab threw inside the
+owner's effect, so the owner boundary replaced the visit. Commands now go through one guarded
+send, and the attempt that is current at `onReady` is the one that runs: when its video is not
+the one the frame was built with, that video is loaded. Cost: a command the provider refuses
+for any other reason is also dropped without a failure; the attempt then waits for a provider
+event, which is ruling 7's hung load. The real provider has not been run. Slice 4 does that.
+
+**The frame belongs to one selection.** The host remembers the selection the frame was last
+asked to play. On any other selection the stage parks the dialog and Cinema clips the host to
+0 x 0 and marks it inert, so the anchor or the slot shows that selection's cover, as it does
+before a first Play. Before this, the earlier video's frame sat over the next selection's
+cover, under the next selection's heading. The builder's matrix could not see it: the mock's
+frame paints nothing, and its `ready` cells are fresh loads. "Ready cells have no iframe" in
+the builder's receipt is true of those cells only. The in-anchor "Player" stop exists only
+while the frame is on the selection.
+
+**Focus when Cinema closes.** When the stored opener is detached (a lens change through
+history remounts the stage; a tab change or a route failure removes it), focus goes to the
+stage's Enter Cinema button, then the gallery heading, then the tab that is showing. The
+host's unmount cleanup clears the background's inert marks before it focuses, because an
+inert control cannot take focus and that cleanup runs before the one that removed them.
+
+**Escape inside the frame.** The parent document’s `keydown` handler does not receive
+child-document key events. With the same-origin mock frame focused, Cinema stayed open on
+Escape and one Tab reached Exit Cinema. This establishes the current handler’s limit, not
+that every parent-side solution is impossible. Real-provider keyboard behavior and browser
+close requests remain unverified. No timer pulls focus out of the frame.
+
+**Leaving the tab.** The owner’s tab watcher uses a layout effect. Pass 1’s eight
+click/Back browser cases observed no player box on the other tab after this change; the
+passive-effect version had exposed one. This is sampled evidence, not a universal timing
+guarantee for every navigation or provider. The effect also sends the guarded retire command.
+
+**Recovery punctuation.** A quoted title that ends its own sentence keeps that mark and gains
+none (D-18). Any other title, every spoiler-light neutral title among them, gets the full
+stop after the quotes. Without it the body read `Next opens “Match highlights from the
+archive” The official source is also available.`
+
+**Row 61.** The visit keeps its own mark of an unreadable stored set, set by the opening read
+and cleared by a write that persists. `saved.reason` could not carry it: a refused write
+overwrites it, and a write refused for an invalid reference returns `invalid-data` too.
+
+**What the inert path changes in the markup.** The builder’s 72-cell empty-edition run reported equal body text and PNGs. Pass 1’s
+re-runs kept equal text but had first-capture PNG noise; PNG identity is advisory. The markup does not: `header` carries
+`data-moments-background="header"`, the tab row carries `data-moments-background="tabs"`, and
+the route content of Fixtures and Table sits inside one
+`<div data-moments-background="route">`. Removing exactly those three from the head's
+`outerHTML` gives the merge base's, byte for byte, in 12 shell cells, 12 route-error cells
+and 5 `?only=` / `&date=` cells. The builder’s layout comparison was equal at six scroll offsets in 30 cells, including
+sticky headers and zone dividers; Pass 1 later recorded 0.03px subpixel noise. Current
+Pass 2 measurements are in the verification addendum. These exact three differences on Fixtures and Table were accepted by Beni, 29 Sep 2026.
+The empty Moments tab has the same three differences; his wording named Fixtures and Table.
+No fourth markup difference is covered by that ruling.
+
+**Pass 2 amendments (Beni’s rulings, 29 September 2026).** The archived plan and build
+prompt retain their original text with dated pointers here. Beni’s ruling outranks the sealed
+package, handoff and plan where they differ.
+
+- **Reload/resume (row 62, with row 67).** The current adapter contract above replaces
+  ready-or-cued seeking. State 5 is no longer used as a seek-completion proxy. The reference
+  documents cued state for cueing and does not promise it after loading, nor provide a
+  seek-complete event. Commands wait for ready and the current ticket is reconciled there,
+  including a replay requested before ready. A malformed/absent sample preserves the cache. A second Play while a resume load is
+  still unsettled carries the seek again, including after retirement; it does not treat the
+  provider’s changed video ID alone as proof that the seek applied.
+  The label requires a positive cached position; a failed initial load at zero cannot resume.
+  A sample of exactly zero after playback begins does not show the sentence; a later sample
+  greater than zero still can. Beni, 30 September 2026.
+- **Iframe permissions and identity (row 63).** Only after explicit Play, construction adds
+  `allow="autoplay; encrypted-media"` and
+  `referrerpolicy="strict-origin-when-cross-origin"`, retaining `allowfullscreen` and the
+  existing attributes. No sandbox or loading attribute is added. The two-item delegation is
+  the [official privacy-enhanced embed example](https://support.google.com/youtube/answer/171780).
+  The earlier seven-item claim in row 63 was not sourced by Pass 1 and is corrected. Neither
+  the [API reference](https://developers.google.com/youtube/iframe_api_reference) nor the
+  [parameters page](https://developers.google.com/youtube/player_parameters) supplied that list.
+  Permission delegation is not proof of autoplay: browser/user policy and the provider still
+  decide whether playback starts.
+- YouTube’s [minimum functionality](https://developers.google.com/youtube/terms/required-minimum-functionality)
+  recommends the chosen referrer policy. Leaving the attribute unset would currently inherit
+  browser/page defaults; `no-referrer` or `same-origin` would suppress cross-origin identity;
+  `unsafe-url` would disclose more than the origin. The chosen value is explicit and sends
+  only the origin cross-origin, except on a security downgrade. Under the
+  [Referrer Policy specification](https://w3c.github.io/webappsec-referrer-policy/), §§3.9,
+  4.3 and 10.2, an explicit element policy can be less restrictive than the document policy;
+  it controls the iframe navigation request, not every subsequent request inside the loaded
+  third-party document. Browser privacy controls can still suppress referrers. No page-level
+  policy is set by the app. Source-link `rel="noopener noreferrer"` is unchanged.
+- **Still open: row 68.** A local `file:` source has no HTTP referrer; this attribute cannot
+  manufacture one. Whether the single-file build offers Play once curated remains a slice-4
+  decision. Deployed Pages Referer/error 153, one-press playback, and whether the API retains
+  these attributes remain unverified until explicitly authorized provider observation.
+- **Player failure (rows 69–70).** `componentDidCatch` reports `player-lost` to the stable owner.
+  It invalidates the active attempt, changes playing/loading to paused, preserves position,
+  completion, history, saved references and queue order, and returns Cinema to the stage.
+  It leaves a gallery surface as gallery. Retry recreates only the host; another explicit Play
+  is required to create a frame. This preserves the plan’s reason for retaining the visit
+  without retaining the false claim that a destroyed player is playing. The fallback says
+  “Retry the player, then press Play when you are ready.”
+- **Keyboard (row 65).** Stage Shift+Tab from Back to selection now targets Enter Cinema.
+  Cinema’s different visual and focus orders remain a design/accessibility follow-up: changing
+  the persistent frame ancestry would need a separate continuity decision and verification.
+
+**Review qualifications.** The late-method stub is a conservative stress case, not evidence
+that the real provider omits methods before ready. Its synchronous load/state sequence and
+exact seek are also simplifications: the reference permits nearest-keyframe starts. The
+adapter still catches synchronous command exceptions; a refused command is not proof of a
+provider failure code and no loading timer is invented. Global focus lookup and inert cleanup
+assume the app’s single host; no multi-player support is claimed. Parking preserves the DOM
+instance, not verified decoding or playback continuity. Escape key events within an iframe do
+not bubble into this document; the existing parent key listener cannot handle them. The real
+provider’s keyboard handling and browser close requests remain slice-4 observations, so the
+Pass 1 statement that the parent can never fix this is broader than the evidence.

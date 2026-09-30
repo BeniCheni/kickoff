@@ -1,0 +1,385 @@
+{
+  "browser": "154.0.8037.58",
+  "dateUtc": "2026-09-29T13:25:55.638Z",
+  "clockFixedAt": "2026-09-27T02:40:00Z",
+  "baseSha": "8cb9d87c531ffce3c609f98e0da557c26027d432",
+  "baseUrl": "http://127.0.0.1:8853",
+  "tipUrl": "http://127.0.0.1:8854",
+  "cells": 72,
+  "loads": 144,
+  "identicalText": 72,
+  "identicalScreenshots": 72,
+  "mediaProviderRequests": 0,
+  "errors": [],
+  "fonts": {
+    "base": 317,
+    "tip": 317,
+    "total": 634,
+    "hosts": {
+      "fonts.googleapis.com": 146,
+      "fonts.gstatic.com": 488
+    }
+  },
+  "compared": [
+    {
+      "name": "360-ledger-light-fixtures",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "360-ledger-light-table",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "360-ledger-light-moments",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "360-ledger-dark-fixtures",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "360-ledger-dark-table",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "360-ledger-dark-moments",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "360-poster-light-fixtures",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "360-poster-light-table",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "360-poster-light-moments",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "360-poster-dark-fixtures",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "360-poster-dark-table",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "360-poster-dark-moments",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "360-broadcast-light-fixtures",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "360-broadcast-light-table",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "360-broadcast-light-moments",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "360-broadcast-dark-fixtures",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "360-broadcast-dark-table",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "360-broadcast-dark-moments",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "375-ledger-light-fixtures",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "375-ledger-light-table",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "375-ledger-light-moments",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "375-ledger-dark-fixtures",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "375-ledger-dark-table",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "375-ledger-dark-moments",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "375-poster-light-fixtures",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "375-poster-light-table",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "375-poster-light-moments",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "375-poster-dark-fixtures",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "375-poster-dark-table",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "375-poster-dark-moments",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "375-broadcast-light-fixtures",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "375-broadcast-light-table",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "375-broadcast-light-moments",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "375-broadcast-dark-fixtures",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "375-broadcast-dark-table",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "375-broadcast-dark-moments",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "390-ledger-light-fixtures",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "390-ledger-light-table",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "390-ledger-light-moments",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "390-ledger-dark-fixtures",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "390-ledger-dark-table",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "390-ledger-dark-moments",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "390-poster-light-fixtures",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "390-poster-light-table",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "390-poster-light-moments",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "390-poster-dark-fixtures",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "390-poster-dark-table",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "390-poster-dark-moments",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "390-broadcast-light-fixtures",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "390-broadcast-light-table",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "390-broadcast-light-moments",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "390-broadcast-dark-fixtures",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "390-broadcast-dark-table",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "390-broadcast-dark-moments",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "1000-ledger-light-fixtures",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "1000-ledger-light-table",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "1000-ledger-light-moments",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "1000-ledger-dark-fixtures",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "1000-ledger-dark-table",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "1000-ledger-dark-moments",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "1000-poster-light-fixtures",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "1000-poster-light-table",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "1000-poster-light-moments",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "1000-poster-dark-fixtures",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "1000-poster-dark-table",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "1000-poster-dark-moments",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "1000-broadcast-light-fixtures",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "1000-broadcast-light-table",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "1000-broadcast-light-moments",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "1000-broadcast-dark-fixtures",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "1000-broadcast-dark-table",
+      "identicalText": true,
+      "identicalScreenshot": true
+    },
+    {
+      "name": "1000-broadcast-dark-moments",
+      "identicalText": true,
+      "identicalScreenshot": true
+    }
+  ]
+}

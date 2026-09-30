@@ -34,6 +34,7 @@ export type QueueAction =
   | { type: 'saved'; ids: readonly string[] }
   | { type: 'surface'; surface: MomentsQueue['surface'] }
   | { type: 'leave' }
+  | { type: 'player-lost' }
   | { type: 'play'; replay?: boolean }
   | { type: 'provider'; id: string; attempt: number; event: 'playing' | 'paused' | 'ended' | 'position'; position?: number }
   | { type: 'failure'; id: string; attempt: number; failure: MediaFailure }
@@ -132,6 +133,14 @@ export function momentsQueueReducer(state: MomentsQueue, action: QueueAction): M
     }
     case 'restore': return { ...state, remainder: state.canonical.filter(id => !state.history.includes(id)),
       mode: 'editorial', seed: null, undo: null }
+    case 'player-lost': {
+      const next = suspend(state)
+      const active = next.active
+      const media = active ? next.media[active] : undefined
+      return { ...next, surface: state.surface === 'gallery' ? 'gallery' : 'stage',
+        media: active && media?.status === 'loading'
+          ? { ...next.media, [active]: { ...media, status: 'paused' } } : next.media }
+    }
     case 'leave': return { ...suspend(state), surface: 'gallery' }
     case 'surface': return { ...(action.surface === 'gallery' ? suspend(state) : state), surface: action.surface }
     case 'play': {

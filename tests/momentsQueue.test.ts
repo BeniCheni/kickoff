@@ -270,3 +270,19 @@ it('a retry timeout retaining an older block may still upgrade to its own known 
   expect(s.media['1']!.failure).toEqual({ kind: 'unavailable', providerError: 100 })
   expect(reduce(s, { type: 'failure', id: '1', attempt, failure: { kind: 'owner-blocked', providerError: 150 } })).toBe(s)
 })
+
+it.each(['loading', 'playing', 'ended', 'blocked'] as const)('player loss preserves the visit and invalidates a %s attempt', status => {
+  let s = run(createMomentsQueue(ids), open('1'), { type: 'saved', ids: ['old-reference', '1'] }, shuffle, { type: 'play' }, { type: 'surface', surface: 'cinema' })
+  if (status === 'playing') s = provider(s, 'playing', 7)
+  if (status === 'ended') s = provider(provider(s, 'playing'), 'ended', 7)
+  if (status === 'blocked') s = reduce(s, { type: 'failure', id: '1', attempt: s.media['1']!.attempt, failure: { kind: 'owner-blocked', providerError: 150 } })
+  const next = reduce(s, { type: 'player-lost' })
+  expect(next.surface).toBe('stage')
+  expect(next.history).toEqual(s.history)
+  expect(next.remainder).toEqual(s.remainder)
+  expect(next.undo).toEqual(s.undo)
+  expect(next.saved).toEqual(s.saved)
+  expect(next.media['1']).toEqual({ ...s.media['1'], attempt: s.media['1']!.attempt + 1,
+    status: status === 'playing' || status === 'loading' ? 'paused' : status })
+  expect(reduce(next, { type: 'provider', id: '1', attempt: s.media['1']!.attempt, event: 'playing' })).toBe(next)
+})

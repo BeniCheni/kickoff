@@ -181,21 +181,16 @@ runs the six-pass cycle; [`kickoff-design-studio`](.agents/skills/kickoff-design
 
 **Shipped**: fixtures, standings, the three lenses, the scheduled sync with its self-merging
 PRs and change digest, the Champions League with computed matchday provenance and venue clocks
-(v0.5.0), and the Moments foundation: the authored-record contract (slice 1) and the dormant
-gallery (slice 2), both merged as non-releases with the live site provably unchanged.
-
-**In flight**: Moments slice 3, the video player and its full-screen "Cinema" view. Cursor/Grok
-is building it from [a plan it wrote](docs/moments-player-plan.md) that was
-[scored against criteria fixed before the run](docs/moments-player-plan-review.md); the build
-spec travels with the PR.
-
-Two constraints make it interesting: exactly one player element that is never re-created on
-navigation, and not a single request to YouTube until a reader presses Play.
+(v0.5.0), and the Moments foundation: the authored-record contract (slice 1), the dormant
+gallery (slice 2), and the player with Cinema (slice 3). All three landed as non-releases.
+While `src/curated/moments.json` is `[]`, the live site is unchanged and the player requests
+nothing.
 
 **Next**: slice 4, an end-to-end acceptance pass, one narrowly authorised real-provider test
 (all playback so far is simulated), and a first curated edition that needs an explicit
 publication decision. When a reader can use Moments, that's the next minor release; the number
-is the human's call.
+is the human's call. The player keeps one element for the visit and makes no provider request
+until Play.
 
 ## 🥅 Try it
 
