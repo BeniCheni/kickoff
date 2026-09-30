@@ -320,7 +320,7 @@ export function createYouTubePlayer(host: HTMLElement, hooks: PlayerHooks): Mome
     const live = player
     const resume = !ticket.replay && ticket.resume && finitePosition(ticket.position) !== null && ticket.position > 0
     const loaded = loadedId()
-    if (ticket.replay || loaded !== ticket.videoId) {
+    if (ticket.replay || loaded !== ticket.videoId || (awaitingPlayback !== null && !awaitingPlayback.started)) {
       awaitingPlayback = ticket
       pendingLabel = resume ? ticket : null
       const accepted = sent(() => live.loadVideoById({ videoId: ticket.videoId, startSeconds: resume ? ticket.position : 0 }))
@@ -328,6 +328,7 @@ export function createYouTubePlayer(host: HTMLElement, hooks: PlayerHooks): Mome
       else pendingLabel = null
       return
     }
+    awaitingPlayback = null
     if (initial && resume) {
       awaitingPlayback = ticket
       pendingLabel = ticket
@@ -344,7 +345,8 @@ export function createYouTubePlayer(host: HTMLElement, hooks: PlayerHooks): Mome
       if (current) current.retired = true
       const ticket: Ticket = { ...request, retired: false, failed: false, instanceId, started: false }
       current = ticket
-      awaitingPlayback = null
+      // A retired load may still be settling. Keep its marker so the next Play
+      // carries the cached seek again rather than sampling its transitional zero.
       pendingLabel = null
       hooks.onResumeLabel(false)
       if (rejected) {
@@ -378,7 +380,6 @@ export function createYouTubePlayer(host: HTMLElement, hooks: PlayerHooks): Mome
         sent(() => live.pauseVideo())
       }
       if (ticket) ticket.retired = true
-      awaitingPlayback = null
       pendingLabel = null
     },
     dispose() {

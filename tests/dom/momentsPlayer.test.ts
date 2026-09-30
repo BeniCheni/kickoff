@@ -311,6 +311,26 @@ it('a rejected reload retains the cached position until matching playback starts
   expect(labels).not.toContain(true)
 })
 
+it.each([false, true])('a second Play during an unsettled resume keeps the seek after retire=%s', retire => {
+  installYT()
+  const { hooks, events, labels } = harness()
+  const player = createYouTubePlayer(mount(), hooks)
+  player.play(request())
+  const fake = fakes[0]!
+  fake.options.events.onReady({ target: fake, data: 0 })
+  const resumed = request({ videoId: 'bbbbbbbbbbb', position: 42, resume: true })
+  player.play(resumed)
+  fake.time = 0
+  if (retire) player.retire()
+  player.play({ ...resumed, attempt: 2 })
+  fake.time = 0
+  fake.options.events.onStateChange({ target: fake, data: 3 })
+  player.pause()
+  expect(fake.loadArgs).toEqual([{ videoId: 'bbbbbbbbbbb', startSeconds: 42 }, { videoId: 'bbbbbbbbbbb', startSeconds: 42 }])
+  expect(events.filter(event => 'position' in event)).toEqual([])
+  expect(labels).not.toContain(true)
+})
+
 it('a replay requested before ready is loaded from zero at ready', () => {
   installLateYT()
   const { hooks } = harness()

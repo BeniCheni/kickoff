@@ -558,7 +558,9 @@ package, handoff and plan where they differ.
   ready-or-cued seeking. State 5 is no longer used as a seek-completion proxy. The reference
   documents cued state for cueing and does not promise it after loading, nor provide a
   seek-complete event. Commands wait for ready and the current ticket is reconciled there,
-  including a replay requested before ready. A malformed/absent sample preserves the cache.
+  including a replay requested before ready. A malformed/absent sample preserves the cache. A second Play while a resume load is
+  still unsettled carries the seek again, including after retirement; it does not treat the
+  provider’s changed video ID alone as proof that the seek applied.
   The label requires a positive cached position; a failed initial load at zero cannot resume.
 - **Iframe permissions and identity (row 63).** Only after explicit Play, construction adds
   `allow="autoplay; encrypted-media"` and
