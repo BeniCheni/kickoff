@@ -1,4 +1,4 @@
-import { Component, createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
+import { Component, createContext, useContext, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { MOMENTS } from '../lib/moments'
 import { ALL_MOMENTS, matchesMoment, newestMoments, type GalleryFilters, type GalleryMoment } from '../lib/momentsGallery'
 import { createMomentsQueue, momentsQueueReducer, queueNeighbours, type MomentsQueue, type QueueAction } from '../lib/momentsQueue'
@@ -98,7 +98,9 @@ export function MomentsSessionProvider({ children, edition = MOMENTS, tab = 'mom
     update({ ...prior, playerNotice: { ...prior.playerNotice, ...partial } })
   }
   const previousTab = useRef(tab)
-  useEffect(() => {
+  // Before paint: a passive effect left one frame in which the player's box, still placed on
+  // the stage, was drawn over Fixtures or Table.
+  useLayoutEffect(() => {
     if (previousTab.current === 'moments' && tab !== 'moments') {
       dispatch({ type: 'leave' })
       const prior = current.current
