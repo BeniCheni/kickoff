@@ -518,11 +518,11 @@ stage's Enter Cinema button, then the gallery heading, then the tab that is show
 host's unmount cleanup clears the background's inert marks before it focuses, because an
 inert control cannot take focus and that cleanup runs before the one that removed them.
 
-**Escape inside the frame.** Escape is a `keydown` on the parent document. While focus is
-inside a cross-origin frame the parent never receives it, so Cinema stays open; one Tab from
-the frame reaches Exit Cinema. This is a limit, not a defect that can be fixed from the
-parent, and the parent does not pull focus out of the frame on a timer. Measured with the
-mock's same-origin frame, whose key events do not reach the parent either.
+**Escape inside the frame.** The parent document’s `keydown` handler does not receive
+child-document key events. With the same-origin mock frame focused, Cinema stayed open on
+Escape and one Tab reached Exit Cinema. This establishes the current handler’s limit, not
+that every parent-side solution is impossible. Real-provider keyboard behavior and browser
+close requests remain unverified. No timer pulls focus out of the frame.
 
 **Leaving the tab.** The owner’s tab watcher uses a layout effect. Pass 1’s eight
 click/Back browser cases observed no player box on the other tab after this change; the
@@ -544,7 +544,7 @@ re-runs kept equal text but had first-capture PNG noise; PNG identity is advisor
 the route content of Fixtures and Table sits inside one
 `<div data-moments-background="route">`. Removing exactly those three from the head's
 `outerHTML` gives the merge base's, byte for byte, in 12 shell cells, 12 route-error cells
-and 5 `?only=` / `&date=` cells, The builder’s layout comparison was equal at six scroll offsets in 30 cells, including
+and 5 `?only=` / `&date=` cells. The builder’s layout comparison was equal at six scroll offsets in 30 cells, including
 sticky headers and zone dividers; Pass 1 later recorded 0.03px subpixel noise. Current
 Pass 2 measurements are in the verification addendum. These exact three differences on Fixtures and Table were accepted by Beni, 29 Sep 2026.
 The empty Moments tab has the same three differences; his wording named Fixtures and Table.

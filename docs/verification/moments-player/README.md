@@ -126,3 +126,20 @@ resolutions".
   captures at 390, which show the dialog at scroll 0 where the script has scrolled it by the
   time it captures. One is glyph rasterisation. PNG hashes were advisory and remain so.
 
+
+## Pass 2 addendum (Codex, 29 September 2026)
+
+The fresh results and reproducible commands are in [pass2.md](pass2.md), with the compact
+[machine summary](pass2.json). Application source `5d68da3`: 719 tests / 51 files;
+1260 player cells and 404 journeys, six checker mutations red, restored checker green;
+72/72 inert text and advisory PNG comparisons; 35/35 normalized markup/URL comparisons;
+180/180 layout comparisons. Mock/inert runs made no provider request. The real adapter's
+stub run attempted nine requests, all aborted; zero reached the provider.
+
+Exactly one route wrapper and the header/tab background attributes on Fixtures and Table
+were **accepted by Beni, 29 Sep 2026**. Empty Moments independently has the same three
+markup differences; his ruling named Fixtures/Table. No fourth difference is covered.
+D-04 is vertical: the 360 Broadcast action ends at 779.11, 64.89px above 844, in both themes.
+Cinema capture now precedes row scrolling. PNG identity remains advisory. The older sections
+above retain the builder's and Pass 1's historical claims; the new checker now proves inert,
+AX exclusion, Play→Next cover placement, and capture ordering by failing mutations.

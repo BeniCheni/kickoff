@@ -21,6 +21,7 @@ await context.route('**/*', async route => {
   return route.continue()
 })
 const page = await context.newPage()
+const cdp = await context.newCDPSession(page)
 page.on('pageerror', error => errors.push(error.message))
 page.on('requestfailed', request => requests.push({ url: request.url(), failed: request.failure()?.errorText }))
 const widths = [360, 375, 390, 761, 768, 800, 855, 887, 888, 1000, 1100, 1160, 1250, 1440, 1920]
@@ -51,7 +52,7 @@ async function load(query, width) {
     const root = document.documentElement
     const raw = document.querySelector('[data-visit-state]')?.textContent
     if (!raw || root.dataset.lens !== expected.lens || root.dataset.theme !== expected.theme) return false
-    if (expected.scenario === 'gallery') return !!document.querySelector('[data-moment-card]')
+    if (expected.scenario === 'gallery' || expected.scenario === 'read-refused') return !!document.querySelector('[data-moment-card]')
     const visit = JSON.parse(raw)
     const status = visit.queue?.media?.[visit.queue.active]?.status
     const frames = document.querySelectorAll('iframe').length
@@ -138,6 +139,30 @@ async function hitRows() {
     })
   })
 }
+async function verifyCinema(name) {
+  const isolation = await page.evaluate(() => {
+    const dialog = document.querySelector('[data-moments-player-dialog]')
+    const selector = 'a[href],button,input,select,textarea,summary,iframe,[tabindex],[contenteditable],audio[controls],video[controls]'
+    const outside = [...document.querySelectorAll(selector)].filter(node => !dialog.contains(node))
+    const unisolated = outside.filter(node => !node.closest('[inert]')).map(node => node.outerHTML.slice(0, 160))
+    return { outside: outside.length, unisolated, inertAncestor: !!dialog.closest('[inert]') }
+  })
+  assert(isolation.outside > 0, `${name} Cinema background enumeration is empty`)
+  assert.deepEqual(isolation.unisolated, [], `${name} Cinema outside focusables must be inert`)
+  assert.equal(isolation.inertAncestor, false, `${name} Cinema has an inert ancestor`)
+  const { nodes } = await cdp.send('Accessibility.getFullAXTree')
+  const names = nodes.filter(node => !node.ignored).map(node => `${node.role?.value}:${node.name?.value ?? ''}`.toLowerCase())
+  const background = ['button:Fixtures', 'button:Table', 'button:Moments', 'radio:Ledger', 'radio:Poster', 'radio:Broadcast', 'button:Dark mode', 'button:Light mode']
+  assert.deepEqual(background.filter(name => names.includes(name.toLowerCase())), [], `${name} Cinema AX exposes background controls`)
+}
+
+async function capture(name, surface) {
+  // The row hit-tests scroll the dialog. Capture its initial presentation first.
+  if (surface === 'cinema') assert.equal(await page.locator('[data-moments-player-dialog]').evaluate(node => node.scrollTop), 0, `${name} capture after row scrolling`)
+  const bytes = await page.screenshot({ path: `${output}/${name}.png`, fullPage: surface !== 'cinema', animations: 'disabled' })
+  shots.push({ name, sha256: crypto.createHash('sha256').update(bytes).digest('hex') })
+}
+
 let failure
 try {
   const runWidths = smoke ? [360, 390, 888] : widths
@@ -152,7 +177,7 @@ try {
       assert.equal(gallery.frames, 0)
       if (width <= 390) {
         for (const key of ['leadTitle', 'leadSource', 'leadAction']) assert(gallery[key]?.bottom <= 844, `D-04 ${key}`)
-        if (width === 360 && lens === 'broadcast') journeys.push({ id: 'D-04', theme, margin: width - gallery.leadTitle.right, lead: gallery.leadTitle })
+        if (width === 360 && lens === 'broadcast') journeys.push({ id: 'D-04', theme, verticalMargin: heightFor(width) - gallery.leadAction.bottom, leadAction: gallery.leadAction })
       }
       if (shotNames.has(`${width}-${lens}-${theme}-gallery`)) {
         const bytes = await page.screenshot({ path: `${output}/${width}-${lens}-${theme}-gallery.png`, fullPage: true, animations: 'disabled' })
@@ -189,6 +214,8 @@ try {
           assert(measured.width >= 480 && measured.height >= 270, `${name} side-by-side size`)
         }
         if (surface === 'cinema') assert(box.frame.width <= 1441, `${name} cinema frame`)
+        if (surface === 'cinema') await verifyCinema(name)
+        if (shotNames.has(name)) await capture(name, surface)
         const hits = await hitRows()
         assert(hits.length >= 1 && hits.every(hit => hit.points.every(Boolean)), `${name} hit ${JSON.stringify(hits)}`)
         if ((width === 360 || width === 390) && surface === 'stage' && playback === 'playing') {
@@ -205,15 +232,28 @@ try {
           journeys.push({ id: 'scroll', width, lens, theme, delta, anchor: scrolled.anchor, host: scrolled.host })
           await page.evaluate(() => scrollTo(0, 0))
         }
-        if (shotNames.has(name)) {
-          const bytes = await page.screenshot({ path: `${output}/${name}.png`, fullPage: surface !== 'cinema', animations: 'disabled' })
-          shots.push({ name, sha256: crypto.createHash('sha256').update(bytes).digest('hex') })
-        }
         cells.push({ name, width, lens, theme, surface, playback, box: measured, host: box.host, list: box.list, frames: box.frames })
       }
     }
     await fs.writeFile(`${output}/progress.json`, JSON.stringify({ completed: cells.length, lastWidth: width }))
     console.log(`Player matrix: ${cells.length} cells through ${width}px`)
+  }
+  for (const width of [360, 1000]) for (const lens of runLenses) for (const theme of runThemes) for (const surface of ['stage', 'cinema']) {
+    await load({ scenario: 'player', lens, theme, surface, playback: 'playing' }, width)
+    const root = surface === 'cinema' ? page.locator('[data-moments-player-dialog]') : page.locator('main')
+    const before = await visit()
+    await root.getByRole('button', { name: /^Next:/ }).click()
+    await page.waitForFunction(id => JSON.parse(document.querySelector('[data-visit-state]').textContent).queue.active !== id, before.queue.active)
+    const cover = await page.evaluate(() => {
+      const cinema = document.querySelector('[data-moments-player-dialog]').dataset.placement === 'cinema'
+      const anchor = document.querySelector(cinema ? '[data-moments-cinema-slot]' : '[data-moments-stage-anchor]')
+      anchor.scrollIntoView({ block: 'center' })
+      const rect = anchor.getBoundingClientRect()
+      const hit = document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2)
+      return { cover: anchor.contains(hit), hit: hit?.tagName }
+    })
+    assert(cover.cover && cover.hit !== 'IFRAME', `F10 Next must show the new cover: ${JSON.stringify(cover)}`)
+    journeys.push({ id: 'F10-play-next', width, lens, theme, surface, ...cover })
   }
   if (!smoke) {
     for (const width of [360, 390, 887, 888, 1440]) for (const lens of lenses) for (const theme of themes) {
@@ -268,7 +308,6 @@ try {
       await page.keyboard.press('Enter')
       await page.waitForFunction(() => document.querySelector('iframe')?.getAttribute('src') === 'about:blank')
       await page.keyboard.press('Shift+Tab')
-      await page.keyboard.press('Tab')
       assert.equal(await page.evaluate(() => document.activeElement?.textContent?.trim()), 'Enter Cinema')
       await page.keyboard.press('Enter')
       await page.waitForFunction(() => document.activeElement?.hasAttribute('data-cinema-exit'))
@@ -349,6 +388,29 @@ try {
           journeys.push({ id: 'D-17', width, lens, theme, surface, refused, pass: true })
         }
       }
+    }
+    for (const width of [360, 390, 768, 1000, 1440]) for (const lens of lenses) for (const theme of themes) for (const surface of ['gallery', 'stage', 'cinema']) {
+      await load({ scenario: 'read-refused', lens, theme }, width)
+      if (surface !== 'gallery') await page.locator('[data-lead] [data-primary-action]').click()
+      if (surface === 'cinema') await page.getByRole('button', { name: 'Enter Cinema' }).click()
+      const root = page.locator(surface === 'gallery' ? '[data-lead]' : surface === 'stage' ? '.moments-stage-main' : '[data-moments-player-dialog]')
+      const boxes = () => root.locator('[data-save], [data-primary-action]').evaluateAll(elements => elements.map(element => {
+        const b = element.getBoundingClientRect(), dialog = element.closest('[data-moments-player-dialog]')
+        return { x: b.x + (dialog ? dialog.scrollLeft : scrollX), y: b.y + (dialog ? dialog.scrollTop : scrollY), width: b.width, height: b.height }
+      }))
+      const before = await boxes()
+      const save = root.locator('[data-save]')
+      await save.click()
+      await root.locator('[role=status]').filter({ hasText: 'This write replaces the unreadable stored set.' }).waitFor()
+      const after = await boxes()
+      before.forEach((box, i) => Object.keys(box).forEach(key => assert(Math.abs(box[key] - after[i][key]) <= 1, `row61 D-17 ${width} ${lens} ${theme} ${surface} ${key}`)))
+      assert.equal(await root.locator('[role=status]').count(), 1, 'row61 D-19')
+      const text = await root.textContent()
+      assert(!text.includes('Saved references could not be read.'), 'row61 warning is replaced')
+      assert(!/\.\.|[?!]\./.test(await root.locator('[role=status]').textContent()), 'row61 D-18')
+      await save.click()
+      assert(!(await root.locator('[role=status]').textContent()).includes('unreadable stored set'), 'row61 only once')
+      journeys.push({ id: 'row61-D17-D18-D19', width, lens, theme, surface, pass: true })
     }
     for (const width of [1160, 1250]) for (const lens of lenses) for (const theme of themes) {
       await load({ scenario: 'gallery', lens, theme, playback: 'ready', surface: 'stage' }, width)

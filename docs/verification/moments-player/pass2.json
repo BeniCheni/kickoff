@@ -1,0 +1,442 @@
+{
+  "applicationSha": "5d68da3d850cff1e4ebb87bac94937a08171e9de",
+  "baselineSha": "76a0421a2240f159b689ad6d672c8c61b3d8a549",
+  "inertBaseSha": "8cb9d87c531ffce3c609f98e0da557c26027d432",
+  "dateUtc": "2026-09-30T02:34:13.865Z",
+  "browser": "154.0.8037.58",
+  "runtime": "/Users/benicheni/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright-core/index.mjs",
+  "origin": "http://localhost:5189",
+  "testCounts": {
+    "76a0421": 688,
+    "07ad532": 688,
+    "529af8c": 717,
+    "5d68da3": 719,
+    "files": 51
+  },
+  "player": {
+    "cells": 1260,
+    "journeys": {
+      "scroll": 12,
+      "D-04": 2,
+      "F10-play-next": 24,
+      "lens-switch": 30,
+      "gallery-return": 30,
+      "tab-away": 30,
+      "playing-zero": 6,
+      "keyboard": 12,
+      "D-15": 12,
+      "D-17": 120,
+      "row61-D17-D18-D19": 90,
+      "H-B": 36
+    },
+    "shots": [
+      {
+        "name": "360-ledger-light-stage-ready",
+        "sha256": "1610160bcf22e2ea691142a78a734b98cdb8552d76a112cec0b6afaa0f6fb5ea"
+      },
+      {
+        "name": "360-ledger-light-stage-playing",
+        "sha256": "9ae42489b62c9a099a9640275437acc7ccbc5f7f476636cfbe184cb3b92b011f"
+      },
+      {
+        "name": "360-broadcast-light-gallery",
+        "sha256": "79b698e3fe2ae7d35cac039e57dcf7497bf86afe27fee2bb6258a4301fc83090"
+      },
+      {
+        "name": "360-broadcast-dark-stage-playing",
+        "sha256": "b8429cae44a134aea4b1ef445be60760752dcfeb83ae51d02eed00df456eef80"
+      },
+      {
+        "name": "375-poster-light-stage-playing",
+        "sha256": "4991cae89767808f14bbb86217cb99d5ea467213caf1babc895f6255303e39aa"
+      },
+      {
+        "name": "390-ledger-light-cinema-blocked",
+        "sha256": "b5fcdd974128cac4a8f573a859063847acd3359d8a69852af0741be55b9b69a9"
+      },
+      {
+        "name": "390-ledger-dark-cinema-playing",
+        "sha256": "2926ced0671f07857340ccf1a174b807bb2597bfeca143f157b93034c20156c4"
+      },
+      {
+        "name": "390-poster-light-cinema-playing",
+        "sha256": "65a9b65c8eedce30b8cfc4b6d59122e1e496735572a2d1989cdc2740c5c9d4ef"
+      },
+      {
+        "name": "390-poster-dark-cinema-playing",
+        "sha256": "4f77b2d6ab58f9276e585c8be9205c4d9827fca625365c718767260a11cb7922"
+      },
+      {
+        "name": "390-broadcast-light-stage-timeout",
+        "sha256": "f92b515b20d6dc42b1220ecb706afe86ee42b853749850e2c1fc3a05c05658ac"
+      },
+      {
+        "name": "390-broadcast-dark-cinema-playing",
+        "sha256": "a4aebada516bdffb4c99ffab5e407a722a0e273ef6658740be528ca606830cf4"
+      },
+      {
+        "name": "887-poster-light-stage-playing",
+        "sha256": "d7f33761007a6920adaed6731a06ce3f65003737a36996d87833ff8330eb62f1"
+      },
+      {
+        "name": "888-poster-light-stage-playing",
+        "sha256": "fad458ccd7005410cce413d4797930c87c6d8286f5f01a89f2fbb5a8b6977237"
+      },
+      {
+        "name": "888-broadcast-dark-cinema-playing",
+        "sha256": "91f47b7bf2fbcb0252d3a022a124c657fb886d67dfe2c65edd46f054bab76664"
+      },
+      {
+        "name": "1000-poster-dark-stage-paused",
+        "sha256": "ba0cf9da5b90bb15dea4b466db618e786417459e6c9f37ebca99fb72fea16852"
+      },
+      {
+        "name": "1440-ledger-light-cinema-ended",
+        "sha256": "5fbc7b5d9516088a7875fbcde796a4ae43839fedfb7599743770f9e87577f062"
+      },
+      {
+        "name": "390-poster-light-cinema-playing-d15",
+        "sha256": "7d64dde50c50c12d46c81a31ec630edb86a4c687e9cf70d8666edc87793472e7"
+      }
+    ],
+    "requests": {
+      "total": 6906,
+      "fonts": {
+        "fonts.googleapis.com": 1716,
+        "fonts.gstatic.com": 5190
+      },
+      "mediaProvider": 0,
+      "unexpected": 0,
+      "failed": 0
+    },
+    "errors": []
+  },
+  "inert": {
+    "cells": 72,
+    "equalText": 72,
+    "equalPngAdvisory": 72,
+    "overflowFreeLoads": 144,
+    "mediaElements": 0,
+    "providerRequests": 0,
+    "fontRequests": 634,
+    "errors": []
+  },
+  "mutations": [
+    {
+      "name": "outside-inert",
+      "exitCode": 1,
+      "assertion": "Cinema outside focusables must be inert"
+    },
+    {
+      "name": "dialog-ancestor",
+      "exitCode": 1,
+      "assertion": "Cinema has an inert ancestor"
+    },
+    {
+      "name": "empty-enumeration",
+      "exitCode": 1,
+      "assertion": "Cinema background enumeration is empty"
+    },
+    {
+      "name": "ax-background",
+      "exitCode": 1,
+      "assertion": "Cinema AX exposes background controls"
+    },
+    {
+      "name": "next-cover",
+      "exitCode": 1,
+      "assertion": "F10 Next must show the new cover"
+    },
+    {
+      "name": "capture-order",
+      "exitCode": 1,
+      "assertion": "capture after row scrolling"
+    }
+  ],
+  "markup": {
+    "cells": 35,
+    "equalNormalized": 35,
+    "namedDifferencesPerCell": 3,
+    "equalUrl": 35
+  },
+  "layout": {
+    "cells": 30,
+    "offsetsPerCell": 6,
+    "equalComparisons": 180
+  },
+  "geometry": {
+    "contrastCells": 72,
+    "minimumContrast": 5.44,
+    "failingPairs": 0,
+    "minimumType": 10,
+    "d04": [
+      {
+        "width": 360,
+        "lens": "ledger",
+        "theme": "light",
+        "scrollY": 0,
+        "mainTop": 202.5,
+        "title": 530.77,
+        "source": 630.27,
+        "action": 742.27,
+        "marginBelowAction": 101.73,
+        "horizontal": 35,
+        "overflowFree": true
+      },
+      {
+        "width": 360,
+        "lens": "ledger",
+        "theme": "dark",
+        "scrollY": 0,
+        "mainTop": 202.5,
+        "title": 530.77,
+        "source": 630.27,
+        "action": 742.27,
+        "marginBelowAction": 101.73,
+        "horizontal": 35,
+        "overflowFree": true
+      },
+      {
+        "width": 360,
+        "lens": "poster",
+        "theme": "light",
+        "scrollY": 0,
+        "mainTop": 202.5,
+        "title": 559.61,
+        "source": 659.11,
+        "action": 771.11,
+        "marginBelowAction": 72.89,
+        "horizontal": 35,
+        "overflowFree": true
+      },
+      {
+        "width": 360,
+        "lens": "poster",
+        "theme": "dark",
+        "scrollY": 0,
+        "mainTop": 202.5,
+        "title": 559.61,
+        "source": 659.11,
+        "action": 771.11,
+        "marginBelowAction": 72.89,
+        "horizontal": 35,
+        "overflowFree": true
+      },
+      {
+        "width": 360,
+        "lens": "broadcast",
+        "theme": "light",
+        "scrollY": 0,
+        "mainTop": 202.5,
+        "title": 567.61,
+        "source": 667.11,
+        "action": 779.11,
+        "marginBelowAction": 64.89,
+        "horizontal": 35,
+        "overflowFree": true
+      },
+      {
+        "width": 360,
+        "lens": "broadcast",
+        "theme": "dark",
+        "scrollY": 0,
+        "mainTop": 202.5,
+        "title": 567.61,
+        "source": 667.11,
+        "action": 779.11,
+        "marginBelowAction": 64.89,
+        "horizontal": 35,
+        "overflowFree": true
+      },
+      {
+        "width": 375,
+        "lens": "ledger",
+        "theme": "light",
+        "scrollY": 0,
+        "mainTop": 202.5,
+        "title": 496.05,
+        "source": 580.55,
+        "action": 692.55,
+        "marginBelowAction": 151.45,
+        "horizontal": 35,
+        "overflowFree": true
+      },
+      {
+        "width": 375,
+        "lens": "ledger",
+        "theme": "dark",
+        "scrollY": 0,
+        "mainTop": 202.5,
+        "title": 496.05,
+        "source": 580.55,
+        "action": 692.55,
+        "marginBelowAction": 151.45,
+        "horizontal": 35,
+        "overflowFree": true
+      },
+      {
+        "width": 375,
+        "lens": "poster",
+        "theme": "light",
+        "scrollY": 0,
+        "mainTop": 202.5,
+        "title": 524.89,
+        "source": 609.39,
+        "action": 721.39,
+        "marginBelowAction": 122.61,
+        "horizontal": 35,
+        "overflowFree": true
+      },
+      {
+        "width": 375,
+        "lens": "poster",
+        "theme": "dark",
+        "scrollY": 0,
+        "mainTop": 202.5,
+        "title": 524.89,
+        "source": 609.39,
+        "action": 721.39,
+        "marginBelowAction": 122.61,
+        "horizontal": 35,
+        "overflowFree": true
+      },
+      {
+        "width": 375,
+        "lens": "broadcast",
+        "theme": "light",
+        "scrollY": 0,
+        "mainTop": 202.5,
+        "title": 532.89,
+        "source": 617.39,
+        "action": 729.39,
+        "marginBelowAction": 114.61,
+        "horizontal": 35,
+        "overflowFree": true
+      },
+      {
+        "width": 375,
+        "lens": "broadcast",
+        "theme": "dark",
+        "scrollY": 0,
+        "mainTop": 202.5,
+        "title": 532.89,
+        "source": 617.39,
+        "action": 729.39,
+        "marginBelowAction": 114.61,
+        "horizontal": 35,
+        "overflowFree": true
+      },
+      {
+        "width": 390,
+        "lens": "ledger",
+        "theme": "light",
+        "scrollY": 0,
+        "mainTop": 202.5,
+        "title": 496.05,
+        "source": 580.55,
+        "action": 692.55,
+        "marginBelowAction": 151.45,
+        "horizontal": 35,
+        "overflowFree": true
+      },
+      {
+        "width": 390,
+        "lens": "ledger",
+        "theme": "dark",
+        "scrollY": 0,
+        "mainTop": 202.5,
+        "title": 496.05,
+        "source": 580.55,
+        "action": 692.55,
+        "marginBelowAction": 151.45,
+        "horizontal": 35,
+        "overflowFree": true
+      },
+      {
+        "width": 390,
+        "lens": "poster",
+        "theme": "light",
+        "scrollY": 0,
+        "mainTop": 202.5,
+        "title": 524.89,
+        "source": 609.39,
+        "action": 721.39,
+        "marginBelowAction": 122.61,
+        "horizontal": 35,
+        "overflowFree": true
+      },
+      {
+        "width": 390,
+        "lens": "poster",
+        "theme": "dark",
+        "scrollY": 0,
+        "mainTop": 202.5,
+        "title": 524.89,
+        "source": 609.39,
+        "action": 721.39,
+        "marginBelowAction": 122.61,
+        "horizontal": 35,
+        "overflowFree": true
+      },
+      {
+        "width": 390,
+        "lens": "broadcast",
+        "theme": "light",
+        "scrollY": 0,
+        "mainTop": 202.5,
+        "title": 532.89,
+        "source": 617.39,
+        "action": 729.39,
+        "marginBelowAction": 114.61,
+        "horizontal": 35,
+        "overflowFree": true
+      },
+      {
+        "width": 390,
+        "lens": "broadcast",
+        "theme": "dark",
+        "scrollY": 0,
+        "mainTop": 202.5,
+        "title": 532.89,
+        "source": 617.39,
+        "action": 729.39,
+        "marginBelowAction": 114.61,
+        "horizontal": 35,
+        "overflowFree": true
+      }
+    ],
+    "errors": []
+  },
+  "realAdapter": {
+    "providerRequestsAttempted": 9,
+    "providerRequestsAborted": 9,
+    "providerRequestsAllowedThrough": 0,
+    "stubOnly": true
+  },
+  "localEvidenceRoot": "/Users/benicheni/kickoff-pr128-pass2",
+  "sha256": {
+    "final-player/player-receipt.json": "0f8a7347bdd91fba88eccf841a1e647dfeda87de9b8ebd50a81f2b07c0338451",
+    "final-player/cells.json": "d1ea86d33c7437b315df5068af6fbd4cf54aeac92b1ac80805a81cf7c6a579d2",
+    "inert-5d68/matrix.json": "db85d75c272b4163db2b86000845a1171e662702e96ef034355c3948ede1605c",
+    "mutations-tip/mutations.json": "ca77721e946e2079b0eedf6426bafa3afea7e37eb668fc2377318ecf8146d287",
+    "markup.json": "d669545a78a6018144301b520a7629ef2d92ec869e21fb6930f2e03f6e19a3fa",
+    "layout.json": "bb2f8b892c257f6479e2bc63a93723121b940feecc2f45d8bc8019cee7a0e9ed",
+    "geometry.json": "62fc51e4c69cf87a57b472c8cf7db375867a8c5eb89b2bafef6752eee74b792d",
+    "cinema.json": "960295fbca11970e44f0a774dfefe00835a3f365eec98713b4453d02bcf23079",
+    "cinema-back.log": "4ceaf8b145d137ac8c65d22aa87f19f205e0a6c051e7bc7c68d305a666533ce9",
+    "focus-exits.log": "1a9a911032bdb800ec39113dd667a5352a98c5ce238b14407f1a05aabf79d355",
+    "tab-frames.log": "eb1bdcc8d9f4d012b66cacde144f7116a46aec9bc1feadb53737f7b5e60d5fe1",
+    "tab-frames-red.log": "70c0fc8a077011505c1e67564360f4f3f579bcbbe2f52112e87a465343358108",
+    "real-adapter-final.json": "664836f0cd4d67bc974da3442b96e80e54dbe1337e6ace67c02c90a524383734",
+    "scroll-proof.json": "7756cf0c9ee0682536520d0137c3140ffce2c8f06810d37653dc15dbad83b8be",
+    "bundle-5d68.json": "8cb7f396e5333f891faa5c9b7051efd91b2ea7f09d0750fa1522a644b91398d8",
+    "pass1-redgreen.json": "33fd1fdb4134100ea0e23632996d93ab159454a1faee7d2d103310aee350bf8e",
+    "redgreen-pass2/results.json": "b641294de9e920a79d087a8f892692ce18aaf333fe6b03ef4cd8aecb9a8a8e8d",
+    "unsettled-red.log": "bffe0f5f185eda49b9a8c1c95331483b7cb8aeb00f6286c51ea0b8397a1f785b",
+    "unsettled-test.log": "3cc0c12016a21c06a7bc18df10b65122a014424002c794243a3514543bc52250",
+    "copied-probes-fixed.log": "b7817dc98baa7a4f59cfae958eec09f370627e1a6c5e5472b3c735d9c4cc7f02",
+    "pass1/probes/retryplayer.out.json": "317d23f04718e00bd0f5e6322cfc328245f0f4ce81570dc3a5f0fe0ce15bc5cc",
+    "pass1/probes/owner.out.json": "1d9354e8d53d6d868aa26a9a84f478344a5e9fb8a38151f414752c6d7c4a9d18"
+  },
+  "checkerSha256": "148275321a615c04ef11e16dd3192f46de0944480d7824f85e2f22870077e91e"
+}
