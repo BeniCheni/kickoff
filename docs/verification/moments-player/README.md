@@ -97,3 +97,32 @@ network log is the request proof.
 Physical devices. Safari and Firefox. Screen-reader speech. Any real provider behaviour,
 rights, or playback. Whether the provider letterboxes a 16:10 box. Iframe continuity across
 park and return. Browser zoom beyond the listed widths. Android and iOS back. `CloseWatcher`.
+
+## Pass 1 addendum (Claude Code, 29 September 2026)
+
+Everything above is the builder's receipt, left as written. This section is the cold review's,
+and it is about what the receipt can and cannot show. The findings, the fixes and the numbers
+are in the PR conversation and in `docs/moments-architecture.md`, "Slice 3 review
+resolutions".
+
+- Both receipts were re-run on builds made by the review, at the builder's head and again at
+  the review's tip. The player matrix reproduced both times: 1260 cells, 290 journeys, zero
+  provider requests, zero page errors, 6450 font requests. The inert comparison against
+  `8cb9d87` reproduced its text both times, 72 of 72, with 634 font requests. Its first-capture
+  PNGs read 72 of 72 at the builder's head and 68 of 72 twice at the review's tip, a different
+  four each time; all eight were identical across both builds on two recaptures each, and the
+  base build compared with itself read 70 of 72.
+- The checker can fail on the 200px floor and on a host moved over the queue. It cannot fail
+  on inert: with that step removed it stayed green through every journey.
+- "Ready cells have no iframe" is true of the cells, which are fresh loads. It was not true of
+  a `ready` selection reached by Next after another had played, until the review's fix.
+- The mock carries no ready window and its frame paints nothing. The real adapter was run in
+  Chrome against a stub that follows the provider reference, with the provider's hosts
+  unresolvable and aborted; nothing reached the provider.
+- D-04 above reports 35, which is `innerWidth - leadTitle.right`, a horizontal margin. The
+  vertical margin slice 2 reported is unchanged: at 360 Broadcast, both themes, the lead's
+  action ends at 779.11, 64.89px above 844.
+- Six of the 17 captures differ from a re-run of the script as committed. Five are the Cinema
+  captures at 390, which show the dialog at scroll 0 where the script has scrolled it by the
+  time it captures. One is glyph rasterisation. PNG hashes were advisory and remain so.
+

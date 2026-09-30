@@ -480,3 +480,80 @@ with `preventScroll: true`.
 
 The inert receipt’s base is the merge base `8cb9d87c531ffce3c609f98e0da557c26027d432`. The
 tip is built from that same snapshot, without a rebase onto later sync commits.
+
+## Slice 3 review resolutions (PR #128, Pass 1, 29 September 2026)
+
+Pass 1 was the cold review by the seat that did not build slice 3. What it changed is recorded
+here with its cost; what it measured and left alone is in the PR conversation. Beni's rulings
+are not reopened. Where a sentence above says something this section amends, this section is
+the later one.
+
+**Provider commands before `onReady`.** The reference makes `onReady` the point where a player
+"is ready to begin receiving API calls". The adapter used to call `pauseVideo`, `playVideo` and
+`loadVideoById` as soon as `YT.Player` was constructed; against a stub that attaches those
+methods at ready, `retire()` threw from inside the owner's dispatch, Next, Previous, a queue
+row, the Gallery button and a second Play did nothing, and leaving the tab threw inside the
+owner's effect, so the owner boundary replaced the visit. Commands now go through one guarded
+send, and the attempt that is current at `onReady` is the one that runs: when its video is not
+the one the frame was built with, that video is loaded. Cost: a command the provider refuses
+for any other reason is also dropped without a failure; the attempt then waits for a provider
+event, which is ruling 7's hung load. The real provider has not been run. Slice 4 does that.
+
+**The frame belongs to one selection.** The host remembers the selection the frame was last
+asked to play. On any other selection the stage parks the dialog and Cinema clips the host to
+0 x 0 and marks it inert, so the anchor or the slot shows that selection's cover, as it does
+before a first Play. Before this, the earlier video's frame sat over the next selection's
+cover, under the next selection's heading. The builder's matrix could not see it: the mock's
+frame paints nothing, and its `ready` cells are fresh loads. "Ready cells have no iframe" in
+the builder's receipt is true of those cells only. The in-anchor "Player" stop exists only
+while the frame is on the selection.
+
+**Focus when Cinema closes.** When the stored opener is detached (a lens change through
+history remounts the stage; a tab change or a route failure removes it), focus goes to the
+stage's Enter Cinema button, then the gallery heading, then the tab that is showing. The
+host's unmount cleanup clears the background's inert marks before it focuses, because an
+inert control cannot take focus and that cleanup runs before the one that removed them.
+
+**Escape inside the frame.** Escape is a `keydown` on the parent document. While focus is
+inside a cross-origin frame the parent never receives it, so Cinema stays open; one Tab from
+the frame reaches Exit Cinema. This is a limit, not a defect that can be fixed from the
+parent, and the parent does not pull focus out of the frame on a timer. Measured with the
+mock's same-origin frame, whose key events do not reach the parent either.
+
+**Leaving the tab happens before paint.** The owner's tab watcher is a layout effect. As a
+passive effect it left one painted frame in which the player's box, still placed, was drawn
+over Fixtures or Table.
+
+**Recovery punctuation.** A quoted title that ends its own sentence keeps that mark and gains
+none (D-18). Any other title, every spoiler-light neutral title among them, gets the full
+stop after the quotes. Without it the body read `Next opens “Match highlights from the
+archive” The official source is also available.`
+
+**Row 61.** The visit keeps its own mark of an unreadable stored set, set by the opening read
+and cleared by a write that persists. `saved.reason` could not carry it: a refused write
+overwrites it, and a write refused for an invalid reference returns `invalid-data` too.
+
+**What the inert path changes in the markup.** With the empty edition the body text and the
+pixels of all 72 cells equal the merge base's. The markup does not: `header` carries
+`data-moments-background="header"`, the tab row carries `data-moments-background="tabs"`, and
+the route content of Fixtures and Table sits inside one
+`<div data-moments-background="route">`. Removing exactly those three from the head's
+`outerHTML` gives the merge base's, byte for byte, in 12 shell cells, 12 route-error cells
+and 5 `?only=` / `&date=` cells, and every element's box is equal at six scroll offsets in 30
+cells, the sticky Table header and zone dividers included. This is the accepted cost of
+marking the background per subtree; whether it is accepted is Beni's.
+
+**Open, and not decided here.**
+
+- Reload-and-seek. `loadVideoById` "loads and plays"; the reference gives state `5` to
+  `cueVideoById` only, and `onReady` belongs to the player, not to a load. On a player that
+  already exists, neither event follows a load, so the pending seek is never applied: the
+  returning selection starts at zero, the `-1` and `3` samples overwrite its cached position
+  with zero, and the resume label never shows. The build prompt said "on ready or cued", so
+  the defect is the specification's. `startSeconds`, or a seek on the attempt's first
+  `playing`, would apply it. Beni rules; slice 4 observes.
+- The frame carries `allowfullscreen` and no `allow`. A cross-origin frame without autoplay
+  delegation treats `playVideo()` from the parent as scripted playback, so a first Play may
+  always land on "Playback has not started." Neither the reference nor the plan decides it.
+- Opened from a `file:` URL, the single-file build's `location.origin` is `file://` in Chrome
+  154, which becomes the `origin` parameter. With the empty edition nothing is requested.

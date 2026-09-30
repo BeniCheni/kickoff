@@ -8,6 +8,17 @@ releases.
 
 ## [Unreleased]
 
+### Changed
+
+- The Moments player, its Cinema surface and the YouTube adapter are in the code and
+  inactive. With the empty production edition the player renders nothing and requests
+  nothing, so the interface readers see is unchanged. Fixtures and Table carry one wrapper
+  element and two data attributes more in their markup; their text, layout and URL state
+  are what they were. The review of that landing made the inactive player keep navigation
+  working before the provider reports ready, show its frame only on the selection the
+  frame holds, return focus to a control that survives when Cinema closes, and end the
+  recovery sentence after a title that has no mark of its own.
+
 ### Fixed
 
 - The authored Moments contract validates source identity, content, dated evidence,
