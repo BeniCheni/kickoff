@@ -1,8 +1,12 @@
-/** Recovery sentences. A title is quoted and not given a second terminal mark. */
+/** Recovery sentences. A title is quoted. One that ends its own sentence keeps that mark
+ * inside the quotes and gets no second one (D-18); any other title, a spoiler-light neutral
+ * title among them, gets the full stop after the quotes, so the next sentence has a boundary. */
+
+const ENDS_ITS_SENTENCE = /[.?!…][”’"')\]]*$/
 
 export function nextSelectionSentence(title: string | null): string {
   if (title === null) return 'There is no next selection in this order.'
-  return `Next opens “${title}”`
+  return `Next opens “${title}”${ENDS_ITS_SENTENCE.test(title.trimEnd()) ? '' : '.'}`
 }
 
 export function blockedRecovery(title: string | null): { heading: string; body: string } {

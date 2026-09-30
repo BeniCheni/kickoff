@@ -461,3 +461,16 @@ it('leaving Cinema hands focus to a control that survives, and never to one that
   expect(taken.filter(call => call.inert)).toEqual([])
   expect(error).toHaveBeenCalled()
 })
+
+it('D-18: under spoiler-light the recovery names the neutral title and still ends its sentence', () => {
+  renderVisit(); openCard(archivalEdition[0]!.id); click('Play')
+  emitFailure({ kind: 'owner-blocked', providerError: 150 })
+  fireEvent.click(screen.getByLabelText('Spoiler-light'))
+  const neutral = archivalEdition[1]!.editorial!.neutralTitle!
+  const stage = document.querySelector('.moments-stage-main [data-recovery-copy]')!.textContent!
+  expect(stage).toContain(`Next opens “${neutral}”. The official source is also available.`)
+  expect(stage).not.toContain(archivalEdition[1]!.title)
+  expect(stage).not.toMatch(/\.\.|\?\.|!\.|[.?!]”\./)
+  click('Enter Cinema')
+  expect(within(screen.getByRole('dialog', { name: 'Cinema' })).getByText(/Next opens/).textContent).toBe(stage)
+})
