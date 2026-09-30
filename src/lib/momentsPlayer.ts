@@ -200,7 +200,8 @@ export function createYouTubePlayer(host: HTMLElement, hooks: PlayerHooks): Mome
   }
   const observePosition = (ticket: Ticket): number | null => {
     const position = sampleFor(ticket)
-    if (position !== null && pendingLabel === ticket && ticket.started) {
+    // A sample of exactly zero is a position, not evidence of a resume. Beni, 30 Sep 2026.
+    if (position !== null && position > 0 && pendingLabel === ticket && ticket.started) {
       pendingLabel = null
       hooks.onResumeLabel(true)
     }

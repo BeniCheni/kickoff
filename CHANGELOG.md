@@ -22,7 +22,7 @@ releases.
 ### Fixed
 
 - The inactive Moments player carries a returning selection’s last-known position with its
-  load (including a repeated Play before it settles), waits for observed playback before resume feedback, and explicitly sets its embed
+  load (including a repeated Play before it settles), shows resume feedback only after a sample greater than zero, and explicitly sets its embed
   permissions and referrer policy. A player failure preserves the visit but clears active
   playback and returns Cinema to the stage. The first persisted reference write after an
   unreadable read explains replacement on every surface; stage keyboard return reaches

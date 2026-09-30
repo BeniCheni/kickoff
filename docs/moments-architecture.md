@@ -439,8 +439,10 @@ least 0, zero included, is dispatched. Beni’s 29 September 2026 ruling superse
 a different loaded id uses `loadVideoById({ videoId, startSeconds })`. A fresh instance
 seeks at ready and then calls `playVideo()`. Samples before matching playback begins do not
 replace the cached position. “Resuming from the last known position.” requires a positive
-cached position and a finite, nonnegative provider sample after playback begins, not the
-requested target; this is last-known recovery, not proof of an exact seek. Navigation does not wait on a
+cached position and a provider sample greater than zero after playback begins, not the
+requested target. A sample of exactly zero stays a position and keeps the sentence pending
+until a later sample is greater than zero. Beni, 30 September 2026. This is last-known
+recovery, not proof of an exact seek. Navigation does not wait on a
 cross-origin reply.
 
 Stage keeps the same `<dialog>` open once a frame exists, because a closed dialog is
@@ -562,6 +564,8 @@ package, handoff and plan where they differ.
   still unsettled carries the seek again, including after retirement; it does not treat the
   provider’s changed video ID alone as proof that the seek applied.
   The label requires a positive cached position; a failed initial load at zero cannot resume.
+  A sample of exactly zero after playback begins does not show the sentence; a later sample
+  greater than zero still can. Beni, 30 September 2026.
 - **Iframe permissions and identity (row 63).** Only after explicit Play, construction adds
   `allow="autoplay; encrypted-media"` and
   `referrerpolicy="strict-origin-when-cross-origin"`, retaining `allowfullscreen` and the

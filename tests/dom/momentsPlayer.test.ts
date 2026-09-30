@@ -255,6 +255,26 @@ it('loads with startSeconds, ignores pre-play samples and labels only an observe
   expect(labels.at(-1)).toBe(true)
 })
 
+it('does not call a zero sample a resume, and labels a later sample above zero', () => {
+  installYT()
+  const { hooks, events, labels } = harness()
+  const player = createYouTubePlayer(mount(), hooks)
+  player.play(request())
+  const fake = fakes[0]!
+  fake.options.events.onReady({ target: fake, data: 0 })
+  player.play(request({ itemId: 'item-b', attempt: 3, videoId: 'bbbbbbbbbbb', position: 42, resume: true }))
+  fake.getCurrentTime = () => 0
+  fake.options.events.onStateChange({ target: fake, data: 1 })
+  expect(labels).not.toContain(true)
+  expect(events.filter(event => event.event === 'position').at(-1)).toMatchObject({ position: 0 })
+  fake.options.events.onStateChange({ target: fake, data: 3 })
+  expect(labels).not.toContain(true)
+  fake.getCurrentTime = () => 41.5
+  fake.options.events.onStateChange({ target: fake, data: 3 })
+  expect(labels.at(-1)).toBe(true)
+  expect(events.filter(event => event.event === 'position').at(-1)).toMatchObject({ position: 41.5 })
+})
+
 it('fresh construction seeks then plays, and does not sample the requested target as proof', () => {
   installLateYT()
   const { hooks, events, labels } = harness()
