@@ -12,6 +12,9 @@ type Visit = {
   edition: readonly GalleryMoment[]
   queue: MomentsQueue
   saved: SavedReferences
+  /** The stored set could not be read at the start of the visit and no write has replaced it
+   * yet. Kept apart from `saved.reason`, which a refused write overwrites. */
+  unread: boolean
   filters: GalleryFilters
   spoiler: boolean
   notice: Notice
@@ -68,7 +71,8 @@ export function MomentsSessionProvider({ children, edition = MOMENTS, tab = 'mom
 }) {
   const [visit, setVisit] = useState<Visit>(() => {
     const saved = readSavedReferences(storage)
-    return { edition, saved, filters: ALL_MOMENTS, spoiler: false, notice: saved.reason ? { target: 'initial-read', text: '' } : null,
+    return { edition, saved, unread: saved.reason === 'read-refused' || saved.reason === 'invalid-data',
+      filters: ALL_MOMENTS, spoiler: false, notice: saved.reason ? { target: 'initial-read', text: '' } : null,
       playerNotice: quietNotice,
       queue: momentsQueueReducer(createMomentsQueue(edition.map(m => m.id)), { type: 'saved', ids: saved.ids }) }
   })
@@ -123,14 +127,14 @@ export function MomentsSessionProvider({ children, edition = MOMENTS, tab = 'mom
     const wasSaved = prior.queue.saved.includes(id)
     const ids = wasSaved ? prior.queue.saved.filter(value => value !== id) : [...prior.queue.saved, id]
     const saved = writeSavedReferences(ids, storage)
-    const replacedUnreadable = target === 'cinema' && saved.persistence === 'local'
-      && (prior.saved.reason === 'read-refused' || prior.saved.reason === 'invalid-data')
+    const replacedUnreadable = target === 'cinema' && saved.persistence === 'local' && prior.unread
     const text = saved.persistence === 'local'
       ? `${wasSaved ? 'Reference removed from this browser.' : 'Reference saved in this browser.'}${replacedUnreadable ? ' This write replaces the unreadable stored set.' : ''}`
       : saved.reason === 'invalid-data' ? 'Invalid reference refused. Changes are visit-only; stored references were not changed.'
       : wasSaved ? 'Removed for this visit only. The stored reference may return next visit.'
       : 'Saved for this visit only. Browser storage refused the update.'
-    update({ ...prior, saved, queue: momentsQueueReducer(prior.queue, { type: 'saved', ids: saved.ids }), notice: { target, text } })
+    update({ ...prior, saved, unread: prior.unread && saved.persistence !== 'local',
+      queue: momentsQueueReducer(prior.queue, { type: 'saved', ids: saved.ids }), notice: { target, text } })
   }
   const play = (replay = false) => {
     const prior = current.current

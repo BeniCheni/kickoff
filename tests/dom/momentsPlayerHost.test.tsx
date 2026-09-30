@@ -245,6 +245,45 @@ it.each(['read-refused', 'invalid-data'] as const)('row 61: a Cinema write after
   expect(within(cinema).getByRole('status').textContent).toBe('Reference removed from this browser.')
 })
 
+it.each(['read-refused', 'invalid-data'] as const)('row 61: after %s, a refused write does not use up the sentence; the first write that persists says it, once', reason => {
+  const storage = referenceStorageRig(reason === 'invalid-data' ? 'broken JSON' : '["old-reference"]')
+  if (reason === 'read-refused') storage.refuseRead(true)
+  render(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsStorage={storage.access}
+    momentsRoute={<><MomentsPage /><Probe /></>} />)
+  const before = storage.disk()
+  storage.refuseWrite(true)
+  openCard(archivalEdition[0]!.id); click('Enter Cinema')
+  const cinema = screen.getByRole('dialog', { name: 'Cinema' })
+  const save = within(cinema).getByRole('button', { name: /Save reference/ })
+  const status = () => within(cinema).getByRole('status').textContent
+  fireEvent.click(save)
+  expect(status()).toBe('Saved for this visit only. Browser storage refused the update.')
+  expect(storage.disk()).toBe(before)
+  storage.refuseWrite(false)
+  fireEvent.click(save)
+  expect(status()).toBe('Reference removed from this browser. This write replaces the unreadable stored set.')
+  expect(storage.disk()).toBe('[]')
+  fireEvent.click(save)
+  expect(status()).toBe('Reference saved in this browser.')
+})
+
+it('row 61: a write refused for an invalid reference is not an unreadable stored set', () => {
+  const storage = referenceStorageRig('["old-reference"]')
+  const edition = archivalEdition.map((item, index) => index === 0 ? { ...item, id: ' padded ' } : item)
+  render(<App momentsEdition={edition} momentsPlayer={createMockMomentsPlayer} momentsStorage={storage.access}
+    momentsRoute={<><MomentsPage /><Probe /></>} />)
+  openCard(' padded '); click('Enter Cinema')
+  const cinema = screen.getByRole('dialog', { name: 'Cinema' })
+  const status = () => within(cinema).getByRole('status').textContent
+  fireEvent.click(within(cinema).getByRole('button', { name: /Save reference/ }))
+  expect(status()).toBe('Invalid reference refused. Changes are visit-only; stored references were not changed.')
+  expect(storage.disk()).toBe('["old-reference"]')
+  fireEvent.click(within(cinema).getByRole('button', { name: /^Next:/ }))
+  fireEvent.click(within(cinema).getByRole('button', { name: /Save reference/ }))
+  expect(status()).toBe('Reference saved in this browser.')
+  expect(JSON.parse(storage.disk()!)).toEqual(['old-reference', edition[1]!.id])
+})
+
 it('H-C/D-15: Escape and cancel leave Cinema, and a lower queue row focuses its primary action', () => {
   renderVisit(); openCard(archivalEdition[0]!.id)
   const opener = screen.getByRole('button', { name: 'Enter Cinema' })
