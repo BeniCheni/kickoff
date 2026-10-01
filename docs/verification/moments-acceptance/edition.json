@@ -1,0 +1,296 @@
+[
+  {
+    "id": "acceptance-1",
+    "title": "Permitted one",
+    "category": "highlights",
+    "fixtureId": "supercup:401873624",
+    "curatedAt": "2026-10-01T00:00:00Z",
+    "fixture": {
+      "home": {
+        "name": "Paris Saint-Germain",
+        "sourceId": "160"
+      },
+      "away": {
+        "name": "Aston Villa",
+        "sourceId": "362"
+      },
+      "competition": "supercup",
+      "kickoffUtc": "2026-08-12T19:00:00.000Z",
+      "venueTz": "Europe/Vienna",
+      "timeConfidence": "exact",
+      "status": "full_time"
+    },
+    "source": {
+      "name": "Fictional acceptance source",
+      "url": "https://www.youtube.com/watch?v=S4Accept001",
+      "identity": {
+        "provider": "youtube",
+        "videoId": "S4Accept001"
+      },
+      "content": {
+        "scope": "highlights",
+        "description": "Fictional acceptance content; no video is claimed.",
+        "verification": "source-described"
+      },
+      "permissions": [
+        {
+          "use": "embed",
+          "status": "permitted",
+          "checkedAt": "2026-09-01T00:00:00Z",
+          "basis": "Fictional acceptance record only; this is not permission for any real video."
+        }
+      ]
+    },
+    "editorial": {
+      "note": "Fictional acceptance selection. Fixture facts copied from committed snapshot 1fad3427dfeeeae4a642b6996fe1a114f4640d63.",
+      "cover": "voices"
+    },
+    "collections": [
+      {
+        "id": "acceptance",
+        "order": 0
+      }
+    ]
+  },
+  {
+    "id": "acceptance-2",
+    "title": "Permitted two",
+    "category": "highlights",
+    "fixtureId": "laliga:401882926",
+    "curatedAt": "2026-10-01T00:00:00Z",
+    "fixture": {
+      "home": {
+        "name": "Alav\u00e9s",
+        "sourceId": "96"
+      },
+      "away": {
+        "name": "Getafe",
+        "sourceId": "2922"
+      },
+      "competition": "laliga",
+      "kickoffUtc": "2026-08-15T17:30:00.000Z",
+      "venueTz": "Europe/Madrid",
+      "timeConfidence": "exact",
+      "status": "full_time"
+    },
+    "source": {
+      "name": "Fictional acceptance source",
+      "url": "https://www.youtube.com/watch?v=S4Accept002",
+      "identity": {
+        "provider": "youtube",
+        "videoId": "S4Accept002"
+      },
+      "content": {
+        "scope": "highlights",
+        "description": "Fictional acceptance content; no video is claimed.",
+        "verification": "source-described"
+      },
+      "permissions": [
+        {
+          "use": "embed",
+          "status": "permitted",
+          "checkedAt": "2026-09-01T00:00:00Z",
+          "basis": "Fictional acceptance record only; this is not permission for any real video."
+        }
+      ]
+    },
+    "editorial": {
+      "note": "Fictional acceptance selection. Fixture facts copied from committed snapshot 1fad3427dfeeeae4a642b6996fe1a114f4640d63.",
+      "cover": "seven"
+    },
+    "collections": [
+      {
+        "id": "acceptance",
+        "order": 1
+      }
+    ]
+  },
+  {
+    "id": "acceptance-3",
+    "title": "Identity without permission",
+    "category": "highlights",
+    "fixtureId": "laliga:401882918",
+    "curatedAt": "2026-10-01T00:00:00Z",
+    "fixture": {
+      "home": {
+        "name": "Sevilla",
+        "sourceId": "243"
+      },
+      "away": {
+        "name": "Rayo Vallecano",
+        "sourceId": "101"
+      },
+      "competition": "laliga",
+      "kickoffUtc": "2026-08-15T19:30:00.000Z",
+      "venueTz": "Europe/Madrid",
+      "timeConfidence": "exact",
+      "status": "full_time"
+    },
+    "source": {
+      "name": "Fictional acceptance source",
+      "url": "https://www.youtube.com/watch?v=S4Accept003",
+      "identity": {
+        "provider": "youtube",
+        "videoId": "S4Accept003"
+      },
+      "content": {
+        "scope": "highlights",
+        "description": "Fictional acceptance content; no video is claimed.",
+        "verification": "source-described"
+      }
+    },
+    "editorial": {
+      "note": "Fictional acceptance selection. Fixture facts copied from committed snapshot 1fad3427dfeeeae4a642b6996fe1a114f4640d63.",
+      "cover": "together"
+    },
+    "collections": [
+      {
+        "id": "acceptance",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": "acceptance-4",
+    "title": "Denied",
+    "category": "highlights",
+    "fixtureId": "shield:401875219",
+    "curatedAt": "2026-10-01T00:00:00Z",
+    "fixture": {
+      "home": {
+        "name": "Arsenal",
+        "sourceId": "359"
+      },
+      "away": {
+        "name": "Manchester City",
+        "sourceId": "382"
+      },
+      "competition": "shield",
+      "kickoffUtc": "2026-08-16T14:00:00.000Z",
+      "venueTz": "Europe/London",
+      "timeConfidence": "exact",
+      "status": "full_time"
+    },
+    "source": {
+      "name": "Fictional acceptance source",
+      "url": "https://www.youtube.com/watch?v=S4Accept004",
+      "identity": {
+        "provider": "youtube",
+        "videoId": "S4Accept004"
+      },
+      "content": {
+        "scope": "highlights",
+        "description": "Fictional acceptance content; no video is claimed.",
+        "verification": "source-described"
+      },
+      "permissions": [
+        {
+          "use": "embed",
+          "status": "denied",
+          "checkedAt": "2026-09-01T00:00:00Z",
+          "basis": "Fictional acceptance record only; this is not permission for any real video."
+        }
+      ]
+    },
+    "editorial": {
+      "note": "Fictional acceptance selection. Fixture facts copied from committed snapshot 1fad3427dfeeeae4a642b6996fe1a114f4640d63.",
+      "cover": "voices"
+    },
+    "collections": [
+      {
+        "id": "acceptance",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": "acceptance-5",
+    "title": "Expired",
+    "category": "highlights",
+    "fixtureId": "laliga:401882920",
+    "curatedAt": "2026-10-01T00:00:00Z",
+    "fixture": {
+      "home": {
+        "name": "Racing Santander",
+        "sourceId": "87"
+      },
+      "away": {
+        "name": "Villarreal",
+        "sourceId": "102"
+      },
+      "competition": "laliga",
+      "kickoffUtc": "2026-08-16T15:00:00.000Z",
+      "venueTz": "Europe/Madrid",
+      "timeConfidence": "exact",
+      "status": "full_time"
+    },
+    "source": {
+      "name": "Fictional acceptance source",
+      "url": "https://www.youtube.com/watch?v=S4Accept005",
+      "identity": {
+        "provider": "youtube",
+        "videoId": "S4Accept005"
+      },
+      "content": {
+        "scope": "highlights",
+        "description": "Fictional acceptance content; no video is claimed.",
+        "verification": "source-described"
+      },
+      "permissions": [
+        {
+          "use": "embed",
+          "status": "permitted",
+          "checkedAt": "2026-09-01T00:00:00Z",
+          "basis": "Fictional acceptance record only; this is not permission for any real video.",
+          "expiresAt": "2026-09-02T00:00:00Z"
+        }
+      ]
+    },
+    "editorial": {
+      "note": "Fictional acceptance selection. Fixture facts copied from committed snapshot 1fad3427dfeeeae4a642b6996fe1a114f4640d63.",
+      "cover": "seven"
+    },
+    "collections": [
+      {
+        "id": "acceptance",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": "acceptance-6",
+    "title": "Legacy link-only",
+    "category": "highlights",
+    "fixtureId": "laliga:401882922",
+    "curatedAt": "2026-10-01T00:00:00Z",
+    "fixture": {
+      "home": {
+        "name": "Espanyol",
+        "sourceId": "88"
+      },
+      "away": {
+        "name": "Levante",
+        "sourceId": "1538"
+      },
+      "competition": "laliga",
+      "kickoffUtc": "2026-08-16T17:00:00.000Z",
+      "venueTz": "Europe/Madrid",
+      "timeConfidence": "exact",
+      "status": "full_time"
+    },
+    "source": {
+      "name": "Fictional acceptance legacy source",
+      "url": "https://example.com/acceptance-legacy"
+    },
+    "editorial": {
+      "note": "Fictional acceptance selection. Fixture facts copied from committed snapshot 1fad3427dfeeeae4a642b6996fe1a114f4640d63.",
+      "cover": "together"
+    },
+    "collections": [
+      {
+        "id": "acceptance",
+        "order": 5
+      }
+    ]
+  }
+]

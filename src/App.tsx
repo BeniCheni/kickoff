@@ -18,6 +18,7 @@ import type { StorageAccess } from './lib/momentsSaved'
 import { MomentsPlayerBoundary } from './components/MomentsPlayerHost'
 import { MomentsSessionBoundary, MomentsSessionProvider, useMomentsSession } from './components/MomentsSessionProvider'
 import { ViewBoundary } from './components/ViewBoundary'
+import type { MomentsPlayability } from './lib/momentsPlayability'
 import type { MomentsPlayerFactory } from './lib/momentsPlayer'
 
 // A route-level seam allows the isolated harness to exercise the real shell and boundary.
@@ -27,10 +28,11 @@ function MomentsRouteBoundary({ boundaryKey, children }: { boundaryKey: string; 
     allowRetry>{children}</ViewBoundary>
 }
 
-export default function App({ momentsEdition = MOMENTS, momentsStorage, momentsRoute, momentsPlayer, momentsPlayerFault = false }: {
+export default function App({ momentsEdition = MOMENTS, momentsStorage, momentsRoute, momentsPlayer, momentsPlayability, momentsPlayerFault = false }: {
   momentsEdition?: readonly GalleryMoment[]
   momentsStorage?: StorageAccess
   momentsRoute?: ReactNode
+  momentsPlayability?: MomentsPlayability
   momentsPlayer?: MomentsPlayerFactory
   momentsPlayerFault?: boolean
 } = {}) {
@@ -143,7 +145,7 @@ export default function App({ momentsEdition = MOMENTS, momentsStorage, momentsR
           Fixtures and Table render outside both Moments boundaries: an owner failure cannot take
           the shell or another tab down, and their error paths stay exactly what main renders. */}
       <MomentsSessionBoundary active={tab === 'moments'}>
-        <MomentsSessionProvider edition={momentsEdition} tab={tab} storage={momentsStorage}>
+        <MomentsSessionProvider edition={momentsEdition} tab={tab} storage={momentsStorage} playability={momentsPlayability}>
           {tab === 'moments' && <div data-moments-background="route"><MomentsRouteBoundary boundaryKey={`${tab}:${lens}`}>
             {momentsRoute ?? <MomentsPage />}
           </MomentsRouteBoundary></div>}

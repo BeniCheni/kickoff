@@ -5,10 +5,6 @@ import type { MediaStatus } from '../lib/momentsQueue'
 import { blockedRecovery, timeoutRecovery, unavailableRecovery } from '../lib/momentsRecovery'
 import { useMomentsSession } from './MomentsSessionProvider'
 
-export function momentVideoId(moment: GalleryMoment): string | undefined {
-  return moment.source?.identity?.videoId
-}
-
 function Primary({ status }: { status: MediaStatus }) {
   const session = useMomentsSession()!
   if (status === 'blocked' || status === 'timeout' || status === 'failed') {
@@ -63,7 +59,7 @@ export function PlaybackActions({ moment, target, nextTitle, readNotice = false 
   const feedbackId = useId()
   const saved = session.queue.saved.includes(moment.id)
   const media = session.queue.media[moment.id]
-  const identity = momentVideoId(moment)
+  const identity = session.canPlay(moment) && moment.source?.identity?.videoId
   const notice = session.notice && (session.notice.target === target || session.notice.target === 'playback') ? session.notice.text : ''
   const readWarning = readNotice && session.notice?.target === 'initial-read'
     ? 'Saved references could not be read. Changes are visit-only until a browser write succeeds.' : ''
@@ -77,7 +73,7 @@ export function PlaybackActions({ moment, target, nextTitle, readNotice = false 
     </div>
     <p className="moments-save-state">{saved ? 'Saved reference' : 'Not saved'}{session.saved.persistence === 'visit-only' ? ' · visit only' : ''}</p>
     <p id={feedbackId} role="status" aria-live="polite" className="moments-feedback">{notice || readWarning}</p>
-    <PlaybackStatus />
+    {identity ? <PlaybackStatus /> : null}
     {identity ? <PlaybackRecovery moment={moment} nextTitle={nextTitle} /> : null}
   </div>
 }

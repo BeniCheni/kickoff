@@ -5,3 +5,4 @@ _to_delete/
 *.local
 .DS_Store
 tsconfig*.tsbuildinfo
+dist-acceptance/

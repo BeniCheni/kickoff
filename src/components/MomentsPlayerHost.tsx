@@ -173,7 +173,8 @@ export function MomentsPlayerHost({ factory, fault = false }: { factory?: Moment
   const surface = session.queue.surface
   // The frame belongs to the selection it was last asked to play. On any other selection the
   // stage and the Cinema slot show that selection's cover, as they do before a first Play.
-  const shown = live && owner !== null && owner === session.queue.active
+  const activeMoment = session.edition.find(item => item.id === session.queue.active)
+  const shown = live && owner !== null && owner === session.queue.active && !!activeMoment && session.canPlay(activeMoment)
   const shownRef = useRef(shown)
   shownRef.current = shown
   const placement: Placement = surface === 'cinema' ? 'cinema' : shown && surface === 'stage' ? 'stage' : live ? 'parked' : 'idle'
