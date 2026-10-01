@@ -336,6 +336,8 @@ D-01, D-02, D-03, D-05, D-10, D-11, D-12, D-13 stay on the slice-2 tests. Slice 
 
 ## 9. Slice-4 real-provider validation (written now, not run)
 
+> Superseded, 1 October 2026: `docs/moments-slice-4-spec.md` is the slice-4 specification. It reconciles this section with Beni's later rulings and the repository facts it did not account for. The text below remains the original archive.
+
 This is not a rerun of the 20 September spike. The historical ids in the R3 package (`pkEpLtePJm0`, `iBuTEywEQ6U`, `sXAkBsEcXSo`) are not authorized by this plan and are not the request list. Beni names the items in writing before any request. At most two: one embed he expects to play, and one he expects to owner-block. Each needs an allowlisted `source.identity` already accepted by `youtubeIdFromUrl`. `hasEmbedPermission` is checked at the test instant and recorded; a missing permission stops the run before the script is inserted. The adapter does not treat that function as a playback guarantee, but slice 4 does not fire a request Beni has not named.
 
 **Environment.** One macOS Chrome, current installed version recorded. Served production build (`npm run build`, then a local static server), not only the Vite dev server. Loopback. No CI, no cron, no `workflow_dispatch`. One page load.
