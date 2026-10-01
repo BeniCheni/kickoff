@@ -1,0 +1,3 @@
+AssertionError [ERR_ASSERTION]: 360-ledger-light-cinema-ready Cinema background enumeration is empty
+    at verifyCinema (file:///private/tmp/kickoff-moments-s4/evidence/base-mutations/empty-enumeration.mjs:150:3)
+    at async file:///private/tmp/kickoff-moments-s4/evidence/base-mutations/empty-enumeration.mjs:217:35

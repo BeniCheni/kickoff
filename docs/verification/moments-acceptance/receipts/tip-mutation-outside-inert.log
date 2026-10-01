@@ -1,0 +1,10 @@
+AssertionError [ERR_ASSERTION]: 360-ledger-light-cinema-ready Cinema outside focusables must be inert
++ actual - expected
+
++ [
++   '<button class="label-caps cursor-pointer rounded border-[1.5px] border-ink bg-ink px-3.5 py-2.5 text-[11px] text-bg">Dark mode</button>'
++ ]
+- []
+
+    at verifyCinema (file:///private/tmp/kickoff-moments-s4/evidence/tip-mutations/outside-inert.mjs:152:10)
+    at async file:///private/tmp/kickoff-moments-s4/evidence/tip-mutations/outside-inert.mjs:218:35

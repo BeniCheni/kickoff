@@ -1,0 +1,13 @@
+
+> kickoff@0.5.2 test
+> vitest run
+
+
+ RUN  v4.1.11 /Users/benicheni/.codex/worktrees/fdaf/Kickoff
+
+
+ Test Files  51 passed (51)
+      Tests  720 passed (720)
+   Start at  11:46:38
+   Duration  6.93s (transform 3.72s, setup 2.44s, import 8.11s, tests 29.21s, environment 8.72s)
+

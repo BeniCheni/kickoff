@@ -1,0 +1,39 @@
+
+> kickoff@0.5.2 build:acceptance
+> tsc -b && tsx scripts/build-moments-acceptance.ts /tmp/kickoff-moments-s4/evidence/build-isolation/bad-schema.json
+
+/Users/benicheni/.codex/worktrees/fdaf/Kickoff/src/lib/moments.ts:127
+  const moments = momentsSchema.parse(raw)
+                                ^
+
+ZodError: [
+  {
+    "origin": "string",
+    "code": "invalid_format",
+    "format": "regex",
+    "pattern": "/^[A-Za-z0-9_-]{11}$/",
+    "path": [
+      0,
+      "source",
+      "identity",
+      "videoId"
+    ],
+    "message": "An 11-character YouTube video ID"
+  },
+  {
+    "code": "custom",
+    "path": [
+      0,
+      "source",
+      "url"
+    ],
+    "message": "Source URL must be an allowlisted YouTube watch URL for the declared video ID"
+  }
+]
+    at parseMoments (/Users/benicheni/.codex/worktrees/fdaf/Kickoff/src/lib/moments.ts:127:33)
+    at <anonymous> (/Users/benicheni/.codex/worktrees/fdaf/Kickoff/scripts/build-moments-acceptance.ts:16:17)
+    at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
+    at async node:internal/modules/esm/loader:639:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v24.15.0

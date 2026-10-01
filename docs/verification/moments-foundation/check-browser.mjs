@@ -9,10 +9,10 @@ await fs.mkdir(root,{recursive:true});
 const browser=await chromium.launch({executablePath:chrome,headless:true});
 const requests=[], errors=[], cells=[];
 const hash=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
-const provider=host=>['youtube.com','youtube-nocookie.com','ytimg.com','googlevideo.com'].some(domain=>host===domain||host.endsWith('.'+domain));
+const provider=host=>['youtube.com','youtu.be','youtube-nocookie.com','ytimg.com','googlevideo.com','ggpht.com'].some(domain=>host===domain||host.endsWith('.'+domain));
 const fonts=host=>['fonts.googleapis.com','fonts.gstatic.com'].includes(host);
 for(const build of ['base','foundation']) {
- const context=await browser.newContext({deviceScaleFactor:1,reducedMotion:'reduce'});
+ const context=await browser.newContext({deviceScaleFactor:1,reducedMotion:'reduce',viewport:{width:360,height:844}});
  await context.addInitScript(()=>{
    const Original=Date; const now=Date.parse('2026-09-27T02:40:00Z');
    globalThis.Date=class extends Original { constructor(...args){ super(...(args.length?args:[now])); } static now(){return now;} };

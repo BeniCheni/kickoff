@@ -1,0 +1,8 @@
+AssertionError [ERR_ASSERTION]: 360-ledger-light-cinema-ready capture after row scrolling
+
+48 !== 0
+
+    at capture (file:///private/tmp/kickoff-moments-s4/evidence/tip-mutations/capture-order.mjs:162:36)
+    at runNextTicks (node:internal/process/task_queues:65:5)
+    at process.processImmediate (node:internal/timers:472:9)
+    at async file:///private/tmp/kickoff-moments-s4/evidence/tip-mutations/capture-order.mjs:220:34

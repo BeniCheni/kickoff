@@ -10,6 +10,11 @@ releases.
 
 ### Changed
 
+- The inactive Moments player now offers Play only with a current recorded embed permission;
+  missing or lapsed permission keeps the selection link-only. A separate acceptance build
+  exercises fictional selections without entering either production build. The production
+  edition stays empty, requests nothing, and leaves the interface readers see unchanged.
+
 - The Moments player, its Cinema surface and the YouTube adapter are in the code and
   inactive. With the empty production edition the player renders nothing and requests
   nothing, so the interface readers see is unchanged. Fixtures and Table carry one wrapper

@@ -1,0 +1,6 @@
+AssertionError [ERR_ASSERTION]: 360-ledger-light-cinema-ready Cinema has an inert ancestor
+
+true !== false
+
+    at verifyCinema (file:///private/tmp/kickoff-moments-s4/evidence/base-mutations/dialog-ancestor.mjs:153:10)
+    at async file:///private/tmp/kickoff-moments-s4/evidence/base-mutations/dialog-ancestor.mjs:218:35

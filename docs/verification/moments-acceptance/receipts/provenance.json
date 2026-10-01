@@ -1,0 +1,13 @@
+{
+  "base": "7636b0871c9a10db53e9a00ad3811cc7093efa6c",
+  "applicationTip": "75dcb944067f2ced3d1bd69ccc2b07f75d4f0373",
+  "snapshot": "7636b0871c9a10db53e9a00ad3811cc7093efa6c",
+  "productionBaseOrigin": "http://127.0.0.1:8871",
+  "productionTipOrigin": "http://127.0.0.1:8872",
+  "acceptanceOrigin": "http://127.0.0.1:8873",
+  "baseHarnessOrigin": "http://127.0.0.1:5191",
+  "tipHarnessOrigin": "http://127.0.0.1:5192",
+  "node": "24.15.0",
+  "playwright": "1.62.1",
+  "chrome": "154.0.8037.58"
+}

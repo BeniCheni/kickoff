@@ -1,0 +1,36 @@
+{
+  "provenance": {
+    "base": "7636b0871c9a10db53e9a00ad3811cc7093efa6c",
+    "applicationTip": "75dcb944067f2ced3d1bd69ccc2b07f75d4f0373",
+    "snapshot": "7636b0871c9a10db53e9a00ad3811cc7093efa6c",
+    "productionBaseOrigin": "http://127.0.0.1:8871",
+    "productionTipOrigin": "http://127.0.0.1:8872",
+    "acceptanceOrigin": "http://127.0.0.1:8873",
+    "baseHarnessOrigin": "http://127.0.0.1:5191",
+    "tipHarnessOrigin": "http://127.0.0.1:5192",
+    "node": "24.15.0",
+    "playwright": "1.62.1",
+    "chrome": "154.0.8037.58"
+  },
+  "unchangedFromBase": {
+    "src/curated/moments.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "tests/moments.test.ts": "1fbc1297b330725c8d1b32d3ff58e4d21fdaf8b6c9a70bc66f9f706305b73272",
+    "src/lib/moments.ts": "85dffd149dc985809af0ce255a8c424b45d0a84654ce900f51aec3d89144f824",
+    "src/lib/momentsQueue.ts": "3a98bc6920d6a7e45ce6097d49a52d20f3751c0524decddddd4ec27ae268dc44",
+    "src/lib/momentsPlayer.ts": "57708e2f4f5381e1e748c3b935d8cc93a17284d6944ca7863f80ec25bec089ae",
+    "src/main.tsx": "d4f3a194baaa2acd3b537cb707d426e7c66c306578102de433b31f15e7cd6b00",
+    "vite.config.ts": "482ebbe6369568ab9d93dd571845bbd810643620661454f0db5d8e0c15ff3f15",
+    "index.html": "98e7c61061edd82853de41fcd1942c298879e5972ca8d215110cb379ee3a6463",
+    "package-lock.json": "fa7e9700b980a0cc19c17c467ed7a43b78d436ea2db9c281716095fc54c0d397",
+    "README.md": "4439e84a1e3c6dd32b5779cac22ccb8f875932d71080cd474690de4d5aa39225",
+    ".github/workflows/ci.yml": "7a1c6abf1e01f35eabfefbf896721c75b2385d9e28eaf6102f7c46ca3b9ae769",
+    ".github/workflows/pages.yml": "4918df919fe5d71c7a30ada6e2732b1305dc27bd283f8acc79360499c1f53c86",
+    ".github/workflows/sync.yml": "bbdf16888f3905867f29e216b7d016d115b7f89a008d33d80091f29a99f32f3e",
+    "src/data/standings.json": "87d8c0c0187361d8670a64993a1dadce84d0c1f838a2579725e8737f8bf32e2c",
+    "src/data/fixtures.json": "5b356d3f97ad46ed5ff1e396802d420b11ec894978f69e068a1ea88b589fa4cc",
+    "src/data/meta.json": "e44b38e04fd2e9a035bb87b6753ee2ae126571074bf1e3fd56bc061d9d6a10ab"
+  },
+  "specSha256": "992aa72044cfe1eec7977487501e3bb3a451793117f3a827c5e941436408ea5e",
+  "fixtureProvenanceMatchesGit": true,
+  "applicationSourceUnchangedAfter": "75dcb944067f2ced3d1bd69ccc2b07f75d4f0373"
+}
