@@ -267,6 +267,11 @@ export function MomentsPlayerHost({ factory, fault = false }: { factory?: Moment
     const dialog = dialogRef.current
     const host = hostRef.current
     if (!dialog || !host) return
+    // Move focus before hiding its return stop or measuring the parked box. Only the
+    // active owner's frame can lapse here; another selection's parked frame stays inert.
+    if (placement === 'parked' && owner === session.queue.active && host.contains(document.activeElement)) {
+      survivingControl()?.focus()
+    }
     host.querySelectorAll<HTMLElement>('[data-player-return], [data-player-continue]').forEach(button => {
       button.hidden = placement !== 'stage'
     })

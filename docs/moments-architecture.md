@@ -625,14 +625,27 @@ rulings govern over this section and the archived prompt; no ruled player behavi
   check precedes retire and the reducer's play action, so a refused call does not even
   invalidate a current attempt. Cost: another subscription to the shared clock, not another
   timer; permission changes are observed at its minute tick or focus/visibility catch-up.
-- **Lapse parks.** When the same active selection loses eligibility, a layout effect samples
-  and retires the adapter, then dispatches existing `player-lost`. Playing/loading becomes
+- **Lapse parks a live frame.** When the same active selection loses eligibility while its
+  frame is live, a layout effect samples and retires the adapter, then dispatches existing
+  `player-lost`. Playing/loading becomes
   paused, Cinema returns to stage, the frame parks inert, and the Player focus stop vanishes.
   Position, queue and history survive. Other terminal states keep their diagnosis internally
   but expose only the source link. The iframe stays mounted. Cost: a permission lapse ends
   the current attempt too; this is stronger than refusing the next Play. It does not destroy
   the provider instance or establish anything about parked decoding. The reducer's provider
-  contract and adapter commands are unchanged.
+  contract and adapter commands are unchanged. Pass 2 implements Beni's 1 Oct rulings:
+  without a live frame, the cover keeps its surface and attempt, including in Cinema. A
+  frame parked under another active selection is left alone. The lapse effect reads the
+  render's `playerLive` closure (the preceding commit's shown frame); the host's layout
+  effect queues false for the next render, without changing that closure. Tests cover both
+  live surfaces, both cover surfaces and both possible lapsing items around a parked frame.
+  On stage-to-parked, focus inside the active owner's host moves to Enter Cinema before the
+  return stop is hidden; focus elsewhere is untouched. In cover-only Cinema, the clipped
+  host stays inert, the dialog controls remain active and focus stays on Exit Cinema.
+- **Playback labels stay whole.** Only primary buttons directly in `moments-action-row`
+  receive zero flex shrink and no wrapping. Play, Pause, Retry and Replay stay on one line;
+  the source link takes the wrapping cost. Primary source links and gallery Open selection
+  buttons keep their wrapping rules. No token or action-row layout mode changes.
 - **Mock seam.** Optional `App.momentsPlayability` is threaded to the owner like the existing
   factory seam. `tests/fixtures/moments/mockPlayability.ts` is passed only alongside the mock
   in the harness and player DOM tests. `src/main.tsx` passes neither prop. Archival examples

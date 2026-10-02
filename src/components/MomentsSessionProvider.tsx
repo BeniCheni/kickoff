@@ -124,7 +124,10 @@ export function MomentsSessionProvider({ children, edition = MOMENTS, tab = 'mom
   const activePlayable = !!activeMoment && canPlay(activeMoment)
   const previousPlayable = useRef({ id: visit.queue.active, playable: activePlayable })
   useLayoutEffect(() => {
-    if (previousPlayable.current.id === visit.queue.active && previousPlayable.current.playable && !activePlayable) {
+    if (previousPlayable.current.id === visit.queue.active && previousPlayable.current.playable && !activePlayable && playerLive) {
+      // This render retains the preceding commit's shown frame. The host's layout effect
+      // queues setPlayerLive(false) for the next render; it cannot change this closure.
+      // A cover (including another selection's parked frame) has no attempt to lose.
       // Sample/pause and retire callbacks before invalidating the attempt. Reuse the
       // existing loss path; no new provider event or clock-derived position.
       bridge.current?.retire()

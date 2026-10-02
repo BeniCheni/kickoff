@@ -10,6 +10,10 @@ releases.
 
 ### Changed
 
+- The inactive Moments player preserves keyboard focus when permission lapses, leaves a
+  cover-only Cinema open, and keeps playback button labels on one line on phones. The
+  production edition remains empty and the interface readers see is unchanged.
+
 - The inactive Moments player now offers Play only with a current recorded embed permission;
   missing or lapsed permission keeps the selection link-only. A separate acceptance build
   exercises fictional selections without entering either production build. The production

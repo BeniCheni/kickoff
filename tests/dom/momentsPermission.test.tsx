@@ -24,10 +24,10 @@ beforeEach(() => {
 })
 afterEach(() => { cleanup(); release(); vi.restoreAllMocks() })
 function Probe() { session = useMomentsSession()!; return <MomentsPage /> }
-function mount(moment: Moment) {
+function mount(moment: Moment, others: Moment[] = []) {
   const factory = vi.fn(createMockMomentsPlayer)
-  render(<App momentsEdition={[moment]} momentsPlayer={factory} momentsRoute={<Probe />} />)
-  fireEvent.click(screen.getByRole('button', { name: 'Open selection' }))
+  render(<App momentsEdition={[moment, ...others]} momentsPlayer={factory} momentsRoute={<Probe />} />)
+  fireEvent.click(screen.getAllByRole('button', { name: 'Open selection' })[0]!)
   return factory
 }
 const click = (name: string) => fireEvent.click(screen.getByRole('button', { name }))
@@ -79,7 +79,17 @@ it.each(['playing', 'blocked', 'ended', 'loading'] as const)('expiry at next clo
     else if (status !== 'loading') player.emit({ ...request, event: status, position: 12 })
   })
   click('Enter Cinema')
+  const beforeLapse = structuredClone(session.queue)
+  expect(player.reads.retires).toBe(0)
   tick(60_050)
+  expect(player.reads.retires).toBe(1)
+  expect(session.queue.media[permitted.id]).toMatchObject({
+    status: status === 'playing' || status === 'loading' ? 'paused' : status,
+    position: beforeLapse.media[permitted.id]!.position,
+    attempt: beforeLapse.media[permitted.id]!.attempt + 1,
+  })
+  expect(session.queue.history).toEqual(beforeLapse.history)
+  expect(session.queue.remainder).toEqual(beforeLapse.remainder)
   expect(session.queue.surface).toBe('stage')
   expect(document.querySelector('[data-moments-player-dialog]')?.getAttribute('data-placement')).toBe('parked')
   expect(document.querySelector('[data-player-sentinel], [data-playback-recovery], [data-player-status]')).toBeNull()
@@ -91,6 +101,73 @@ it.each(['playing', 'blocked', 'ended', 'loading'] as const)('expiry at next clo
   expect(player.reads).toEqual(reads)
   act(() => player.emit({ ...request, event: 'playing', position: 99 }))
   expect(session.queue.media[permitted.id]?.position).not.toBe(99)
+})
+it.each(['[data-player-return]', 'iframe'])('a stage lapse hands focus from %s to the visible Cinema control', selector => {
+  mount(patchPermission({ expiresAt: '2026-10-01T16:01:00Z' }))
+  click('Play')
+  const player = currentMockPlayer()!
+  act(() => player.emit({ ...player.reads.plays[0]!, event: 'playing', position: 12 }))
+  const focus = document.querySelector<HTMLElement>(selector)!
+  focus.focus()
+  expect(document.activeElement).toBe(focus)
+  tick(60_050)
+  const control = screen.getByRole('button', { name: 'Enter Cinema' })
+  expect(document.activeElement).toBe(control)
+  expect(control.closest('[inert], [hidden], [aria-hidden="true"]')).toBeNull()
+  expect(player.reads.retires).toBe(1)
+  expect(session.queue.media[permitted.id]).toMatchObject({ status: 'paused', position: 12, attempt: 2 })
+})
+it('a stage lapse leaves focus outside the host alone', () => {
+  mount(patchPermission({ expiresAt: '2026-10-01T16:01:00Z' }))
+  click('Play')
+  const control = screen.getByRole('button', { name: /^Save reference:/ })
+  control.focus()
+  tick(60_050)
+  expect(document.activeElement).toBe(control)
+})
+it.each(['stage', 'cinema'] as const)('a lapse before Play keeps the %s cover and attempt unchanged', surface => {
+  const factory = mount(patchPermission({ expiresAt: '2026-10-01T16:01:00Z' }))
+  if (surface === 'cinema') click('Enter Cinema')
+  const control = screen.getByRole('button', { name: surface === 'cinema' ? 'Exit Cinema' : 'Enter Cinema' })
+  control.focus()
+  const before = structuredClone(session.queue)
+  tick(60_050)
+  expect(session.queue).toEqual(before)
+  expect(session.queue.surface).toBe(surface)
+  expect(document.activeElement).toBe(control)
+  expect(control.closest('[inert], [hidden], [aria-hidden="true"]')).toBeNull()
+  expect(screen.queryByRole('button', { name: /^(Play|Pause|Retry|Replay)$/ })).toBeNull()
+  const area = document.querySelector(surface === 'cinema' ? '[data-moments-cinema]' : '.moments-stage-main')!
+  expect(area.querySelector('[data-primary-action]')?.tagName).toBe('A')
+  expect(factory).not.toHaveBeenCalled()
+  expect(document.querySelector('iframe')).toBeNull()
+  if (surface === 'cinema') {
+    expect(document.querySelector('[data-moments-player-host]')?.hasAttribute('inert')).toBe(true)
+    expect(document.querySelector('[data-moments-player-dialog]')?.hasAttribute('inert')).toBe(false)
+  }
+})
+it.each(['owner', 'selection'] as const)('a parked frame under another selection is undisturbed by the %s lapse', lapsing => {
+  const expiring = patchPermission({ expiresAt: '2026-10-01T16:01:00Z' })
+  const first = lapsing === 'owner' ? expiring : permitted
+  const second = { ...(lapsing === 'selection' ? expiring : permitted), id: 'permission-neighbour', title: 'Neighbour' }
+  mount(first, [second])
+  click('Play')
+  const player = currentMockPlayer()!
+  act(() => player.emit({ ...player.reads.plays[0]!, event: 'playing', position: 12 }))
+  act(() => session.dispatch({ type: 'open', id: second.id }))
+  click('Enter Cinema')
+  const control = screen.getByRole('button', { name: 'Exit Cinema' })
+  control.focus()
+  const before = structuredClone(session.queue)
+  const retires = player.reads.retires
+  const frame = document.querySelector('iframe')
+  tick(60_050)
+  expect(session.queue).toEqual(before)
+  expect(session.queue.surface).toBe('cinema')
+  expect(player.reads.retires).toBe(retires)
+  expect(document.querySelector('iframe')).toBe(frame)
+  expect(document.activeElement).toBe(control)
+  expect(document.querySelector('[data-moments-player-host]')?.hasAttribute('inert')).toBe(true)
 })
 it('focus catch-up observes a permission lapse after suspension', () => {
   mount(patchPermission({ expiresAt: '2026-10-01T16:01:00Z' }))

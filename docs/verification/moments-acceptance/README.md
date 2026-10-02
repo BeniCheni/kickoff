@@ -19,6 +19,9 @@ Production curation remains `[]`; readers see the same empty shelf and no player
 - `fixture-provenance.json` copies six rows from snapshot
   `1fad3427dfeeeae4a642b6996fe1a114f4640d63`. The edition projects those facts, and its node
   test asserts absence from the current snapshot. All five video IDs are fictional.
+  `parseMoments` skips fixture cross-checks for these absent IDs; only the node test compares
+  their facts with `fixture-provenance.json`, and no automated check compares that file with
+  `1fad342` itself (the same validation limit applies to a real edition outside the window).
 
 Every JSON receipt wraps the original checker result with the build provenance. The
 [manifest](receipts/provenance.json) names all five served builds. Machine geometry,
