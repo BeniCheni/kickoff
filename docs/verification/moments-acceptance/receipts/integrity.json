@@ -1,16 +1,24 @@
 {
   "provenance": {
     "base": "7636b0871c9a10db53e9a00ad3811cc7093efa6c",
-    "applicationTip": "75dcb944067f2ced3d1bd69ccc2b07f75d4f0373",
+    "applicationTip": "c846fa0e338ab96f83cf177ab86452922b9419be",
     "snapshot": "7636b0871c9a10db53e9a00ad3811cc7093efa6c",
     "productionBaseOrigin": "http://127.0.0.1:8871",
-    "productionTipOrigin": "http://127.0.0.1:8872",
-    "acceptanceOrigin": "http://127.0.0.1:8873",
+    "productionTipOrigin": "http://127.0.0.1:8878",
+    "acceptanceOrigin": "http://127.0.0.1:8888",
     "baseHarnessOrigin": "http://127.0.0.1:5191",
-    "tipHarnessOrigin": "http://127.0.0.1:5192",
+    "tipHarnessOrigin": "http://127.0.0.1:5193",
     "node": "24.15.0",
     "playwright": "1.62.1",
-    "chrome": "154.0.8037.58"
+    "chrome": "154.0.8037.93",
+    "rebuttalBaseline": "0a9a3c2b83a1daba8adaa1544f425746fb470f93",
+    "lapseOrigin": "http://127.0.0.1:8879",
+    "beforeLapseOrigin": "http://127.0.0.1:8884",
+    "beforeAcceptanceOrigin": "http://127.0.0.1:8885",
+    "npm": "11.12.1",
+    "headless": true,
+    "deviceScaleFactor": 1,
+    "reducedMotion": "reduce"
   },
   "unchangedFromBase": {
     "src/curated/moments.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
@@ -32,5 +40,19 @@
   },
   "specSha256": "992aa72044cfe1eec7977487501e3bb3a451793117f3a827c5e941436408ea5e",
   "fixtureProvenanceMatchesGit": true,
-  "applicationSourceUnchangedAfter": "75dcb944067f2ced3d1bd69ccc2b07f75d4f0373"
+  "applicationSourceUnchangedAfter": "c846fa0e338ab96f83cf177ab86452922b9419be",
+  "fixtureProvenanceCheck": {
+    "snapshot": "1fad3427dfeeeae4a642b6996fe1a114f4640d63",
+    "matched": 6,
+    "absentFromCurrent": 6,
+    "networkFetch": false,
+    "method": "git show local object, JSON row equality; not build validation"
+  },
+  "playerCheckersByteIdentical": true,
+  "receiptWorkingTreeBuildsMatchFrozenApplicationTip": [
+    "dist",
+    "dist-acceptance"
+  ],
+  "singleFileMatchesApplicationTipIsolationReceipt": "575d28f3a9989284b1e3b224a2a449495e7f1ad7da927a121e7531e7a1b97603",
+  "singleFileScratchDifference": "The unserved frozen-archive single-file build contained one extra unused Tailwind .blur rule (212 characters); final checkout build matches c846fa0 isolation build byte for byte. No single-file browser receipt claimed."
 }

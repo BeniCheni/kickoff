@@ -9,9 +9,9 @@ transforming...
 rendering chunks...
 [plugin vite:singlefile] 
 
-[plugin vite:singlefile] Inlining: index-SCrP2s2Q.js
-[plugin vite:singlefile] Inlining: style-Ce_g5iW3.css
+[plugin vite:singlefile] Inlining: index-CsYYv1bz.js
+[plugin vite:singlefile] Inlining: style-CKjq5mb7.css
 computing gzip size...
-dist-single/index.html  1,084.76 kB │ gzip: 188.51 kB
+dist-single/index.html  1,085.04 kB │ gzip: 188.56 kB
 
-✓ built in 314ms
+✓ built in 392ms

@@ -1,14 +1,14 @@
 
 > kickoff@0.5.2 build:acceptance
-> tsc -b && tsx scripts/build-moments-acceptance.ts /tmp/kickoff-moments-s4/evidence/build-isolation/bad-fixture.json
+> tsc -b && tsx scripts/build-moments-acceptance.ts /tmp/kickoff-pr138-pass2/final-isolation/bad-fixture.json
 
-/Users/benicheni/.codex/worktrees/fdaf/Kickoff/src/lib/moments.ts:141
+/Users/benicheni/.codex/worktrees/pr138-pass2/Kickoff/src/lib/moments.ts:141
       if (!agrees) throw new Error(`Moment ${m.id}: ${key} disagrees with fixture ${m.fixtureId}; correct the curation`)
                          ^
 
 Error: Moment acceptance-1: home disagrees with fixture ligue1:401876468; correct the curation
-    at parseMoments (/Users/benicheni/.codex/worktrees/fdaf/Kickoff/src/lib/moments.ts:141:26)
-    at <anonymous> (/Users/benicheni/.codex/worktrees/fdaf/Kickoff/scripts/build-moments-acceptance.ts:16:17)
+    at parseMoments (/Users/benicheni/.codex/worktrees/pr138-pass2/Kickoff/src/lib/moments.ts:141:26)
+    at <anonymous> (/Users/benicheni/.codex/worktrees/pr138-pass2/Kickoff/scripts/build-moments-acceptance.ts:16:17)
     at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
     at async node:internal/modules/esm/loader:639:26
     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)

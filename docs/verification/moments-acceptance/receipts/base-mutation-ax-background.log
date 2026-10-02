@@ -6,5 +6,5 @@ AssertionError [ERR_ASSERTION]: 360-ledger-light-cinema-ready Cinema AX exposes 
 + ]
 - []
 
-    at verifyCinema (file:///private/tmp/kickoff-moments-s4/evidence/base-mutations/ax-background.mjs:157:10)
-    at async file:///private/tmp/kickoff-moments-s4/evidence/base-mutations/ax-background.mjs:218:35
+    at verifyCinema (file:///private/tmp/kickoff-pr138-pass2/evidence/base-mutations/ax-background.mjs:157:10)
+    at async file:///private/tmp/kickoff-pr138-pass2/evidence/base-mutations/ax-background.mjs:218:35

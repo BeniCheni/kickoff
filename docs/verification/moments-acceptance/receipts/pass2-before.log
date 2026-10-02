@@ -1,0 +1,189 @@
+
+> kickoff@0.5.2 test
+> vitest run tests/dom/momentsPermission.test.tsx
+
+
+ RUN  v4.1.11 /private/tmp/kickoff-pr138-pass2/final-regression/source
+
+ ❯ |dom| tests/dom/momentsPermission.test.tsx (24 tests | 5 failed) 4979ms
+   × a stage lapse hands focus from [data-player-return] to the visible Cinema control 101ms
+   × a stage lapse hands focus from iframe to the visible Cinema control 87ms
+   × a lapse before Play keeps the stage cover and attempt unchanged 260ms
+   × a lapse before Play keeps the cinema cover and attempt unchanged 102ms
+   × a parked frame under another selection is undisturbed by the selection lapse 353ms
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 19 passed (24)
+   Start at  10:12:13
+   Duration  8.48s (transform 975ms, setup 473ms, import 1.34s, tests 4.98s, environment 1.38s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |dom| tests/dom/momentsPermission.test.tsx > a stage lapse hands focus from [data-player-return] to the visible Cinema control
+AssertionError: expected <button type="button" …(3)></button> to be <button type="button" …(2)></button> // Object.is equality
+
+- Expected
++ Received
+
+  <button
+-   class="moments-button"
+-   data-cinema-enter="true"
++   class="sr-only"
++   data-player-return=""
++   hidden=""
+    type="button"
+  >
+-   Enter Cinema
++   Back to selection
+  </button>
+
+ ❯ tests/dom/momentsPermission.test.tsx:115:34
+    113|   tick(60_050)
+    114|   const control = screen.getByRole('button', { name: 'Enter Cinema' })
+    115|   expect(document.activeElement).toBe(control)
+       |                                  ^
+    116|   expect(control.closest('[inert], [hidden], [aria-hidden="true"]')).t…
+    117|   expect(player.reads.retires).toBe(1)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  |dom| tests/dom/momentsPermission.test.tsx > a stage lapse hands focus from iframe to the visible Cinema control
+AssertionError: expected <iframe …(3)></iframe> to be <button type="button" …(2)></button> // Object.is equality
+
+- Expected
++ Received
+
+- <button
+-   class="moments-button"
+-   data-cinema-enter="true"
+-   type="button"
+- >
+-   Enter Cinema
+- </button>
++ <iframe
++   src="about:blank"
++   tabindex="0"
++   title="Moments player"
++ />
+
+ ❯ tests/dom/momentsPermission.test.tsx:115:34
+    113|   tick(60_050)
+    114|   const control = screen.getByRole('button', { name: 'Enter Cinema' })
+    115|   expect(document.activeElement).toBe(control)
+       |                                  ^
+    116|   expect(control.closest('[inert], [hidden], [aria-hidden="true"]')).t…
+    117|   expect(player.reads.retires).toBe(1)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  |dom| tests/dom/momentsPermission.test.tsx > a lapse before Play keeps the stage cover and attempt unchanged
+AssertionError: expected { …(12) } to deeply equal { …(12) }
+
+- Expected
++ Received
+
+@@ -6,11 +6,11 @@
+    "history": [
+      "permission-test",
+    ],
+    "media": {
+      "permission-test": {
+-       "attempt": 0,
++       "attempt": 1,
+        "completed": false,
+        "position": 0,
+        "status": "ready",
+      },
+    },
+
+ ❯ tests/dom/momentsPermission.test.tsx:135:25
+    133|   const before = structuredClone(session.queue)
+    134|   tick(60_050)
+    135|   expect(session.queue).toEqual(before)
+       |                         ^
+    136|   expect(session.queue.surface).toBe(surface)
+    137|   expect(document.activeElement).toBe(control)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  |dom| tests/dom/momentsPermission.test.tsx > a lapse before Play keeps the cinema cover and attempt unchanged
+AssertionError: expected { …(12) } to deeply equal { …(12) }
+
+- Expected
++ Received
+
+@@ -6,11 +6,11 @@
+    "history": [
+      "permission-test",
+    ],
+    "media": {
+      "permission-test": {
+-       "attempt": 0,
++       "attempt": 1,
+        "completed": false,
+        "position": 0,
+        "status": "ready",
+      },
+    },
+@@ -20,8 +20,8 @@
+    ],
+    "remainder": [],
+    "saved": [],
+    "savedOnly": false,
+    "seed": null,
+-   "surface": "cinema",
++   "surface": "stage",
+    "undo": null,
+  }
+
+ ❯ tests/dom/momentsPermission.test.tsx:135:25
+    133|   const before = structuredClone(session.queue)
+    134|   tick(60_050)
+    135|   expect(session.queue).toEqual(before)
+       |                         ^
+    136|   expect(session.queue.surface).toBe(surface)
+    137|   expect(document.activeElement).toBe(control)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  |dom| tests/dom/momentsPermission.test.tsx > a parked frame under another selection is undisturbed by the selection lapse
+AssertionError: expected { canonical: [ …(2) ], …(11) } to deeply equal { canonical: [ …(2) ], …(11) }
+
+- Expected
++ Received
+
+@@ -8,11 +8,11 @@
+      "permission-test",
+      "permission-neighbour",
+    ],
+    "media": {
+      "permission-neighbour": {
+-       "attempt": 0,
++       "attempt": 1,
+        "completed": false,
+        "position": 0,
+        "status": "ready",
+      },
+      "permission-test": {
+@@ -29,8 +29,8 @@
+    ],
+    "remainder": [],
+    "saved": [],
+    "savedOnly": false,
+    "seed": null,
+-   "surface": "cinema",
++   "surface": "stage",
+    "undo": null,
+  }
+
+ ❯ tests/dom/momentsPermission.test.tsx:165:25
+    163|   const frame = document.querySelector('iframe')
+    164|   tick(60_050)
+    165|   expect(session.queue).toEqual(before)
+       |                         ^
+    166|   expect(session.queue.surface).toBe('cinema')
+    167|   expect(player.reads.retires).toBe(retires)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+

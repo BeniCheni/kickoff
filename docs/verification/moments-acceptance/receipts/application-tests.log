@@ -1,13 +1,18 @@
 
+> kickoff@0.5.2 typecheck
+> tsc -b --noEmit
+
+
+
 > kickoff@0.5.2 test
 > vitest run
 
 
- RUN  v4.1.11 /Users/benicheni/.codex/worktrees/fdaf/Kickoff
+ RUN  v4.1.11 /Users/benicheni/.codex/worktrees/pr138-pass2/Kickoff
 
 
  Test Files  53 passed (53)
-      Tests  738 passed (738)
-   Start at  11:50:19
-   Duration  8.24s (transform 4.66s, setup 3.06s, import 9.77s, tests 35.94s, environment 10.96s)
+      Tests  745 passed (745)
+   Start at  10:09:16
+   Duration  13.46s (transform 5.58s, setup 3.96s, import 13.87s, tests 66.67s, environment 16.96s)
 
