@@ -3,8 +3,10 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { execFileSync, spawnSync } from 'node:child_process'
 import assert from 'node:assert/strict'
-const [before, after, out] = process.argv.slice(2)
+const [beforeRef, afterRef, out] = process.argv.slice(2)
 if (!out) throw new Error('Usage: node reproduce-pass2.mjs <before-sha> <after-sha> <new-output-dir>')
+const resolve = ref => execFileSync('git', ['rev-parse', ref], { encoding: 'utf8' }).trim()
+const before = resolve(beforeRef), after = resolve(afterRef)
 const repo = process.cwd(), source = path.resolve(out, 'source')
 await fs.mkdir(out); await fs.mkdir(source)
 const archive = execFileSync('git', ['archive', after], { maxBuffer: 100 * 1024 * 1024 })

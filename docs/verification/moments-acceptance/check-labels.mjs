@@ -33,10 +33,12 @@ const record = async (name, area, playback) => {
     }
     const items = [...root.querySelectorAll('.moments-action-row > *')].map(measure)
     const p = measure(primary)
-    return { width: innerWidth, scrollWidth: document.documentElement.scrollWidth, primary: p, items, playback,
+    return { width: innerWidth, scrollWidth: document.documentElement.scrollWidth,
+      lens: document.documentElement.dataset.lens, theme: document.documentElement.dataset.theme, primary: p, items, playback,
       fits: items.every(n => n.x >= -1 && n.right <= innerWidth + 1),
       valid: playback ? p.lines === 1 && p.whiteSpace === 'nowrap' && p.shrink === '0' : p.whiteSpace === 'normal' }
   }, { area, playback })
+  assert(name.startsWith(`${row.width}-${row.lens}-${row.theme}-`), 'Rendered lens/theme must match the cell')
   result.rows.push({ name, ...row })
 }
 try {

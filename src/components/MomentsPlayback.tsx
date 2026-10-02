@@ -8,15 +8,15 @@ import { useMomentsSession } from './MomentsSessionProvider'
 function Primary({ status }: { status: MediaStatus }) {
   const session = useMomentsSession()!
   if (status === 'blocked' || status === 'timeout' || status === 'failed') {
-    return <button type="button" className="moments-button moments-primary" data-primary-action onClick={() => session.play()}>Retry</button>
+    return <button type="button" className="moments-button moments-primary" data-primary-action data-playback-action onClick={() => session.play()}>Retry</button>
   }
   if (status === 'ended') {
-    return <button type="button" className="moments-button moments-primary" data-primary-action onClick={() => session.play(true)}>Replay</button>
+    return <button type="button" className="moments-button moments-primary" data-primary-action data-playback-action onClick={() => session.play(true)}>Replay</button>
   }
   if (status === 'playing') {
-    return <button type="button" className="moments-button moments-primary" data-primary-action onClick={() => session.pausePlayback()}>Pause</button>
+    return <button type="button" className="moments-button moments-primary" data-primary-action data-playback-action onClick={() => session.pausePlayback()}>Pause</button>
   }
-  return <button type="button" className="moments-button moments-primary" data-primary-action onClick={() => session.play()}>Play</button>
+  return <button type="button" className="moments-button moments-primary" data-primary-action data-playback-action onClick={() => session.play()}>Play</button>
 }
 
 export function SourceLink({ moment, primary = false }: { moment: GalleryMoment; primary?: boolean }) {

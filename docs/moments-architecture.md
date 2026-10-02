@@ -642,7 +642,7 @@ rulings govern over this section and the archived prompt; no ruled player behavi
   On stage-to-parked, focus inside the active owner's host moves to Enter Cinema before the
   return stop is hidden; focus elsewhere is untouched. In cover-only Cinema, the clipped
   host stays inert, the dialog controls remain active and focus stays on Exit Cinema.
-- **Playback labels stay whole.** Only primary buttons directly in `moments-action-row`
+- **Playback labels stay whole.** Only primary buttons marked `data-playback-action`
   receive zero flex shrink and no wrapping. Play, Pause, Retry and Replay stay on one line;
   the source link takes the wrapping cost. Primary source links and gallery Open selection
   buttons keep their wrapping rules. No token or action-row layout mode changes.
