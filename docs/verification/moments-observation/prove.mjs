@@ -36,6 +36,7 @@ const run = async (name, extra, reason = null) => {
   console.log(name, child.status, receipt.stopReason ?? 'complete')
 }
 for (const variant of stopReasons) await run(variant, ['--port', '0', '--variant', variant], variant)
+await run('http-redirect-refused', ['--port', '0', '--variant', 'http-redirect-refused'], 'http-redirect-refused')
 const original = stubAuthority('http://127.0.0.1:4318')
 const refusals = [
   ['future-authority', { ...original, at: '2099-01-01T00:00:00Z' }],

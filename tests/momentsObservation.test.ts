@@ -11,6 +11,7 @@ import { providerRelease, applyDecision } from '../docs/verification/moments-obs
 import { detectStop, stopReasons, type Evidence } from '../docs/verification/moments-observation/stops'
 import { Telemetry, observations } from '../docs/verification/moments-observation/telemetry'
 import { instrumentAdapter } from '../docs/verification/moments-observation/instrumentation'
+import { redirectLocation } from '../docs/verification/moments-observation/redirect'
 
 const origin = 'http://127.0.0.1:4318', instant = '2026-10-02T18:00:00Z'
 const authority = () => stubAuthority(origin)
@@ -21,6 +22,11 @@ const refused = (value: unknown, reason: string, url = origin, mode: 'stub' | 'l
 }
 
 describe('identity extraction and network policy', () => {
+  it('redirect guard refuses Location before automatic redirect handling', () => {
+    for (const status of [301, 302, 303, 307, 308]) expect(redirectLocation(status, [{ name: 'Location', value: apiUrl }])).toBe(apiUrl)
+    expect(redirectLocation(200, [{ name: 'location', value: apiUrl }])).toBeNull()
+    expect(redirectLocation(304, [])).toBeNull()
+  })
   it.each([
     ['https://www.youtube-nocookie.com/embed/S4Stub00001', ['S4Stub00001']],
     ['https://www.youtube.com/watch?v=S4Stub00001&v=S4Stub00002', [...fictionalIds]],
@@ -40,7 +46,7 @@ describe('identity extraction and network policy', () => {
     expect(extractIds(apiUrl, body)).toEqual(['S4Stub00002'])
   })
   it.each(providerDomains)('provider-before-play catches %s and subdomains', domain => {
-    for (const host of [domain, `x.${domain}`, `${domain}.`]) expect(decideRequest(input({ url: `https://${host}/x`, phase: 'before-play' })).reason).toBe('provider-before-play')
+    for (const host of [domain, `x.${domain}`, `${domain}.`]) expect(decideRequest(input({ url: `https://${host}/x`, phase: 'before-play' }))).toMatchObject({ action: 'stop', reason: 'provider-before-play' })
     expect(providerHost(`${domain}.example.org`)).toBe(false)
   })
   it('releases exactly the API entry and one named frame, recording loader and later requests', () => {
@@ -51,8 +57,8 @@ describe('identity extraction and network policy', () => {
     const frame = decideRequest(input({ url: 'https://www.youtube-nocookie.com/embed/S4Stub00001?origin=' + origin, resourceType: 'document', seen: api.next }))
     expect(frame.action).toBe('release')
     expect(decideRequest(input({ url: 'https://r1.googlevideo.com/videoplayback?id=opaque', seen: frame.next })).action).toBe('record')
-    expect(decideRequest(input({ seen: api.next })).reason).toBe('second-api-request')
-    expect(decideRequest(input({ url: 'https://www.youtube-nocookie.com/embed/S4Stub00001', resourceType: 'document', seen: frame.next })).reason).toBe('second-frame-request')
+    expect(decideRequest(input({ seen: api.next }))).toMatchObject({ action: 'stop', reason: 'second-api-request' })
+    expect(decideRequest(input({ url: 'https://www.youtube-nocookie.com/embed/S4Stub00001', resourceType: 'document', seen: frame.next }))).toMatchObject({ action: 'stop', reason: 'second-frame-request' })
   })
   it.each([
     ['https://www.youtube.com/watch?v=S4Stub99999', 'unnamed-id'],
@@ -61,13 +67,13 @@ describe('identity extraction and network policy', () => {
     ['https://www.youtube.com:444/iframe_api', 'provider-url-refused'],
     ['https://user@www.youtube.com/iframe_api', 'provider-url-refused'],
     ['https://www.youtube.com/embed/S4Stub00001', 'frame-url-refused'],
-  ])('refuses %s as %s', (url, reason) => expect(decideRequest(input({ url })).reason).toBe(reason))
-  it('rejects unnamed body identities even on a released host', () => expect(decideRequest(input({ body: '{"videoId":"S4Stub99999"}' })).reason).toBe('unnamed-id'))
+  ])('refuses %s as %s', (url, reason) => expect(decideRequest(input({ url }))).toMatchObject({ action: 'stop', reason: reason }))
+  it('rejects unnamed body identities even on a released host', () => expect(decideRequest(input({ body: '{"videoId":"S4Stub99999"}' }))).toMatchObject({ action: 'stop', reason: 'unnamed-id' }))
   it('does not discard duplicate JSON identity keys', () => expect(extractIds(apiUrl, '{"videoId":"S4Stub99999","videoId":"S4Stub00001"}')).toEqual(['S4Stub99999', 'S4Stub00001']))
   it('refuses an unauthorised host and requests before the API', () => {
-    expect(decideRequest(input({ hosts: ['youtube-nocookie.com'] })).reason).toBe('provider-host-not-authorized')
-    expect(decideRequest(input({ url: 'https://i.ytimg.com/picture.jpg' })).reason).toBe('provider-before-player')
-    expect(decideRequest(input({ url: 'https://www.youtube-nocookie.com/embed/S4Stub00001', resourceType: 'document' })).reason).toBe('frame-before-api')
+    expect(decideRequest(input({ hosts: ['youtube-nocookie.com'] }))).toMatchObject({ action: 'stop', reason: 'provider-host-not-authorized' })
+    expect(decideRequest(input({ url: 'https://i.ytimg.com/picture.jpg' }))).toMatchObject({ action: 'stop', reason: 'provider-before-player' })
+    expect(decideRequest(input({ url: 'https://www.youtube-nocookie.com/embed/S4Stub00001', resourceType: 'document' }))).toMatchObject({ action: 'stop', reason: 'frame-before-api' })
   })
   it.each([[origin + '/', 'release'], ['https://fonts.googleapis.com/css2', 'release'], ['https://fonts.gstatic.com/font.woff2', 'release'], ['https://example.com/', 'abort'], ['http://fonts.gstatic.com/font', 'abort']])('non-provider %s: %s', (url, action) => expect(decideRequest(input({ url })).action).toBe(action))
 })

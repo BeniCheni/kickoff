@@ -14,6 +14,7 @@ import { providerRelease, applyDecision } from './route.ts'
 import { detectStop, stopReasons } from './stops.ts'
 import { Telemetry, observations } from './telemetry.ts'
 import { hasEmbedPermission } from '../../../src/lib/moments.ts'
+import { redirectLocation } from './redirect.ts'
 
 const { values: args } = parseArgs({ options: {
   stub: { type: 'boolean' }, live: { type: 'boolean' }, authority: { type: 'string' },
@@ -39,7 +40,7 @@ const result = { startedAt, mode: args.live ? 'live' : 'stub', status: 'refused'
     'Physical devices, Safari, Firefox, screen-reader speech, zoom, Android/iOS Back and CloseWatcher are not verified.',
   ], network: { providerContinued: 0, providerFulfilled: 0, providerAborted: 0, unhandledProviderResponses: [], bytesWhileParked: 0, wireHeaders: [], hosts: {} },
 }
-let context, server, profile, timer, terminal, authority, telemetry, page, stopping, pending = new Set()
+let context, server, profile, timer, terminal, authority, telemetry, page, stopping, ensureFrameGuard, pending = new Set()
 let phase = 'before-play', seen = { api: false, frames: [] }, parked = false
 const now = () => new Date().toISOString()
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex')
@@ -70,7 +71,7 @@ try {
   if (args.live && args.headless) throw new Refusal('live-requires-headed-chrome')
   if (!args.runtime || !args.chrome) throw new Refusal('runtime-and-chrome-required')
   if (args.live && !args.authority) throw new Refusal('authority-required')
-  if (!['clean', 'owner-blocked', 'cold-blocked', ...stopReasons].includes(args.variant) || (args.live && args.variant !== 'clean')) throw new Refusal('invalid-variant')
+  if (!['clean', 'owner-blocked', 'cold-blocked', 'http-redirect-refused', ...stopReasons].includes(args.variant) || (args.live && args.variant !== 'clean')) throw new Refusal('invalid-variant')
   const ceiling = Number(args['ceiling-ms'])
   if (!Number.isInteger(ceiling) || ceiling < 100 || ceiling > 900000) throw new Refusal('invalid-safety-ceiling')
   result.safetyCeiling = { milliseconds: ceiling, meaning: 'Operational total-run safety ceiling, not a product readiness timeout' }
@@ -103,6 +104,9 @@ try {
     server = http.createServer(async (request, response) => {
       try {
         const pathname = decodeURIComponent(new URL(request.url, origin).pathname)
+        if (mode === 'stub' && args.variant === 'http-redirect-refused' && pathname === '/redirect-check') {
+          response.writeHead(302, { Location: apiUrl }); response.end(); return
+        }
         const file = await fs.realpath(path.resolve(dist, '.' + (pathname === '/' ? '/index.html' : pathname)))
         if (!file.startsWith(dist + path.sep)) { response.writeHead(403); response.end(); return }
         response.setHeader('Content-Type', file.endsWith('.js') ? 'text/javascript' : file.endsWith('.css') ? 'text/css' : 'text/html')
@@ -161,6 +165,8 @@ try {
   const handled = new WeakSet()
   await context.route('**/*', async route => {
     const request = route.request(), url = request.url()
+    try { await ensureFrameGuard(request.frame()) }
+    catch (error) { await route.abort(); stop('response-guard-unavailable: ' + error.message); return }
     const decision = decideRequest({ url, body: request.postData() ?? '', resourceType: request.resourceType(), phase, origin,
       namedIds: authority.ids.map(i => i.id), hosts: authority.hosts, seen })
     seen = decision.next
@@ -207,6 +213,39 @@ try {
   await context.addInitScript({ path: new URL('./browser-observer.js', import.meta.url).pathname })
   if (mode === 'stub') await context.addInitScript(variant => { window.__observationVariant = variant }, args.variant)
   page = context.pages()[0] ?? await context.newPage()
+  const guards = new Map()
+  result.network.redirects = []
+  ensureFrameGuard = frame => {
+    if (guards.has(frame)) return guards.get(frame)
+    const install = (async () => {
+      let session
+      try { session = await context.newCDPSession(frame) }
+      catch (error) {
+        // Same-process frames inherit the parent's response-stage guard. Any other
+        // attach failure refuses the request before the release function is called.
+        if (frame.parentFrame() && /does not have a separate CDP session/.test(error.message)) return ensureFrameGuard(frame.parentFrame())
+        throw error
+      }
+      session.on('Fetch.requestPaused', event => {
+        const task = (async () => {
+          const location = redirectLocation(event.responseStatusCode ?? 0, event.responseHeaders ?? [])
+          if (location !== null) {
+            result.network.redirects.push({ url: event.request.url, status: event.responseStatusCode, location, action: 'aborted-before-follow' })
+            await session.send('Fetch.failRequest', { requestId: event.requestId, errorReason: 'Aborted' })
+            stop('http-redirect-refused')
+          } else await session.send('Fetch.continueResponse', { requestId: event.requestId })
+        })().catch(error => { if (!result.stopReason) stop('response-guard-failed: ' + error.message) })
+        pending.add(task); task.finally(() => pending.delete(task))
+      })
+      await session.send('Fetch.enable', { patterns: [{ urlPattern: '*', requestStage: 'Response' }] })
+      return session
+    })()
+    guards.set(frame, install); return install
+  }
+  // A frame may acquire another process on navigation; re-check its target before the
+  // next initial request is released. Redirects themselves are stopped at the response.
+  page.on('framenavigated', frame => { if (frame !== page.mainFrame()) guards.delete(frame) })
+  await ensureFrameGuard(page.mainFrame())
   // CDP's extra-info headers describe the browser's network request, rather than the
   // intercepted proposal. Locally fulfilled frame requests may have no wire headers.
   const cdp = await context.newCDPSession(page), wireUrls = new Map()
@@ -273,6 +312,7 @@ try {
     }
   }
   await snapshot('before-play')
+  if (args.variant === 'http-redirect-refused') await page.evaluate(() => fetch('/redirect-check').catch(() => {}))
   if (args.variant === 'provider-before-play') await page.evaluate(() => { const s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api'; document.head.append(s) })
   await click(/Open selection/)
   await snapshot('A-cover')

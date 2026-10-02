@@ -118,6 +118,18 @@ Usual Chrome background-networking flags are set, but traffic outside Playwright
 is not claimed. Provider-shaped local requests, aborted requests, and network continuations
 are separate counts.
 
+One additional refusal is deliberately stricter than the brief: HTTP redirects stop before
+following the Location header. Installed Playwright 1.62.1's Chromium implementation
+automatically continues redirected requests without invoking its route handler. The runner
+therefore installs a CDP response guard before releasing each frame's initial requests,
+using the parent's guard for frames in the same process. A guard attachment failure refuses
+the request. This avoids silently following an unexamined URL. A loopback server's redirect
+toward the fictional API entry is stopped with zero provider attempts. The redirect
+decision has a pure deletion mutant; disabling that response guard in a browser would
+deliberately bypass the route boundary, so S4a does not run that browser mutant. A provider
+redirect in S4b ends the visit and needs a new reviewed routing design before another run;
+this runner does not claim to observe a redirecting provider flow.
+
 The acceptance plugin alone adds observer events around original adapter dispatches,
 samples, ready/error/block callbacks and Play calls; exact source matches fail on drift.
 The application source and production builds have no hook. No injected player factory or

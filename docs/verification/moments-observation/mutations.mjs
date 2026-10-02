@@ -43,6 +43,8 @@ add('stop-route', 'route.ts', "await route.abort(); return", "await release(rout
 add('observation-150', 'telemetry.ts', "code === 150 || code === 101 ? 'owner-blocked'", "code === 101 ? 'owner-blocked'")
 add('hook-dispatch', 'instrumentation.ts', "observe('dispatch', event); originalHooks.dispatch(event)", 'originalHooks.dispatch(event)')
 add('null-frame-hit', 'browser-observer.js', '!!frame && hit === frame', 'hit === frame')
+add('redirect-refusal', 'redirect.ts', "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null", 'return null')
+add('live-port-zero', 'authority.ts', "throw new Refusal('live-port-zero')", 'void 0')
 const receipts = []
 async function test(name, expected, dom = false) {
   const r = spawnSync('npm', ['test', '--', '--project', dom ? 'dom' : 'node', dom ? 'tests/dom/momentsObservationObserver.test.ts' : 'tests/momentsObservation.test.ts'], { cwd: source, encoding: 'utf8' })
