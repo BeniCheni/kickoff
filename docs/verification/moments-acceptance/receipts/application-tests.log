@@ -1,18 +1,13 @@
 
-> kickoff@0.5.2 typecheck
-> tsc -b --noEmit
-
-
-
 > kickoff@0.5.2 test
 > vitest run
 
 
- RUN  v4.1.11 /Users/benicheni/.codex/worktrees/pr138-pass2/Kickoff
+ RUN  v4.1.11 /private/tmp/pr138-focus-receipts-p_1epuvu/tip
 
 
  Test Files  53 passed (53)
-      Tests  745 passed (745)
-   Start at  10:09:16
-   Duration  13.46s (transform 5.58s, setup 3.96s, import 13.87s, tests 66.67s, environment 16.96s)
+      Tests  753 passed (753)
+   Start at  15:27:39
+   Duration  7.91s (transform 3.92s, setup 2.58s, import 9.74s, tests 34.72s, environment 9.18s)
 

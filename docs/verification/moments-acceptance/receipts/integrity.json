@@ -1,24 +1,32 @@
 {
   "provenance": {
     "base": "7636b0871c9a10db53e9a00ad3811cc7093efa6c",
-    "applicationTip": "c846fa0e338ab96f83cf177ab86452922b9419be",
+    "applicationTip": "a23c7f8391e74331d1c9c756846b2ad15ce9c3c4",
     "snapshot": "7636b0871c9a10db53e9a00ad3811cc7093efa6c",
-    "productionBaseOrigin": "http://127.0.0.1:8871",
-    "productionTipOrigin": "http://127.0.0.1:8878",
-    "acceptanceOrigin": "http://127.0.0.1:8888",
-    "baseHarnessOrigin": "http://127.0.0.1:5191",
-    "tipHarnessOrigin": "http://127.0.0.1:5193",
-    "node": "24.15.0",
+    "redSource": "c846fa0e338ab96f83cf177ab86452922b9419be",
+    "productionBaseOrigin": "http://127.0.0.1:9111",
+    "productionTipOrigin": "http://127.0.0.1:9112",
+    "acceptanceOrigin": "http://127.0.0.1:9113",
+    "lapseOrigin": "http://127.0.0.1:9114",
+    "beforeLapseOrigin": "http://127.0.0.1:9115",
+    "baseHarnessOrigin": "http://127.0.0.1:5211",
+    "tipHarnessOrigin": "http://127.0.0.1:5212",
+    "node": "v24.15.0",
+    "npm": "11.12.1",
     "playwright": "1.62.1",
     "chrome": "154.0.8037.93",
-    "rebuttalBaseline": "0a9a3c2b83a1daba8adaa1544f425746fb470f93",
-    "lapseOrigin": "http://127.0.0.1:8879",
-    "beforeLapseOrigin": "http://127.0.0.1:8884",
-    "beforeAcceptanceOrigin": "http://127.0.0.1:8885",
-    "npm": "11.12.1",
     "headless": true,
     "deviceScaleFactor": 1,
-    "reducedMotion": "reduce"
+    "reducedMotion": "reduce",
+    "runDirectory": "/tmp/pr138-focus-receipts-p_1epuvu",
+    "sourceTree": "51e7b2da3e99997b20c2855318aaf8ff5f100811",
+    "redTree": "26b7ad0bf9bec4440bcf22672ad08719e0a5a1c3",
+    "dataGate": "git diff --exit-code 7636b0871c9a10db53e9a00ad3811cc7093efa6c a23c7f8391e74331d1c9c756846b2ad15ce9c3c4 -- src/data",
+    "providerEgress": 0,
+    "baseArchiveTree": "962054855d63f249dd4e99b6800443f9c4e47300",
+    "tipArchiveTree": "51e7b2da3e99997b20c2855318aaf8ff5f100811",
+    "redArchiveTree": "26b7ad0bf9bec4440bcf22672ad08719e0a5a1c3",
+    "isolation-sourceArchiveTree": "51e7b2da3e99997b20c2855318aaf8ff5f100811"
   },
   "unchangedFromBase": {
     "src/curated/moments.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
@@ -40,7 +48,7 @@
   },
   "specSha256": "992aa72044cfe1eec7977487501e3bb3a451793117f3a827c5e941436408ea5e",
   "fixtureProvenanceMatchesGit": true,
-  "applicationSourceUnchangedAfter": "c846fa0e338ab96f83cf177ab86452922b9419be",
+  "applicationSourceUnchangedAfter": "a23c7f8391e74331d1c9c756846b2ad15ce9c3c4",
   "fixtureProvenanceCheck": {
     "snapshot": "1fad3427dfeeeae4a642b6996fe1a114f4640d63",
     "matched": 6,
@@ -49,10 +57,26 @@
     "method": "git show local object, JSON row equality; not build validation"
   },
   "playerCheckersByteIdentical": true,
-  "receiptWorkingTreeBuildsMatchFrozenApplicationTip": [
+  "singleFileMatchesApplicationTipIsolationReceipt": "6cd805190874645951f885cd081b42e367990a5a5b140e3fe93d48d0c0e896e6",
+  "singleFileScratchDifference": "No CSS change: production CSS retains its frozen name, size and hash. The old single-file hash no longer applies because the focus fix changes inlined application JavaScript. Docs-only final-tip rebuild is reported in chat; no single-file browser receipt is claimed.",
+  "cssUnchangedFromRed": "d95877ee266c6426c04414a1b526df2c6e08857cf5ca9c8871f0b93f9a93ab79",
+  "receiptFrozenArchiveBuildsMatchApplicationTip": [
     "dist",
-    "dist-acceptance"
+    "dist-normal",
+    "dist-lapse"
   ],
-  "singleFileMatchesApplicationTipIsolationReceipt": "575d28f3a9989284b1e3b224a2a449495e7f1ad7da927a121e7531e7a1b97603",
-  "singleFileScratchDifference": "The unserved frozen-archive single-file build contained one extra unused filter utility (212 characters); final checkout build matches c846fa0 isolation build byte for byte. No single-file browser receipt claimed."
+  "productionBuild": {
+    "index-CKjq5mb7.css": {
+      "bytes": 38966,
+      "sha256": "f22157bc13632d0de509baba600fb44c087975b29e1d722c6e13eaa5bac7cdaa"
+    },
+    "index-Cszug8Wr.js": {
+      "bytes": 1045045,
+      "sha256": "e73e066584f1267de1a66c0ea3056bc3e71577d3d1365d81c99b263f6ce36f9f"
+    }
+  },
+  "singleFileBuild": {
+    "bytes": 1085715,
+    "sha256": "6cd805190874645951f885cd081b42e367990a5a5b140e3fe93d48d0c0e896e6"
+  }
 }
