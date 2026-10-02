@@ -7,6 +7,12 @@ Beni on his Mac with his written authority. Codex does not run live mode.
 **A green stub is not playback. A loopback result predicts nothing about the Pages origin.**
 The production edition stays empty. Nothing imports these observations into curation.
 
+**Unresolved picture finding:** the unchanged application's Cinema cover obscures the
+synthetic frame at 390, 1000 and 360. Stage displays it. Both viewport and full-page
+captures reproduce this, and the centre hit-test reaches the cover word in Cinema.
+The completed stub visit establishes the runner's protocol, not a clear Cinema picture.
+No application fix was made; Beni's decision is required before a separate repair or S4b.
+
 ## Authority and prerequisites
 
 S4b needs Beni present, installed Google Chrome, an existing Playwright module path, and
@@ -228,3 +234,50 @@ nearest-keyframe seeking, one-press autoplay, real iframe attribute retention, t
 API loader's own requests, parked decoding, the Referer received by the provider, error 153
 on any origin, the Pages origin, physical devices, Safari and Firefox, screen-reader speech,
 browser zoom, Android and iOS Back, CloseWatcher. A stub proves runner logic only.
+
+## Builder receipts, 2 Oct 2026
+
+Frozen main is `11845cb21cfd0e87a1105e37e7b74e348739541c`: typecheck passed and the
+builder reran **753 tests in 53 files**. Implementation evidence is from
+`515224be130f704590245844d1a886fd81d9a725`: typecheck passed and **844 tests in 55 files**
+passed. Production, single-file, default acceptance and generated stub acceptance builds
+passed. The protected application/configuration diff is empty. The later evidence commit
+only adds these records and documentation; its exact head and Verify run are in the PR comment.
+
+- [Proof summary](receipts/proof.json): all 24 cases passed their expected result: fourteen
+  stops, redirect refusal, six authority refusals before launch, owner-blocked, cold-blocked,
+  then a completed two-ID visit. Every case has zero provider continuations and no unhandled
+  provider response. The completed visit has two local provider-shaped fulfillments.
+- [Pure mutation receipts](receipts/mutations.json): **51 red, 51 restored green**. This
+  includes route-action assertions, authority, generation, schemas, extraction, hooks,
+  redirect refusal and the observer's absent-frame regression.
+- [Browser mutation receipts](receipts/runner-mutations.json): **14 red, 14 restored green**,
+  one per stop-table row. Red means the expected-stop assertion failed; the raw process may
+  still stop for a different reason or the safety ceiling. Both states kept zero provider
+  continuations. These inject evidence and do not establish application defects.
+- [Completed visit](receipts/clean/receipt.json), [observation array](receipts/clean/observations.json)
+  and six adjacent captures: one page load, one instance, cold/warm synthetic events,
+  A sampled at 12, B loaded at zero, A reloaded at 12. All settled width checks matched.
+  A separate one-ID visit also completed and explicitly omitted Next/Previous.
+- [Picture finding](receipts/picture-finding.json) and [Cinema viewport](receipts/cinema-picture-finding.png):
+  the frame is 350 by 200, 632 by 355.5 and 320 by 200 at the respective widths. In Cinema
+  its centre hits the cover word at every width. Stage hits the iframe. The diagnostic
+  adds read-only hit/style reporting and viewport captures to the same stub runner; no
+  application source or style was changed. Receipt status complete is not a visual pass.
+- [Full raw evidence](receipts/full-evidence.tar.gz) contains every forced-case receipt,
+  request decision, authority copy, observation array, screenshot, red/green log, diagnostic
+  script and baseline/build log. Extract into an external directory with `tar -xzf`.
+  Regenerable source archives are omitted; the mutation scripts reconstruct them from Git.
+  Raw diagnostics are compressed because CSS-like tokens in receipts can alter production
+  CSS (ideas row 78). The readable summaries and PNGs remain directly inspectable.
+
+Chrome was 154.0.8037.93 on macOS Darwin 25.6.0 arm64, headless with a fresh profile per
+visit. Ports are in each receipt, including 54113 for the completed two-ID visit and 4318
+for the one-ID visit. This is the Ledger/light protocol; other lenses/themes are not
+claimed. There was no application interface change and no CHANGELOG entry.
+
+Row 78 comparison: production CSS SHA-256 on main and the final documentation tree is
+`f22157bc13632d0de509baba600fb44c087975b29e1d722c6e13eaa5bac7cdaa`.
+The single-file HTML is also byte-identical to main, SHA-256
+`be6c6ede104d573b5415ddd6a2bf19747d1f3c2eee6bbe10d56642fc1393b91e`.
+The final-head build and completed stub receipt are also recorded in the PR comment.
