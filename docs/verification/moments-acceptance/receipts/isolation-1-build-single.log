@@ -1,0 +1,17 @@
+
+> kickoff@0.5.2 build:single
+> tsx scripts/validate-moments.ts && tsc -b && vite build --mode single
+
+Curated Moments validated: 0
+vite v8.2.2 building client environment for single...
+transforming...
+✓ 144 modules transformed.
+rendering chunks...
+[plugin vite:singlefile] 
+
+[plugin vite:singlefile] Inlining: index-CsYYv1bz.js
+[plugin vite:singlefile] Inlining: style-CKjq5mb7.css
+computing gzip size...
+dist-single/index.html  1,085.04 kB │ gzip: 188.56 kB
+
+✓ built in 392ms

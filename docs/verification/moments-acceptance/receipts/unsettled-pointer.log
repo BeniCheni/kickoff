@@ -1,0 +1,124 @@
+KICKOFF
+BROOKLYN · ET
+V0.5.2 · 1496 FIXTURES · SYNCED 2026-10-01 14:38 UTC
+DARK MODE
+FIXTURES
+TABLE
+MOMENTS
+LEDGER
+POSTER
+BROADCAST
+← Gallery
+SELECTED MOMENT
+Enter Cinema
+Permitted one
+
+Fictional acceptance source · Fictional acceptance content; no video is claimed.
+
+VOICES
+Original typographic art · not a match still
+Player
+
+Paris Saint-Germain v Aston Villa · UEFA Super Cup
+
+August 12, 2026 · Brooklyn date
+
+9:00 PM local
+🗽 3:00 PM EDT
+
+Play
+Open at Fictional acceptance source
+↗
+(new tab)
+Save reference
+
+Not saved
+
+Fictional acceptance selection. Fixture facts copied from committed snapshot 1fad3427dfeeeae4a642b6996fe1a114f4640d63.
+
+Source & curation
+Previous
+Next
+Permitted two
+Your evening
+Find your next moment 6 / 6
+1
+Permitted one
+Active · Opened
+2
+Permitted two
+Unvisited
+3
+Identity without permission
+Unvisited
+4
+Denied
+Unvisited
+5
+Expired
+Unvisited
+6
+Legacy link-only
+Unvisited
+Shuffle remaining
+Undo shuffle
+Restore Beni’s order
+
+Beni’s order for the remainder
+
+History keeps only selections you opened, in first-open order. Skipped selections remain reorderable. Opened does not mean watched.
+
+Back to selection
+Continue past the player
+[
+  [ 'pointerdown', 'BUTTON', null, 'Open selection →' ],
+  [ 'focusin', 'BUTTON', null, 'Open selection →' ],
+  [ 'pointerup', 'BUTTON', null, 'Open selection →' ],
+  [ 'click', 'BUTTON', null, 'Open selection →' ],
+  [ 'focusin', 'H1', undefined, 'Permitted one' ],
+  [ 'pointerdown', 'BUTTON', null, 'Enter Cinema' ],
+  [ 'focusin', 'BUTTON', null, 'Enter Cinema' ],
+  [ 'pointerup', 'BUTTON', null, 'Enter Cinema' ],
+  [ 'click', 'BUTTON', null, 'Enter Cinema' ],
+  [ 'focusin', 'BUTTON', null, 'Exit Cinema' ],
+  [ 'pointerdown', 'BUTTON', null, 'Exit Cinema' ],
+  [ 'pointerup', 'BUTTON', null, 'Exit Cinema' ],
+  [ 'click', 'BUTTON', null, 'Exit Cinema' ],
+  [ 'focusin', 'BUTTON', null, 'Enter Cinema' ],
+  [ 'pointerdown', 'BUTTON', null, 'Play' ],
+  [ 'focusin', 'BUTTON', null, 'Play' ],
+  [ 'pointerup', 'BUTTON', null, 'Play' ],
+  [ 'click', 'BUTTON', null, 'Play' ],
+  [
+    'focusin',
+    'DIALOG',
+    undefined,
+    'Back to selectionContinue past the player'
+  ],
+  [ 'focusin', 'BUTTON', null, 'Back to selection' ],
+  [ 'pointerdown', 'BUTTON', null, 'Enter Cinema' ],
+  [ 'focusin', 'BUTTON', null, 'Enter Cinema' ],
+  [ 'pointerup', 'BUTTON', null, 'Enter Cinema' ],
+  [ 'click', 'BUTTON', null, 'Enter Cinema' ],
+  [ 'focusin', 'BUTTON', null, 'Exit Cinema' ],
+  [ 'pointerdown', 'BUTTON', null, 'Exit Cinema' ],
+  [ 'pointerup', 'BUTTON', null, 'Exit Cinema' ],
+  [ 'click', 'BUTTON', null, 'Exit Cinema' ],
+  [ 'focusin', 'BUTTON', null, 'Enter Cinema' ]
+]
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+locator.waitFor: Timeout 30000ms exceeded.
+Call log:
+[2m  - waiting for getByRole('heading', { name: 'Permitted two', exact: true }) to be visible[22m
+
+    at /Users/benicheni/.codex/worktrees/fdaf/Kickoff/docs/verification/moments-acceptance/real-adapter.mjs:120:100 {
+  log: [
+    "  - waiting for getByRole('heading', { name: 'Permitted two', exact: true }) to be visible"
+  ],
+  name: 'TimeoutError'
+}
+
+Node.js v24.15.0

@@ -1,0 +1,20 @@
+
+> kickoff@0.5.2 build
+> tsx scripts/validate-moments.ts && tsc -b && vite build --mode acceptance
+
+Curated Moments validated: 0
+vite v8.2.2 building client environment for acceptance...
+transforming...
+✓ 144 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                     1.75 kB │ gzip:   0.79 kB
+dist/assets/index-CKjq5mb7.css     38.96 kB │ gzip:   8.55 kB
+dist/assets/index-BIbxml1c.js   1,044.37 kB │ gzip: 179.48 kB
+
+✓ built in 331ms
+[plugin builtin:vite-reporter] 
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.

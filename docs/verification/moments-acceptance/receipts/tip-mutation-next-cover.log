@@ -1,0 +1,5 @@
+Player matrix: 6 cells through 360px
+Player matrix: 12 cells through 390px
+Player matrix: 18 cells through 888px
+AssertionError [ERR_ASSERTION]: F10 Next must show the new cover: {"cover":false,"hit":"IFRAME"}
+    at file:///private/tmp/kickoff-pr138-pass2/final-evidence/tip-mutations/next-cover.mjs:258:5

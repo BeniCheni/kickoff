@@ -1,0 +1,162 @@
+{
+  "snapshotSha": "1fad3427dfeeeae4a642b6996fe1a114f4640d63",
+  "path": "src/data/fixtures.json",
+  "rows": [
+    {
+      "id": "supercup:401873624",
+      "competition": "supercup",
+      "kickoffUtc": "2026-08-12T19:00:00.000Z",
+      "venueTz": "Europe/Vienna",
+      "venue": "Red Bull Arena Salzburg",
+      "home": {
+        "name": "Paris Saint-Germain",
+        "sourceId": "160"
+      },
+      "away": {
+        "name": "Aston Villa",
+        "sourceId": "362"
+      },
+      "status": "full_time",
+      "timeConfidence": "exact",
+      "result": {
+        "home": 2,
+        "away": 1
+      },
+      "source": {
+        "provider": "espn",
+        "sourceId": "401873624",
+        "fetchedAt": "2026-08-24T01:06:18.492Z"
+      }
+    },
+    {
+      "id": "laliga:401882926",
+      "competition": "laliga",
+      "kickoffUtc": "2026-08-15T17:30:00.000Z",
+      "venueTz": "Europe/Madrid",
+      "venue": "Mendizorrotza",
+      "home": {
+        "name": "Alav\u00e9s",
+        "sourceId": "96"
+      },
+      "away": {
+        "name": "Getafe",
+        "sourceId": "2922"
+      },
+      "status": "full_time",
+      "timeConfidence": "exact",
+      "result": {
+        "home": 3,
+        "away": 0
+      },
+      "source": {
+        "provider": "espn",
+        "sourceId": "401882926",
+        "fetchedAt": "2026-08-24T01:06:18.492Z"
+      }
+    },
+    {
+      "id": "laliga:401882918",
+      "competition": "laliga",
+      "kickoffUtc": "2026-08-15T19:30:00.000Z",
+      "venueTz": "Europe/Madrid",
+      "venue": "Ram\u00f3n S\u00e1nchez Pizju\u00e1n Stadium",
+      "home": {
+        "name": "Sevilla",
+        "sourceId": "243"
+      },
+      "away": {
+        "name": "Rayo Vallecano",
+        "sourceId": "101"
+      },
+      "status": "full_time",
+      "timeConfidence": "exact",
+      "result": {
+        "home": 2,
+        "away": 1
+      },
+      "source": {
+        "provider": "espn",
+        "sourceId": "401882918",
+        "fetchedAt": "2026-08-24T01:06:18.492Z"
+      }
+    },
+    {
+      "id": "shield:401875219",
+      "competition": "shield",
+      "kickoffUtc": "2026-08-16T14:00:00.000Z",
+      "venueTz": "Europe/London",
+      "venue": "Principality Stadium",
+      "home": {
+        "name": "Arsenal",
+        "sourceId": "359"
+      },
+      "away": {
+        "name": "Manchester City",
+        "sourceId": "382"
+      },
+      "status": "full_time",
+      "timeConfidence": "exact",
+      "result": {
+        "home": 3,
+        "away": 0
+      },
+      "source": {
+        "provider": "espn",
+        "sourceId": "401875219",
+        "fetchedAt": "2026-08-24T01:06:18.492Z"
+      }
+    },
+    {
+      "id": "laliga:401882920",
+      "competition": "laliga",
+      "kickoffUtc": "2026-08-16T15:00:00.000Z",
+      "venueTz": "Europe/Madrid",
+      "venue": "El Sardineros",
+      "home": {
+        "name": "Racing Santander",
+        "sourceId": "87"
+      },
+      "away": {
+        "name": "Villarreal",
+        "sourceId": "102"
+      },
+      "status": "full_time",
+      "timeConfidence": "exact",
+      "result": {
+        "home": 2,
+        "away": 2
+      },
+      "source": {
+        "provider": "espn",
+        "sourceId": "401882920",
+        "fetchedAt": "2026-08-24T01:06:18.492Z"
+      }
+    },
+    {
+      "id": "laliga:401882922",
+      "competition": "laliga",
+      "kickoffUtc": "2026-08-16T17:00:00.000Z",
+      "venueTz": "Europe/Madrid",
+      "venue": "RCDE Stadium",
+      "home": {
+        "name": "Espanyol",
+        "sourceId": "88"
+      },
+      "away": {
+        "name": "Levante",
+        "sourceId": "1538"
+      },
+      "status": "full_time",
+      "timeConfidence": "exact",
+      "result": {
+        "home": 3,
+        "away": 0
+      },
+      "source": {
+        "provider": "espn",
+        "sourceId": "401882922",
+        "fetchedAt": "2026-08-24T01:06:18.492Z"
+      }
+    }
+  ]
+}

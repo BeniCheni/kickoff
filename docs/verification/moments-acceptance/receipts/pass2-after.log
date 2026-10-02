@@ -1,0 +1,13 @@
+
+> kickoff@0.5.2 test
+> vitest run tests/dom/momentsPermission.test.tsx
+
+
+ RUN  v4.1.11 /private/tmp/kickoff-pr138-pass2/final-regression/source
+
+
+ Test Files  1 passed (1)
+      Tests  24 passed (24)
+   Start at  10:12:23
+   Duration  7.04s (transform 853ms, setup 286ms, import 1.09s, tests 3.80s, environment 1.50s)
+

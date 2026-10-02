@@ -1,5 +1,7 @@
 import { Component, createContext, useContext, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { MOMENTS } from '../lib/moments'
+import { mayPlayMoment, type MomentsPlayability } from '../lib/momentsPlayability'
+import { useNow } from '../lib/useNow'
 import { ALL_MOMENTS, matchesMoment, newestMoments, type GalleryFilters, type GalleryMoment } from '../lib/momentsGallery'
 import { createMomentsQueue, momentsQueueReducer, queueNeighbours, type MomentsQueue, type QueueAction } from '../lib/momentsQueue'
 import type { PlayRequest } from '../lib/momentsPlayer'
@@ -27,6 +29,7 @@ type PlayerBridge = {
   focus: (from: EventTarget | null) => void
 }
 type Session = Visit & {
+  canPlay: (moment: GalleryMoment) => boolean
   dispatch: (action: QueueAction) => void
   setFilters: (filters: GalleryFilters) => void
   setSpoiler: (spoiler: boolean) => void
@@ -63,12 +66,15 @@ function changesAttempt(prior: Visit, action: QueueAction): boolean {
 }
 
 /** No key, global singleton, effect-driven writes or remount-based visit lifecycle. */
-export function MomentsSessionProvider({ children, edition = MOMENTS, tab = 'moments', storage }: {
+export function MomentsSessionProvider({ children, edition = MOMENTS, tab = 'moments', storage, playability = mayPlayMoment }: {
   children: ReactNode
   edition?: readonly GalleryMoment[]
   tab?: Tab
   storage?: StorageAccess
+  playability?: MomentsPlayability
 }) {
+  const { nowUtcIso } = useNow()
+  const canPlay = (moment: GalleryMoment) => playability(moment, nowUtcIso)
   const [visit, setVisit] = useState<Visit>(() => {
     const saved = readSavedReferences(storage)
     return { edition, saved, unread: saved.reason === 'read-refused' || saved.reason === 'invalid-data',
@@ -114,6 +120,21 @@ export function MomentsSessionProvider({ children, edition = MOMENTS, tab = 'mom
     }
     previousTab.current = tab
   }, [tab])
+  const activeMoment = visit.edition.find(item => item.id === visit.queue.active)
+  const activePlayable = !!activeMoment && canPlay(activeMoment)
+  const previousPlayable = useRef({ id: visit.queue.active, playable: activePlayable })
+  useLayoutEffect(() => {
+    if (previousPlayable.current.id === visit.queue.active && previousPlayable.current.playable && !activePlayable && playerLive) {
+      // This render retains the preceding commit's shown frame. The host's layout effect
+      // queues setPlayerLive(false) for the next render; it cannot change this closure.
+      // A cover (including another selection's parked frame) has no attempt to lose.
+      // Sample/pause and retire callbacks before invalidating the attempt. Reuse the
+      // existing loss path; no new provider event or clock-derived position.
+      bridge.current?.retire()
+      dispatch({ type: 'player-lost' })
+    }
+    previousPlayable.current = { id: visit.queue.active, playable: activePlayable }
+  }, [activePlayable, visit.queue.active])
   const setFilters = (filters: GalleryFilters) => {
     const prior = current.current
     const ids = prior.edition.filter(m => matchesMoment(m, filters)).map(m => m.id)
@@ -140,17 +161,17 @@ export function MomentsSessionProvider({ children, edition = MOMENTS, tab = 'mom
     const prior = current.current
     const active = prior.queue.active
     if (!active || prior.queue.surface === 'gallery') return
+    const moment = prior.edition.find(item => item.id === active)
+    const videoId = moment && canPlay(moment) ? moment.source?.identity?.videoId : undefined
+    if (!videoId) return
     const before = prior.queue.media[active]
     if (!before) return
     bridge.current?.retire()
     const base = current.current
     const queue = momentsQueueReducer(base.queue, { type: 'play', ...(replay ? { replay: true } : {}) })
-    const moment = base.edition.find(item => item.id === active)
-    const videoId = moment?.source?.identity?.videoId
     const retrying = before.status === 'blocked' || before.status === 'timeout' || before.status === 'failed'
     update({ ...base, queue, playerNotice: quietNotice,
       notice: retrying ? { target: 'playback', text: 'Retrying this selection.' } : base.notice })
-    if (!videoId) return
     const media = queue.media[active]
     if (!media) return
     bridge.current?.play({
@@ -169,7 +190,7 @@ export function MomentsSessionProvider({ children, edition = MOMENTS, tab = 'mom
     if (prior.queue.surface !== 'cinema') return
     update({ ...prior, queue: momentsQueueReducer(prior.queue, { type: 'surface', surface: 'stage' }) })
   }
-  return <Context.Provider value={{ ...visit, playerLive, dispatch, setFilters, setOrder, toggleSave, play,
+  return <Context.Provider value={{ ...visit, canPlay, playerLive, dispatch, setFilters, setOrder, toggleSave, play,
     pausePlayback: () => bridge.current?.pause(), enterCinema, exitCinema, setPlayerNotice, setPlayerLive,
     registerPlayer: next => { bridge.current = next },
     focusPlayer: from => bridge.current?.focus(from),

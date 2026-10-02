@@ -1,0 +1,10 @@
+AssertionError [ERR_ASSERTION]: 360-ledger-light-cinema-ready Cinema AX exposes background controls
++ actual - expected
+
++ [
++   'button:Dark mode'
++ ]
+- []
+
+    at verifyCinema (file:///private/tmp/kickoff-pr138-pass2/evidence/base-mutations/ax-background.mjs:157:10)
+    at async file:///private/tmp/kickoff-pr138-pass2/evidence/base-mutations/ax-background.mjs:218:35

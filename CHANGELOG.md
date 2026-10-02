@@ -10,6 +10,16 @@ releases.
 
 ### Changed
 
+- When a permission lapse removes the focused Moments control, focus moves to Enter Cinema
+  on the stage, or Exit Cinema when a cover-only Cinema stays open. A control the lapse
+  leaves connected keeps focus. Playback button labels stay on one line on phones. The
+  production edition remains empty and the interface readers see is unchanged.
+
+- The inactive Moments player now offers Play only with a current recorded embed permission;
+  missing or lapsed permission keeps the selection link-only. A separate acceptance build
+  exercises fictional selections without entering either production build. The production
+  edition stays empty, requests nothing, and leaves the interface readers see unchanged.
+
 - The Moments player, its Cinema surface and the YouTube adapter are in the code and
   inactive. With the empty production edition the player renders nothing and requests
   nothing, so the interface readers see is unchanged. Fixtures and Table carry one wrapper

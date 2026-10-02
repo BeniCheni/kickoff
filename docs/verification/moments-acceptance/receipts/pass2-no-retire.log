@@ -1,0 +1,65 @@
+
+> kickoff@0.5.2 test
+> vitest run tests/dom/momentsPermission.test.tsx
+
+
+ RUN  v4.1.11 /private/tmp/kickoff-pr138-pass2/final-regression/source
+
+ ❯ |dom| tests/dom/momentsPermission.test.tsx (24 tests | 6 failed) 6383ms
+   × expiry at next clock tick parks playing and blocks Play, Retry and Replay 433ms
+   × expiry at next clock tick parks blocked and blocks Play, Retry and Replay 344ms
+   × expiry at next clock tick parks ended and blocks Play, Retry and Replay 385ms
+   × expiry at next clock tick parks loading and blocks Play, Retry and Replay 215ms
+   × a stage lapse hands focus from [data-player-return] to the visible Cinema control 200ms
+   × a stage lapse hands focus from iframe to the visible Cinema control 147ms
+
+ Test Files  1 failed (1)
+      Tests  6 failed | 18 passed (24)
+   Start at  10:12:40
+   Duration  11.36s (transform 1.48s, setup 366ms, import 2.18s, tests 6.38s, environment 2.09s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |dom| tests/dom/momentsPermission.test.tsx > expiry at next clock tick parks playing and blocks Play, Retry and Replay
+ FAIL  |dom| tests/dom/momentsPermission.test.tsx > expiry at next clock tick parks blocked and blocks Play, Retry and Replay
+ FAIL  |dom| tests/dom/momentsPermission.test.tsx > expiry at next clock tick parks ended and blocks Play, Retry and Replay
+ FAIL  |dom| tests/dom/momentsPermission.test.tsx > expiry at next clock tick parks loading and blocks Play, Retry and Replay
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tests/dom/momentsPermission.test.tsx:85:32
+     83|   expect(player.reads.retires).toBe(0)
+     84|   tick(60_050)
+     85|   expect(player.reads.retires).toBe(1)
+       |                                ^
+     86|   expect(session.queue.media[permitted.id]).toMatchObject({
+     87|     status: status === 'playing' || status === 'loading' ? 'paused' : …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  |dom| tests/dom/momentsPermission.test.tsx > a stage lapse hands focus from [data-player-return] to the visible Cinema control
+ FAIL  |dom| tests/dom/momentsPermission.test.tsx > a stage lapse hands focus from iframe to the visible Cinema control
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ tests/dom/momentsPermission.test.tsx:117:32
+    115|   expect(document.activeElement).toBe(control)
+    116|   expect(control.closest('[inert], [hidden], [aria-hidden="true"]')).t…
+    117|   expect(player.reads.retires).toBe(1)
+       |                                ^
+    118|   expect(session.queue.media[permitted.id]).toMatchObject({ status: 'p…
+    119| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+

@@ -1,0 +1,82 @@
+{
+  "provenance": {
+    "base": "7636b0871c9a10db53e9a00ad3811cc7093efa6c",
+    "applicationTip": "a23c7f8391e74331d1c9c756846b2ad15ce9c3c4",
+    "snapshot": "7636b0871c9a10db53e9a00ad3811cc7093efa6c",
+    "redSource": "c846fa0e338ab96f83cf177ab86452922b9419be",
+    "productionBaseOrigin": "http://127.0.0.1:9111",
+    "productionTipOrigin": "http://127.0.0.1:9112",
+    "acceptanceOrigin": "http://127.0.0.1:9113",
+    "lapseOrigin": "http://127.0.0.1:9114",
+    "beforeLapseOrigin": "http://127.0.0.1:9115",
+    "baseHarnessOrigin": "http://127.0.0.1:5211",
+    "tipHarnessOrigin": "http://127.0.0.1:5212",
+    "node": "v24.15.0",
+    "npm": "11.12.1",
+    "playwright": "1.62.1",
+    "chrome": "154.0.8037.93",
+    "headless": true,
+    "deviceScaleFactor": 1,
+    "reducedMotion": "reduce",
+    "runDirectory": "/tmp/pr138-focus-receipts-p_1epuvu",
+    "sourceTree": "51e7b2da3e99997b20c2855318aaf8ff5f100811",
+    "redTree": "26b7ad0bf9bec4440bcf22672ad08719e0a5a1c3",
+    "dataGate": "git diff --exit-code 7636b0871c9a10db53e9a00ad3811cc7093efa6c a23c7f8391e74331d1c9c756846b2ad15ce9c3c4 -- src/data",
+    "providerEgress": 0,
+    "baseArchiveTree": "962054855d63f249dd4e99b6800443f9c4e47300",
+    "tipArchiveTree": "51e7b2da3e99997b20c2855318aaf8ff5f100811",
+    "redArchiveTree": "26b7ad0bf9bec4440bcf22672ad08719e0a5a1c3",
+    "isolation-sourceArchiveTree": "51e7b2da3e99997b20c2855318aaf8ff5f100811"
+  },
+  "unchangedFromBase": {
+    "src/curated/moments.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "tests/moments.test.ts": "1fbc1297b330725c8d1b32d3ff58e4d21fdaf8b6c9a70bc66f9f706305b73272",
+    "src/lib/moments.ts": "85dffd149dc985809af0ce255a8c424b45d0a84654ce900f51aec3d89144f824",
+    "src/lib/momentsQueue.ts": "3a98bc6920d6a7e45ce6097d49a52d20f3751c0524decddddd4ec27ae268dc44",
+    "src/lib/momentsPlayer.ts": "57708e2f4f5381e1e748c3b935d8cc93a17284d6944ca7863f80ec25bec089ae",
+    "src/main.tsx": "d4f3a194baaa2acd3b537cb707d426e7c66c306578102de433b31f15e7cd6b00",
+    "vite.config.ts": "482ebbe6369568ab9d93dd571845bbd810643620661454f0db5d8e0c15ff3f15",
+    "index.html": "98e7c61061edd82853de41fcd1942c298879e5972ca8d215110cb379ee3a6463",
+    "package-lock.json": "fa7e9700b980a0cc19c17c467ed7a43b78d436ea2db9c281716095fc54c0d397",
+    "README.md": "4439e84a1e3c6dd32b5779cac22ccb8f875932d71080cd474690de4d5aa39225",
+    ".github/workflows/ci.yml": "7a1c6abf1e01f35eabfefbf896721c75b2385d9e28eaf6102f7c46ca3b9ae769",
+    ".github/workflows/pages.yml": "4918df919fe5d71c7a30ada6e2732b1305dc27bd283f8acc79360499c1f53c86",
+    ".github/workflows/sync.yml": "bbdf16888f3905867f29e216b7d016d115b7f89a008d33d80091f29a99f32f3e",
+    "src/data/standings.json": "87d8c0c0187361d8670a64993a1dadce84d0c1f838a2579725e8737f8bf32e2c",
+    "src/data/fixtures.json": "5b356d3f97ad46ed5ff1e396802d420b11ec894978f69e068a1ea88b589fa4cc",
+    "src/data/meta.json": "e44b38e04fd2e9a035bb87b6753ee2ae126571074bf1e3fd56bc061d9d6a10ab"
+  },
+  "specSha256": "992aa72044cfe1eec7977487501e3bb3a451793117f3a827c5e941436408ea5e",
+  "fixtureProvenanceMatchesGit": true,
+  "applicationSourceUnchangedAfter": "a23c7f8391e74331d1c9c756846b2ad15ce9c3c4",
+  "fixtureProvenanceCheck": {
+    "snapshot": "1fad3427dfeeeae4a642b6996fe1a114f4640d63",
+    "matched": 6,
+    "absentFromCurrent": 6,
+    "networkFetch": false,
+    "method": "git show local object, JSON row equality; not build validation"
+  },
+  "playerCheckersByteIdentical": true,
+  "singleFileMatchesApplicationTipIsolationReceipt": "6cd805190874645951f885cd081b42e367990a5a5b140e3fe93d48d0c0e896e6",
+  "singleFileScratchDifference": "No CSS change: production CSS retains its frozen name, size and hash. The old single-file hash no longer applies because the focus fix changes inlined application JavaScript. Docs-only final-tip rebuild is reported in chat; no single-file browser receipt is claimed.",
+  "cssUnchangedFromRed": "d95877ee266c6426c04414a1b526df2c6e08857cf5ca9c8871f0b93f9a93ab79",
+  "receiptFrozenArchiveBuildsMatchApplicationTip": [
+    "dist",
+    "dist-normal",
+    "dist-lapse"
+  ],
+  "productionBuild": {
+    "index-CKjq5mb7.css": {
+      "bytes": 38966,
+      "sha256": "f22157bc13632d0de509baba600fb44c087975b29e1d722c6e13eaa5bac7cdaa"
+    },
+    "index-Cszug8Wr.js": {
+      "bytes": 1045045,
+      "sha256": "e73e066584f1267de1a66c0ea3056bc3e71577d3d1365d81c99b263f6ce36f9f"
+    }
+  },
+  "singleFileBuild": {
+    "bytes": 1085715,
+    "sha256": "6cd805190874645951f885cd081b42e367990a5a5b140e3fe93d48d0c0e896e6"
+  }
+}

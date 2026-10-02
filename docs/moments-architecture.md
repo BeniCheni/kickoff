@@ -611,3 +611,85 @@ instance, not verified decoding or playback continuity. Escape key events within
 not bubble into this document; the existing parent key listener cannot handle them. The real
 provider’s keyboard handling and browser close requests remain slice-4 observations, so the
 Pass 1 statement that the parent can never fix this is broader than the evidence.
+
+## Slice 4 implementation decisions (S2)
+
+This non-release implements `docs/moments-slice-4-spec.md` S2 and records S3 builder
+acceptance in `docs/verification/moments-acceptance/`. The spec is unchanged. Its Authority
+rulings govern over this section and the archived prompt; no ruled player behavior changes.
+
+- **One decision, one clock.** `src/lib/momentsPlayability.ts` defines `MomentsPlayability`
+  and its production default, `mayPlayMoment`, delegating to the unchanged
+  `hasEmbedPermission`. The owner subscribes to `useNow`; `canPlay` feeds the action row,
+  recovery/status visibility, frame visibility and direct `play()`. The identity/permission
+  check precedes retire and the reducer's play action, so a refused call does not even
+  invalidate a current attempt. Cost: another subscription to the shared clock, not another
+  timer; permission changes are observed at its minute tick or focus/visibility catch-up.
+- **Lapse parks a live frame.** When the same active selection loses eligibility while its
+  frame is live, a layout effect samples and retires the adapter, then dispatches existing
+  `player-lost`. Playing/loading becomes
+  paused, Cinema returns to stage, the frame parks inert, and the Player focus stop vanishes.
+  Position, queue and history survive. Other terminal states keep their diagnosis internally
+  but expose only the source link. The iframe stays mounted. Cost: a permission lapse ends
+  the current attempt too; this is stronger than refusing the next Play. It does not destroy
+  the provider instance or establish anything about parked decoding. The reducer's provider
+  contract and adapter commands are unchanged. Pass 2 implements Beni's 1 Oct rulings:
+  without a live frame, the cover keeps its surface and attempt, including in Cinema. A
+  frame parked under another active selection is left alone. The lapse effect reads the
+  render's `playerLive` closure (the preceding commit's shown frame); the host's layout
+  effect queues false for the next render, without changing that closure. Tests cover both
+  live surfaces, both cover surfaces and both possible lapsing items around a parked frame.
+  On stage-to-parked, focus inside the active owner's host moves to Enter Cinema before the
+  return stop is hidden. When the lapse removes the focused playback control or secondary
+  source link, focus moves to Enter Cinema on the stage, or Exit Cinema when a cover-only
+  Cinema stays open. A control the lapse leaves connected keeps focus. The host remembers
+  focus during render and handles detached controls in a separate layout effect on every
+  commit, only on the active selection's playable-to-refused transition. Live Cinema keeps
+  its existing close/opener restoration. In cover-only Cinema, the clipped host stays inert
+  and the dialog controls remain active.
+- **Playback labels stay whole.** Only primary buttons marked `data-playback-action`
+  receive zero flex shrink and no wrapping. Play, Pause, Retry and Replay stay on one line;
+  the source link takes the wrapping cost. Primary source links and gallery Open selection
+  buttons keep their wrapping rules. No token or action-row layout mode changes.
+- **Mock seam.** Optional `App.momentsPlayability` is threaded to the owner like the existing
+  factory seam. `tests/fixtures/moments/mockPlayability.ts` is passed only alongside the mock
+  in the harness and player DOM tests. `src/main.tsx` passes neither prop. Archival examples
+  retain their no-permission statement and carry no permission decisions. Cost: callers of
+  the internal test seam must keep that pairing; it is not a production configuration API.
+- **Separate build entry, no environment selector.** `scripts/build-moments-acceptance.ts`
+  validates its optional command-line JSON path (or committed `edition.json`) against
+  `git show HEAD:src/data/fixtures.json`, then installs a local Vite replacement plugin and
+  writes git-ignored `dist-acceptance/`. The replacement plugin is not imported by
+  `vite.config.ts`; even passing acceptance mode to a production build cannot install it.
+  A title prefix and `html[data-moments-acceptance]` mark this build without a layout change.
+  Cost: the acceptance command requires a Git checkout with a committed snapshot; ordinary
+  archive builds remain available for production. A new bundle is required for a new edition.
+- **Fictional acceptance input.** `edition.json` holds two permitted, one identity-only, one
+  denied, one expired and one legacy link-only selection. Its video IDs are fictional, and
+  every permission basis says so. `fixture-provenance.json` preserves six complete rows
+  copied from `1fad3427dfeeeae4a642b6996fe1a114f4640d63`; the edition projects their authored
+  fixture fields without changing them. The node test validates the edition and proves all
+  six IDs absent from the current snapshot. Cost: these records prove neither rights nor
+  content; S4 must supply its separately authorized replacement input.
+- **Probes and evidence.** `real-adapter.mjs`, `youtube-stub.js`, `layout-probe.mjs`,
+  `check-build-isolation.mjs` and `reproduce-permission.mjs` live in the new receipt directory.
+  The first two replace the copied `_probe_real` entry with the actual bundled production
+  entry and rule. The stub attaches methods at ready, with a construction-time control;
+  only the API URL and the two fictional nocookie frame URLs are fulfilled locally. Every
+  other provider URL is aborted, with DNS blocking as a second guard. The layout probe now
+  fails on differences and compares the shared route wrapper too. The old inert checker
+  gains the complete provider predicate and an explicit viewport on its initial load; no
+  assertion is weakened. Cost: stub readiness, state events and seeks are simplified and
+  establish no real playback. Pointer probes settle scrolling before dispatch; the initial
+  unsettled-click limitation is recorded in ideas row 71.
+- **Commit split.** Claude's docs commit is cherry-picked first, preserving its authorship.
+  The gate, seam, fixtures, build script and tests form the first Codex code commit. Red
+  tests are run against the prior commit in a disposable archive, never committed red.
+  Tooling, documentation and machine receipts follow separately so the served application
+  remains frozen throughout verification. Typecheck and the full suite stay green at each
+  commit. The production edition, empty-edition test, workflows, snapshot, dependencies,
+  version and README stay unchanged.
+
+There is no disagreement with the slice-4 spec. S4 provider observation and S7 publication
+remain separately gated; the acceptance edition is not a proposed public edition. Rows 65,
+66 and 68 retain their existing wording and status.

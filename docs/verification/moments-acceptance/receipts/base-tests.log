@@ -1,0 +1,13 @@
+
+> kickoff@0.5.2 test
+> vitest run
+
+
+ RUN  v4.1.11 /private/tmp/pr138-focus-receipts-p_1epuvu/base-checks
+
+
+ Test Files  51 passed (51)
+      Tests  720 passed (720)
+   Start at  15:31:46
+   Duration  12.15s (transform 5.97s, setup 3.97s, import 14.34s, tests 56.41s, environment 14.79s)
+

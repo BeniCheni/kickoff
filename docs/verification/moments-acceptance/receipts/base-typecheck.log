@@ -1,0 +1,4 @@
+
+> kickoff@0.5.2 typecheck
+> tsc -b --noEmit
+

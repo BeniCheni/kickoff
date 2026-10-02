@@ -1,0 +1,94 @@
+{
+  "provenance": {
+    "base": "7636b0871c9a10db53e9a00ad3811cc7093efa6c",
+    "applicationTip": "c846fa0e338ab96f83cf177ab86452922b9419be",
+    "snapshot": "7636b0871c9a10db53e9a00ad3811cc7093efa6c",
+    "productionBaseOrigin": "http://127.0.0.1:8871",
+    "productionTipOrigin": "http://127.0.0.1:8878",
+    "acceptanceOrigin": "http://127.0.0.1:8888",
+    "baseHarnessOrigin": "http://127.0.0.1:5191",
+    "tipHarnessOrigin": "http://127.0.0.1:5193",
+    "node": "24.15.0",
+    "playwright": "1.62.1",
+    "chrome": "154.0.8037.93",
+    "rebuttalBaseline": "0a9a3c2b83a1daba8adaa1544f425746fb470f93",
+    "lapseOrigin": "http://127.0.0.1:8879",
+    "beforeLapseOrigin": "http://127.0.0.1:8884",
+    "beforeAcceptanceOrigin": "http://127.0.0.1:8885",
+    "npm": "11.12.1",
+    "headless": true,
+    "deviceScaleFactor": 1,
+    "reducedMotion": "reduce"
+  },
+  "result": {
+    "method": "Codex in-app browser UI and read-only DOM observations; production and cover-only acceptance, no Play",
+    "cells": 72,
+    "uniqueCells": 72,
+    "widths": [
+      360,
+      375,
+      390,
+      1000
+    ],
+    "lenses": [
+      "ledger",
+      "poster",
+      "broadcast"
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "tabs": [
+      "Fixtures",
+      "Table",
+      "Moments"
+    ],
+    "horizontalOverflowCells": 0,
+    "mediaCells": 0,
+    "actualThemeAndLensChecked": true,
+    "captures": {
+      "source": "Separate final headless inert comparison; six final 390px Fixtures screenshots visually inspected",
+      "shots": [
+        {
+          "name": "foundation-390-ledger-light-fixtures.png",
+          "sha256": "61252d406328ab71dceee12f4f1be0cafa7e379d4ebdf7aadb5894a004f19fca",
+          "visuallyInspected": true
+        },
+        {
+          "name": "foundation-390-ledger-dark-fixtures.png",
+          "sha256": "b9e9f1f79f235ecb668e0dd048375f15a9ddd180c22769e982e55b752d1a2831",
+          "visuallyInspected": true
+        },
+        {
+          "name": "foundation-390-poster-light-fixtures.png",
+          "sha256": "2738fbcbc25e587dc7591615606acb7822e92923a86bd882ec3e6507e61f30e9",
+          "visuallyInspected": true
+        },
+        {
+          "name": "foundation-390-poster-dark-fixtures.png",
+          "sha256": "b7a0706971b59e904d63a236250ec163694cf070c51f76db4c6ff95ba6536438",
+          "visuallyInspected": true
+        },
+        {
+          "name": "foundation-390-broadcast-light-fixtures.png",
+          "sha256": "a90978b62788c13ba51645d0dba4d3fd857edbf7d454beaae8531cf1a9d1d035",
+          "visuallyInspected": true
+        },
+        {
+          "name": "foundation-390-broadcast-dark-fixtures.png",
+          "sha256": "f4cc87b01b0ca301418743063e7a497ecb6fce1c6585007bf9235a8e8a98265b",
+          "visuallyInspected": true
+        }
+      ]
+    },
+    "acceptanceCoverObservation": {
+      "width": 360,
+      "surface": "cinema",
+      "iframes": 0,
+      "hostInert": true,
+      "focus": "Exit Cinema"
+    },
+    "networkBoundary": "Pane did not load media; it has no provider route/DNS instrumentation. Headless receipts separately prove zero provider egress."
+  }
+}

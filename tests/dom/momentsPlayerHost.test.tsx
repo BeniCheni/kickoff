@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import App from '../../src/App'
+import { mockPlayability } from '../fixtures/moments/mockPlayability'
 import { MomentsPage } from '../../src/components/MomentsPage'
 import { useMomentsSession } from '../../src/components/MomentsSessionProvider'
 import { archivalEdition } from '../fixtures/moments/gallery'
@@ -39,7 +40,7 @@ function emitFailure(failure: { kind: 'owner-blocked' | 'unknown' | 'unavailable
 }
 
 function renderVisit() {
-  return render(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer}
+  return render(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsPlayability={mockPlayability}
     momentsRoute={<><MomentsPage /><Probe /></>} />)
 }
 
@@ -179,7 +180,7 @@ it('D-08/D-18/H-G: recovery names only the real next item, with one Next and no 
 
 it.each(['Ends.', 'Ends?', 'Ends!', 'Ends.”'])('D-18: Cinema and recovery copy do not double the terminal mark in %s', title => {
   const edition = archivalEdition.map(item => ({ ...item, title }))
-  render(<App momentsEdition={edition} momentsPlayer={createMockMomentsPlayer} momentsRoute={<><MomentsPage /><Probe /></>} />)
+  render(<App momentsEdition={edition} momentsPlayer={createMockMomentsPlayer} momentsPlayability={mockPlayability} momentsRoute={<><MomentsPage /><Probe /></>} />)
   openCard(edition[0]!.id); click('Play')
   emitFailure({ kind: 'unavailable', providerError: 100 })
   click('Enter Cinema')
@@ -193,7 +194,7 @@ it.each(['Ends.', 'Ends?', 'Ends!', 'Ends.”'])('D-18: Cinema and recovery copy
 
 it('D-19/D-07/H-C: Cinema has one live region, a stable Save name, and no history entry', () => {
   const storage = referenceStorageRig(); storage.refuseWrite(true)
-  render(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsStorage={storage.access}
+  render(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsPlayability={mockPlayability} momentsStorage={storage.access}
     momentsRoute={<><MomentsPage /><Probe /></>} />)
   openCard(archivalEdition[0]!.id); click('Play'); emitPlaying(1)
   const before = window.history.length
@@ -240,7 +241,7 @@ const badReadSurfaces = saveSurfaces.flatMap(target => (['read-refused', 'invali
 it.each(badReadSurfaces)('row 61: a $target write after $reason says it replaces the unreadable stored set', ({ target, reason }) => {
   const storage = referenceStorageRig(reason === 'invalid-data' ? 'broken JSON' : '["old-reference"]')
   if (reason === 'read-refused') storage.refuseRead(true)
-  render(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsStorage={storage.access}
+  render(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsPlayability={mockPlayability} momentsStorage={storage.access}
     momentsRoute={<><MomentsPage /><Probe /></>} />)
   const cinema = saveArea(target, archivalEdition[0]!.id)
   fireEvent.click(within(cinema).getByRole('button', { name: /Save reference/ }))
@@ -255,7 +256,7 @@ it.each(badReadSurfaces)('row 61: a $target write after $reason says it replaces
 it.each(badReadSurfaces)('row 61: $target after $reason, a refused write does not use up the sentence', ({ target, reason }) => {
   const storage = referenceStorageRig(reason === 'invalid-data' ? 'broken JSON' : '["old-reference"]')
   if (reason === 'read-refused') storage.refuseRead(true)
-  render(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsStorage={storage.access}
+  render(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsPlayability={mockPlayability} momentsStorage={storage.access}
     momentsRoute={<><MomentsPage /><Probe /></>} />)
   const before = storage.disk()
   storage.refuseWrite(true)
@@ -276,7 +277,7 @@ it.each(badReadSurfaces)('row 61: $target after $reason, a refused write does no
 it.each(saveSurfaces)('row 61: %s refuses an invalid reference without claiming an unreadable stored set', target => {
   const storage = referenceStorageRig('["old-reference"]')
   const edition = archivalEdition.map((item, index) => index === 0 ? { ...item, id: ' padded ' } : item)
-  render(<App momentsEdition={edition} momentsPlayer={createMockMomentsPlayer} momentsStorage={storage.access}
+  render(<App momentsEdition={edition} momentsPlayer={createMockMomentsPlayer} momentsPlayability={mockPlayability} momentsStorage={storage.access}
     momentsRoute={<><MomentsPage /><Probe /></>} />)
   let cinema = saveArea(target, ' padded ')
   const status = () => within(cinema).getByRole('status').textContent
@@ -361,9 +362,9 @@ it('a route throw still pauses through leave; a player throw keeps the shell, ta
   let fail = false
   function Route() { if (fail) throw new Error('contained test failure'); return <><MomentsPage /><Probe /></> }
   const error = vi.spyOn(console, 'error').mockImplementation(() => {})
-  const view = render(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsRoute={<Route />} />)
+  const view = render(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsPlayability={mockPlayability} momentsRoute={<Route />} />)
   openCard(archivalEdition[0]!.id); click('Play'); emitPlaying(2)
-  fail = true; view.rerender(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsRoute={<Route />} />)
+  fail = true; view.rerender(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsPlayability={mockPlayability} momentsRoute={<Route />} />)
   expect(screen.getByText('This view couldn’t load.')).toBeTruthy()
   fail = false; click('Retry')
   expect(media()).toMatchObject({ status: 'paused', position: 2 })
@@ -374,7 +375,7 @@ it('a route throw still pauses through leave; a player throw keeps the shell, ta
   expect(screen.getByRole('button', { name: 'Table' }).getAttribute('aria-current')).toBe('page')
 
   error.mockClear()
-  view.rerender(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsPlayerFault momentsRoute={<><MomentsPage /><Probe /></>} />)
+  view.rerender(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsPlayability={mockPlayability} momentsPlayerFault momentsRoute={<><MomentsPage /><Probe /></>} />)
   expect(screen.getByRole('alert').textContent).toContain('The player could not be shown.')
   expect(screen.queryByText(/visit may be lost/)).toBeNull()
   expect(screen.getByText('Kickoff')).toBeTruthy()
@@ -386,14 +387,14 @@ it('a route throw still pauses through leave; a player throw keeps the shell, ta
   click('Table')
   expect(screen.getByRole('button', { name: 'Table' }).getAttribute('aria-current')).toBe('page')
   click('Moments')
-  view.rerender(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsPlayerFault={false} momentsRoute={<><MomentsPage /><Probe /></>} />)
+  view.rerender(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsPlayability={mockPlayability} momentsPlayerFault={false} momentsRoute={<><MomentsPage /><Probe /></>} />)
   click('Retry player')
   expect(screen.queryByText('The player could not be shown.')).toBeNull()
   expect(error).toHaveBeenCalled()
 })
 
 it('StrictMode yields one player instance after one Play', () => {
-  render(<StrictMode><App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer}
+  render(<StrictMode><App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsPlayability={mockPlayability}
     momentsRoute={<><MomentsPage /><Probe /></>} /></StrictMode>)
   openCard(archivalEdition[0]!.id); click('Play'); emitPlaying(0)
   expect(document.querySelectorAll('iframe')).toHaveLength(1)
@@ -407,7 +408,7 @@ it('H-B/H-E: the header shell stays 780 and empty copy is unchanged', () => {
   expect(shell?.contains(document.querySelector('header'))).toBe(true)
   expect(shell?.contains(document.querySelector('nav'))).toBe(true)
   cleanup()
-  render(<App momentsEdition={[]} momentsPlayer={createMockMomentsPlayer} />)
+  render(<App momentsEdition={[]} momentsPlayer={createMockMomentsPlayer} momentsPlayability={mockPlayability} />)
   expect(screen.getByText('No moments curated yet.')).toBeTruthy()
   expect(screen.getByText(/Hand-curated · linked to rights holders · never played here/)).toBeTruthy()
   expect(screen.queryByText('Choose the archival sample')).toBeNull()
@@ -487,9 +488,9 @@ it('leaving Cinema hands focus to a control that survives, and never to one that
   window.history.replaceState(null, '', '/?tab=moments')
   let fail = false
   function Route() { if (fail) throw new Error('contained test failure'); return <><MomentsPage /><Probe /></> }
-  const routed = render(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsRoute={<Route />} />)
+  const routed = render(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsPlayability={mockPlayability} momentsRoute={<Route />} />)
   enterPlaying()
-  fail = true; routed.rerender(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsRoute={<Route />} />)
+  fail = true; routed.rerender(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsPlayability={mockPlayability} momentsRoute={<Route />} />)
   expect(screen.getByText('This view couldn’t load.')).toBeTruthy()
   expect(document.querySelector('[inert][data-moments-background]')).toBeNull()
   expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Moments' }))
@@ -497,7 +498,7 @@ it('leaving Cinema hands focus to a control that survives, and never to one that
 
   // A player failure unmounts the host while the background is still marked.
   const faulted = renderVisit(); enterPlaying()
-  faulted.rerender(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsPlayerFault momentsRoute={<><MomentsPage /><Probe /></>} />)
+  faulted.rerender(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsPlayability={mockPlayability} momentsPlayerFault momentsRoute={<><MomentsPage /><Probe /></>} />)
   expect(screen.getByRole('alert').textContent).toContain('The player could not be shown.')
   expect(document.querySelector('[inert][data-moments-background]')).toBeNull()
   expect(document.activeElement?.hasAttribute('data-cinema-enter')).toBe(true)
@@ -524,7 +525,7 @@ it('D-18: under spoiler-light the recovery names the neutral title and still end
 it.each(['selected', 'card', 'cinema'].flatMap(target => ['read-refused', 'invalid-data'].map(reason => ({ target, reason }))))('row 61: $target after $reason, refused writes and tab departure preserve the first-write notice', ({ target, reason }) => {
   const storage = referenceStorageRig(reason === 'invalid-data' ? 'broken JSON' : '["old-reference"]')
   if (reason === 'read-refused') storage.refuseRead(true)
-  render(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsStorage={storage.access}
+  render(<App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsPlayability={mockPlayability} momentsStorage={storage.access}
     momentsRoute={<><MomentsPage /><Probe /></>} />)
   click('Fixtures'); click('Moments')
   const first = archivalEdition[0]!
@@ -554,7 +555,7 @@ it('Shift+Tab from Back to selection reaches Enter Cinema', () => {
 
 it.each(['stage', 'cinema'] as const)('player failure on %s invalidates playback and Retry waits for Play', surface => {
   const error = vi.spyOn(console, 'error').mockImplementation(() => {})
-  const app = (fault = false) => <App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer}
+  const app = (fault = false) => <App momentsEdition={archivalEdition} momentsPlayer={createMockMomentsPlayer} momentsPlayability={mockPlayability}
     momentsPlayerFault={fault} momentsRoute={<><MomentsPage /><Probe /></>} />
   const view = render(app())
   openCard(archivalEdition[0]!.id); click('Play'); emitPlaying(7)

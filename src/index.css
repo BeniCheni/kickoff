@@ -266,6 +266,7 @@
 .moments-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; text-align: center; }
 .moments-button:disabled { opacity: .55; cursor: default; }
 .moments-primary { background: var(--text); color: var(--bg); border-color: var(--text); font-weight: 600; }
+.moments-primary[data-playback-action] { flex-shrink: 0; white-space: nowrap; }
 .moments-save { flex: none; }
 .moments-save[aria-pressed=true] { border-color: var(--pitch); box-shadow: inset 0 -3px var(--pitch); }
 .moments-save-state { font-size: 10px; margin-top: 5px; color: var(--text-secondary); }

@@ -1,6 +1,7 @@
 import { StrictMode, useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from '../../src/App'
+import { mockPlayability } from '../fixtures/moments/mockPlayability'
 import { MomentsPage } from '../../src/components/MomentsPage'
 import { useMomentsSession } from '../../src/components/MomentsSessionProvider'
 import { SAVED_MOMENTS_KEY } from '../../src/lib/momentsSaved'
@@ -97,4 +98,4 @@ function emitSim(kind: 'playing' | 'playing0' | 'paused' | 'ended' | 'blocked' |
     : { event: 'autoplay-blocked' }
   mock.emit(notice)
 }
-createRoot(document.getElementById('root')!).render(<StrictMode><App momentsEdition={edition} momentsPlayer={createMockMomentsPlayer} momentsRoute={<Route />} /></StrictMode>)
+createRoot(document.getElementById('root')!).render(<StrictMode><App momentsEdition={edition} momentsPlayer={createMockMomentsPlayer} momentsPlayability={mockPlayability} momentsRoute={<Route />} /></StrictMode>)

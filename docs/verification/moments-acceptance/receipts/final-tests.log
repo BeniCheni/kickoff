@@ -1,0 +1,18 @@
+
+> kickoff@0.5.2 typecheck
+> tsc -b --noEmit
+
+
+
+> kickoff@0.5.2 test
+> vitest run
+
+
+ RUN  v4.1.11 /Users/benicheni/.codex/worktrees/pr138-pass2/Kickoff
+
+
+ Test Files  53 passed (53)
+      Tests  745 passed (745)
+   Start at  10:25:49
+   Duration  7.27s (transform 3.41s, setup 2.55s, import 8.14s, tests 31.19s, environment 9.13s)
+
