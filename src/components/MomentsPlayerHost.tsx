@@ -174,6 +174,11 @@ export function MomentsPlayerHost({ factory, fault = false }: { factory?: Moment
   // The frame belongs to the selection it was last asked to play. On any other selection the
   // stage and the Cinema slot show that selection's cover, as they do before a first Play.
   const activeMoment = session.edition.find(item => item.id === session.queue.active)
+  // Remember the node before React removes a lapsed action during this commit.
+  const focusedBeforeCommit = useRef<Element | null>(null)
+  focusedBeforeCommit.current = document.activeElement
+  const activePlayable = !!activeMoment && session.canPlay(activeMoment)
+  const previousPlayable = useRef({ id: session.queue.active, playable: activePlayable })
   const shown = live && owner !== null && owner === session.queue.active && !!activeMoment && session.canPlay(activeMoment)
   const shownRef = useRef(shown)
   shownRef.current = shown
@@ -267,9 +272,9 @@ export function MomentsPlayerHost({ factory, fault = false }: { factory?: Moment
     const dialog = dialogRef.current
     const host = hostRef.current
     if (!dialog || !host) return
-    // Move focus before hiding its return stop or measuring the parked box. Only the
-    // active owner's frame can lapse here; another selection's parked frame stays inert.
-    if (placement === 'parked' && owner === session.queue.active && host.contains(document.activeElement)) {
+    // Move focus before hiding its return stop or measuring the parked box.
+    // Another selection's parked frame stays inert and cannot contain focus.
+    if (placement === 'parked' && host.contains(document.activeElement)) {
       survivingControl()?.focus()
     }
     host.querySelectorAll<HTMLElement>('[data-player-return], [data-player-continue]').forEach(button => {
@@ -290,6 +295,25 @@ export function MomentsPlayerHost({ factory, fault = false }: { factory?: Moment
       host.querySelector<HTMLElement>('[data-player-return]')?.focus()
     }
   }, [placement, session.queue.active, live, shown])
+
+  // Covers keep their placement on lapse, so this hand-off must run on every commit.
+  useLayoutEffect(() => {
+    const prior = previousPlayable.current
+    previousPlayable.current = { id: session.queue.active, playable: activePlayable }
+    if (prior.id !== session.queue.active || !prior.playable || activePlayable) return
+    if (!document.querySelector('[data-moments-gallery]')) return
+    // Live Cinema closes through player-lost and its existing opener restoration.
+    if (surface === 'cinema' && session.playerLive) return
+    const node = focusedBeforeCommit.current
+    if (!(node instanceof HTMLElement) || node.isConnected) return
+    // A detached control has lost its action-row ancestors; classify the node itself.
+    if (!node.hasAttribute('data-playback-action') && !node.hasAttribute('data-primary-action')
+      && !node.classList.contains('moments-source-link')) return
+    if (document.activeElement && document.activeElement !== document.body) return
+    const control = surface === 'cinema' && dialogRef.current?.open
+      ? dialogRef.current.querySelector<HTMLElement>('[data-cinema-exit]') : survivingControl()
+    control?.focus()
+  })
 
   // The in-anchor "Player" stop exists only while the frame is on this selection.
   useLayoutEffect(() => {

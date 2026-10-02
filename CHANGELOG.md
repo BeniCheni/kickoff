@@ -10,8 +10,9 @@ releases.
 
 ### Changed
 
-- The inactive Moments player preserves keyboard focus when permission lapses, leaves a
-  cover-only Cinema open, and keeps playback button labels on one line on phones. The
+- When a permission lapse removes the focused Moments control, focus moves to Enter Cinema
+  on the stage, or Exit Cinema when a cover-only Cinema stays open. A control the lapse
+  leaves connected keeps focus. Playback button labels stay on one line on phones. The
   production edition remains empty and the interface readers see is unchanged.
 
 - The inactive Moments player now offers Play only with a current recorded embed permission;

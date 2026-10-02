@@ -63,7 +63,9 @@ existing wrapped style.
   smoke pass when it is docs or tooling, and check
   `document.documentElement.scrollWidth === window.innerWidth` — **set the viewport before
   capturing any screenshot**; a clipped capture cost a review pass proving a non-bug.
-- Commits authored as `Claude <noreply@anthropic.com>` so GitHub attribution stays clean.
+- Commits may be authored by Claude, Codex or Cursor. Use the identity of the agent
+  doing the work; Codex commits use `Codex <noreply@openai.com>`. Explicit session
+  authorship instructions take precedence.
 - `.claude/worktrees/` entries look "prunable" from cloud/VM sessions because their absolute
   gitdir paths only resolve on the Mac — don't prune them from a mounted session.
 

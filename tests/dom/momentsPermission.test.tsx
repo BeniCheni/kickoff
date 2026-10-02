@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react'
 import App from '../../src/App'
 import { MomentsPage } from '../../src/components/MomentsPage'
 import { useMomentsSession } from '../../src/components/MomentsSessionProvider'
@@ -33,6 +33,7 @@ function mount(moment: Moment, others: Moment[] = []) {
 const click = (name: string) => fireEvent.click(screen.getByRole('button', { name }))
 const patchPermission = (patch: Partial<NonNullable<Moment['source']['permissions']>[number]>): Moment => ({ ...permitted,
   source: { ...permitted.source, permissions: [{ ...permitted.source.permissions![0]!, ...patch }] } })
+const expiring = patchPermission({ expiresAt: '2026-10-01T16:01:00Z' })
 const failing: Array<[string, Moment]> = [
   ['identity without permission', { ...permitted, source: { ...permitted.source, permissions: undefined } }],
   ...(['unknown', 'denied', 'revoked'] as const).map(status => [status, patchPermission({ status })] as [string, Moment]),
@@ -173,4 +174,104 @@ it('focus catch-up observes a permission lapse after suspension', () => {
   mount(patchPermission({ expiresAt: '2026-10-01T16:01:00Z' }))
   wake(new Date('2026-10-01T16:05:00Z'))
   expect(screen.queryByRole('button', { name: 'Play' })).toBeNull()
+})
+
+function expectVisibleFocus(control: HTMLElement) {
+  expect(document.activeElement).toBe(control)
+  expect(control.isConnected).toBe(true)
+  expect(control.closest('[inert], [hidden], [aria-hidden="true"]')).toBeNull()
+  expect(getComputedStyle(control).display).not.toBe('none')
+  expect(getComputedStyle(control).visibility).toBe('visible')
+}
+function playingExpiring() {
+  mount(expiring)
+  click('Play')
+  const player = currentMockPlayer()!
+  act(() => player.emit({ ...player.reads.plays[0]!, event: 'playing', position: 12 }))
+  return player
+}
+it('removed stage Pause hands focus to Enter Cinema on lapse', () => {
+  playingExpiring()
+  const removed = screen.getByRole('button', { name: 'Pause' })
+  removed.focus()
+  tick(60_050)
+  expect(removed.isConnected).toBe(false)
+  expectVisibleFocus(screen.getByRole('button', { name: 'Enter Cinema' }))
+})
+it('removed stage cover Play hands focus to Enter Cinema on lapse', () => {
+  const factory = mount(expiring)
+  const removed = screen.getByRole('button', { name: 'Play' })
+  removed.focus()
+  tick(60_050)
+  expect(removed.isConnected).toBe(false)
+  expectVisibleFocus(screen.getByRole('button', { name: 'Enter Cinema' }))
+  expect(factory).not.toHaveBeenCalled()
+})
+it('removed Cinema cover Play hands focus to Exit Cinema without changing attempt', () => {
+  const factory = mount(expiring)
+  click('Enter Cinema')
+  const cinema = document.querySelector<HTMLElement>('[data-moments-cinema]')!
+  const removed = within(cinema).getByRole('button', { name: 'Play' })
+  removed.focus()
+  const before = structuredClone(session.queue)
+  tick(60_050)
+  expect(removed.isConnected).toBe(false)
+  expectVisibleFocus(within(cinema).getByRole('button', { name: 'Exit Cinema' }))
+  expect(session.queue).toEqual(before)
+  expect(session.queue.surface).toBe('cinema')
+  expect(document.querySelector<HTMLDialogElement>('[data-moments-player-dialog]')!.open).toBe(true)
+  expect(factory).not.toHaveBeenCalled()
+})
+it('removed live Cinema Pause retains the existing Enter Cinema hand-off', () => {
+  playingExpiring()
+  click('Enter Cinema')
+  const cinema = document.querySelector<HTMLElement>('[data-moments-cinema]')!
+  within(cinema).getByRole('button', { name: 'Pause' }).focus()
+  tick(60_050)
+  expectVisibleFocus(screen.getByRole('button', { name: 'Enter Cinema' }))
+  expect(session.queue.surface).toBe('stage')
+})
+it('removed stage Retry hands focus to Enter Cinema on lapse', () => {
+  const player = playingExpiring()
+  act(() => player.emit({ ...player.reads.plays[0]!, event: 'failure', failure: { kind: 'owner-blocked', providerError: 150 } }))
+  const removed = screen.getByRole('button', { name: 'Retry' })
+  removed.focus()
+  tick(60_050)
+  expect(removed.isConnected).toBe(false)
+  expectVisibleFocus(screen.getByRole('button', { name: 'Enter Cinema' }))
+})
+it('removed secondary source link hands focus to Enter Cinema on lapse', () => {
+  playingExpiring()
+  const removed = screen.getByRole('link', { name: /Open at/ })
+  removed.focus()
+  tick(60_050)
+  expect(removed.isConnected).toBe(false)
+  expectVisibleFocus(screen.getByRole('button', { name: 'Enter Cinema' }))
+})
+it('connected stage Save reference retains the same focus on lapse', () => {
+  playingExpiring()
+  const control = screen.getByRole('button', { name: /^Save reference:/ })
+  control.focus()
+  tick(60_050)
+  expectVisibleFocus(control)
+})
+it('removed cover Play over another parked owner hands focus to Enter Cinema without retiring that frame', () => {
+  const second = { ...expiring, id: 'permission-neighbour', title: 'Neighbour' }
+  mount(permitted, [second])
+  click('Play')
+  const player = currentMockPlayer()!
+  act(() => player.emit({ ...player.reads.plays[0]!, event: 'playing', position: 12 }))
+  act(() => session.dispatch({ type: 'open', id: second.id }))
+  const frame = document.querySelector('iframe')
+  const firstMedia = structuredClone(session.queue.media[permitted.id])
+  const reads = structuredClone(player.reads)
+  const removed = screen.getByRole('button', { name: 'Play' })
+  removed.focus()
+  tick(60_050)
+  expect(removed.isConnected).toBe(false)
+  expectVisibleFocus(screen.getByRole('button', { name: 'Enter Cinema' }))
+  expect(player.reads).toEqual(reads)
+  expect(session.queue.media[permitted.id]).toEqual(firstMedia)
+  expect(document.querySelector('iframe')).toBe(frame)
+  expect(frame!.isConnected).toBe(true)
 })

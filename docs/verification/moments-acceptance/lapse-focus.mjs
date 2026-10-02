@@ -15,6 +15,7 @@ const result = { browser: browser.version(), clock: '2026-10-01T16:00:00Z -> 17:
 try {
   for (const width of [360, 390, 1000]) for (const scenario of [
     'stage-iframe', 'stage-return', 'stage-outside', 'cinema-live', 'stage-cover', 'cinema-cover', 'parked-owner', 'parked-selection',
+    'stage-pause', 'stage-play-cover', 'cinema-play-cover', 'cinema-pause-live', 'stage-retry', 'stage-source-link',
   ]) {
     const log = { fulfilled: [], aborted: [], escaped: [], errors: [] }
     const context = await browser.newContext({ viewport: { width, height: width === 1000 ? 900 : 844 },
@@ -71,10 +72,17 @@ try {
       await page.getByRole('button', { name: 'Pause', exact: true }).waitFor()
       await page.evaluate(() => { window.__players[0].time = 12 })
     }
+    if (scenario === 'stage-retry') {
+      await page.evaluate(() => window.__players[0].__error(150))
+      await page.getByRole('button', { name: 'Retry', exact: true }).waitFor()
+    }
     if (scenario === 'parked-owner') await click(/^Next:/)
     if (scenario === 'parked-selection') await click(/^Previous:/)
     if (scenario.startsWith('cinema') || scenario.startsWith('parked')) await click('Enter Cinema')
-    const focusSelector = scenario === 'stage-iframe' ? 'iframe' : scenario === 'stage-return' ? '[data-player-return]'
+    const focusSelector = ['stage-pause', 'stage-play-cover', 'stage-retry'].includes(scenario) ? '.moments-stage-main [data-primary-action]'
+      : ['cinema-play-cover', 'cinema-pause-live'].includes(scenario) ? '[data-moments-cinema] [data-primary-action]'
+      : scenario === 'stage-source-link' ? '.moments-stage-main .moments-source-link'
+      : scenario === 'stage-iframe' ? 'iframe' : scenario === 'stage-return' ? '[data-player-return]'
       : scenario === 'stage-outside' ? '.moments-stage-main [data-save]' : scenario === 'stage-cover' ? '[data-cinema-enter]' : '[data-cinema-exit]'
     // Gallery.open schedules heading focus for the next frame. Finish that navigation
     // before placing the user's focus; otherwise the probe mistakes it for lapse behavior.
@@ -86,7 +94,8 @@ try {
       const area = document.querySelector(dialog.dataset.placement === 'cinema' ? '[data-moments-cinema]' : '.moments-stage-main')
       return { placement: dialog.dataset.placement, dialogInert: dialog.inert, hostInert: host.hasAttribute('inert'),
         focus: { tag: focus.tagName, text: focus.textContent?.trim().slice(0, 80), enter: focus.hasAttribute('data-cinema-enter'),
-          exit: focus.hasAttribute('data-cinema-exit'), save: focus.hasAttribute('data-save'), inert: !!focus.closest('[inert], [hidden]') },
+          exit: focus.hasAttribute('data-cinema-exit'), save: focus.hasAttribute('data-save'), inert: !!focus.closest('[inert], [hidden]'), connected: focus.isConnected,
+          visible: focus.getClientRects().length > 0 && getComputedStyle(focus).visibility === 'visible' },
         primaryTag: area.querySelector('[data-primary-action]')?.tagName, primary: area.querySelector('[data-primary-action]')?.textContent.trim(),
         width: innerWidth, scrollWidth: document.documentElement.scrollWidth, frames: document.querySelectorAll('iframe').length,
         calls: window.__players?.flatMap(p => p.calls) ?? [] }
@@ -101,9 +110,13 @@ try {
     const after = await read(), failures = []
     const check = (condition, message) => { if (!condition) failures.push(message) }
     check(after.width === after.scrollWidth && after.frames <= 1, 'overflow or multiple frames')
-    check(!after.focus.inert && after.focus.tag !== 'BODY', 'focus must remain on a visible control')
-    if (scenario === 'stage-iframe' || scenario === 'stage-return' || scenario === 'cinema-live') {
+    check(after.focus.connected && after.focus.visible && !after.focus.inert && after.focus.tag !== 'BODY', 'focus must remain on a visible control')
+    if (scenario === 'stage-iframe' || scenario === 'stage-return' || scenario === 'cinema-live' || ['stage-pause', 'stage-retry', 'stage-source-link', 'cinema-pause-live'].includes(scenario)) {
       check(after.placement === 'parked' && after.focus.enter, 'live lapse must park and focus Enter Cinema')
+    } else if (scenario === 'stage-play-cover' || scenario === 'cinema-play-cover') {
+      check(after.placement === before.placement, 'cover surface changed')
+      check(scenario === 'cinema-play-cover' ? after.focus.exit : after.focus.enter,
+        scenario === 'cinema-play-cover' ? 'cover lapse must focus Exit Cinema' : 'cover lapse must focus Enter Cinema')
     } else {
       check(after.placement === before.placement || (scenario === 'stage-outside' && after.placement === 'parked'), 'cover surface changed')
       check(JSON.stringify(after.focus) === JSON.stringify(before.focus), 'unrelated focus changed')
@@ -120,4 +133,4 @@ try {
   await fs.writeFile(out, JSON.stringify(result, null, 2))
   await browser.close()
 }
-assert(result.rows.length === 24 && result.rows.every(r => r.failures.length === 0), 'Permission lapse regressions; see receipt')
+assert(result.rows.length === 42 && result.rows.every(r => r.failures.length === 0), 'Permission lapse regressions; see receipt')

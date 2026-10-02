@@ -640,8 +640,13 @@ rulings govern over this section and the archived prompt; no ruled player behavi
   effect queues false for the next render, without changing that closure. Tests cover both
   live surfaces, both cover surfaces and both possible lapsing items around a parked frame.
   On stage-to-parked, focus inside the active owner's host moves to Enter Cinema before the
-  return stop is hidden; focus elsewhere is untouched. In cover-only Cinema, the clipped
-  host stays inert, the dialog controls remain active and focus stays on Exit Cinema.
+  return stop is hidden. When the lapse removes the focused playback control or secondary
+  source link, focus moves to Enter Cinema on the stage, or Exit Cinema when a cover-only
+  Cinema stays open. A control the lapse leaves connected keeps focus. The host remembers
+  focus during render and handles detached controls in a separate layout effect on every
+  commit, only on the active selection's playable-to-refused transition. Live Cinema keeps
+  its existing close/opener restoration. In cover-only Cinema, the clipped host stays inert
+  and the dialog controls remain active.
 - **Playback labels stay whole.** Only primary buttons marked `data-playback-action`
   receive zero flex shrink and no wrapping. Play, Pause, Retry and Replay stay on one line;
   the source link takes the wrapping cost. Primary source links and gallery Open selection

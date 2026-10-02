@@ -54,5 +54,5 @@
     "dist-acceptance"
   ],
   "singleFileMatchesApplicationTipIsolationReceipt": "575d28f3a9989284b1e3b224a2a449495e7f1ad7da927a121e7531e7a1b97603",
-  "singleFileScratchDifference": "The unserved frozen-archive single-file build contained one extra unused Tailwind .blur rule (212 characters); final checkout build matches c846fa0 isolation build byte for byte. No single-file browser receipt claimed."
+  "singleFileScratchDifference": "The unserved frozen-archive single-file build contained one extra unused filter utility (212 characters); final checkout build matches c846fa0 isolation build byte for byte. No single-file browser receipt claimed."
 }
