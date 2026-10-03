@@ -1,0 +1,26 @@
+{
+  "who": "Beni",
+  "at": "2026-10-02T00:00:00Z",
+  "words": "FICTIONAL STUB FIXTURE. This is not Beni's provider authority.",
+  "hosts": [
+    "youtube.com",
+    "youtu.be",
+    "youtube-nocookie.com",
+    "ytimg.com",
+    "googlevideo.com",
+    "ggpht.com"
+  ],
+  "origin": "http://127.0.0.1:54113",
+  "ids": [
+    {
+      "id": "S4Stub00001",
+      "role": "unknown",
+      "source": "third-party"
+    },
+    {
+      "id": "S4Stub00002",
+      "role": "unknown",
+      "source": "third-party"
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+// Manual integration mutation controls. Every browser launch is guarded --stub.
+import fs from 'node:fs/promises'
+import path from 'node:path'
+import assert from 'node:assert/strict'
+import { execFileSync, spawnSync } from 'node:child_process'
+import { stopReasons } from './stops.ts'
+const [runtime, chrome, output] = process.argv.slice(2)
+if (!output) throw new Error('Usage: node --import tsx runner-mutations.mjs <playwright-module> <chrome> <new-output-directory>')
+const out = path.resolve(output); await fs.mkdir(out)
+const archive = path.join(out, 'archive'); await fs.mkdir(archive)
+const sha = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim()
+const gitDir = execFileSync('git', ['rev-parse', '--absolute-git-dir'], { encoding: 'utf8' }).trim()
+execFileSync('git', ['diff', '--exit-code', '11845cb21cfd0e87a1105e37e7b74e348739541c', sha, '--', 'src'])
+await fs.writeFile(path.join(out, 'source.tar'), execFileSync('git', ['archive', sha], { maxBuffer: 100 * 1024 * 1024 }))
+execFileSync('tar', ['-xf', path.join(out, 'source.tar'), '-C', archive])
+await fs.symlink(await fs.realpath('node_modules'), path.join(archive, 'node_modules'))
+await fs.cp('dist-acceptance', path.join(archive, 'dist-acceptance'), { recursive: true })
+// Read-only Git provenance from the source checkout; no index write or temporary commit.
+const env = { ...process.env, GIT_DIR: gitDir, GIT_WORK_TREE: archive }
+const rows = []
+async function probe(reason, color) {
+  const destination = path.join(out, `${reason}-${color}`)
+  const run = spawnSync(process.execPath, ['--import', 'tsx', 'docs/verification/moments-observation/runner.mjs',
+    '--stub', '--headless', '--port', '0', '--variant', reason, '--ceiling-ms', '10000',
+    '--runtime', runtime, '--chrome', chrome, '--out', destination], { cwd: archive, env, encoding: 'utf8', timeout: 20000 })
+  await fs.writeFile(destination + '.log', run.stdout + run.stderr)
+  const receipt = JSON.parse(await fs.readFile(path.join(destination, 'receipt.json'), 'utf8'))
+  assert.equal(receipt.network.providerContinued, 0)
+  assert.equal(receipt.network.unhandledProviderResponses.length, 0)
+  const assertionPassed = run.status === 1 && receipt.stopReason === reason
+  assert.equal(assertionPassed, color === 'green', `${reason} ${color}: expected-stop assertion did not change (${receipt.stopReason})`)
+  return { processExit: run.status, expectedStopAssertion: assertionPassed, actualReason: receipt.stopReason, providerNetworkRequests: 0 }
+}
+for (const reason of stopReasons) {
+  const policy = ['provider-before-play', 'unnamed-id'].includes(reason)
+  const file = path.join(archive, 'docs/verification/moments-observation', policy ? 'policy.ts' : 'stops.ts')
+  const original = await fs.readFile(file, 'utf8')
+  const from = policy ? `return result('stop', '${reason}')` : `return '${reason}'`
+  const to = policy ? `return result('release', '${reason}')` : 'return null'
+  assert(original.includes(from))
+  await fs.writeFile(file, original.replaceAll(from, to))
+  let red
+  try { red = await probe(reason, 'red') } finally { await fs.writeFile(file, original) }
+  const green = await probe(reason, 'green')
+  rows.push({ reason, file: path.basename(file), from, to, red, green })
+  await fs.writeFile(path.join(out, 'runner-mutations.json'), JSON.stringify({ sha, rows }, null, 2))
+  console.log(reason, 'red -> green')
+}

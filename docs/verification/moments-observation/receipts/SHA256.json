@@ -1,0 +1,18 @@
+{
+  "cinema-picture-finding.png": "9c4a38538e595f27e3ef80395bf8b2fd03d7ba67ba199b396b9d130fee4948a6",
+  "clean/authority-copy.json": "da314f557020e28f5b8f6a8e5a2cdeceb11bb308353be4ffb619a8f540ccf96e",
+  "clean/cinema-1000.png": "37e38aeab3a73bb5c2ddb459d496b61bd797996e6f25532b5bf1949e4aa80bc9",
+  "clean/cinema-360.png": "d6d59980c2615493b8a8471d55f168685ffd53ecece8aa297c84d5bb64a837dd",
+  "clean/cinema-390.png": "559ad8ac784d857a7a6fea75479e83be512c3df82cc8e73a0d954f7b42b2e64a",
+  "clean/observations.json": "e20a141af63a506d47f96a6571ee2d9b5e2e0f8133945c8736e6d4c933992ab2",
+  "clean/receipt.json": "afc06997caf2c8c780675c0c93d7a3e194c32824d8b107f29051025fe08a6e2d",
+  "clean/stage-1000.png": "27abdb32562c1893cb291200f0e19892f0def03644b696c5377457e769306cbd",
+  "clean/stage-360.png": "d976810c80158621b97d34363b2f56d76fe85501912452adc6ddf5475782ee4b",
+  "clean/stage-390.png": "ed0c4e6abf4063450626f05b577b10b9569d11791da34caad2b1fba22305b24c",
+  "final-local-checks.tar.gz": "ffc8bec71ac5afd22f2d8b6479010506f70b7bbd01cc49f4c328e5dcb9a3e240",
+  "full-evidence.tar.gz": "7b4e0dcbdbf91576efb8db453e97efeabcd4cac99b75707c120eb5662ce2bad3",
+  "mutations.json": "25755975357c6aedbd374463d91d79b7cc4de893aa84ef297e759e678b7a43bd",
+  "picture-finding.json": "c57cc3c9298e604bba5a109f4164b9cfc4867544d7839dddef09a5edacbf0ebe",
+  "proof.json": "a2433f60cd687ecd1fbe474cd44de4cedb93d593c39393a2244e144c1b91522a",
+  "runner-mutations.json": "4ef8c0a352e3092d8133f816dae1b1a0897492c3976f2befb2243c7a23ae1080"
+}

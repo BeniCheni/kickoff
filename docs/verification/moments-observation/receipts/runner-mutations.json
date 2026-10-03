@@ -1,0 +1,257 @@
+{
+  "sha": "515224be130f704590245844d1a886fd81d9a725",
+  "rows": [
+    {
+      "reason": "provider-before-play",
+      "file": "policy.ts",
+      "from": "return result('stop', 'provider-before-play')",
+      "to": "return result('release', 'provider-before-play')",
+      "red": {
+        "processExit": 1,
+        "expectedStopAssertion": false,
+        "actualReason": "frame-before-api",
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "processExit": 1,
+        "expectedStopAssertion": true,
+        "actualReason": "provider-before-play",
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "second-element",
+      "file": "stops.ts",
+      "from": "return 'second-element'",
+      "to": "return null",
+      "red": {
+        "processExit": 0,
+        "expectedStopAssertion": false,
+        "actualReason": null,
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "processExit": 1,
+        "expectedStopAssertion": true,
+        "actualReason": "second-element",
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "parent-changed",
+      "file": "stops.ts",
+      "from": "return 'parent-changed'",
+      "to": "return null",
+      "red": {
+        "processExit": 1,
+        "expectedStopAssertion": false,
+        "actualReason": "second-frame-request",
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "processExit": 1,
+        "expectedStopAssertion": true,
+        "actualReason": "parent-changed",
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "queue-covered",
+      "file": "stops.ts",
+      "from": "return 'queue-covered'",
+      "to": "return null",
+      "red": {
+        "processExit": 1,
+        "expectedStopAssertion": false,
+        "actualReason": "control-hit-missed",
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "processExit": 1,
+        "expectedStopAssertion": true,
+        "actualReason": "queue-covered",
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "navigation-waits",
+      "file": "stops.ts",
+      "from": "return 'navigation-waits'",
+      "to": "return null",
+      "red": {
+        "processExit": 1,
+        "expectedStopAssertion": false,
+        "actualReason": "operational-safety-ceiling",
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "processExit": 1,
+        "expectedStopAssertion": true,
+        "actualReason": "navigation-waits",
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "second-terminal-failure",
+      "file": "stops.ts",
+      "from": "return 'second-terminal-failure'",
+      "to": "return null",
+      "red": {
+        "processExit": 0,
+        "expectedStopAssertion": false,
+        "actualReason": null,
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "processExit": 1,
+        "expectedStopAssertion": true,
+        "actualReason": "second-terminal-failure",
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "unsampled-position",
+      "file": "stops.ts",
+      "from": "return 'unsampled-position'",
+      "to": "return null",
+      "red": {
+        "processExit": 0,
+        "expectedStopAssertion": false,
+        "actualReason": null,
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "processExit": 1,
+        "expectedStopAssertion": true,
+        "actualReason": "unsampled-position",
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "territory-150",
+      "file": "stops.ts",
+      "from": "return 'territory-150'",
+      "to": "return null",
+      "red": {
+        "processExit": 0,
+        "expectedStopAssertion": false,
+        "actualReason": null,
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "processExit": 1,
+        "expectedStopAssertion": true,
+        "actualReason": "territory-150",
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "error-153",
+      "file": "stops.ts",
+      "from": "return 'error-153'",
+      "to": "return null",
+      "red": {
+        "processExit": 1,
+        "expectedStopAssertion": false,
+        "actualReason": "operational-safety-ceiling",
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "processExit": 1,
+        "expectedStopAssertion": true,
+        "actualReason": "error-153",
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "warm-autoplay-blocked",
+      "file": "stops.ts",
+      "from": "return 'warm-autoplay-blocked'",
+      "to": "return null",
+      "red": {
+        "processExit": 1,
+        "expectedStopAssertion": false,
+        "actualReason": "operational-safety-ceiling",
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "processExit": 1,
+        "expectedStopAssertion": true,
+        "actualReason": "warm-autoplay-blocked",
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "parked-return-blank",
+      "file": "stops.ts",
+      "from": "return 'parked-return-blank'",
+      "to": "return null",
+      "red": {
+        "processExit": 0,
+        "expectedStopAssertion": false,
+        "actualReason": null,
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "processExit": 1,
+        "expectedStopAssertion": true,
+        "actualReason": "parked-return-blank",
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "resume-at-zero",
+      "file": "stops.ts",
+      "from": "return 'resume-at-zero'",
+      "to": "return null",
+      "red": {
+        "processExit": 0,
+        "expectedStopAssertion": false,
+        "actualReason": null,
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "processExit": 1,
+        "expectedStopAssertion": true,
+        "actualReason": "resume-at-zero",
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "ineligible-play",
+      "file": "stops.ts",
+      "from": "return 'ineligible-play'",
+      "to": "return null",
+      "red": {
+        "processExit": 0,
+        "expectedStopAssertion": false,
+        "actualReason": null,
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "processExit": 1,
+        "expectedStopAssertion": true,
+        "actualReason": "ineligible-play",
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "unnamed-id",
+      "file": "policy.ts",
+      "from": "return result('stop', 'unnamed-id')",
+      "to": "return result('release', 'unnamed-id')",
+      "red": {
+        "processExit": 0,
+        "expectedStopAssertion": false,
+        "actualReason": null,
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "processExit": 1,
+        "expectedStopAssertion": true,
+        "actualReason": "unnamed-id",
+        "providerNetworkRequests": 0
+      }
+    }
+  ]
+}

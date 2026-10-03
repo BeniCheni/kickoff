@@ -1,0 +1,4236 @@
+{
+  "startedAt": "2026-10-02T21:48:30.309Z",
+  "mode": "stub",
+  "status": "complete",
+  "stopReason": null,
+  "requests": [
+    {
+      "at": "2026-10-02T21:48:30.852Z",
+      "url": "http://127.0.0.1:54113/?tab=moments&lens=ledger",
+      "method": "GET",
+      "resourceType": "document",
+      "phase": "before-play",
+      "decision": {
+        "action": "release",
+        "reason": "local-or-fonts",
+        "next": {
+          "api": false,
+          "frames": []
+        },
+        "provider": false,
+        "ids": []
+      },
+      "parked": false,
+      "proposedReferer": null,
+      "disposition": "continued-local-or-fonts",
+      "sizes": {
+        "requestBodySize": 0,
+        "requestHeadersSize": 459,
+        "responseBodySize": 4418,
+        "responseHeadersSize": 150
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:30.869Z",
+      "url": "https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap",
+      "method": "GET",
+      "resourceType": "stylesheet",
+      "phase": "before-play",
+      "decision": {
+        "action": "release",
+        "reason": "local-or-fonts",
+        "next": {
+          "api": false,
+          "frames": []
+        },
+        "provider": false,
+        "ids": []
+      },
+      "parked": false,
+      "proposedReferer": "http://127.0.0.1:54113/",
+      "disposition": "continued-local-or-fonts",
+      "sizes": {
+        "requestBodySize": 0,
+        "requestHeadersSize": 350,
+        "responseBodySize": 1517,
+        "responseHeadersSize": 0
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:30.869Z",
+      "url": "http://127.0.0.1:54113/assets/index-BLxHeU-P.js",
+      "method": "GET",
+      "resourceType": "script",
+      "phase": "before-play",
+      "decision": {
+        "action": "release",
+        "reason": "local-or-fonts",
+        "next": {
+          "api": false,
+          "frames": []
+        },
+        "provider": false,
+        "ids": []
+      },
+      "parked": false,
+      "proposedReferer": "http://127.0.0.1:54113/?tab=moments&lens=ledger",
+      "disposition": "continued-local-or-fonts",
+      "sizes": {
+        "requestBodySize": 0,
+        "requestHeadersSize": 411,
+        "responseBodySize": 1047643,
+        "responseHeadersSize": 159
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:30.870Z",
+      "url": "http://127.0.0.1:54113/assets/index-CKjq5mb7.css",
+      "method": "GET",
+      "resourceType": "stylesheet",
+      "phase": "before-play",
+      "decision": {
+        "action": "release",
+        "reason": "local-or-fonts",
+        "next": {
+          "api": false,
+          "frames": []
+        },
+        "provider": false,
+        "ids": []
+      },
+      "parked": false,
+      "proposedReferer": "http://127.0.0.1:54113/?tab=moments&lens=ledger",
+      "disposition": "continued-local-or-fonts",
+      "sizes": {
+        "requestBodySize": 0,
+        "requestHeadersSize": 427,
+        "responseBodySize": 38966,
+        "responseHeadersSize": 150
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.013Z",
+      "url": "https://fonts.gstatic.com/s/oswald/v57/TK3IWkUHHAIjg75cFRf3bXL8LICs1_Fv40pKlN4NNSeSASz7FmlWHYjMdZwl.woff2",
+      "method": "GET",
+      "resourceType": "font",
+      "phase": "before-play",
+      "decision": {
+        "action": "release",
+        "reason": "local-or-fonts",
+        "next": {
+          "api": false,
+          "frames": []
+        },
+        "provider": false,
+        "ids": []
+      },
+      "parked": false,
+      "proposedReferer": "https://fonts.googleapis.com/",
+      "disposition": "continued-local-or-fonts",
+      "sizes": {
+        "requestBodySize": 0,
+        "requestHeadersSize": 448,
+        "responseBodySize": 21441,
+        "responseHeadersSize": 0
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.013Z",
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3twJwlBFgsAXHNk.woff2",
+      "method": "GET",
+      "resourceType": "font",
+      "phase": "before-play",
+      "decision": {
+        "action": "release",
+        "reason": "local-or-fonts",
+        "next": {
+          "api": false,
+          "frames": []
+        },
+        "provider": false,
+        "ids": []
+      },
+      "parked": false,
+      "proposedReferer": "https://fonts.googleapis.com/",
+      "disposition": "continued-local-or-fonts",
+      "sizes": {
+        "requestBodySize": 0,
+        "requestHeadersSize": 432,
+        "responseBodySize": 10087,
+        "responseHeadersSize": 0
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.013Z",
+      "url": "https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw.woff2",
+      "method": "GET",
+      "resourceType": "font",
+      "phase": "before-play",
+      "decision": {
+        "action": "release",
+        "reason": "local-or-fonts",
+        "next": {
+          "api": false,
+          "frames": []
+        },
+        "provider": false,
+        "ids": []
+      },
+      "parked": false,
+      "proposedReferer": "https://fonts.googleapis.com/",
+      "disposition": "continued-local-or-fonts",
+      "sizes": {
+        "requestBodySize": 0,
+        "requestHeadersSize": 429,
+        "responseBodySize": 48464,
+        "responseHeadersSize": 0
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.021Z",
+      "url": "http://127.0.0.1:54113/favicon-32.png",
+      "method": "GET",
+      "resourceType": "other",
+      "phase": "before-play",
+      "decision": {
+        "action": "release",
+        "reason": "local-or-fonts",
+        "next": {
+          "api": false,
+          "frames": []
+        },
+        "provider": false,
+        "ids": []
+      },
+      "parked": false,
+      "proposedReferer": "http://127.0.0.1:54113/?tab=moments&lens=ledger",
+      "disposition": "continued-local-or-fonts",
+      "sizes": {
+        "requestBodySize": 0,
+        "requestHeadersSize": 430,
+        "responseBodySize": 248,
+        "responseHeadersSize": 149
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.234Z",
+      "url": "https://www.youtube.com/iframe_api",
+      "method": "GET",
+      "resourceType": "script",
+      "phase": "after-play",
+      "decision": {
+        "action": "release",
+        "reason": "api-entry",
+        "next": {
+          "api": true,
+          "frames": []
+        },
+        "provider": true,
+        "ids": []
+      },
+      "parked": false,
+      "proposedReferer": "http://127.0.0.1:54113/",
+      "disposition": "local-or-aborted",
+      "sizes": {
+        "requestBodySize": 0,
+        "requestHeadersSize": 341,
+        "responseBodySize": 1883,
+        "responseHeadersSize": 72
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.248Z",
+      "url": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+      "method": "GET",
+      "resourceType": "document",
+      "phase": "after-play",
+      "decision": {
+        "action": "release",
+        "reason": "named-frame",
+        "next": {
+          "api": true,
+          "frames": [
+            "S4Stub00001"
+          ]
+        },
+        "provider": true,
+        "ids": [
+          "S4Stub00001"
+        ]
+      },
+      "parked": false,
+      "proposedReferer": "http://127.0.0.1:54113/",
+      "disposition": "local-or-aborted",
+      "sizes": {
+        "requestBodySize": 0,
+        "requestHeadersSize": 510,
+        "responseBodySize": 132,
+        "responseHeadersSize": 65
+      }
+    }
+  ],
+  "console": [],
+  "events": [
+    {
+      "at": "2026-10-02T21:48:30.867Z",
+      "kind": "structure",
+      "value": {
+        "frames": 0,
+        "apiElements": 0,
+        "parentChanged": false,
+        "instanceDied": false
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:30.868Z",
+      "kind": "structure",
+      "value": {
+        "frames": 0,
+        "apiElements": 0,
+        "parentChanged": false,
+        "instanceDied": false
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:30.868Z",
+      "kind": "structure",
+      "value": {
+        "frames": 0,
+        "apiElements": 0,
+        "parentChanged": false,
+        "instanceDied": false
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:30.868Z",
+      "kind": "structure",
+      "value": {
+        "frames": 0,
+        "apiElements": 0,
+        "parentChanged": false,
+        "instanceDied": false
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:30.868Z",
+      "kind": "structure",
+      "value": {
+        "frames": 0,
+        "apiElements": 0,
+        "parentChanged": false,
+        "instanceDied": false
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:30.962Z",
+      "kind": "dom",
+      "value": {
+        "width": 390,
+        "scrollWidth": 390,
+        "height": 844,
+        "placement": null,
+        "sameElement": true,
+        "parentChanged": false,
+        "rows": [],
+        "primary": [],
+        "status": [],
+        "frame": null
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:30.996Z",
+      "kind": "structure",
+      "value": {
+        "frames": 0,
+        "apiElements": 0,
+        "parentChanged": false,
+        "instanceDied": false
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.001Z",
+      "kind": "structure",
+      "value": {
+        "frames": 0,
+        "apiElements": 0,
+        "parentChanged": false,
+        "instanceDied": false
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.014Z",
+      "kind": "dom",
+      "value": {
+        "width": 390,
+        "scrollWidth": 390,
+        "height": 844,
+        "placement": "idle",
+        "sameElement": true,
+        "parentChanged": false,
+        "rows": [],
+        "primary": [
+          {
+            "tag": "BUTTON",
+            "text": "Open selection →"
+          },
+          {
+            "tag": "BUTTON",
+            "text": "Open selection →"
+          }
+        ],
+        "status": [],
+        "frame": null
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.130Z",
+      "kind": "click",
+      "value": {
+        "text": "Open selection →",
+        "label": null,
+        "queueId": null,
+        "at": 286.1000000014901
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.132Z",
+      "kind": "structure",
+      "value": {
+        "frames": 0,
+        "apiElements": 0,
+        "parentChanged": false,
+        "instanceDied": false
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.161Z",
+      "kind": "dom",
+      "value": {
+        "width": 390,
+        "scrollWidth": 390,
+        "height": 844,
+        "placement": "idle",
+        "sameElement": true,
+        "parentChanged": false,
+        "rows": [
+          {
+            "id": "kickoff-moments-slice-4-test-1",
+            "active": "true",
+            "visited": "true",
+            "rect": {
+              "x": 20,
+              "y": 1094.5625,
+              "width": 350,
+              "height": 60.5,
+              "top": 1094.5625,
+              "right": 370,
+              "bottom": 1155.0625,
+              "left": 20
+            },
+            "hitFrame": false,
+            "inViewport": false,
+            "intersects": false
+          },
+          {
+            "id": "kickoff-moments-slice-4-test-2",
+            "active": null,
+            "visited": "false",
+            "rect": {
+              "x": 20,
+              "y": 1156.0625,
+              "width": 350,
+              "height": 60.5,
+              "top": 1156.0625,
+              "right": 370,
+              "bottom": 1216.5625,
+              "left": 20
+            },
+            "hitFrame": false,
+            "inViewport": false,
+            "intersects": false
+          }
+        ],
+        "primary": [
+          {
+            "tag": "BUTTON",
+            "text": "Play"
+          }
+        ],
+        "status": [],
+        "frame": null
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.230Z",
+      "kind": "click",
+      "value": {
+        "text": "Play",
+        "label": null,
+        "queueId": null,
+        "at": 385.69999999925494
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.231Z",
+      "kind": "hook",
+      "value": {
+        "kind": "play",
+        "value": {
+          "itemId": "kickoff-moments-slice-4-test-1",
+          "attempt": 1,
+          "videoId": "S4Stub00001",
+          "position": 0,
+          "replay": false,
+          "resume": false
+        }
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.231Z",
+      "kind": "hook",
+      "value": {
+        "kind": "resume",
+        "value": false
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.234Z",
+      "kind": "structure",
+      "value": {
+        "frames": 0,
+        "apiElements": 1,
+        "parentChanged": false,
+        "instanceDied": false
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.246Z",
+      "kind": "hook",
+      "value": {
+        "kind": "instance",
+        "value": 1
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.247Z",
+      "kind": "structure",
+      "value": {
+        "frames": 1,
+        "apiElements": 1,
+        "parentChanged": false,
+        "instanceDied": false
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.276Z",
+      "kind": "hook",
+      "value": {
+        "kind": "ready",
+        "value": 1
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.277Z",
+      "kind": "hook",
+      "value": {
+        "kind": "dispatch",
+        "value": {
+          "itemId": "kickoff-moments-slice-4-test-1",
+          "attempt": 1,
+          "event": "playing"
+        }
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.293Z",
+      "kind": "dom",
+      "value": {
+        "width": 390,
+        "scrollWidth": 390,
+        "height": 844,
+        "placement": "stage",
+        "sameElement": true,
+        "parentChanged": false,
+        "rows": [
+          {
+            "id": "kickoff-moments-slice-4-test-1",
+            "active": "true",
+            "visited": "true",
+            "rect": {
+              "x": 20,
+              "y": 831.5625,
+              "width": 350,
+              "height": 60.5,
+              "top": 831.5625,
+              "right": 370,
+              "bottom": 892.0625,
+              "left": 20
+            },
+            "hitFrame": false,
+            "inViewport": false,
+            "intersects": false
+          },
+          {
+            "id": "kickoff-moments-slice-4-test-2",
+            "active": null,
+            "visited": "false",
+            "rect": {
+              "x": 20,
+              "y": 893.0625,
+              "width": 350,
+              "height": 60.5,
+              "top": 893.0625,
+              "right": 370,
+              "bottom": 953.5625,
+              "left": 20
+            },
+            "hitFrame": false,
+            "inViewport": false,
+            "intersects": false
+          }
+        ],
+        "primary": [
+          {
+            "tag": "BUTTON",
+            "text": "Pause"
+          }
+        ],
+        "status": [],
+        "frame": {
+          "rect": {
+            "x": 20,
+            "y": 91.328125,
+            "width": 350,
+            "height": 200,
+            "top": 91.328125,
+            "right": 370,
+            "bottom": 291.328125,
+            "left": 20
+          },
+          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+          "allow": "autoplay; encrypted-media",
+          "referrerpolicy": "strict-origin-when-cross-origin",
+          "allowfullscreen": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.362Z",
+      "kind": "click",
+      "value": {
+        "text": "Pause",
+        "label": null,
+        "queueId": null,
+        "at": 517.6999999992549
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.363Z",
+      "kind": "hook",
+      "value": {
+        "kind": "sample",
+        "value": 12
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.363Z",
+      "kind": "hook",
+      "value": {
+        "kind": "sample",
+        "value": 12
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.363Z",
+      "kind": "hook",
+      "value": {
+        "kind": "dispatch",
+        "value": {
+          "itemId": "kickoff-moments-slice-4-test-1",
+          "attempt": 1,
+          "event": "paused",
+          "position": 12
+        }
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.364Z",
+      "kind": "hook",
+      "value": {
+        "kind": "dispatch",
+        "value": {
+          "itemId": "kickoff-moments-slice-4-test-1",
+          "attempt": 1,
+          "event": "paused",
+          "position": 12
+        }
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.377Z",
+      "kind": "dom",
+      "value": {
+        "width": 390,
+        "scrollWidth": 390,
+        "height": 844,
+        "placement": "stage",
+        "sameElement": true,
+        "parentChanged": false,
+        "rows": [
+          {
+            "id": "kickoff-moments-slice-4-test-1",
+            "active": "true",
+            "visited": "true",
+            "rect": {
+              "x": 20,
+              "y": 831.5625,
+              "width": 350,
+              "height": 60.5,
+              "top": 831.5625,
+              "right": 370,
+              "bottom": 892.0625,
+              "left": 20
+            },
+            "hitFrame": false,
+            "inViewport": false,
+            "intersects": false
+          },
+          {
+            "id": "kickoff-moments-slice-4-test-2",
+            "active": null,
+            "visited": "false",
+            "rect": {
+              "x": 20,
+              "y": 893.0625,
+              "width": 350,
+              "height": 60.5,
+              "top": 893.0625,
+              "right": 370,
+              "bottom": 953.5625,
+              "left": 20
+            },
+            "hitFrame": false,
+            "inViewport": false,
+            "intersects": false
+          }
+        ],
+        "primary": [
+          {
+            "tag": "BUTTON",
+            "text": "Play"
+          }
+        ],
+        "status": [],
+        "frame": {
+          "rect": {
+            "x": 20,
+            "y": 91.328125,
+            "width": 350,
+            "height": 200,
+            "top": 91.328125,
+            "right": 370,
+            "bottom": 291.328125,
+            "left": 20
+          },
+          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+          "allow": "autoplay; encrypted-media",
+          "referrerpolicy": "strict-origin-when-cross-origin",
+          "allowfullscreen": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.680Z",
+      "kind": "click",
+      "value": {
+        "text": "Enter Cinema",
+        "label": null,
+        "queueId": null,
+        "at": 836.1000000014901
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.683Z",
+      "kind": "structure",
+      "value": {
+        "frames": 1,
+        "apiElements": 1,
+        "parentChanged": false,
+        "instanceDied": false
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.978Z",
+      "kind": "click",
+      "value": {
+        "text": "Exit Cinema",
+        "label": null,
+        "queueId": null,
+        "at": 1133.9000000022352
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:31.979Z",
+      "kind": "structure",
+      "value": {
+        "frames": 1,
+        "apiElements": 1,
+        "parentChanged": false,
+        "instanceDied": false
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:32.027Z",
+      "kind": "dom",
+      "value": {
+        "width": 1000,
+        "scrollWidth": 1000,
+        "height": 900,
+        "placement": "stage",
+        "sameElement": true,
+        "parentChanged": false,
+        "rows": [
+          {
+            "id": "kickoff-moments-slice-4-test-1",
+            "active": "true",
+            "visited": "true",
+            "rect": {
+              "x": 680,
+              "y": 438.0625,
+              "width": 300,
+              "height": 60.5,
+              "top": 438.0625,
+              "right": 980,
+              "bottom": 498.5625,
+              "left": 680
+            },
+            "hitFrame": false,
+            "inViewport": true,
+            "intersects": false
+          },
+          {
+            "id": "kickoff-moments-slice-4-test-2",
+            "active": null,
+            "visited": "false",
+            "rect": {
+              "x": 680,
+              "y": 499.5625,
+              "width": 300,
+              "height": 60.5,
+              "top": 499.5625,
+              "right": 980,
+              "bottom": 560.0625,
+              "left": 680
+            },
+            "hitFrame": false,
+            "inViewport": true,
+            "intersects": false
+          }
+        ],
+        "primary": [
+          {
+            "tag": "BUTTON",
+            "text": "Play"
+          }
+        ],
+        "status": [],
+        "frame": {
+          "rect": {
+            "x": 20,
+            "y": 301.828125,
+            "width": 632,
+            "height": 355.5,
+            "top": 301.828125,
+            "right": 652,
+            "bottom": 657.328125,
+            "left": 20
+          },
+          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+          "allow": "autoplay; encrypted-media",
+          "referrerpolicy": "strict-origin-when-cross-origin",
+          "allowfullscreen": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:32.301Z",
+      "kind": "click",
+      "value": {
+        "text": "Enter Cinema",
+        "label": null,
+        "queueId": null,
+        "at": 1455.699999999255
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:32.303Z",
+      "kind": "structure",
+      "value": {
+        "frames": 1,
+        "apiElements": 1,
+        "parentChanged": false,
+        "instanceDied": false
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:32.613Z",
+      "kind": "click",
+      "value": {
+        "text": "Exit Cinema",
+        "label": null,
+        "queueId": null,
+        "at": 1769
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:32.614Z",
+      "kind": "structure",
+      "value": {
+        "frames": 1,
+        "apiElements": 1,
+        "parentChanged": false,
+        "instanceDied": false
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:32.660Z",
+      "kind": "dom",
+      "value": {
+        "width": 360,
+        "scrollWidth": 360,
+        "height": 844,
+        "placement": "stage",
+        "sameElement": true,
+        "parentChanged": false,
+        "rows": [
+          {
+            "id": "kickoff-moments-slice-4-test-1",
+            "active": "true",
+            "visited": "true",
+            "rect": {
+              "x": 20,
+              "y": 1094.5625,
+              "width": 320,
+              "height": 60.5,
+              "top": 1094.5625,
+              "right": 340,
+              "bottom": 1155.0625,
+              "left": 20
+            },
+            "hitFrame": false,
+            "inViewport": false,
+            "intersects": false
+          },
+          {
+            "id": "kickoff-moments-slice-4-test-2",
+            "active": null,
+            "visited": "false",
+            "rect": {
+              "x": 20,
+              "y": 1156.0625,
+              "width": 320,
+              "height": 60.5,
+              "top": 1156.0625,
+              "right": 340,
+              "bottom": 1216.5625,
+              "left": 20
+            },
+            "hitFrame": false,
+            "inViewport": false,
+            "intersects": false
+          }
+        ],
+        "primary": [
+          {
+            "tag": "BUTTON",
+            "text": "Play"
+          }
+        ],
+        "status": [],
+        "frame": {
+          "rect": {
+            "x": 20,
+            "y": 354.328125,
+            "width": 320,
+            "height": 200,
+            "top": 354.328125,
+            "right": 340,
+            "bottom": 554.328125,
+            "left": 20
+          },
+          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+          "allow": "autoplay; encrypted-media",
+          "referrerpolicy": "strict-origin-when-cross-origin",
+          "allowfullscreen": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:32.913Z",
+      "kind": "click",
+      "value": {
+        "text": "Enter Cinema",
+        "label": null,
+        "queueId": null,
+        "at": 2068.300000000745
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:32.915Z",
+      "kind": "structure",
+      "value": {
+        "frames": 1,
+        "apiElements": 1,
+        "parentChanged": false,
+        "instanceDied": false
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.212Z",
+      "kind": "click",
+      "value": {
+        "text": "Exit Cinema",
+        "label": null,
+        "queueId": null,
+        "at": 2367.60000000149
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.213Z",
+      "kind": "structure",
+      "value": {
+        "frames": 1,
+        "apiElements": 1,
+        "parentChanged": false,
+        "instanceDied": false
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.311Z",
+      "kind": "click",
+      "value": {
+        "text": "← Gallery",
+        "label": null,
+        "queueId": null,
+        "at": 2466.800000000745
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.311Z",
+      "kind": "hook",
+      "value": {
+        "kind": "sample",
+        "value": 12
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.311Z",
+      "kind": "hook",
+      "value": {
+        "kind": "dispatch",
+        "value": {
+          "itemId": "kickoff-moments-slice-4-test-1",
+          "attempt": 1,
+          "event": "position",
+          "position": 12
+        }
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.311Z",
+      "kind": "hook",
+      "value": {
+        "kind": "sample",
+        "value": 12
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.312Z",
+      "kind": "hook",
+      "value": {
+        "kind": "dispatch",
+        "value": {
+          "itemId": "kickoff-moments-slice-4-test-1",
+          "attempt": 1,
+          "event": "paused",
+          "position": 12
+        }
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.312Z",
+      "kind": "structure",
+      "value": {
+        "frames": 1,
+        "apiElements": 1,
+        "parentChanged": false,
+        "instanceDied": false
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.324Z",
+      "kind": "dom",
+      "value": {
+        "width": 360,
+        "scrollWidth": 360,
+        "height": 844,
+        "placement": "parked",
+        "sameElement": true,
+        "parentChanged": false,
+        "rows": [],
+        "primary": [
+          {
+            "tag": "BUTTON",
+            "text": "Open selection →"
+          },
+          {
+            "tag": "BUTTON",
+            "text": "Open selection →"
+          }
+        ],
+        "status": [],
+        "frame": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          },
+          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+          "allow": "autoplay; encrypted-media",
+          "referrerpolicy": "strict-origin-when-cross-origin",
+          "allowfullscreen": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.513Z",
+      "kind": "click",
+      "value": {
+        "text": "Return to selection",
+        "label": null,
+        "queueId": null,
+        "at": 2669.300000000745
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.515Z",
+      "kind": "structure",
+      "value": {
+        "frames": 1,
+        "apiElements": 1,
+        "parentChanged": false,
+        "instanceDied": false
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.528Z",
+      "kind": "dom",
+      "value": {
+        "width": 360,
+        "scrollWidth": 360,
+        "height": 844,
+        "placement": "stage",
+        "sameElement": true,
+        "parentChanged": false,
+        "rows": [
+          {
+            "id": "kickoff-moments-slice-4-test-1",
+            "active": "true",
+            "visited": "true",
+            "rect": {
+              "x": 20,
+              "y": 461.5625,
+              "width": 320,
+              "height": 60.5,
+              "top": 461.5625,
+              "right": 340,
+              "bottom": 522.0625,
+              "left": 20
+            },
+            "hitFrame": false,
+            "inViewport": true,
+            "intersects": false
+          },
+          {
+            "id": "kickoff-moments-slice-4-test-2",
+            "active": null,
+            "visited": "false",
+            "rect": {
+              "x": 20,
+              "y": 523.0625,
+              "width": 320,
+              "height": 60.5,
+              "top": 523.0625,
+              "right": 340,
+              "bottom": 583.5625,
+              "left": 20
+            },
+            "hitFrame": false,
+            "inViewport": true,
+            "intersects": false
+          }
+        ],
+        "primary": [
+          {
+            "tag": "BUTTON",
+            "text": "Play"
+          }
+        ],
+        "status": [],
+        "frame": {
+          "rect": {
+            "x": 20,
+            "y": -278.671875,
+            "width": 320,
+            "height": 200,
+            "top": -278.671875,
+            "right": 340,
+            "bottom": -78.671875,
+            "left": 20
+          },
+          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+          "allow": "autoplay; encrypted-media",
+          "referrerpolicy": "strict-origin-when-cross-origin",
+          "allowfullscreen": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.614Z",
+      "kind": "click",
+      "value": {
+        "text": "NextObservation 2",
+        "label": "Next: Observation 2",
+        "queueId": null,
+        "at": 2769.400000002235
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.614Z",
+      "kind": "structure",
+      "value": {
+        "frames": 1,
+        "apiElements": 1,
+        "parentChanged": false,
+        "instanceDied": false
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.627Z",
+      "kind": "dom",
+      "value": {
+        "width": 360,
+        "scrollWidth": 360,
+        "height": 844,
+        "placement": "parked",
+        "sameElement": true,
+        "parentChanged": false,
+        "rows": [
+          {
+            "id": "kickoff-moments-slice-4-test-1",
+            "active": null,
+            "visited": "true",
+            "rect": {
+              "x": 20,
+              "y": 831.5625,
+              "width": 320,
+              "height": 60.5,
+              "top": 831.5625,
+              "right": 340,
+              "bottom": 892.0625,
+              "left": 20
+            },
+            "hitFrame": false,
+            "inViewport": false,
+            "intersects": false
+          },
+          {
+            "id": "kickoff-moments-slice-4-test-2",
+            "active": "true",
+            "visited": "true",
+            "rect": {
+              "x": 20,
+              "y": 893.0625,
+              "width": 320,
+              "height": 60.5,
+              "top": 893.0625,
+              "right": 340,
+              "bottom": 953.5625,
+              "left": 20
+            },
+            "hitFrame": false,
+            "inViewport": false,
+            "intersects": false
+          }
+        ],
+        "primary": [
+          {
+            "tag": "BUTTON",
+            "text": "Play"
+          }
+        ],
+        "status": [],
+        "frame": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          },
+          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+          "allow": "autoplay; encrypted-media",
+          "referrerpolicy": "strict-origin-when-cross-origin",
+          "allowfullscreen": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.714Z",
+      "kind": "click",
+      "value": {
+        "text": "Play",
+        "label": null,
+        "queueId": null,
+        "at": 2869
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.715Z",
+      "kind": "hook",
+      "value": {
+        "kind": "play",
+        "value": {
+          "itemId": "kickoff-moments-slice-4-test-2",
+          "attempt": 1,
+          "videoId": "S4Stub00002",
+          "position": 0,
+          "replay": false,
+          "resume": false
+        }
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.715Z",
+      "kind": "hook",
+      "value": {
+        "kind": "resume",
+        "value": false
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.715Z",
+      "kind": "hook",
+      "value": {
+        "kind": "sample",
+        "value": 0
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.715Z",
+      "kind": "hook",
+      "value": {
+        "kind": "dispatch",
+        "value": {
+          "itemId": "kickoff-moments-slice-4-test-2",
+          "attempt": 1,
+          "event": "position",
+          "position": 0
+        }
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.715Z",
+      "kind": "hook",
+      "value": {
+        "kind": "dispatch",
+        "value": {
+          "itemId": "kickoff-moments-slice-4-test-2",
+          "attempt": 1,
+          "event": "playing"
+        }
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.716Z",
+      "kind": "structure",
+      "value": {
+        "frames": 1,
+        "apiElements": 1,
+        "parentChanged": false,
+        "instanceDied": false
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.725Z",
+      "kind": "dom",
+      "value": {
+        "width": 360,
+        "scrollWidth": 360,
+        "height": 844,
+        "placement": "stage",
+        "sameElement": true,
+        "parentChanged": false,
+        "rows": [
+          {
+            "id": "kickoff-moments-slice-4-test-1",
+            "active": null,
+            "visited": "true",
+            "rect": {
+              "x": 20,
+              "y": 831.5625,
+              "width": 320,
+              "height": 60.5,
+              "top": 831.5625,
+              "right": 340,
+              "bottom": 892.0625,
+              "left": 20
+            },
+            "hitFrame": false,
+            "inViewport": false,
+            "intersects": false
+          },
+          {
+            "id": "kickoff-moments-slice-4-test-2",
+            "active": "true",
+            "visited": "true",
+            "rect": {
+              "x": 20,
+              "y": 893.0625,
+              "width": 320,
+              "height": 60.5,
+              "top": 893.0625,
+              "right": 340,
+              "bottom": 953.5625,
+              "left": 20
+            },
+            "hitFrame": false,
+            "inViewport": false,
+            "intersects": false
+          }
+        ],
+        "primary": [
+          {
+            "tag": "BUTTON",
+            "text": "Pause"
+          }
+        ],
+        "status": [],
+        "frame": {
+          "rect": {
+            "x": 20,
+            "y": 91.328125,
+            "width": 320,
+            "height": 200,
+            "top": 91.328125,
+            "right": 340,
+            "bottom": 291.328125,
+            "left": 20
+          },
+          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+          "allow": "autoplay; encrypted-media",
+          "referrerpolicy": "strict-origin-when-cross-origin",
+          "allowfullscreen": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.810Z",
+      "kind": "click",
+      "value": {
+        "text": "PreviousObservation 1",
+        "label": "Previous: Observation 1",
+        "queueId": null,
+        "at": 2966.10000000149
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.810Z",
+      "kind": "hook",
+      "value": {
+        "kind": "sample",
+        "value": 0
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.810Z",
+      "kind": "hook",
+      "value": {
+        "kind": "dispatch",
+        "value": {
+          "itemId": "kickoff-moments-slice-4-test-2",
+          "attempt": 1,
+          "event": "position",
+          "position": 0
+        }
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.811Z",
+      "kind": "hook",
+      "value": {
+        "kind": "sample",
+        "value": 0
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.811Z",
+      "kind": "hook",
+      "value": {
+        "kind": "dispatch",
+        "value": {
+          "itemId": "kickoff-moments-slice-4-test-2",
+          "attempt": 1,
+          "event": "paused",
+          "position": 0
+        }
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.811Z",
+      "kind": "structure",
+      "value": {
+        "frames": 1,
+        "apiElements": 1,
+        "parentChanged": false,
+        "instanceDied": false
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.826Z",
+      "kind": "dom",
+      "value": {
+        "width": 360,
+        "scrollWidth": 360,
+        "height": 844,
+        "placement": "parked",
+        "sameElement": true,
+        "parentChanged": false,
+        "rows": [
+          {
+            "id": "kickoff-moments-slice-4-test-1",
+            "active": "true",
+            "visited": "true",
+            "rect": {
+              "x": 20,
+              "y": 831.5625,
+              "width": 320,
+              "height": 60.5,
+              "top": 831.5625,
+              "right": 340,
+              "bottom": 892.0625,
+              "left": 20
+            },
+            "hitFrame": false,
+            "inViewport": false,
+            "intersects": false
+          },
+          {
+            "id": "kickoff-moments-slice-4-test-2",
+            "active": null,
+            "visited": "true",
+            "rect": {
+              "x": 20,
+              "y": 893.0625,
+              "width": 320,
+              "height": 60.5,
+              "top": 893.0625,
+              "right": 340,
+              "bottom": 953.5625,
+              "left": 20
+            },
+            "hitFrame": false,
+            "inViewport": false,
+            "intersects": false
+          }
+        ],
+        "primary": [
+          {
+            "tag": "BUTTON",
+            "text": "Play"
+          }
+        ],
+        "status": [],
+        "frame": {
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          },
+          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+          "allow": "autoplay; encrypted-media",
+          "referrerpolicy": "strict-origin-when-cross-origin",
+          "allowfullscreen": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.912Z",
+      "kind": "click",
+      "value": {
+        "text": "Play",
+        "label": null,
+        "queueId": null,
+        "at": 3068.10000000149
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.913Z",
+      "kind": "hook",
+      "value": {
+        "kind": "play",
+        "value": {
+          "itemId": "kickoff-moments-slice-4-test-1",
+          "attempt": 4,
+          "videoId": "S4Stub00001",
+          "position": 12,
+          "replay": false,
+          "resume": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.913Z",
+      "kind": "hook",
+      "value": {
+        "kind": "resume",
+        "value": false
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.913Z",
+      "kind": "hook",
+      "value": {
+        "kind": "sample",
+        "value": 12
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.914Z",
+      "kind": "hook",
+      "value": {
+        "kind": "resume",
+        "value": true
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.914Z",
+      "kind": "hook",
+      "value": {
+        "kind": "dispatch",
+        "value": {
+          "itemId": "kickoff-moments-slice-4-test-1",
+          "attempt": 4,
+          "event": "position",
+          "position": 12
+        }
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.914Z",
+      "kind": "hook",
+      "value": {
+        "kind": "dispatch",
+        "value": {
+          "itemId": "kickoff-moments-slice-4-test-1",
+          "attempt": 4,
+          "event": "playing"
+        }
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.914Z",
+      "kind": "structure",
+      "value": {
+        "frames": 1,
+        "apiElements": 1,
+        "parentChanged": false,
+        "instanceDied": false
+      }
+    },
+    {
+      "at": "2026-10-02T21:48:33.924Z",
+      "kind": "dom",
+      "value": {
+        "width": 360,
+        "scrollWidth": 360,
+        "height": 844,
+        "placement": "stage",
+        "sameElement": true,
+        "parentChanged": false,
+        "rows": [
+          {
+            "id": "kickoff-moments-slice-4-test-1",
+            "active": "true",
+            "visited": "true",
+            "rect": {
+              "x": 20,
+              "y": 848.0625,
+              "width": 320,
+              "height": 60.5,
+              "top": 848.0625,
+              "right": 340,
+              "bottom": 908.5625,
+              "left": 20
+            },
+            "hitFrame": false,
+            "inViewport": false,
+            "intersects": false
+          },
+          {
+            "id": "kickoff-moments-slice-4-test-2",
+            "active": null,
+            "visited": "true",
+            "rect": {
+              "x": 20,
+              "y": 909.5625,
+              "width": 320,
+              "height": 60.5,
+              "top": 909.5625,
+              "right": 340,
+              "bottom": 970.0625,
+              "left": 20
+            },
+            "hitFrame": false,
+            "inViewport": false,
+            "intersects": false
+          }
+        ],
+        "primary": [
+          {
+            "tag": "BUTTON",
+            "text": "Pause"
+          }
+        ],
+        "status": [
+          "Resuming from the last known position."
+        ],
+        "frame": {
+          "rect": {
+            "x": 20,
+            "y": 91.328125,
+            "width": 320,
+            "height": 200,
+            "top": 91.328125,
+            "right": 340,
+            "bottom": 291.328125,
+            "left": 20
+          },
+          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+          "allow": "autoplay; encrypted-media",
+          "referrerpolicy": "strict-origin-when-cross-origin",
+          "allowfullscreen": true
+        }
+      }
+    }
+  ],
+  "checkpoints": [
+    {
+      "label": "before-play",
+      "at": "2026-10-02T21:48:31.055Z",
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 844,
+      "placement": "idle",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Open selection →"
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Open selection →"
+        }
+      ],
+      "status": [],
+      "frame": null
+    },
+    {
+      "label": "click",
+      "name": "/Open selection/",
+      "parentReceived": true
+    },
+    {
+      "label": "A-cover",
+      "at": "2026-10-02T21:48:31.162Z",
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 844,
+      "placement": "idle",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [
+        {
+          "id": "kickoff-moments-slice-4-test-1",
+          "active": "true",
+          "visited": "true",
+          "rect": {
+            "x": 20,
+            "y": 831.5625,
+            "width": 350,
+            "height": 60.5,
+            "top": 831.5625,
+            "right": 370,
+            "bottom": 892.0625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": false,
+          "intersects": false
+        },
+        {
+          "id": "kickoff-moments-slice-4-test-2",
+          "active": null,
+          "visited": "false",
+          "rect": {
+            "x": 20,
+            "y": 893.0625,
+            "width": 350,
+            "height": 60.5,
+            "top": 893.0625,
+            "right": 370,
+            "bottom": 953.5625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": false,
+          "intersects": false
+        }
+      ],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Play"
+        }
+      ],
+      "status": [],
+      "frame": null
+    },
+    {
+      "label": "click",
+      "name": "Play",
+      "parentReceived": true
+    },
+    {
+      "label": "A-cold-result",
+      "at": "2026-10-02T21:48:31.294Z",
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 844,
+      "placement": "stage",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [
+        {
+          "id": "kickoff-moments-slice-4-test-1",
+          "active": "true",
+          "visited": "true",
+          "rect": {
+            "x": 20,
+            "y": 831.5625,
+            "width": 350,
+            "height": 60.5,
+            "top": 831.5625,
+            "right": 370,
+            "bottom": 892.0625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": false,
+          "intersects": false
+        },
+        {
+          "id": "kickoff-moments-slice-4-test-2",
+          "active": null,
+          "visited": "false",
+          "rect": {
+            "x": 20,
+            "y": 893.0625,
+            "width": 350,
+            "height": 60.5,
+            "top": 893.0625,
+            "right": 370,
+            "bottom": 953.5625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": false,
+          "intersects": false
+        }
+      ],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Pause"
+        }
+      ],
+      "status": [],
+      "frame": {
+        "rect": {
+          "x": 20,
+          "y": 91.328125,
+          "width": 350,
+          "height": 200,
+          "top": 91.328125,
+          "right": 370,
+          "bottom": 291.328125,
+          "left": 20
+        },
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "allow": "autoplay; encrypted-media",
+        "referrerpolicy": "strict-origin-when-cross-origin",
+        "allowfullscreen": true
+      }
+    },
+    {
+      "label": "click",
+      "name": "Pause",
+      "parentReceived": true
+    },
+    {
+      "label": "stage",
+      "at": "2026-10-02T21:48:31.425Z",
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 844,
+      "placement": "stage",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [
+        {
+          "id": "kickoff-moments-slice-4-test-1",
+          "active": "true",
+          "visited": "true",
+          "rect": {
+            "x": 20,
+            "y": 831.5625,
+            "width": 350,
+            "height": 60.5,
+            "top": 831.5625,
+            "right": 370,
+            "bottom": 892.0625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": false,
+          "intersects": false
+        },
+        {
+          "id": "kickoff-moments-slice-4-test-2",
+          "active": null,
+          "visited": "false",
+          "rect": {
+            "x": 20,
+            "y": 893.0625,
+            "width": 350,
+            "height": 60.5,
+            "top": 893.0625,
+            "right": 370,
+            "bottom": 953.5625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": false,
+          "intersects": false
+        }
+      ],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Play"
+        }
+      ],
+      "status": [],
+      "frame": {
+        "rect": {
+          "x": 20,
+          "y": 91.328125,
+          "width": 350,
+          "height": 200,
+          "top": 91.328125,
+          "right": 370,
+          "bottom": 291.328125,
+          "left": 20
+        },
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "allow": "autoplay; encrypted-media",
+        "referrerpolicy": "strict-origin-when-cross-origin",
+        "allowfullscreen": true
+      },
+      "lastSample": 12
+    },
+    {
+      "label": "queue-row-hit-0",
+      "at": "2026-10-02T21:48:31.543Z",
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 844,
+      "placement": "stage",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [
+        {
+          "id": "kickoff-moments-slice-4-test-1",
+          "active": "true",
+          "visited": "true",
+          "rect": {
+            "x": 20,
+            "y": 783.5625,
+            "width": 350,
+            "height": 60.5,
+            "top": 783.5625,
+            "right": 370,
+            "bottom": 844.0625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        },
+        {
+          "id": "kickoff-moments-slice-4-test-2",
+          "active": null,
+          "visited": "false",
+          "rect": {
+            "x": 20,
+            "y": 845.0625,
+            "width": 350,
+            "height": 60.5,
+            "top": 845.0625,
+            "right": 370,
+            "bottom": 905.5625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": false,
+          "intersects": false
+        }
+      ],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Play"
+        }
+      ],
+      "status": [],
+      "frame": {
+        "rect": {
+          "x": 20,
+          "y": 43.328125,
+          "width": 350,
+          "height": 200,
+          "top": 43.328125,
+          "right": 370,
+          "bottom": 243.328125,
+          "left": 20
+        },
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "allow": "autoplay; encrypted-media",
+        "referrerpolicy": "strict-origin-when-cross-origin",
+        "allowfullscreen": true
+      },
+      "lastSample": 12
+    },
+    {
+      "label": "queue-row-hit-1",
+      "at": "2026-10-02T21:48:31.610Z",
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 844,
+      "placement": "stage",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [
+        {
+          "id": "kickoff-moments-slice-4-test-1",
+          "active": "true",
+          "visited": "true",
+          "rect": {
+            "x": 20,
+            "y": 513.5625,
+            "width": 350,
+            "height": 60.5,
+            "top": 513.5625,
+            "right": 370,
+            "bottom": 574.0625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        },
+        {
+          "id": "kickoff-moments-slice-4-test-2",
+          "active": null,
+          "visited": "false",
+          "rect": {
+            "x": 20,
+            "y": 575.0625,
+            "width": 350,
+            "height": 60.5,
+            "top": 575.0625,
+            "right": 370,
+            "bottom": 635.5625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        }
+      ],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Play"
+        }
+      ],
+      "status": [],
+      "frame": {
+        "rect": {
+          "x": 20,
+          "y": -226.671875,
+          "width": 350,
+          "height": 200,
+          "top": -226.671875,
+          "right": 370,
+          "bottom": -26.671875,
+          "left": 20
+        },
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "allow": "autoplay; encrypted-media",
+        "referrerpolicy": "strict-origin-when-cross-origin",
+        "allowfullscreen": true
+      },
+      "lastSample": 12
+    },
+    {
+      "label": "click",
+      "name": "Enter Cinema",
+      "parentReceived": true
+    },
+    {
+      "label": "cinema",
+      "at": "2026-10-02T21:48:31.743Z",
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 844,
+      "placement": "cinema",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [
+        {
+          "id": "kickoff-moments-slice-4-test-1",
+          "active": "true",
+          "visited": "true",
+          "rect": {
+            "x": 20,
+            "y": 643.5625,
+            "width": 350,
+            "height": 60.5,
+            "top": 643.5625,
+            "right": 370,
+            "bottom": 704.0625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        },
+        {
+          "id": "kickoff-moments-slice-4-test-2",
+          "active": null,
+          "visited": "false",
+          "rect": {
+            "x": 20,
+            "y": 705.0625,
+            "width": 350,
+            "height": 60.5,
+            "top": 705.0625,
+            "right": 370,
+            "bottom": 765.5625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        }
+      ],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Play"
+        }
+      ],
+      "status": [],
+      "frame": {
+        "rect": {
+          "x": 20,
+          "y": 183.828125,
+          "width": 350,
+          "height": 200,
+          "top": 183.828125,
+          "right": 370,
+          "bottom": 383.828125,
+          "left": 20
+        },
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "allow": "autoplay; encrypted-media",
+        "referrerpolicy": "strict-origin-when-cross-origin",
+        "allowfullscreen": true
+      },
+      "lastSample": 12
+    },
+    {
+      "label": "queue-row-hit-0",
+      "at": "2026-10-02T21:48:31.842Z",
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 844,
+      "placement": "cinema",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [
+        {
+          "id": "kickoff-moments-slice-4-test-1",
+          "active": "true",
+          "visited": "true",
+          "rect": {
+            "x": 20,
+            "y": 643.5625,
+            "width": 350,
+            "height": 60.5,
+            "top": 643.5625,
+            "right": 370,
+            "bottom": 704.0625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        },
+        {
+          "id": "kickoff-moments-slice-4-test-2",
+          "active": null,
+          "visited": "false",
+          "rect": {
+            "x": 20,
+            "y": 705.0625,
+            "width": 350,
+            "height": 60.5,
+            "top": 705.0625,
+            "right": 370,
+            "bottom": 765.5625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        }
+      ],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Play"
+        }
+      ],
+      "status": [],
+      "frame": {
+        "rect": {
+          "x": 20,
+          "y": 183.828125,
+          "width": 350,
+          "height": 200,
+          "top": 183.828125,
+          "right": 370,
+          "bottom": 383.828125,
+          "left": 20
+        },
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "allow": "autoplay; encrypted-media",
+        "referrerpolicy": "strict-origin-when-cross-origin",
+        "allowfullscreen": true
+      },
+      "lastSample": 12
+    },
+    {
+      "label": "queue-row-hit-1",
+      "at": "2026-10-02T21:48:31.908Z",
+      "width": 390,
+      "scrollWidth": 390,
+      "height": 844,
+      "placement": "cinema",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [
+        {
+          "id": "kickoff-moments-slice-4-test-1",
+          "active": "true",
+          "visited": "true",
+          "rect": {
+            "x": 20,
+            "y": 643.5625,
+            "width": 350,
+            "height": 60.5,
+            "top": 643.5625,
+            "right": 370,
+            "bottom": 704.0625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        },
+        {
+          "id": "kickoff-moments-slice-4-test-2",
+          "active": null,
+          "visited": "false",
+          "rect": {
+            "x": 20,
+            "y": 705.0625,
+            "width": 350,
+            "height": 60.5,
+            "top": 705.0625,
+            "right": 370,
+            "bottom": 765.5625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        }
+      ],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Play"
+        }
+      ],
+      "status": [],
+      "frame": {
+        "rect": {
+          "x": 20,
+          "y": 183.828125,
+          "width": 350,
+          "height": 200,
+          "top": 183.828125,
+          "right": 370,
+          "bottom": 383.828125,
+          "left": 20
+        },
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "allow": "autoplay; encrypted-media",
+        "referrerpolicy": "strict-origin-when-cross-origin",
+        "allowfullscreen": true
+      },
+      "lastSample": 12
+    },
+    {
+      "label": "click",
+      "name": "Exit Cinema",
+      "parentReceived": true
+    },
+    {
+      "label": "stage",
+      "at": "2026-10-02T21:48:32.042Z",
+      "width": 1000,
+      "scrollWidth": 1000,
+      "height": 900,
+      "placement": "stage",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [
+        {
+          "id": "kickoff-moments-slice-4-test-1",
+          "active": "true",
+          "visited": "true",
+          "rect": {
+            "x": 680,
+            "y": 438.0625,
+            "width": 300,
+            "height": 60.5,
+            "top": 438.0625,
+            "right": 980,
+            "bottom": 498.5625,
+            "left": 680
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        },
+        {
+          "id": "kickoff-moments-slice-4-test-2",
+          "active": null,
+          "visited": "false",
+          "rect": {
+            "x": 680,
+            "y": 499.5625,
+            "width": 300,
+            "height": 60.5,
+            "top": 499.5625,
+            "right": 980,
+            "bottom": 560.0625,
+            "left": 680
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        }
+      ],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Play"
+        }
+      ],
+      "status": [],
+      "frame": {
+        "rect": {
+          "x": 20,
+          "y": 301.828125,
+          "width": 632,
+          "height": 355.5,
+          "top": 301.828125,
+          "right": 652,
+          "bottom": 657.328125,
+          "left": 20
+        },
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "allow": "autoplay; encrypted-media",
+        "referrerpolicy": "strict-origin-when-cross-origin",
+        "allowfullscreen": true
+      },
+      "lastSample": 12
+    },
+    {
+      "label": "queue-row-hit-0",
+      "at": "2026-10-02T21:48:32.160Z",
+      "width": 1000,
+      "scrollWidth": 1000,
+      "height": 900,
+      "placement": "stage",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [
+        {
+          "id": "kickoff-moments-slice-4-test-1",
+          "active": "true",
+          "visited": "true",
+          "rect": {
+            "x": 680,
+            "y": 438.0625,
+            "width": 300,
+            "height": 60.5,
+            "top": 438.0625,
+            "right": 980,
+            "bottom": 498.5625,
+            "left": 680
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        },
+        {
+          "id": "kickoff-moments-slice-4-test-2",
+          "active": null,
+          "visited": "false",
+          "rect": {
+            "x": 680,
+            "y": 499.5625,
+            "width": 300,
+            "height": 60.5,
+            "top": 499.5625,
+            "right": 980,
+            "bottom": 560.0625,
+            "left": 680
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        }
+      ],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Play"
+        }
+      ],
+      "status": [],
+      "frame": {
+        "rect": {
+          "x": 20,
+          "y": 301.828125,
+          "width": 632,
+          "height": 355.5,
+          "top": 301.828125,
+          "right": 652,
+          "bottom": 657.328125,
+          "left": 20
+        },
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "allow": "autoplay; encrypted-media",
+        "referrerpolicy": "strict-origin-when-cross-origin",
+        "allowfullscreen": true
+      },
+      "lastSample": 12
+    },
+    {
+      "label": "queue-row-hit-1",
+      "at": "2026-10-02T21:48:32.227Z",
+      "width": 1000,
+      "scrollWidth": 1000,
+      "height": 900,
+      "placement": "stage",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [
+        {
+          "id": "kickoff-moments-slice-4-test-1",
+          "active": "true",
+          "visited": "true",
+          "rect": {
+            "x": 680,
+            "y": 438.0625,
+            "width": 300,
+            "height": 60.5,
+            "top": 438.0625,
+            "right": 980,
+            "bottom": 498.5625,
+            "left": 680
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        },
+        {
+          "id": "kickoff-moments-slice-4-test-2",
+          "active": null,
+          "visited": "false",
+          "rect": {
+            "x": 680,
+            "y": 499.5625,
+            "width": 300,
+            "height": 60.5,
+            "top": 499.5625,
+            "right": 980,
+            "bottom": 560.0625,
+            "left": 680
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        }
+      ],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Play"
+        }
+      ],
+      "status": [],
+      "frame": {
+        "rect": {
+          "x": 20,
+          "y": 301.828125,
+          "width": 632,
+          "height": 355.5,
+          "top": 301.828125,
+          "right": 652,
+          "bottom": 657.328125,
+          "left": 20
+        },
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "allow": "autoplay; encrypted-media",
+        "referrerpolicy": "strict-origin-when-cross-origin",
+        "allowfullscreen": true
+      },
+      "lastSample": 12
+    },
+    {
+      "label": "click",
+      "name": "Enter Cinema",
+      "parentReceived": true
+    },
+    {
+      "label": "cinema",
+      "at": "2026-10-02T21:48:32.361Z",
+      "width": 1000,
+      "scrollWidth": 1000,
+      "height": 900,
+      "placement": "cinema",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [
+        {
+          "id": "kickoff-moments-slice-4-test-1",
+          "active": "true",
+          "visited": "true",
+          "rect": {
+            "x": 680,
+            "y": 136.234375,
+            "width": 300,
+            "height": 60.5,
+            "top": 136.234375,
+            "right": 980,
+            "bottom": 196.734375,
+            "left": 680
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        },
+        {
+          "id": "kickoff-moments-slice-4-test-2",
+          "active": null,
+          "visited": "false",
+          "rect": {
+            "x": 680,
+            "y": 197.734375,
+            "width": 300,
+            "height": 60.5,
+            "top": 197.734375,
+            "right": 980,
+            "bottom": 258.234375,
+            "left": 680
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        }
+      ],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Play"
+        }
+      ],
+      "status": [],
+      "frame": {
+        "rect": {
+          "x": 20,
+          "y": 183.828125,
+          "width": 632,
+          "height": 355.5,
+          "top": 183.828125,
+          "right": 652,
+          "bottom": 539.328125,
+          "left": 20
+        },
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "allow": "autoplay; encrypted-media",
+        "referrerpolicy": "strict-origin-when-cross-origin",
+        "allowfullscreen": true
+      },
+      "lastSample": 12
+    },
+    {
+      "label": "queue-row-hit-0",
+      "at": "2026-10-02T21:48:32.476Z",
+      "width": 1000,
+      "scrollWidth": 1000,
+      "height": 900,
+      "placement": "cinema",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [
+        {
+          "id": "kickoff-moments-slice-4-test-1",
+          "active": "true",
+          "visited": "true",
+          "rect": {
+            "x": 680,
+            "y": 136.234375,
+            "width": 300,
+            "height": 60.5,
+            "top": 136.234375,
+            "right": 980,
+            "bottom": 196.734375,
+            "left": 680
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        },
+        {
+          "id": "kickoff-moments-slice-4-test-2",
+          "active": null,
+          "visited": "false",
+          "rect": {
+            "x": 680,
+            "y": 197.734375,
+            "width": 300,
+            "height": 60.5,
+            "top": 197.734375,
+            "right": 980,
+            "bottom": 258.234375,
+            "left": 680
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        }
+      ],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Play"
+        }
+      ],
+      "status": [],
+      "frame": {
+        "rect": {
+          "x": 20,
+          "y": 183.828125,
+          "width": 632,
+          "height": 355.5,
+          "top": 183.828125,
+          "right": 652,
+          "bottom": 539.328125,
+          "left": 20
+        },
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "allow": "autoplay; encrypted-media",
+        "referrerpolicy": "strict-origin-when-cross-origin",
+        "allowfullscreen": true
+      },
+      "lastSample": 12
+    },
+    {
+      "label": "queue-row-hit-1",
+      "at": "2026-10-02T21:48:32.542Z",
+      "width": 1000,
+      "scrollWidth": 1000,
+      "height": 900,
+      "placement": "cinema",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [
+        {
+          "id": "kickoff-moments-slice-4-test-1",
+          "active": "true",
+          "visited": "true",
+          "rect": {
+            "x": 680,
+            "y": 136.234375,
+            "width": 300,
+            "height": 60.5,
+            "top": 136.234375,
+            "right": 980,
+            "bottom": 196.734375,
+            "left": 680
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        },
+        {
+          "id": "kickoff-moments-slice-4-test-2",
+          "active": null,
+          "visited": "false",
+          "rect": {
+            "x": 680,
+            "y": 197.734375,
+            "width": 300,
+            "height": 60.5,
+            "top": 197.734375,
+            "right": 980,
+            "bottom": 258.234375,
+            "left": 680
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        }
+      ],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Play"
+        }
+      ],
+      "status": [],
+      "frame": {
+        "rect": {
+          "x": 20,
+          "y": 183.828125,
+          "width": 632,
+          "height": 355.5,
+          "top": 183.828125,
+          "right": 652,
+          "bottom": 539.328125,
+          "left": 20
+        },
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "allow": "autoplay; encrypted-media",
+        "referrerpolicy": "strict-origin-when-cross-origin",
+        "allowfullscreen": true
+      },
+      "lastSample": 12
+    },
+    {
+      "label": "click",
+      "name": "Exit Cinema",
+      "parentReceived": true
+    },
+    {
+      "label": "stage",
+      "at": "2026-10-02T21:48:32.677Z",
+      "width": 360,
+      "scrollWidth": 360,
+      "height": 844,
+      "placement": "stage",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [
+        {
+          "id": "kickoff-moments-slice-4-test-1",
+          "active": "true",
+          "visited": "true",
+          "rect": {
+            "x": 20,
+            "y": 1094.5625,
+            "width": 320,
+            "height": 60.5,
+            "top": 1094.5625,
+            "right": 340,
+            "bottom": 1155.0625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": false,
+          "intersects": false
+        },
+        {
+          "id": "kickoff-moments-slice-4-test-2",
+          "active": null,
+          "visited": "false",
+          "rect": {
+            "x": 20,
+            "y": 1156.0625,
+            "width": 320,
+            "height": 60.5,
+            "top": 1156.0625,
+            "right": 340,
+            "bottom": 1216.5625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": false,
+          "intersects": false
+        }
+      ],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Play"
+        }
+      ],
+      "status": [],
+      "frame": {
+        "rect": {
+          "x": 20,
+          "y": 354.328125,
+          "width": 320,
+          "height": 200,
+          "top": 354.328125,
+          "right": 340,
+          "bottom": 554.328125,
+          "left": 20
+        },
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "allow": "autoplay; encrypted-media",
+        "referrerpolicy": "strict-origin-when-cross-origin",
+        "allowfullscreen": true
+      },
+      "lastSample": 12
+    },
+    {
+      "label": "queue-row-hit-0",
+      "at": "2026-10-02T21:48:32.776Z",
+      "width": 360,
+      "scrollWidth": 360,
+      "height": 844,
+      "placement": "stage",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [
+        {
+          "id": "kickoff-moments-slice-4-test-1",
+          "active": "true",
+          "visited": "true",
+          "rect": {
+            "x": 20,
+            "y": 461.5625,
+            "width": 320,
+            "height": 60.5,
+            "top": 461.5625,
+            "right": 340,
+            "bottom": 522.0625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        },
+        {
+          "id": "kickoff-moments-slice-4-test-2",
+          "active": null,
+          "visited": "false",
+          "rect": {
+            "x": 20,
+            "y": 523.0625,
+            "width": 320,
+            "height": 60.5,
+            "top": 523.0625,
+            "right": 340,
+            "bottom": 583.5625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        }
+      ],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Play"
+        }
+      ],
+      "status": [],
+      "frame": {
+        "rect": {
+          "x": 20,
+          "y": -278.671875,
+          "width": 320,
+          "height": 200,
+          "top": -278.671875,
+          "right": 340,
+          "bottom": -78.671875,
+          "left": 20
+        },
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "allow": "autoplay; encrypted-media",
+        "referrerpolicy": "strict-origin-when-cross-origin",
+        "allowfullscreen": true
+      },
+      "lastSample": 12
+    },
+    {
+      "label": "queue-row-hit-1",
+      "at": "2026-10-02T21:48:32.842Z",
+      "width": 360,
+      "scrollWidth": 360,
+      "height": 844,
+      "placement": "stage",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [
+        {
+          "id": "kickoff-moments-slice-4-test-1",
+          "active": "true",
+          "visited": "true",
+          "rect": {
+            "x": 20,
+            "y": 461.5625,
+            "width": 320,
+            "height": 60.5,
+            "top": 461.5625,
+            "right": 340,
+            "bottom": 522.0625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        },
+        {
+          "id": "kickoff-moments-slice-4-test-2",
+          "active": null,
+          "visited": "false",
+          "rect": {
+            "x": 20,
+            "y": 523.0625,
+            "width": 320,
+            "height": 60.5,
+            "top": 523.0625,
+            "right": 340,
+            "bottom": 583.5625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        }
+      ],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Play"
+        }
+      ],
+      "status": [],
+      "frame": {
+        "rect": {
+          "x": 20,
+          "y": -278.671875,
+          "width": 320,
+          "height": 200,
+          "top": -278.671875,
+          "right": 340,
+          "bottom": -78.671875,
+          "left": 20
+        },
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "allow": "autoplay; encrypted-media",
+        "referrerpolicy": "strict-origin-when-cross-origin",
+        "allowfullscreen": true
+      },
+      "lastSample": 12
+    },
+    {
+      "label": "click",
+      "name": "Enter Cinema",
+      "parentReceived": true
+    },
+    {
+      "label": "cinema",
+      "at": "2026-10-02T21:48:32.976Z",
+      "width": 360,
+      "scrollWidth": 360,
+      "height": 844,
+      "placement": "cinema",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [
+        {
+          "id": "kickoff-moments-slice-4-test-1",
+          "active": "true",
+          "visited": "true",
+          "rect": {
+            "x": 20,
+            "y": 643.5625,
+            "width": 320,
+            "height": 60.5,
+            "top": 643.5625,
+            "right": 340,
+            "bottom": 704.0625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        },
+        {
+          "id": "kickoff-moments-slice-4-test-2",
+          "active": null,
+          "visited": "false",
+          "rect": {
+            "x": 20,
+            "y": 705.0625,
+            "width": 320,
+            "height": 60.5,
+            "top": 705.0625,
+            "right": 340,
+            "bottom": 765.5625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        }
+      ],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Play"
+        }
+      ],
+      "status": [],
+      "frame": {
+        "rect": {
+          "x": 20,
+          "y": 183.828125,
+          "width": 320,
+          "height": 200,
+          "top": 183.828125,
+          "right": 340,
+          "bottom": 383.828125,
+          "left": 20
+        },
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "allow": "autoplay; encrypted-media",
+        "referrerpolicy": "strict-origin-when-cross-origin",
+        "allowfullscreen": true
+      },
+      "lastSample": 12
+    },
+    {
+      "label": "queue-row-hit-0",
+      "at": "2026-10-02T21:48:33.077Z",
+      "width": 360,
+      "scrollWidth": 360,
+      "height": 844,
+      "placement": "cinema",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [
+        {
+          "id": "kickoff-moments-slice-4-test-1",
+          "active": "true",
+          "visited": "true",
+          "rect": {
+            "x": 20,
+            "y": 643.5625,
+            "width": 320,
+            "height": 60.5,
+            "top": 643.5625,
+            "right": 340,
+            "bottom": 704.0625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        },
+        {
+          "id": "kickoff-moments-slice-4-test-2",
+          "active": null,
+          "visited": "false",
+          "rect": {
+            "x": 20,
+            "y": 705.0625,
+            "width": 320,
+            "height": 60.5,
+            "top": 705.0625,
+            "right": 340,
+            "bottom": 765.5625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        }
+      ],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Play"
+        }
+      ],
+      "status": [],
+      "frame": {
+        "rect": {
+          "x": 20,
+          "y": 183.828125,
+          "width": 320,
+          "height": 200,
+          "top": 183.828125,
+          "right": 340,
+          "bottom": 383.828125,
+          "left": 20
+        },
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "allow": "autoplay; encrypted-media",
+        "referrerpolicy": "strict-origin-when-cross-origin",
+        "allowfullscreen": true
+      },
+      "lastSample": 12
+    },
+    {
+      "label": "queue-row-hit-1",
+      "at": "2026-10-02T21:48:33.142Z",
+      "width": 360,
+      "scrollWidth": 360,
+      "height": 844,
+      "placement": "cinema",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [
+        {
+          "id": "kickoff-moments-slice-4-test-1",
+          "active": "true",
+          "visited": "true",
+          "rect": {
+            "x": 20,
+            "y": 643.5625,
+            "width": 320,
+            "height": 60.5,
+            "top": 643.5625,
+            "right": 340,
+            "bottom": 704.0625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        },
+        {
+          "id": "kickoff-moments-slice-4-test-2",
+          "active": null,
+          "visited": "false",
+          "rect": {
+            "x": 20,
+            "y": 705.0625,
+            "width": 320,
+            "height": 60.5,
+            "top": 705.0625,
+            "right": 340,
+            "bottom": 765.5625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": true,
+          "intersects": false
+        }
+      ],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Play"
+        }
+      ],
+      "status": [],
+      "frame": {
+        "rect": {
+          "x": 20,
+          "y": 183.828125,
+          "width": 320,
+          "height": 200,
+          "top": 183.828125,
+          "right": 340,
+          "bottom": 383.828125,
+          "left": 20
+        },
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "allow": "autoplay; encrypted-media",
+        "referrerpolicy": "strict-origin-when-cross-origin",
+        "allowfullscreen": true
+      },
+      "lastSample": 12
+    },
+    {
+      "label": "click",
+      "name": "Exit Cinema",
+      "parentReceived": true
+    },
+    {
+      "label": "before-park",
+      "at": "2026-10-02T21:48:33.243Z",
+      "width": 360,
+      "scrollWidth": 360,
+      "height": 844,
+      "placement": "stage",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [
+        {
+          "id": "kickoff-moments-slice-4-test-1",
+          "active": "true",
+          "visited": "true",
+          "rect": {
+            "x": 20,
+            "y": 1094.5625,
+            "width": 320,
+            "height": 60.5,
+            "top": 1094.5625,
+            "right": 340,
+            "bottom": 1155.0625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": false,
+          "intersects": false
+        },
+        {
+          "id": "kickoff-moments-slice-4-test-2",
+          "active": null,
+          "visited": "false",
+          "rect": {
+            "x": 20,
+            "y": 1156.0625,
+            "width": 320,
+            "height": 60.5,
+            "top": 1156.0625,
+            "right": 340,
+            "bottom": 1216.5625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": false,
+          "intersects": false
+        }
+      ],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Play"
+        }
+      ],
+      "status": [],
+      "frame": {
+        "rect": {
+          "x": 20,
+          "y": 354.328125,
+          "width": 320,
+          "height": 200,
+          "top": 354.328125,
+          "right": 340,
+          "bottom": 554.328125,
+          "left": 20
+        },
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "allow": "autoplay; encrypted-media",
+        "referrerpolicy": "strict-origin-when-cross-origin",
+        "allowfullscreen": true
+      },
+      "lastSample": 12
+    },
+    {
+      "label": "click",
+      "name": "← Gallery",
+      "parentReceived": true
+    },
+    {
+      "label": "parked",
+      "at": "2026-10-02T21:48:33.343Z",
+      "width": 360,
+      "scrollWidth": 360,
+      "height": 844,
+      "placement": "parked",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Open selection →"
+        },
+        {
+          "tag": "BUTTON",
+          "text": "Open selection →"
+        }
+      ],
+      "status": [],
+      "frame": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "allow": "autoplay; encrypted-media",
+        "referrerpolicy": "strict-origin-when-cross-origin",
+        "allowfullscreen": true
+      },
+      "lastSample": 12
+    },
+    {
+      "label": "click",
+      "name": "Return to selection",
+      "parentReceived": true
+    },
+    {
+      "label": "parked-return",
+      "at": "2026-10-02T21:48:33.544Z",
+      "width": 360,
+      "scrollWidth": 360,
+      "height": 844,
+      "placement": "stage",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [
+        {
+          "id": "kickoff-moments-slice-4-test-1",
+          "active": "true",
+          "visited": "true",
+          "rect": {
+            "x": 20,
+            "y": 831.5625,
+            "width": 320,
+            "height": 60.5,
+            "top": 831.5625,
+            "right": 340,
+            "bottom": 892.0625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": false,
+          "intersects": false
+        },
+        {
+          "id": "kickoff-moments-slice-4-test-2",
+          "active": null,
+          "visited": "false",
+          "rect": {
+            "x": 20,
+            "y": 893.0625,
+            "width": 320,
+            "height": 60.5,
+            "top": 893.0625,
+            "right": 340,
+            "bottom": 953.5625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": false,
+          "intersects": false
+        }
+      ],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Play"
+        }
+      ],
+      "status": [],
+      "frame": {
+        "rect": {
+          "x": 20,
+          "y": 91.328125,
+          "width": 320,
+          "height": 200,
+          "top": 91.328125,
+          "right": 340,
+          "bottom": 291.328125,
+          "left": 20
+        },
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "allow": "autoplay; encrypted-media",
+        "referrerpolicy": "strict-origin-when-cross-origin",
+        "allowfullscreen": true
+      },
+      "lastSample": 12
+    },
+    {
+      "label": "click",
+      "name": "/^Next:/",
+      "parentReceived": true
+    },
+    {
+      "label": "next-without-provider-reply",
+      "at": "2026-10-02T21:48:33.643Z",
+      "width": 360,
+      "scrollWidth": 360,
+      "height": 844,
+      "placement": "parked",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [
+        {
+          "id": "kickoff-moments-slice-4-test-1",
+          "active": null,
+          "visited": "true",
+          "rect": {
+            "x": 20,
+            "y": 831.5625,
+            "width": 320,
+            "height": 60.5,
+            "top": 831.5625,
+            "right": 340,
+            "bottom": 892.0625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": false,
+          "intersects": false
+        },
+        {
+          "id": "kickoff-moments-slice-4-test-2",
+          "active": "true",
+          "visited": "true",
+          "rect": {
+            "x": 20,
+            "y": 893.0625,
+            "width": 320,
+            "height": 60.5,
+            "top": 893.0625,
+            "right": 340,
+            "bottom": 953.5625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": false,
+          "intersects": false
+        }
+      ],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Play"
+        }
+      ],
+      "status": [],
+      "frame": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "allow": "autoplay; encrypted-media",
+        "referrerpolicy": "strict-origin-when-cross-origin",
+        "allowfullscreen": true
+      },
+      "lastSample": 12
+    },
+    {
+      "label": "click",
+      "name": "Play",
+      "parentReceived": true
+    },
+    {
+      "label": "B-warm-result",
+      "at": "2026-10-02T21:48:33.745Z",
+      "width": 360,
+      "scrollWidth": 360,
+      "height": 844,
+      "placement": "stage",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [
+        {
+          "id": "kickoff-moments-slice-4-test-1",
+          "active": null,
+          "visited": "true",
+          "rect": {
+            "x": 20,
+            "y": 831.5625,
+            "width": 320,
+            "height": 60.5,
+            "top": 831.5625,
+            "right": 340,
+            "bottom": 892.0625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": false,
+          "intersects": false
+        },
+        {
+          "id": "kickoff-moments-slice-4-test-2",
+          "active": "true",
+          "visited": "true",
+          "rect": {
+            "x": 20,
+            "y": 893.0625,
+            "width": 320,
+            "height": 60.5,
+            "top": 893.0625,
+            "right": 340,
+            "bottom": 953.5625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": false,
+          "intersects": false
+        }
+      ],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Pause"
+        }
+      ],
+      "status": [],
+      "frame": {
+        "rect": {
+          "x": 20,
+          "y": 91.328125,
+          "width": 320,
+          "height": 200,
+          "top": 91.328125,
+          "right": 340,
+          "bottom": 291.328125,
+          "left": 20
+        },
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "allow": "autoplay; encrypted-media",
+        "referrerpolicy": "strict-origin-when-cross-origin",
+        "allowfullscreen": true
+      },
+      "lastSample": 0
+    },
+    {
+      "label": "click",
+      "name": "/^Previous:/",
+      "parentReceived": true
+    },
+    {
+      "label": "previous-without-provider-reply",
+      "at": "2026-10-02T21:48:33.842Z",
+      "width": 360,
+      "scrollWidth": 360,
+      "height": 844,
+      "placement": "parked",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [
+        {
+          "id": "kickoff-moments-slice-4-test-1",
+          "active": "true",
+          "visited": "true",
+          "rect": {
+            "x": 20,
+            "y": 831.5625,
+            "width": 320,
+            "height": 60.5,
+            "top": 831.5625,
+            "right": 340,
+            "bottom": 892.0625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": false,
+          "intersects": false
+        },
+        {
+          "id": "kickoff-moments-slice-4-test-2",
+          "active": null,
+          "visited": "true",
+          "rect": {
+            "x": 20,
+            "y": 893.0625,
+            "width": 320,
+            "height": 60.5,
+            "top": 893.0625,
+            "right": 340,
+            "bottom": 953.5625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": false,
+          "intersects": false
+        }
+      ],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Play"
+        }
+      ],
+      "status": [],
+      "frame": {
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "width": 0,
+          "height": 0,
+          "top": 0,
+          "right": 0,
+          "bottom": 0,
+          "left": 0
+        },
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "allow": "autoplay; encrypted-media",
+        "referrerpolicy": "strict-origin-when-cross-origin",
+        "allowfullscreen": true
+      },
+      "lastSample": 0
+    },
+    {
+      "label": "click",
+      "name": "Play",
+      "parentReceived": true
+    },
+    {
+      "label": "A-reload-and-seek",
+      "at": "2026-10-02T21:48:33.944Z",
+      "width": 360,
+      "scrollWidth": 360,
+      "height": 844,
+      "placement": "stage",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [
+        {
+          "id": "kickoff-moments-slice-4-test-1",
+          "active": "true",
+          "visited": "true",
+          "rect": {
+            "x": 20,
+            "y": 848.0625,
+            "width": 320,
+            "height": 60.5,
+            "top": 848.0625,
+            "right": 340,
+            "bottom": 908.5625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": false,
+          "intersects": false
+        },
+        {
+          "id": "kickoff-moments-slice-4-test-2",
+          "active": null,
+          "visited": "true",
+          "rect": {
+            "x": 20,
+            "y": 909.5625,
+            "width": 320,
+            "height": 60.5,
+            "top": 909.5625,
+            "right": 340,
+            "bottom": 970.0625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": false,
+          "intersects": false
+        }
+      ],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Pause"
+        }
+      ],
+      "status": [
+        "Resuming from the last known position."
+      ],
+      "frame": {
+        "rect": {
+          "x": 20,
+          "y": 91.328125,
+          "width": 320,
+          "height": 200,
+          "top": 91.328125,
+          "right": 340,
+          "bottom": 291.328125,
+          "left": 20
+        },
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "allow": "autoplay; encrypted-media",
+        "referrerpolicy": "strict-origin-when-cross-origin",
+        "allowfullscreen": true
+      },
+      "lastSample": 12
+    },
+    {
+      "label": "visit-complete",
+      "at": "2026-10-02T21:48:33.945Z",
+      "width": 360,
+      "scrollWidth": 360,
+      "height": 844,
+      "placement": "stage",
+      "sameElement": true,
+      "parentChanged": false,
+      "rows": [
+        {
+          "id": "kickoff-moments-slice-4-test-1",
+          "active": "true",
+          "visited": "true",
+          "rect": {
+            "x": 20,
+            "y": 848.0625,
+            "width": 320,
+            "height": 60.5,
+            "top": 848.0625,
+            "right": 340,
+            "bottom": 908.5625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": false,
+          "intersects": false
+        },
+        {
+          "id": "kickoff-moments-slice-4-test-2",
+          "active": null,
+          "visited": "true",
+          "rect": {
+            "x": 20,
+            "y": 909.5625,
+            "width": 320,
+            "height": 60.5,
+            "top": 909.5625,
+            "right": 340,
+            "bottom": 970.0625,
+            "left": 20
+          },
+          "hitFrame": false,
+          "inViewport": false,
+          "intersects": false
+        }
+      ],
+      "primary": [
+        {
+          "tag": "BUTTON",
+          "text": "Pause"
+        }
+      ],
+      "status": [
+        "Resuming from the last known position."
+      ],
+      "frame": {
+        "rect": {
+          "x": 20,
+          "y": 91.328125,
+          "width": 320,
+          "height": 200,
+          "top": 91.328125,
+          "right": 340,
+          "bottom": 291.328125,
+          "left": 20
+        },
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "allow": "autoplay; encrypted-media",
+        "referrerpolicy": "strict-origin-when-cross-origin",
+        "allowfullscreen": true
+      },
+      "lastSample": 12
+    }
+  ],
+  "captures": [
+    {
+      "file": "stage-390.png",
+      "sha256": "ed0c4e6abf4063450626f05b577b10b9569d11791da34caad2b1fba22305b24c",
+      "width": 390,
+      "scrollWidth": 390
+    },
+    {
+      "file": "cinema-390.png",
+      "sha256": "559ad8ac784d857a7a6fea75479e83be512c3df82cc8e73a0d954f7b42b2e64a",
+      "width": 390,
+      "scrollWidth": 390
+    },
+    {
+      "file": "stage-1000.png",
+      "sha256": "27abdb32562c1893cb291200f0e19892f0def03644b696c5377457e769306cbd",
+      "width": 1000,
+      "scrollWidth": 1000
+    },
+    {
+      "file": "cinema-1000.png",
+      "sha256": "37e38aeab3a73bb5c2ddb459d496b61bd797996e6f25532b5bf1949e4aa80bc9",
+      "width": 1000,
+      "scrollWidth": 1000
+    },
+    {
+      "file": "stage-360.png",
+      "sha256": "d976810c80158621b97d34363b2f56d76fe85501912452adc6ddf5475782ee4b",
+      "width": 360,
+      "scrollWidth": 360
+    },
+    {
+      "file": "cinema-360.png",
+      "sha256": "d6d59980c2615493b8a8471d55f168685ffd53ecece8aa297c84d5bb64a837dd",
+      "width": 360,
+      "scrollWidth": 360
+    }
+  ],
+  "human": [],
+  "ads": "not observed; stub",
+  "picture": "synthetic frame only",
+  "manualNext": "not requested",
+  "nonClaims": [
+    "A green stub is not playback. A loopback result predicts nothing about the Pages origin.",
+    "Browser-level traffic outside Playwright is not claimed. DNS guard is additional protection in stub mode.",
+    "Opaque media signatures, binary bodies and undocumented identity encodings are not decoded.",
+    "Full reducer state is not exposed. DOM attributes give selection, visited rows and placement; adapter hooks give dispatches, not a reducer dump.",
+    "Ads and picture/blank-return judgments require Beni. Decoding and the Referer received by the provider are not observable here.",
+    "Content, rights, readiness duration, nearest-keyframe seeking, real autoplay and attribute retention are not proved by stubs.",
+    "Physical devices, Safari, Firefox, screen-reader speech, zoom, Android/iOS Back and CloseWatcher are not verified."
+  ],
+  "network": {
+    "providerContinued": 0,
+    "providerFulfilled": 2,
+    "providerAborted": 0,
+    "unhandledProviderResponses": [],
+    "bytesWhileParked": 0,
+    "wireHeaders": [
+      {
+        "requestId": "BDA9F7C50884A75BFEB794E9F6505A8B",
+        "url": "http://127.0.0.1:54113/?tab=moments&lens=ledger",
+        "headers": {
+          "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Accept-Language": "en-US,en;q=0.9",
+          "Cache-Control": "no-cache",
+          "Connection": "keep-alive",
+          "Host": "127.0.0.1:54113",
+          "Pragma": "no-cache",
+          "Sec-Fetch-Dest": "document",
+          "Sec-Fetch-Mode": "navigate",
+          "Sec-Fetch-Site": "none",
+          "Sec-Fetch-User": "?1",
+          "Upgrade-Insecure-Requests": "1",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+          "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": "\"macOS\""
+        },
+        "note": "Browser-reported sent headers; not a server receipt"
+      },
+      {
+        "requestId": "82383.4",
+        "url": "http://127.0.0.1:54113/assets/index-CKjq5mb7.css",
+        "headers": {
+          "Accept": "text/css,*/*;q=0.1",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Accept-Language": "en-US,en;q=0.9",
+          "Cache-Control": "no-cache",
+          "Connection": "keep-alive",
+          "Host": "127.0.0.1:54113",
+          "Origin": "http://127.0.0.1:54113",
+          "Pragma": "no-cache",
+          "Referer": "http://127.0.0.1:54113/?tab=moments&lens=ledger",
+          "Sec-Fetch-Dest": "style",
+          "Sec-Fetch-Mode": "cors",
+          "Sec-Fetch-Site": "same-origin",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+          "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": "\"macOS\""
+        },
+        "note": "Browser-reported sent headers; not a server receipt"
+      },
+      {
+        "requestId": "82383.3",
+        "url": "http://127.0.0.1:54113/assets/index-BLxHeU-P.js",
+        "headers": {
+          "Accept": "*/*",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Accept-Language": "en-US,en;q=0.9",
+          "Cache-Control": "no-cache",
+          "Connection": "keep-alive",
+          "Host": "127.0.0.1:54113",
+          "Origin": "http://127.0.0.1:54113",
+          "Pragma": "no-cache",
+          "Referer": "http://127.0.0.1:54113/?tab=moments&lens=ledger",
+          "Sec-Fetch-Dest": "script",
+          "Sec-Fetch-Mode": "cors",
+          "Sec-Fetch-Site": "same-origin",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+          "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": "\"macOS\""
+        },
+        "note": "Browser-reported sent headers; not a server receipt"
+      },
+      {
+        "requestId": "82383.2",
+        "url": "https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap",
+        "headers": {
+          ":authority": "fonts.googleapis.com",
+          ":method": "GET",
+          ":path": "/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap",
+          ":scheme": "https",
+          "accept": "text/css,*/*;q=0.1",
+          "accept-encoding": "gzip, deflate, br, zstd",
+          "accept-language": "en-US,en;q=0.9",
+          "cache-control": "no-cache",
+          "pragma": "no-cache",
+          "priority": "u=0",
+          "referer": "http://127.0.0.1:54113/",
+          "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": "\"macOS\"",
+          "sec-fetch-dest": "style",
+          "sec-fetch-mode": "no-cors",
+          "sec-fetch-site": "cross-site",
+          "sec-fetch-storage-access": "active",
+          "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+          "x-browser-channel": "stable",
+          "x-browser-copyright": "Copyright 2026 Google LLC. All Rights Reserved.",
+          "x-browser-validation": "O4YbeFY1KIzq8jwDRTQRBaDR5Jg=",
+          "x-browser-year": "2026"
+        },
+        "note": "Browser-reported sent headers; not a server receipt"
+      },
+      {
+        "requestId": "82383.43",
+        "url": null,
+        "headers": {
+          ":authority": "fonts.gstatic.com",
+          ":method": "GET",
+          ":path": "/s/oswald/v57/TK3IWkUHHAIjg75cFRf3bXL8LICs1_Fv40pKlN4NNSeSASz7FmlWHYjMdZwl.woff2",
+          ":scheme": "https",
+          "accept": "*/*",
+          "accept-encoding": "gzip, deflate, br, zstd",
+          "accept-language": "en-US,en;q=0.9",
+          "cache-control": "no-cache",
+          "origin": "http://127.0.0.1:54113",
+          "pragma": "no-cache",
+          "priority": "u=0",
+          "referer": "https://fonts.googleapis.com/",
+          "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": "\"macOS\"",
+          "sec-fetch-dest": "font",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-site": "cross-site",
+          "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+          "x-browser-channel": "stable",
+          "x-browser-copyright": "Copyright 2026 Google LLC. All Rights Reserved.",
+          "x-browser-validation": "O4YbeFY1KIzq8jwDRTQRBaDR5Jg=",
+          "x-browser-year": "2026"
+        },
+        "note": "Browser-reported sent headers; not a server receipt"
+      },
+      {
+        "requestId": "82383.12",
+        "url": null,
+        "headers": {
+          ":authority": "fonts.gstatic.com",
+          ":method": "GET",
+          ":path": "/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3twJwlBFgsAXHNk.woff2",
+          ":scheme": "https",
+          "accept": "*/*",
+          "accept-encoding": "gzip, deflate, br, zstd",
+          "accept-language": "en-US,en;q=0.9",
+          "cache-control": "no-cache",
+          "origin": "http://127.0.0.1:54113",
+          "pragma": "no-cache",
+          "priority": "u=0",
+          "referer": "https://fonts.googleapis.com/",
+          "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": "\"macOS\"",
+          "sec-fetch-dest": "font",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-site": "cross-site",
+          "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+          "x-browser-channel": "stable",
+          "x-browser-copyright": "Copyright 2026 Google LLC. All Rights Reserved.",
+          "x-browser-validation": "O4YbeFY1KIzq8jwDRTQRBaDR5Jg=",
+          "x-browser-year": "2026"
+        },
+        "note": "Browser-reported sent headers; not a server receipt"
+      },
+      {
+        "requestId": "82383.24",
+        "url": null,
+        "headers": {
+          ":authority": "fonts.gstatic.com",
+          ":method": "GET",
+          ":path": "/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw.woff2",
+          ":scheme": "https",
+          "accept": "*/*",
+          "accept-encoding": "gzip, deflate, br, zstd",
+          "accept-language": "en-US,en;q=0.9",
+          "cache-control": "no-cache",
+          "origin": "http://127.0.0.1:54113",
+          "pragma": "no-cache",
+          "priority": "u=0",
+          "referer": "https://fonts.googleapis.com/",
+          "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": "\"macOS\"",
+          "sec-fetch-dest": "font",
+          "sec-fetch-mode": "cors",
+          "sec-fetch-site": "cross-site",
+          "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+          "x-browser-channel": "stable",
+          "x-browser-copyright": "Copyright 2026 Google LLC. All Rights Reserved.",
+          "x-browser-validation": "O4YbeFY1KIzq8jwDRTQRBaDR5Jg=",
+          "x-browser-year": "2026"
+        },
+        "note": "Browser-reported sent headers; not a server receipt"
+      },
+      {
+        "requestId": "82383.54",
+        "url": "http://127.0.0.1:54113/favicon-32.png",
+        "headers": {
+          "Accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Accept-Language": "en-US,en;q=0.9",
+          "Cache-Control": "no-cache",
+          "Connection": "keep-alive",
+          "Host": "127.0.0.1:54113",
+          "Pragma": "no-cache",
+          "Referer": "http://127.0.0.1:54113/?tab=moments&lens=ledger",
+          "Sec-Fetch-Dest": "image",
+          "Sec-Fetch-Mode": "no-cors",
+          "Sec-Fetch-Site": "same-origin",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+          "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": "\"macOS\""
+        },
+        "note": "Browser-reported sent headers; not a server receipt"
+      }
+    ],
+    "hosts": {
+      "127.0.0.1": 4,
+      "fonts.googleapis.com": 1,
+      "fonts.gstatic.com": 3,
+      "www.youtube.com": 1,
+      "www.youtube-nocookie.com": 1
+    },
+    "redirects": []
+  },
+  "safetyCeiling": {
+    "milliseconds": 60000,
+    "meaning": "Operational total-run safety ceiling, not a product readiness timeout"
+  },
+  "build": {
+    "gitSha": "515224be130f704590245844d1a886fd81d9a725",
+    "runnerSha": "515224be130f704590245844d1a886fd81d9a725",
+    "distHash": "31efb155d1a45f8cd23c112311808bee00fba73e96ea2ea47b54336356f2ca50",
+    "files": [
+      {
+        "path": "assets/index-BLxHeU-P.js",
+        "sha256": "5cefeb2e58f2987082d261c0397cde36190c440c9ddea08a0e93d42b20966609",
+        "bytes": 1047643
+      },
+      {
+        "path": "assets/index-CKjq5mb7.css",
+        "sha256": "f22157bc13632d0de509baba600fb44c087975b29e1d722c6e13eaa5bac7cdaa",
+        "bytes": 38966
+      },
+      {
+        "path": "favicon-192.png",
+        "sha256": "4308e7ecd71fc2b2f693631dd495d6ff3959705b08a0fd6e78c4226204ffacec",
+        "bytes": 1706
+      },
+      {
+        "path": "favicon-32.png",
+        "sha256": "7029b21dccbb0090b5905c82f8135f0eea68987602e512076b4b9e3c7186cd4c",
+        "bytes": 248
+      },
+      {
+        "path": "favicon-512.png",
+        "sha256": "832162dda57344b5bf62bb0070a07ff1a2907057ed4059f7097f07d369fb7008",
+        "bytes": 10030
+      },
+      {
+        "path": "favicon-64.png",
+        "sha256": "4372588d93f02f6dbae63197a59e7ae6f2fd92264241a5eb20fc568de8cd4239",
+        "bytes": 965
+      },
+      {
+        "path": "index.html",
+        "sha256": "e4e158a8e82c24ea44a81b6c3d4872fb7ec8161ffa824135e5443371c378a506",
+        "bytes": 4418
+      }
+    ]
+  },
+  "boundPort": 54113,
+  "origin": "http://127.0.0.1:54113",
+  "authority": {
+    "who": "Beni",
+    "at": "2026-10-02T00:00:00Z",
+    "words": "FICTIONAL STUB FIXTURE. This is not Beni's provider authority.",
+    "hosts": [
+      "youtube.com",
+      "youtu.be",
+      "youtube-nocookie.com",
+      "ytimg.com",
+      "googlevideo.com",
+      "ggpht.com"
+    ],
+    "origin": "http://127.0.0.1:54113",
+    "ids": [
+      {
+        "id": "S4Stub00001",
+        "role": "unknown",
+        "source": "third-party"
+      },
+      {
+        "id": "S4Stub00002",
+        "role": "unknown",
+        "source": "third-party"
+      }
+    ]
+  },
+  "browser": {
+    "executable": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "version": "Google Chrome 154.0.8037.93",
+    "headed": false,
+    "os": "darwin 25.6.0 arm64",
+    "launchedVersion": "154.0.8037.93",
+    "freshProfile": true
+  },
+  "dnsGuard": "--host-resolver-rules=MAP youtube.com ~NOTFOUND, MAP *.youtube.com ~NOTFOUND, MAP youtu.be ~NOTFOUND, MAP *.youtu.be ~NOTFOUND, MAP youtube-nocookie.com ~NOTFOUND, MAP *.youtube-nocookie.com ~NOTFOUND, MAP ytimg.com ~NOTFOUND, MAP *.ytimg.com ~NOTFOUND, MAP googlevideo.com ~NOTFOUND, MAP *.googlevideo.com ~NOTFOUND, MAP ggpht.com ~NOTFOUND, MAP *.ggpht.com ~NOTFOUND",
+  "pageLoads": 1,
+  "servedBundleVerified": true,
+  "onePress": {
+    "cold": true,
+    "warm": true,
+    "meaning": "Synthetic events only"
+  },
+  "park": {
+    "sameElement": true,
+    "sameParent": true,
+    "lastSampleBeforePark": 12,
+    "lastSampleAfterReturn": 12,
+    "freshSampleAtReturn": false,
+    "positionLimit": "The app need not call getCurrentTime on return; unchanged cached samples do not establish a fresh provider position.",
+    "encodedBytesReportedWhileParked": 0,
+    "byteScope": "CDP Network.dataReceived on the page session; cross-process frames or buffered transfers may be absent",
+    "picture": "synthetic only"
+  },
+  "stubCalls": [
+    [
+      [
+        "playVideo"
+      ],
+      [
+        "pauseVideo"
+      ],
+      [
+        "pauseVideo"
+      ],
+      [
+        "loadVideoById",
+        {
+          "videoId": "S4Stub00002",
+          "startSeconds": 0
+        }
+      ],
+      [
+        "pauseVideo"
+      ],
+      [
+        "loadVideoById",
+        {
+          "videoId": "S4Stub00001",
+          "startSeconds": 12
+        }
+      ]
+    ]
+  ],
+  "instancesObserved": 1,
+  "finishedAt": "2026-10-02T21:48:34.088Z",
+  "observations": [
+    {
+      "observedAt": "2026-10-02T21:48:34.088Z",
+      "environment": "loopback http://127.0.0.1:54113; Chrome Google Chrome 154.0.8037.93; headless; darwin 25.6.0",
+      "outcome": "played",
+      "note": "Test id S4Stub00001. Synthetic stub events only; no provider playback observed. No territory diagnosis."
+    },
+    {
+      "observedAt": "2026-10-02T21:48:34.088Z",
+      "environment": "loopback http://127.0.0.1:54113; Chrome Google Chrome 154.0.8037.93; headless; darwin 25.6.0",
+      "outcome": "played",
+      "note": "Test id S4Stub00002. Synthetic stub events only; no provider playback observed. No territory diagnosis."
+    }
+  ]
+}
