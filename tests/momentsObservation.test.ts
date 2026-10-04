@@ -207,15 +207,17 @@ describe('telemetry and observation schema', () => {
     expect(() => instrumentAdapter(transformed)).toThrow('observation-hook-source-mismatch')
     expect(fs.readFileSync(file, 'utf8')).toBe(before)
   })
-  it('CI, package scripts and tests have no execution edge into the manual browser runner', () => {
-    const target = ['moments-observation', 'runner.mjs'].join('/')
+  it('CI, package scripts and tests have no execution edge into the manual browser runner or its drivers', () => {
+    // The drivers spawn the runner, so a script that names prove.mjs is an edge into it too.
+    const targets = ['runner.mjs', 'prove.mjs', 'runner-mutations.mjs', 'mutations.mjs', 'generate.mjs'].map(f => ['moments-observation', f].join('/'))
+    const free = (text: string) => { for (const target of targets) expect(text).not.toContain(target) }
     const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8')) as { scripts: Record<string, string> }
-    for (const command of Object.values(pkg.scripts)) expect(command).not.toContain(target)
-    for (const f of fs.readdirSync('.github', { recursive: true, withFileTypes: true }).filter(e => e.isFile())) expect(fs.readFileSync(path.join(f.parentPath, f.name), 'utf8')).not.toContain(target)
+    for (const command of Object.values(pkg.scripts)) free(command)
+    for (const f of fs.readdirSync('.github', { recursive: true, withFileTypes: true }).filter(e => e.isFile())) free(fs.readFileSync(path.join(f.parentPath, f.name), 'utf8'))
     for (const f of fs.readdirSync('tests', { recursive: true, withFileTypes: true }).filter(e => e.isFile() && /\.[cm]?[jt]sx?$/.test(e.name))) {
-      expect(fs.readFileSync(path.join(f.parentPath, f.name), 'utf8')).not.toContain(target)
+      free(fs.readFileSync(path.join(f.parentPath, f.name), 'utf8'))
     }
-    for (const f of fs.readdirSync('scripts', { recursive: true, withFileTypes: true }).filter(e => e.isFile())) expect(fs.readFileSync(path.join(f.parentPath, f.name), 'utf8')).not.toContain(target)
+    for (const f of fs.readdirSync('scripts', { recursive: true, withFileTypes: true }).filter(e => e.isFile())) free(fs.readFileSync(path.join(f.parentPath, f.name), 'utf8'))
     expect(fs.readFileSync('vite.config.ts', 'utf8')).not.toContain('moments-observation')
   })
 })
