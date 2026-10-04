@@ -1,0 +1,3733 @@
+{
+  "sha": "a022828e5d399f391767f65dc89174c362b0d07b",
+  "cases": [
+    {
+      "name": "provider-before-play",
+      "status": "stopped",
+      "stopReason": "provider-before-play",
+      "port": 62450,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [],
+      "runnerAborts": {
+        "www.youtube.com": {
+          "provider-before-play": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "second-element",
+      "status": "stopped",
+      "stopReason": "second-element",
+      "port": 62471,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "parent-changed",
+      "status": "stopped",
+      "stopReason": "parent-changed",
+      "port": 62486,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [],
+      "runnerAborts": {
+        "www.youtube-nocookie.com": {
+          "second-frame-request": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "queue-covered",
+      "status": "stopped",
+      "stopReason": "queue-covered",
+      "port": 62503,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "navigation-waits",
+      "status": "stopped",
+      "stopReason": "navigation-waits",
+      "port": 62531,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "second-terminal-failure",
+      "status": "stopped",
+      "stopReason": "second-terminal-failure",
+      "port": 62594,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "unsampled-position",
+      "status": "stopped",
+      "stopReason": "unsampled-position",
+      "port": 62621,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "territory-150",
+      "status": "stopped",
+      "stopReason": "territory-150",
+      "port": 62635,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "error-153",
+      "status": "stopped",
+      "stopReason": "error-153",
+      "port": 62653,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "warm-autoplay-blocked",
+      "status": "stopped",
+      "stopReason": "warm-autoplay-blocked",
+      "port": 62692,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "parked-return-blank",
+      "status": "stopped",
+      "stopReason": "parked-return-blank",
+      "port": 62781,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "resume-at-zero",
+      "status": "stopped",
+      "stopReason": "resume-at-zero",
+      "port": 62833,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "ineligible-play",
+      "status": "stopped",
+      "stopReason": "ineligible-play",
+      "port": 62882,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "unnamed-id",
+      "status": "stopped",
+      "stopReason": "unnamed-id",
+      "port": 62942,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [],
+      "runnerAborts": {
+        "www.youtube.com": {
+          "unnamed-id": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "http-redirect-refused",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 62985,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://127.0.0.1:62985/redirect-check",
+          "status": 302,
+          "location": "https://www.youtube.com/iframe_api",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [],
+      "runnerAborts": {
+        "127.0.0.1": {
+          "http-redirect-refused": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "redirect-top-document",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 63013,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://127.0.0.1:63013/__s4a/redirect?status=302",
+          "status": 302,
+          "location": "/__s4a/landed",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:11:32.695Z",
+          "url": "http://127.0.0.1:63013/__s4a/frame?kind=document&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": null,
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 686,
+            "responseBodySize": 103,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:11:32.712Z",
+          "url": "http://127.0.0.1:63013/__s4a/redirect?status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63013/__s4a/frame?kind=document&status=302",
+          "disposition": "continued-local-or-fonts"
+        }
+      ],
+      "runnerAborts": {
+        "127.0.0.1": {
+          "http-redirect-refused": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "redirect-top-script",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 63032,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://127.0.0.1:63032/__s4a/redirect?status=302",
+          "status": 302,
+          "location": "/__s4a/landed",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:11:34.314Z",
+          "url": "http://127.0.0.1:63032/__s4a/frame?kind=script&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": null,
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 686,
+            "responseBodySize": 94,
+            "responseHeadersSize": 180
+          }
+        },
+        {
+          "at": "2026-10-04T23:11:34.327Z",
+          "url": "http://127.0.0.1:63032/__s4a/redirect?status=302",
+          "method": "GET",
+          "resourceType": "script",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63032/__s4a/frame?kind=script&status=302",
+          "disposition": "continued-local-or-fonts"
+        }
+      ],
+      "runnerAborts": {
+        "127.0.0.1": {
+          "http-redirect-refused": 1,
+          "local-or-fonts": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "redirect-top-fetch",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 63059,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://127.0.0.1:63059/__s4a/redirect?status=302",
+          "status": 302,
+          "location": "/__s4a/landed",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:11:35.919Z",
+          "url": "http://127.0.0.1:63059/__s4a/frame?kind=fetch&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": null,
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 686,
+            "responseBodySize": 132,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:11:35.978Z",
+          "url": "http://127.0.0.1:63059/__s4a/redirect?status=302",
+          "method": "GET",
+          "resourceType": "xhr",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63059/__s4a/frame?kind=fetch&status=302",
+          "disposition": "continued-local-or-fonts"
+        }
+      ],
+      "runnerAborts": {
+        "127.0.0.1": {
+          "http-redirect-refused": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "redirect-top-chain",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 63089,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://127.0.0.1:63089/__s4a/redirect?status=302&chain=1",
+          "status": 302,
+          "location": "/__s4a/redirect",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:11:37.591Z",
+          "url": "http://127.0.0.1:63089/__s4a/frame?kind=chain&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": null,
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 686,
+            "responseBodySize": 140,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:11:37.649Z",
+          "url": "http://127.0.0.1:63089/__s4a/redirect?status=302&chain=1",
+          "method": "GET",
+          "resourceType": "xhr",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63089/__s4a/frame?kind=chain&status=302",
+          "disposition": "continued-local-or-fonts"
+        }
+      ],
+      "runnerAborts": {
+        "127.0.0.1": {
+          "http-redirect-refused": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "redirect-top-meta",
+      "status": "refused",
+      "stopReason": "probe-finished",
+      "port": 63129,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 1,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:11:39.268Z",
+          "url": "http://127.0.0.1:63129/__s4a/frame?kind=meta&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": null,
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 686,
+            "responseBodySize": 101,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:11:39.284Z",
+          "url": "http://127.0.0.1:63129/__s4a/landed",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63129/__s4a/frame?kind=meta&status=302",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 740,
+            "responseBodySize": 25,
+            "responseHeadersSize": 186
+          }
+        }
+      ],
+      "runnerAborts": {},
+      "cancellations": [
+        {
+          "stage": "cancelled-response",
+          "method": "Fetch.continueResponse",
+          "code": -32602,
+          "message": "Invalid InterceptionId."
+        }
+      ]
+    },
+    {
+      "name": "redirect-top-script-nav",
+      "status": "refused",
+      "stopReason": "probe-finished",
+      "port": 63198,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 1,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:11:42.959Z",
+          "url": "http://127.0.0.1:63198/__s4a/frame?kind=script-nav&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": null,
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 686,
+            "responseBodySize": 90,
+            "responseHeadersSize": 180
+          }
+        },
+        {
+          "at": "2026-10-04T23:11:42.982Z",
+          "url": "http://127.0.0.1:63198/__s4a/landed",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63198/__s4a/frame?kind=script-nav&status=302",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 746,
+            "responseBodySize": 25,
+            "responseHeadersSize": 186
+          }
+        }
+      ],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "redirect-same-document",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 63249,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://127.0.0.1:63249/__s4a/redirect?status=302",
+          "status": 302,
+          "location": "/__s4a/landed",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:11:46.627Z",
+          "url": "http://127.0.0.1:63249/__s4a/frame?kind=document&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63249/?tab=moments&lens=ledger",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 729,
+            "responseBodySize": 103,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:11:46.639Z",
+          "url": "http://127.0.0.1:63249/__s4a/redirect?status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63249/__s4a/frame?kind=document&status=302",
+          "disposition": "continued-local-or-fonts"
+        }
+      ],
+      "runnerAborts": {
+        "127.0.0.1": {
+          "http-redirect-refused": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "redirect-same-script",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 63278,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://127.0.0.1:63278/__s4a/redirect?status=302",
+          "status": 302,
+          "location": "/__s4a/landed",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:11:48.189Z",
+          "url": "http://127.0.0.1:63278/__s4a/frame?kind=script&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63278/?tab=moments&lens=ledger",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 729,
+            "responseBodySize": 94,
+            "responseHeadersSize": 180
+          }
+        },
+        {
+          "at": "2026-10-04T23:11:48.197Z",
+          "url": "http://127.0.0.1:63278/__s4a/redirect?status=302",
+          "method": "GET",
+          "resourceType": "script",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63278/__s4a/frame?kind=script&status=302",
+          "disposition": "continued-local-or-fonts"
+        }
+      ],
+      "runnerAborts": {
+        "127.0.0.1": {
+          "http-redirect-refused": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "redirect-same-fetch",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 63293,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://127.0.0.1:63293/__s4a/redirect?status=302",
+          "status": 302,
+          "location": "/__s4a/landed",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:11:49.788Z",
+          "url": "http://127.0.0.1:63293/__s4a/frame?kind=fetch&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63293/?tab=moments&lens=ledger",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 729,
+            "responseBodySize": 132,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:11:49.846Z",
+          "url": "http://127.0.0.1:63293/__s4a/redirect?status=302",
+          "method": "GET",
+          "resourceType": "xhr",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63293/__s4a/frame?kind=fetch&status=302",
+          "disposition": "continued-local-or-fonts"
+        }
+      ],
+      "runnerAborts": {
+        "127.0.0.1": {
+          "http-redirect-refused": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "redirect-same-chain",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 63327,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://127.0.0.1:63327/__s4a/redirect?status=302&chain=1",
+          "status": 302,
+          "location": "/__s4a/redirect",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:11:51.630Z",
+          "url": "http://127.0.0.1:63327/__s4a/frame?kind=chain&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63327/?tab=moments&lens=ledger",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 729,
+            "responseBodySize": 140,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:11:51.687Z",
+          "url": "http://127.0.0.1:63327/__s4a/redirect?status=302&chain=1",
+          "method": "GET",
+          "resourceType": "xhr",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63327/__s4a/frame?kind=chain&status=302",
+          "disposition": "continued-local-or-fonts"
+        }
+      ],
+      "runnerAborts": {
+        "127.0.0.1": {
+          "http-redirect-refused": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "redirect-same-meta",
+      "status": "refused",
+      "stopReason": "probe-finished",
+      "port": 63373,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 1,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:11:53.520Z",
+          "url": "http://127.0.0.1:63373/__s4a/frame?kind=meta&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63373/?tab=moments&lens=ledger",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 729,
+            "responseBodySize": 101,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:11:53.535Z",
+          "url": "http://127.0.0.1:63373/__s4a/landed",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63373/__s4a/frame?kind=meta&status=302",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 738,
+            "responseBodySize": 25,
+            "responseHeadersSize": 186
+          }
+        }
+      ],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "redirect-same-script-nav",
+      "status": "refused",
+      "stopReason": "probe-finished",
+      "port": 63441,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 1,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:11:57.684Z",
+          "url": "http://127.0.0.1:63441/__s4a/frame?kind=script-nav&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63441/?tab=moments&lens=ledger",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 729,
+            "responseBodySize": 90,
+            "responseHeadersSize": 180
+          }
+        },
+        {
+          "at": "2026-10-04T23:11:57.693Z",
+          "url": "http://127.0.0.1:63441/__s4a/landed",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63441/__s4a/frame?kind=script-nav&status=302",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 744,
+            "responseBodySize": 25,
+            "responseHeadersSize": 186
+          }
+        }
+      ],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "redirect-cross-document",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 63514,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://frame.s4a.test:63514/__s4a/redirect?status=302",
+          "status": 302,
+          "location": "/__s4a/landed",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:12:01.179Z",
+          "url": "http://frame.s4a.test:63514/__s4a/frame?kind=document&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63514/",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 492,
+            "responseBodySize": 103,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:01.188Z",
+          "url": "http://frame.s4a.test:63514/__s4a/redirect?status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://frame.s4a.test:63514/__s4a/frame?kind=document&status=302",
+          "disposition": "continued-local-or-fonts"
+        }
+      ],
+      "runnerAborts": {
+        "frame.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "redirect-cross-script",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 63536,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://frame.s4a.test:63536/__s4a/redirect?status=302",
+          "status": 302,
+          "location": "/__s4a/landed",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:12:03.000Z",
+          "url": "http://frame.s4a.test:63536/__s4a/frame?kind=script&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63536/",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 492,
+            "responseBodySize": 94,
+            "responseHeadersSize": 180
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:03.012Z",
+          "url": "http://frame.s4a.test:63536/__s4a/redirect?status=302",
+          "method": "GET",
+          "resourceType": "script",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://frame.s4a.test:63536/__s4a/frame?kind=script&status=302",
+          "disposition": "continued-local-or-fonts"
+        }
+      ],
+      "runnerAborts": {
+        "frame.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "redirect-cross-fetch",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 63580,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://frame.s4a.test:63580/__s4a/redirect?status=302",
+          "status": 302,
+          "location": "/__s4a/landed",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:12:04.693Z",
+          "url": "http://frame.s4a.test:63580/__s4a/frame?kind=fetch&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63580/",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 492,
+            "responseBodySize": 132,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:04.756Z",
+          "url": "http://frame.s4a.test:63580/__s4a/redirect?status=302",
+          "method": "GET",
+          "resourceType": "xhr",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://frame.s4a.test:63580/__s4a/frame?kind=fetch&status=302",
+          "disposition": "continued-local-or-fonts"
+        }
+      ],
+      "runnerAborts": {
+        "frame.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "redirect-cross-chain",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 63613,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://frame.s4a.test:63613/__s4a/redirect?status=302&chain=1",
+          "status": 302,
+          "location": "/__s4a/redirect",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:12:06.484Z",
+          "url": "http://frame.s4a.test:63613/__s4a/frame?kind=chain&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63613/",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 492,
+            "responseBodySize": 140,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:06.556Z",
+          "url": "http://frame.s4a.test:63613/__s4a/redirect?status=302&chain=1",
+          "method": "GET",
+          "resourceType": "xhr",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://frame.s4a.test:63613/__s4a/frame?kind=chain&status=302",
+          "disposition": "continued-local-or-fonts"
+        }
+      ],
+      "runnerAborts": {
+        "frame.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "redirect-cross-meta",
+      "status": "refused",
+      "stopReason": "probe-finished",
+      "port": 63646,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 1,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:12:08.293Z",
+          "url": "http://frame.s4a.test:63646/__s4a/frame?kind=meta&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63646/",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 492,
+            "responseBodySize": 101,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:08.306Z",
+          "url": "http://frame.s4a.test:63646/__s4a/landed",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://frame.s4a.test:63646/__s4a/frame?kind=meta&status=302",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 530,
+            "responseBodySize": 25,
+            "responseHeadersSize": 186
+          }
+        }
+      ],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "redirect-cross-script-nav",
+      "status": "refused",
+      "stopReason": "probe-finished",
+      "port": 63707,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 1,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:12:11.971Z",
+          "url": "http://frame.s4a.test:63707/__s4a/frame?kind=script-nav&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63707/",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 492,
+            "responseBodySize": 90,
+            "responseHeadersSize": 180
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:11.985Z",
+          "url": "http://frame.s4a.test:63707/__s4a/landed",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://frame.s4a.test:63707/__s4a/frame?kind=script-nav&status=302",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 536,
+            "responseBodySize": 25,
+            "responseHeadersSize": 186
+          }
+        }
+      ],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "redirect-nested-document",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 63744,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://nested.s4a.test:63744/__s4a/redirect?status=302",
+          "status": 302,
+          "location": "/__s4a/landed",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:12:15.633Z",
+          "url": "http://frame.s4a.test:63744/__s4a/nested?kind=document&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63744/",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 493,
+            "responseBodySize": 122,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:15.648Z",
+          "url": "http://nested.s4a.test:63744/__s4a/frame?kind=document",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://frame.s4a.test:63744/",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 498,
+            "responseBodySize": 103,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:15.655Z",
+          "url": "http://nested.s4a.test:63744/__s4a/redirect?status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://nested.s4a.test:63744/__s4a/frame?kind=document",
+          "disposition": "continued-local-or-fonts"
+        }
+      ],
+      "runnerAborts": {
+        "nested.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "redirect-nested-script",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 63791,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://nested.s4a.test:63791/__s4a/redirect?status=302",
+          "status": 302,
+          "location": "/__s4a/landed",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:12:17.566Z",
+          "url": "http://frame.s4a.test:63791/__s4a/nested?kind=script&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63791/",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 493,
+            "responseBodySize": 120,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:17.576Z",
+          "url": "http://nested.s4a.test:63791/__s4a/frame?kind=script",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://frame.s4a.test:63791/",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 498,
+            "responseBodySize": 94,
+            "responseHeadersSize": 180
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:17.581Z",
+          "url": "http://nested.s4a.test:63791/__s4a/redirect?status=302",
+          "method": "GET",
+          "resourceType": "script",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://nested.s4a.test:63791/__s4a/frame?kind=script",
+          "disposition": "continued-local-or-fonts"
+        }
+      ],
+      "runnerAborts": {
+        "nested.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "redirect-nested-fetch",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 63821,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://nested.s4a.test:63821/__s4a/redirect?status=302",
+          "status": 302,
+          "location": "/__s4a/landed",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:12:19.046Z",
+          "url": "http://frame.s4a.test:63821/__s4a/nested?kind=fetch&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63821/",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 493,
+            "responseBodySize": 119,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:19.057Z",
+          "url": "http://nested.s4a.test:63821/__s4a/frame?kind=fetch",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://frame.s4a.test:63821/",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 498,
+            "responseBodySize": 132,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:19.114Z",
+          "url": "http://nested.s4a.test:63821/__s4a/redirect?status=302",
+          "method": "GET",
+          "resourceType": "xhr",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://nested.s4a.test:63821/__s4a/frame?kind=fetch",
+          "disposition": "continued-local-or-fonts"
+        }
+      ],
+      "runnerAborts": {
+        "nested.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "redirect-nested-chain",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 63843,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://nested.s4a.test:63843/__s4a/redirect?status=302&chain=1",
+          "status": 302,
+          "location": "/__s4a/redirect",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:12:20.811Z",
+          "url": "http://frame.s4a.test:63843/__s4a/nested?kind=chain&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63843/",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 493,
+            "responseBodySize": 119,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:20.821Z",
+          "url": "http://nested.s4a.test:63843/__s4a/frame?kind=chain",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://frame.s4a.test:63843/",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 498,
+            "responseBodySize": 140,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:20.878Z",
+          "url": "http://nested.s4a.test:63843/__s4a/redirect?status=302&chain=1",
+          "method": "GET",
+          "resourceType": "xhr",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://nested.s4a.test:63843/__s4a/frame?kind=chain",
+          "disposition": "continued-local-or-fonts"
+        }
+      ],
+      "runnerAborts": {
+        "nested.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "redirect-nested-meta",
+      "status": "refused",
+      "stopReason": "probe-finished",
+      "port": 63886,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 1,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:12:22.630Z",
+          "url": "http://frame.s4a.test:63886/__s4a/nested?kind=meta&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63886/",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 493,
+            "responseBodySize": 118,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:22.649Z",
+          "url": "http://nested.s4a.test:63886/__s4a/frame?kind=meta",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://frame.s4a.test:63886/",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 498,
+            "responseBodySize": 101,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:22.666Z",
+          "url": "http://nested.s4a.test:63886/__s4a/landed",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://nested.s4a.test:63886/__s4a/frame?kind=meta",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 521,
+            "responseBodySize": 25,
+            "responseHeadersSize": 186
+          }
+        }
+      ],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "redirect-nested-script-nav",
+      "status": "refused",
+      "stopReason": "probe-finished",
+      "port": 63946,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 1,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:12:26.472Z",
+          "url": "http://frame.s4a.test:63946/__s4a/nested?kind=script-nav&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63946/",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 493,
+            "responseBodySize": 124,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:26.482Z",
+          "url": "http://nested.s4a.test:63946/__s4a/frame?kind=script-nav",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://frame.s4a.test:63946/",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 498,
+            "responseBodySize": 90,
+            "responseHeadersSize": 180
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:26.496Z",
+          "url": "http://nested.s4a.test:63946/__s4a/landed",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://nested.s4a.test:63946/__s4a/frame?kind=script-nav",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 527,
+            "responseBodySize": 25,
+            "responseHeadersSize": 186
+          }
+        }
+      ],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "redirect-firstsame-document",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 63999,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://127.0.0.1:63999/__s4a/redirect?status=302",
+          "status": 302,
+          "location": "/__s4a/landed",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:12:29.799Z",
+          "url": "http://127.0.0.1:63999/__s4a/frame?kind=document&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "before-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": false,
+              "frames": []
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63999/?tab=moments&lens=ledger",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 749,
+            "responseBodySize": 103,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:29.811Z",
+          "url": "http://127.0.0.1:63999/__s4a/redirect?status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "before-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": false,
+              "frames": []
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:63999/__s4a/frame?kind=document&status=302",
+          "disposition": "continued-local-or-fonts"
+        }
+      ],
+      "runnerAborts": {
+        "127.0.0.1": {
+          "http-redirect-refused": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "redirect-firstsame-script",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 64019,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://127.0.0.1:64019/__s4a/redirect?status=302",
+          "status": 302,
+          "location": "/__s4a/landed",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:12:31.379Z",
+          "url": "http://127.0.0.1:64019/__s4a/frame?kind=script&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "before-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": false,
+              "frames": []
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:64019/?tab=moments&lens=ledger",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 749,
+            "responseBodySize": 94,
+            "responseHeadersSize": 180
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:31.387Z",
+          "url": "http://127.0.0.1:64019/__s4a/redirect?status=302",
+          "method": "GET",
+          "resourceType": "script",
+          "phase": "before-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": false,
+              "frames": []
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:64019/__s4a/frame?kind=script&status=302",
+          "disposition": "continued-local-or-fonts"
+        }
+      ],
+      "runnerAborts": {
+        "127.0.0.1": {
+          "http-redirect-refused": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "redirect-firstsame-fetch",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 64064,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://127.0.0.1:64064/__s4a/redirect?status=302",
+          "status": 302,
+          "location": "/__s4a/landed",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:12:32.864Z",
+          "url": "http://127.0.0.1:64064/__s4a/frame?kind=fetch&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "before-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": false,
+              "frames": []
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:64064/?tab=moments&lens=ledger",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 749,
+            "responseBodySize": 132,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:32.920Z",
+          "url": "http://127.0.0.1:64064/__s4a/redirect?status=302",
+          "method": "GET",
+          "resourceType": "xhr",
+          "phase": "before-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": false,
+              "frames": []
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:64064/__s4a/frame?kind=fetch&status=302",
+          "disposition": "continued-local-or-fonts"
+        }
+      ],
+      "runnerAborts": {
+        "127.0.0.1": {
+          "http-redirect-refused": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "redirect-firstsame-chain",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 64079,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://127.0.0.1:64079/__s4a/redirect?status=302&chain=1",
+          "status": 302,
+          "location": "/__s4a/redirect",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:12:34.255Z",
+          "url": "http://127.0.0.1:64079/__s4a/frame?kind=chain&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "before-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": false,
+              "frames": []
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:64079/?tab=moments&lens=ledger",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 749,
+            "responseBodySize": 140,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:34.316Z",
+          "url": "http://127.0.0.1:64079/__s4a/redirect?status=302&chain=1",
+          "method": "GET",
+          "resourceType": "xhr",
+          "phase": "before-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": false,
+              "frames": []
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:64079/__s4a/frame?kind=chain&status=302",
+          "disposition": "continued-local-or-fonts"
+        }
+      ],
+      "runnerAborts": {
+        "127.0.0.1": {
+          "http-redirect-refused": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "redirect-firstsame-meta",
+      "status": "refused",
+      "stopReason": "probe-finished",
+      "port": 64108,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 1,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:12:36.044Z",
+          "url": "http://127.0.0.1:64108/__s4a/frame?kind=meta&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "before-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": false,
+              "frames": []
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:64108/?tab=moments&lens=ledger",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 749,
+            "responseBodySize": 101,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:36.071Z",
+          "url": "http://127.0.0.1:64108/__s4a/landed",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "before-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": false,
+              "frames": []
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:64108/__s4a/frame?kind=meta&status=302",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 758,
+            "responseBodySize": 25,
+            "responseHeadersSize": 186
+          }
+        }
+      ],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "redirect-firstsame-script-nav",
+      "status": "refused",
+      "stopReason": "probe-finished",
+      "port": 64171,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 1,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:12:39.821Z",
+          "url": "http://127.0.0.1:64171/__s4a/frame?kind=script-nav&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "before-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": false,
+              "frames": []
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:64171/?tab=moments&lens=ledger",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 749,
+            "responseBodySize": 90,
+            "responseHeadersSize": 180
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:39.826Z",
+          "url": "http://127.0.0.1:64171/__s4a/landed",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "before-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": false,
+              "frames": []
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:64171/__s4a/frame?kind=script-nav&status=302",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 764,
+            "responseBodySize": 25,
+            "responseHeadersSize": 186
+          }
+        }
+      ],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "redirect-firstcross-document",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 64228,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://frame.s4a.test:64228/__s4a/redirect?status=302",
+          "status": 302,
+          "location": "/__s4a/landed",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:12:43.105Z",
+          "url": "http://frame.s4a.test:64228/__s4a/frame?kind=document&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "before-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": false,
+              "frames": []
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:64228/",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 492,
+            "responseBodySize": 103,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:43.115Z",
+          "url": "http://frame.s4a.test:64228/__s4a/redirect?status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "before-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": false,
+              "frames": []
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://frame.s4a.test:64228/__s4a/frame?kind=document&status=302",
+          "disposition": "continued-local-or-fonts"
+        }
+      ],
+      "runnerAborts": {
+        "frame.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "redirect-firstcross-script",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 64247,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://frame.s4a.test:64247/__s4a/redirect?status=302",
+          "status": 302,
+          "location": "/__s4a/landed",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:12:44.477Z",
+          "url": "http://frame.s4a.test:64247/__s4a/frame?kind=script&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "before-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": false,
+              "frames": []
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:64247/",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 492,
+            "responseBodySize": 94,
+            "responseHeadersSize": 180
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:44.491Z",
+          "url": "http://frame.s4a.test:64247/__s4a/redirect?status=302",
+          "method": "GET",
+          "resourceType": "script",
+          "phase": "before-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": false,
+              "frames": []
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://frame.s4a.test:64247/__s4a/frame?kind=script&status=302",
+          "disposition": "continued-local-or-fonts"
+        }
+      ],
+      "runnerAborts": {
+        "frame.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "redirect-firstcross-fetch",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 64278,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://frame.s4a.test:64278/__s4a/redirect?status=302",
+          "status": 302,
+          "location": "/__s4a/landed",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:12:46.319Z",
+          "url": "http://frame.s4a.test:64278/__s4a/frame?kind=fetch&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "before-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": false,
+              "frames": []
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:64278/",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 492,
+            "responseBodySize": 132,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:46.378Z",
+          "url": "http://frame.s4a.test:64278/__s4a/redirect?status=302",
+          "method": "GET",
+          "resourceType": "xhr",
+          "phase": "before-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": false,
+              "frames": []
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://frame.s4a.test:64278/__s4a/frame?kind=fetch&status=302",
+          "disposition": "continued-local-or-fonts"
+        }
+      ],
+      "runnerAborts": {
+        "frame.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "redirect-firstcross-chain",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 64309,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://frame.s4a.test:64309/__s4a/redirect?status=302&chain=1",
+          "status": 302,
+          "location": "/__s4a/redirect",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:12:48.104Z",
+          "url": "http://frame.s4a.test:64309/__s4a/frame?kind=chain&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "before-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": false,
+              "frames": []
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:64309/",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 492,
+            "responseBodySize": 140,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:48.172Z",
+          "url": "http://frame.s4a.test:64309/__s4a/redirect?status=302&chain=1",
+          "method": "GET",
+          "resourceType": "xhr",
+          "phase": "before-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": false,
+              "frames": []
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://frame.s4a.test:64309/__s4a/frame?kind=chain&status=302",
+          "disposition": "continued-local-or-fonts"
+        }
+      ],
+      "runnerAborts": {
+        "frame.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "redirect-firstcross-meta",
+      "status": "refused",
+      "stopReason": "probe-finished",
+      "port": 64359,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 1,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:12:50.321Z",
+          "url": "http://frame.s4a.test:64359/__s4a/frame?kind=meta&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "before-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": false,
+              "frames": []
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:64359/",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 492,
+            "responseBodySize": 101,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:50.353Z",
+          "url": "http://frame.s4a.test:64359/__s4a/landed",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "before-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": false,
+              "frames": []
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://frame.s4a.test:64359/__s4a/frame?kind=meta&status=302",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 530,
+            "responseBodySize": 25,
+            "responseHeadersSize": 186
+          }
+        }
+      ],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "redirect-firstcross-script-nav",
+      "status": "refused",
+      "stopReason": "probe-finished",
+      "port": 64422,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 1,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:12:53.806Z",
+          "url": "http://frame.s4a.test:64422/__s4a/frame?kind=script-nav&status=302",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "before-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": false,
+              "frames": []
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:64422/",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 492,
+            "responseBodySize": 90,
+            "responseHeadersSize": 180
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:53.822Z",
+          "url": "http://frame.s4a.test:64422/__s4a/landed",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "before-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": false,
+              "frames": []
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://frame.s4a.test:64422/__s4a/frame?kind=script-nav&status=302",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 536,
+            "responseBodySize": 25,
+            "responseHeadersSize": 186
+          }
+        }
+      ],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "redirect-status301-fetch",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 64484,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://frame.s4a.test:64484/__s4a/redirect?status=301",
+          "status": 301,
+          "location": "/__s4a/landed",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:12:57.247Z",
+          "url": "http://frame.s4a.test:64484/__s4a/frame?kind=fetch&status=301",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:64484/",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 492,
+            "responseBodySize": 132,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:57.306Z",
+          "url": "http://frame.s4a.test:64484/__s4a/redirect?status=301",
+          "method": "GET",
+          "resourceType": "xhr",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://frame.s4a.test:64484/__s4a/frame?kind=fetch&status=301",
+          "disposition": "continued-local-or-fonts"
+        }
+      ],
+      "runnerAborts": {
+        "frame.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "redirect-status303-fetch",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 64501,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://frame.s4a.test:64501/__s4a/redirect?status=303",
+          "status": 303,
+          "location": "/__s4a/landed",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:12:58.788Z",
+          "url": "http://frame.s4a.test:64501/__s4a/frame?kind=fetch&status=303",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:64501/",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 492,
+            "responseBodySize": 132,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:12:58.845Z",
+          "url": "http://frame.s4a.test:64501/__s4a/redirect?status=303",
+          "method": "GET",
+          "resourceType": "xhr",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://frame.s4a.test:64501/__s4a/frame?kind=fetch&status=303",
+          "disposition": "continued-local-or-fonts"
+        }
+      ],
+      "runnerAborts": {
+        "frame.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "redirect-status307-fetch",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 64533,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://frame.s4a.test:64533/__s4a/redirect?status=307",
+          "status": 307,
+          "location": "/__s4a/landed",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:13:00.360Z",
+          "url": "http://frame.s4a.test:64533/__s4a/frame?kind=fetch&status=307",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:64533/",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 492,
+            "responseBodySize": 132,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:13:00.418Z",
+          "url": "http://frame.s4a.test:64533/__s4a/redirect?status=307",
+          "method": "GET",
+          "resourceType": "xhr",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://frame.s4a.test:64533/__s4a/frame?kind=fetch&status=307",
+          "disposition": "continued-local-or-fonts"
+        }
+      ],
+      "runnerAborts": {
+        "frame.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "redirect-status308-fetch",
+      "status": "stopped",
+      "stopReason": "http-redirect-refused",
+      "port": 64565,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [
+        {
+          "url": "http://frame.s4a.test:64565/__s4a/redirect?status=308",
+          "status": 308,
+          "location": "/__s4a/landed",
+          "action": "aborted-before-follow"
+        }
+      ],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:13:01.917Z",
+          "url": "http://frame.s4a.test:64565/__s4a/frame?kind=fetch&status=308",
+          "method": "GET",
+          "resourceType": "document",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://127.0.0.1:64565/",
+          "disposition": "continued-local-or-fonts",
+          "sizes": {
+            "requestBodySize": 0,
+            "requestHeadersSize": 492,
+            "responseBodySize": 132,
+            "responseHeadersSize": 181
+          }
+        },
+        {
+          "at": "2026-10-04T23:13:01.976Z",
+          "url": "http://frame.s4a.test:64565/__s4a/redirect?status=308",
+          "method": "GET",
+          "resourceType": "xhr",
+          "phase": "after-play",
+          "decision": {
+            "action": "release",
+            "reason": "local-or-fonts",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "http://frame.s4a.test:64565/__s4a/frame?kind=fetch&status=308",
+          "disposition": "continued-local-or-fonts"
+        }
+      ],
+      "runnerAborts": {
+        "frame.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "prompt-ceiling",
+      "status": "stopped",
+      "stopReason": "operational-safety-ceiling",
+      "port": 64606,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "extra-hosts",
+      "status": "complete",
+      "stopReason": null,
+      "port": 64612,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [
+        {
+          "at": "2026-10-04T23:13:04.031Z",
+          "url": "https://named.s4a.test/probe",
+          "method": "GET",
+          "resourceType": "xhr",
+          "phase": "after-play",
+          "decision": {
+            "action": "record",
+            "reason": "named-extra-host",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "https://www.youtube-nocookie.com/",
+          "disposition": "local-or-aborted"
+        },
+        {
+          "at": "2026-10-04T23:13:04.033Z",
+          "url": "https://unnamed.s4a.test/probe",
+          "method": "GET",
+          "resourceType": "xhr",
+          "phase": "after-play",
+          "decision": {
+            "action": "abort",
+            "reason": "unlisted-host",
+            "next": {
+              "api": true,
+              "frames": [
+                "S4Stub00001"
+              ]
+            },
+            "provider": false,
+            "ids": []
+          },
+          "parked": false,
+          "proposedReferer": "https://www.youtube-nocookie.com/",
+          "disposition": "aborted"
+        }
+      ],
+      "runnerAborts": {
+        "unnamed.s4a.test": {
+          "unlisted-host": 1
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "shelf-images",
+      "status": "complete",
+      "stopReason": null,
+      "port": 64692,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [],
+      "runnerAborts": {
+        "i.ytimg.com": {
+          "stub-request-not-served": 2
+        }
+      },
+      "cancellations": []
+    },
+    {
+      "name": "malformed-error",
+      "status": "complete",
+      "stopReason": null,
+      "port": 64761,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "sandbox-headed",
+      "status": "complete",
+      "stopReason": null,
+      "port": 64812,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "refusal-future-authority",
+      "status": "refused",
+      "stopReason": "future-authority",
+      "port": null,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "refusal-too-many-ids",
+      "status": "refused",
+      "stopReason": "too-many-ids",
+      "port": null,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "refusal-malformed-video-id",
+      "status": "refused",
+      "stopReason": "malformed-video-id",
+      "port": null,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "refusal-authority-schema",
+      "status": "refused",
+      "stopReason": "authority-schema",
+      "port": null,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "refusal-duplicate-id",
+      "status": "refused",
+      "stopReason": "duplicate-id",
+      "port": null,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "refusal-origin-mismatch",
+      "status": "refused",
+      "stopReason": "origin-mismatch",
+      "port": null,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "owner-blocked",
+      "status": "complete",
+      "stopReason": null,
+      "port": 64880,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "cold-blocked",
+      "status": "complete",
+      "stopReason": null,
+      "port": 64946,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [],
+      "runnerAborts": {},
+      "cancellations": []
+    },
+    {
+      "name": "clean",
+      "status": "complete",
+      "stopReason": null,
+      "port": 65007,
+      "providerContinuations": 0,
+      "unhandledProviderResponses": [],
+      "redirects": [],
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "policyDecisions": [],
+      "runnerAborts": {},
+      "cancellations": []
+    }
+  ]
+}

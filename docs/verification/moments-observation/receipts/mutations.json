@@ -1,6 +1,6 @@
 {
-  "sha": "515224be130f704590245844d1a886fd81d9a725",
-  "count": 51,
+  "sha": "a022828e5d399f391767f65dc89174c362b0d07b",
+  "count": 64,
   "receipts": [
     {
       "name": "provider-before-play",
@@ -11,15 +11,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -32,15 +32,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  2 failed | 88 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  2 failed | 103 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -53,15 +53,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -74,15 +74,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -95,15 +95,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -116,15 +116,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  2 failed | 88 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  2 failed | 103 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -137,15 +137,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  2 failed | 88 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  2 failed | 103 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -158,15 +158,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -179,15 +179,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  2 failed | 88 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  2 failed | 103 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -200,15 +200,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  2 failed | 88 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  2 failed | 103 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -221,15 +221,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  2 failed | 88 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  2 failed | 103 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -242,15 +242,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  2 failed | 88 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  2 failed | 103 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -263,15 +263,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -284,15 +284,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  2 failed | 88 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  2 failed | 103 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -305,15 +305,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  7 failed | 83 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  7 failed | 98 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 7 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -326,15 +326,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  3 failed | 87 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  5 failed | 100 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 5 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -347,15 +347,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  3 failed | 87 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  4 failed | 101 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 4 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -368,15 +368,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -389,15 +389,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -410,15 +410,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -431,15 +431,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -452,15 +452,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -473,15 +473,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  9 failed | 81 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  10 failed | 95 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 10 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -494,15 +494,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  3 failed | 87 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  3 failed | 102 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 3 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -515,15 +515,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  5 failed | 85 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  6 failed | 99 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 6 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -536,15 +536,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -557,15 +557,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -578,15 +578,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -599,15 +599,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  3 failed | 87 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  3 failed | 102 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 3 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -620,15 +620,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -641,15 +641,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -662,15 +662,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -683,15 +683,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -704,15 +704,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  4 failed | 86 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  4 failed | 101 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 4 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -725,15 +725,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -746,15 +746,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -767,15 +767,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  2 failed | 88 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  2 failed | 103 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -788,15 +788,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  2 failed | 88 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  2 failed | 103 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -809,15 +809,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  2 failed | 88 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  2 failed | 103 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -830,15 +830,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -851,15 +851,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -872,15 +872,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -893,15 +893,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -914,15 +914,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -935,15 +935,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -956,15 +956,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -977,15 +977,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  2 failed | 103 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -998,15 +998,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -1019,15 +1019,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed (1)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 1 passed (2)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  1 passed (1)"
+          "      Tests  2 passed (2)"
         ]
       }
     },
@@ -1040,15 +1040,15 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
         ]
       }
     },
@@ -1061,15 +1061,288 @@
         "exit": 1,
         "counts": [
           " Test Files  1 failed (1)",
-          "      Tests  1 failed | 89 passed (90)",
-          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯"
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
         ]
       },
       "green": {
         "exit": 0,
         "counts": [
           " Test Files  1 passed (1)",
-          "      Tests  90 passed (90)"
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "named-extra-host",
+      "file": "docs/verification/moments-observation/policy.ts",
+      "from": "if (!provider) return result('record', shelf ? 'shelf-image' : 'named-extra-host')",
+      "to": "if (!provider) return result('abort', 'unlisted-host')",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "extra-before-play",
+      "file": "docs/verification/moments-observation/policy.ts",
+      "from": "return result('abort', 'extra-host-before-play')",
+      "to": "return result('record', 'named-extra-host')",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "unlisted-host",
+      "file": "docs/verification/moments-observation/policy.ts",
+      "from": "return result('abort', 'unlisted-host')",
+      "to": "return result('record', 'named-extra-host')",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  3 failed | 102 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 3 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "shelf-images",
+      "file": "docs/verification/moments-observation/policy.ts",
+      "from": "!shelf && ids.some",
+      "to": "ids.some",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "host-syntax",
+      "file": "docs/verification/moments-observation/authority.ts",
+      "from": ".regex(/^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z](?:[a-z0-9-]{0,61}[a-z0-9])?$/)",
+      "to": "",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "host-cap",
+      "file": "docs/verification/moments-observation/authority.ts",
+      "from": ".max(32)",
+      "to": ".max(100)",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "played-positive-sample",
+      "file": "docs/verification/moments-observation/telemetry.ts",
+      "from": "if (event.event === 'playing') this.playing = true",
+      "to": "if (event.event === 'playing') { this.playing = true; this.played.add(this.current.videoId) }",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "malformed-error",
+      "file": "docs/verification/moments-observation/telemetry.ts",
+      "from": "Number.isSafeInteger(hook.value) && hook.value >= 0",
+      "to": "true",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  5 failed | 100 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 5 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "stub-marker",
+      "file": "docs/verification/moments-observation/telemetry.ts",
+      "from": "stub ? 'STUB; ' : ''",
+      "to": "''",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "unreached-note",
+      "file": "docs/verification/moments-observation/telemetry.ts",
+      "from": "'Id not reached.'",
+      "to": "'Attempt reached.'",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  8 failed | 97 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 8 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "resume-label-sample",
+      "file": "docs/verification/moments-observation/telemetry.ts",
+      "from": "this.resumeSample = hook.value === true ? this.lastSample : undefined",
+      "to": "this.resumeSample = undefined",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  2 failed | 103 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "clipped-frame",
+      "file": "docs/verification/moments-observation/browser-observer.js",
+      "from": "const exposedFrame = frame && clippedRect(frame)",
+      "to": "const exposedFrame = rect",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 1 passed (2)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  2 passed (2)"
+        ]
+      }
+    },
+    {
+      "name": "cancelled-response",
+      "file": "docs/verification/moments-observation/redirect.ts",
+      "from": "return method === 'Fetch.continueResponse'",
+      "to": "return false && method === 'Fetch.continueResponse'",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
         ]
       }
     }

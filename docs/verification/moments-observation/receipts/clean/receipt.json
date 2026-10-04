@@ -1,12 +1,12 @@
 {
-  "startedAt": "2026-10-02T21:48:30.309Z",
+  "startedAt": "2026-10-04T23:13:30.794Z",
   "mode": "stub",
   "status": "complete",
   "stopReason": null,
   "requests": [
     {
-      "at": "2026-10-02T21:48:30.852Z",
-      "url": "http://127.0.0.1:54113/?tab=moments&lens=ledger",
+      "at": "2026-10-04T23:13:31.454Z",
+      "url": "http://127.0.0.1:65007/?tab=moments&lens=ledger",
       "method": "GET",
       "resourceType": "document",
       "phase": "before-play",
@@ -25,13 +25,13 @@
       "disposition": "continued-local-or-fonts",
       "sizes": {
         "requestBodySize": 0,
-        "requestHeadersSize": 459,
+        "requestHeadersSize": 675,
         "responseBodySize": 4418,
         "responseHeadersSize": 150
       }
     },
     {
-      "at": "2026-10-02T21:48:30.869Z",
+      "at": "2026-10-04T23:13:31.471Z",
       "url": "https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap",
       "method": "GET",
       "resourceType": "stylesheet",
@@ -47,18 +47,18 @@
         "ids": []
       },
       "parked": false,
-      "proposedReferer": "http://127.0.0.1:54113/",
+      "proposedReferer": "http://127.0.0.1:65007/",
       "disposition": "continued-local-or-fonts",
       "sizes": {
         "requestBodySize": 0,
-        "requestHeadersSize": 350,
+        "requestHeadersSize": 907,
         "responseBodySize": 1517,
         "responseHeadersSize": 0
       }
     },
     {
-      "at": "2026-10-02T21:48:30.869Z",
-      "url": "http://127.0.0.1:54113/assets/index-BLxHeU-P.js",
+      "at": "2026-10-04T23:13:31.472Z",
+      "url": "http://127.0.0.1:65007/assets/index-BLxHeU-P.js",
       "method": "GET",
       "resourceType": "script",
       "phase": "before-play",
@@ -73,18 +73,18 @@
         "ids": []
       },
       "parked": false,
-      "proposedReferer": "http://127.0.0.1:54113/?tab=moments&lens=ledger",
+      "proposedReferer": "http://127.0.0.1:65007/?tab=moments&lens=ledger",
       "disposition": "continued-local-or-fonts",
       "sizes": {
         "requestBodySize": 0,
-        "requestHeadersSize": 411,
+        "requestHeadersSize": 608,
         "responseBodySize": 1047643,
         "responseHeadersSize": 159
       }
     },
     {
-      "at": "2026-10-02T21:48:30.870Z",
-      "url": "http://127.0.0.1:54113/assets/index-CKjq5mb7.css",
+      "at": "2026-10-04T23:13:31.472Z",
+      "url": "http://127.0.0.1:65007/assets/index-CKjq5mb7.css",
       "method": "GET",
       "resourceType": "stylesheet",
       "phase": "before-play",
@@ -99,17 +99,17 @@
         "ids": []
       },
       "parked": false,
-      "proposedReferer": "http://127.0.0.1:54113/?tab=moments&lens=ledger",
+      "proposedReferer": "http://127.0.0.1:65007/?tab=moments&lens=ledger",
       "disposition": "continued-local-or-fonts",
       "sizes": {
         "requestBodySize": 0,
-        "requestHeadersSize": 427,
+        "requestHeadersSize": 623,
         "responseBodySize": 38966,
         "responseHeadersSize": 150
       }
     },
     {
-      "at": "2026-10-02T21:48:31.013Z",
+      "at": "2026-10-04T23:13:31.606Z",
       "url": "https://fonts.gstatic.com/s/oswald/v57/TK3IWkUHHAIjg75cFRf3bXL8LICs1_Fv40pKlN4NNSeSASz7FmlWHYjMdZwl.woff2",
       "method": "GET",
       "resourceType": "font",
@@ -129,13 +129,13 @@
       "disposition": "continued-local-or-fonts",
       "sizes": {
         "requestBodySize": 0,
-        "requestHeadersSize": 448,
+        "requestHeadersSize": 931,
         "responseBodySize": 21441,
         "responseHeadersSize": 0
       }
     },
     {
-      "at": "2026-10-02T21:48:31.013Z",
+      "at": "2026-10-04T23:13:31.606Z",
       "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3twJwlBFgsAXHNk.woff2",
       "method": "GET",
       "resourceType": "font",
@@ -155,13 +155,13 @@
       "disposition": "continued-local-or-fonts",
       "sizes": {
         "requestBodySize": 0,
-        "requestHeadersSize": 432,
+        "requestHeadersSize": 899,
         "responseBodySize": 10087,
         "responseHeadersSize": 0
       }
     },
     {
-      "at": "2026-10-02T21:48:31.013Z",
+      "at": "2026-10-04T23:13:31.607Z",
       "url": "https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw.woff2",
       "method": "GET",
       "resourceType": "font",
@@ -181,14 +181,74 @@
       "disposition": "continued-local-or-fonts",
       "sizes": {
         "requestBodySize": 0,
-        "requestHeadersSize": 429,
+        "requestHeadersSize": 893,
         "responseBodySize": 48464,
         "responseHeadersSize": 0
       }
     },
     {
-      "at": "2026-10-02T21:48:31.021Z",
-      "url": "http://127.0.0.1:54113/favicon-32.png",
+      "at": "2026-10-04T23:13:31.619Z",
+      "url": "https://fonts.gstatic.com/s/oswald/v57/TK3IWkUHHAIjg75cFRf3bXL8LICs1_Fv40pKlN4NNSeSASz7FmlWHYjMdZwl.woff2",
+      "method": "GET",
+      "resourceType": "font",
+      "phase": "before-play",
+      "decision": {
+        "action": "release",
+        "reason": "local-or-fonts",
+        "next": {
+          "api": false,
+          "frames": []
+        },
+        "provider": false,
+        "ids": []
+      },
+      "parked": false,
+      "proposedReferer": "https://fonts.googleapis.com/",
+      "disposition": "continued-local-or-fonts"
+    },
+    {
+      "at": "2026-10-04T23:13:31.619Z",
+      "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3twJwlBFgsAXHNk.woff2",
+      "method": "GET",
+      "resourceType": "font",
+      "phase": "before-play",
+      "decision": {
+        "action": "release",
+        "reason": "local-or-fonts",
+        "next": {
+          "api": false,
+          "frames": []
+        },
+        "provider": false,
+        "ids": []
+      },
+      "parked": false,
+      "proposedReferer": "https://fonts.googleapis.com/",
+      "disposition": "continued-local-or-fonts"
+    },
+    {
+      "at": "2026-10-04T23:13:31.620Z",
+      "url": "https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw.woff2",
+      "method": "GET",
+      "resourceType": "font",
+      "phase": "before-play",
+      "decision": {
+        "action": "release",
+        "reason": "local-or-fonts",
+        "next": {
+          "api": false,
+          "frames": []
+        },
+        "provider": false,
+        "ids": []
+      },
+      "parked": false,
+      "proposedReferer": "https://fonts.googleapis.com/",
+      "disposition": "continued-local-or-fonts"
+    },
+    {
+      "at": "2026-10-04T23:13:31.635Z",
+      "url": "http://127.0.0.1:65007/favicon-32.png",
       "method": "GET",
       "resourceType": "other",
       "phase": "before-play",
@@ -203,17 +263,17 @@
         "ids": []
       },
       "parked": false,
-      "proposedReferer": "http://127.0.0.1:54113/?tab=moments&lens=ledger",
+      "proposedReferer": "http://127.0.0.1:65007/?tab=moments&lens=ledger",
       "disposition": "continued-local-or-fonts",
       "sizes": {
         "requestBodySize": 0,
-        "requestHeadersSize": 430,
+        "requestHeadersSize": 629,
         "responseBodySize": 248,
         "responseHeadersSize": 149
       }
     },
     {
-      "at": "2026-10-02T21:48:31.234Z",
+      "at": "2026-10-04T23:13:31.828Z",
       "url": "https://www.youtube.com/iframe_api",
       "method": "GET",
       "resourceType": "script",
@@ -229,18 +289,18 @@
         "ids": []
       },
       "parked": false,
-      "proposedReferer": "http://127.0.0.1:54113/",
+      "proposedReferer": "http://127.0.0.1:65007/",
       "disposition": "local-or-aborted",
       "sizes": {
         "requestBodySize": 0,
-        "requestHeadersSize": 341,
-        "responseBodySize": 1883,
-        "responseHeadersSize": 72
+        "requestHeadersSize": 328,
+        "responseBodySize": 1885,
+        "responseHeadersSize": 50
       }
     },
     {
-      "at": "2026-10-02T21:48:31.248Z",
-      "url": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+      "at": "2026-10-04T23:13:31.843Z",
+      "url": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
       "method": "GET",
       "resourceType": "document",
       "phase": "after-play",
@@ -259,20 +319,20 @@
         ]
       },
       "parked": false,
-      "proposedReferer": "http://127.0.0.1:54113/",
+      "proposedReferer": "http://127.0.0.1:65007/",
       "disposition": "local-or-aborted",
       "sizes": {
         "requestBodySize": 0,
-        "requestHeadersSize": 510,
-        "responseBodySize": 132,
-        "responseHeadersSize": 65
+        "requestHeadersSize": 365,
+        "responseBodySize": 134,
+        "responseHeadersSize": 44
       }
     }
   ],
   "console": [],
   "events": [
     {
-      "at": "2026-10-02T21:48:30.867Z",
+      "at": "2026-10-04T23:13:31.469Z",
       "kind": "structure",
       "value": {
         "frames": 0,
@@ -282,7 +342,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:30.868Z",
+      "at": "2026-10-04T23:13:31.470Z",
       "kind": "structure",
       "value": {
         "frames": 0,
@@ -292,7 +352,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:30.868Z",
+      "at": "2026-10-04T23:13:31.470Z",
       "kind": "structure",
       "value": {
         "frames": 0,
@@ -302,7 +362,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:30.868Z",
+      "at": "2026-10-04T23:13:31.470Z",
       "kind": "structure",
       "value": {
         "frames": 0,
@@ -312,7 +372,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:30.868Z",
+      "at": "2026-10-04T23:13:31.470Z",
       "kind": "structure",
       "value": {
         "frames": 0,
@@ -322,7 +382,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:30.962Z",
+      "at": "2026-10-04T23:13:31.595Z",
       "kind": "dom",
       "value": {
         "width": 390,
@@ -338,7 +398,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:30.996Z",
+      "at": "2026-10-04T23:13:31.596Z",
       "kind": "structure",
       "value": {
         "frames": 0,
@@ -348,7 +408,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:31.001Z",
+      "at": "2026-10-04T23:13:31.606Z",
       "kind": "structure",
       "value": {
         "frames": 0,
@@ -358,7 +418,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:31.014Z",
+      "at": "2026-10-04T23:13:31.616Z",
       "kind": "dom",
       "value": {
         "width": 390,
@@ -371,11 +431,11 @@
         "primary": [
           {
             "tag": "BUTTON",
-            "text": "Open selection →"
+            "text": "Open selection \u2192"
           },
           {
             "tag": "BUTTON",
-            "text": "Open selection →"
+            "text": "Open selection \u2192"
           }
         ],
         "status": [],
@@ -383,17 +443,17 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:31.130Z",
+      "at": "2026-10-04T23:13:31.728Z",
       "kind": "click",
       "value": {
-        "text": "Open selection →",
+        "text": "Open selection \u2192",
         "label": null,
         "queueId": null,
-        "at": 286.1000000014901
+        "at": 275.6000000014901
       }
     },
     {
-      "at": "2026-10-02T21:48:31.132Z",
+      "at": "2026-10-04T23:13:31.729Z",
       "kind": "structure",
       "value": {
         "frames": 0,
@@ -403,7 +463,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:31.161Z",
+      "at": "2026-10-04T23:13:31.739Z",
       "kind": "dom",
       "value": {
         "width": 390,
@@ -461,17 +521,17 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:31.230Z",
+      "at": "2026-10-04T23:13:31.826Z",
       "kind": "click",
       "value": {
         "text": "Play",
         "label": null,
         "queueId": null,
-        "at": 385.69999999925494
+        "at": 373.69999999925494
       }
     },
     {
-      "at": "2026-10-02T21:48:31.231Z",
+      "at": "2026-10-04T23:13:31.826Z",
       "kind": "hook",
       "value": {
         "kind": "play",
@@ -486,7 +546,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:31.231Z",
+      "at": "2026-10-04T23:13:31.827Z",
       "kind": "hook",
       "value": {
         "kind": "resume",
@@ -494,7 +554,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:31.234Z",
+      "at": "2026-10-04T23:13:31.829Z",
       "kind": "structure",
       "value": {
         "frames": 0,
@@ -504,7 +564,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:31.246Z",
+      "at": "2026-10-04T23:13:31.842Z",
       "kind": "hook",
       "value": {
         "kind": "instance",
@@ -512,7 +572,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:31.247Z",
+      "at": "2026-10-04T23:13:31.842Z",
       "kind": "structure",
       "value": {
         "frames": 1,
@@ -522,7 +582,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:31.276Z",
+      "at": "2026-10-04T23:13:31.873Z",
       "kind": "hook",
       "value": {
         "kind": "ready",
@@ -530,7 +590,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:31.277Z",
+      "at": "2026-10-04T23:13:31.874Z",
       "kind": "hook",
       "value": {
         "kind": "dispatch",
@@ -542,7 +602,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:31.293Z",
+      "at": "2026-10-04T23:13:31.876Z",
       "kind": "dom",
       "value": {
         "width": 390,
@@ -607,7 +667,7 @@
             "bottom": 291.328125,
             "left": 20
           },
-          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
           "allow": "autoplay; encrypted-media",
           "referrerpolicy": "strict-origin-when-cross-origin",
           "allowfullscreen": true
@@ -615,17 +675,17 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:31.362Z",
+      "at": "2026-10-04T23:13:31.942Z",
       "kind": "click",
       "value": {
         "text": "Pause",
         "label": null,
         "queueId": null,
-        "at": 517.6999999992549
+        "at": 490.5
       }
     },
     {
-      "at": "2026-10-02T21:48:31.363Z",
+      "at": "2026-10-04T23:13:31.943Z",
       "kind": "hook",
       "value": {
         "kind": "sample",
@@ -633,7 +693,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:31.363Z",
+      "at": "2026-10-04T23:13:31.943Z",
       "kind": "hook",
       "value": {
         "kind": "sample",
@@ -641,7 +701,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:31.363Z",
+      "at": "2026-10-04T23:13:31.943Z",
       "kind": "hook",
       "value": {
         "kind": "dispatch",
@@ -654,7 +714,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:31.364Z",
+      "at": "2026-10-04T23:13:31.943Z",
       "kind": "hook",
       "value": {
         "kind": "dispatch",
@@ -667,7 +727,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:31.377Z",
+      "at": "2026-10-04T23:13:31.956Z",
       "kind": "dom",
       "value": {
         "width": 390,
@@ -732,7 +792,7 @@
             "bottom": 291.328125,
             "left": 20
           },
-          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
           "allow": "autoplay; encrypted-media",
           "referrerpolicy": "strict-origin-when-cross-origin",
           "allowfullscreen": true
@@ -740,17 +800,17 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:31.680Z",
+      "at": "2026-10-04T23:13:32.260Z",
       "kind": "click",
       "value": {
         "text": "Enter Cinema",
         "label": null,
         "queueId": null,
-        "at": 836.1000000014901
+        "at": 807.9000000022352
       }
     },
     {
-      "at": "2026-10-02T21:48:31.683Z",
+      "at": "2026-10-04T23:13:32.263Z",
       "kind": "structure",
       "value": {
         "frames": 1,
@@ -760,17 +820,17 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:31.978Z",
+      "at": "2026-10-04T23:13:32.576Z",
       "kind": "click",
       "value": {
         "text": "Exit Cinema",
         "label": null,
         "queueId": null,
-        "at": 1133.9000000022352
+        "at": 1124.199999999255
       }
     },
     {
-      "at": "2026-10-02T21:48:31.979Z",
+      "at": "2026-10-04T23:13:32.577Z",
       "kind": "structure",
       "value": {
         "frames": 1,
@@ -780,7 +840,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:32.027Z",
+      "at": "2026-10-04T23:13:32.624Z",
       "kind": "dom",
       "value": {
         "width": 1000,
@@ -845,7 +905,7 @@
             "bottom": 657.328125,
             "left": 20
           },
-          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
           "allow": "autoplay; encrypted-media",
           "referrerpolicy": "strict-origin-when-cross-origin",
           "allowfullscreen": true
@@ -853,17 +913,17 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:32.301Z",
+      "at": "2026-10-04T23:13:32.901Z",
       "kind": "click",
       "value": {
         "text": "Enter Cinema",
         "label": null,
         "queueId": null,
-        "at": 1455.699999999255
+        "at": 1440.300000000745
       }
     },
     {
-      "at": "2026-10-02T21:48:32.303Z",
+      "at": "2026-10-04T23:13:32.901Z",
       "kind": "structure",
       "value": {
         "frames": 1,
@@ -873,17 +933,17 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:32.613Z",
+      "at": "2026-10-04T23:13:33.240Z",
       "kind": "click",
       "value": {
         "text": "Exit Cinema",
         "label": null,
         "queueId": null,
-        "at": 1769
+        "at": 1787.300000000745
       }
     },
     {
-      "at": "2026-10-02T21:48:32.614Z",
+      "at": "2026-10-04T23:13:33.245Z",
       "kind": "structure",
       "value": {
         "frames": 1,
@@ -893,7 +953,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:32.660Z",
+      "at": "2026-10-04T23:13:33.290Z",
       "kind": "dom",
       "value": {
         "width": 360,
@@ -958,7 +1018,7 @@
             "bottom": 554.328125,
             "left": 20
           },
-          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
           "allow": "autoplay; encrypted-media",
           "referrerpolicy": "strict-origin-when-cross-origin",
           "allowfullscreen": true
@@ -966,17 +1026,17 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:32.913Z",
+      "at": "2026-10-04T23:13:33.611Z",
       "kind": "click",
       "value": {
         "text": "Enter Cinema",
         "label": null,
         "queueId": null,
-        "at": 2068.300000000745
+        "at": 2159
       }
     },
     {
-      "at": "2026-10-02T21:48:32.915Z",
+      "at": "2026-10-04T23:13:33.614Z",
       "kind": "structure",
       "value": {
         "frames": 1,
@@ -986,17 +1046,17 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.212Z",
+      "at": "2026-10-04T23:13:33.941Z",
       "kind": "click",
       "value": {
         "text": "Exit Cinema",
         "label": null,
         "queueId": null,
-        "at": 2367.60000000149
+        "at": 2489.60000000149
       }
     },
     {
-      "at": "2026-10-02T21:48:33.213Z",
+      "at": "2026-10-04T23:13:33.943Z",
       "kind": "structure",
       "value": {
         "frames": 1,
@@ -1006,17 +1066,17 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.311Z",
+      "at": "2026-10-04T23:13:34.044Z",
       "kind": "click",
       "value": {
-        "text": "← Gallery",
+        "text": "\u2190 Gallery",
         "label": null,
         "queueId": null,
-        "at": 2466.800000000745
+        "at": 2591.699999999255
       }
     },
     {
-      "at": "2026-10-02T21:48:33.311Z",
+      "at": "2026-10-04T23:13:34.045Z",
       "kind": "hook",
       "value": {
         "kind": "sample",
@@ -1024,7 +1084,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.311Z",
+      "at": "2026-10-04T23:13:34.045Z",
       "kind": "hook",
       "value": {
         "kind": "dispatch",
@@ -1037,7 +1097,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.311Z",
+      "at": "2026-10-04T23:13:34.046Z",
       "kind": "hook",
       "value": {
         "kind": "sample",
@@ -1045,7 +1105,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.312Z",
+      "at": "2026-10-04T23:13:34.046Z",
       "kind": "hook",
       "value": {
         "kind": "dispatch",
@@ -1058,7 +1118,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.312Z",
+      "at": "2026-10-04T23:13:34.048Z",
       "kind": "structure",
       "value": {
         "frames": 1,
@@ -1068,7 +1128,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.324Z",
+      "at": "2026-10-04T23:13:34.055Z",
       "kind": "dom",
       "value": {
         "width": 360,
@@ -1081,11 +1141,11 @@
         "primary": [
           {
             "tag": "BUTTON",
-            "text": "Open selection →"
+            "text": "Open selection \u2192"
           },
           {
             "tag": "BUTTON",
-            "text": "Open selection →"
+            "text": "Open selection \u2192"
           }
         ],
         "status": [],
@@ -1100,7 +1160,7 @@
             "bottom": 0,
             "left": 0
           },
-          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
           "allow": "autoplay; encrypted-media",
           "referrerpolicy": "strict-origin-when-cross-origin",
           "allowfullscreen": true
@@ -1108,17 +1168,17 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.513Z",
+      "at": "2026-10-04T23:13:34.243Z",
       "kind": "click",
       "value": {
         "text": "Return to selection",
         "label": null,
         "queueId": null,
-        "at": 2669.300000000745
+        "at": 2790.60000000149
       }
     },
     {
-      "at": "2026-10-02T21:48:33.515Z",
+      "at": "2026-10-04T23:13:34.245Z",
       "kind": "structure",
       "value": {
         "frames": 1,
@@ -1128,7 +1188,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.528Z",
+      "at": "2026-10-04T23:13:34.256Z",
       "kind": "dom",
       "value": {
         "width": 360,
@@ -1193,7 +1253,7 @@
             "bottom": -78.671875,
             "left": 20
           },
-          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
           "allow": "autoplay; encrypted-media",
           "referrerpolicy": "strict-origin-when-cross-origin",
           "allowfullscreen": true
@@ -1201,17 +1261,17 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.614Z",
+      "at": "2026-10-04T23:13:34.342Z",
       "kind": "click",
       "value": {
         "text": "NextObservation 2",
         "label": "Next: Observation 2",
         "queueId": null,
-        "at": 2769.400000002235
+        "at": 2889.800000000745
       }
     },
     {
-      "at": "2026-10-02T21:48:33.614Z",
+      "at": "2026-10-04T23:13:34.342Z",
       "kind": "structure",
       "value": {
         "frames": 1,
@@ -1221,7 +1281,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.627Z",
+      "at": "2026-10-04T23:13:34.356Z",
       "kind": "dom",
       "value": {
         "width": 360,
@@ -1286,7 +1346,7 @@
             "bottom": 0,
             "left": 0
           },
-          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
           "allow": "autoplay; encrypted-media",
           "referrerpolicy": "strict-origin-when-cross-origin",
           "allowfullscreen": true
@@ -1294,17 +1354,17 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.714Z",
+      "at": "2026-10-04T23:13:34.442Z",
       "kind": "click",
       "value": {
         "text": "Play",
         "label": null,
         "queueId": null,
-        "at": 2869
+        "at": 2989.699999999255
       }
     },
     {
-      "at": "2026-10-02T21:48:33.715Z",
+      "at": "2026-10-04T23:13:34.443Z",
       "kind": "hook",
       "value": {
         "kind": "play",
@@ -1319,7 +1379,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.715Z",
+      "at": "2026-10-04T23:13:34.443Z",
       "kind": "hook",
       "value": {
         "kind": "resume",
@@ -1327,7 +1387,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.715Z",
+      "at": "2026-10-04T23:13:34.443Z",
       "kind": "hook",
       "value": {
         "kind": "sample",
@@ -1335,7 +1395,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.715Z",
+      "at": "2026-10-04T23:13:34.443Z",
       "kind": "hook",
       "value": {
         "kind": "dispatch",
@@ -1348,7 +1408,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.715Z",
+      "at": "2026-10-04T23:13:34.443Z",
       "kind": "hook",
       "value": {
         "kind": "dispatch",
@@ -1360,7 +1420,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.716Z",
+      "at": "2026-10-04T23:13:34.444Z",
       "kind": "structure",
       "value": {
         "frames": 1,
@@ -1370,7 +1430,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.725Z",
+      "at": "2026-10-04T23:13:34.456Z",
       "kind": "dom",
       "value": {
         "width": 360,
@@ -1435,7 +1495,7 @@
             "bottom": 291.328125,
             "left": 20
           },
-          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
           "allow": "autoplay; encrypted-media",
           "referrerpolicy": "strict-origin-when-cross-origin",
           "allowfullscreen": true
@@ -1443,17 +1503,17 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.810Z",
+      "at": "2026-10-04T23:13:34.541Z",
       "kind": "click",
       "value": {
         "text": "PreviousObservation 1",
         "label": "Previous: Observation 1",
         "queueId": null,
-        "at": 2966.10000000149
+        "at": 3089.400000002235
       }
     },
     {
-      "at": "2026-10-02T21:48:33.810Z",
+      "at": "2026-10-04T23:13:34.542Z",
       "kind": "hook",
       "value": {
         "kind": "sample",
@@ -1461,7 +1521,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.810Z",
+      "at": "2026-10-04T23:13:34.542Z",
       "kind": "hook",
       "value": {
         "kind": "dispatch",
@@ -1474,7 +1534,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.811Z",
+      "at": "2026-10-04T23:13:34.542Z",
       "kind": "hook",
       "value": {
         "kind": "sample",
@@ -1482,7 +1542,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.811Z",
+      "at": "2026-10-04T23:13:34.542Z",
       "kind": "hook",
       "value": {
         "kind": "dispatch",
@@ -1495,7 +1555,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.811Z",
+      "at": "2026-10-04T23:13:34.543Z",
       "kind": "structure",
       "value": {
         "frames": 1,
@@ -1505,7 +1565,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.826Z",
+      "at": "2026-10-04T23:13:34.555Z",
       "kind": "dom",
       "value": {
         "width": 360,
@@ -1570,7 +1630,7 @@
             "bottom": 0,
             "left": 0
           },
-          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
           "allow": "autoplay; encrypted-media",
           "referrerpolicy": "strict-origin-when-cross-origin",
           "allowfullscreen": true
@@ -1578,17 +1638,17 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.912Z",
+      "at": "2026-10-04T23:13:34.641Z",
       "kind": "click",
       "value": {
         "text": "Play",
         "label": null,
         "queueId": null,
-        "at": 3068.10000000149
+        "at": 3188.900000002235
       }
     },
     {
-      "at": "2026-10-02T21:48:33.913Z",
+      "at": "2026-10-04T23:13:34.641Z",
       "kind": "hook",
       "value": {
         "kind": "play",
@@ -1603,7 +1663,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.913Z",
+      "at": "2026-10-04T23:13:34.642Z",
       "kind": "hook",
       "value": {
         "kind": "resume",
@@ -1611,7 +1671,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.913Z",
+      "at": "2026-10-04T23:13:34.642Z",
       "kind": "hook",
       "value": {
         "kind": "sample",
@@ -1619,7 +1679,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.914Z",
+      "at": "2026-10-04T23:13:34.642Z",
       "kind": "hook",
       "value": {
         "kind": "resume",
@@ -1627,7 +1687,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.914Z",
+      "at": "2026-10-04T23:13:34.642Z",
       "kind": "hook",
       "value": {
         "kind": "dispatch",
@@ -1640,7 +1700,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.914Z",
+      "at": "2026-10-04T23:13:34.642Z",
       "kind": "hook",
       "value": {
         "kind": "dispatch",
@@ -1652,7 +1712,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.914Z",
+      "at": "2026-10-04T23:13:34.643Z",
       "kind": "structure",
       "value": {
         "frames": 1,
@@ -1662,7 +1722,7 @@
       }
     },
     {
-      "at": "2026-10-02T21:48:33.924Z",
+      "at": "2026-10-04T23:13:34.656Z",
       "kind": "dom",
       "value": {
         "width": 360,
@@ -1729,7 +1789,7 @@
             "bottom": 291.328125,
             "left": 20
           },
-          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+          "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
           "allow": "autoplay; encrypted-media",
           "referrerpolicy": "strict-origin-when-cross-origin",
           "allowfullscreen": true
@@ -1740,7 +1800,7 @@
   "checkpoints": [
     {
       "label": "before-play",
-      "at": "2026-10-02T21:48:31.055Z",
+      "at": "2026-10-04T23:13:31.661Z",
       "width": 390,
       "scrollWidth": 390,
       "height": 844,
@@ -1751,11 +1811,11 @@
       "primary": [
         {
           "tag": "BUTTON",
-          "text": "Open selection →"
+          "text": "Open selection \u2192"
         },
         {
           "tag": "BUTTON",
-          "text": "Open selection →"
+          "text": "Open selection \u2192"
         }
       ],
       "status": [],
@@ -1768,7 +1828,7 @@
     },
     {
       "label": "A-cover",
-      "at": "2026-10-02T21:48:31.162Z",
+      "at": "2026-10-04T23:13:31.757Z",
       "width": 390,
       "scrollWidth": 390,
       "height": 844,
@@ -1829,7 +1889,7 @@
     },
     {
       "label": "A-cold-result",
-      "at": "2026-10-02T21:48:31.294Z",
+      "at": "2026-10-04T23:13:31.878Z",
       "width": 390,
       "scrollWidth": 390,
       "height": 844,
@@ -1892,7 +1952,7 @@
           "bottom": 291.328125,
           "left": 20
         },
-        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
         "allow": "autoplay; encrypted-media",
         "referrerpolicy": "strict-origin-when-cross-origin",
         "allowfullscreen": true
@@ -1905,7 +1965,7 @@
     },
     {
       "label": "stage",
-      "at": "2026-10-02T21:48:31.425Z",
+      "at": "2026-10-04T23:13:32.006Z",
       "width": 390,
       "scrollWidth": 390,
       "height": 844,
@@ -1968,7 +2028,7 @@
           "bottom": 291.328125,
           "left": 20
         },
-        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
         "allow": "autoplay; encrypted-media",
         "referrerpolicy": "strict-origin-when-cross-origin",
         "allowfullscreen": true
@@ -1977,7 +2037,7 @@
     },
     {
       "label": "queue-row-hit-0",
-      "at": "2026-10-02T21:48:31.543Z",
+      "at": "2026-10-04T23:13:32.123Z",
       "width": 390,
       "scrollWidth": 390,
       "height": 844,
@@ -2040,7 +2100,7 @@
           "bottom": 243.328125,
           "left": 20
         },
-        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
         "allow": "autoplay; encrypted-media",
         "referrerpolicy": "strict-origin-when-cross-origin",
         "allowfullscreen": true
@@ -2049,7 +2109,7 @@
     },
     {
       "label": "queue-row-hit-1",
-      "at": "2026-10-02T21:48:31.610Z",
+      "at": "2026-10-04T23:13:32.190Z",
       "width": 390,
       "scrollWidth": 390,
       "height": 844,
@@ -2112,7 +2172,7 @@
           "bottom": -26.671875,
           "left": 20
         },
-        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
         "allow": "autoplay; encrypted-media",
         "referrerpolicy": "strict-origin-when-cross-origin",
         "allowfullscreen": true
@@ -2126,7 +2186,7 @@
     },
     {
       "label": "cinema",
-      "at": "2026-10-02T21:48:31.743Z",
+      "at": "2026-10-04T23:13:32.323Z",
       "width": 390,
       "scrollWidth": 390,
       "height": 844,
@@ -2189,7 +2249,7 @@
           "bottom": 383.828125,
           "left": 20
         },
-        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
         "allow": "autoplay; encrypted-media",
         "referrerpolicy": "strict-origin-when-cross-origin",
         "allowfullscreen": true
@@ -2198,7 +2258,7 @@
     },
     {
       "label": "queue-row-hit-0",
-      "at": "2026-10-02T21:48:31.842Z",
+      "at": "2026-10-04T23:13:32.439Z",
       "width": 390,
       "scrollWidth": 390,
       "height": 844,
@@ -2261,7 +2321,7 @@
           "bottom": 383.828125,
           "left": 20
         },
-        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
         "allow": "autoplay; encrypted-media",
         "referrerpolicy": "strict-origin-when-cross-origin",
         "allowfullscreen": true
@@ -2270,7 +2330,7 @@
     },
     {
       "label": "queue-row-hit-1",
-      "at": "2026-10-02T21:48:31.908Z",
+      "at": "2026-10-04T23:13:32.506Z",
       "width": 390,
       "scrollWidth": 390,
       "height": 844,
@@ -2333,7 +2393,7 @@
           "bottom": 383.828125,
           "left": 20
         },
-        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
         "allow": "autoplay; encrypted-media",
         "referrerpolicy": "strict-origin-when-cross-origin",
         "allowfullscreen": true
@@ -2347,7 +2407,7 @@
     },
     {
       "label": "stage",
-      "at": "2026-10-02T21:48:32.042Z",
+      "at": "2026-10-04T23:13:32.639Z",
       "width": 1000,
       "scrollWidth": 1000,
       "height": 900,
@@ -2410,7 +2470,7 @@
           "bottom": 657.328125,
           "left": 20
         },
-        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
         "allow": "autoplay; encrypted-media",
         "referrerpolicy": "strict-origin-when-cross-origin",
         "allowfullscreen": true
@@ -2419,7 +2479,7 @@
     },
     {
       "label": "queue-row-hit-0",
-      "at": "2026-10-02T21:48:32.160Z",
+      "at": "2026-10-04T23:13:32.757Z",
       "width": 1000,
       "scrollWidth": 1000,
       "height": 900,
@@ -2482,7 +2542,7 @@
           "bottom": 657.328125,
           "left": 20
         },
-        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
         "allow": "autoplay; encrypted-media",
         "referrerpolicy": "strict-origin-when-cross-origin",
         "allowfullscreen": true
@@ -2491,7 +2551,7 @@
     },
     {
       "label": "queue-row-hit-1",
-      "at": "2026-10-02T21:48:32.227Z",
+      "at": "2026-10-04T23:13:32.823Z",
       "width": 1000,
       "scrollWidth": 1000,
       "height": 900,
@@ -2554,7 +2614,7 @@
           "bottom": 657.328125,
           "left": 20
         },
-        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
         "allow": "autoplay; encrypted-media",
         "referrerpolicy": "strict-origin-when-cross-origin",
         "allowfullscreen": true
@@ -2568,7 +2628,7 @@
     },
     {
       "label": "cinema",
-      "at": "2026-10-02T21:48:32.361Z",
+      "at": "2026-10-04T23:13:32.959Z",
       "width": 1000,
       "scrollWidth": 1000,
       "height": 900,
@@ -2631,7 +2691,7 @@
           "bottom": 539.328125,
           "left": 20
         },
-        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
         "allow": "autoplay; encrypted-media",
         "referrerpolicy": "strict-origin-when-cross-origin",
         "allowfullscreen": true
@@ -2640,7 +2700,7 @@
     },
     {
       "label": "queue-row-hit-0",
-      "at": "2026-10-02T21:48:32.476Z",
+      "at": "2026-10-04T23:13:33.094Z",
       "width": 1000,
       "scrollWidth": 1000,
       "height": 900,
@@ -2703,7 +2763,7 @@
           "bottom": 539.328125,
           "left": 20
         },
-        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
         "allow": "autoplay; encrypted-media",
         "referrerpolicy": "strict-origin-when-cross-origin",
         "allowfullscreen": true
@@ -2712,7 +2772,7 @@
     },
     {
       "label": "queue-row-hit-1",
-      "at": "2026-10-02T21:48:32.542Z",
+      "at": "2026-10-04T23:13:33.157Z",
       "width": 1000,
       "scrollWidth": 1000,
       "height": 900,
@@ -2775,7 +2835,7 @@
           "bottom": 539.328125,
           "left": 20
         },
-        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
         "allow": "autoplay; encrypted-media",
         "referrerpolicy": "strict-origin-when-cross-origin",
         "allowfullscreen": true
@@ -2789,7 +2849,7 @@
     },
     {
       "label": "stage",
-      "at": "2026-10-02T21:48:32.677Z",
+      "at": "2026-10-04T23:13:33.309Z",
       "width": 360,
       "scrollWidth": 360,
       "height": 844,
@@ -2852,7 +2912,7 @@
           "bottom": 554.328125,
           "left": 20
         },
-        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
         "allow": "autoplay; encrypted-media",
         "referrerpolicy": "strict-origin-when-cross-origin",
         "allowfullscreen": true
@@ -2861,7 +2921,7 @@
     },
     {
       "label": "queue-row-hit-0",
-      "at": "2026-10-02T21:48:32.776Z",
+      "at": "2026-10-04T23:13:33.459Z",
       "width": 360,
       "scrollWidth": 360,
       "height": 844,
@@ -2924,7 +2984,7 @@
           "bottom": -78.671875,
           "left": 20
         },
-        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
         "allow": "autoplay; encrypted-media",
         "referrerpolicy": "strict-origin-when-cross-origin",
         "allowfullscreen": true
@@ -2933,7 +2993,7 @@
     },
     {
       "label": "queue-row-hit-1",
-      "at": "2026-10-02T21:48:32.842Z",
+      "at": "2026-10-04T23:13:33.541Z",
       "width": 360,
       "scrollWidth": 360,
       "height": 844,
@@ -2996,7 +3056,7 @@
           "bottom": -78.671875,
           "left": 20
         },
-        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
         "allow": "autoplay; encrypted-media",
         "referrerpolicy": "strict-origin-when-cross-origin",
         "allowfullscreen": true
@@ -3010,7 +3070,7 @@
     },
     {
       "label": "cinema",
-      "at": "2026-10-02T21:48:32.976Z",
+      "at": "2026-10-04T23:13:33.674Z",
       "width": 360,
       "scrollWidth": 360,
       "height": 844,
@@ -3073,7 +3133,7 @@
           "bottom": 383.828125,
           "left": 20
         },
-        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
         "allow": "autoplay; encrypted-media",
         "referrerpolicy": "strict-origin-when-cross-origin",
         "allowfullscreen": true
@@ -3082,7 +3142,7 @@
     },
     {
       "label": "queue-row-hit-0",
-      "at": "2026-10-02T21:48:33.077Z",
+      "at": "2026-10-04T23:13:33.793Z",
       "width": 360,
       "scrollWidth": 360,
       "height": 844,
@@ -3145,7 +3205,7 @@
           "bottom": 383.828125,
           "left": 20
         },
-        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
         "allow": "autoplay; encrypted-media",
         "referrerpolicy": "strict-origin-when-cross-origin",
         "allowfullscreen": true
@@ -3154,7 +3214,7 @@
     },
     {
       "label": "queue-row-hit-1",
-      "at": "2026-10-02T21:48:33.142Z",
+      "at": "2026-10-04T23:13:33.874Z",
       "width": 360,
       "scrollWidth": 360,
       "height": 844,
@@ -3217,7 +3277,7 @@
           "bottom": 383.828125,
           "left": 20
         },
-        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
         "allow": "autoplay; encrypted-media",
         "referrerpolicy": "strict-origin-when-cross-origin",
         "allowfullscreen": true
@@ -3231,7 +3291,7 @@
     },
     {
       "label": "before-park",
-      "at": "2026-10-02T21:48:33.243Z",
+      "at": "2026-10-04T23:13:33.973Z",
       "width": 360,
       "scrollWidth": 360,
       "height": 844,
@@ -3294,7 +3354,7 @@
           "bottom": 554.328125,
           "left": 20
         },
-        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
         "allow": "autoplay; encrypted-media",
         "referrerpolicy": "strict-origin-when-cross-origin",
         "allowfullscreen": true
@@ -3303,12 +3363,12 @@
     },
     {
       "label": "click",
-      "name": "← Gallery",
+      "name": "\u2190 Gallery",
       "parentReceived": true
     },
     {
       "label": "parked",
-      "at": "2026-10-02T21:48:33.343Z",
+      "at": "2026-10-04T23:13:34.075Z",
       "width": 360,
       "scrollWidth": 360,
       "height": 844,
@@ -3319,11 +3379,11 @@
       "primary": [
         {
           "tag": "BUTTON",
-          "text": "Open selection →"
+          "text": "Open selection \u2192"
         },
         {
           "tag": "BUTTON",
-          "text": "Open selection →"
+          "text": "Open selection \u2192"
         }
       ],
       "status": [],
@@ -3338,7 +3398,7 @@
           "bottom": 0,
           "left": 0
         },
-        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
         "allow": "autoplay; encrypted-media",
         "referrerpolicy": "strict-origin-when-cross-origin",
         "allowfullscreen": true
@@ -3352,7 +3412,7 @@
     },
     {
       "label": "parked-return",
-      "at": "2026-10-02T21:48:33.544Z",
+      "at": "2026-10-04T23:13:34.273Z",
       "width": 360,
       "scrollWidth": 360,
       "height": 844,
@@ -3415,7 +3475,7 @@
           "bottom": 291.328125,
           "left": 20
         },
-        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
         "allow": "autoplay; encrypted-media",
         "referrerpolicy": "strict-origin-when-cross-origin",
         "allowfullscreen": true
@@ -3429,7 +3489,7 @@
     },
     {
       "label": "next-without-provider-reply",
-      "at": "2026-10-02T21:48:33.643Z",
+      "at": "2026-10-04T23:13:34.373Z",
       "width": 360,
       "scrollWidth": 360,
       "height": 844,
@@ -3492,7 +3552,7 @@
           "bottom": 0,
           "left": 0
         },
-        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
         "allow": "autoplay; encrypted-media",
         "referrerpolicy": "strict-origin-when-cross-origin",
         "allowfullscreen": true
@@ -3506,7 +3566,7 @@
     },
     {
       "label": "B-warm-result",
-      "at": "2026-10-02T21:48:33.745Z",
+      "at": "2026-10-04T23:13:34.474Z",
       "width": 360,
       "scrollWidth": 360,
       "height": 844,
@@ -3569,7 +3629,7 @@
           "bottom": 291.328125,
           "left": 20
         },
-        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
         "allow": "autoplay; encrypted-media",
         "referrerpolicy": "strict-origin-when-cross-origin",
         "allowfullscreen": true
@@ -3583,7 +3643,7 @@
     },
     {
       "label": "previous-without-provider-reply",
-      "at": "2026-10-02T21:48:33.842Z",
+      "at": "2026-10-04T23:13:34.573Z",
       "width": 360,
       "scrollWidth": 360,
       "height": 844,
@@ -3646,7 +3706,7 @@
           "bottom": 0,
           "left": 0
         },
-        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
         "allow": "autoplay; encrypted-media",
         "referrerpolicy": "strict-origin-when-cross-origin",
         "allowfullscreen": true
@@ -3660,7 +3720,7 @@
     },
     {
       "label": "A-reload-and-seek",
-      "at": "2026-10-02T21:48:33.944Z",
+      "at": "2026-10-04T23:13:34.673Z",
       "width": 360,
       "scrollWidth": 360,
       "height": 844,
@@ -3725,7 +3785,7 @@
           "bottom": 291.328125,
           "left": 20
         },
-        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
         "allow": "autoplay; encrypted-media",
         "referrerpolicy": "strict-origin-when-cross-origin",
         "allowfullscreen": true
@@ -3734,7 +3794,7 @@
     },
     {
       "label": "visit-complete",
-      "at": "2026-10-02T21:48:33.945Z",
+      "at": "2026-10-04T23:13:34.674Z",
       "width": 360,
       "scrollWidth": 360,
       "height": 844,
@@ -3799,7 +3859,7 @@
           "bottom": 291.328125,
           "left": 20
         },
-        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A54113",
+        "src": "https://www.youtube-nocookie.com/embed/S4Stub00001?enablejsapi=1&playsinline=1&origin=http%3A%2F%2F127.0.0.1%3A65007",
         "allow": "autoplay; encrypted-media",
         "referrerpolicy": "strict-origin-when-cross-origin",
         "allowfullscreen": true
@@ -3866,16 +3926,14 @@
     "bytesWhileParked": 0,
     "wireHeaders": [
       {
-        "requestId": "BDA9F7C50884A75BFEB794E9F6505A8B",
-        "url": "http://127.0.0.1:54113/?tab=moments&lens=ledger",
+        "requestId": "6B18E8D261C6E9513EBC8FA72BB41658",
+        "url": "http://127.0.0.1:65007/?tab=moments&lens=ledger",
         "headers": {
           "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
           "Accept-Encoding": "gzip, deflate, br, zstd",
           "Accept-Language": "en-US,en;q=0.9",
-          "Cache-Control": "no-cache",
           "Connection": "keep-alive",
-          "Host": "127.0.0.1:54113",
-          "Pragma": "no-cache",
+          "Host": "127.0.0.1:65007",
           "Sec-Fetch-Dest": "document",
           "Sec-Fetch-Mode": "navigate",
           "Sec-Fetch-Site": "none",
@@ -3889,41 +3947,16 @@
         "note": "Browser-reported sent headers; not a server receipt"
       },
       {
-        "requestId": "82383.4",
-        "url": "http://127.0.0.1:54113/assets/index-CKjq5mb7.css",
-        "headers": {
-          "Accept": "text/css,*/*;q=0.1",
-          "Accept-Encoding": "gzip, deflate, br, zstd",
-          "Accept-Language": "en-US,en;q=0.9",
-          "Cache-Control": "no-cache",
-          "Connection": "keep-alive",
-          "Host": "127.0.0.1:54113",
-          "Origin": "http://127.0.0.1:54113",
-          "Pragma": "no-cache",
-          "Referer": "http://127.0.0.1:54113/?tab=moments&lens=ledger",
-          "Sec-Fetch-Dest": "style",
-          "Sec-Fetch-Mode": "cors",
-          "Sec-Fetch-Site": "same-origin",
-          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
-          "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
-          "sec-ch-ua-mobile": "?0",
-          "sec-ch-ua-platform": "\"macOS\""
-        },
-        "note": "Browser-reported sent headers; not a server receipt"
-      },
-      {
-        "requestId": "82383.3",
-        "url": "http://127.0.0.1:54113/assets/index-BLxHeU-P.js",
+        "requestId": "87812.3",
+        "url": "http://127.0.0.1:65007/assets/index-BLxHeU-P.js",
         "headers": {
           "Accept": "*/*",
           "Accept-Encoding": "gzip, deflate, br, zstd",
           "Accept-Language": "en-US,en;q=0.9",
-          "Cache-Control": "no-cache",
           "Connection": "keep-alive",
-          "Host": "127.0.0.1:54113",
-          "Origin": "http://127.0.0.1:54113",
-          "Pragma": "no-cache",
-          "Referer": "http://127.0.0.1:54113/?tab=moments&lens=ledger",
+          "Host": "127.0.0.1:65007",
+          "Origin": "http://127.0.0.1:65007",
+          "Referer": "http://127.0.0.1:65007/?tab=moments&lens=ledger",
           "Sec-Fetch-Dest": "script",
           "Sec-Fetch-Mode": "cors",
           "Sec-Fetch-Site": "same-origin",
@@ -3935,7 +3968,28 @@
         "note": "Browser-reported sent headers; not a server receipt"
       },
       {
-        "requestId": "82383.2",
+        "requestId": "87812.4",
+        "url": "http://127.0.0.1:65007/assets/index-CKjq5mb7.css",
+        "headers": {
+          "Accept": "text/css,*/*;q=0.1",
+          "Accept-Encoding": "gzip, deflate, br, zstd",
+          "Accept-Language": "en-US,en;q=0.9",
+          "Connection": "keep-alive",
+          "Host": "127.0.0.1:65007",
+          "Origin": "http://127.0.0.1:65007",
+          "Referer": "http://127.0.0.1:65007/?tab=moments&lens=ledger",
+          "Sec-Fetch-Dest": "style",
+          "Sec-Fetch-Mode": "cors",
+          "Sec-Fetch-Site": "same-origin",
+          "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+          "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
+          "sec-ch-ua-mobile": "?0",
+          "sec-ch-ua-platform": "\"macOS\""
+        },
+        "note": "Browser-reported sent headers; not a server receipt"
+      },
+      {
+        "requestId": "87812.2",
         "url": "https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap",
         "headers": {
           ":authority": "fonts.googleapis.com",
@@ -3945,10 +3999,8 @@
           "accept": "text/css,*/*;q=0.1",
           "accept-encoding": "gzip, deflate, br, zstd",
           "accept-language": "en-US,en;q=0.9",
-          "cache-control": "no-cache",
-          "pragma": "no-cache",
           "priority": "u=0",
-          "referer": "http://127.0.0.1:54113/",
+          "referer": "http://127.0.0.1:65007/",
           "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
           "sec-ch-ua-mobile": "?0",
           "sec-ch-ua-platform": "\"macOS\"",
@@ -3965,8 +4017,8 @@
         "note": "Browser-reported sent headers; not a server receipt"
       },
       {
-        "requestId": "82383.43",
-        "url": null,
+        "requestId": "87812.43",
+        "url": "https://fonts.gstatic.com/s/oswald/v57/TK3IWkUHHAIjg75cFRf3bXL8LICs1_Fv40pKlN4NNSeSASz7FmlWHYjMdZwl.woff2",
         "headers": {
           ":authority": "fonts.gstatic.com",
           ":method": "GET",
@@ -3975,9 +4027,7 @@
           "accept": "*/*",
           "accept-encoding": "gzip, deflate, br, zstd",
           "accept-language": "en-US,en;q=0.9",
-          "cache-control": "no-cache",
-          "origin": "http://127.0.0.1:54113",
-          "pragma": "no-cache",
+          "origin": "http://127.0.0.1:65007",
           "priority": "u=0",
           "referer": "https://fonts.googleapis.com/",
           "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
@@ -3995,8 +4045,8 @@
         "note": "Browser-reported sent headers; not a server receipt"
       },
       {
-        "requestId": "82383.12",
-        "url": null,
+        "requestId": "87812.12",
+        "url": "https://fonts.gstatic.com/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3twJwlBFgsAXHNk.woff2",
         "headers": {
           ":authority": "fonts.gstatic.com",
           ":method": "GET",
@@ -4005,9 +4055,7 @@
           "accept": "*/*",
           "accept-encoding": "gzip, deflate, br, zstd",
           "accept-language": "en-US,en;q=0.9",
-          "cache-control": "no-cache",
-          "origin": "http://127.0.0.1:54113",
-          "pragma": "no-cache",
+          "origin": "http://127.0.0.1:65007",
           "priority": "u=0",
           "referer": "https://fonts.googleapis.com/",
           "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
@@ -4025,8 +4073,8 @@
         "note": "Browser-reported sent headers; not a server receipt"
       },
       {
-        "requestId": "82383.24",
-        "url": null,
+        "requestId": "87812.24",
+        "url": "https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw.woff2",
         "headers": {
           ":authority": "fonts.gstatic.com",
           ":method": "GET",
@@ -4035,9 +4083,7 @@
           "accept": "*/*",
           "accept-encoding": "gzip, deflate, br, zstd",
           "accept-language": "en-US,en;q=0.9",
-          "cache-control": "no-cache",
-          "origin": "http://127.0.0.1:54113",
-          "pragma": "no-cache",
+          "origin": "http://127.0.0.1:65007",
           "priority": "u=0",
           "referer": "https://fonts.googleapis.com/",
           "sec-ch-ua": "\"Chromium\";v=\"154\", \"Google Chrome\";v=\"154\", \"Not A(Brand\";v=\"99\"",
@@ -4055,17 +4101,15 @@
         "note": "Browser-reported sent headers; not a server receipt"
       },
       {
-        "requestId": "82383.54",
-        "url": "http://127.0.0.1:54113/favicon-32.png",
+        "requestId": "87812.54",
+        "url": "http://127.0.0.1:65007/favicon-32.png",
         "headers": {
           "Accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
           "Accept-Encoding": "gzip, deflate, br, zstd",
           "Accept-Language": "en-US,en;q=0.9",
-          "Cache-Control": "no-cache",
           "Connection": "keep-alive",
-          "Host": "127.0.0.1:54113",
-          "Pragma": "no-cache",
-          "Referer": "http://127.0.0.1:54113/?tab=moments&lens=ledger",
+          "Host": "127.0.0.1:65007",
+          "Referer": "http://127.0.0.1:65007/?tab=moments&lens=ledger",
           "Sec-Fetch-Dest": "image",
           "Sec-Fetch-Mode": "no-cors",
           "Sec-Fetch-Site": "same-origin",
@@ -4080,20 +4124,26 @@
     "hosts": {
       "127.0.0.1": 4,
       "fonts.googleapis.com": 1,
-      "fonts.gstatic.com": 3,
+      "fonts.gstatic.com": 6,
       "www.youtube.com": 1,
       "www.youtube-nocookie.com": 1
     },
-    "redirects": []
+    "runnerAborts": {},
+    "redirects": [],
+    "interceptionCancellations": []
+  },
+  "redirectProof": {
+    "locationHits": 0,
+    "probeFinished": false
   },
   "safetyCeiling": {
     "milliseconds": 60000,
     "meaning": "Operational total-run safety ceiling, not a product readiness timeout"
   },
   "build": {
-    "gitSha": "515224be130f704590245844d1a886fd81d9a725",
-    "runnerSha": "515224be130f704590245844d1a886fd81d9a725",
-    "distHash": "31efb155d1a45f8cd23c112311808bee00fba73e96ea2ea47b54336356f2ca50",
+    "gitSha": "a022828e5d399f391767f65dc89174c362b0d07b",
+    "runnerSha": "a022828e5d399f391767f65dc89174c362b0d07b",
+    "distHash": "8102f26ad54b5a8f8af621ed97825cc68e75d74fc9d40cf676fed0a788811f14",
     "files": [
       {
         "path": "assets/index-BLxHeU-P.js",
@@ -4127,13 +4177,13 @@
       },
       {
         "path": "index.html",
-        "sha256": "e4e158a8e82c24ea44a81b6c3d4872fb7ec8161ffa824135e5443371c378a506",
+        "sha256": "02c998d8a84acf896a43ffb80d48764e7fb39b8feb8f834eb8af4d1b4add8e8b",
         "bytes": 4418
       }
     ]
   },
-  "boundPort": 54113,
-  "origin": "http://127.0.0.1:54113",
+  "boundPort": 65007,
+  "origin": "http://127.0.0.1:65007",
   "authority": {
     "who": "Beni",
     "at": "2026-10-02T00:00:00Z",
@@ -4146,7 +4196,7 @@
       "googlevideo.com",
       "ggpht.com"
     ],
-    "origin": "http://127.0.0.1:54113",
+    "origin": "http://127.0.0.1:65007",
     "ids": [
       {
         "id": "S4Stub00001",
@@ -4161,12 +4211,14 @@
     ]
   },
   "browser": {
-    "executable": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "executable": "<installed-google-chrome>",
     "version": "Google Chrome 154.0.8037.93",
     "headed": false,
     "os": "darwin 25.6.0 arm64",
     "launchedVersion": "154.0.8037.93",
-    "freshProfile": true
+    "freshProfile": true,
+    "launchCommand": "<installed-google-chrome> --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --remote-debugging-port=0 --disable-background-networking --disable-component-update --disable-domain-reliability --disable-sync --no-first-run --no-default-browser-check --disable-features=MediaRouter,OptimizationHints --host-resolver-rules=MAP youtube.com ~NOTFOUND, MAP *.youtube.com ~NOTFOUND, MAP youtu.be ~NOTFOUND, MAP *.youtu.be ~NOTFOUND, MAP youtube-nocookie.com ~NOTFOUND, MAP *.youtube-nocookie.com ~NOTFOUND, MAP ytimg.com ~NOTFOUND, MAP *.ytimg.com ~NOTFOUND, MAP googlevideo.com ~NOTFOUND, MAP *.googlevideo.com ~NOTFOUND, MAP ggpht.com ~NOTFOUND, MAP *.ggpht.com ~NOTFOUND, MAP *.s4a.test 127.0.0.1 --user-data-dir=<fresh-profile> --remote-debugging-pipe about:blank",
+    "webdriver": true
   },
   "dnsGuard": "--host-resolver-rules=MAP youtube.com ~NOTFOUND, MAP *.youtube.com ~NOTFOUND, MAP youtu.be ~NOTFOUND, MAP *.youtu.be ~NOTFOUND, MAP youtube-nocookie.com ~NOTFOUND, MAP *.youtube-nocookie.com ~NOTFOUND, MAP ytimg.com ~NOTFOUND, MAP *.ytimg.com ~NOTFOUND, MAP googlevideo.com ~NOTFOUND, MAP *.googlevideo.com ~NOTFOUND, MAP ggpht.com ~NOTFOUND, MAP *.ggpht.com ~NOTFOUND",
   "pageLoads": 1,
@@ -4218,19 +4270,19 @@
     ]
   ],
   "instancesObserved": 1,
-  "finishedAt": "2026-10-02T21:48:34.088Z",
+  "finishedAt": "2026-10-04T23:13:34.889Z",
   "observations": [
     {
-      "observedAt": "2026-10-02T21:48:34.088Z",
-      "environment": "loopback http://127.0.0.1:54113; Chrome Google Chrome 154.0.8037.93; headless; darwin 25.6.0",
+      "observedAt": "2026-10-04T23:13:34.889Z",
+      "environment": "STUB; loopback http://127.0.0.1:65007; Chrome Google Chrome 154.0.8037.93; headless; darwin 25.6.0",
       "outcome": "played",
-      "note": "Test id S4Stub00001. Synthetic stub events only; no provider playback observed. No territory diagnosis."
+      "note": "Test id S4Stub00001. Attempt reached.  Synthetic stub events only; no provider playback observed. No territory diagnosis."
     },
     {
-      "observedAt": "2026-10-02T21:48:34.088Z",
-      "environment": "loopback http://127.0.0.1:54113; Chrome Google Chrome 154.0.8037.93; headless; darwin 25.6.0",
-      "outcome": "played",
-      "note": "Test id S4Stub00002. Synthetic stub events only; no provider playback observed. No territory diagnosis."
+      "observedAt": "2026-10-04T23:13:34.889Z",
+      "environment": "STUB; loopback http://127.0.0.1:65007; Chrome Google Chrome 154.0.8037.93; headless; darwin 25.6.0",
+      "outcome": "unknown",
+      "note": "Test id S4Stub00002. Attempt reached.  Synthetic stub events only; no provider playback observed. No territory diagnosis."
     }
   ]
 }

@@ -1,0 +1,46 @@
+{
+  "sha": "b37d5666a7667a1b1ae76480911c784280878369",
+  "main": "d1b20235360bc1e6bdb1f08681fe42eb26b771b6",
+  "dataSnapshot": "11845cb21cfd0e87a1105e37e7b74e348739541c",
+  "comparison": "Current main source and PR source, both using the unchanged committed 11845cb data bytes in disposable archives.",
+  "dist": {
+    "equal": true,
+    "head": {
+      "assets/index-2Dbxbga-.js": "bde71dcf0f5f5c83b1a1041a71e6f1bf1260fc400637d27d107a99153a41e4fa",
+      "assets/index-CKjq5mb7.css": "f22157bc13632d0de509baba600fb44c087975b29e1d722c6e13eaa5bac7cdaa",
+      "favicon-192.png": "4308e7ecd71fc2b2f693631dd495d6ff3959705b08a0fd6e78c4226204ffacec",
+      "favicon-32.png": "7029b21dccbb0090b5905c82f8135f0eea68987602e512076b4b9e3c7186cd4c",
+      "favicon-512.png": "832162dda57344b5bf62bb0070a07ff1a2907057ed4059f7097f07d369fb7008",
+      "favicon-64.png": "4372588d93f02f6dbae63197a59e7ae6f2fd92264241a5eb20fc568de8cd4239",
+      "index.html": "c55aeaa5cba1d245829fa98edff3a5d487ecb64b31fb5c8f764a242d4ed85944"
+    },
+    "main": {
+      "assets/index-2Dbxbga-.js": "bde71dcf0f5f5c83b1a1041a71e6f1bf1260fc400637d27d107a99153a41e4fa",
+      "assets/index-CKjq5mb7.css": "f22157bc13632d0de509baba600fb44c087975b29e1d722c6e13eaa5bac7cdaa",
+      "favicon-192.png": "4308e7ecd71fc2b2f693631dd495d6ff3959705b08a0fd6e78c4226204ffacec",
+      "favicon-32.png": "7029b21dccbb0090b5905c82f8135f0eea68987602e512076b4b9e3c7186cd4c",
+      "favicon-512.png": "832162dda57344b5bf62bb0070a07ff1a2907057ed4059f7097f07d369fb7008",
+      "favicon-64.png": "4372588d93f02f6dbae63197a59e7ae6f2fd92264241a5eb20fc568de8cd4239",
+      "index.html": "c55aeaa5cba1d245829fa98edff3a5d487ecb64b31fb5c8f764a242d4ed85944"
+    }
+  },
+  "dist-single": {
+    "equal": true,
+    "head": {
+      "favicon-192.png": "4308e7ecd71fc2b2f693631dd495d6ff3959705b08a0fd6e78c4226204ffacec",
+      "favicon-32.png": "7029b21dccbb0090b5905c82f8135f0eea68987602e512076b4b9e3c7186cd4c",
+      "favicon-512.png": "832162dda57344b5bf62bb0070a07ff1a2907057ed4059f7097f07d369fb7008",
+      "favicon-64.png": "4372588d93f02f6dbae63197a59e7ae6f2fd92264241a5eb20fc568de8cd4239",
+      "index.html": "be6c6ede104d573b5415ddd6a2bf19747d1f3c2eee6bbe10d56642fc1393b91e"
+    },
+    "main": {
+      "favicon-192.png": "4308e7ecd71fc2b2f693631dd495d6ff3959705b08a0fd6e78c4226204ffacec",
+      "favicon-32.png": "7029b21dccbb0090b5905c82f8135f0eea68987602e512076b4b9e3c7186cd4c",
+      "favicon-512.png": "832162dda57344b5bf62bb0070a07ff1a2907057ed4059f7097f07d369fb7008",
+      "favicon-64.png": "4372588d93f02f6dbae63197a59e7ae6f2fd92264241a5eb20fc568de8cd4239",
+      "index.html": "be6c6ede104d573b5415ddd6a2bf19747d1f3c2eee6bbe10d56642fc1393b91e"
+    }
+  },
+  "finalImplementation": "a022828e5d399f391767f65dc89174c362b0d07b",
+  "finalEvidenceTreeRebuilt": true
+}

@@ -284,16 +284,22 @@ browser zoom, Android and iOS Back, CloseWatcher. A stub proves runner logic onl
 
 ## Pass 2 receipts
 
-The implementation SHA, exact counts, ports, build hashes and final Verify run are recorded
-in the readable summaries and the single Pass 2 PR comment. Earlier receipts are historical
+Implementation `a022828e5d399f391767f65dc89174c362b0d07b`: typecheck and **860 tests in
+55 files** pass; **69 proof cases**, **64 pure mutants** and **47 browser mutants** pass,
+with every mutant red and restored green. The disposable merge onto main `d1b2023` passes
+typecheck, the same suite and all 69 proof cases (merge tree `81dcfe4b`, no merge commit).
+Chrome 154.0.8037.93, Playwright 1.62.1, Node 24.15.0 and npm 11.12.1 were used on Darwin
+25.6.0 arm64. Clean two-ID port: 65007; one-ID: 63404; headed sandbox: 64812; base Cinema:
+57237. Every case's dynamic port is in the receipts. A docs-only evidence commit follows;
+the final head and Verify run are in the single Pass 2 PR comment. Earlier receipts are historical
 where explicitly dated; regenerated clean observations carry the stub marker and stricter
 played rule. A completed protocol is not a visual pass.
 
-- `proof.json`: forced stops, authority refusals, frame/redirect/navigation variants,
+- [Proof summary](receipts/proof.json): forced stops, authority refusals, frame/redirect/navigation variants,
   prompt ceiling, named/unnamed hosts, shelf images, malformed callbacks, sandbox-on headed
   launch and complete visits. Every run asserts zero provider continuations and zero
   unhandled provider responses.
-- `mutations.json` and `runner-mutations.json`: deletion controls, each restored green;
+- [Pure mutants](receipts/mutations.json) and [browser mutants](receipts/runner-mutations.json): deletion controls, each restored green;
   browser reds disclose alternate stops. Redirect reds must actually reach Location.
 - `clean/` and the one-ID summary: completed two-ID and one-ID protocols and captures.
 - `base-cinema.json`: independent `11845cb` default acceptance build, six cells (three
@@ -317,3 +323,18 @@ same authority can generate the same edition twice. Pass 2 recommends a 24-hour 
 Beni to rule on; it implements neither expiry nor consumption. A spent marker beside one
 receipt alone would not prevent reuse with another output directory. The five-minute
 runner default is unchanged; the live example explicitly chooses fifteen minutes.
+
+
+The controlled production comparison uses current-main application source and PR source
+with the exact committed `11845cb` data bytes in both disposable archives: no fixtures are
+typed or regenerated. Production and single-file outputs are byte-identical. CSS SHA-256 is
+`f22157bc13632d0de509baba600fb44c087975b29e1d722c6e13eaa5bac7cdaa`; single-file HTML is
+`be6c6ede104d573b5415ddd6a2bf19747d1f3c2eee6bbe10d56642fc1393b91e`.
+The independent merge test uses current main's actual `d1b2023` snapshot. The smoke receipt
+covers ten cells at 390/1000 with V0.5.2, equal scrollWidth/innerWidth, no frames and no
+provider attempts. S3 was not rerun: neither instrumentation nor the acceptance build script
+changed. `regressions.json` records the parent reds, execution-edge checks, authority reuse
+and the interim cancellation failure; `parent-runner-probes.patch` contains only the stub
+entry/fixture additions used against 54d4e80, never a copied or modified redirect guard.
+Apply it to an external 54d4e80 checkout and copy `probe-fixtures.mjs` there to repeat those
+parent cases with the same generated acceptance build, runtime and DNS guard.

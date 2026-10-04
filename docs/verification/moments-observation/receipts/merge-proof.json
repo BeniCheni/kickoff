@@ -1,5 +1,5 @@
 {
-  "sha": "a022828e5d399f391767f65dc89174c362b0d07b",
+  "sha": "d1b20235360bc1e6bdb1f08681fe42eb26b771b6",
   "cases": [
     {
       "name": "provider-before-play",
@@ -9,7 +9,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 0,
       "providerAborts": 1,
-      "port": 62450,
+      "port": 62502,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": false
@@ -30,7 +30,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 62471,
+      "port": 62530,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": false
@@ -47,7 +47,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 1,
-      "port": 62486,
+      "port": 62563,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": false
@@ -68,7 +68,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 62503,
+      "port": 62578,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": false
@@ -85,7 +85,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 62531,
+      "port": 62595,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": false
@@ -102,7 +102,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 62594,
+      "port": 62652,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": false
@@ -119,7 +119,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 62621,
+      "port": 62682,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": false
@@ -136,7 +136,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 62635,
+      "port": 62723,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": false
@@ -153,7 +153,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 62653,
+      "port": 62766,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": false
@@ -170,7 +170,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 62692,
+      "port": 62782,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": false
@@ -187,7 +187,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 62781,
+      "port": 62837,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": false
@@ -204,7 +204,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 62833,
+      "port": 62926,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": false
@@ -221,7 +221,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 62882,
+      "port": 62965,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": false
@@ -238,7 +238,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 1,
-      "port": 62942,
+      "port": 63031,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": false
@@ -259,7 +259,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 0,
       "providerAborts": 0,
-      "port": 62985,
+      "port": 63058,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": false
@@ -280,7 +280,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 63013,
+      "port": 63087,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": true
@@ -301,15 +301,14 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 63032,
+      "port": 63116,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": true
       },
       "runnerAborts": {
         "127.0.0.1": {
-          "http-redirect-refused": 1,
-          "local-or-fonts": 1
+          "http-redirect-refused": 1
         }
       },
       "screenshots": 0,
@@ -323,7 +322,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 63059,
+      "port": 63146,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": true
@@ -344,7 +343,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 63089,
+      "port": 63164,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": true
@@ -365,7 +364,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 63129,
+      "port": 63200,
       "redirectProof": {
         "locationHits": 1,
         "probeFinished": true
@@ -382,7 +381,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 63198,
+      "port": 63251,
       "redirectProof": {
         "locationHits": 1,
         "probeFinished": true
@@ -399,7 +398,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 63249,
+      "port": 63325,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": true
@@ -420,7 +419,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 63278,
+      "port": 63369,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": true
@@ -441,7 +440,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 63293,
+      "port": 63405,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": true
@@ -462,7 +461,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 63327,
+      "port": 63437,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": true
@@ -483,7 +482,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 63373,
+      "port": 63483,
       "redirectProof": {
         "locationHits": 1,
         "probeFinished": true
@@ -500,7 +499,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 63441,
+      "port": 63535,
       "redirectProof": {
         "locationHits": 1,
         "probeFinished": true
@@ -517,7 +516,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 63514,
+      "port": 63612,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": true
@@ -538,7 +537,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 63536,
+      "port": 63645,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": true
@@ -559,7 +558,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 63580,
+      "port": 63674,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": true
@@ -580,7 +579,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 63613,
+      "port": 63693,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": true
@@ -601,7 +600,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 63646,
+      "port": 63723,
       "redirectProof": {
         "locationHits": 1,
         "probeFinished": true
@@ -618,7 +617,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 63707,
+      "port": 63771,
       "redirectProof": {
         "locationHits": 1,
         "probeFinished": true
@@ -635,7 +634,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 63744,
+      "port": 63841,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": true
@@ -656,7 +655,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 63791,
+      "port": 63872,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": true
@@ -677,7 +676,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 63821,
+      "port": 63905,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": true
@@ -698,7 +697,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 63843,
+      "port": 63933,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": true
@@ -719,7 +718,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 63886,
+      "port": 63964,
       "redirectProof": {
         "locationHits": 1,
         "probeFinished": true
@@ -736,7 +735,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 63946,
+      "port": 64018,
       "redirectProof": {
         "locationHits": 1,
         "probeFinished": true
@@ -753,7 +752,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 0,
       "providerAborts": 0,
-      "port": 63999,
+      "port": 64087,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": true
@@ -774,7 +773,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 0,
       "providerAborts": 0,
-      "port": 64019,
+      "port": 64110,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": true
@@ -795,7 +794,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 0,
       "providerAborts": 0,
-      "port": 64064,
+      "port": 64150,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": true
@@ -816,7 +815,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 0,
       "providerAborts": 0,
-      "port": 64079,
+      "port": 64173,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": true
@@ -837,7 +836,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 0,
       "providerAborts": 0,
-      "port": 64108,
+      "port": 64202,
       "redirectProof": {
         "locationHits": 1,
         "probeFinished": true
@@ -854,7 +853,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 0,
       "providerAborts": 0,
-      "port": 64171,
+      "port": 64249,
       "redirectProof": {
         "locationHits": 1,
         "probeFinished": true
@@ -871,7 +870,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 0,
       "providerAborts": 0,
-      "port": 64228,
+      "port": 64331,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": true
@@ -892,7 +891,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 0,
       "providerAborts": 0,
-      "port": 64247,
+      "port": 64364,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": true
@@ -913,7 +912,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 0,
       "providerAborts": 0,
-      "port": 64278,
+      "port": 64391,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": true
@@ -934,7 +933,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 0,
       "providerAborts": 0,
-      "port": 64309,
+      "port": 64424,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": true
@@ -955,7 +954,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 0,
       "providerAborts": 0,
-      "port": 64359,
+      "port": 64452,
       "redirectProof": {
         "locationHits": 1,
         "probeFinished": true
@@ -972,7 +971,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 0,
       "providerAborts": 0,
-      "port": 64422,
+      "port": 64503,
       "redirectProof": {
         "locationHits": 1,
         "probeFinished": true
@@ -989,7 +988,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 64484,
+      "port": 64581,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": true
@@ -1010,7 +1009,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 64501,
+      "port": 64613,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": true
@@ -1031,7 +1030,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 64533,
+      "port": 64644,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": true
@@ -1052,7 +1051,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 64565,
+      "port": 64677,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": true
@@ -1073,7 +1072,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 0,
       "providerAborts": 0,
-      "port": 64606,
+      "port": 64725,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": false
@@ -1090,7 +1089,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 64612,
+      "port": 64726,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": false
@@ -1111,7 +1110,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 2,
-      "port": 64692,
+      "port": 64777,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": false
@@ -1132,7 +1131,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 64761,
+      "port": 64842,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": false
@@ -1149,7 +1148,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 64812,
+      "port": 64882,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": false
@@ -1256,7 +1255,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 64880,
+      "port": 64977,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": false
@@ -1273,7 +1272,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 64946,
+      "port": 65026,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": false
@@ -1290,7 +1289,7 @@
       "providerNetworkRequests": 0,
       "localProviderFulfillments": 2,
       "providerAborts": 0,
-      "port": 65007,
+      "port": 65076,
       "redirectProof": {
         "locationHits": 0,
         "probeFinished": false

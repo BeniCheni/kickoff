@@ -1,5 +1,5 @@
 {
-  "sha": "515224be130f704590245844d1a886fd81d9a725",
+  "sha": "a022828e5d399f391767f65dc89174c362b0d07b",
   "rows": [
     {
       "reason": "provider-before-play",
@@ -250,6 +250,991 @@
         "processExit": 1,
         "expectedStopAssertion": true,
         "actualReason": "unnamed-id",
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "redirect-top-document",
+      "file": "redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "probe-finished",
+        "port": 64582,
+        "proof": {
+          "locationHits": 1,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "http-redirect-refused",
+        "port": 64659,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "redirect-top-script",
+      "file": "redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "probe-finished",
+        "port": 64691,
+        "proof": {
+          "locationHits": 1,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "http-redirect-refused",
+        "port": 64745,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "redirect-top-fetch",
+      "file": "redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "probe-finished",
+        "port": 64776,
+        "proof": {
+          "locationHits": 1,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "http-redirect-refused",
+        "port": 64813,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "redirect-top-chain",
+      "file": "redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "probe-finished",
+        "port": 64844,
+        "proof": {
+          "locationHits": 1,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "http-redirect-refused",
+        "port": 64881,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "redirect-same-document",
+      "file": "redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "probe-finished",
+        "port": 64927,
+        "proof": {
+          "locationHits": 1,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "http-redirect-refused",
+        "port": 64962,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "redirect-same-script",
+      "file": "redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "probe-finished",
+        "port": 64978,
+        "proof": {
+          "locationHits": 1,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "http-redirect-refused",
+        "port": 65025,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "redirect-same-fetch",
+      "file": "redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "probe-finished",
+        "port": 65057,
+        "proof": {
+          "locationHits": 1,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "http-redirect-refused",
+        "port": 65078,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "redirect-same-chain",
+      "file": "redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "probe-finished",
+        "port": 65106,
+        "proof": {
+          "locationHits": 1,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "http-redirect-refused",
+        "port": 65124,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "redirect-cross-document",
+      "file": "redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "probe-finished",
+        "port": 65138,
+        "proof": {
+          "locationHits": 1,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "http-redirect-refused",
+        "port": 65156,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "redirect-cross-script",
+      "file": "redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "probe-finished",
+        "port": 65174,
+        "proof": {
+          "locationHits": 1,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "http-redirect-refused",
+        "port": 65192,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "redirect-cross-fetch",
+      "file": "redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "probe-finished",
+        "port": 65206,
+        "proof": {
+          "locationHits": 1,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "http-redirect-refused",
+        "port": 65224,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "redirect-cross-chain",
+      "file": "redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "probe-finished",
+        "port": 65239,
+        "proof": {
+          "locationHits": 1,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "http-redirect-refused",
+        "port": 65256,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "redirect-nested-document",
+      "file": "redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "probe-finished",
+        "port": 65271,
+        "proof": {
+          "locationHits": 1,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "http-redirect-refused",
+        "port": 65290,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "redirect-nested-script",
+      "file": "redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "probe-finished",
+        "port": 65308,
+        "proof": {
+          "locationHits": 1,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "http-redirect-refused",
+        "port": 65325,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "redirect-nested-fetch",
+      "file": "redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "probe-finished",
+        "port": 65341,
+        "proof": {
+          "locationHits": 1,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "http-redirect-refused",
+        "port": 65359,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "redirect-nested-chain",
+      "file": "redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "probe-finished",
+        "port": 65375,
+        "proof": {
+          "locationHits": 1,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "http-redirect-refused",
+        "port": 65393,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "redirect-firstsame-document",
+      "file": "redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "probe-finished",
+        "port": 65409,
+        "proof": {
+          "locationHits": 1,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "http-redirect-refused",
+        "port": 65426,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "redirect-firstsame-script",
+      "file": "redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "probe-finished",
+        "port": 65440,
+        "proof": {
+          "locationHits": 1,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "http-redirect-refused",
+        "port": 65457,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "redirect-firstsame-fetch",
+      "file": "redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "probe-finished",
+        "port": 65484,
+        "proof": {
+          "locationHits": 1,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "http-redirect-refused",
+        "port": 65503,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "redirect-firstsame-chain",
+      "file": "redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "probe-finished",
+        "port": 65518,
+        "proof": {
+          "locationHits": 1,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "http-redirect-refused",
+        "port": 65534,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "redirect-firstcross-document",
+      "file": "redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "probe-finished",
+        "port": 49167,
+        "proof": {
+          "locationHits": 1,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "http-redirect-refused",
+        "port": 49185,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "redirect-firstcross-script",
+      "file": "redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "probe-finished",
+        "port": 49200,
+        "proof": {
+          "locationHits": 1,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "http-redirect-refused",
+        "port": 49218,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "redirect-firstcross-fetch",
+      "file": "redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "probe-finished",
+        "port": 49239,
+        "proof": {
+          "locationHits": 1,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "http-redirect-refused",
+        "port": 49257,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "redirect-firstcross-chain",
+      "file": "redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "probe-finished",
+        "port": 49271,
+        "proof": {
+          "locationHits": 1,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "http-redirect-refused",
+        "port": 49287,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "redirect-status301-fetch",
+      "file": "redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "probe-finished",
+        "port": 49301,
+        "proof": {
+          "locationHits": 1,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "http-redirect-refused",
+        "port": 49318,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "redirect-status303-fetch",
+      "file": "redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "probe-finished",
+        "port": 49333,
+        "proof": {
+          "locationHits": 1,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "http-redirect-refused",
+        "port": 49349,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "redirect-status307-fetch",
+      "file": "redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "probe-finished",
+        "port": 49364,
+        "proof": {
+          "locationHits": 1,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "http-redirect-refused",
+        "port": 49380,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "redirect-status308-fetch",
+      "file": "redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "probe-finished",
+        "port": 49396,
+        "proof": {
+          "locationHits": 1,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "http-redirect-refused",
+        "port": 49414,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": true
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "prompt-ceiling",
+      "file": "runner.mjs",
+      "from": "promptAbort.abort()",
+      "to": "void 0",
+      "red": {
+        "exit": null,
+        "signal": "SIGTERM",
+        "expectedAssertion": false,
+        "actualReason": "receipt-missing",
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "operational-safety-ceiling",
+        "port": 49434,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": false
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "sandbox",
+      "file": "runner.mjs",
+      "from": "chromiumSandbox: true",
+      "to": "chromiumSandbox: false",
+      "red": {
+        "exit": 0,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "receipt-missing",
+        "port": 49435,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": false
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 0,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "receipt-missing",
+        "port": 49452,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": false
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "extra-hosts",
+      "file": "policy.ts",
+      "from": "if (!provider) return result('record', shelf ? 'shelf-image' : 'named-extra-host')",
+      "to": "if (!provider) return result('abort', 'unlisted-host')",
+      "red": {
+        "exit": 0,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "receipt-missing",
+        "port": 49468,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": false
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 0,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "receipt-missing",
+        "port": 49485,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": false
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "unlisted-host",
+      "file": "policy.ts",
+      "from": "return result('abort', 'unlisted-host')",
+      "to": "return result('record', 'named-extra-host')",
+      "red": {
+        "exit": 0,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "receipt-missing",
+        "port": 49502,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": false
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 0,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "receipt-missing",
+        "port": 49519,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": false
+        },
+        "providerNetworkRequests": 0
+      }
+    },
+    {
+      "reason": "shelf-images",
+      "file": "policy.ts",
+      "from": "!shelf && ids.some",
+      "to": "ids.some",
+      "red": {
+        "exit": 1,
+        "signal": null,
+        "expectedAssertion": false,
+        "actualReason": "unnamed-id",
+        "port": 49535,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": false
+        },
+        "providerNetworkRequests": 0
+      },
+      "green": {
+        "exit": 0,
+        "signal": null,
+        "expectedAssertion": true,
+        "actualReason": "receipt-missing",
+        "port": 49551,
+        "proof": {
+          "locationHits": 0,
+          "probeFinished": false
+        },
         "providerNetworkRequests": 0
       }
     }
