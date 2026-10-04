@@ -420,6 +420,7 @@ try {
   await stopping; await context?.close().catch(() => {})
   networkGuard?.close()
   if (redirectProbe) result.guardAudit = networkGuard?.audit
+  result.network.interceptionCancellations = networkGuard?.audit.filter(entry => entry.stage === 'cancelled-response') ?? []
   await Promise.all([...pending])
   if (server) await new Promise(resolve => server.close(resolve))
   if (profile) await fs.rm(profile, { recursive: true, force: true })
