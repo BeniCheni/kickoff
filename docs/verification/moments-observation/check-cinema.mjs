@@ -27,7 +27,7 @@ for(const transparent of [false,true]) for(const width of [390,1000,360]) {
  const page=await context.newPage();await page.goto(origin+'/?tab=moments&lens=ledger');await page.evaluate(()=>document.fonts.ready)
  const settle=()=>page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))))
  const click=async name=>{const b=page.getByRole('button',{name,exact:typeof name==='string'});await b.scrollIntoViewIfNeeded();await settle();await b.click();await settle()}
- await page.locator('[data-lead]').getByRole('button',{name:/Open selection/}).click();await click('Play');await page.getByRole('button',{name:'Pause',exact:true}).waitFor()
+ await page.locator('[data-lead]').getByRole('button',{name:/Open selection/}).click();await click('Play');await page.waitForFunction(()=>window.__players?.length===1);await page.evaluate(()=>window.__players[0].__ready());await page.getByRole('button',{name:'Pause',exact:true}).waitFor()
  const probe=()=>page.evaluate(()=>{
   const f=document.querySelector('iframe'),r=f.getBoundingClientRect();const points=[[.5,.5],[.35,.35],[.65,.35],[.35,.65],[.65,.65]];const name=n=>n?`${n.tagName.toLowerCase()}${n.className?'.'+String(n.className).replaceAll(' ','.'):''}`:null
   return {width:innerWidth,scrollWidth:document.documentElement.scrollWidth,rect:r.toJSON(),hits:points.map(([x,y])=>name(document.elementFromPoint(r.x+r.width*x,r.y+r.height*y))),stack:[f.parentElement,document.querySelector('dialog'),document.querySelector('[data-moments-cinema-slot]')].filter(Boolean).map(n=>({node:name(n),position:getComputedStyle(n).position,zIndex:getComputedStyle(n).zIndex,background:getComputedStyle(n).backgroundColor}))}

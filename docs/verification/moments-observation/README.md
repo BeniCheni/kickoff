@@ -64,10 +64,11 @@ npm run build:acceptance -- "$EDITION"
 node --import tsx docs/verification/moments-observation/runner.mjs --live --authority "$AUTH" --runtime "$RT" --chrome "$CHROME" --ceiling-ms 900000 --out /absolute/external/new-receipt
 ```
 
-The ceiling option is spelled out because the default five minutes must cover a typed
-confirmation and about a dozen further prompts (ideas row 92). Pass 1 of PR #144 found that
-a ceiling firing *while a prompt is open* currently hangs the runner with no receipt written
-(row 81); until that is fixed, answer every prompt well inside the ceiling.
+The command explicitly allows fifteen minutes for twelve prompts (thirteen with
+`--manual-next`): confirmation, advancement, six captures, parking, blank return, ads and
+final picture description. The default remains five minutes; neither limit measures product
+readiness. A ceiling at any prompt aborts the pending question, writes both JSON files and
+returns exit 1. Ctrl-C uses the same path with `operator-interrupt`.
 
 By default the runner serves that acceptance build itself, using the authority's exact
 loopback origin and port. Beni can pin that port explicitly with the port option; a
@@ -83,9 +84,12 @@ host families and total safety ceiling. Beni confirms both browser and allowlist
 uses a new profile, headed; live headless is refused. A ceiling of five minutes bounds the
 whole interactive visit, including confirmation; the ceiling option can adjust it up to
 fifteen minutes. It is operational protection, **not a product readiness timeout**. The
-launch takes Playwright's defaults, so the Chrome observed runs with `--no-sandbox` and
-reports `navigator.webdriver === true` (measured with these exact options, headed and
-headless; ideas row 86); the receipt does not yet record those flags.
+launch explicitly sets `chromiumSandbox: true`, in both modes. A launch failure refuses the
+run; no unsandboxed fallback exists. The receipt records Chrome's effective command line
+(with the temporary profile path redacted) and `navigator.webdriver`. This remains an
+automation-controlled browser; no flag hides that fact. The ephemeral loopback debugging
+endpoint is used for the browser-wide network guard. Sandbox-on headless and headed stub
+launches are measured in the proof driver.
 
 The page loads once. A is played cold, then Beni lets it advance before the runner pauses
 and records the sample. Stage and Cinema are captured at 390, 1000 and 360, always setting
@@ -104,10 +108,9 @@ state; settled automated clicks do not prove rapid manual pointer behavior.
 
 At the end, Beni answers `ad shown` with yes, no or unsure. Answers are kept verbatim; the
 page cannot detect ads. Any observed stop closes Chrome, writes the receipt and returns a
-nonzero exit without moving to another identity or origin — except, today, the safety
-ceiling firing during a prompt (row 81). A human unsure answer is kept as uncertainty,
+nonzero exit without moving to another identity or origin, including a ceiling at a prompt. A human unsure answer is kept as uncertainty,
 never promoted to a pass for the corresponding provider claim. The ad answer describes what
-Beni saw in a browser whose non-provider requests were aborted (next section), so it is an
+Beni saw under the named-host policy and any recorded runner aborts (next section), so it is an
 observation of this allowlist as much as of the provider.
 
 ## Request and observation boundary
@@ -119,7 +122,11 @@ scripts, are released only within authorized families and recorded host by host.
 not described as expected beforehand. Ruling 2 counts the page-created iframe and API
 entry elements, including removed/replaced ones, rather than counting downstream scripts.
 
-Explicit foreign IDs stop even on otherwise allowed hosts. The extractor recognizes embed,
+An unnamed playback identity stops even on a named extra host. Under Beni's 4 Oct ruling,
+image requests with exactly one thumbnail/storyboard path identity (`vi`, `vi_webp`,
+`an_webp`, `sb`), no body and no query are recorded as shelf images rather than stopping.
+Document, API/fetch and media requests still stop on an unnamed identity. This intentionally
+narrows the spec's broader unnamed-id stop; the PM amends the spec separately. The extractor recognizes embed,
 watch/v, short/live, short-link, thumbnail/storyboard paths, repeated identity parameters,
 video_id/docid and JSON videoId fields, including duplicate explicit keys. It follows
 nested URLs three levels. It cannot identify IDs hidden in opaque signatures, binary
@@ -127,40 +134,38 @@ bodies, unknown parameter names, arbitrary encodings or an undocumented protocol
 eleven-character opaque media token is not assumed to be a video ID. This is conservative
 about recognized identity fields, not a claim to decode all provider traffic.
 
-Non-provider requests release only the exact app origin and HTTPS Google Fonts; others
-are aborted and logged. That is narrower than the spec's "let through and recorded host by
-host", and the authority cannot name a host outside the six families, so any other host a
-real embed contacts is aborted by this runner; what that changes in playback or ads is not
-observed, and `observations.json` does not say which outcomes followed an own abort
-(ideas row 85). Stub mode injects local fulfillment and adds the existing provider
-DNS guard to Chrome. It cannot obtain a provider continuation. Live alone receives that
-function after authority validation and typed confirmation. Service workers are blocked.
-Usual Chrome background-networking flags are set, but traffic outside Playwright's view
-is not claimed. Provider-shaped local requests, aborted requests, and network continuations
-are separate counts.
+Authority can name up to 32 host families, including the required `youtube.com` and
+`youtube-nocookie.com`. Names are lowercase DNS names with bounded labels: no IP literals,
+schemes, paths, ports, wildcards or trailing dots. A name authorizes itself and dot-bounded
+subdomains; the printed authority lists them before typed RELEASE. Before Play only the app
+origin and HTTPS Google Fonts are released. Afterwards named extra hosts follow the same
+HTTPS, identity and redirect rules. Every other non-provider host is aborted as
+`unlisted-host`, a runner decision rather than a provider failure. Hosts and abort reasons
+are counted; every completed observation notes any runner abort during the visit. This is
+narrower than the spec's unrestricted recording language, as Beni ruled on 4 Oct.
 
-One additional refusal is deliberately stricter than the brief: HTTP redirects stop before
-following the Location header. Installed Playwright 1.62.1's Chromium implementation
-automatically continues redirected requests without invoking its route handler. The runner
-therefore installs a CDP response guard before releasing each frame's initial requests,
-using the parent's guard for frames in the same process. A guard attachment failure refuses
-the request. A loopback server's redirect toward the fictional API entry is stopped with
-zero provider attempts. The redirect decision has a pure deletion mutant; disabling that
-response guard in a browser would deliberately bypass the route boundary, so S4a does not
-run that browser mutant. A provider redirect in S4b ends the visit and needs a new reviewed
-routing design before another run; this runner does not claim to observe a redirecting
-provider flow.
+Stub mode receives a local fulfilment function, never a provider or named-extra-host
+continuation. The extra-host proof fulfils the fictional named host locally and aborts the
+unnamed host. Redirect fixtures use only the runner's own server through fixed
+loopback-resolved names. Provider DNS remains blocked in every stub launch. Service workers
+are blocked. Provider-shaped local requests, aborts and continuations have separate counts.
 
-**Coverage, as measured by PR #144's Pass 1 (ideas row 80):** the guard stops every
-redirect issued by the top frame or a same-site frame — 301, 302, 303, 307 and 308; fetch,
-script, document navigation, a same-site iframe, a cross-site frame's own document
-navigation, and a two-hop chain — with zero requests reaching the Location target. It does
-**not** see a redirect of a request issued *from inside* a cross-site frame (that frame's
-first script or a later fetch): Playwright follows it without a route decision, the target
-is fetched, and the guard logs nothing. The `unhandled-provider-response` check then stops
-the run only when the target is a provider host, after the request has gone out. In S4b
-every request the player makes originates in the nocookie frame, so this is the frame that
-matters.
+Every HTTP redirect ends the run before Location is followed. Playwright's route callback
+skips redirect hops; Pass 2 therefore removes that competing interceptor and uses one
+browser-target CDP Fetch owner for request policy and response decisions. Page-target
+interceptors lost coverage when an out-of-process iframe rejoined its parent. The browser
+target survives those transitions; failure or disconnection stops the run. This is measured
+on the recorded Chrome version, not a promise about an untested browser version.
+
+**Coverage measured in Pass 2:** initial same-site and cross-site frames, top frame,
+subsequent same-site/cross-site frame documents and a nested cross-site frame; document,
+first script, later fetch and two-hop chain redirects; 301, 302, 303, 307 and 308. Each
+redirect has a guard-off browser mutant that must reach the loopback Location, then a
+restored guard that must stop with zero target hits. Meta refresh and script-driven
+navigation are new requests: the corresponding twelve cases reach the loopback target
+through the policy and are recorded, without pretending they are HTTP redirects. These
+fixtures prove interception, not provider behavior. Binary identities, WebRTC, WebSockets,
+real media redirects and traffic outside the guarded HTTP lifecycle remain unmeasured.
 
 The acceptance plugin alone adds observer events around original adapter dispatches,
 samples, ready/error/block callbacks and Play calls; exact source matches fail on drift.
@@ -186,22 +191,22 @@ runner variants in `prove.mjs` verify the named receipt, nonzero exit and zero p
 continuations. Injection at the hook/decision boundary is identified below; it is not a
 claim that the unchanged application generated that defect.
 
-| # | Stop | Proof boundary | Mutation that must fail |
+| # | Stop | Can fire against the unchanged application in S4b? | Proof and limits |
 |---|---|---|---|
-| 1 | Provider before Play | Stub inserts a routed API request before intent | Remove before-Play policy/stop detection |
-| 2 | Second iframe or API entry element | Stub adds a second iframe; pure test covers API entry count | Remove element-count detection |
-| 3 | Iframe parent changes | Stub reparents the existing frame | Remove parent detection |
-| 4 | Frame covers a row or row hit reaches frame | Stub overlaps a queue row; all clean rows hit-tested | Remove coverage detection |
-| 5 | Navigation waits for cross-origin reply | Stub suppresses local Next commit; runner requires the selection by two paints with no reply awaited | Remove navigation detection |
-| 6 | Second terminal failure on one attempt | Two injected adapter-dispatch observations, plus pure telemetry test | Remove terminal-count detection |
-| 7 | Position without a current getCurrentTime sample | Injected dispatch value absent from that attempt's sample ledger | Remove sample-membership detection |
-| 8 | Error 150 called a territory block | Injected wrong diagnosis; normal 150 schema outcome tested separately | Remove diagnosis detection |
-| 9 | Error 153 | Stub emits provider callback 153 | Remove error-code detection |
-| 10 | Warm direct-click autoplay blocked | Stub callback on warm load | Remove warm-block detection |
-| 11 | Blank parked return or dead instance | Synthetic blank-answer injection; human picture gate in live, element loss monitored | Remove return/instance detection |
-| 12 | Resume sentence after zero sample | Inject zero sample then resume signal | Remove zero-resume detection |
-| 13 | Play for failed eligibility rule | Pure rule/decision injection using future checkedAt; source is not weakened to make this happen | Remove eligibility detection |
-| 14 | Unnamed ID | Routed thumbnail for fictional S4Stub99999, plus body/path policy tests | Remove named-ID detection |
+| 1 | Provider before Play | Yes | Routed request; phase flips once and stays after-Play. |
+| 2 | Second iframe/API element | Yes | Counts every element ever added; a legitimate rebuilding Retry also stops. |
+| 3 | Parent changes | Yes | DOM identity and parent observation. |
+| 4 | Queue covered/frame hit | Yes | Real hit-tests and viewport/ancestor-clipped overlap; a clipped parked frame is excluded. Cinema cover remains a separate defect. |
+| 5 | Navigation waits | Yes | Requires local selection after two paints; any late commit stops, without attributing it to the provider. |
+| 6 | Second terminal failure | Adapter regression only | Current `fail()` guards the ticket; injected dispatch proves the tripwire. |
+| 7 | Unsampled position | Adapter regression only | Instrumented `sample()` precedes current position dispatch; numeric membership does not establish causality. |
+| 8 | 150 called territory | Dispatch: regression only; copy: possibly | Current mapping is owner-blocked. Copy regex can miss other wording and cannot read the provider frame's text. |
+| 9 | Error 153 | Yes | Hook precedes stale-callback filtering; conservative stop. |
+| 10 | Warm autoplay blocked | Yes | Warm direct-click callback. |
+| 11 | Blank/dead return | Element loss: yes; blankness: human | `unsure` remains uncertainty and continues. |
+| 12 | Resume after zero | Adapter regression or wrong copy | Uses the sample when the resume signal was emitted; a later zero does not falsely invalidate an existing label. |
+| 13 | Ineligible Play | Regression only in this protocol | Generated items are permitted without expiry. The variant evaluates the rule at year 2000; it does not read a failing page. |
+| 14 | Unnamed playback id | Yes | Frame/API/media identities stop; recognized shelf image identities are recorded under Beni's ruling. |
 
 For row 5, live evidence is a conservative local-commit check, not introspection into a
 cross-origin implementation. A delayed local commit also stops; the runner cannot prove
@@ -234,9 +239,10 @@ node docs/verification/moments-observation/mutations.mjs "$RUN/mutations"
 node --import tsx docs/verification/moments-observation/runner-mutations.mjs "$RT" "$CHROME" "$RUN/runner-mutations"
 ```
 
-The three drivers begin by asserting that `src` is unchanged since base `11845cb`, so they
-run from this branch's tree but not from `main` after the merge, where sync commits have
-moved `src/data` (ideas row 82).
+The protected-path diff is a review assertion for this PR, with BASE supplied explicitly;
+it is not a driver precondition on future main. The three drivers work after legitimate
+application/data changes. Exact adapter instrumentation still fails on source drift, as
+its unit regression demonstrates. Do not replace that guard with a source-history pin.
 
 The generator accepts an optional final `1` in stub mode to produce a one-item edition.
 For that run, supply an external fictional authority with just its first identity and the
@@ -252,10 +258,15 @@ runs all forced stops and refusals, then ends with a complete clean visit.
 observedAt, environment (loopback status, exact origin, Chrome, headed/headless, OS), outcome,
 optional providerError and note. The schema has no identity property, so ordered identities
 are in the authority/receipt and each note names its test ID. Error 150 is owner-blocked,
-never a territory diagnosis. Stub outcomes describe synthetic events explicitly in the note
-only; the environment string and outcome do not mark a stub, and the array is also written
-for stopped and refused runs, with `unknown` for an id the run never reached (ideas row 83).
-Read `receipt.json`'s `status` and `stopReason` before reading the array.
+never a territory diagnosis. Only a completed run produces observations; stopped/refused
+runs write an empty array alongside their full receipt. Every stub environment begins
+`STUB;` and every note says synthetic. Unreached identities are labelled explicitly.
+`played` requires a matching current-attempt PLAYING event followed by a finite positive
+sample for that identity. It still cannot distinguish content from an ad; picture/content
+judgment remains human. Pass 2.5 should ask Beni to accept this conservative rule.
+Malformed provider codes are recorded as unknown with a note and no invalid numeric field;
+they cannot prevent receipt serialization. Runner aborts appear in every completed note
+when any occurred during the visit.
 
 `receipt.json` contains the authority, source and dist hashes, request decisions, host counts,
 hook/DOM/click observations, schema observations, console messages, captures and hashes,
@@ -268,49 +279,38 @@ API loader's own requests, parked decoding, the Referer received by the provider
 on any origin, the Pages origin, physical devices, Safari and Firefox, screen-reader speech,
 browser zoom, Android and iOS Back, CloseWatcher. A stub proves runner logic only.
 
-## Builder receipts, 2 Oct 2026
+## Pass 2 receipts
 
-Frozen main is `11845cb21cfd0e87a1105e37e7b74e348739541c`: typecheck passed and the
-builder reran **753 tests in 53 files**. Implementation evidence is from
-`515224be130f704590245844d1a886fd81d9a725`: typecheck passed and **844 tests in 55 files**
-passed. Production, single-file, default acceptance and generated stub acceptance builds
-passed. The protected application/configuration diff is empty. The later evidence commit
-only adds these records and documentation; its exact head and Verify run are in the PR comment.
+The implementation SHA, exact counts, ports, build hashes and final Verify run are recorded
+in the readable summaries and the single Pass 2 PR comment. Earlier receipts are historical
+where explicitly dated; regenerated clean observations carry the stub marker and stricter
+played rule. A completed protocol is not a visual pass.
 
-- [Proof summary](receipts/proof.json): all 24 cases passed their expected result: fourteen
-  stops, redirect refusal, six authority refusals before launch, owner-blocked, cold-blocked,
-  then a completed two-ID visit. Every case has zero provider continuations and no unhandled
-  provider response. The completed visit has two local provider-shaped fulfillments.
-- [Pure mutation receipts](receipts/mutations.json): **51 red, 51 restored green**. This
-  includes route-action assertions, authority, generation, schemas, extraction, hooks,
-  redirect refusal and the observer's absent-frame regression.
-- [Browser mutation receipts](receipts/runner-mutations.json): **14 red, 14 restored green**,
-  one per stop-table row. Red means the expected-stop assertion failed; the raw process may
-  still stop for a different reason or the safety ceiling. Both states kept zero provider
-  continuations. These inject evidence and do not establish application defects.
-- [Completed visit](receipts/clean/receipt.json), [observation array](receipts/clean/observations.json)
-  and six adjacent captures: one page load, one instance, cold/warm synthetic events,
-  A sampled at 12, B loaded at zero, A reloaded at 12. All settled width checks matched.
-  A separate one-ID visit also completed and explicitly omitted Next/Previous.
-- [Picture finding](receipts/picture-finding.json) and [Cinema viewport](receipts/cinema-picture-finding.png):
-  the frame is 350 by 200, 632 by 355.5 and 320 by 200 at the respective widths. In Cinema
-  its centre hits the cover word at every width. Stage hits the iframe. The diagnostic
-  adds read-only hit/style reporting and viewport captures to the same stub runner; no
-  application source or style was changed. Receipt status complete is not a visual pass.
-- [Full raw evidence](receipts/full-evidence.tar.gz) contains every forced-case receipt,
-  request decision, authority copy, observation array, screenshot, red/green log, diagnostic
-  script and baseline/build log. Extract into an external directory with `tar -xzf`.
-  Regenerable source archives are omitted; the mutation scripts reconstruct them from Git.
-  Raw diagnostics are compressed because CSS-like tokens in receipts can alter production
-  CSS (ideas row 78). The readable summaries and PNGs remain directly inspectable.
+- `proof.json`: forced stops, authority refusals, frame/redirect/navigation variants,
+  prompt ceiling, named/unnamed hosts, shelf images, malformed callbacks, sandbox-on headed
+  launch and complete visits. Every run asserts zero provider continuations and zero
+  unhandled provider responses.
+- `mutations.json` and `runner-mutations.json`: deletion controls, each restored green;
+  browser reds disclose alternate stops. Redirect reds must actually reach Location.
+- `clean/` and the one-ID summary: completed two-ID and one-ID protocols and captures.
+- `base-cinema.json`: independent `11845cb` default acceptance build, six cells (three
+  widths × opaque/transparent frame), five hit points each. Stage hits the iframe; Cinema
+  hits the cover word; hiding the cover exposes the slot. `check-cinema.mjs` reproduces it
+  using the base build and its original S3 stub. Beni authorized a separate repair before
+  S4b. This PR changes no application source.
 
-Chrome was 154.0.8037.93 on macOS Darwin 25.6.0 arm64, headless with a fresh profile per
-visit. Ports are in each receipt, including 54113 for the completed two-ID visit and 4318
-for the one-ID visit. This is the Ledger/light protocol; other lenses/themes are not
-claimed. There was no application interface change and no CHANGELOG entry.
+The full raw archive was removed under Beni's ruling. Its historical SHA-256 was
+`7b4e0dcbdbf91576efb8db453e97efeabcd4cac99b75707c120eb5662ce2bad3`.
+The small final-check archive was also removed (SHA-256
+`ffc8bec71ac5afd22f2d8b6479010506f70b7bbd01cc49f4c328e5dcb9a3e240`);
+readable check summaries replace compressed logs. After running the recipe above, regenerate
+a raw archive outside Git with `tar -czf "$RUN/full-evidence.tar.gz" -C "$RUN" proof mutations runner-mutations`.
+New times, ports and browser files mean it is not expected to match the historical hash.
+No archive belongs in the final tree. Committed copies redact local workspace/profile paths;
+raw external evidence retains exact launch provenance.
 
-Row 78 comparison: production CSS SHA-256 on main and the final documentation tree is
-`f22157bc13632d0de509baba600fb44c087975b29e1d722c6e13eaa5bac7cdaa`.
-The single-file HTML is also byte-identical to main, SHA-256
-`be6c6ede104d573b5415ddd6a2bf19747d1f3c2eee6bbe10d56642fc1393b91e`.
-The final-head build and completed stub receipt are also recorded in the PR comment.
+The authority freshness/reuse finding stays open: old past timestamps can pass and the
+same authority can generate the same edition twice. Pass 2 recommends a 24-hour bound for
+Beni to rule on; it implements neither expiry nor consumption. A spent marker beside one
+receipt alone would not prevent reuse with another output directory. The five-minute
+runner default is unchanged; the live example explicitly chooses fifteen minutes.

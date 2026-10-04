@@ -66,8 +66,8 @@ export function observations(ids: readonly string[], telemetry: Telemetry, envir
   return availabilityObservationSchema.array().parse(ids.map(id => {
     const code = telemetry.errors.get(id)
     return { observedAt, environment: `${stub ? 'STUB; ' : ''}${environment}`,
-      outcome: telemetry.malformed.has(id) ? 'unknown' : code === 150 || code === 101 ? 'owner-blocked' : code !== undefined ? [2, 5, 100].includes(code) ? 'unavailable' : 'unknown' : telemetry.played.has(id) ? 'played' : 'unknown',
+      outcome: telemetry.malformed.has(id) && code === undefined ? 'unknown' : code === 150 || code === 101 ? 'owner-blocked' : code !== undefined ? [2, 5, 100].includes(code) ? 'unavailable' : 'unknown' : telemetry.played.has(id) ? 'played' : 'unknown',
       ...(code === undefined ? {} : { providerError: code }),
-      note: `Test id ${id}. ${telemetry.reached.has(id) ? 'Attempt reached.' : 'Id not reached.'} ${telemetry.malformed.has(id) ? 'Malformed provider error callback; code omitted, outcome unknown.' : ''} ${stub ? 'Synthetic stub events only; no provider playback observed.' : 'Single visit; API events are observations, not content or rights verification.'} ${code === 150 ? 'Error 150 is an owner block.' : 'No territory diagnosis.'}` }
+      note: `Test id ${id}. ${telemetry.reached.has(id) ? 'Attempt reached.' : 'Id not reached.'} ${telemetry.malformed.has(id) ? 'Malformed provider error callback observed; invalid code omitted.' : ''} ${stub ? 'Synthetic stub events only; no provider playback observed.' : 'Single visit; API events are observations, not content or rights verification.'} ${code === 150 ? 'Error 150 is an owner block.' : 'No territory diagnosis.'}` }
   }))
 }

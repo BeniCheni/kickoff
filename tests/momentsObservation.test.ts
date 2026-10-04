@@ -284,3 +284,12 @@ it('a later zero sample does not invalidate an already emitted positive resume l
   expect(t.resumeSample).toBe(12)
   expect(detectStop({ resume: true, lastSample: t.resumeSample })).toBeNull()
 })
+
+
+it('a valid owner-block callback after a malformed one remains serializable', () => {
+  const t = new Telemetry(fictionalIds)
+  t.accept({ kind: 'play', value: { itemId: 'a', attempt: 1, videoId: fictionalIds[0] } })
+  t.accept({ kind: 'error', value: undefined })
+  t.accept({ kind: 'error', value: 150 })
+  expect(observations(fictionalIds, t, 'environment', instant, true)[0]).toMatchObject({ outcome: 'owner-blocked', providerError: 150 })
+})
