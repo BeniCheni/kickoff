@@ -61,8 +61,13 @@ RT=/Users/benicheni/.cache/codex-runtimes/codex-primary-runtime/dependencies/nod
 CHROME='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 node --import tsx docs/verification/moments-observation/generate.mjs "$AUTH" "$EDITION"
 npm run build:acceptance -- "$EDITION"
-node --import tsx docs/verification/moments-observation/runner.mjs --live --authority "$AUTH" --runtime "$RT" --chrome "$CHROME" --out /absolute/external/new-receipt
+node --import tsx docs/verification/moments-observation/runner.mjs --live --authority "$AUTH" --runtime "$RT" --chrome "$CHROME" --ceiling-ms 900000 --out /absolute/external/new-receipt
 ```
+
+The ceiling option is spelled out because the default five minutes must cover a typed
+confirmation and about a dozen further prompts (ideas row 92). Pass 1 of PR #144 found that
+a ceiling firing *while a prompt is open* currently hangs the runner with no receipt written
+(row 81); until that is fixed, answer every prompt well inside the ceiling.
 
 By default the runner serves that acceptance build itself, using the authority's exact
 loopback origin and port. Beni can pin that port explicitly with the port option; a
@@ -77,7 +82,10 @@ host families and total safety ceiling. Beni confirms both browser and allowlist
 `RELEASE` followed by a space and the exact origin. Piped confirmation is refused. Chrome
 uses a new profile, headed; live headless is refused. A ceiling of five minutes bounds the
 whole interactive visit, including confirmation; the ceiling option can adjust it up to
-fifteen minutes. It is operational protection, **not a product readiness timeout**.
+fifteen minutes. It is operational protection, **not a product readiness timeout**. The
+launch takes Playwright's defaults, so the Chrome observed runs with `--no-sandbox` and
+reports `navigator.webdriver === true` (measured with these exact options, headed and
+headless; ideas row 86); the receipt does not yet record those flags.
 
 The page loads once. A is played cold, then Beni lets it advance before the runner pauses
 and records the sample. Stage and Cinema are captured at 390, 1000 and 360, always setting
@@ -96,8 +104,11 @@ state; settled automated clicks do not prove rapid manual pointer behavior.
 
 At the end, Beni answers `ad shown` with yes, no or unsure. Answers are kept verbatim; the
 page cannot detect ads. Any observed stop closes Chrome, writes the receipt and returns a
-nonzero exit without moving to another identity or origin. A human unsure answer is kept
-as uncertainty, never promoted to a pass for the corresponding provider claim.
+nonzero exit without moving to another identity or origin — except, today, the safety
+ceiling firing during a prompt (row 81). A human unsure answer is kept as uncertainty,
+never promoted to a pass for the corresponding provider claim. The ad answer describes what
+Beni saw in a browser whose non-provider requests were aborted (next section), so it is an
+observation of this allowlist as much as of the provider.
 
 ## Request and observation boundary
 
@@ -117,7 +128,11 @@ eleven-character opaque media token is not assumed to be a video ID. This is con
 about recognized identity fields, not a claim to decode all provider traffic.
 
 Non-provider requests release only the exact app origin and HTTPS Google Fonts; others
-are aborted and logged. Stub mode injects local fulfillment and adds the existing provider
+are aborted and logged. That is narrower than the spec's "let through and recorded host by
+host", and the authority cannot name a host outside the six families, so any other host a
+real embed contacts is aborted by this runner; what that changes in playback or ads is not
+observed, and `observations.json` does not say which outcomes followed an own abort
+(ideas row 85). Stub mode injects local fulfillment and adds the existing provider
 DNS guard to Chrome. It cannot obtain a provider continuation. Live alone receives that
 function after authority validation and typed confirmation. Service workers are blocked.
 Usual Chrome background-networking flags are set, but traffic outside Playwright's view
@@ -129,12 +144,23 @@ following the Location header. Installed Playwright 1.62.1's Chromium implementa
 automatically continues redirected requests without invoking its route handler. The runner
 therefore installs a CDP response guard before releasing each frame's initial requests,
 using the parent's guard for frames in the same process. A guard attachment failure refuses
-the request. This avoids silently following an unexamined URL. A loopback server's redirect
-toward the fictional API entry is stopped with zero provider attempts. The redirect
-decision has a pure deletion mutant; disabling that response guard in a browser would
-deliberately bypass the route boundary, so S4a does not run that browser mutant. A provider
-redirect in S4b ends the visit and needs a new reviewed routing design before another run;
-this runner does not claim to observe a redirecting provider flow.
+the request. A loopback server's redirect toward the fictional API entry is stopped with
+zero provider attempts. The redirect decision has a pure deletion mutant; disabling that
+response guard in a browser would deliberately bypass the route boundary, so S4a does not
+run that browser mutant. A provider redirect in S4b ends the visit and needs a new reviewed
+routing design before another run; this runner does not claim to observe a redirecting
+provider flow.
+
+**Coverage, as measured by PR #144's Pass 1 (ideas row 80):** the guard stops every
+redirect issued by the top frame or a same-site frame — 301, 302, 303, 307 and 308; fetch,
+script, document navigation, a same-site iframe, a cross-site frame's own document
+navigation, and a two-hop chain — with zero requests reaching the Location target. It does
+**not** see a redirect of a request issued *from inside* a cross-site frame (that frame's
+first script or a later fetch): Playwright follows it without a route decision, the target
+is fetched, and the guard logs nothing. The `unhandled-provider-response` check then stops
+the run only when the target is a provider host, after the request has gone out. In S4b
+every request the player makes originates in the nocookie frame, so this is the frame that
+matters.
 
 The acceptance plugin alone adds observer events around original adapter dispatches,
 samples, ready/error/block callbacks and Play calls; exact source matches fail on drift.
@@ -208,6 +234,10 @@ node docs/verification/moments-observation/mutations.mjs "$RUN/mutations"
 node --import tsx docs/verification/moments-observation/runner-mutations.mjs "$RT" "$CHROME" "$RUN/runner-mutations"
 ```
 
+The three drivers begin by asserting that `src` is unchanged since base `11845cb`, so they
+run from this branch's tree but not from `main` after the merge, where sync commits have
+moved `src/data` (ideas row 82).
+
 The generator accepts an optional final `1` in stub mode to produce a one-item edition.
 For that run, supply an external fictional authority with just its first identity and the
 matching loopback port. The runner's port option accepts zero only for its own stub fixture,
@@ -222,7 +252,10 @@ runs all forced stops and refusals, then ends with a complete clean visit.
 observedAt, environment (loopback status, exact origin, Chrome, headed/headless, OS), outcome,
 optional providerError and note. The schema has no identity property, so ordered identities
 are in the authority/receipt and each note names its test ID. Error 150 is owner-blocked,
-never a territory diagnosis. Stub outcomes describe synthetic events explicitly.
+never a territory diagnosis. Stub outcomes describe synthetic events explicitly in the note
+only; the environment string and outcome do not mark a stub, and the array is also written
+for stopped and refused runs, with `unknown` for an id the run never reached (ideas row 83).
+Read `receipt.json`'s `status` and `stopReason` before reading the array.
 
 `receipt.json` contains the authority, source and dist hashes, request decisions, host counts,
 hook/DOM/click observations, schema observations, console messages, captures and hashes,
