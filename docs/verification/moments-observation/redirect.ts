@@ -4,3 +4,9 @@ export function redirectLocation(status: number, headers: readonly { name: strin
   if (status < 300 || status >= 400) return null
   return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null
 }
+
+// Chrome may cancel a paused response while a new document commits. The event's own
+// request id is then gone, so continuing it reports InvalidParams; no hop is released.
+export function cancelledInterception(method: string, code: number, message: string): boolean {
+  return method === 'Fetch.continueResponse' && code === -32602 && message === 'Invalid InterceptionId.'
+}

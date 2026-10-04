@@ -3,7 +3,7 @@
 // this owner survives frame/process changes. Playwright retains DOM control only.
 import fs from 'node:fs/promises'
 import path from 'node:path'
-import { redirectLocation } from './redirect.ts'
+import { redirectLocation, cancelledInterception } from './redirect.ts'
 export async function guardNetwork(profile, routeRequest, onRedirect, onFailure, pending) {
   const [port, endpoint] = (await fs.readFile(path.join(profile, 'DevToolsActivePort'), 'utf8')).trim().split('\n')
   const socket = new WebSocket(`ws://127.0.0.1:${port}${endpoint}`)
@@ -11,7 +11,7 @@ export async function guardNetwork(profile, routeRequest, onRedirect, onFailure,
   let serial = 0
   const replies = new Map(), audit = []
   const send = (method, params = {}, sessionId) => new Promise((resolve, reject) => {
-    const id = ++serial; replies.set(id, { resolve, reject }); socket.send(JSON.stringify({ id, method, params, ...(sessionId ? { sessionId } : {}) }))
+    const id = ++serial; replies.set(id, { resolve, reject, method }); socket.send(JSON.stringify({ id, method, params, ...(sessionId ? { sessionId } : {}) }))
   })
   const track = promise => { pending.add(promise); promise.finally(() => pending.delete(promise)) }
   socket.addEventListener('close', () => { onFailure(new Error('browser-network-guard-disconnected')); for (const reply of replies.values()) reply.reject(new Error('CDP connection closed')); replies.clear() })
@@ -20,7 +20,9 @@ export async function guardNetwork(profile, routeRequest, onRedirect, onFailure,
     if (event.method === 'Fetch.requestPaused') audit.push({ url: event.params.request.url, frameId: event.params.frameId, stage: event.params.responseStatusCode === undefined ? 'request' : 'response', status: event.params.responseStatusCode })
     if (event.id) {
       const reply = replies.get(event.id); replies.delete(event.id)
-      if (event.error) reply?.reject(new Error(event.error.message)); else reply?.resolve(event.result)
+      if (event.error && reply && cancelledInterception(reply.method, event.error.code, event.error.message)) {
+        audit.push({ stage: 'cancelled-response', method: reply.method, code: event.error.code, message: event.error.message }); reply.resolve({})
+      } else if (event.error) reply?.reject(new Error(event.error.message)); else reply?.resolve(event.result)
       return
     }
     if (event.method === 'Fetch.requestPaused') {

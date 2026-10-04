@@ -154,7 +154,10 @@ Every HTTP redirect ends the run before Location is followed. Playwright's route
 skips redirect hops; Pass 2 therefore removes that competing interceptor and uses one
 browser-target CDP Fetch owner for request policy and response decisions. Page-target
 interceptors lost coverage when an out-of-process iframe rejoined its parent. The browser
-target survives those transitions; failure or disconnection stops the run. This is measured
+target survives those transitions; failure or disconnection stops the run. The one recorded
+exception is Chrome cancelling a paused response during document replacement: an exact
+`Fetch.continueResponse` InvalidParams/expired-id response is logged as cancellation, with
+no new request released. Request-release, fulfilment and redirect-abort errors still stop. This is measured
 on the recorded Chrome version, not a promise about an untested browser version.
 
 **Coverage measured in Pass 2:** initial same-site and cross-site frames, top frame,

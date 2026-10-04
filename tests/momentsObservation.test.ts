@@ -11,7 +11,7 @@ import { providerRelease, applyDecision } from '../docs/verification/moments-obs
 import { detectStop, stopReasons, type Evidence } from '../docs/verification/moments-observation/stops'
 import { Telemetry, observations } from '../docs/verification/moments-observation/telemetry'
 import { instrumentAdapter } from '../docs/verification/moments-observation/instrumentation'
-import { redirectLocation } from '../docs/verification/moments-observation/redirect'
+import { redirectLocation, cancelledInterception } from '../docs/verification/moments-observation/redirect'
 
 const origin = 'http://127.0.0.1:4318', instant = '2026-10-02T18:00:00Z'
 const authority = () => stubAuthority(origin)
@@ -292,4 +292,12 @@ it('a valid owner-block callback after a malformed one remains serializable', ()
   t.accept({ kind: 'error', value: undefined })
   t.accept({ kind: 'error', value: 150 })
   expect(observations(fictionalIds, t, 'environment', instant, true)[0]).toMatchObject({ outcome: 'owner-blocked', providerError: 150 })
+})
+
+
+it('only an expired response continuation is a cancellation, never a redirect or request-release failure', () => {
+  expect(cancelledInterception('Fetch.continueResponse', -32602, 'Invalid InterceptionId.')).toBe(true)
+  for (const method of ['Fetch.continueRequest', 'Fetch.failRequest', 'Fetch.fulfillRequest']) expect(cancelledInterception(method, -32602, 'Invalid InterceptionId.')).toBe(false)
+  expect(cancelledInterception('Fetch.continueResponse', -32000, 'Invalid InterceptionId.')).toBe(false)
+  expect(cancelledInterception('Fetch.continueResponse', -32602, 'Other failure')).toBe(false)
 })
