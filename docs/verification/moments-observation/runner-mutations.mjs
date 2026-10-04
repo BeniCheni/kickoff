@@ -3,6 +3,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import assert from 'node:assert/strict'
 import { execFileSync, spawnSync } from 'node:child_process'
+import { redirectVariants } from './probe-fixtures.mjs'
 import { stopReasons } from './stops.ts'
 const [runtime, chrome, output] = process.argv.slice(2)
 if (!output) throw new Error('Usage: node --import tsx runner-mutations.mjs <playwright-module> <chrome> <new-output-directory>')
@@ -10,7 +11,6 @@ const out = path.resolve(output); await fs.mkdir(out)
 const archive = path.join(out, 'archive'); await fs.mkdir(archive)
 const sha = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim()
 const gitDir = execFileSync('git', ['rev-parse', '--absolute-git-dir'], { encoding: 'utf8' }).trim()
-execFileSync('git', ['diff', '--exit-code', '11845cb21cfd0e87a1105e37e7b74e348739541c', sha, '--', 'src'])
 await fs.writeFile(path.join(out, 'source.tar'), execFileSync('git', ['archive', sha], { maxBuffer: 100 * 1024 * 1024 }))
 execFileSync('tar', ['-xf', path.join(out, 'source.tar'), '-C', archive])
 await fs.symlink(await fs.realpath('node_modules'), path.join(archive, 'node_modules'))
@@ -46,3 +46,36 @@ for (const reason of stopReasons) {
   await fs.writeFile(path.join(out, 'runner-mutations.json'), JSON.stringify({ sha, rows }, null, 2))
   console.log(reason, 'red -> green')
 }
+
+// Each redirect mutation is safe: its Location stays on the runner's loopback server.
+async function control(name, variant, fileName, from, to, assertion, ceiling = '12000') {
+  const file = path.join(archive, 'docs/verification/moments-observation', fileName)
+  const original = await fs.readFile(file, 'utf8'); assert(original.includes(from), name)
+  const execute = async color => {
+    const destination = path.join(out, `${name}-${color}`)
+    const child = spawnSync(process.execPath, ['--import', 'tsx', 'docs/verification/moments-observation/runner.mjs', '--stub', '--headless', '--port', '0', '--variant', variant, '--ceiling-ms', ceiling, '--runtime', runtime, '--chrome', chrome, '--out', destination], { cwd: archive, env, encoding: 'utf8', timeout: 18000 })
+    await fs.writeFile(destination + '.log', child.stdout + child.stderr)
+    let receipt
+    try { receipt = JSON.parse(await fs.readFile(path.join(destination, 'receipt.json'), 'utf8')) } catch (error) { if (error.code !== 'ENOENT') throw error }
+    if (receipt) { assert.equal(receipt.network.providerContinued, 0); assert.equal(receipt.network.unhandledProviderResponses.length, 0) }
+    const passed = !!receipt && assertion(receipt)
+    assert.equal(passed, color === 'green', `${name}: ${color} failed intended assertion (reason ${receipt?.stopReason})`)
+    return { exit: child.status, signal: child.signal, expectedAssertion: passed, actualReason: receipt?.stopReason ?? 'receipt-missing', port: receipt?.boundPort, proof: receipt?.redirectProof, providerNetworkRequests: receipt?.network.providerContinued ?? 0 }
+  }
+  await fs.writeFile(file, original.replaceAll(from, to))
+  let red
+  try { red = await execute('red') } finally { await fs.writeFile(file, original) }
+  const green = await execute('green')
+  rows.push({ reason: name, file: fileName, from, to, red, green })
+  await fs.writeFile(path.join(out, 'runner-mutations.json'), JSON.stringify({ sha, rows }, null, 2))
+  console.log(name, 'red -> green')
+}
+for (const variant of redirectVariants.filter(v => !/-(meta|script-nav)$/.test(v))) {
+  await control(variant, variant, 'redirect.ts', "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null", 'return null', r => r.stopReason === 'http-redirect-refused' && r.redirectProof.locationHits === 0)
+  assert.equal(rows.at(-1).red.proof.locationHits, 1, variant + ': guard-off control must reach Location')
+}
+await control('prompt-ceiling', 'prompt-ceiling', 'runner.mjs', 'promptAbort.abort()', 'void 0', r => r.stopReason === 'operational-safety-ceiling' && Array.isArray(r.observations), '100')
+await control('sandbox', 'clean', 'runner.mjs', 'chromiumSandbox: true', 'chromiumSandbox: false', r => r.status === 'complete' && !r.browser.launchCommand.includes('--no-sandbox'))
+await control('extra-hosts', 'extra-hosts', 'policy.ts', "if (!provider) return result('record', shelf ? 'shelf-image' : 'named-extra-host')", "if (!provider) return result('abort', 'unlisted-host')", r => r.requests.some(q => q.decision.reason === 'named-extra-host'))
+await control('unlisted-host', 'extra-hosts', 'policy.ts', "return result('abort', 'unlisted-host')", "return result('record', 'named-extra-host')", r => r.network.runnerAborts['unnamed.s4a.test']?.['unlisted-host'] === 1)
+await control('shelf-images', 'shelf-images', 'policy.ts', '!shelf && ids.some', 'ids.some', r => r.status === 'complete' && r.requests.filter(q => q.decision.reason === 'shelf-image').length === 2)

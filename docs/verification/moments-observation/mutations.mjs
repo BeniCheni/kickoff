@@ -9,7 +9,6 @@ if (!output) throw new Error('Usage: node mutations.mjs <new-output-directory>')
 const out = path.resolve(output); await fs.mkdir(out)
 const source = path.join(out, 'archive'); await fs.mkdir(source)
 const sha = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim()
-execFileSync('git', ['diff', '--exit-code', '11845cb21cfd0e87a1105e37e7b74e348739541c', sha, '--', 'src'])
 await fs.writeFile(path.join(out, 'source.tar'), execFileSync('git', ['archive', sha], { maxBuffer: 100 * 1024 * 1024 }))
 execFileSync('tar', ['-xf', path.join(out, 'source.tar'), '-C', source])
 await fs.symlink(await fs.realpath('node_modules'), path.join(source, 'node_modules'))
@@ -45,6 +44,18 @@ add('hook-dispatch', 'instrumentation.ts', "observe('dispatch', event); original
 add('null-frame-hit', 'browser-observer.js', '!!frame && hit === frame', 'hit === frame')
 add('redirect-refusal', 'redirect.ts', "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null", 'return null')
 add('live-port-zero', 'authority.ts', "throw new Refusal('live-port-zero')", 'void 0')
+add('named-extra-host', 'policy.ts', "if (!provider) return result('record', shelf ? 'shelf-image' : 'named-extra-host')", "if (!provider) return result('abort', 'unlisted-host')")
+add('extra-before-play', 'policy.ts', "return result('abort', 'extra-host-before-play')", "return result('record', 'named-extra-host')")
+add('unlisted-host', 'policy.ts', "return result('abort', 'unlisted-host')", "return result('record', 'named-extra-host')")
+add('shelf-images', 'policy.ts', "!shelf && ids.some", "ids.some")
+add('host-syntax', 'authority.ts', '.regex(/^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z](?:[a-z0-9-]{0,61}[a-z0-9])?$/)', '')
+add('host-cap', 'authority.ts', '.max(32)', '.max(100)')
+add('played-positive-sample', 'telemetry.ts', "if (event.event === 'playing') this.playing = true", "if (event.event === 'playing') { this.playing = true; this.played.add(this.current.videoId) }")
+add('malformed-error', 'telemetry.ts', "Number.isSafeInteger(hook.value) && hook.value >= 0", "true")
+add('stub-marker', 'telemetry.ts', "stub ? 'STUB; ' : ''", "''")
+add('unreached-note', 'telemetry.ts', "'Id not reached.'", "'Attempt reached.'")
+add('resume-label-sample', 'telemetry.ts', "this.resumeSample = hook.value === true ? this.lastSample : undefined", "this.resumeSample = undefined")
+add('clipped-frame', 'browser-observer.js', "const exposedFrame = frame && clippedRect(frame)", "const exposedFrame = rect")
 const receipts = []
 async function test(name, expected, dom = false) {
   const r = spawnSync('npm', ['test', '--', '--project', dom ? 'dom' : 'node', dom ? 'tests/dom/momentsObservationObserver.test.ts' : 'tests/momentsObservation.test.ts'], { cwd: source, encoding: 'utf8' })
@@ -56,7 +67,7 @@ for (const mutation of cases) {
   const file = path.join(source, mutation.file), original = await fs.readFile(file, 'utf8')
   assert(original.includes(mutation.from), 'Missing mutation target: ' + mutation.name)
   await fs.writeFile(file, original.replaceAll(mutation.from, mutation.to))
-  const dom = mutation.name === 'null-frame-hit'
+  const dom = ['null-frame-hit', 'clipped-frame'].includes(mutation.name)
   let red
   try { red = await test(mutation.name + '-red', false, dom) }
   finally { await fs.writeFile(file, original) }

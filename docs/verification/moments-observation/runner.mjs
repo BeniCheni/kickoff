@@ -1,3 +1,5 @@
+import { guardNetwork } from './cdp-network.mjs'
+import { redirectVariants, fixtureURL, serveFixture, runRedirectProbe } from './probe-fixtures.mjs'
 // Manual entry. Invoke with node --import tsx; a Playwright path is always explicit.
 import fs from 'node:fs/promises'
 import path from 'node:path'
@@ -40,13 +42,18 @@ const result = { startedAt, mode: args.live ? 'live' : 'stub', status: 'refused'
     'Physical devices, Safari, Firefox, screen-reader speech, zoom, Android/iOS Back and CloseWatcher are not verified.',
   ], network: { providerContinued: 0, providerFulfilled: 0, providerAborted: 0, unhandledProviderResponses: [], bytesWhileParked: 0, wireHeaders: [], hosts: {} },
 }
-let context, server, profile, timer, terminal, authority, telemetry, page, stopping, ensureFrameGuard, pending = new Set()
+let context, server, profile, timer, terminal, authority, telemetry, page, stopping, networkGuard, pending = new Set()
+const redirectProbe = args.stub && redirectVariants.includes(args.variant)
+result.redirectProof = { locationHits: 0, probeFinished: false }
 let phase = 'before-play', seen = { api: false, frames: [] }, parked = false
+const promptAbort = new AbortController()
+process.once('SIGINT', () => stop('operator-interrupt'))
 const now = () => new Date().toISOString()
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex')
 function stop(reason) {
   if (result.stopReason) return
   result.stopReason = reason; result.status = 'stopped'
+  promptAbort.abort()
   terminal?.close()
   stopping = context?.close().catch(() => {})
 }
@@ -54,8 +61,11 @@ const check = evidence => { const reason = detectStop(evidence); if (reason) sto
 const ensure = () => { if (result.stopReason) throw new Error(result.stopReason) }
 async function ask(question) {
   ensure()
-  terminal ??= createInterface({ input: process.stdin, output: process.stdout })
-  const answer = await terminal.question(question + '\n> ')
+  if (!terminal) {
+    terminal = createInterface({ input: process.stdin, output: process.stdout })
+    terminal.on('SIGINT', () => stop('operator-interrupt'))
+  }
+  const answer = await terminal.question(question + '\n> ', { signal: promptAbort.signal })
   result.human.push({ question, answer, at: now() }); ensure(); return answer
 }
 async function files(dir) {
@@ -71,7 +81,7 @@ try {
   if (args.live && args.headless) throw new Refusal('live-requires-headed-chrome')
   if (!args.runtime || !args.chrome) throw new Refusal('runtime-and-chrome-required')
   if (args.live && !args.authority) throw new Refusal('authority-required')
-  if (!['clean', 'owner-blocked', 'cold-blocked', 'http-redirect-refused', ...stopReasons].includes(args.variant) || (args.live && args.variant !== 'clean')) throw new Refusal('invalid-variant')
+  if (!['clean', 'owner-blocked', 'cold-blocked', 'http-redirect-refused', ...redirectVariants, 'prompt-ceiling', 'malformed-error', 'extra-hosts', 'shelf-images', ...stopReasons].includes(args.variant) || (args.live && args.variant !== 'clean')) throw new Refusal('invalid-variant')
   const ceiling = Number(args['ceiling-ms'])
   if (!Number.isInteger(ceiling) || ceiling < 100 || ceiling > 900000) throw new Refusal('invalid-safety-ceiling')
   result.safetyCeiling = { milliseconds: ceiling, meaning: 'Operational total-run safety ceiling, not a product readiness timeout' }
@@ -87,6 +97,7 @@ try {
   }
   let origin = args.origin ?? authority?.origin ?? `http://127.0.0.1:${args.port ?? '4318'}`
   authority ??= stubAuthority(origin)
+  if (mode === 'stub' && args.variant === 'extra-hosts') authority.hosts.push('named.s4a.test')
   authority = validateAuthority(authority, origin, now(), mode)
   const target = new URL(origin)
   if (!args.origin && !['localhost', '127.0.0.1'].includes(target.hostname)) throw new Refusal('non-loopback-requires-attach')
@@ -103,6 +114,7 @@ try {
   if (!args.origin) {
     server = http.createServer(async (request, response) => {
       try {
+        if (redirectProbe && serveFixture(request, response, origin, result.redirectProof)) return
         const pathname = decodeURIComponent(new URL(request.url, origin).pathname)
         if (mode === 'stub' && args.variant === 'http-redirect-refused' && pathname === '/redirect-check') {
           response.writeHead(302, { Location: apiUrl }); response.end(); return
@@ -121,11 +133,12 @@ try {
     result.boundPort = port
   } else result.boundPort = null
   result.origin = origin; result.authority = authority
+  result.network.runnerAborts = {}
   await fs.writeFile(path.join(out, 'authority-copy.json'), JSON.stringify(authority, null, 2))
   telemetry = new Telemetry(authority.ids.map(i => i.id))
   const assess = state => {
     check({ parentChanged: state.parentChanged, queueCovered: state.rows.some(r => r.intersects || r.hitFrame),
-      resume: state.status.some(s => s.includes('Resuming')), lastSample: telemetry.lastSample })
+      resume: state.status.some(s => s.includes('Resuming')), lastSample: telemetry.resumeSample })
     const id = state.rows.find(r => r.active === 'true')?.id
     const item = manifest.edition.find(m => m.id === id)
     if (item) check({ playShown: state.primary.some(p => p.tag === 'BUTTON' && /^(Play|Pause|Retry|Replay)$/.test(p.text)), permitted: hasEmbedPermission(item.source, now()) })
@@ -140,34 +153,40 @@ try {
   // The total ceiling includes typed confirmation and every later manual checkpoint.
   timer = setTimeout(() => stop('operational-safety-ceiling'), ceiling)
   let confirmation = ''
+  if (mode === 'stub' && args.variant === 'prompt-ceiling') await ask('Stub-only open prompt; wait for the ceiling.')
   if (mode === 'live') {
     if (!process.stdin.isTTY) throw new Refusal('live-requires-beni-terminal')
     confirmation = await ask(`Confirm this Chrome and allowlist. Type RELEASE ${origin} to launch the one visit.`)
   }
   const stub = await fs.readFile(new URL('./observation-stub.js', import.meta.url), 'utf8')
+  const recordAbort = (url, reason) => {
+    const host = new URL(url).hostname
+    const reasons = result.network.runnerAborts[host] ??= {}
+    reasons[reason] = (reasons[reason] ?? 0) + 1
+  }
   const local = async route => {
     const u = new URL(route.request().url())
     if (u.href === apiUrl) {
       result.network.providerFulfilled++; await route.fulfill({ contentType: 'text/javascript', body: stub })
     } else if (u.hostname === 'www.youtube-nocookie.com' && u.pathname.startsWith('/embed/')) {
       result.network.providerFulfilled++; await route.fulfill({ contentType: 'text/html', body: '<!doctype html><title>Local observation stub</title><body style="background:#234;color:white">Synthetic frame. No provider picture.</body>' })
-    } else { result.network.providerAborted++; await route.abort() }
+    } else if (u.hostname === 'named.s4a.test' && args.variant === 'extra-hosts') {
+      await route.fulfill({ contentType: 'text/javascript', body: '/* local named-host fixture */' })
+    } else { if (providerHost(u.hostname)) result.network.providerAborted++; recordAbort(u.href, 'stub-request-not-served'); await route.abort() }
   }
   const release = providerRelease(mode, authority, origin, now(), confirmation, local)
   ensure()
   const { chromium } = await import(path.resolve(args.runtime))
   profile = await fs.mkdtemp(path.join(os.tmpdir(), 'kickoff-observation-chrome-'))
-  context = await chromium.launchPersistentContext(profile, { executablePath: args.chrome, headless: !!args.headless,
+  context = await chromium.launchPersistentContext(profile, { executablePath: args.chrome, headless: !!args.headless, chromiumSandbox: true,
     viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, reducedMotion: 'reduce', serviceWorkers: 'block',
-    args: ['--disable-background-networking', '--disable-component-update', '--disable-domain-reliability', '--disable-sync', '--no-first-run', '--no-default-browser-check', '--disable-features=MediaRouter,OptimizationHints', ...(mode === 'stub' ? [dnsGuard] : [])] })
+    args: ['--remote-debugging-port=0', '--disable-background-networking', '--disable-component-update', '--disable-domain-reliability', '--disable-sync', '--no-first-run', '--no-default-browser-check', '--disable-features=MediaRouter,OptimizationHints', ...(mode === 'stub' ? [dnsGuard + ', MAP *.s4a.test 127.0.0.1'] : [])] })
   result.browser.launchedVersion = context.browser()?.version() ?? chromeVersion
   result.browser.freshProfile = true
-  const handled = new WeakSet()
-  await context.route('**/*', async route => {
+  const handled = new Set()
+  const routeRequest = async route => {
     const request = route.request(), url = request.url()
-    try { await ensureFrameGuard(request.frame()) }
-    catch (error) { await route.abort(); stop('response-guard-unavailable: ' + error.message); return }
-    const decision = decideRequest({ url, body: request.postData() ?? '', resourceType: request.resourceType(), phase, origin,
+    const decision = decideRequest({ url: redirectProbe && fixtureURL(url, origin) ? origin + new URL(url).pathname : url, body: request.postData() ?? '', resourceType: request.resourceType(), phase, origin,
       namedIds: authority.ids.map(i => i.id), hosts: authority.hosts, seen })
     seen = decision.next
     const record = { at: now(), url, method: request.method(), resourceType: request.resourceType(), phase, decision, parked,
@@ -175,23 +194,26 @@ try {
     result.requests.push(record)
     const host = new URL(url).hostname
     result.network.hosts[host] = (result.network.hosts[host] ?? 0) + 1
-    if (decision.provider) handled.add(request)
+    if (decision.provider) handled.add(url)
     try {
       if (result.stopReason || decision.action === 'stop' || decision.action === 'abort') {
+        recordAbort(url, decision.reason)
         if (decision.provider) result.network.providerAborted++
         record.disposition = 'aborted'; await route.abort()
         if (decision.action === 'stop') stop(decision.reason)
         return
       }
-      if (decision.provider) {
+      if (decision.provider || decision.reason === 'named-extra-host' || decision.reason === 'shelf-image') {
         record.disposition = mode === 'stub' ? 'local-or-aborted' : 'continued'
-        if (mode === 'live') result.network.providerContinued++
+        if (mode === 'live' && decision.provider) result.network.providerContinued++
         await applyDecision(route, decision, release)
       } else { record.disposition = 'continued-local-or-fonts'; await route.continue() }
     } catch (error) { if (!result.stopReason) stop('routing-failed: ' + error.message) }
-  })
+  }
+  result.network.redirects = []
+  networkGuard = await guardNetwork(profile, routeRequest, redirect => { result.network.redirects.push(redirect); recordAbort(redirect.url, 'http-redirect-refused'); stop('http-redirect-refused') }, error => { if (!result.stopReason && result.status !== 'complete') stop('response-guard-failed: ' + error.message) }, pending)
   context.on('response', response => {
-    if (providerHost(new URL(response.url()).hostname) && !handled.has(response.request())) {
+    if (providerHost(new URL(response.url()).hostname) && !handled.has(response.url())) {
       result.network.unhandledProviderResponses.push(response.url()); stop('unhandled-provider-response')
     }
   })
@@ -213,39 +235,8 @@ try {
   await context.addInitScript({ path: new URL('./browser-observer.js', import.meta.url).pathname })
   if (mode === 'stub') await context.addInitScript(variant => { window.__observationVariant = variant }, args.variant)
   page = context.pages()[0] ?? await context.newPage()
-  const guards = new Map()
-  result.network.redirects = []
-  ensureFrameGuard = frame => {
-    if (guards.has(frame)) return guards.get(frame)
-    const install = (async () => {
-      let session
-      try { session = await context.newCDPSession(frame) }
-      catch (error) {
-        // Same-process frames inherit the parent's response-stage guard. Any other
-        // attach failure refuses the request before the release function is called.
-        if (frame.parentFrame() && /does not have a separate CDP session/.test(error.message)) return ensureFrameGuard(frame.parentFrame())
-        throw error
-      }
-      session.on('Fetch.requestPaused', event => {
-        const task = (async () => {
-          const location = redirectLocation(event.responseStatusCode ?? 0, event.responseHeaders ?? [])
-          if (location !== null) {
-            result.network.redirects.push({ url: event.request.url, status: event.responseStatusCode, location, action: 'aborted-before-follow' })
-            await session.send('Fetch.failRequest', { requestId: event.requestId, errorReason: 'Aborted' })
-            stop('http-redirect-refused')
-          } else await session.send('Fetch.continueResponse', { requestId: event.requestId })
-        })().catch(error => { if (!result.stopReason) stop('response-guard-failed: ' + error.message) })
-        pending.add(task); task.finally(() => pending.delete(task))
-      })
-      await session.send('Fetch.enable', { patterns: [{ urlPattern: '*', requestStage: 'Response' }] })
-      return session
-    })()
-    guards.set(frame, install); return install
-  }
-  // A frame may acquire another process on navigation; re-check its target before the
-  // next initial request is released. Redirects themselves are stopped at the response.
-  page.on('framenavigated', frame => { if (frame !== page.mainFrame()) guards.delete(frame) })
-  await ensureFrameGuard(page.mainFrame())
+  result.browser.launchCommand = execFileSync('ps', ['-ww', '-axo', 'command='], { encoding: 'utf8' }).split('\n').find(line => line.includes('--user-data-dir=' + profile) && !line.includes('--type='))?.replaceAll(profile, '<fresh-profile>') ?? 'not observed'
+  result.browser.webdriver = await page.evaluate(() => navigator.webdriver)
   // CDP's extra-info headers describe the browser's network request, rather than the
   // intercepted proposal. Locally fulfilled frame requests may have no wire headers.
   const cdp = await context.newCDPSession(page), wireUrls = new Map()
@@ -312,6 +303,10 @@ try {
     }
   }
   await snapshot('before-play')
+  if (args.variant.startsWith('redirect-first')) {
+    await runRedirectProbe(page, args.variant, origin, result.redirectProof)
+    ensure(); throw new Refusal('probe-finished')
+  }
   if (args.variant === 'http-redirect-refused') await page.evaluate(() => fetch('/redirect-check').catch(() => {}))
   if (args.variant === 'provider-before-play') await page.evaluate(() => { const s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api'; document.head.append(s) })
   await click(/Open selection/)
@@ -320,7 +315,19 @@ try {
   // Readiness has no product timeout. The total-run safety ceiling is the only deadline.
   await page.waitForFunction(() => document.querySelector('[data-primary-action]')?.textContent.trim() === 'Pause' || document.querySelector('[data-recovery-copy]') || document.querySelector('[data-player-status]'))
   await snapshot('A-cold-result')
-  result.onePress = { cold: telemetry.played.has(authority.ids[0].id) && !telemetry.events.some(e => e.kind === 'blocked'), warm: null,
+  if (redirectProbe) {
+    await runRedirectProbe(page, args.variant, origin, result.redirectProof)
+    ensure(); throw new Refusal('probe-finished')
+  }
+  if (args.variant === 'malformed-error') await page.evaluate(() => window.dispatchEvent(new CustomEvent('moments-observation-hook-v1', { detail: { kind: 'error', value: undefined } })))
+  if (args.variant === 'extra-hosts') {
+    const frame = page.frames().find(f => f !== page.mainFrame())
+    await frame.evaluate(async () => { await fetch('https://named.s4a.test/probe').catch(() => {}); await fetch('https://unnamed.s4a.test/probe').catch(() => {}) })
+  }
+  if (args.variant === 'shelf-images') await page.evaluate(async () => {
+    await Promise.all(['vi', 'sb'].map(label => new Promise(resolve => { const image = new Image(); image.onload = image.onerror = resolve; image.src = `https://i.ytimg.com/${label}/S4Stub99999/default.jpg` })))
+  })
+  result.onePress = { cold: telemetry.playing && !telemetry.events.some(e => e.kind === 'blocked'), warm: null,
     meaning: mode === 'stub' ? 'Synthetic events only' : 'API event and one parent Play click; picture is a separate human observation' }
   if (mode === 'stub' && !['clean', 'owner-blocked', 'cold-blocked', 'warm-autoplay-blocked', 'provider-before-play', 'error-153', 'navigation-waits', 'parked-return-blank', 'ineligible-play'].includes(args.variant)) {
     await page.evaluate(variant => {
@@ -332,7 +339,7 @@ try {
       if (variant === 'unsampled-position') emit('dispatch', { itemId: 'kickoff-moments-slice-4-test-1', attempt: 1, event: 'position', position: 999 })
       if (variant === 'territory-150') emit('dispatch', { itemId: 'kickoff-moments-slice-4-test-1', attempt: 1, event: 'failure', failure: { kind: 'territory', providerError: 150 } })
       if (variant === 'resume-at-zero') { emit('sample', 0); emit('resume', true) }
-      if (variant === 'unnamed-id') { const image = new Image(); image.src = 'https://i.ytimg.com/vi/S4Stub99999/default.jpg' }
+      if (variant === 'unnamed-id') fetch('https://www.youtube.com/youtubei/v1/player?videoId=S4Stub99999&v=S4Stub99999').catch(() => {})
     }, args.variant)
     await settle(); await snapshot('fault-injected')
   }
@@ -387,7 +394,7 @@ try {
     await click('Play')
     await page.waitForFunction(() => document.querySelector('[data-primary-action]')?.textContent.trim() === 'Pause' || document.querySelector('[data-recovery-copy]') || document.querySelector('[data-player-status]'))
     await snapshot('B-warm-result')
-    result.onePress.warm = telemetry.played.has(authority.ids[1].id) && !telemetry.events.slice(warmStart).some(e => e.kind === 'blocked')
+    result.onePress.warm = telemetry.playing && !telemetry.events.slice(warmStart).some(e => e.kind === 'blocked')
     await click(/^Previous:/)
     const prior = await snapshot('previous-without-provider-reply')
     check({ navigationWaits: !prior.rows.some(r => r.id === 'kickoff-moments-slice-4-test-1' && r.active === 'true') }); ensure()
@@ -411,12 +418,16 @@ try {
 } finally {
   clearTimeout(timer); terminal?.close()
   await stopping; await context?.close().catch(() => {})
+  networkGuard?.close()
+  if (redirectProbe) result.guardAudit = networkGuard?.audit
   await Promise.all([...pending])
   if (server) await new Promise(resolve => server.close(resolve))
   if (profile) await fs.rm(profile, { recursive: true, force: true })
   result.finishedAt = now()
   const environment = `${result.origin && ['localhost', '127.0.0.1'].includes(new URL(result.origin).hostname) ? 'loopback' : 'non-loopback'} ${result.origin ?? 'not launched'}; Chrome ${result.browser?.version ?? 'not launched'}; ${args.headless ? 'headless' : 'headed'}; ${os.platform()} ${os.release()}`
-  result.observations = telemetry ? observations(authority.ids.map(i => i.id), telemetry, environment, now(), !!args.stub) : []
+  result.observations = telemetry && result.status === 'complete' ? observations(authority.ids.map(i => i.id), telemetry, environment, now(), !!args.stub) : []
+  const aborts = JSON.stringify(result.network.runnerAborts ?? {})
+  if (aborts !== '{}') for (const observation of result.observations) observation.note += ` Runner aborts occurred during this visit (host/reason/count): ${aborts}. Outcomes and ad answers reflect these runner restrictions.`
   await fs.writeFile(path.join(out, 'observations.json'), JSON.stringify(result.observations, null, 2) + '\n')
   await fs.writeFile(path.join(out, 'receipt.json'), JSON.stringify(result, null, 2) + '\n')
 }

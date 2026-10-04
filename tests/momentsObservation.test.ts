@@ -221,3 +221,66 @@ describe('telemetry and observation schema', () => {
     expect(fs.readFileSync('vite.config.ts', 'utf8')).not.toContain('moments-observation')
   })
 })
+
+
+describe('Pass 2 observation honesty and authority boundaries', () => {
+  it('names extra host families with strict DNS syntax and a bounded list', () => {
+    expect(validateAuthority({ ...authority(), hosts: [...providerDomains, 'named.s4a.test'] }, origin, instant, 'stub').hosts).toContain('named.s4a.test')
+    for (const host of ['https://extra.test', '*.extra.test', 'extra.test/path', 'extra.test:443', '-bad.test', 'EXTRA.test', '127.0.0.1', 'com', 'x..test', 'x.test.']) refused({ ...authority(), hosts: [...providerDomains, host] }, 'authority-schema')
+    refused({ ...authority(), hosts: [...providerDomains, ...Array.from({ length: 27 }, (_, i) => `x${i}.test`)] }, 'authority-schema')
+  })
+  it('named extra hosts release only after Play and check playback identity', () => {
+    const extra = { url: 'https://child.named.s4a.test/api', hosts: [...providerDomains, 'named.s4a.test'], seen: { api: true, frames: [] } }
+    expect(decideRequest(input(extra))).toMatchObject({ action: 'record', reason: 'named-extra-host' })
+    expect(decideRequest(input({ ...extra, phase: 'before-play' }))).toMatchObject({ action: 'abort', reason: 'extra-host-before-play' })
+    expect(decideRequest(input({ ...extra, body: '{"videoId":"S4Stub99999"}' }))).toMatchObject({ action: 'stop', reason: 'unnamed-id' })
+    expect(decideRequest(input({ ...extra, url: 'https://unnamed.s4a.test/api' }))).toMatchObject({ action: 'abort', reason: 'unlisted-host' })
+    expect(decideRequest(input({ ...extra, url: 'http://named.s4a.test/api' }))).toMatchObject({ action: 'stop', reason: 'provider-url-refused' })
+  })
+  it('records shelf images but stops an unnamed document, fetch, body, or media identity', () => {
+    for (const label of ['vi', 'vi_webp', 'an_webp', 'sb']) {
+      const url = `https://i.ytimg.com/${label}/S4Stub99999/default.jpg`
+      expect(decideRequest(input({ url, resourceType: 'image', seen: { api: true, frames: [] } }))).toMatchObject({ action: 'record', reason: 'shelf-image', ids: ['S4Stub99999'] })
+      for (const resourceType of ['document', 'fetch', 'media']) expect(decideRequest(input({ url, resourceType }))).toMatchObject({ action: 'stop', reason: 'unnamed-id' })
+      expect(decideRequest(input({ url: url + '?v=S4Stub99998', resourceType: 'image' }))).toMatchObject({ action: 'stop', reason: 'unnamed-id' })
+    }
+  })
+  it('PLAYING alone is unknown; a later positive sample confirms only the current named attempt', () => {
+    const t = new Telemetry(fictionalIds)
+    t.accept({ kind: 'play', value: { itemId: 'a', attempt: 1, videoId: fictionalIds[0] } })
+    t.accept({ kind: 'sample', value: 12 })
+    t.accept({ kind: 'dispatch', value: { itemId: 'a', attempt: 1, event: 'playing' } })
+    expect(observations(fictionalIds, t, 'environment', instant, true)[0]!.outcome).toBe('unknown')
+    t.accept({ kind: 'sample', value: 0 })
+    expect(t.played.size).toBe(0)
+    t.accept({ kind: 'sample', value: 12 })
+    expect(t.played.has(fictionalIds[0])).toBe(true)
+    t.accept({ kind: 'play', value: { itemId: 'b', attempt: 2, videoId: fictionalIds[1] } })
+    t.accept({ kind: 'dispatch', value: { itemId: 'a', attempt: 1, event: 'playing' } })
+    t.accept({ kind: 'sample', value: 20 })
+    expect(t.played.has(fictionalIds[1])).toBe(false)
+    const obs = observations(fictionalIds, t, 'environment', instant, true)
+    expect(obs.every(o => o.environment.includes('STUB') && o.note.includes('Synthetic'))).toBe(true)
+  })
+  it.each([undefined, NaN, Infinity, -1, Number.MAX_SAFE_INTEGER + 1, 150.5, '150', null])('malformed error %s cannot lose a receipt', value => {
+    const t = new Telemetry(fictionalIds)
+    t.accept({ kind: 'play', value: { itemId: 'a', attempt: 1, videoId: fictionalIds[0] } })
+    t.accept({ kind: 'error', value: 150 })
+    t.accept({ kind: 'error', value })
+    const obs = observations(fictionalIds, t, 'environment', instant, true)
+    expect(obs[0]).toMatchObject({ outcome: 'unknown' })
+    expect(obs[0]).not.toHaveProperty('providerError')
+    expect(obs[0]!.note).toContain('Malformed')
+    expect(obs[1]!.note).toContain('not reached')
+  })
+})
+
+it('a later zero sample does not invalidate an already emitted positive resume label', () => {
+  const t = new Telemetry(fictionalIds)
+  t.accept({ kind: 'play', value: { itemId: 'a', attempt: 1, videoId: fictionalIds[0] } })
+  t.accept({ kind: 'sample', value: 12 })
+  t.accept({ kind: 'resume', value: true })
+  t.accept({ kind: 'sample', value: 0 })
+  expect(t.resumeSample).toBe(12)
+  expect(detectStop({ resume: true, lastSample: t.resumeSample })).toBeNull()
+})

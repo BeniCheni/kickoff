@@ -29,12 +29,23 @@
     const frame = document.querySelector('iframe'), dialog = document.querySelector('[data-moments-player-dialog]')
     const rect = frame?.getBoundingClientRect()
     const visible = node => node.getClientRects().length > 0 && !node.closest('[hidden], [inert]')
+    const clippedRect = node => {
+      const r = node.getBoundingClientRect()
+      const bounds = { left: Math.max(0, r.left), top: Math.max(0, r.top), right: Math.min(innerWidth, r.right), bottom: Math.min(innerHeight, r.bottom) }
+      for (let parent = node.parentElement; parent; parent = parent.parentElement) {
+        const style = getComputedStyle(parent), clip = parent.getBoundingClientRect()
+        if (/(hidden|clip|auto|scroll)/.test(style.overflowX || style.overflow)) { bounds.left = Math.max(bounds.left, clip.left); bounds.right = Math.min(bounds.right, clip.right) }
+        if (/(hidden|clip|auto|scroll)/.test(style.overflowY || style.overflow)) { bounds.top = Math.max(bounds.top, clip.top); bounds.bottom = Math.min(bounds.bottom, clip.bottom) }
+      }
+      return bounds
+    }
+    const exposedFrame = frame && clippedRect(frame)
     const rows = [...document.querySelectorAll('[data-queue-id]')].filter(visible).map(row => {
       const r = row.getBoundingClientRect(), x = r.x + r.width / 2, y = r.y + r.height / 2
-      const hit = document.elementFromPoint(x, y)
+      const hit = document.elementFromPoint(x, y), exposedRow = clippedRect(row)
       return { id: row.dataset.queueId, active: row.getAttribute('aria-current'), visited: row.dataset.visited,
         rect: r.toJSON(), hitFrame: !!frame && hit === frame, inViewport: y >= 0 && y < innerHeight && x >= 0 && x < innerWidth,
-        intersects: !!rect && rect.width > 1 && rect.height > 1 && rect.left < r.right && rect.right > r.left && rect.top < r.bottom && rect.bottom > r.top }
+        intersects: !!exposedFrame && Math.max(exposedFrame.left, exposedRow.left) < Math.min(exposedFrame.right, exposedRow.right) && Math.max(exposedFrame.top, exposedRow.top) < Math.min(exposedFrame.bottom, exposedRow.bottom) }
     })
     return { width: innerWidth, scrollWidth: document.documentElement.scrollWidth, height: innerHeight,
       placement: dialog?.dataset.placement ?? null, sameElement: !firstFrame || frame === firstFrame,

@@ -58,14 +58,19 @@ export function decideRequest(input: RequestInput): Decision {
   const { seen, namedIds, phase } = input
   const u = new URL(input.url), provider = providerHost(u.hostname), ids = extractIds(input.url, input.body)
   const result = (action: Decision['action'], reason: string, next = seen): Decision => ({ action, reason, next, provider, ids })
+  const authorized = input.hosts.some(host => u.hostname === host || u.hostname.endsWith('.' + host))
+  const shelf = input.resourceType === 'image' && !input.body && /^\/(?:vi|vi_webp|an_webp|sb)\/[^/]+\//.test(u.pathname) && !u.search && ids.length === 1
   if (!provider) {
     if (u.origin === input.origin || (u.protocol === 'https:' && ['fonts.googleapis.com', 'fonts.gstatic.com'].includes(u.hostname))) return result('release', 'local-or-fonts')
-    return result('abort', 'unlisted-host')
+    if (!authorized) return result('abort', 'unlisted-host')
+    if (phase === 'before-play') return result('abort', 'extra-host-before-play')
   }
   if (phase === 'before-play') return result('stop', 'provider-before-play')
-  if (ids.some(id => !namedIds.includes(id))) return result('stop', 'unnamed-id')
+  if (!shelf && ids.some(id => !namedIds.includes(id))) return result('stop', 'unnamed-id')
   if (u.protocol !== 'https:' || u.username || u.password || u.port) return result('stop', 'provider-url-refused')
-  if (!input.hosts.some(host => u.hostname === host || u.hostname.endsWith('.' + host))) return result('stop', 'provider-host-not-authorized')
+  if (!authorized) return result('stop', 'provider-host-not-authorized')
+  if (!provider) return result('record', shelf ? 'shelf-image' : 'named-extra-host')
+  if (shelf && seen.api) return result('record', 'shelf-image')
   if (u.href === apiUrl) {
     if (seen.api) return result('stop', 'second-api-request')
     return result('release', 'api-entry', { ...seen, api: true })

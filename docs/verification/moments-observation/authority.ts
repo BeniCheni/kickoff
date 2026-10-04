@@ -6,7 +6,7 @@ const schema = z.object({
   who: z.literal('Beni'),
   at: z.iso.datetime({ offset: true }),
   words: z.string().trim().min(1),
-  hosts: z.array(z.enum(providerDomains)).min(2).max(providerDomains.length),
+  hosts: z.array(z.string().max(253).regex(/^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z](?:[a-z0-9-]{0,61}[a-z0-9])?$/)).min(2).max(32),
   origin: z.string(),
   ids: z.array(z.object({
     id: youtubeVideoIdSchema,
