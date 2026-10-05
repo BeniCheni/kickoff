@@ -165,3 +165,84 @@ only; the real picture in Cinema, letterboxing, ads and playback remain S4b obse
 Not verified: real providers or rights, physical devices, Safari/Firefox, screen-reader
 speech, zoom, provider keyboard behavior, real parked decoding or real seek continuity,
 Pages/live deployment. No live-mode observation or production edition was run or published.
+
+## Pass 1 addendum (Claude Code, 5 October 2026)
+
+Everything above is the builder's receipt, left as written. This section is the cold
+review's: what it re-ran, what the receipts can and cannot show, and what it changed in
+this directory. Its findings table is in the PR conversation; the follow-ups are ideas
+rows 96 to 100.
+
+Builds made by the review: base bd157f1, tip 69cbd21, one data snapshot. Chrome
+154.0.8037.93, Playwright 1.62.1, Node 24.15.0, npm 11.12.1, macOS 27.0.1 arm64.
+Stub mode only; every browser had the six-family resolver guard, and no run reached a
+provider.
+
+- **Reproduced.** Production stylesheets 38,966 and 39,043 bytes with the two hashes
+  above; the one emitted rule is the whole difference, and the tip with that rule taken
+  out of its source builds the base stylesheet byte for byte. A merge of 69cbd21 into main
+  at 17d1451 (tree 0f9ab8b, never committed) builds the repair's hash too. Player matrix on frozen
+  harness builds: base 1,260 cells and 404 journeys with 540 Cinema cells and 2,700 hits
+  failing, tip all passing. Every failing hit names the cover word; none is null and none
+  is off screen. Cells without the new field, journeys and all 17 capture hashes are equal
+  between the two builds. Repaired-state probe: 12 of 12 fail on base, none on tip.
+  Deletion control: 6 of 18 matrix cells and 12 of 12 probe cells fail, and both pass on
+  the exact bytes restored. Real adapter: five runs, base three times and tip twice, each
+  72 runs and 324 checkpoints, 138 requests fulfilled locally, none aborted or escaped.
+  Lapse 42 and 42, equal after loopback normalisation. Labels 234 and 234, exactly equal.
+  Layout 180 of 180. Inert 72 of 72 texts and 72 of 72 first-capture PNGs, 144 loads
+  without overflow. Isolation: seven rows on each side with equal outcomes. S4a with the
+  base runner: both visits complete with no provider continuation, the three stage
+  captures byte-identical, the Cinema captures the same size as the three kept here.
+- **The post-ready label.** The review saw one differing sample, not three: 390, "Play
+  again after ready", Pause on the tip's first run and Play on the other four. It differs
+  between the tip's own two runs and not among the base's three, so the same bytes give
+  both readings. 240 focused repeats, 120 per build, read Pause every time.
+- **The dev server.** The abort described above did not reproduce. On the dev server the
+  tip passed all 1,260 cells and 404 journeys, and the base completed them with its 540
+  expected failures. A third tip run survived a second dev server starting on the shared
+  dependency directory, then stopped at 697 cells within twenty seconds of a receipt and
+  a README line being written into the served tree: Vite logged a hot update of the
+  stylesheet and the checker lost its page ("Execution context was destroyed, most likely
+  because of a navigation", check-player.mjs line 49). The stylesheet build reads docs, so
+  to a dev server a docs write is a source change. Nothing in this PR's files causes the
+  abort, and the frozen harness build is the right instrument.
+- **What the hit-test and the pixel check cannot see.** Both run at device scale 1, and
+  the pixel check leaves the boundary rows out. With the scale set by the launch flag,
+  the 27 Cinema cells at scale 1 and 2 carry one slot-coloured pixel between them. At
+  2.625, 2.75, 3 and 3.5, one device row of the slot's colour shows under the frame's
+  bottom edge in 10 of 43 Cinema cells. The stage shows the same in 13 of its 92 cells on
+  the same build, with main's code, so the rule neither causes nor cures it (row 96). The
+  mock frame paints nothing, which is why the 17 matrix captures are byte-equal with and
+  without the repair: they are not picture evidence.
+- **Real input.** A stub frame that records its own events received the click at the
+  frame's centre in Cinema at 360, 390 and 1000 on the tip; on the base the cover's
+  document received it. Next clips the frame and the cover takes the click; Play on the
+  new selection gives the click back to the frame; Exit Cinema, and Escape from a parent
+  control, return focus to Enter Cinema with the same frame on the stage. Escape pressed
+  while the picture has focus goes to the frame and Cinema stays open (row 100).
+- **Layout events.** The host stayed on the slot, within 1/64 pixel and with five hits
+  on the frame, through twelve viewport changes with a live frame, one more while the
+  dialog was scrolled, and a late font load. The font case moved nothing, because the
+  acceptance edition's title is one short line; it shows the listener does no harm, not
+  that it is enough.
+- **Outside the receipts' reach.** Continuous integration cannot see the rule: with it
+  deleted, typecheck and all 860 tests pass (row 98). The action row under the Cinema
+  slot starts where the slot ends, so the top edge of its focus indicator is painted
+  under the slot, before the repair and after it (row 97).
+- **The recipe.** It runs as written, with one trap: dist-harness is not ignored, and the
+  stylesheet build scans it. A production build made from the same directory afterwards
+  was 39,255 bytes with a different hash (row 99). Build production first, or keep the
+  harness build and any preserved output outside the tree.
+- **Smaller things.** providerContinuations in the probe's receipt is a constant; the
+  measured guards are the empty lists of escaped and aborted requests. summary.json cites
+  the checker at line 445 for the base matrix and at 446 for the deletion run; the
+  committed checker asserts at 446 and gives the same counts. check-cinema.mjs asserts the
+  old defect, so it fails against a repaired build by design.
+- **Removed from this directory.** deletion-red.json and deletion-restored.json. After
+  the loopback port was normalised they were leaf for leaf equal to repair-red.json and
+  repair-green.json: 2,960 leaves each and none differing, with only a one-line mutation
+  note of their own. The deletion control's counts stay in summary.json. Their SHA-256 at
+  69cbd21, red then restored:
+  2646b5c99934387b901328d645885e4028fa88238bf6556dbc5139c0ab7ade54
+  3c0ec15cf388247c20f2e3fa593d868b31fab82a5c7f71826aad19638c3cfe98

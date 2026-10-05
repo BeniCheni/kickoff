@@ -522,6 +522,18 @@ nothing and remains inert; the selected cover is visible before Play and while a
 selection owns the frame. Browser evidence checks five frame hits, opaque synthetic pixels
 and the clipped-host control; it does not establish a real provider picture.
 
+**Cinema stacking, review qualifications (PR #159 Pass 1).** Without the rule the cover
+word is under all five points in every one of 540 Cinema matrix cells; with it they
+reach the frame, and a stub frame that records its own events receives the click. The
+evidence stops short of four things. At device scales of 2.625 and above, one device row
+of the slot's colour can show under the frame's bottom edge, in Cinema and on the stage
+alike and on main as on the repair for the stage; the shipped palette keeps it out of
+sight (ideas row 96). The action row under the Cinema slot starts where the slot ends, so
+the top edge of a keyboard focus indicator there is painted under the slot, before the
+repair and after it (row 97). `npm test` cannot see the rule: with it deleted the suite
+stays green, so the browser matrices are its only guard (row 98). And a click on the
+picture now puts focus inside the frame, where the Escape limit below applies (row 100).
+
 **Focus when Cinema closes.** When the stored opener is detached (a lens change through
 history remounts the stage; a tab change or a route failure removes it), focus goes to the
 stage's Enter Cinema button, then the gallery heading, then the tab that is showing. The
@@ -757,4 +769,5 @@ Both npm test and build:acceptance fail on drift. An adapter change must update 
 and rerun S3; a repair touching only the host/CSS does not change those string matches.
 Authority expiry/consumption remains unimplemented pending Beni. The independently
 reproduced Cinema stacking defect requires his separately authorized repair before S4b;
-this runner PR cannot close that application finding.
+this runner PR cannot close that application finding. (PR #159 made that repair: see
+"Cinema stacking" above.)
