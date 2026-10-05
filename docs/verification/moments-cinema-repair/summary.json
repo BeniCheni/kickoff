@@ -1,0 +1,714 @@
+{
+  "baseSha": "bd157f1c0adaefe8f5826f744f3da0c41fd3ecc7",
+  "applicationSha": "6b5c15b53bc2707bc564680f6d6885fc7d661894",
+  "browser": "154.0.8037.93",
+  "playwright": "1.62.1",
+  "node": "24.15.0",
+  "npm": "11.12.1",
+  "unitChecks": {
+    "typecheck": true,
+    "tests": 860,
+    "files": 55
+  },
+  "srcDiff": {
+    "files": [
+      "src/index.css"
+    ],
+    "addedLines": 1,
+    "removedLines": 0
+  },
+  "player": {
+    "base": {
+      "cells": 1260,
+      "journeys": 404,
+      "shots": 17,
+      "frameHitCells": 540,
+      "frameHitPoints": 2700,
+      "failedCells": 540,
+      "failedPoints": 2700,
+      "requests": {
+        "total": 6906,
+        "fonts": {
+          "fonts.googleapis.com": 1716,
+          "fonts.gstatic.com": 5190
+        },
+        "mediaProvider": 0,
+        "unexpected": 0,
+        "failed": 0
+      },
+      "errors": [],
+      "failure": "AssertionError [ERR_ASSERTION]: 540 Cinema cells fail the five-point frame hit-test\n\n540 !== 0\n\n    at file://<WORKTREE>/docs/verification/moments-player/check-player.mjs:445:10",
+      "rawReceiptSha256": "60132c1c0facb4dae2f0f5f6779e4fcfd1012aebdf50e4b3ec86c66f587d4702",
+      "rawCellsSha256": "210b7760a4c88f7870a5d15c87e60bbfa167dd48799a96bb1634eccfafba1687"
+    },
+    "tip": {
+      "cells": 1260,
+      "journeys": 404,
+      "shots": 17,
+      "frameHitCells": 540,
+      "frameHitPoints": 2700,
+      "failedCells": 0,
+      "failedPoints": 0,
+      "requests": {
+        "total": 6906,
+        "fonts": {
+          "fonts.googleapis.com": 1716,
+          "fonts.gstatic.com": 5190
+        },
+        "mediaProvider": 0,
+        "unexpected": 0,
+        "failed": 0
+      },
+      "errors": [],
+      "failure": null,
+      "rawReceiptSha256": "bf79c067d5b5e61b23f0426917d6d5e0c6d10a8f79c8a55861939b12a5863775",
+      "rawCellsSha256": "1c4070afe7c8bee6d2e4c785c2937c65ef7d35236de868ac323862fd5f5a9495"
+    },
+    "geometryEqual": true,
+    "journeysEqual": true,
+    "deletion": {
+      "cells": 18,
+      "journeys": 6,
+      "shots": 3,
+      "frameHitCells": 6,
+      "frameHitPoints": 30,
+      "failedCells": 6,
+      "failedPoints": 30,
+      "requests": {
+        "total": 100,
+        "fonts": {
+          "fonts.googleapis.com": 25,
+          "fonts.gstatic.com": 75
+        },
+        "mediaProvider": 0,
+        "unexpected": 0,
+        "failed": 0
+      },
+      "errors": [],
+      "failure": "AssertionError [ERR_ASSERTION]: 6 Cinema cells fail the five-point frame hit-test\n\n6 !== 0\n\n    at file://<RUN>/deletion/docs/verification/moments-player/check-player.mjs:446:10",
+      "rawReceiptSha256": "f1d11c611ea7d392f951745d62c018dec053c79115c6d855e8c86d38db5f79ac",
+      "rawCellsSha256": "81f4cf3ff544f721269cc2eabf602ceffaaa4ec32158e884290a6b280edabf17"
+    },
+    "restored": {
+      "cells": 18,
+      "journeys": 6,
+      "shots": 3,
+      "frameHitCells": 6,
+      "frameHitPoints": 30,
+      "failedCells": 0,
+      "failedPoints": 0,
+      "requests": {
+        "total": 100,
+        "fonts": {
+          "fonts.googleapis.com": 25,
+          "fonts.gstatic.com": 75
+        },
+        "mediaProvider": 0,
+        "unexpected": 0,
+        "failed": 0
+      },
+      "errors": [],
+      "failure": null,
+      "rawReceiptSha256": "2cfd652005e1c7774e4fcde27ee7bab49c4df74a6c93d644c1291ef267177b69",
+      "rawCellsSha256": "5874482ff636c6f75d6bb515814aeb91db0d4da24f090ebe69b24c609d7bb2b7"
+    },
+    "discardedDevAttempt": {
+      "cells": 153,
+      "reason": "Blank harness page and 20s state timeout; Vite logged SyntaxError: Unexpected token colon. Replaced with frozen vite preview."
+    }
+  },
+  "data": {
+    "fixtures.json": "6507c05174a6e299b8612a70d8806b45577e353b2bde33e078b7b0e148f54317",
+    "meta.json": "84bda3c73bddcaf5bf80c1461eb6a86b1e77dc42227d116b9d6b071580475024",
+    "standings.json": "427eca37510c1c5e303f190584d6a8a23e767534cab9433f61adb9fad481d953"
+  },
+  "cinema": {
+    "base": {
+      "coreCells": 6,
+      "edgeCells": 6,
+      "failedCells": 12,
+      "providerContinuations": 0
+    },
+    "tip": {
+      "coreCells": 6,
+      "edgeCells": 6,
+      "failedCells": 0,
+      "providerContinuations": 0
+    },
+    "deletion": {
+      "coreCells": 6,
+      "edgeCells": 6,
+      "failedCells": 12,
+      "providerContinuations": 0
+    },
+    "restored": {
+      "coreCells": 6,
+      "edgeCells": 6,
+      "failedCells": 0,
+      "providerContinuations": 0
+    }
+  },
+  "realAdapter": {
+    "base": {
+      "runs": 72,
+      "checkpoints": 324,
+      "completed": 72,
+      "providerEgress": 0,
+      "fulfilled": 138,
+      "aborted": 0,
+      "escaped": 0,
+      "pageErrors": 0,
+      "readyRepeat": {
+        "runs": 12,
+        "immediateLabels": [
+          [
+            "Play"
+          ],
+          [
+            "Play"
+          ],
+          [
+            "Play"
+          ],
+          [
+            "Play"
+          ],
+          [
+            "Play"
+          ],
+          [
+            "Play"
+          ],
+          [
+            "Play"
+          ],
+          [
+            "Play"
+          ],
+          [
+            "Play"
+          ],
+          [
+            "Play"
+          ],
+          [
+            "Play"
+          ],
+          [
+            "Play"
+          ]
+        ],
+        "settledLabels": [
+          [
+            "Pause"
+          ],
+          [
+            "Pause"
+          ],
+          [
+            "Pause"
+          ],
+          [
+            "Pause"
+          ],
+          [
+            "Pause"
+          ],
+          [
+            "Pause"
+          ],
+          [
+            "Pause"
+          ],
+          [
+            "Pause"
+          ],
+          [
+            "Pause"
+          ],
+          [
+            "Pause"
+          ],
+          [
+            "Pause"
+          ],
+          [
+            "Pause"
+          ]
+        ]
+      }
+    },
+    "tip": {
+      "runs": 72,
+      "checkpoints": 324,
+      "completed": 72,
+      "providerEgress": 0,
+      "fulfilled": 138,
+      "aborted": 0,
+      "escaped": 0,
+      "pageErrors": 0,
+      "readyRepeat": {
+        "runs": 12,
+        "immediateLabels": [
+          [
+            "Play"
+          ],
+          [
+            "Play"
+          ],
+          [
+            "Play"
+          ],
+          [
+            "Play"
+          ],
+          [
+            "Play"
+          ],
+          [
+            "Play"
+          ],
+          [
+            "Play"
+          ],
+          [
+            "Play"
+          ],
+          [
+            "Play"
+          ],
+          [
+            "Play"
+          ],
+          [
+            "Play"
+          ],
+          [
+            "Play"
+          ]
+        ],
+        "settledLabels": [
+          [
+            "Pause"
+          ],
+          [
+            "Pause"
+          ],
+          [
+            "Pause"
+          ],
+          [
+            "Pause"
+          ],
+          [
+            "Pause"
+          ],
+          [
+            "Pause"
+          ],
+          [
+            "Pause"
+          ],
+          [
+            "Pause"
+          ],
+          [
+            "Pause"
+          ],
+          [
+            "Pause"
+          ],
+          [
+            "Pause"
+          ],
+          [
+            "Pause"
+          ]
+        ]
+      }
+    },
+    "comparison": {
+      "normalization": "Loopback origin and its URL-encoded form only",
+      "differences": [
+        [
+          "/runs/33/steps/2/primary/0",
+          "Pause",
+          "Play"
+        ],
+        [
+          "/runs/45/steps/2/primary/0",
+          "Play",
+          "Pause"
+        ],
+        [
+          "/runs/57/steps/2/primary/0",
+          "Play",
+          "Pause"
+        ]
+      ]
+    },
+    "explanation": "Only three unsynchronized immediate post-ready stage labels differ. Existing checker samples before React must commit; two repeats at both method timings and all three widths settle to Pause on both builds. All other normalized fields equal."
+  },
+  "lapse": {
+    "baseCells": 42,
+    "tipCells": 42,
+    "failures": 0,
+    "comparison": {
+      "normalization": "Loopback origin and its URL-encoded form only",
+      "differences": []
+    }
+  },
+  "labels": {
+    "baseCells": 234,
+    "tipCells": 234,
+    "exactlyEqual": true
+  },
+  "layout": {
+    "comparisons": 180,
+    "equal": 180,
+    "errors": [],
+    "providerRequests": 0
+  },
+  "inert": {
+    "cells": 72,
+    "loads": 144,
+    "equalText": 72,
+    "equalPng": 71,
+    "overflowFree": true,
+    "mediaElements": 0,
+    "errors": [],
+    "providerRequests": 0,
+    "pngMismatches": [
+      "360-broadcast-light-table"
+    ],
+    "recaptures": [
+      {
+        "equalText": true,
+        "equalPng": true
+      },
+      {
+        "equalText": true,
+        "equalPng": true
+      }
+    ]
+  },
+  "isolation": {
+    "base": [
+      {
+        "script": "build",
+        "exitCode": 0,
+        "scanHits": []
+      },
+      {
+        "script": "build:single",
+        "exitCode": 0,
+        "scanHits": []
+      },
+      {
+        "script": "build",
+        "exitCode": 0,
+        "scanHits": []
+      },
+      {
+        "script": "build:acceptance",
+        "exitCode": 0,
+        "scanHits": []
+      },
+      {
+        "script": "build:acceptance",
+        "exitCode": 1,
+        "scanHits": []
+      },
+      {
+        "script": "build:acceptance",
+        "exitCode": 1,
+        "scanHits": []
+      },
+      {
+        "script": "build:acceptance",
+        "exitCode": 0,
+        "scanHits": []
+      }
+    ],
+    "tip": [
+      {
+        "script": "build",
+        "exitCode": 0,
+        "scanHits": []
+      },
+      {
+        "script": "build:single",
+        "exitCode": 0,
+        "scanHits": []
+      },
+      {
+        "script": "build",
+        "exitCode": 0,
+        "scanHits": []
+      },
+      {
+        "script": "build:acceptance",
+        "exitCode": 0,
+        "scanHits": []
+      },
+      {
+        "script": "build:acceptance",
+        "exitCode": 1,
+        "scanHits": []
+      },
+      {
+        "script": "build:acceptance",
+        "exitCode": 1,
+        "scanHits": []
+      },
+      {
+        "script": "build:acceptance",
+        "exitCode": 0,
+        "scanHits": []
+      }
+    ]
+  },
+  "observation": {
+    "base": {
+      "status": "complete",
+      "stopReason": null,
+      "build": {
+        "gitSha": "bd157f1c0adaefe8f5826f744f3da0c41fd3ecc7",
+        "runnerSha": "bd157f1c0adaefe8f5826f744f3da0c41fd3ecc7",
+        "distHash": "8a5e5b02543fafa8830f47c0a4877ccfd3c964b58134ee5e4456403391d613a1",
+        "files": [
+          {
+            "path": "assets/index-CKjq5mb7.css",
+            "sha256": "f22157bc13632d0de509baba600fb44c087975b29e1d722c6e13eaa5bac7cdaa",
+            "bytes": 38966
+          },
+          {
+            "path": "assets/index-DjKr7wBf.js",
+            "sha256": "9791c10489ef6fb68920d08c42d204f178bb110e3a520405ed75391e9dbe97ab",
+            "bytes": 1052459
+          },
+          {
+            "path": "favicon-192.png",
+            "sha256": "4308e7ecd71fc2b2f693631dd495d6ff3959705b08a0fd6e78c4226204ffacec",
+            "bytes": 1706
+          },
+          {
+            "path": "favicon-32.png",
+            "sha256": "7029b21dccbb0090b5905c82f8135f0eea68987602e512076b4b9e3c7186cd4c",
+            "bytes": 248
+          },
+          {
+            "path": "favicon-512.png",
+            "sha256": "832162dda57344b5bf62bb0070a07ff1a2907057ed4059f7097f07d369fb7008",
+            "bytes": 10030
+          },
+          {
+            "path": "favicon-64.png",
+            "sha256": "4372588d93f02f6dbae63197a59e7ae6f2fd92264241a5eb20fc568de8cd4239",
+            "bytes": 965
+          },
+          {
+            "path": "index.html",
+            "sha256": "14f17a907928887a01b005c5667ac4db4ac6f365a8736d37fe2aa9af386e13bd",
+            "bytes": 4418
+          }
+        ]
+      },
+      "providerContinued": 0,
+      "providerFulfilled": 2,
+      "providerAborted": 0,
+      "unhandledProviderResponses": [],
+      "captures": [
+        {
+          "file": "stage-390.png",
+          "sha256": "a0a0fc3ce4b0836a368c272e0b93a021783e33ffb593af840a18c948f0914340",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "file": "cinema-390.png",
+          "sha256": "559ad8ac784d857a7a6fea75479e83be512c3df82cc8e73a0d954f7b42b2e64a",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "file": "stage-1000.png",
+          "sha256": "590830f2468190e5c74be772d3732c21863d49df0d2d468f2a63f4c07ed10e25",
+          "width": 1000,
+          "scrollWidth": 1000
+        },
+        {
+          "file": "cinema-1000.png",
+          "sha256": "37e38aeab3a73bb5c2ddb459d496b61bd797996e6f25532b5bf1949e4aa80bc9",
+          "width": 1000,
+          "scrollWidth": 1000
+        },
+        {
+          "file": "stage-360.png",
+          "sha256": "a7ac9f74778598450d0ebf5ee7ec53e62668683cb61b2c6a0ed27b446e57b9b1",
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "file": "cinema-360.png",
+          "sha256": "d6d59980c2615493b8a8471d55f168685ffd53ecece8aa297c84d5bb64a837dd",
+          "width": 360,
+          "scrollWidth": 360
+        }
+      ]
+    },
+    "tip": {
+      "status": "complete",
+      "stopReason": null,
+      "build": {
+        "gitSha": "6b5c15b53bc2707bc564680f6d6885fc7d661894",
+        "runnerSha": "bd157f1c0adaefe8f5826f744f3da0c41fd3ecc7",
+        "distHash": "f30927962ab494a17dccde27e341abf2266b11c8294373add2297f0cce8ef670",
+        "files": [
+          {
+            "path": "assets/index-BiI1bc11.js",
+            "sha256": "9791c10489ef6fb68920d08c42d204f178bb110e3a520405ed75391e9dbe97ab",
+            "bytes": 1052459
+          },
+          {
+            "path": "assets/index-DNFlpoCc.css",
+            "sha256": "a3e896cd54a93d13e5c18df3b653cfa48b02bc33f1588c8b790031a0c3949a5f",
+            "bytes": 39043
+          },
+          {
+            "path": "favicon-192.png",
+            "sha256": "4308e7ecd71fc2b2f693631dd495d6ff3959705b08a0fd6e78c4226204ffacec",
+            "bytes": 1706
+          },
+          {
+            "path": "favicon-32.png",
+            "sha256": "7029b21dccbb0090b5905c82f8135f0eea68987602e512076b4b9e3c7186cd4c",
+            "bytes": 248
+          },
+          {
+            "path": "favicon-512.png",
+            "sha256": "832162dda57344b5bf62bb0070a07ff1a2907057ed4059f7097f07d369fb7008",
+            "bytes": 10030
+          },
+          {
+            "path": "favicon-64.png",
+            "sha256": "4372588d93f02f6dbae63197a59e7ae6f2fd92264241a5eb20fc568de8cd4239",
+            "bytes": 965
+          },
+          {
+            "path": "index.html",
+            "sha256": "c4554a54f321b2870ab845c6dd0a95c87f85ce56689994ed8bc1bb5579e5dc58",
+            "bytes": 4418
+          }
+        ]
+      },
+      "providerContinued": 0,
+      "providerFulfilled": 2,
+      "providerAborted": 0,
+      "unhandledProviderResponses": [],
+      "captures": [
+        {
+          "file": "stage-390.png",
+          "sha256": "a0a0fc3ce4b0836a368c272e0b93a021783e33ffb593af840a18c948f0914340",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "file": "cinema-390.png",
+          "sha256": "3a0acbc1fb6d403dcc10a5d37aa19706a41d81dae9460525a43114c876b23eb2",
+          "width": 390,
+          "scrollWidth": 390
+        },
+        {
+          "file": "stage-1000.png",
+          "sha256": "590830f2468190e5c74be772d3732c21863d49df0d2d468f2a63f4c07ed10e25",
+          "width": 1000,
+          "scrollWidth": 1000
+        },
+        {
+          "file": "cinema-1000.png",
+          "sha256": "810130789b64727c6eebb5dd666f77ee1a9833c9c455a3ae68c54d33f6fdedde",
+          "width": 1000,
+          "scrollWidth": 1000
+        },
+        {
+          "file": "stage-360.png",
+          "sha256": "a7ac9f74778598450d0ebf5ee7ec53e62668683cb61b2c6a0ed27b446e57b9b1",
+          "width": 360,
+          "scrollWidth": 360
+        },
+        {
+          "file": "cinema-360.png",
+          "sha256": "cb4a2b6b1db37b25457a676d251ed3f9e8b779010ef4a50c8360102a28bf7dc7",
+          "width": 360,
+          "scrollWidth": 360
+        }
+      ]
+    },
+    "stageCapturesEqual": true
+  },
+  "css": {
+    "base": {
+      "bytes": 38966,
+      "sha256": "f22157bc13632d0de509baba600fb44c087975b29e1d722c6e13eaa5bac7cdaa"
+    },
+    "tip": {
+      "bytes": 39043,
+      "sha256": "a3e896cd54a93d13e5c18df3b653cfa48b02bc33f1588c8b790031a0c3949a5f"
+    },
+    "onlyAddedRule": ".moments-player-dialog[data-placement=cinema] .moments-player-host{z-index:1}",
+    "removingRuleEqualsBase": true
+  },
+  "buildFiles": {
+    "base": {
+      "dist/assets/index-CKjq5mb7.css": "f22157bc13632d0de509baba600fb44c087975b29e1d722c6e13eaa5bac7cdaa",
+      "dist/assets/index-E56YXQU9.js": "cf3eeae57e7aa5d6cc82e26ac70485fc13677affa26943106deaa3cb8b638112",
+      "dist/favicon-192.png": "4308e7ecd71fc2b2f693631dd495d6ff3959705b08a0fd6e78c4226204ffacec",
+      "dist/favicon-32.png": "7029b21dccbb0090b5905c82f8135f0eea68987602e512076b4b9e3c7186cd4c",
+      "dist/favicon-512.png": "832162dda57344b5bf62bb0070a07ff1a2907057ed4059f7097f07d369fb7008",
+      "dist/favicon-64.png": "4372588d93f02f6dbae63197a59e7ae6f2fd92264241a5eb20fc568de8cd4239",
+      "dist/index.html": "80767df82be821d7085cdb55b0d640ec7e5ed1b2e65c8dfc6ee9796f91bd26ef",
+      "dist-acceptance/assets/index-B0cnnT8w.js": "bd58c33877804198dbab968dcb3ddfa8b8fd9daa2ee5c23506312e7714162828",
+      "dist-acceptance/assets/index-CKjq5mb7.css": "f22157bc13632d0de509baba600fb44c087975b29e1d722c6e13eaa5bac7cdaa",
+      "dist-acceptance/favicon-192.png": "4308e7ecd71fc2b2f693631dd495d6ff3959705b08a0fd6e78c4226204ffacec",
+      "dist-acceptance/favicon-32.png": "7029b21dccbb0090b5905c82f8135f0eea68987602e512076b4b9e3c7186cd4c",
+      "dist-acceptance/favicon-512.png": "832162dda57344b5bf62bb0070a07ff1a2907057ed4059f7097f07d369fb7008",
+      "dist-acceptance/favicon-64.png": "4372588d93f02f6dbae63197a59e7ae6f2fd92264241a5eb20fc568de8cd4239",
+      "dist-acceptance/index.html": "cda1b2c017dcfdb385c731824a804eeb1c8d1d99b69424d0b7cc43073a549374"
+    },
+    "tip": {
+      "dist/assets/index-DFjXih5x.js": "cf3eeae57e7aa5d6cc82e26ac70485fc13677affa26943106deaa3cb8b638112",
+      "dist/assets/index-DNFlpoCc.css": "a3e896cd54a93d13e5c18df3b653cfa48b02bc33f1588c8b790031a0c3949a5f",
+      "dist/favicon-192.png": "4308e7ecd71fc2b2f693631dd495d6ff3959705b08a0fd6e78c4226204ffacec",
+      "dist/favicon-32.png": "7029b21dccbb0090b5905c82f8135f0eea68987602e512076b4b9e3c7186cd4c",
+      "dist/favicon-512.png": "832162dda57344b5bf62bb0070a07ff1a2907057ed4059f7097f07d369fb7008",
+      "dist/favicon-64.png": "4372588d93f02f6dbae63197a59e7ae6f2fd92264241a5eb20fc568de8cd4239",
+      "dist/index.html": "bb42e7a39f1ec3fa702a61117a3ab0b2ec389f935f2ab315c953f333a1b079b5",
+      "dist-acceptance/assets/index-Bb55TDO8.js": "bd58c33877804198dbab968dcb3ddfa8b8fd9daa2ee5c23506312e7714162828",
+      "dist-acceptance/assets/index-DNFlpoCc.css": "a3e896cd54a93d13e5c18df3b653cfa48b02bc33f1588c8b790031a0c3949a5f",
+      "dist-acceptance/favicon-192.png": "4308e7ecd71fc2b2f693631dd495d6ff3959705b08a0fd6e78c4226204ffacec",
+      "dist-acceptance/favicon-32.png": "7029b21dccbb0090b5905c82f8135f0eea68987602e512076b4b9e3c7186cd4c",
+      "dist-acceptance/favicon-512.png": "832162dda57344b5bf62bb0070a07ff1a2907057ed4059f7097f07d369fb7008",
+      "dist-acceptance/favicon-64.png": "4372588d93f02f6dbae63197a59e7ae6f2fd92264241a5eb20fc568de8cd4239",
+      "dist-acceptance/index.html": "f37b84663c00f964b205ccf7bba3c39958965ca28b8e5eb2f4a2a83ba986de6e",
+      "dist-harness/assets/moments-DNFlpoCc.css": "a3e896cd54a93d13e5c18df3b653cfa48b02bc33f1588c8b790031a0c3949a5f",
+      "dist-harness/assets/moments-DdC5XRXL.js": "2cf9cae08bcb12b78fb2841f9126b17ed216b8f56b23d9cfc74edef4239ee69d",
+      "dist-harness/favicon-192.png": "4308e7ecd71fc2b2f693631dd495d6ff3959705b08a0fd6e78c4226204ffacec",
+      "dist-harness/favicon-32.png": "7029b21dccbb0090b5905c82f8135f0eea68987602e512076b4b9e3c7186cd4c",
+      "dist-harness/favicon-512.png": "832162dda57344b5bf62bb0070a07ff1a2907057ed4059f7097f07d369fb7008",
+      "dist-harness/favicon-64.png": "4372588d93f02f6dbae63197a59e7ae6f2fd92264241a5eb20fc568de8cd4239",
+      "dist-harness/tests/harness/moments.html": "3f65b9fedad4197cb147a601be6c6c221936e077a124d8b581b109b41c3bb9fd"
+    }
+  },
+  "notVerified": [
+    "real provider picture, playback, letterboxing and ads",
+    "rights",
+    "physical devices",
+    "Safari/Firefox",
+    "screen-reader speech",
+    "zoom",
+    "real provider keyboard behavior, parked decoding or seek continuity",
+    "Pages/live deployment",
+    "independent cold review"
+  ]
+}

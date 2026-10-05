@@ -514,6 +514,14 @@ frame paints nothing, and its `ready` cells are fresh loads. "Ready cells have n
 the builder's receipt is true of those cells only. The in-anchor "Player" stop exists only
 while the frame is on the selection.
 
+**Cinema stacking (ideas row 79).** The Cinema-placement host has stacking level 1 inside
+the dialog, above the later slot's background and cover. The host keeps its original DOM
+position, so frame focus order and the one-instance ownership contract do not move. Stage
+and parked placements retain their existing stacking. A host clipped to 0 x 0 still paints
+nothing and remains inert; the selected cover is visible before Play and while another
+selection owns the frame. Browser evidence checks five frame hits, opaque synthetic pixels
+and the clipped-host control; it does not establish a real provider picture.
+
 **Focus when Cinema closes.** When the stored opener is detached (a lens change through
 history remounts the stage; a tab change or a route failure removes it), focus goes to the
 stage's Enter Cinema button, then the gallery heading, then the tab that is showing. The
