@@ -1,0 +1,1302 @@
+{
+  "sha": "d1b20235360bc1e6bdb1f08681fe42eb26b771b6",
+  "cases": [
+    {
+      "name": "provider-before-play",
+      "exit": 1,
+      "expected": "provider-before-play",
+      "actual": "provider-before-play",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 0,
+      "providerAborts": 1,
+      "port": 62502,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "runnerAborts": {
+        "www.youtube.com": {
+          "provider-before-play": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "second-element",
+      "exit": 1,
+      "expected": "second-element",
+      "actual": "second-element",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 62530,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "runnerAborts": {},
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "parent-changed",
+      "exit": 1,
+      "expected": "parent-changed",
+      "actual": "parent-changed",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 1,
+      "port": 62563,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "runnerAborts": {
+        "www.youtube-nocookie.com": {
+          "second-frame-request": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "queue-covered",
+      "exit": 1,
+      "expected": "queue-covered",
+      "actual": "queue-covered",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 62578,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "runnerAborts": {},
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "navigation-waits",
+      "exit": 1,
+      "expected": "navigation-waits",
+      "actual": "navigation-waits",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 62595,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "runnerAborts": {},
+      "screenshots": 6,
+      "launched": true
+    },
+    {
+      "name": "second-terminal-failure",
+      "exit": 1,
+      "expected": "second-terminal-failure",
+      "actual": "second-terminal-failure",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 62652,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "runnerAborts": {},
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "unsampled-position",
+      "exit": 1,
+      "expected": "unsampled-position",
+      "actual": "unsampled-position",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 62682,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "runnerAborts": {},
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "territory-150",
+      "exit": 1,
+      "expected": "territory-150",
+      "actual": "territory-150",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 62723,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "runnerAborts": {},
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "error-153",
+      "exit": 1,
+      "expected": "error-153",
+      "actual": "error-153",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 62766,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "runnerAborts": {},
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "warm-autoplay-blocked",
+      "exit": 1,
+      "expected": "warm-autoplay-blocked",
+      "actual": "warm-autoplay-blocked",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 62782,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "runnerAborts": {},
+      "screenshots": 6,
+      "launched": true
+    },
+    {
+      "name": "parked-return-blank",
+      "exit": 1,
+      "expected": "parked-return-blank",
+      "actual": "parked-return-blank",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 62837,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "runnerAborts": {},
+      "screenshots": 6,
+      "launched": true
+    },
+    {
+      "name": "resume-at-zero",
+      "exit": 1,
+      "expected": "resume-at-zero",
+      "actual": "resume-at-zero",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 62926,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "runnerAborts": {},
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "ineligible-play",
+      "exit": 1,
+      "expected": "ineligible-play",
+      "actual": "ineligible-play",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 62965,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "runnerAborts": {},
+      "screenshots": 6,
+      "launched": true
+    },
+    {
+      "name": "unnamed-id",
+      "exit": 1,
+      "expected": "unnamed-id",
+      "actual": "unnamed-id",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 1,
+      "port": 63031,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "runnerAborts": {
+        "www.youtube.com": {
+          "unnamed-id": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "http-redirect-refused",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 0,
+      "providerAborts": 0,
+      "port": 63058,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "runnerAborts": {
+        "127.0.0.1": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-top-document",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 63087,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "runnerAborts": {
+        "127.0.0.1": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-top-script",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 63116,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "runnerAborts": {
+        "127.0.0.1": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-top-fetch",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 63146,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "runnerAborts": {
+        "127.0.0.1": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-top-chain",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 63164,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "runnerAborts": {
+        "127.0.0.1": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-top-meta",
+      "exit": 1,
+      "expected": "probe-finished",
+      "actual": "probe-finished",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 63200,
+      "redirectProof": {
+        "locationHits": 1,
+        "probeFinished": true
+      },
+      "runnerAborts": {},
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-top-script-nav",
+      "exit": 1,
+      "expected": "probe-finished",
+      "actual": "probe-finished",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 63251,
+      "redirectProof": {
+        "locationHits": 1,
+        "probeFinished": true
+      },
+      "runnerAborts": {},
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-same-document",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 63325,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "runnerAborts": {
+        "127.0.0.1": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-same-script",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 63369,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "runnerAborts": {
+        "127.0.0.1": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-same-fetch",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 63405,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "runnerAborts": {
+        "127.0.0.1": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-same-chain",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 63437,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "runnerAborts": {
+        "127.0.0.1": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-same-meta",
+      "exit": 1,
+      "expected": "probe-finished",
+      "actual": "probe-finished",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 63483,
+      "redirectProof": {
+        "locationHits": 1,
+        "probeFinished": true
+      },
+      "runnerAborts": {},
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-same-script-nav",
+      "exit": 1,
+      "expected": "probe-finished",
+      "actual": "probe-finished",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 63535,
+      "redirectProof": {
+        "locationHits": 1,
+        "probeFinished": true
+      },
+      "runnerAborts": {},
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-cross-document",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 63612,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "runnerAborts": {
+        "frame.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-cross-script",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 63645,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "runnerAborts": {
+        "frame.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-cross-fetch",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 63674,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "runnerAborts": {
+        "frame.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-cross-chain",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 63693,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "runnerAborts": {
+        "frame.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-cross-meta",
+      "exit": 1,
+      "expected": "probe-finished",
+      "actual": "probe-finished",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 63723,
+      "redirectProof": {
+        "locationHits": 1,
+        "probeFinished": true
+      },
+      "runnerAborts": {},
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-cross-script-nav",
+      "exit": 1,
+      "expected": "probe-finished",
+      "actual": "probe-finished",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 63771,
+      "redirectProof": {
+        "locationHits": 1,
+        "probeFinished": true
+      },
+      "runnerAborts": {},
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-nested-document",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 63841,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "runnerAborts": {
+        "nested.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-nested-script",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 63872,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "runnerAborts": {
+        "nested.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-nested-fetch",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 63905,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "runnerAborts": {
+        "nested.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-nested-chain",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 63933,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "runnerAborts": {
+        "nested.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-nested-meta",
+      "exit": 1,
+      "expected": "probe-finished",
+      "actual": "probe-finished",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 63964,
+      "redirectProof": {
+        "locationHits": 1,
+        "probeFinished": true
+      },
+      "runnerAborts": {},
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-nested-script-nav",
+      "exit": 1,
+      "expected": "probe-finished",
+      "actual": "probe-finished",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 64018,
+      "redirectProof": {
+        "locationHits": 1,
+        "probeFinished": true
+      },
+      "runnerAborts": {},
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-firstsame-document",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 0,
+      "providerAborts": 0,
+      "port": 64087,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "runnerAborts": {
+        "127.0.0.1": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-firstsame-script",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 0,
+      "providerAborts": 0,
+      "port": 64110,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "runnerAborts": {
+        "127.0.0.1": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-firstsame-fetch",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 0,
+      "providerAborts": 0,
+      "port": 64150,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "runnerAborts": {
+        "127.0.0.1": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-firstsame-chain",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 0,
+      "providerAborts": 0,
+      "port": 64173,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "runnerAborts": {
+        "127.0.0.1": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-firstsame-meta",
+      "exit": 1,
+      "expected": "probe-finished",
+      "actual": "probe-finished",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 0,
+      "providerAborts": 0,
+      "port": 64202,
+      "redirectProof": {
+        "locationHits": 1,
+        "probeFinished": true
+      },
+      "runnerAborts": {},
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-firstsame-script-nav",
+      "exit": 1,
+      "expected": "probe-finished",
+      "actual": "probe-finished",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 0,
+      "providerAborts": 0,
+      "port": 64249,
+      "redirectProof": {
+        "locationHits": 1,
+        "probeFinished": true
+      },
+      "runnerAborts": {},
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-firstcross-document",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 0,
+      "providerAborts": 0,
+      "port": 64331,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "runnerAborts": {
+        "frame.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-firstcross-script",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 0,
+      "providerAborts": 0,
+      "port": 64364,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "runnerAborts": {
+        "frame.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-firstcross-fetch",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 0,
+      "providerAborts": 0,
+      "port": 64391,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "runnerAborts": {
+        "frame.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-firstcross-chain",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 0,
+      "providerAborts": 0,
+      "port": 64424,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "runnerAborts": {
+        "frame.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-firstcross-meta",
+      "exit": 1,
+      "expected": "probe-finished",
+      "actual": "probe-finished",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 0,
+      "providerAborts": 0,
+      "port": 64452,
+      "redirectProof": {
+        "locationHits": 1,
+        "probeFinished": true
+      },
+      "runnerAborts": {},
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-firstcross-script-nav",
+      "exit": 1,
+      "expected": "probe-finished",
+      "actual": "probe-finished",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 0,
+      "providerAborts": 0,
+      "port": 64503,
+      "redirectProof": {
+        "locationHits": 1,
+        "probeFinished": true
+      },
+      "runnerAborts": {},
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-status301-fetch",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 64581,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "runnerAborts": {
+        "frame.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-status303-fetch",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 64613,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "runnerAborts": {
+        "frame.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-status307-fetch",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 64644,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "runnerAborts": {
+        "frame.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "redirect-status308-fetch",
+      "exit": 1,
+      "expected": "http-redirect-refused",
+      "actual": "http-redirect-refused",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 64677,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": true
+      },
+      "runnerAborts": {
+        "frame.s4a.test": {
+          "http-redirect-refused": 1
+        }
+      },
+      "screenshots": 0,
+      "launched": true
+    },
+    {
+      "name": "prompt-ceiling",
+      "exit": 1,
+      "expected": "operational-safety-ceiling",
+      "actual": "operational-safety-ceiling",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 0,
+      "providerAborts": 0,
+      "port": 64725,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "runnerAborts": {},
+      "screenshots": 0,
+      "launched": false
+    },
+    {
+      "name": "extra-hosts",
+      "exit": 0,
+      "expected": null,
+      "actual": null,
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 64726,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "runnerAborts": {
+        "unnamed.s4a.test": {
+          "unlisted-host": 1
+        }
+      },
+      "screenshots": 6,
+      "launched": true
+    },
+    {
+      "name": "shelf-images",
+      "exit": 0,
+      "expected": null,
+      "actual": null,
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 2,
+      "port": 64777,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "runnerAborts": {
+        "i.ytimg.com": {
+          "stub-request-not-served": 2
+        }
+      },
+      "screenshots": 6,
+      "launched": true
+    },
+    {
+      "name": "malformed-error",
+      "exit": 0,
+      "expected": null,
+      "actual": null,
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 64842,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "runnerAborts": {},
+      "screenshots": 6,
+      "launched": true
+    },
+    {
+      "name": "sandbox-headed",
+      "exit": 0,
+      "expected": null,
+      "actual": null,
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 64882,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "runnerAborts": {},
+      "screenshots": 6,
+      "launched": true
+    },
+    {
+      "name": "refusal-future-authority",
+      "exit": 1,
+      "expected": "future-authority",
+      "actual": "future-authority",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 0,
+      "providerAborts": 0,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "screenshots": 0,
+      "launched": false
+    },
+    {
+      "name": "refusal-too-many-ids",
+      "exit": 1,
+      "expected": "too-many-ids",
+      "actual": "too-many-ids",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 0,
+      "providerAborts": 0,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "screenshots": 0,
+      "launched": false
+    },
+    {
+      "name": "refusal-malformed-video-id",
+      "exit": 1,
+      "expected": "malformed-video-id",
+      "actual": "malformed-video-id",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 0,
+      "providerAborts": 0,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "screenshots": 0,
+      "launched": false
+    },
+    {
+      "name": "refusal-authority-schema",
+      "exit": 1,
+      "expected": "authority-schema",
+      "actual": "authority-schema",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 0,
+      "providerAborts": 0,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "screenshots": 0,
+      "launched": false
+    },
+    {
+      "name": "refusal-duplicate-id",
+      "exit": 1,
+      "expected": "duplicate-id",
+      "actual": "duplicate-id",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 0,
+      "providerAborts": 0,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "screenshots": 0,
+      "launched": false
+    },
+    {
+      "name": "refusal-origin-mismatch",
+      "exit": 1,
+      "expected": "origin-mismatch",
+      "actual": "origin-mismatch",
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 0,
+      "providerAborts": 0,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "screenshots": 0,
+      "launched": false
+    },
+    {
+      "name": "owner-blocked",
+      "exit": 0,
+      "expected": null,
+      "actual": null,
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 64977,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "runnerAborts": {},
+      "screenshots": 6,
+      "launched": true
+    },
+    {
+      "name": "cold-blocked",
+      "exit": 0,
+      "expected": null,
+      "actual": null,
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 65026,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "runnerAborts": {},
+      "screenshots": 6,
+      "launched": true
+    },
+    {
+      "name": "clean",
+      "exit": 0,
+      "expected": null,
+      "actual": null,
+      "providerNetworkRequests": 0,
+      "localProviderFulfillments": 2,
+      "providerAborts": 0,
+      "port": 65076,
+      "redirectProof": {
+        "locationHits": 0,
+        "probeFinished": false
+      },
+      "runnerAborts": {},
+      "screenshots": 6,
+      "launched": true
+    }
+  ]
+}

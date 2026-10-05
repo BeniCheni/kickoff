@@ -1,0 +1,734 @@
+{
+  "applicationSha": "11845cb21cfd0e87a1105e37e7b74e348739541c",
+  "browser": "154.0.8037.93",
+  "port": 57237,
+  "providerContinuations": 0,
+  "cells": [
+    {
+      "transparent": false,
+      "width": 390,
+      "stage": {
+        "width": 390,
+        "scrollWidth": 390,
+        "rect": {
+          "x": 20,
+          "y": 91.328125,
+          "width": 350,
+          "height": 200,
+          "top": 91.328125,
+          "right": 370,
+          "bottom": 291.328125,
+          "left": 20
+        },
+        "hits": [
+          "iframe",
+          "iframe",
+          "iframe",
+          "iframe",
+          "iframe"
+        ],
+        "stack": [
+          {
+            "node": "div.moments-player-host",
+            "position": "absolute",
+            "zIndex": "auto",
+            "background": "rgba(0, 0, 0, 0)"
+          },
+          {
+            "node": "dialog.moments-player-dialog",
+            "position": "absolute",
+            "zIndex": "30",
+            "background": "rgba(0, 0, 0, 0)"
+          }
+        ]
+      },
+      "cinema": {
+        "width": 390,
+        "scrollWidth": 390,
+        "rect": {
+          "x": 20,
+          "y": 183.828125,
+          "width": 350,
+          "height": 200,
+          "top": 183.828125,
+          "right": 370,
+          "bottom": 383.828125,
+          "left": 20
+        },
+        "hits": [
+          "span.moments-cover-word",
+          "span.moments-cover-word",
+          "span.moments-cover-word",
+          "span.moments-cover-word",
+          "span.moments-cover-word"
+        ],
+        "stack": [
+          {
+            "node": "div.moments-player-host",
+            "position": "absolute",
+            "zIndex": "auto",
+            "background": "rgba(0, 0, 0, 0)"
+          },
+          {
+            "node": "dialog.moments-player-dialog",
+            "position": "fixed",
+            "zIndex": "30",
+            "background": "rgb(247, 245, 238)"
+          },
+          {
+            "node": "div.moments-cinema-slot",
+            "position": "relative",
+            "zIndex": "auto",
+            "background": "rgb(228, 224, 210)"
+          }
+        ]
+      },
+      "coverHidden": {
+        "width": 390,
+        "scrollWidth": 390,
+        "rect": {
+          "x": 20,
+          "y": 183.828125,
+          "width": 350,
+          "height": 200,
+          "top": 183.828125,
+          "right": 370,
+          "bottom": 383.828125,
+          "left": 20
+        },
+        "hits": [
+          "div.moments-cinema-slot",
+          "div.moments-cinema-slot",
+          "div.moments-cinema-slot",
+          "div.moments-cinema-slot",
+          "div.moments-cinema-slot"
+        ],
+        "stack": [
+          {
+            "node": "div.moments-player-host",
+            "position": "absolute",
+            "zIndex": "auto",
+            "background": "rgba(0, 0, 0, 0)"
+          },
+          {
+            "node": "dialog.moments-player-dialog",
+            "position": "fixed",
+            "zIndex": "30",
+            "background": "rgb(247, 245, 238)"
+          },
+          {
+            "node": "div.moments-cinema-slot",
+            "position": "relative",
+            "zIndex": "auto",
+            "background": "rgb(228, 224, 210)"
+          }
+        ]
+      }
+    },
+    {
+      "transparent": false,
+      "width": 1000,
+      "stage": {
+        "width": 1000,
+        "scrollWidth": 1000,
+        "rect": {
+          "x": 20,
+          "y": 116.828125,
+          "width": 632,
+          "height": 355.5,
+          "top": 116.828125,
+          "right": 652,
+          "bottom": 472.328125,
+          "left": 20
+        },
+        "hits": [
+          "iframe",
+          "iframe",
+          "iframe",
+          "iframe",
+          "iframe"
+        ],
+        "stack": [
+          {
+            "node": "div.moments-player-host",
+            "position": "absolute",
+            "zIndex": "auto",
+            "background": "rgba(0, 0, 0, 0)"
+          },
+          {
+            "node": "dialog.moments-player-dialog",
+            "position": "absolute",
+            "zIndex": "30",
+            "background": "rgba(0, 0, 0, 0)"
+          }
+        ]
+      },
+      "cinema": {
+        "width": 1000,
+        "scrollWidth": 1000,
+        "rect": {
+          "x": 20,
+          "y": 183.828125,
+          "width": 632,
+          "height": 355.5,
+          "top": 183.828125,
+          "right": 652,
+          "bottom": 539.328125,
+          "left": 20
+        },
+        "hits": [
+          "span.moments-cover-word",
+          "span.moments-cover-word",
+          "span.moments-cover-word",
+          "span.moments-cover-word",
+          "span.moments-cover-word"
+        ],
+        "stack": [
+          {
+            "node": "div.moments-player-host",
+            "position": "absolute",
+            "zIndex": "auto",
+            "background": "rgba(0, 0, 0, 0)"
+          },
+          {
+            "node": "dialog.moments-player-dialog",
+            "position": "fixed",
+            "zIndex": "30",
+            "background": "rgb(247, 245, 238)"
+          },
+          {
+            "node": "div.moments-cinema-slot",
+            "position": "relative",
+            "zIndex": "auto",
+            "background": "rgb(228, 224, 210)"
+          }
+        ]
+      },
+      "coverHidden": {
+        "width": 1000,
+        "scrollWidth": 1000,
+        "rect": {
+          "x": 20,
+          "y": 183.828125,
+          "width": 632,
+          "height": 355.5,
+          "top": 183.828125,
+          "right": 652,
+          "bottom": 539.328125,
+          "left": 20
+        },
+        "hits": [
+          "div.moments-cinema-slot",
+          "div.moments-cinema-slot",
+          "div.moments-cinema-slot",
+          "div.moments-cinema-slot",
+          "div.moments-cinema-slot"
+        ],
+        "stack": [
+          {
+            "node": "div.moments-player-host",
+            "position": "absolute",
+            "zIndex": "auto",
+            "background": "rgba(0, 0, 0, 0)"
+          },
+          {
+            "node": "dialog.moments-player-dialog",
+            "position": "fixed",
+            "zIndex": "30",
+            "background": "rgb(247, 245, 238)"
+          },
+          {
+            "node": "div.moments-cinema-slot",
+            "position": "relative",
+            "zIndex": "auto",
+            "background": "rgb(228, 224, 210)"
+          }
+        ]
+      }
+    },
+    {
+      "transparent": false,
+      "width": 360,
+      "stage": {
+        "width": 360,
+        "scrollWidth": 360,
+        "rect": {
+          "x": 20,
+          "y": 91.328125,
+          "width": 320,
+          "height": 200,
+          "top": 91.328125,
+          "right": 340,
+          "bottom": 291.328125,
+          "left": 20
+        },
+        "hits": [
+          "iframe",
+          "iframe",
+          "iframe",
+          "iframe",
+          "iframe"
+        ],
+        "stack": [
+          {
+            "node": "div.moments-player-host",
+            "position": "absolute",
+            "zIndex": "auto",
+            "background": "rgba(0, 0, 0, 0)"
+          },
+          {
+            "node": "dialog.moments-player-dialog",
+            "position": "absolute",
+            "zIndex": "30",
+            "background": "rgba(0, 0, 0, 0)"
+          }
+        ]
+      },
+      "cinema": {
+        "width": 360,
+        "scrollWidth": 360,
+        "rect": {
+          "x": 20,
+          "y": 183.828125,
+          "width": 320,
+          "height": 200,
+          "top": 183.828125,
+          "right": 340,
+          "bottom": 383.828125,
+          "left": 20
+        },
+        "hits": [
+          "span.moments-cover-word",
+          "span.moments-cover-word",
+          "span.moments-cover-word",
+          "span.moments-cover-word",
+          "span.moments-cover-word"
+        ],
+        "stack": [
+          {
+            "node": "div.moments-player-host",
+            "position": "absolute",
+            "zIndex": "auto",
+            "background": "rgba(0, 0, 0, 0)"
+          },
+          {
+            "node": "dialog.moments-player-dialog",
+            "position": "fixed",
+            "zIndex": "30",
+            "background": "rgb(247, 245, 238)"
+          },
+          {
+            "node": "div.moments-cinema-slot",
+            "position": "relative",
+            "zIndex": "auto",
+            "background": "rgb(228, 224, 210)"
+          }
+        ]
+      },
+      "coverHidden": {
+        "width": 360,
+        "scrollWidth": 360,
+        "rect": {
+          "x": 20,
+          "y": 183.828125,
+          "width": 320,
+          "height": 200,
+          "top": 183.828125,
+          "right": 340,
+          "bottom": 383.828125,
+          "left": 20
+        },
+        "hits": [
+          "div.moments-cinema-slot",
+          "div.moments-cinema-slot",
+          "div.moments-cinema-slot",
+          "div.moments-cinema-slot",
+          "div.moments-cinema-slot"
+        ],
+        "stack": [
+          {
+            "node": "div.moments-player-host",
+            "position": "absolute",
+            "zIndex": "auto",
+            "background": "rgba(0, 0, 0, 0)"
+          },
+          {
+            "node": "dialog.moments-player-dialog",
+            "position": "fixed",
+            "zIndex": "30",
+            "background": "rgb(247, 245, 238)"
+          },
+          {
+            "node": "div.moments-cinema-slot",
+            "position": "relative",
+            "zIndex": "auto",
+            "background": "rgb(228, 224, 210)"
+          }
+        ]
+      }
+    },
+    {
+      "transparent": true,
+      "width": 390,
+      "stage": {
+        "width": 390,
+        "scrollWidth": 390,
+        "rect": {
+          "x": 20,
+          "y": 91.328125,
+          "width": 350,
+          "height": 200,
+          "top": 91.328125,
+          "right": 370,
+          "bottom": 291.328125,
+          "left": 20
+        },
+        "hits": [
+          "iframe",
+          "iframe",
+          "iframe",
+          "iframe",
+          "iframe"
+        ],
+        "stack": [
+          {
+            "node": "div.moments-player-host",
+            "position": "absolute",
+            "zIndex": "auto",
+            "background": "rgba(0, 0, 0, 0)"
+          },
+          {
+            "node": "dialog.moments-player-dialog",
+            "position": "absolute",
+            "zIndex": "30",
+            "background": "rgba(0, 0, 0, 0)"
+          }
+        ]
+      },
+      "cinema": {
+        "width": 390,
+        "scrollWidth": 390,
+        "rect": {
+          "x": 20,
+          "y": 183.828125,
+          "width": 350,
+          "height": 200,
+          "top": 183.828125,
+          "right": 370,
+          "bottom": 383.828125,
+          "left": 20
+        },
+        "hits": [
+          "span.moments-cover-word",
+          "span.moments-cover-word",
+          "span.moments-cover-word",
+          "span.moments-cover-word",
+          "span.moments-cover-word"
+        ],
+        "stack": [
+          {
+            "node": "div.moments-player-host",
+            "position": "absolute",
+            "zIndex": "auto",
+            "background": "rgba(0, 0, 0, 0)"
+          },
+          {
+            "node": "dialog.moments-player-dialog",
+            "position": "fixed",
+            "zIndex": "30",
+            "background": "rgb(247, 245, 238)"
+          },
+          {
+            "node": "div.moments-cinema-slot",
+            "position": "relative",
+            "zIndex": "auto",
+            "background": "rgb(228, 224, 210)"
+          }
+        ]
+      },
+      "coverHidden": {
+        "width": 390,
+        "scrollWidth": 390,
+        "rect": {
+          "x": 20,
+          "y": 183.828125,
+          "width": 350,
+          "height": 200,
+          "top": 183.828125,
+          "right": 370,
+          "bottom": 383.828125,
+          "left": 20
+        },
+        "hits": [
+          "div.moments-cinema-slot",
+          "div.moments-cinema-slot",
+          "div.moments-cinema-slot",
+          "div.moments-cinema-slot",
+          "div.moments-cinema-slot"
+        ],
+        "stack": [
+          {
+            "node": "div.moments-player-host",
+            "position": "absolute",
+            "zIndex": "auto",
+            "background": "rgba(0, 0, 0, 0)"
+          },
+          {
+            "node": "dialog.moments-player-dialog",
+            "position": "fixed",
+            "zIndex": "30",
+            "background": "rgb(247, 245, 238)"
+          },
+          {
+            "node": "div.moments-cinema-slot",
+            "position": "relative",
+            "zIndex": "auto",
+            "background": "rgb(228, 224, 210)"
+          }
+        ]
+      }
+    },
+    {
+      "transparent": true,
+      "width": 1000,
+      "stage": {
+        "width": 1000,
+        "scrollWidth": 1000,
+        "rect": {
+          "x": 20,
+          "y": 116.828125,
+          "width": 632,
+          "height": 355.5,
+          "top": 116.828125,
+          "right": 652,
+          "bottom": 472.328125,
+          "left": 20
+        },
+        "hits": [
+          "iframe",
+          "iframe",
+          "iframe",
+          "iframe",
+          "iframe"
+        ],
+        "stack": [
+          {
+            "node": "div.moments-player-host",
+            "position": "absolute",
+            "zIndex": "auto",
+            "background": "rgba(0, 0, 0, 0)"
+          },
+          {
+            "node": "dialog.moments-player-dialog",
+            "position": "absolute",
+            "zIndex": "30",
+            "background": "rgba(0, 0, 0, 0)"
+          }
+        ]
+      },
+      "cinema": {
+        "width": 1000,
+        "scrollWidth": 1000,
+        "rect": {
+          "x": 20,
+          "y": 183.828125,
+          "width": 632,
+          "height": 355.5,
+          "top": 183.828125,
+          "right": 652,
+          "bottom": 539.328125,
+          "left": 20
+        },
+        "hits": [
+          "span.moments-cover-word",
+          "span.moments-cover-word",
+          "span.moments-cover-word",
+          "span.moments-cover-word",
+          "span.moments-cover-word"
+        ],
+        "stack": [
+          {
+            "node": "div.moments-player-host",
+            "position": "absolute",
+            "zIndex": "auto",
+            "background": "rgba(0, 0, 0, 0)"
+          },
+          {
+            "node": "dialog.moments-player-dialog",
+            "position": "fixed",
+            "zIndex": "30",
+            "background": "rgb(247, 245, 238)"
+          },
+          {
+            "node": "div.moments-cinema-slot",
+            "position": "relative",
+            "zIndex": "auto",
+            "background": "rgb(228, 224, 210)"
+          }
+        ]
+      },
+      "coverHidden": {
+        "width": 1000,
+        "scrollWidth": 1000,
+        "rect": {
+          "x": 20,
+          "y": 183.828125,
+          "width": 632,
+          "height": 355.5,
+          "top": 183.828125,
+          "right": 652,
+          "bottom": 539.328125,
+          "left": 20
+        },
+        "hits": [
+          "div.moments-cinema-slot",
+          "div.moments-cinema-slot",
+          "div.moments-cinema-slot",
+          "div.moments-cinema-slot",
+          "div.moments-cinema-slot"
+        ],
+        "stack": [
+          {
+            "node": "div.moments-player-host",
+            "position": "absolute",
+            "zIndex": "auto",
+            "background": "rgba(0, 0, 0, 0)"
+          },
+          {
+            "node": "dialog.moments-player-dialog",
+            "position": "fixed",
+            "zIndex": "30",
+            "background": "rgb(247, 245, 238)"
+          },
+          {
+            "node": "div.moments-cinema-slot",
+            "position": "relative",
+            "zIndex": "auto",
+            "background": "rgb(228, 224, 210)"
+          }
+        ]
+      }
+    },
+    {
+      "transparent": true,
+      "width": 360,
+      "stage": {
+        "width": 360,
+        "scrollWidth": 360,
+        "rect": {
+          "x": 20,
+          "y": 91.328125,
+          "width": 320,
+          "height": 200,
+          "top": 91.328125,
+          "right": 340,
+          "bottom": 291.328125,
+          "left": 20
+        },
+        "hits": [
+          "iframe",
+          "iframe",
+          "iframe",
+          "iframe",
+          "iframe"
+        ],
+        "stack": [
+          {
+            "node": "div.moments-player-host",
+            "position": "absolute",
+            "zIndex": "auto",
+            "background": "rgba(0, 0, 0, 0)"
+          },
+          {
+            "node": "dialog.moments-player-dialog",
+            "position": "absolute",
+            "zIndex": "30",
+            "background": "rgba(0, 0, 0, 0)"
+          }
+        ]
+      },
+      "cinema": {
+        "width": 360,
+        "scrollWidth": 360,
+        "rect": {
+          "x": 20,
+          "y": 183.828125,
+          "width": 320,
+          "height": 200,
+          "top": 183.828125,
+          "right": 340,
+          "bottom": 383.828125,
+          "left": 20
+        },
+        "hits": [
+          "span.moments-cover-word",
+          "span.moments-cover-word",
+          "span.moments-cover-word",
+          "span.moments-cover-word",
+          "span.moments-cover-word"
+        ],
+        "stack": [
+          {
+            "node": "div.moments-player-host",
+            "position": "absolute",
+            "zIndex": "auto",
+            "background": "rgba(0, 0, 0, 0)"
+          },
+          {
+            "node": "dialog.moments-player-dialog",
+            "position": "fixed",
+            "zIndex": "30",
+            "background": "rgb(247, 245, 238)"
+          },
+          {
+            "node": "div.moments-cinema-slot",
+            "position": "relative",
+            "zIndex": "auto",
+            "background": "rgb(228, 224, 210)"
+          }
+        ]
+      },
+      "coverHidden": {
+        "width": 360,
+        "scrollWidth": 360,
+        "rect": {
+          "x": 20,
+          "y": 183.828125,
+          "width": 320,
+          "height": 200,
+          "top": 183.828125,
+          "right": 340,
+          "bottom": 383.828125,
+          "left": 20
+        },
+        "hits": [
+          "div.moments-cinema-slot",
+          "div.moments-cinema-slot",
+          "div.moments-cinema-slot",
+          "div.moments-cinema-slot",
+          "div.moments-cinema-slot"
+        ],
+        "stack": [
+          {
+            "node": "div.moments-player-host",
+            "position": "absolute",
+            "zIndex": "auto",
+            "background": "rgba(0, 0, 0, 0)"
+          },
+          {
+            "node": "dialog.moments-player-dialog",
+            "position": "fixed",
+            "zIndex": "30",
+            "background": "rgb(247, 245, 238)"
+          },
+          {
+            "node": "div.moments-cinema-slot",
+            "position": "relative",
+            "zIndex": "auto",
+            "background": "rgb(228, 224, 210)"
+          }
+        ]
+      }
+    }
+  ]
+}

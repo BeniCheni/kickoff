@@ -1,0 +1,99 @@
+{
+  "sourceSha": "515224be130f704590245844d1a886fd81d9a725",
+  "applicationBase": "11845cb21cfd0e87a1105e37e7b74e348739541c",
+  "applicationDiffEmpty": true,
+  "providerContinuations": 0,
+  "finding": "Cinema cover art obscures the synthetic iframe at all three widths. Stage shows it. No application fix made.",
+  "checks": [
+    {
+      "capture": "cinema-1000.png",
+      "frame": {
+        "x": 20,
+        "y": 183.828125,
+        "width": 632,
+        "height": 355.5,
+        "top": 183.828125,
+        "right": 652,
+        "bottom": 539.328125,
+        "left": 20
+      },
+      "centreHit": "cover word VOICES",
+      "viewportScreenshot": "viewport-cinema-1000.png"
+    },
+    {
+      "capture": "cinema-360.png",
+      "frame": {
+        "x": 20,
+        "y": 183.828125,
+        "width": 320,
+        "height": 200,
+        "top": 183.828125,
+        "right": 340,
+        "bottom": 383.828125,
+        "left": 20
+      },
+      "centreHit": "cover word VOICES",
+      "viewportScreenshot": "viewport-cinema-360.png"
+    },
+    {
+      "capture": "cinema-390.png",
+      "frame": {
+        "x": 20,
+        "y": 183.828125,
+        "width": 350,
+        "height": 200,
+        "top": 183.828125,
+        "right": 370,
+        "bottom": 383.828125,
+        "left": 20
+      },
+      "centreHit": "cover word VOICES",
+      "viewportScreenshot": "viewport-cinema-390.png"
+    },
+    {
+      "capture": "stage-1000.png",
+      "frame": {
+        "x": 20,
+        "y": 301.828125,
+        "width": 632,
+        "height": 355.5,
+        "top": 301.828125,
+        "right": 652,
+        "bottom": 657.328125,
+        "left": 20
+      },
+      "centreHit": "iframe",
+      "viewportScreenshot": "viewport-stage-1000.png"
+    },
+    {
+      "capture": "stage-360.png",
+      "frame": {
+        "x": 20,
+        "y": 354.328125,
+        "width": 320,
+        "height": 200,
+        "top": 354.328125,
+        "right": 340,
+        "bottom": 554.328125,
+        "left": 20
+      },
+      "centreHit": "iframe",
+      "viewportScreenshot": "viewport-stage-360.png"
+    },
+    {
+      "capture": "stage-390.png",
+      "frame": {
+        "x": 20,
+        "y": 91.328125,
+        "width": 350,
+        "height": 200,
+        "top": 91.328125,
+        "right": 370,
+        "bottom": 291.328125,
+        "left": 20
+      },
+      "centreHit": "iframe",
+      "viewportScreenshot": "viewport-stage-390.png"
+    }
+  ]
+}

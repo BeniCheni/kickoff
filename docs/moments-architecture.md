@@ -693,3 +693,60 @@ rulings govern over this section and the archived prompt; no ruled player behavi
 There is no disagreement with the slice-4 spec. S4 provider observation and S7 publication
 remain separately gated; the acceptance edition is not a proposed public edition. Rows 65,
 66 and 68 retain their existing wording and status.
+
+
+### Slice 4 S4a
+
+Beni split S4 on 2 October 2026: this non-release builds the manual observation runner;
+S4b is his later authorized provider visit. The spec remains with the PM for its separate
+amendment. His element-count ruling governs: the one page-created iframe and API entry
+script are counted; subsequent provider-loader requests are recorded without prediction.
+
+The runner and pure policy live in `docs/verification/moments-observation/`. Strict external
+authority names one or two identities and an exact origin. The generator substitutes those
+identities into the two permitted acceptance templates; synthetic permission/content fields
+exercise the rule but establish no edition rights or actual content. The acceptance plugin
+adds guarded observation hooks and an edition/source manifest without changing application
+source. Production and single-file builds cannot reach the plugin. The manual runner
+requires local bundle/served-byte agreement, isolates Chrome in a fresh profile, and records
+requests, snapshots, screenshots, manual answers and schema-valid test observations. It
+never writes curation. Its stub release function cannot continue a provider request.
+
+Costs and limits: the authority is an attestation; the extractor cannot decode opaque
+identity encodings; full reducer state, provider pixels, decoding and received headers are
+not inferred from hooks. Blank return and ads need Beni. Existing source does not sample
+position merely on return. A total safety ceiling ends stalled runs without inventing a
+product readiness timeout. See the runner README for the fourteen stops and their proof
+boundaries. A green stub is not playback, and loopback predicts nothing about Pages.
+
+
+Pass 2 (4 Oct 2026) changes the runner boundary under Beni's rulings, not the application.
+One browser-target CDP Fetch owner replaces competing per-frame/Playwright routing; every
+HTTP redirect stops before its Location. Loopback mutants must prove both the bypass and
+the restored guard, including first cross-site requests and process changes. The cost is a
+Chrome-version-sensitive CDP dependency and a loopback debugging endpoint; unsupported or
+lost interception refuses the run. No provider observation was performed.
+
+Beni narrowed the spec in two places: authority may explicitly name additional host
+families, while other hosts abort and are disclosed as runner restrictions; thumbnail and
+storyboard images may name other identities, while playback requests still stop. The PM
+amends the spec separately. His additional rulings require sandbox-on Chrome and removal of
+the raw tarball; launch provenance is recorded, readable evidence remains, and raw logs are
+regenerated outside Git. These are explicit S4a deviations/additions; they do not change
+permission, iframe, recovery, source-policy or publication rulings.
+
+Pending prompts now abort on the safety ceiling or Ctrl-C, preserving a stopped receipt.
+Incomplete runs emit an empty observation array; stubs are marked in environment and notes,
+unreached identities are labelled, malformed error codes cannot break serialization, and
+played requires PLAYING followed by a positive sample for that attempt. This still cannot
+separate an ad from the named content. Queue overlap now respects ancestor clipping and
+resume checks retain the sample at label emission. Drivers no longer pin src to a historical
+base; current-main merge validation remains a review task.
+
+`docs/verification/moments-observation/instrumentation.ts` is an intentional test/build
+dependency: seven exact source replacements (not Pass 1's eight) observe the adapter.
+Both npm test and build:acceptance fail on drift. An adapter change must update this file
+and rerun S3; a repair touching only the host/CSS does not change those string matches.
+Authority expiry/consumption remains unimplemented pending Beni. The independently
+reproduced Cinema stacking defect requires his separately authorized repair before S4b;
+this runner PR cannot close that application finding.
