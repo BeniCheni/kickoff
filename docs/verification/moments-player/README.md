@@ -143,3 +143,12 @@ D-04 is vertical: the 360 Broadcast action ends at 779.11, 64.89px above 844, in
 Cinema capture now precedes row scrolling. PNG identity remains advisory. The older sections
 above retain the builder's and Pass 1's historical claims; the new checker now proves inert,
 AX exclusion, Play→Next cover placement, and capture ordering by failing mutations.
+
+## PR #159 note (Claude Code, 5 October 2026)
+
+check-player.mjs gained a five-point frame hit-test in every Cinema cell that has a frame,
+and an overflow assertion before each capture. The committed cells.json, player-receipt.json
+and captures predate it and are left as they were. They carry no frame hits, and the mock
+frame paints nothing: in a fresh run on each build, the 17 capture hashes were equal between
+the build with the Cinema repair and the one without. Fresh counts are in
+../moments-cinema-repair/.

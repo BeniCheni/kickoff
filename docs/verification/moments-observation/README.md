@@ -7,11 +7,15 @@ Beni on his Mac with his written authority. Codex does not run live mode.
 **A green stub is not playback. A loopback result predicts nothing about the Pages origin.**
 The production edition stays empty. Nothing imports these observations into curation.
 
-**Unresolved picture finding:** the unchanged application's Cinema cover obscures the
-synthetic frame at 390, 1000 and 360. Stage displays it. Both viewport and full-page
-captures reproduce this, and the centre hit-test reaches the cover word in Cinema.
-The completed stub visit establishes the runner's protocol, not a clear Cinema picture.
-No application fix was made; Beni's decision is required before a separate repair or S4b.
+**Picture finding, repaired by PR #159 (ideas row 79).** When this runner was built, the
+application's Cinema cover obscured the synthetic frame at 390, 1000 and 360 while the stage
+displayed it. Viewport and full-page captures reproduced that, and the centre hit-test
+reached the cover word in Cinema. The receipts and captures in this directory record that
+state and are historical. One Cinema-scoped stacking rule now puts the live frame above its
+slot; `check-cinema-repair.mjs` is the repaired-state probe and `../moments-cinema-repair/`
+holds its evidence. `check-cinema.mjs` asserts the old defect, so it exits non-zero against
+any repaired build, by design. A completed stub visit still establishes the runner's
+protocol, not a provider picture.
 
 ## Authority and prerequisites
 
@@ -306,7 +310,8 @@ played rule. A completed protocol is not a visual pass.
   widths × opaque/transparent frame), five hit points each. Stage hits the iframe; Cinema
   hits the cover word; hiding the cover exposes the slot. `check-cinema.mjs` reproduces it
   using the base build and its original S3 stub. Beni authorized a separate repair before
-  S4b. This PR changes no application source.
+  S4b. This PR changes no application source. (That repair is PR #159; since it, the
+  script reproduces the defect only against a build made before it.)
 
 The full raw archive was removed under Beni's ruling. Its historical SHA-256 was
 `7b4e0dcbdbf91576efb8db453e97efeabcd4cac99b75707c120eb5662ce2bad3`.
