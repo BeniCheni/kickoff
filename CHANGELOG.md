@@ -10,7 +10,8 @@ releases.
 
 ### Changed
 
-- Cinema now puts the playing frame above its cover; readers cannot reach Cinema until a Moments edition is published.
+- Cinema now puts the playing frame above its cover; readers cannot reach Cinema until a
+  Moments edition is published.
 
 - A manual Moments observation runner records guarded stub evidence for the separately
   authorized provider visit. It does not publish an edition or change the deployed app.
