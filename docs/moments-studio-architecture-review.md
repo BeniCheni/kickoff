@@ -1127,11 +1127,79 @@ no flag and no warning printed. The module's documented stability was not checke
 
 ## Appendix S: Beni's fal spike log
 
-Blank on purpose. Filled only by Beni, from real runs. One row per attempt.
+Filled Tue 6 Oct 2026 from Beni's spike of 4 to 5 Oct 2026, run by a Spike Operator session
+(Claude Code) with Beni as director, judge and payer, outside every repository, in a folder
+that is not a Git repository. Sources: the spike's request ledger (96 rows: 59 paid or
+attempted requests, one Director session, and free reads, uploads and notes) and its findings
+file. This appendix carries summaries, costs and SHA-256 prefixes only; no photo, media file,
+contact sheet, raw provider response, script, prompt file or key is copied into Kickoff, and
+the input hashes were taken in place. Tags are the spike's own (OBSERVED, DOCUMENTED,
+UNVERIFIED; the legend in section 2 maps them). Outcome and "What failed" carry Beni's notes
+as notes and the operator's objective notes as notes: the spike's scores file has every
+numeric cell blank, so nothing here is a score. One row per paid attempt would pass 40 rows,
+so identical cells are grouped into one row with a run count; the 21 rows account for every
+paid request and the Director session and sum to **$15.6265**, the ledger total, which matches
+credits used on the fal dashboard. Dates are Brooklyn time: the run began at 17:12 EDT on
+4 Oct and the last paid request was at 09:18 EDT on 5 Oct. Every request went through fal's
+queue host with `enable_safety_checker` on wherever the endpoint has it; every video used seed
+20261004 where a seed exists; keyframes and images were 1280 × 800.
+
+Inputs by hash prefix (SHA-256, first 16 hex): Fenway reference photos 05 `95e32a55400baed3`,
+11 `fc4e572512b2288b`, 15 `adf38149355f3cf2`, 02 `598c0f4dff6a246a`; Frankenstein reference
+photos 24 `6b70682f90d0b8fc`, 21 `5a81ca3cf406a127`, 08 `6b8774271e8083c1`, 23
+`b20a4956e1fc88c3`; the LoRA dataset zip (39 metadata-free photos with captions)
+`8ccd2402c77dc39f`; K0 Fenway `1360cc0e5fff593b` (s2-1) and K0 Frankenstein
+`08be4ecc85bac7b1` (s2-4); K2 Fenway `bbfb87a9aadfc92c` (s3-2) and K2 Frankenstein
+`7e08a2d54aff810b` (s3-20); the trained LoRA weights `8fbb32d8173b2ff2`.
 
 | Date (Brooklyn) | Model and endpoint | Input (subject, keyframes, references, by hash) | Settings (duration, resolution, seed, other) | Cost | Wall time | Outcome | What failed | Next step |
 |---|---|---|---|---|---|---|---|---|
-| | | | | | | | | |
-| | | | | | | | | |
-| | | | | | | | | |
-| | | | | | | | | |
+| 4 Oct, 18:34 | `fal-ai/flux-2-trainer` ×1 (S1) | Both cats: zip `8ccd2402…`, 19 Fenway and 20 Frankenstein photos with caption files, trigger words `fwyx` and `krzn` | 1,000 steps; learning rate 0.00005; output lifecycle 7 days | $6.40 | 37.3 min (4.3 queued) | Weights returned (`8fbb32d8…`). OBSERVED | Two upload attempts just before it were refused with HTTP 403 "User is locked. Reason: Exhausted balance" until Beni bought credit; nothing left the folder on those | Test images, next row |
+| 4 Oct, 18:34 | `fal-ai/flux-2/lora` ×3 (S1) | P1 prompt with the LoRA at scale 1 for `fwyx cat` and `krzn cat`, and a control with the LoRA off | 1280 × 800; seed 20261004 | $0.063 (3 × $0.021) | 6 to 21 s | Three images. The two trigger words drew a near-identical brown tabby; only the stadium differed (operator note). Beni chose no LoRA image | The two cats did not separate on the one seed tested. OBSERVED | LoRA route left out of recipe v0; two single-cat LoRAs ($12.80) UNVERIFIED |
+| 4 Oct, 17:59 | `openai/gpt-image-2/edit` ×6 (S2) | Fenway: P1, P2, P3 with photos 05, 11, 15, 02; Frankenstein: P1, P2, P3 with photos 24, 21, 08, 23 | 1280 × 800; quality low; the endpoint has no seed and no safety parameter | $0.306 (header units $0.0506 to $0.0513 each) | 18 to 27 s | Six images. Beni chose s2-1 (`1360cc0e…`) and s2-4 (`08be4ecc…`) as K0 for every later video. OBSERVED | A football in frame unasked; a star-pattern ball like a branded tournament ball; a generated keeper's face; an extra player (operator notes, three images) | K0 for S3 and S4 |
+| 4 Oct, 18:01 | `fal-ai/flux-2/edit` ×6 (S2) | Same two cats, same prompts and photos | 1280 × 800; seed 20261004; 28 steps; guidance 2.5; safety checker on | $0.360 (5 processed MP × $0.012 each) | 27 to 31 s | Six images, none chosen by Beni. OBSERVED | The same seed gave the same composition for both cats; legs cropped at the knee; numbers and crest-like marks on a defender | Not in recipe v0 |
+| 4 Oct, 19:01 | `openai/gpt-image-2/edit` ×4 (S3, K1 then K2, with photos) | Chain on each K0 plus three reference photos: Fenway (05, 11, 15), Frankenstein (24, 21, 08) | 1280 × 800; quality low; the S3 edit instructions | $0.1902 ($0.0473 and $0.0478 per edit) | 16 to 21 s | Both K2s re-staged the scene as a strike: one ball in the top corner, keeper diving. Fenway's K2 `bbfb87a9…` (s3-2) was chosen for every Fenway video. OBSERVED | K1s cut the defender's head at the top edge; the star-pattern ball carried over from K0 | K2 for S4 and S5 |
+| 4 Oct, 19:05 | `openai/gpt-image-2/edit` ×4 (S3, K1 then K2, keyframe only) | Chain on each K0 alone, no photos | 1280 × 800; quality low | $0.0492 ($0.0123 per edit) | 12 to 19 s | Both K2s re-staged as a strike. Frankenstein's K2 `7e08a2d5…` (s3-20) was chosen for every Frankenstein video. OBSERVED | No objective fault seen on these four | K2 for S4 and S5; whether K2 can be made straight from K0 is UNVERIFIED |
+| 4 Oct, 19:02 | `fal-ai/flux-2/edit` ×4 (S3, with photos) | As the GPT chains, with three photos | 1280 × 800; seed 20261004; 28 steps; guidance 2.5 | $0.240 | 29 to 39 s | Four images, none chosen | K2 not re-staged: the K1 dribble kept and a goal with keeper pasted at the left, two balls in frame; number 9 and logo-like marks on the defender. OBSERVED | Not in recipe v0 |
+| 4 Oct, 19:06 | `fal-ai/flux-2/edit` ×4 (S3, keyframe only) | As above, no photos | Same | $0.096 (2 MP each) | 10 to 17 s | Four images, none chosen | Same failure: not re-staged, two balls | Not in recipe v0 |
+| 4 Oct, 19:03 | `fal-ai/flux-2/lora/edit` ×4 (S3, with photos) | As above, plus the S1 LoRA at scale 1 and its trigger word | 1280 × 800; seed 20261004 | $0.420 ($0.105 each) | 35 to 82 s (one queued 49 s) | Four images, none chosen | Not re-staged; a swoosh-like mark on the defender's shirt that resembles a real sportswear logo; numbers 7 and 9. OBSERVED | Not in recipe v0 |
+| 4 Oct, 19:06 | `fal-ai/flux-2/lora/edit` ×4 (S3, keyframe only) | As above, no photos | Same | $0.168 ($0.042 each) | 14 to 25 s | Four images, none chosen | Same failure | Not in recipe v0 |
+| 4 Oct, 19:21 | `minimax/h3-max-turbo/image-to-video` ×4 (S4, runs A1 and A2 per cat) | K0 as `image_url` only; the V1 motion prompt | 5 s; 480P; seed 20261004; prompt expansion disabled (A1) or balanced (A2) | $0.300 ($0.075 each) | 3 s | 768 × 480 H.264 at 24 fps, 5.167 s, AAC stereo, 3.5 to 4.4 MB. OBSERVED | Without a last frame the shot cut to a separate goal picture and the cat was absent from the final frames; the cat dropped to all fours; extra players; garbled board text; a crest-like mark | A last frame is required |
+| 4 Oct, 19:21 | `minimax/h3-max-turbo/image-to-video` ×4 (S4, runs B1 and B2 per cat) | K0 as `image_url`, K2 as `end_image_url` | 5 s; 480P; seed 20261004; expansion disabled (B1) or balanced (B2) | $0.300 | 3 to 6 s | The last frame matched K2 in 4 of 4. Beni liked s4-4 (Fenway B2) and said the cats on the S5 sheet were upright except Frankenstein's B2, which was both. OBSERVED; preference notes only | Crest-like and text-like marks on a defender; a referee-like figure; a stadium screen with a logo-like shape; the operator's first "all fours" note on two Fenway clips was wrong or overstated and was corrected at full frame size | Recipe v0's clip step |
+| 4 Oct, 19:21 | `minimax/h3-max-turbo/image-to-video` ×2 (S4, run C per cat) | K0 first, K2 last | 15 s; 480P; seed 20261004; expansion balanced | $0.450 ($0.225 each) | 6 to 12 s | 15.084 s clips, 10.0 and 10.4 MB; the last frame held in both; Beni liked both. OBSERVED; preference notes only | Fenway at the 25% frame on all fours with no shirt (a red collar only), the shirt returns later; Frankenstein on all fours mid-clip; extra players; a close-up of the ball in the net | The 15 s clip of recipe v0 |
+| 4 Oct, 19:22 | `minimax/h3-max/reference-to-video` ×2 (S4, run R per cat) | Three reference photos per cat (Fenway 05, 11, 15; Frankenstein 24, 21, 08), no keyframes | 5 s; 480P; aspect 16:9; seed 20261004; expansion balanced | $0.5006 ($0.2506 and $0.2500; 5.0128 and 5.0 billed seconds) | 6 s | 832 × 480 clips, about 4 MB; Beni liked both. OBSERVED; preference notes only | The cat on all fours in a bib throughout, never upright; the clip ends on the goal without the cat; a camera in frame; 3.3 times the H3 clip's price and not 16:10 | Worth a second look; not in recipe v0 |
+| 4 Oct, 19:57 and 20:33 | `alibaba/wan-3.0/image-to-video` ×2 (S5, one per cat) | K0 as start image, K2 as end image; the V1 prompt | 5 s; 480p; aspect adaptive; audio on; prompt expansion on; seed 20261004 | $0.500 ($0.25 each) | 86 to 101 s | 808 × 506 H.264 at 30 fps, 5.04 s, 5.7 and 6.2 MB; the last frame matched K2; the cat upright in every sampled frame; Beni liked both. OBSERVED; preference notes only | Extra players with numbers and crest-like marks; the ball changed to a star-like pattern mid-clip; the cat absent from the 75% frame | Recipe v0's optional final render |
+| 4 Oct, 21:31 | `alibaba/wan-3.0/image-to-video` ×1 (S5, Fenway) | K0 start, K2 end | 15 s; 480p; adaptive; audio on; seed 20261004 | $0.750 | 147 s | 15.0 s picture (15.07 s audio), 13.6 MB; the last frame held; Beni liked it, compared with H3's 15 s. OBSERVED; preference note only | Text-like marks on a board; the 75% frame a close-up of the ball without the cat | The second $10 top-up was bought after this run |
+| 4 Oct, 19:59 | `bytedance/seedance-2.0/mini/image-to-video` ×1 (S5, Fenway) | K0 `1360cc0e…`, K2 `bbfb87a9…` | 5 s; 480p; aspect auto; audio on; the endpoint has no seed and no safety parameter | $0 (0 units) | 122 s | Status `COMPLETED`, then HTTP 422 on the result: `content_policy_violation`, "may contain likenesses of real people or other private information", reason `partner_validation_failed`, on `image_url`. OBSERVED | Fenway's keyframes were refused; Frankenstein's were accepted on the next row | Not retried, by the spike's rule; which image tripped it is UNVERIFIED |
+| 4 Oct, 20:38 | `bytedance/seedance-2.0/mini/image-to-video` ×1 (S5, Frankenstein) | K0 `08be4ecc…`, K2 `7e08a2d5…` | 5 s; 480p; aspect auto; audio on; seed returned 1621382416 | $0.3545 (50.638 units × $0.007) | 308 s | 864 × 496 H.264 at 24 fps, 5.08 s, 2.2 MB; the last frame held; the cat upright and in shot in every sampled frame; Beni liked it, "probably the best of the S5 set". OBSERVED; preference note only | A small mark on the cat's shorts; five minutes to render | An optional final in recipe v0, with the refusal state |
+| 4 Oct, 22:37 | `minimax/h3-max/director` ×1 session (S6), driven by Beni by hand in the fal playground | K0 `1360cc0e…` uploaded by Beni as the first frame; an opening prompt and four live prompts | 768p (the plan said 480p, same price); 16:9; seed 20261004; memory 6 | **$4.158**, read by Beni from the request's Cost field in fal's Recent History (ROUTED); 86.6 s at $0.048, against a $2.88 card for 60 s | Request 98.28 s; 12 to 15 s from Connect to first picture; each live prompt took effect 6 to 13 s after sending, on chunk boundaries | A browser-recorded WebM (VP9 video, Opus audio, 25.7 MB; 88.5 s by Beni's reading) was downloaded from the fal playground; after End session the page showed a replay player. All four prompts were followed, including an unrelated redirect. OBSERVED | Billed about 87 s with no meter or countdown on screen, 44% over the card; 16:9 only; WebM not MP4; swoosh-like and crest-like marks on shirts, star-ball-like logos on the boards, lettering on shirt backs; the cat on all fours. Which control saved the file is UNVERIFIED | Set aside (section 9) |
+| 5 Oct, 09:17 | `minimax/h3-max-turbo/image-to-video` ×1 (S7a, deliberately invalid) | Text only | duration 0.5 s, below the 0.92 s minimum; 480P | $0 (0 units) | 0.4 s | Submit accepted (HTTP 200, `IN_QUEUE`); status `COMPLETED`; the result HTTP 422 "Input should be greater than or equal to 0.92". OBSERVED | `COMPLETED` means finished, not succeeded | 8.2's state machine reads the result's HTTP status |
+| 5 Oct, 09:18 | `fal-ai/flux-2/lora` ×1 (S7b, cancel probe) | The S1 LoRA, P1 prompt | 1280 × 800; seed 20261005; cancel sent at 0.3 s while `IN_PROGRESS` | $0.021 (1.0 unit, billed in full) | 26.5 s | Cancel returned HTTP 202 `CANCELLATION_REQUESTED`; the job still completed at 26 s, returned its image and billed. OBSERVED | Cancel did not stop a running job | 8.1 and 8.3: the Studio does not rely on cancel |
+| | **Total: 59 requests and one session** | | | **$15.6265** | | By step: S1 $6.463, S2 $0.666, S3 $1.1634, S4 $1.5506, S5 $1.6045, S6 $4.158, S7 $0.021 | | |
+
+Free reads in the same run, not in the table (OBSERVED, S0): the pricing API returned HTTP 429
+after about nine quick reads and a batched read worked; the operator key got HTTP 403 on the
+account billing and billing-events APIs; the account's storage settings showed no expiry and
+no ACL, so uploads are public by URL and never expire unless each upload says otherwise.
+Section 8.1 carries these as mechanics.
+
+**Money note, 6 Oct.** Beni read fal's Usage page on 5 Oct (OBSERVED, his reading; ROUTED
+here):
+
+- Credits used $15.63; balance $9.37 of $25 bought. The ledger's $15.6265 matches to the cent.
+- Director billed $4.16, so $4.158 is confirmed and the $4.25 header theory is dead; that
+  closes the spike's open question 1.
+- Total Cost $15.46 against credits used $15.63.
+- Per endpoint: flux-2-trainer $6.40, Director $4.16, Wan 3.0 $1.25, H3 image-to-video $1.05,
+  flux-2/edit $0.65, gpt-image-2/edit $0.53, flux-2/lora/edit $0.50, H3 reference-to-video
+  $0.50, Seedance $0.35, flux-2/lora $0.06.
+
+Against the ledger, the video, trainer and Director lines match to the cent (H3
+image-to-video $1.05 = $0.300 + $0.300 + $0.450; reference-to-video $0.5006; Wan $1.25;
+Seedance $0.3545; trainer $6.40; Director $4.158), and the whole gap of about $0.17 sits in
+four image endpoints: flux-2/edit (ledger $0.696 against $0.65), flux-2/lora/edit ($0.588
+against $0.50), gpt-image-2/edit ($0.5454 against $0.53) and flux-2/lora ($0.084 against
+$0.06), the last of which is short by about the size of the billed cancel probe. The cause is
+UNVERIFIED, and the page itself says balance updates may lag. The page shows spend, not caps:
+the caps are Beni's (15.8), and the Studio reconciles against the **balance**, not against
+Total Cost.
