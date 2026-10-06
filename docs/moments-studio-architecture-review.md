@@ -120,7 +120,7 @@ the page components, `seed.ts`, `queries.ts`, the 0020 variants beyond their fil
 | F1 | The course app's Video carried `embedding float[1536]` | At `0220` `videos` has three `vector(512)` CLIP columns (title, description, thumbnail), `src/db/schema.ts` | CONFIRMED |
 | F2 | Thumbnails from an OpenAI image model; clips from `minimax/h3-max-turbo`, 15 seconds | The repo uses `bytedance/seedream/v5/lite/text-to-image` and `bytedance/seedance-2.0/fast/image-to-video`, 8-second clips (`src/db/mock.ts`). The live session ran different models from the published branch | CONFIRMED |
 | F3 | An admin-only "Generate a cat video" dialog | Not in the repo. Generation at `0220` is a command-line script (`npm run db:mock`); `src/app/admin/actions.ts` has no generation action | CONFIRMED |
-| F4 | Director sessions longer than 15 minutes need approved access | fal's Director page: sessions run up to 2 minutes by default, longer on request (A8) | CONFIRMED |
+| F4 | Director sessions longer than 15 minutes need approved access | fal's Director page: sessions run up to 2 minutes by default, longer on request (A8). *6 Oct: the spike found the page data also saying "up to 15 minutes"; the lead is conflicting, not refuted (Appendix B, row 14)* | CONFIRMED → conflicting |
 | F5 | README carries the builder-routing table, "the owning copy" | `CLAUDE.md` and `CONTRIBUTING.md` still point at a table titled "Two builders, one repo"; the README has no such heading since its revamp. The seats table under "How it gets built" is what exists | CONFIRMED |
 | F6 | (README, not the prompt) "621 tests across 47 files" | 753 tests in 53 files at `30ca650` | CONFIRMED |
 | F7 | (Slice-4 spec, finding 8) only the README's sentence becomes false at publication | `docs/HONESTY.md` §5 also says Moments "links out to rights holders without playing media here"; it falls at S7 too | CONFIRMED |
@@ -399,6 +399,14 @@ merges the two halves Beni just separated and inherits every unverified YouTube 
 **Reopening evidence:** a real clip's size and bitrate from Beni's first spike; a decision
 that clips must be private; phone playback that stalls on a progressive MP4.
 
+*Measured 6 Oct, from the spike (OBSERVED, clip facts read with macOS's own tools):* an H3
+15-second clip is about 10 MB and a 5-second one 3.4 to 4.4 MB; a Wan 15-second clip is
+13.6 MB. That is roughly 5 to 7 Mbit/s of H.264 at 480p, and every clip carries a generated
+AAC soundtrack (whether H3's can be turned off is UNVERIFIED). The first reopening condition
+is therefore met with numbers: the same-origin column's 1 GB site limit holds about 70 to 100
+fifteen-second clips before counting history (ESTIMATE), and a progressive MP4 at 5 to 7
+Mbit/s is what the "phone playback that stalls" condition has to be tested against.
+
 *Added 6 Oct:* **Supabase Storage** is one more candidate for the ST4 host ruling, since the
 account now exists for the records (15.2). Free: 1 GB of file storage and 5 GB of egress
 (DOCUMENTED, the pricing page read on 6 Oct, through a summarising fetch); a public bucket
@@ -564,11 +572,16 @@ generated       = strict {
 | Sync or queue | Queue for video and training: `POST https://queue.fal.run/{endpoint}` returns a request id, a status URL and a response URL; states are `IN_QUEUE`, `IN_PROGRESS`, `COMPLETED` | CONFIRMED, A3 |
 | Webhook or polling | **Polling** in phase 1: a local process has no public URL. A hosted Studio switches to `fal_webhook`, verifies the Ed25519 signature against fal's published keys, and treats the request id as the idempotency key. First delivery times out at 15 s; retries continue for about an hour | CONFIRMED, A4 |
 | Timeouts | A start deadline per request through fal's request-timeout header; the Studio's own ceiling per job (the course uses 15 minutes at a 10 s poll) | CONFIRMED, A3; course figure ROUTED |
-| Retries | fal retries failures automatically up to 10 times unless told not to. Send the no-retry header on paid jobs so **the Studio** owns every retry and each one is a ledger line. Whether a failed attempt is billed is VERIFY LIVE | CONFIRMED mechanism, A3 |
+| Retries | fal retries failures automatically up to 10 times unless told not to. Send the no-retry header on paid jobs so **the Studio** owns every retry and each one is a ledger line. Whether a failed attempt is billed is VERIFY LIVE *(4 Oct)*. *6 Oct:* the spike's two failures, an invalid request and a moderated one, billed 0 units (OBSERVED), but fal documents that a 422 may still be billed if a runner spent GPU time (DOCUMENTED), so "failed attempts are free" is not settled beyond those two cases | CONFIRMED mechanism, A3; billing of failures OBSERVED twice, DOCUMENTED otherwise |
 | Idempotency | Write the job row and its key before submitting; store the request id as soon as it returns; after a crash, resume polling that id, never resubmit. A cache hit on (registry row, parameters, input hashes, seed) returns the stored asset at no cost | Design; cache pattern from `0200` |
-| Cancel | `PUT …/requests/{id}/cancel` | CONFIRMED, A3 |
+| Cancel | `PUT …/requests/{id}/cancel`. *6 Oct:* a cancel sent while a job was running returned HTTP 202 `CANCELLATION_REQUESTED`, and the job still completed and billed in full (OBSERVED, Appendix S). The Studio must not rely on cancel; the pre-submit budget refusal (8.3) is the only real stop | CONFIRMED, A3; the running-job behaviour OBSERVED |
 | Result lifetime | Download at once and store the bytes with their hash: media URLs expire by account setting, and fal's CDN URLs are public | CONFIRMED, A3 and A13 |
 | Input privacy | Request payloads are kept 30 days by default; a header turns that off, another sets the lifetime of stored objects. Send both on every call that carries a photograph | CONFIRMED, A13 |
+| Fallback *(added 6 Oct)* | After repeated failures fal may reroute a request to an equivalent endpoint unless its disable-fallback header is sent. The registry sends it on every request, because a fallback means a different model answered and the provenance would be wrong | DOCUMENTED, the spike's recon U7 |
+| Billed units *(added 6 Oct)* | The result carries an `X-Fal-Billable-Units` response header; units times the live unit price matched Beni's dashboard to the cent across the whole spike. The ledger reconciles from this header, which resolves 8.3's VERIFY LIVE | OBSERVED |
+| Out of credit *(added 6 Oct)* | HTTP 403 with "User is locked. Reason: Exhausted balance", on an upload as well as a request; consistent with fal's FAQ that the account locks below a lock threshold. A Studio state, not an error | OBSERVED twice; the threshold DOCUMENTED |
+| Status and result *(added 6 Oct)* | Status `COMPLETED` also covers failures: an invalid and a moderated request both reported `COMPLETED`, then HTTP 422 on the result. The port reads the result's HTTP status, never the queue status alone | OBSERVED |
+| Price and billing APIs *(added 6 Oct)* | The pricing API returned HTTP 429 after about nine quick reads and a batched read worked; the operator key gets HTTP 403 on the billing APIs. The Studio caches prices against the registry and reads cost from the response header, not from a billing API | OBSERVED |
 
 ### 8.2 Job states the admin surface must show
 
@@ -578,6 +591,11 @@ HTTP error or an error payload), `refused` (the model's safety checker, which H3
 enables by default; A6), `timed-out` (the Studio's ceiling) and `cancelled`. `refused` is
 never retried automatically and never shown as a failure of the tool. A `completed` job whose
 download failed is recoverable until the result expires, and says so.
+
+*Added 6 Oct, from the spike:* a non-200 result fetched after status `COMPLETED` maps to
+`failed` (an HTTP error or an error payload) or `refused` (a content-policy or moderation
+body), never to `completed`; both were seen with 0 units billed (OBSERVED, Appendix S).
+Seedance's refusal arrived after 122 s of `IN_PROGRESS`, so `refused` can take minutes.
 
 *Added 6 Oct, from the 15.2 amendment:* a Studio-level state, **`database-unavailable`**, in
 which the Supabase project is unreachable or paused. In it the Studio refuses every paid
@@ -594,11 +612,26 @@ job around a failed ledger write. D1's admin surface shows this state.
   error.
 - **Ledger.** Append-only; one line per attempt; estimate first, then reconciled against what
   fal reports. Whether the queue result carries a billed amount is VERIFY LIVE; until it is
-  known, reconciliation is against the fal dashboard by hand.
+  known, reconciliation is against the fal dashboard by hand *(4 Oct)*. *Resolved 6 Oct:* the
+  result's `X-Fal-Billable-Units` header carries the billed units, and units times the live
+  unit price matched the dashboard to the cent (OBSERVED, 8.1).
 - **A ceiling the code cannot exceed.** fal's Terms describe prepaid credits that expire 365
   days after purchase (CONFIRMED by one reading, A12). A small balance with any automatic
-  top-up off (VERIFY LIVE in the dashboard) is a cap that survives a Studio bug.
-- **The cap numbers are Beni's** (15.8). Section 8.4 gives him the arithmetic.
+  top-up off (VERIFY LIVE in the dashboard) is a cap that survives a Studio bug. *6 Oct:*
+  Beni checked fal's Billing page on 5 Oct and reports auto top-up off (his reading, ROUTED);
+  whether fal offers a settable hard spend limit is UNVERIFIED. The spike also showed the
+  ceiling's edge: out of credit is a hard HTTP 403 lock (8.1), but cancel does not stop a
+  running job, so a loss can pass the balance by about one in-flight job.
+- **The cap numbers are Beni's** (15.8). Section 8.4 gives him the arithmetic. **Ruled 5 Oct:
+  $1.50 per job; $6 per session; the prepaid balance kept at or below $9.37, with top-ups by
+  hand only.** A job is one fal request, not a whole clip: a recipe v0 clip is four requests
+  (three keyframes and one video). The arithmetic, all ESTIMATE from measured prices after
+  15 Oct (8.4): the largest single recipe requests are Wan at 15 s ($0.75) and Seedance at
+  15 s ($0.91 to $1.08, UNVERIFIED), so $1.50 per job admits every recipe request and blocks a
+  $6.40 LoRA run. $6 per session buys about 11 to 13 H3-only clips at $0.45 to $0.52, or
+  about 6 two-tier Wan finals at $0.95 to $1.02, which is roughly what the whole spike minus
+  the LoRA and Director would cost at post-15-Oct prices ($5.71; $5.01 as billed). Because
+  cancel cannot stop a running job, the balance cap can be passed by about one in-flight job.
 - **The ledger line comes before the request** (added 6 Oct). The estimate and the ledger
   line are written to the Supabase database first; if that write fails, or the database is
   unreachable or paused, the Studio refuses the submit (state `database-unavailable`, 8.2)
@@ -611,17 +644,40 @@ job around a failed ledger write. D1's admin surface shows this state.
 |---|---|---|---|
 | `minimax/h3-max-turbo/image-to-video` | $0.015 / $0.024 / $0.048 a second at 480p / 768p / 1080p, a promotion to 15 Oct; then $0.025 / $0.04 / $0.08 | $0.36 at 768p now; **$0.60 after 15 Oct** | CONFIRMED, A6 |
 | `minimax/h3-max/reference-to-video` | $0.05 / $0.08 / $0.16 a second | $1.20 at 768p | CONFIRMED, A7 |
-| `minimax/h3-max/director` | $0.08 a second, every session billed for at least 60 seconds | at least $4.80 a session | CONFIRMED, A8 |
+| `minimax/h3-max/director` | $0.08 a second, every session billed for at least 60 seconds *(4 Oct, from A8)*. *Corrected 6 Oct:* $0.048 a second with a 60 s minimum ($2.88) until 15 Oct, then $0.08 ($4.80), with 1080p at double; this table showed only the later rate | at least $2.88 a session until 15 Oct, $4.80 after; the spike's one session billed $4.158 for about 87 s | A8; the promotion DOCUMENTED by the spike's recon U4 |
 | `bytedance/seedance-2.0/fast/image-to-video` (the course's) | $0.2419 a second at 720p | $3.63; the course's 6 seconds is $1.45 | CONFIRMED, A9 |
 | `fal-ai/flux-2-trainer` | $0.0064 a step; 1,000 steps by default | $6.40 a training run | CONFIRMED, A10 |
 | Nano Banana 2 / Nano Banana Pro | $0.08 / $0.15 an image | — | CONFIRMED, A5 |
 | Seedream v5 lite (the course's) | about $0.035 an image | — | ROUTED, course exercise |
 
-Illustration only (ESTIMATE): six published clips, four attempts each at 768p after the
-promotion, one keyframe per attempt at $0.08 and one LoRA run come to
-24 × $0.60 + 24 × $0.08 + $6.40 = **about $23**. The same on the course's model would be
-24 × $3.63 = $87 for the video alone. One secondary article gave the promotion as 50% off at
-$0.0125; fal's own page says 40% and $0.015, and the primary page governs.
+**Measured in the spike, 4 to 5 Oct (OBSERVED unless tagged; added 6 Oct).** Costs are
+billable units from the response header times the live unit price; wall time is submit to
+result.
+
+| Endpoint | Measured cost | After 15 Oct | Wall time |
+|---|---|---|---|
+| `openai/gpt-image-2/edit` | $0.051 for K0 from four photos; $0.012 per edit alone; $0.047 per edit with three photos (low quality, 1280 × 800) | same; no promotion stated, so UNVERIFIED | 13 to 27 s |
+| `fal-ai/flux-2/edit` | $0.060 / $0.024 / $0.060 for the same three jobs ($0.012 per processed megapixel) | same, UNVERIFIED | 10 to 39 s |
+| `fal-ai/flux-2/lora/edit` | $0.042 without photos, $0.105 with three ($0.021 per megapixel) | same, UNVERIFIED | 14 to 82 s |
+| `fal-ai/flux-2/lora` | $0.021 an image at 1280 × 800 | same, UNVERIFIED | 6 to 21 s |
+| `fal-ai/flux-2-trainer` | $6.40 for 1,000 steps on 39 photos | same | 37.3 min |
+| `alibaba/wan-3.0/image-to-video` | $0.05 a second at 480p: $0.25 at 5 s, $0.75 at 15 s | same, UNVERIFIED | 86 to 147 s |
+| `bytedance/seedance-2.0/mini/image-to-video` | about $0.07 a second, token-priced: $0.3545 at 5 s. A different endpoint from the course's `seedance-2.0/fast` row above | UNVERIFIED | 308 s |
+| `minimax/h3-max-turbo/image-to-video` at 480P, which already outputs 768 × 480 | $0.075 at 5 s, $0.225 at 15 s | $0.125 and $0.375 (DOCUMENTED) | 3 to 12 s |
+| `minimax/h3-max/reference-to-video` at 480P | $0.25 at 5 s ($0.05 a second) | the page states no promotion; UNVERIFIED | 6 s |
+| `minimax/h3-max/director` | $0.048 a second, 60 s minimum (DOCUMENTED); billed $4.158 for about 87 s of a planned 60 | $0.08 a second, $4.80 minimum (DOCUMENTED) | 12 to 15 s to first picture |
+
+Illustration, replaced 6 Oct. The 4 Oct version (in Git at `2a78489`) assumed 768p, $0.08
+keyframes and a LoRA run that recipe v0 does not use, and came to about $23 for six published
+clips at four attempts each. Measured end to end (OBSERVED, from the spike's findings): one
+H3-only clip — K0 from photos $0.051, K1 and K2 edits $0.024 to $0.095, a 15 s 480P clip
+$0.225 — is **$0.30 to $0.37 today and $0.45 to $0.52 after 15 Oct**, in about a minute, nearly
+all of it the three stills; a two-tier flow with a 5 s H3 preview ($0.075) and a 15 s Wan final
+($0.75) is $0.90 to $0.97 today and **$0.95 to $1.02 after 15 Oct**, in about three and a half
+minutes. The H3 and Director rises on 15 Oct are DOCUMENTED; whether the Wan, Seedance, GPT
+Image 2 and FLUX prices hold is UNVERIFIED. One secondary article gave the promotion as 50% off
+at $0.0125; fal's own page says 40% and $0.015, the spike's pricing API read returned 0.015
+(OBSERVED), and the primary page governs.
 
 ### 8.5 The registry and the bake-off
 
@@ -632,11 +688,15 @@ disagree on the model (F2), which corroborates the churn. So:
 - **Registry.** One reviewed file in `studio/`: endpoint id, task, allowed parameters, price
   rule, the date the price was read, the date it stops being valid (H3 Max Turbo's rule
   changes on 15 Oct 2026), the date pinned. The Studio refuses an endpoint that is not in it.
-  Changing the pin is a PR with a bake-off receipt.
+  Changing the pin is a PR with a bake-off receipt. *6 Oct:* every request from the registry
+  carries fal's disable-fallback header (8.1), so the endpoint that answered is the one pinned.
+  The first pin is recipe v0's three endpoints (15.9).
 - **Bake-off harness.** The same keyframe, prompt, seed and duration across the candidate
   rows at the lowest resolution; it records cost, wall time, outcome and Beni's verdict into
   Appendix S's format. It runs only with a written authority naming the rows and the budget,
-  the same pattern S4 uses for named video ids. It never runs in CI.
+  the same pattern S4 uses for named video ids. It never runs in CI. *6 Oct:* the first
+  bake-off ran on 4 to 5 Oct, before ST1 and outside the repo, under Beni's "GO" per step;
+  Appendix S is its receipt, and section 13's ST2 row says what that means for the slice.
 
 ### 8.6 Reproducibility when a model changes
 
@@ -650,24 +710,54 @@ clip can be regenerated identically.
 
 The ranking is the order to **try**, by cost and by how much it commits. What each route can
 do is tagged; how well any of them holds two specific cats across shots is unknown until Beni
-runs it, and Appendix S is where that gets written down.
+runs it, and Appendix S is where that gets written down *(4 Oct)*. **6 Oct:** he ran it. Each
+route ran once or twice on 4 to 5 Oct, on two cats, one scene and one seed, with no numeric
+scores; the table keeps the 4 Oct columns and the paragraph after it says what was found.
 
 | Rank | Route | What is confirmed | What needs Beni's experiment | Cost to try |
 |---|---|---|---|---|
-| 1 | **Reference-image keyframes, then first-and-last-frame video.** Make a base image of the cat from reference photos, edit it into the later keyframes (the instructor's chain, ROUTED), then animate between them | H3 Max Turbo takes `image_url` and `end_image_url`, 0.92 to 15 seconds, and a `seed` (CONFIRMED, A6). fal lists multi-reference edit models; the reference counts quoted for them (14 for Nano Banana 2, 9 for FLUX.2) come from a search summary of fal's pages (UNVERIFIED, A34) | Whether the cat stays the same cat across edits; whether the last frame is honoured; kit and crest drift | About $0.08 a keyframe and $0.36 to $0.60 a clip |
+| 1 | **Reference-image keyframes, then first-and-last-frame video.** Make a base image of the cat from reference photos, edit it into the later keyframes (the instructor's chain, ROUTED), then animate between them | H3 Max Turbo takes `image_url` and `end_image_url`, 0.92 to 15 seconds, and a `seed` (CONFIRMED, A6). fal lists multi-reference edit models; the reference counts quoted for them (14 for Nano Banana 2, 9 for FLUX.2) come from a search summary of fal's pages (UNVERIFIED, A34) | Whether the cat stays the same cat across edits; whether the last frame is honoured; kit and crest drift | About $0.08 a keyframe and $0.36 to $0.60 a clip *(4 Oct, at 768p)*. *Measured 6 Oct:* $0.012 to $0.051 a keyframe; a 15 s 480P clip $0.225, or $0.375 after 15 Oct (OBSERVED) |
 | 2 | **A LoRA on FLUX.2 for keyframes**, then the same video step | A trainer exists: a ZIP of images, at least 10 recommended, a default caption as the trigger, 100 to 10,000 steps (CONFIRMED, A10). A blog summary says 20 to 1,000 images (UNVERIFIED, A34) | Dataset size for a cat; one LoRA per cat or one for both; which inference endpoint loads the weights (not stated on the trainer page) | $6.40 a run, per subject |
 | 3 | **Reference-to-video**, skipping keyframes | H3 Max accepts up to 12 reference files across images, video and audio (CONFIRMED, A7) | Identity hold without a keyframe; cost per usable clip at twice the Turbo rate | $1.20 a clip at 768p |
-| 4 | **Director** | A realtime WebRTC session steered by live prompts, an optional first frame, 10-second chunks, 2 minutes by default; the page describes a live stream and mentions no returned file (CONFIRMED, A8) | Whether a recording can be captured at all | At least $4.80 a session |
+| 4 | **Director** | A realtime WebRTC session steered by live prompts, an optional first frame, 10-second chunks, 2 minutes by default; the page describes a live stream and mentions no returned file (CONFIRMED, A8). *6 Oct:* "no file returned" is disproved in part, below | Whether a recording can be captured at all *(4 Oct)*; answered 6 Oct: yes, in the browser | At least $4.80 a session *(4 Oct)*; $2.88 until 15 Oct, and the one session billed $4.158 |
 | — | A LoRA on the video model itself | H3 Max Turbo's page does not mention training (CONFIRMED absence, A6); the instructor thought it unsupported (ROUTED) | — | — |
+
+**What the spike found, 6 Oct (OBSERVED unless tagged; Appendix S has the rows).**
+
+- **Route 1 is pinned first (15.9, recipe v0).** Beni chose the `openai/gpt-image-2/edit`
+  keyframes for every video, for both cats; the FLUX.2 edits with and without the LoRA kept
+  the dribble and pasted a goal at the side instead of re-staging the strike. The last-frame
+  keyframe held in 10 of 10 clips on three models (H3, Wan 3.0, Seedance 2.0 Mini); without
+  it, H3 cut to a separate goal shot and lost the cat. Identity drift edit by edit is unscored.
+- **Route 2 did not earn its place.** The one LoRA ($6.40, 37 minutes, 39 photos, two trigger
+  words) drew the same cat for both trigger words on the one seed tested, and Beni chose no
+  LoRA image. Two single-cat LoRAs ($12.80) are UNVERIFIED.
+- **Route 3 was liked but costs more and fits worse.** Both reference-to-video clips were
+  liked, at 3.3 times the H3 clip's price, and came out 832 × 480; the cat was on all fours
+  throughout. Worth a second look, not in recipe v0.
+- **Route 4 was tested and set aside.** Section 9's own reopening condition was met: a
+  browser-recorded WebM (VP9 video, Opus audio, 25.7 MB, 88.5 s by Beni's reading) was
+  downloaded from the fal playground, so "no file returned" is disproved in part (which
+  control saved it is UNVERIFIED). The API still returns no file URL and cannot be called
+  through the queue: it needs the alpha client, a WebRTC session and a server proxy
+  (DOCUMENTED, the spike's recon U5). It stays set aside because it bills by the second with
+  no meter (a planned 60 s was billed as about 87 s, $4.158 against a $2.88 card), returns
+  WebM rather than MP4, offers only 16:9, 9:16 or 1:1 and never 16:10, is browser-only, and is
+  dearer after 15 Oct.
+- **Across every route**, every image and video model added crest-like marks, logo-like
+  shapes, garbled board text, numbers or extra players nobody asked for, so the per-clip
+  review checklist in 11.6 is not optional. Seedance refused one of the two keyframe pairs as
+  a possible real likeness after two minutes, with nothing billed.
 
 Upload and privacy terms for every route: inputs are stored on fal's CDN at public URLs until
 they expire, and request payloads for 30 days, unless the headers in 8.1 are sent (CONFIRMED,
 A13). A trained LoRA is a derivative of Beni's photographs and is treated as privately as the
-photographs. **Director is deferred**: it needs the SDK and a WebRTC client, bills a minute
-minimum, and suits a live visitor experience better than an admin batch. **Reopening
-evidence:** route 1 fails Beni's eye on identity after a fair number of attempts, which
-promotes route 2; a screenshot of the Director playground showing a downloadable recording
-would reopen route 4.
+photographs. **Director is deferred** *(4 Oct)*: it needs the SDK and a WebRTC client, bills a
+minute minimum, and suits a live visitor experience better than an admin batch; *6 Oct:*
+tested once and set aside for the reasons above. **Reopening evidence** *(4 Oct)*: route 1
+fails Beni's eye on identity after a fair number of attempts, which promotes route 2; a
+screenshot of the Director playground showing a downloadable recording would reopen route 4
+*(met on 4 Oct, and route 4 was reopened, tested and set aside)*.
 
 ## 10. Playback and motion study
 
@@ -680,7 +770,7 @@ would reopen route 4.
 | K4 | A composite adapter keeps the YouTube frame and the video element as siblings **inside the same host**; neither is moved; switching kinds hides one and shows the other | Same | A second cross-origin frame in the host |
 | Keyboard and focus | **Same document**: Escape, Tab and focus return behave natively. The cross-origin limits recorded in slice 3 (Escape inside the frame, row 65) do not apply to hosted items | Same | Every cross-origin limit recurs |
 | Reducer contract | `playing`, `paused`, `ended`, `position` and `failure` map one to one from media events; `owner-blocked` never occurs; a network or decode error is `unavailable` or `unknown` | Same | Through the player SDK's events (A17) |
-| Adaptive bitrate | None; acceptable for 15 seconds (ESTIMATE; a real file size is VERIFY LIVE) | Yes | Yes |
+| Adaptive bitrate | None; acceptable for 15 seconds (ESTIMATE; a real file size is VERIFY LIVE *(4 Oct)*). *Measured 6 Oct:* an H3 15 s clip is about 10 MB, a 5 s clip 3.4 to 4.4 MB, a Wan 15 s clip 13.6 MB, roughly 5 to 7 Mbit/s (OBSERVED), which is the number the phone test in 6.4 runs against | Yes | Yes |
 | Single-file build | A remote MP4 needs no Referer, so the `file:` problem of row 68 should not apply (ESTIMATE; check in acceptance) | Same | Unknown |
 
 ### 10.2 Autoplay, sound, reduced motion and phones
@@ -694,7 +784,18 @@ would reopen route 4.
 - **360 to 1000 px.** The hosted element fills the existing stage anchor and Cinema slot: 16:9
   with the ruled 200 px floor, which is 320 × 200 at 360 px. Generating keyframes at 16:9
   keeps the clip's ratio equal to the box at every width above the floor; at the floor the
-  clip letterboxes inside 16:10 by containment, never by cropping.
+  clip letterboxes inside 16:10 by containment, never by cropping. *6 Oct, a recorded
+  disagreement:* the spike called the box "the 16:10 Moments stage" and made 1280 × 800
+  keyframes, which gave 768 × 480 clips (OBSERVED), an exact fit at the 200 px floor and
+  pillarboxed inside the 16:9 box at about 1000 px. This review keeps its reading of the
+  source: `src/index.css` gives the stage anchor and the Cinema slot `aspect-ratio: 16 / 9`
+  with `min-height: 200px` (CONFIRMED again at `b5561b1`), so the box is near 16:10 only at
+  phone widths. The keyframe ratio is left to D1 and ST1. H3 takes its canvas from the input
+  image (DOCUMENTED, the spike's recon), so a 16:9 K0 should give a 16:9 clip (UNVERIFIED).
+- **Sound.** Every clip in the spike carried a generated AAC stereo soundtrack (OBSERVED);
+  whether H3's can be turned off is UNVERIFIED, and Wan and Seedance have an untested audio
+  switch. Play is a gesture, so sound on Play is allowed; what the design does with an
+  unwanted soundtrack is a D1 item.
 - **Captions.** Generated clips have no dialogue track to caption today; if generated
   commentary audio is ever used, captions become a requirement (UNVERIFIED need; a design
   item).
@@ -741,6 +842,20 @@ of what the host contains, so a video element or a Stream frame in the same host
 covered in the same way. It must be resolved before any item, YouTube or generated, is shown
 in Cinema.
 
+*6 Oct, read on `main` at `b5561b1`:* PR #144 merged on 4 Oct (Brooklyn time; 00:17 UTC on
+5 Oct, squash `5bb8947`) without the fix. Beni authorised a separate repair on 4 Oct as a
+prerequisite before S4b; it shipped as PR #159, "Cinema paints the live frame above its slot
+(ideas row 79)", squash-merged as `967aa23` on 6 Oct 2026 as a merge-only change with the app
+still at v0.5.2 (`package.json` 0.5.2, no new tag). What it did, from the PR and the repo: one
+Cinema-only CSS rule gives the player host a stacking level above the slot, so the production
+stylesheet grew from 38,966 to 39,043 bytes and its SHA-256 became `a3e896cd54a93d13…`;
+`docs/v0.2.6-ideas.md` row 79 is struck in place with "Closed in PR #159"; `CHANGELOG.md`'s
+Unreleased section says "Cinema now puts the playing frame above its cover; readers cannot
+reach Cinema until a Moments edition is published"; and `docs/moments-architecture.md` records
+the stacking contract. The blocker this section named is therefore closed for both kinds of
+item, and R2's Cinema prerequisite is met (section 13). The rule can match only a Cinema
+dialog, which needs a nonempty edition, so readers see no change.
+
 ## 11. Auth, secrets, privacy and content-policy hooks
 
 ### 11.1 Auth for an admin-only Studio
@@ -782,10 +897,16 @@ job's blast radius is unchanged.
 ### 11.4 Beni's cat photographs
 
 They never enter a repository: the repo is public and its licence would attach to them. They
-live in a directory outside the worktree with the Studio's database and are backed up with
-it. Before any upload: strip metadata, record the SHA-256 of what was sent, send the lifetime
+live in a directory outside the worktree with the Studio's cache and are backed up with it.
+Before any upload: strip metadata, record the SHA-256 of what was sent, send the lifetime
 and no-store headers, and delete the remote copy when the job is reviewed where fal's API
-allows it (VERIFY LIVE). The published provenance carries hashes only. *Added 6 Oct:* the
+allows it (VERIFY LIVE). *6 Oct, from the spike's recon (OBSERVED):* a plain `sips` resize
+keeps GPS, device and XMP data; the method that worked converts each photo to BMP, a format
+with no metadata container, and back to JPEG, after which only resolution and colour-space
+tags remained. Of Beni's 48 originals, 26 carried GPS. The fal account's storage settings had
+no expiry and no ACL, so uploads are public by URL and never expire unless each upload says
+otherwise; the spike sent one-day expiries on every upload, and whether they worked is still
+open (the check fell due after the run). The published provenance carries hashes only. *Added 6 Oct:* the
 photographs never go to Supabase either, neither to its database nor to its Storage; the
 database holds records and hashes only (15.2).
 
@@ -891,9 +1012,9 @@ Claude Code, design by Claude Design.
 | **P0** | This review, and Beni's rulings on section 15 (ruled 5 Oct; 15.2 amended 6 Oct; recorded 6 Oct) | — | Everything | This document | Beni | docs | Claude Code |
 | **D1** | Claude Design brief on Fergie Time: the Generated badge, hosted-player chrome, kind-specific recovery copy, the motion budget's extension, the local admin surface | P0 rulings 15.5, 15.6, 15.10 | Everything | Design review cycle | Beni's sign-off | design | Claude Design → design review |
 | **R1** | Reader contract: the kind union, the hosted identity, provenance, the policy block, playability by provider, C10's decision | P0; coordination with PR #144 (C11) | Edition stays `[]`; no UI change | Contract tests; 72-cell inert comparison | Six-pass review | patch (no reader-visible capability) | Codex Astra → Claude Code |
-| **R2** | Hosted adapter inside the one host; mock; acceptance item with a synthetic same-origin clip; matrix cells | R1; **PR #144's Cinema cover resolved**; D1 for the chrome | Edition stays `[]`; nothing requested | Matrix; isolation check; a stub is not playback | Six-pass review | patch | Codex Astra → Claude Code |
+| **R2** | Hosted adapter inside the one host; mock; acceptance item with a synthetic same-origin clip; matrix cells | R1; **PR #144's Cinema cover resolved** *(4 Oct)* — **met 6 Oct by PR #159, squash `967aa23`** (10.4); D1 for the chrome | Edition stays `[]`; nothing requested | Matrix; isolation check; a stub is not playback | Six-pass review | patch | Codex Astra → Claude Code |
 | **ST1** | Studio core, local and offline: the isolated folder, the Tailwind exclusion, registry, state machine, ledger, caps, fal port and stub, a command-line entry; *6 Oct (15.2):* the Drizzle Postgres schema, the generated migrations, the PGlite-backed tests and a migrate command Beni runs | P0 rulings 15.2 (amended 6 Oct), 15.3. Beni creating the Supabase project is his own account action, needed before first live use, not before ST1 merges | No key, no network, no reader change: still true for the slice's own verification, which runs on PGlite | Studio tests; CSS and single-file hashes equal | Six-pass review | patch (tooling) | Codex lighter or Cursor → Claude Code |
-| **ST2** | Beni's fal spike: the bake-off across consistency routes, under a written authority | ST1; ruling 15.8, 15.9 | The repo | Appendix S, filled by Beni | **Spend authority** | not a release | Beni |
+| **ST2** | Beni's fal spike: the bake-off across consistency routes, under a written authority. *6 Oct:* **done as a pre-ST1 spike** on 4 to 5 Oct, outside the repo and before ST1 existed, under Beni's per-step "GO" and a $15 ceiling (closed $0.63 over, a breach he accepted after the fact); Appendix S is the receipt. Further runs need a new written authority and land in Appendix S | ST1; ruling 15.8, 15.9 *(4 Oct)*. Ran before both | The repo | Appendix S, filled 6 Oct from the spike | **Spend authority** | not a release | Beni |
 | **ST3** | The local review surface: lineage, Regenerate, Confirm, cost meter, refusal states | ST1; D1 | Reader | Studio tests; a browser pass on loopback | Six-pass review | patch (tooling) | Codex → Claude Code |
 | **ST4** | Media port for the chosen host; the export command that writes a branch, validates with the reader's schema and opens a draft PR | R1; ruling 15.4; ST2's evidence | Nothing is exported in this slice | Stubbed upload; a dry-run export diff | Six-pass review; **vendor ruling** | patch (tooling) | Codex Astra → Claude Code |
 | **PUB** | The first generated edition: the publication PR, the content policy, README and HONESTY corrections, CHANGELOG with "Deliberately not done" | R2, ST4, the primary-source read (15.12; counsel only on its trigger), the policy with its review checklist (15.11) | — | Populated matrix on the production bundle; live confirmation on Pages | **Publication authority**; Beni's number and tag | minor (a new capability) | export by Studio → six-pass review |
@@ -904,7 +1025,8 @@ Claude Code, design by Claude Design.
    replaces the test that pins the edition to `[]` and corrects the README and HONESTY
    sentences (F7); the second adds to an existing edition.
 2. **One policy.** S5.5 and the generated policy are one document (11.6).
-3. **One blocker.** The Cinema cover finding gates both.
+3. **One blocker.** The Cinema cover finding gates both. *6 Oct: closed by PR #159 (`967aa23`),
+   so neither half is gated by it any more (10.4).*
 4. **One build-time rule.** C10's decision about permission expiry applies to both.
 5. **Sequence.** The YouTube half continues S4b to S8 untouched. R1 is additive to it. R2
    waits for #144 to merge so two builders are never in the player host at once.
@@ -917,7 +1039,7 @@ Claude Code, design by Claude Design.
 | A hosted Studio, a hosted database, Better Auth | No second user; a PR-based boundary needs no server |
 | Options B and C (replicas of real players) | Ruled: deferred to the build phase; the policy version field is the hook |
 | HLS and adaptive bitrate | 15-second clips; hls.js would roughly double the app's JavaScript |
-| Director | Realtime, a minute minimum, no file returned on the page read |
+| Director | Realtime, a minute minimum, no file returned on the page read *(4 Oct)*. *6 Oct:* tested once in the spike and set aside: a browser-recorded WebM can be kept (OBSERVED), but the API returns no file URL and needs the alpha client, WebRTC and a proxy (DOCUMENTED); it bills by the second with no meter, 16:9 only, WebM not MP4, dearer after 15 Oct (section 9) |
 | Embeddings, search, related rail, watch-time | A static reader and a handful of items; watch-time is also a privacy surface |
 | A motion library | Waits for the design brief's motion spec |
 | Posters for generated clips | A remote poster breaks K3; a same-origin one is a design and repo-weight decision for D1 |
@@ -933,7 +1055,7 @@ Claude Code, design by Claude Design.
 | 3 | The Studio folder changes the reader or stalls the sync: CSS drift, a required check that never runs, a root lockfile change | Studio builder; cold reviewer | Production CSS or single-file hash differs from `main`; a sync PR left open |
 | 4 | Subject consistency is not good enough on any affordable route | Beni (ST2) | Route 1 and route 2 both fail his eye inside the spike budget |
 | 5 | Terms and law: output ownership unread, Article 50 scope, trademarks in kits | Beni, with counsel *(4 Oct)*; ruled 5 Oct: a session's primary-source read, counsel only if a clause restricts publishing or ownership or Article 50's scope cannot be settled (15.12) | Before PUB; earlier if a clip is shared anywhere |
-| 6 | The Cinema cover finding stays open and blocks every visible player | Whoever rules on #144 | R2 is ready and #144 is not resolved |
+| 6 | The Cinema cover finding stays open and blocks every visible player. *Closed 6 Oct:* PR #159 (`967aa23`) shipped the repair as a merge-only change (10.4) | Whoever rules on #144 *(4 Oct)*; closed | R2 is ready and #144 is not resolved *(4 Oct)*; no longer applies |
 | 7 | Model churn: the pinned endpoint changes price or behaviour (15 Oct is the first known date) | Studio registry owner | A registry row past its price-valid date |
 | 8 | Spend: retries, batches, a localhost request from a web page | Beni; Studio builder | A ledger line without a matching estimate; the session cap hit |
 | 9 | A permission expiry turns `verify` red on `main` and the sync cannot merge (C10) | R1 builder | An edition item with an expiry and a build-time playability test |
@@ -1057,7 +1179,7 @@ mean read directly.
 | 11 | H3 Max Turbo prices and the 15 Oct end of the promotion | **Verified exactly** | A6 |
 | 12 | Director: first frame | **Verified** | A8 |
 | 13 | Director: last frame, script beats at whole-second offsets, audio input, checkpoint continuation | **Unverified** for Director. The image-to-video endpoint has a last frame and an audio input (A6). A screenshot of the playground would settle the rest | A6, A8 |
-| 14 | Director sessions over 15 minutes need approved access | **Refuted as stated**: 2 minutes by default, longer on request | A8 |
+| 14 | Director sessions over 15 minutes need approved access | **Refuted as stated** *(4 Oct)*: 2 minutes by default, longer on request. *6 Oct: conflicting, not refuted.* fal's page data says "Default session length is up to 15 minutes", the docs this review read said 2 minutes, and the API reports `max_session_seconds` at session start with no fixed value (DOCUMENTED, conflicting; the spike's recon). The real limit is UNVERIFIED; the one session ran about 87 s | A8; the spike's recon |
 | 15 | fal offers LoRA training for some models, not all | **Verified** that a FLUX.2 trainer exists | A10 |
 | 16 | The instructor does not think H3 allows LoRA | **Consistent, unverified**: the model page does not mention it | A6 |
 | 17 | H3 Max Turbo is fal's own post-training of MiniMax H3 | **Consistent**, from a search summary of fal's pages | A34 |
@@ -1076,6 +1198,11 @@ All in the session scratchpad, outside the repo. macOS Darwin 25.6.0 arm64, Node
 **M1. Kickoff baseline at `30ca650`.** `npm ci`, `npm run build`. CSS 38,966 bytes, SHA-256
 prefix `f22157bc13632d0d`; JS 1,052,551 bytes, 177,358 bytes at gzip level 9 (the bundle
 includes the fixture snapshot). `npm test`: 753 passed, 53 files. `npm run typecheck`: exit 0.
+*6 Oct:* this hash moved when #159 merged (one Cinema rule, 10.4). The post-merge baseline on
+this branch at `origin/main` `b5561b1` is CSS 39,043 bytes, SHA-256
+`a3e896cd54a93d13e5c18df3b653cfa48b02bc33f1588c8b790031a0c3949a5f`; JS 1,040,092 bytes;
+`npm test` 867 passed in 55 files; `npm run typecheck` exit 0. Every prose change in this
+amendment was rebuilt against that hash and left it equal.
 
 **M2. Bundle study.** A new Vite 8.3.2 project with `@vitejs/plugin-react` 6.1.1, React and
 React DOM 19.3.0 (what `^19.2.8` resolved to on the day; Kickoff's lockfile holds 19.2.8).
