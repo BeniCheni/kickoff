@@ -41,9 +41,9 @@ default with a primary-source read and a trigger for counsel.
 
 | # | Question | Recommendation | Who decides |
 |---|---|---|---|
-| A | What to take from the course | Inherit the fal pipeline shape and the prompt craft; adapt Stream and the admin surface; defer the database, auth and embeddings; reject Next.js for the reader, autoplay and CLIP-threshold test gates | CTO, recorded here |
+| A | What to take from the course | Inherit the fal pipeline shape and the prompt craft; adapt Stream and the admin surface; defer the database, auth and embeddings; reject Next.js for the reader, autoplay and CLIP-threshold test gates. *6 Oct: the database moved from defer to inherit-the-pattern and adopt-the-vendor on Beni's 15.2 amendment (section 5)* | CTO, recorded here |
 | B | Boundary | **Export PR.** The Studio opens a PR that edits `moments.json`; merge stays publication. No runtime feed | Beni (15.1): **yes**, 5 Oct |
-| C | Studio hosting and database | **None in phase 1.** A local process on Beni's Mac with a SQLite file outside the repo. Cloudflare Workers with D1 is the hosted path when a visitor dialog is researched | Beni (15.2) |
+| C | Studio hosting and database | **None in phase 1.** A local process on Beni's Mac with a SQLite file outside the repo. Cloudflare Workers with D1 is the hosted path when a visitor dialog is researched *(4 Oct)*. **Ruled 5 Oct: local process, SQLite. Amended 6 Oct: local process, records in a Supabase Postgres project (Free plan) through Drizzle ORM; accounts fal and Supabase; Beni alone holds the database credentials** (section 6.3) | Beni (15.2, amended 6 Oct) |
 | D | Data model | A `generated` kind without a fixture, a `hosted` playback identity, a provenance record and a policy attestation; five collisions with the current contract, section 7 | Beni (15.5 **yes**, 15.6 **authored**; 5 Oct) |
 | E | fal integration | Plain REST behind a typed port, queue plus polling, Studio-owned retries, an append-only cost ledger with per-job and per-session caps, a pinned model registry | Beni for the cap numbers (15.8): **$1.50 a job, $6 a session, balance at or below $9.37**, 5 Oct; section 8.3 |
 | F | Subject consistency | Try reference-image keyframes first, then a FLUX.2 LoRA, then reference-to-video; Director last. All four need Beni's experiment *(4 Oct)*. Spiked 4 to 5 Oct: the keyframe route is pinned first as recipe v0; the LoRA and Director were tried and set aside (section 9) | Beni (15.9): **keyframes**, 5 Oct |
@@ -253,8 +253,8 @@ Evidence is CONFIRMED at the branch and file named. Costs are from Appendix A un
 | `AGENTS.md` pointer | root of every branch | **ADAPT** as an ideas row | Three vendors read this repo | Docs only | Status quo: two skill copies |
 | Exercise prompt craft | `EXERCISE-*.md` | **INHERIT** the cost note and the check-yourself line | Prompt ladder | None | — |
 | LLM through fal | `0090`: `openrouter/router`, a Gemini Flash model | **DEFER** | There is no catalog to invent; Beni directs the prompts | — | Prompt drafting by the PM seat, offline |
-| Postgres and Drizzle | `0070` | **DEFER** until a hosted Studio | Phase 1 is one user on one machine | Drizzle 0.45.3 is Apache-2.0 (A33) | SQLite file through Node's built-in module (Appendix M5) |
-| Supabase | `0070`: pooler, `prepare: false` | **DEFER**; not recommended as the first hosted database | An admin tool sits idle for days | Free projects pause after 1 week of inactivity; 500 MB (A26) | Cloudflare D1: 5 GB free, same vendor as the media (A23) |
+| Postgres and Drizzle | `0070` | **DEFER** until a hosted Studio *(4 Oct)* → **INHERIT** the pattern, re-implemented from Drizzle's and Supabase's own documentation *(ruled 6 Oct, 15.2)* | 4 Oct reasoning, kept: phase 1 is one user on one machine. 6 Oct: records on Postgres from the first slice, so a hosted Studio later reaches the same database (6.3) | Drizzle 0.45.3 is Apache-2.0 (A33); drizzle-kit 0.31.11 MIT, `postgres` 3.4.9 Unlicense, PGlite 0.5.8 Apache-2.0 for tests (6.3) | SQLite file through Node's built-in module (Appendix M5), the 4 Oct recommendation |
+| Supabase | `0070`: pooler, `prepare: false` | **DEFER**; not recommended as the first hosted database *(4 Oct)* → **ADOPT** for Studio records on Beni's ruling *(6 Oct, 15.2)*, the one-week pause an accepted cost | 4 Oct reasoning, kept: an admin tool sits idle for days. 6 Oct: the Studio refuses paid work while the database is paused and says the restore is a dashboard click (8.2) | Free projects pause after 1 week of inactivity; 500 MB (A26) | Cloudflare D1: 5 GB free, same vendor as the media (A23); no longer the natural successor once the schema is Postgres (6.3) |
 | Better Auth | `0130` | **DEFER** | No visitors, no accounts in phase 1 | 1.7.7, MIT (A33); four tables | An access proxy in front of a hosted Studio (section 11.1) |
 | Cloudflare Images | `0140` | **DEFER** | K3: the gallery fetches no remote image | Storage needs the paid plan (A20) | A small same-origin poster, a design-brief decision |
 | CLIP embeddings and pgvector | `0150` | **DEFER** | A handful of items; a static reader | A model download of about 100 MB (ROUTED, course text) | An advisory "still looks like Fenway" score in the Studio, never a gate |
@@ -296,7 +296,7 @@ is inherited. Numbers are CONFIRMED from the pages in Appendix A unless tagged.
 | Upload limit | Disk | 100 MB request body on Free and Pro zones (A22) | 4.5 MB request body: photos must go straight to storage (A24) | Disk |
 | Limits that bite | Only this machine can generate; fal webhooks cannot reach it | Free plan allows 10 ms of CPU per call (A21); a Workers runtime, not Node | Hobby is restricted to non-commercial, personal use (A25) | A card is required after the trial (A27) |
 | Secrets | A git-ignored file outside the worktree, or the macOS keychain | Encrypted bindings (UNVERIFIED this session) | Encrypted environment variables (UNVERIFIED this session) | Secrets store (UNVERIFIED this session) |
-| Accounts and billing | fal only | Cloudflare, with a card for the paid plan | Vercel, plus a database vendor | Fly, with a card |
+| Accounts and billing | fal only *(4 Oct)*; **fal and Supabase** *(ruled 6 Oct, 15.2)* | Cloudflare, with a card for the paid plan | Vercel, plus a database vendor | Fly, with a card |
 
 **Recommendation: option 0 now, option 1 as the hosted path.** The Studio's core (state
 machine, ledger, registry, fal port, media port) is written as pure modules behind ports, so
@@ -312,6 +312,66 @@ research begins.
 | Fit | One writer, one machine | The hosted successor; SQLite semantics | The course's choice | Not researched |
 | Cost and limits | $0; Node 24.15.0 ran `node:sqlite` without a flag or a warning (Appendix M5; its stability label is UNVERIFIED) | Free: 5 GB, 5 million rows read and 100,000 written a day (A23) | Free: 500 MB, pauses after 1 week idle, 2 projects; Pro from $25 a month (A26) | UNVERIFIED |
 | Risk | The file is the only copy: back it up with the photos | Vendor account | The pause, for an idle admin tool | — |
+
+**Ruled 6 Oct 2026 (15.2, amending the 5 Oct answer): Supabase Postgres through Drizzle.** The
+table above is the 4 Oct comparison and its recommendation, kept for the record; the ruling
+flips it. For a cold reader: **Supabase** is a hosted Postgres database with a dashboard and
+APIs; **Drizzle** is the TypeScript library inside the Studio that defines the tables and runs
+the queries; **drizzle-kit** applies the schema to the database. Choosing Supabase is choosing
+Postgres. This is the course's shape: on 4 Oct this review read `0070` and `0220` as Drizzle
+on Postgres over the Supabase pooler with `prepare: false` (CONFIRMED, section 5); the
+Planner's 6 Oct read of the same `0220` branch adds that `drizzle.config.ts` declares dialect
+`postgresql` with drizzle-kit's Supabase roles entity and that `src/db/index.ts` uses
+`drizzle-orm/postgres-js` over the `postgres` driver with `prepare: false` for the Supavisor
+transaction pooler (ROUTED here; re-readable at the branch). The Studio re-implements the
+pattern from Drizzle's and Supabase's own documentation and copies no course file: the course
+repo has no licence (4.4).
+
+A Postgres schema does not port to SQLite, so Cloudflare D1 is no longer the natural hosted
+successor that 6.2's recommendation and the table above assumed; a hosted Studio later reaches
+the same Supabase database over the network. No vendor is named here for that hosting step.
+
+**Where Drizzle goes, and where it does not.**
+
+| Data | Drizzle? | Why |
+|---|---|---|
+| Studio records: generations, jobs, events, ledger, sessions, assets, policy checks, exports (7.1) | **Yes**, Drizzle on Supabase Postgres | The ruling |
+| Studio tests | **Yes**, Drizzle on PGlite in-process (drizzle-orm ships a `pglite` driver in the stable 0.45.3 release) | The same Postgres schema, no network, no credential |
+| Schema changes | drizzle-kit **generated SQL migration files committed under `studio/`** | The six-pass review sees every schema change as a diff, rather than the course's push-only flow |
+| The model registry (8.5) | **No**; it stays a reviewed file | Changing a pin is a PR with a bake-off receipt, not a row update |
+| `moments.json` | **No** | Merge stays publication (15.1) |
+| Fixtures, standings and the sync | **No** | Step 0 must not gain an outage point (K5) |
+| The reader (`src/`) | **No** | Its runtime dependencies stay `react`, `react-dom` and `zod` (K2) |
+
+**Facts the Planner read on 6 Oct 2026**, all DOCUMENTED through a summarising fetch, each to
+be re-read at its URL before anyone relies on it (risk 11):
+
+- npm: drizzle-orm 0.45.3 (Apache-2.0), drizzle-kit 0.31.11 (MIT), `postgres` 3.4.9
+  (Unlicense), `@electric-sql/pglite` 0.5.8 (Apache-2.0, about 25 MB unpacked).
+- drizzle-orm 0.45.3 exports `./postgres-js`, `./node-postgres`, `./pglite`,
+  `./better-sqlite3` and `./d1`, but not `./node-sqlite`: Drizzle on Node's built-in SQLite
+  (Appendix M5's path) exists only in the 1.0 beta and release-candidate line, and 1.0 is at
+  release candidate. Whether to pin 0.45.x or wait for 1.0 is ST1's call.
+- Drizzle's Supabase page recommends the connection pooler for serverless and a direct
+  connection for long-running servers, and says transaction mode needs `prepare: false`.
+- Supabase's connection page: direct connections (port 5432) are IPv6 on the Free plan and
+  IPv4 only with an add-on; the shared session pooler (port 5432) works over IPv4 and IPv6 on
+  every plan; transaction mode (port 6543) is for serverless and edge functions. Which mode the
+  Studio uses is ST1's call; the session pooler is the safe default for a long-lived local
+  process on an IPv4 network.
+- Supabase pricing page: Free has 500 MB per project, a limit of 2 active projects, projects
+  "paused after 1 week of inactivity", 5 GB egress and 1 GB file storage; Pro is from $25 a
+  month, never paused, with spend caps on by default.
+- Supabase row-level-security page: "A table in an exposed schema without RLS is readable
+  and writable by any role with a grant on it" and "Enable RLS on every table in an exposed
+  schema". Section 11.2 turns that into a control.
+
+What the ruling costs and changes elsewhere: a second vendor account and, on Free, a restore
+click after any idle week (section 14); a Studio state in which the database is unreachable or
+paused and every paid submit is refused (8.2, 8.3); two threat rows and a phase 1 secret
+(11.2, 11.3); PGlite-backed tests with the committed migrations applied from scratch, and a CI
+that never holds the database URL (12); ST1 carrying the schema, the migrations and a migrate
+command Beni runs (13).
 
 ### 6.4 Where published clips are served from
 
@@ -338,6 +398,13 @@ new account is wanted for a first edition of a few clips. The YouTube option cos
 merges the two halves Beni just separated and inherits every unverified YouTube behaviour.
 **Reopening evidence:** a real clip's size and bitrate from Beni's first spike; a decision
 that clips must be private; phone playback that stalls on a progressive MP4.
+
+*Added 6 Oct:* **Supabase Storage** is one more candidate for the ST4 host ruling, since the
+account now exists for the records (15.2). Free: 1 GB of file storage and 5 GB of egress
+(DOCUMENTED, the pricing page read on 6 Oct, through a summarising fetch); a public bucket
+gives a plain URL on one origin, which fits the hosted adapter's single-constant rule. A
+candidate, not a pick; its egress allowance against a 10 to 14 MB clip is the number to check
+at ST4.
 
 ### 6.5 Repository shape
 
@@ -390,7 +457,9 @@ The sync, its snapshot and Step 0 appear nowhere in this picture, on purpose.
 
 ### 7.1 Studio pseudo-schema
 
-Pseudo-schema, not code. Storage engine per 6.3. Every table has an id and creation time.
+Pseudo-schema, not code, and it stays prose here. Storage engine per 6.3: ruled 6 Oct,
+Supabase Postgres through Drizzle, so slice ST1 writes this as a Drizzle Postgres schema with
+generated migrations committed under `studio/`. Every table has an id and creation time.
 
 ```
 subject        id · name ("Fenway", "Frankenstein") · description · trigger_word?
@@ -510,6 +579,13 @@ enables by default; A6), `timed-out` (the Studio's ceiling) and `cancelled`. `re
 never retried automatically and never shown as a failure of the tool. A `completed` job whose
 download failed is recoverable until the result expires, and says so.
 
+*Added 6 Oct, from the 15.2 amendment:* a Studio-level state, **`database-unavailable`**, in
+which the Supabase project is unreachable or paused. In it the Studio refuses every paid
+submit, because the estimate and the ledger line must be written before the request leaves
+(8.3); drafts and reads of the local cache still work. Restoring a paused Free project is a
+click in Beni's dashboard, and the Studio says so in its own words. It never retries a paid
+job around a failed ledger write. D1's admin surface shows this state.
+
 ### 8.3 Spend control
 
 - **Estimate before submit.** The registry's price rule times the requested seconds and
@@ -523,6 +599,11 @@ download failed is recoverable until the result expires, and says so.
   days after purchase (CONFIRMED by one reading, A12). A small balance with any automatic
   top-up off (VERIFY LIVE in the dashboard) is a cap that survives a Studio bug.
 - **The cap numbers are Beni's** (15.8). Section 8.4 gives him the arithmetic.
+- **The ledger line comes before the request** (added 6 Oct). The estimate and the ledger
+  line are written to the Supabase database first; if that write fails, or the database is
+  unreachable or paused, the Studio refuses the submit (state `database-unavailable`, 8.2)
+  and never retries a paid job around a failed ledger write. A refusal here costs nothing;
+  a request sent without a ledger line could cost anything.
 
 ### 8.4 Prices, as published on 4 Oct 2026
 
@@ -681,6 +762,8 @@ in Cinema.
 | A photograph leaks | fal's CDN URLs are public until they expire; payloads are kept 30 days | The two headers in 8.1; strip EXIF, location above all, before upload |
 | An unreviewed clip is published | Export without review | Export requires a passed policy check and Beni's yes; the media upload is itself outward-facing and is asked for per export |
 | The sync is broken by this program | A required check that never runs, a root lockfile change, a CSS change | Sections 6.5 and 12 |
+| Studio rows readable through Supabase's Data API *(added 6 Oct)* | Supabase exposes tables in an exposed schema through a REST Data API; a table without row-level security there is readable and writable by any role with a grant (6.3); prompts, costs and photo hashes are private (4.3's row on read policies that expose whole tables) | The Studio's tables sit in a schema the Data API does not expose, or carry RLS with no policies, so nothing is readable through the API; ST1 picks and proves the mechanism with a test. No publishable or anon key is used anywhere in the Studio |
+| The database password reaches an agent, a receipt or a workflow *(added 6 Oct)* | A connection string in a log, a receipt, an environment dump, a committed `.env` or an Actions secret | Beni alone holds it (15.2); the Studio's logger redacts connection strings as it redacts authorization headers; a test greps the tracked tree and the production bundle for a Postgres connection string as it does for key-shaped strings |
 
 ### 11.3 Where each secret lives
 
@@ -689,7 +772,9 @@ in Cinema.
 | fal key | The Studio process's environment, loaded from a file outside the worktree or from the keychain | The Studio only. Never GitHub |
 | Media-host token | Same | Write access to the one product that stores clips, nothing else (the course's token carried Stream and Images edit rights only; CONFIRMED, exercise 0140) |
 | GitHub | Beni's existing `gh` login | Opening the export PR as a draft |
-| Session secret, database URL | Not in phase 1 | Hosted Studio only |
+| Database URL (connection string) *(moved to phase 1 on 6 Oct, 15.2)* | With the fal key: the Studio process's environment, loaded from a file outside the worktree or from the keychain; Beni alone holds it | The Studio only. Never GitHub, never a receipt, never an agent transcript |
+| Supabase access token, if one is ever made | On the same terms as the database URL | Beni's dashboard work only; no agent or workflow uses it |
+| Session secret | Not in phase 1 | Hosted Studio only |
 
 No workflow in this repo needs any of them, so none is added to Actions secrets and the sync
 job's blast radius is unchanged.
@@ -700,13 +785,16 @@ They never enter a repository: the repo is public and its licence would attach t
 live in a directory outside the worktree with the Studio's database and are backed up with
 it. Before any upload: strip metadata, record the SHA-256 of what was sent, send the lifetime
 and no-store headers, and delete the remote copy when the job is reviewed where fal's API
-allows it (VERIFY LIVE). The published provenance carries hashes only.
+allows it (VERIFY LIVE). The published provenance carries hashes only. *Added 6 Oct:* the
+photographs never go to Supabase either, neither to its database nor to its Storage; the
+database holds records and hashes only (15.2).
 
 ### 11.5 Never committed
 
-Keys and `.env` files; photographs; LoRA weights; the Studio database and cache; unpublished
-clips; raw provider responses (they contain public media URLs); run logs that could carry
-headers; anything from `../Fergie Time Design System/`.
+Keys and `.env` files; Postgres connection strings and any Supabase access token (added
+6 Oct); photographs; LoRA weights; the Studio database dumps and cache; unpublished clips; raw
+provider responses (they contain public media URLs); run logs that could carry headers or
+connection strings; anything from `../Fergie Time Design System/`.
 
 ### 11.6 Likeness, labelling and content policy
 
@@ -767,7 +855,7 @@ list for that primary read, and the trigger list for counsel.
 | Browser matrix | The acceptance build gains a hosted item backed by a tiny synthetic clip served from the same origin; cells at 360, 375, 390 and about 1000; at most one frame and one video element; zero requests before Play; the inert comparison with `[]` | Geometry, hit-testing, request classes. A synthetic clip is not a generated one |
 | Studio logic | Its own vitest project in `studio/`: state machine, caps, ledger arithmetic, idempotent resume, registry refusal, policy gate, export validation against the reader's own schema | Logic only |
 | The fal stub | A fake behind the fal port with scripted sequences: queued then completed, error payload, safety refusal, timeout, expired result, duplicate delivery. A network guard throws on any host that is not the stub | **A green stub is not generation**, in PR #144's sense. It proves the Studio's handling and nothing about fal, a model or a price |
-| Studio database | A temporary SQLite file per test, schema applied from scratch | Schema and queries |
+| Studio database | *4 Oct:* a temporary SQLite file per test, schema applied from scratch. *6 Oct (15.2):* a fresh PGlite database per test, with the committed drizzle-kit migrations applied from scratch | Schema, migrations and queries, on the same Postgres dialect. Nothing about Supabase itself |
 | Live runs | Only by Beni, under a written authority naming endpoints and a budget; receipts outside the repo; results into Appendix S | The only evidence about fal |
 
 **CI rules.**
@@ -781,6 +869,8 @@ list for that primary read, and the trigger list for counsel.
 - Every PR that adds or changes files under `studio/` proves the production CSS hash and the
   single-file hash equal to `main`'s (K11, Appendix M4).
 - No workflow ever holds a provider key, so no CI run can call fal.
+- *Added 6 Oct:* no test, script or workflow connects to Supabase, and CI never holds the
+  database URL. The first live connection and the first migration are Beni's, outside CI.
 
 **Against the course's approach.** The course asserts screenshots against sentences by CLIP
 similarity, runs on Chromium at one viewport, and installs Midscene without using it
@@ -802,7 +892,7 @@ Claude Code, design by Claude Design.
 | **D1** | Claude Design brief on Fergie Time: the Generated badge, hosted-player chrome, kind-specific recovery copy, the motion budget's extension, the local admin surface | P0 rulings 15.5, 15.6, 15.10 | Everything | Design review cycle | Beni's sign-off | design | Claude Design → design review |
 | **R1** | Reader contract: the kind union, the hosted identity, provenance, the policy block, playability by provider, C10's decision | P0; coordination with PR #144 (C11) | Edition stays `[]`; no UI change | Contract tests; 72-cell inert comparison | Six-pass review | patch (no reader-visible capability) | Codex Astra → Claude Code |
 | **R2** | Hosted adapter inside the one host; mock; acceptance item with a synthetic same-origin clip; matrix cells | R1; **PR #144's Cinema cover resolved**; D1 for the chrome | Edition stays `[]`; nothing requested | Matrix; isolation check; a stub is not playback | Six-pass review | patch | Codex Astra → Claude Code |
-| **ST1** | Studio core, local and offline: the isolated folder, the Tailwind exclusion, registry, state machine, ledger, caps, fal port and stub, a command-line entry | P0 rulings 15.2, 15.3 | No key, no network, no reader change | Studio tests; CSS and single-file hashes equal | Six-pass review | patch (tooling) | Codex lighter or Cursor → Claude Code |
+| **ST1** | Studio core, local and offline: the isolated folder, the Tailwind exclusion, registry, state machine, ledger, caps, fal port and stub, a command-line entry; *6 Oct (15.2):* the Drizzle Postgres schema, the generated migrations, the PGlite-backed tests and a migrate command Beni runs | P0 rulings 15.2 (amended 6 Oct), 15.3. Beni creating the Supabase project is his own account action, needed before first live use, not before ST1 merges | No key, no network, no reader change: still true for the slice's own verification, which runs on PGlite | Studio tests; CSS and single-file hashes equal | Six-pass review | patch (tooling) | Codex lighter or Cursor → Claude Code |
 | **ST2** | Beni's fal spike: the bake-off across consistency routes, under a written authority | ST1; ruling 15.8, 15.9 | The repo | Appendix S, filled by Beni | **Spend authority** | not a release | Beni |
 | **ST3** | The local review surface: lineage, Regenerate, Confirm, cost meter, refusal states | ST1; D1 | Reader | Studio tests; a browser pass on loopback | Six-pass review | patch (tooling) | Codex → Claude Code |
 | **ST4** | Media port for the chosen host; the export command that writes a branch, validates with the reader's schema and opens a draft PR | R1; ruling 15.4; ST2's evidence | Nothing is exported in this slice | Stubbed upload; a dry-run export diff | Six-pass review; **vendor ruling** | patch (tooling) | Codex Astra → Claude Code |
@@ -849,6 +939,8 @@ Claude Code, design by Claude Design.
 | 9 | A permission expiry turns `verify` red on `main` and the sync cannot merge (C10) | R1 builder | An edition item with an expiry and a build-time playability test |
 | 10 | The media host choice forces a second adapter rewrite | CTO seat | A host whose playback URL is not a plain file |
 | 11 | This review's external facts came through a summarising fetch | PM seat | Any decision that turns on one policy sentence: re-read the page |
+| 12 | Supabase project paused or unreachable *(added 6 Oct, 15.2)* | Studio builder | A paid submit attempted while the ledger write fails: the Studio must refuse it (8.2, 8.3) |
+| 13 | Studio rows exposed through Supabase's Data API *(added 6 Oct)* | Studio builder and cold reviewer | Any Studio table readable with a publishable key (11.2) |
 
 ### Costs this program knowingly accepts
 
@@ -859,7 +951,9 @@ Claude Code, design by Claude Design.
 - Provenance is an attestation with hashes, not a cryptographic proof, and a clip cannot be
   regenerated identically.
 - A second lockfile and a second test suite to keep green, outside the required check.
-- The published prompt, if 15.7 is yes, is public forever.
+- The published prompt, if 15.7 is yes, is public forever. *(Ruled text, 5 Oct: it is.)*
+- *Added 6 Oct (15.2):* a second vendor account, and on the Free plan a restore click after
+  any idle week before the Studio can spend again.
 
 ### Deliberately not done
 
