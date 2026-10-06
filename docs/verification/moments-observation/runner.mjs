@@ -50,6 +50,32 @@ const promptAbort = new AbortController()
 process.once('SIGINT', () => stop('operator-interrupt'))
 const now = () => new Date().toISOString()
 const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex')
+async function endpointProof(profileDir) {
+  let devToolsActivePort = true
+  try { await fs.access(path.join(profileDir, 'DevToolsActivePort')) } catch { devToolsActivePort = false }
+  const processes = execFileSync('ps', ['-ww', '-axo', 'pid=,command='], { encoding: 'utf8' }).split('\n')
+  const parent = processes.find(line => line.includes('--user-data-dir=' + profileDir) && !line.includes('--type='))
+  const pids = []
+  const walk = pid => {
+    if (!pid || pids.includes(pid)) return
+    pids.push(pid)
+    let kids = ''
+    try { kids = execFileSync('pgrep', ['-P', pid], { encoding: 'utf8' }) } catch { kids = '' }
+    for (const kid of kids.trim().split('\n').filter(Boolean)) walk(kid)
+  }
+  if (parent) walk(parent.trim().split(/\s+/)[0])
+  let listeners = []
+  if (pids.length) {
+    try {
+      const out = execFileSync('lsof', ['-nP', '-a', '-iTCP', '-sTCP:LISTEN', '-p', pids.join(',')], { encoding: 'utf8' })
+      listeners = out.split('\n').filter(line => line && !line.startsWith('COMMAND'))
+    } catch (error) {
+      const out = String(error.stdout ?? '')
+      listeners = out.split('\n').filter(line => line && !line.startsWith('COMMAND'))
+    }
+  }
+  return { devToolsActivePort, chromePids: pids, listeningSockets: listeners }
+}
 function stop(reason) {
   if (result.stopReason) return
   result.stopReason = reason; result.status = 'stopped'
@@ -157,6 +183,8 @@ try {
   if (mode === 'live') {
     if (!process.stdin.isTTY) throw new Refusal('live-requires-beni-terminal')
     confirmation = await ask(`Confirm this Chrome and allowlist. Type RELEASE ${origin} to launch the one visit.`)
+    authority = validateAuthority(authority, origin, now(), mode)
+    result.authority = authority
   }
   const stub = await fs.readFile(new URL('./observation-stub.js', import.meta.url), 'utf8')
   const recordAbort = (url, reason) => {
@@ -178,9 +206,10 @@ try {
   ensure()
   const { chromium } = await import(path.resolve(args.runtime))
   profile = await fs.mkdtemp(path.join(os.tmpdir(), 'kickoff-observation-chrome-'))
+  result.authorityAgeMs = Date.parse(now()) - Date.parse(authority.at)
   context = await chromium.launchPersistentContext(profile, { executablePath: args.chrome, headless: !!args.headless, chromiumSandbox: true,
     viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, reducedMotion: 'reduce', serviceWorkers: 'block',
-    args: ['--remote-debugging-port=0', '--disable-background-networking', '--disable-component-update', '--disable-domain-reliability', '--disable-sync', '--no-first-run', '--no-default-browser-check', '--disable-features=MediaRouter,OptimizationHints', ...(mode === 'stub' ? [dnsGuard + ', MAP *.s4a.test 127.0.0.1'] : [])] })
+    args: ['--disable-background-networking', '--disable-component-update', '--disable-domain-reliability', '--disable-sync', '--no-first-run', '--no-default-browser-check', '--disable-features=MediaRouter,OptimizationHints', ...(mode === 'stub' ? [dnsGuard + ', MAP *.s4a.test 127.0.0.1'] : [])] })
   result.browser.launchedVersion = context.browser()?.version() ?? chromeVersion
   result.browser.freshProfile = true
   const handled = new Set()
@@ -211,7 +240,7 @@ try {
     } catch (error) { if (!result.stopReason) stop('routing-failed: ' + error.message) }
   }
   result.network.redirects = []
-  networkGuard = await guardNetwork(profile, routeRequest, redirect => { result.network.redirects.push(redirect); recordAbort(redirect.url, 'http-redirect-refused'); stop('http-redirect-refused') }, error => { if (!result.stopReason && result.status !== 'complete') stop('response-guard-failed: ' + error.message) }, pending)
+  networkGuard = await guardNetwork(context.browser(), routeRequest, redirect => { result.network.redirects.push(redirect); recordAbort(redirect.url, 'http-redirect-refused'); stop('http-redirect-refused') }, error => { if (!result.stopReason && result.status !== 'complete') stop('response-guard-failed: ' + error.message) }, pending)
   context.on('response', response => {
     if (providerHost(new URL(response.url()).hostname) && !handled.has(response.url())) {
       result.network.unhandledProviderResponses.push(response.url()); stop('unhandled-provider-response')
@@ -236,6 +265,7 @@ try {
   if (mode === 'stub') await context.addInitScript(variant => { window.__observationVariant = variant }, args.variant)
   page = context.pages()[0] ?? await context.newPage()
   result.browser.launchCommand = execFileSync('ps', ['-ww', '-axo', 'command='], { encoding: 'utf8' }).split('\n').find(line => line.includes('--user-data-dir=' + profile) && !line.includes('--type='))?.replaceAll(profile, '<fresh-profile>') ?? 'not observed'
+  result.browser.endpointProof = await endpointProof(profile)
   result.browser.webdriver = await page.evaluate(() => navigator.webdriver)
   // CDP's extra-info headers describe the browser's network request, rather than the
   // intercepted proposal. Locally fulfilled frame requests may have no wire headers.

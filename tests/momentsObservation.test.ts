@@ -17,9 +17,10 @@ const origin = 'http://127.0.0.1:4318', instant = '2026-10-02T18:00:00Z'
 const authority = () => stubAuthority(origin)
 const input = (override: Partial<RequestInput> = {}): RequestInput => ({ url: apiUrl, phase: 'after-play', resourceType: 'script',
   origin, namedIds: fictionalIds, hosts: providerDomains, seen: { api: false, frames: [] }, ...override })
-const refused = (value: unknown, reason: string, url = origin, mode: 'stub' | 'live' = 'stub') => {
-  expect(() => validateAuthority(value, url, instant, mode)).toThrow(reason)
+const refused = (value: unknown, reason: string, url = origin, mode: 'stub' | 'live' = 'stub', clock = instant) => {
+  expect(() => validateAuthority(value, url, clock, mode)).toThrow(reason)
 }
+const liveAuthority = (at: string) => ({ ...authority(), at, ids: [{ id: 'S4Fake00001', role: 'unknown' as const, source: 'own-upload' as const }] })
 
 describe('identity extraction and network policy', () => {
   it('redirect guard refuses Location before automatic redirect handling', () => {
@@ -99,6 +100,28 @@ describe('authority and generated edition', () => {
     const raw = authority(); raw.ids[0]!.id = id; refused(raw, 'malformed-video-id')
   })
   it('future-authority', () => refused({ ...authority(), at: '2099-01-01T00:00:00Z' }, 'future-authority'))
+  it('accepts an authority exactly 24 hours old in live mode and refuses one millisecond older', () => {
+    const at = '2026-10-02T00:00:00.000Z'
+    expect(validateAuthority(liveAuthority(at), origin, '2026-10-03T00:00:00.000Z', 'live').at).toBe(at)
+    const staleAt = '2026-10-03T00:00:00.001Z'
+    const ageMs = Date.parse(staleAt) - Date.parse(at)
+    expect(() => validateAuthority(liveAuthority(at), origin, staleAt, 'live')).toThrow(`stale-authority: ${ageMs / 3600000} hours`)
+  })
+  it('compares an offset instant, not its clock face', () => {
+    const at = '2026-10-02T05:30:00+05:30'
+    expect(validateAuthority(liveAuthority(at), origin, '2026-10-03T00:00:00.000Z', 'live').at).toBe(at)
+    refused(liveAuthority(at), 'stale-authority', origin, 'live', '2026-10-03T00:00:00.001Z')
+    refused(liveAuthority('2026-10-03T05:30:00.001+05:30'), 'future-authority', origin, 'live', '2026-10-03T00:00:00.000Z')
+  })
+  it('keeps a missing or malformed at on the schema refusal', () => {
+    refused({ ...authority(), at: '2026-10-02' }, 'authority-schema')
+    refused({ ...authority(), at: 'yesterday' }, 'authority-schema')
+  })
+  it('keeps the dated stub fixture valid in stub mode and refuses that same date in live mode', () => {
+    expect(validateAuthority(authority(), origin, '2027-01-01T00:00:00Z', 'stub')).toEqual(authority())
+    const ageMs = Date.parse('2026-10-03T00:00:00.001Z') - Date.parse(authority().at)
+    expect(() => validateAuthority(authority(), origin, '2026-10-03T00:00:00.001Z', 'live')).toThrow(`stale-authority: ${ageMs / 3600000} hours`)
+  })
   it('too-many-ids', () => { const raw = authority(); raw.ids.push({ ...raw.ids[0]!, id: 'S4Stub00003' }); refused(raw, 'too-many-ids') })
   it('duplicate-id', () => { const raw = authority(); raw.ids[1]!.id = raw.ids[0]!.id; refused(raw, 'duplicate-id') })
   it('origin-mismatch', () => refused(authority(), 'origin-mismatch', 'http://localhost:4318'))

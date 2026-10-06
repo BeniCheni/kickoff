@@ -29,8 +29,11 @@ const run = async (name, extra, reason = null) => {
   if (name.startsWith('refusal-')) assert.equal(receipt.browser, undefined, 'Refusal must precede browser launch')
   if (receipt.browser?.freshProfile) {
     assert(!receipt.browser.launchCommand.includes('--no-sandbox'), name)
+    assert(!receipt.browser.launchCommand.includes('--remote-debugging-port'), name)
+    assert.equal(receipt.browser.endpointProof.devToolsActivePort, false, name)
     assert(receipt.browser.launchCommand.includes('--host-resolver-rules='), name)
     assert.equal(typeof receipt.browser.webdriver, 'boolean', name)
+    assert.equal(Number.isFinite(receipt.authorityAgeMs), true, name)
   }
   if (name.startsWith('redirect-')) {
     const navigation = /-(meta|script-nav)$/.test(name)

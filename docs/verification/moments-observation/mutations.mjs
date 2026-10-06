@@ -26,6 +26,7 @@ add('extract-body', 'policy.ts', 'if (body) {', 'if (false && body) {')
 for (const reason of ['future-authority', 'duplicate-id', 'authority-hosts', 'invalid-origin', 'non-loopback-requires-https', 'origin-mismatch', 'stub-fictional-only', 'fictional-id-in-live']) {
   add('authority-' + reason, 'authority.ts', `throw new Refusal('${reason}')`, `void '${reason}'`)
 }
+add('authority-stale-authority', 'authority.ts', "throw new Refusal('stale-authority', (ageMs / 3600000) + ' hours')", "void 'stale-authority'")
 add('authority-id-pattern', 'authority.ts', 'id: youtubeVideoIdSchema', 'id: z.string()')
 add('authority-count', 'authority.ts', '}).strict()).min(1).max(2)', '}).strict()).min(1).max(3)')
 add('authority-extra-fields', 'authority.ts', '}).strict()\nexport type Authority', '})\nexport type Authority')

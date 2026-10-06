@@ -1,53 +1,60 @@
 // Browser-target Fetch owns every HTTP request and response in this fresh Chrome.
 // A page-target interceptor loses subresource coverage when an OOPIF rejoins its parent;
-// this owner survives frame/process changes. Playwright retains DOM control only.
-import fs from 'node:fs/promises'
-import path from 'node:path'
+// this owner survives frame/process changes. The session is Playwright's browser CDP
+// session on its own pipe. Measured here, Fetch events for cross-site frames, nested
+// frames, workers and the other loopback redirect kinds arrive on that session without a
+// child session id and without Target.setAutoAttach; failing the paused response on the
+// same session stops the redirect. Playwright retains DOM control only.
 import { redirectLocation, cancelledInterception } from './redirect.ts'
-export async function guardNetwork(profile, routeRequest, onRedirect, onFailure, pending) {
-  const [port, endpoint] = (await fs.readFile(path.join(profile, 'DevToolsActivePort'), 'utf8')).trim().split('\n')
-  const socket = new WebSocket(`ws://127.0.0.1:${port}${endpoint}`)
-  await new Promise((resolve, reject) => { socket.addEventListener('open', resolve, { once: true }); socket.addEventListener('error', reject, { once: true }) })
-  let serial = 0
-  const replies = new Map(), audit = []
-  const send = (method, params = {}, sessionId) => new Promise((resolve, reject) => {
-    const id = ++serial; replies.set(id, { resolve, reject, method }); socket.send(JSON.stringify({ id, method, params, ...(sessionId ? { sessionId } : {}) }))
-  })
+
+// Playwright 1.62.1's client Error drops the JSON-RPC code. The pipe protocol log for
+// this exact message is {"code":-32602,"message":"Invalid InterceptionId."}.
+function exposedCdpError(error) {
+  const text = String(error?.message ?? error)
+  const match = text.match(/Protocol error \([^)]+\): (.*)$/)
+  const message = match ? match[1] : text
+  const code = message === 'Invalid InterceptionId.' ? -32602 : Number.NaN
+  return { code, message }
+}
+
+export async function guardNetwork(browser, routeRequest, onRedirect, onFailure, pending) {
+  const session = await browser.newBrowserCDPSession()
+  const audit = []
   const track = promise => { pending.add(promise); promise.finally(() => pending.delete(promise)) }
-  socket.addEventListener('close', () => { onFailure(new Error('browser-network-guard-disconnected')); for (const reply of replies.values()) reply.reject(new Error('CDP connection closed')); replies.clear() })
-  socket.addEventListener('message', message => {
-    const event = JSON.parse(message.data)
-    if (event.method === 'Fetch.requestPaused') audit.push({ url: event.params.request.url, frameId: event.params.frameId, stage: event.params.responseStatusCode === undefined ? 'request' : 'response', status: event.params.responseStatusCode })
-    if (event.id) {
-      const reply = replies.get(event.id); replies.delete(event.id)
-      if (event.error && reply && cancelledInterception(reply.method, event.error.code, event.error.message)) {
-        audit.push({ stage: 'cancelled-response', method: reply.method, code: event.error.code, message: event.error.message }); reply.resolve({})
-      } else if (event.error) reply?.reject(new Error(event.error.message)); else reply?.resolve(event.result)
-      return
+  const send = async (method, params = {}) => {
+    try { return await session.send(method, params) }
+    catch (error) {
+      const parsed = exposedCdpError(error)
+      if (cancelledInterception(method, parsed.code, parsed.message)) {
+        audit.push({ stage: 'cancelled-response', method, code: parsed.code, message: parsed.message })
+        return {}
+      }
+      throw new Error(parsed.message)
     }
-    if (event.method === 'Fetch.requestPaused') {
-      const e = event.params, sessionId = event.sessionId
-      const task = (async () => {
-        if (e.responseStatusCode !== undefined || e.responseErrorReason) {
-          const location = redirectLocation(e.responseStatusCode ?? 0, e.responseHeaders ?? [])
-          if (location !== null) {
-            await send('Fetch.failRequest', { requestId: e.requestId, errorReason: 'Aborted' }, sessionId)
-            onRedirect({ url: e.request.url, status: e.responseStatusCode, location, action: 'aborted-before-follow', sessionId })
-          } else await send('Fetch.continueResponse', { requestId: e.requestId }, sessionId)
-          return
-        }
-        const route = {
-          request: () => ({ url: () => e.request.url, postData: () => e.request.postData ?? '', resourceType: () => e.resourceType.toLowerCase(), method: () => e.request.method,
-            headers: () => Object.fromEntries(Object.entries(e.request.headers).map(([k,v]) => [k.toLowerCase(), v])) }),
-          abort: () => send('Fetch.failRequest', { requestId: e.requestId, errorReason: 'Aborted' }, sessionId),
-          continue: () => send('Fetch.continueRequest', { requestId: e.requestId }, sessionId),
-          fulfill: ({ contentType, body }) => send('Fetch.fulfillRequest', { requestId: e.requestId, responseCode: 200, responseHeaders: [{ name: 'Content-Type', value: contentType }], body: Buffer.from(body).toString('base64') }, sessionId),
-        }
-        await routeRequest(route)
-      })().catch(onFailure)
-      track(task)
-    }
+  }
+  session.on('close', () => { onFailure(new Error('browser-network-guard-disconnected')) })
+  session.on('Fetch.requestPaused', event => {
+    audit.push({ url: event.request.url, frameId: event.frameId, stage: event.responseStatusCode === undefined ? 'request' : 'response', status: event.responseStatusCode })
+    const task = (async () => {
+      if (event.responseStatusCode !== undefined || event.responseErrorReason) {
+        const location = redirectLocation(event.responseStatusCode ?? 0, event.responseHeaders ?? [])
+        if (location !== null) {
+          await send('Fetch.failRequest', { requestId: event.requestId, errorReason: 'Aborted' })
+          onRedirect({ url: event.request.url, status: event.responseStatusCode, location, action: 'aborted-before-follow', sessionId: event.sessionId ?? null })
+        } else await send('Fetch.continueResponse', { requestId: event.requestId })
+        return
+      }
+      const route = {
+        request: () => ({ url: () => event.request.url, postData: () => event.request.postData ?? '', resourceType: () => event.resourceType.toLowerCase(), method: () => event.request.method,
+          headers: () => Object.fromEntries(Object.entries(event.request.headers).map(([k, v]) => [k.toLowerCase(), v])) }),
+        abort: () => send('Fetch.failRequest', { requestId: event.requestId, errorReason: 'Aborted' }),
+        continue: () => send('Fetch.continueRequest', { requestId: event.requestId }),
+        fulfill: ({ contentType, body }) => send('Fetch.fulfillRequest', { requestId: event.requestId, responseCode: 200, responseHeaders: [{ name: 'Content-Type', value: contentType }], body: Buffer.from(body).toString('base64') }),
+      }
+      await routeRequest(route)
+    })().catch(onFailure)
+    track(task)
   })
-  await send('Fetch.enable', { patterns: [{ urlPattern: '*', requestStage: 'Request' }, { urlPattern: '*', requestStage: 'Response' }] })
-  return { close: () => socket.close(), audit }
+  await session.send('Fetch.enable', { patterns: [{ urlPattern: '*', requestStage: 'Request' }, { urlPattern: '*', requestStage: 'Response' }] })
+  return { close: () => { session.detach().catch(() => {}) }, audit }
 }
