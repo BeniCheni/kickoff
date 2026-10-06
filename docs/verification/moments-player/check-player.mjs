@@ -9,6 +9,7 @@ await fs.mkdir(output, { recursive: true })
 const browser = await chromium.launch({ executablePath: chrome, headless: true })
 const context = await browser.newContext({ deviceScaleFactor: 1, reducedMotion: 'reduce' })
 const requests = [], errors = [], cells = [], journeys = [], shots = []
+const frameHitFailures = []
 const provider = host => ['youtube.com', 'youtu.be', 'youtube-nocookie.com', 'ytimg.com', 'googlevideo.com', 'ggpht.com'].some(domain => host === domain || host.endsWith('.' + domain))
 await context.route('**/*', async route => {
   const url = new URL(route.request().url())
@@ -159,6 +160,7 @@ async function verifyCinema(name) {
 async function capture(name, surface) {
   // The row hit-tests scroll the dialog. Capture its initial presentation first.
   if (surface === 'cinema') assert.equal(await page.locator('[data-moments-player-dialog]').evaluate(node => node.scrollTop), 0, `${name} capture after row scrolling`)
+  assert(await page.evaluate(() => document.documentElement.scrollWidth === innerWidth), `${name} capture overflow`)
   const bytes = await page.screenshot({ path: `${output}/${name}.png`, fullPage: surface !== 'cinema', animations: 'disabled' })
   shots.push({ name, sha256: crypto.createHash('sha256').update(bytes).digest('hex') })
 }
@@ -215,6 +217,21 @@ try {
         }
         if (surface === 'cinema') assert(box.frame.width <= 1441, `${name} cinema frame`)
         if (surface === 'cinema') await verifyCinema(name)
+        let frameHits = []
+        if (surface === 'cinema' && box.frames === 1 && box.host.width > 0 && box.host.height > 0) {
+          frameHits = await page.locator('iframe').evaluate(frame => {
+            const r = frame.getBoundingClientRect()
+            return [[r.x + r.width / 2, r.y + r.height / 2],
+              [r.x + 8, r.y + 8], [r.right - 8, r.y + 8],
+              [r.x + 8, r.bottom - 8], [r.right - 8, r.bottom - 8]].map(([x, y]) => {
+              const hit = document.elementFromPoint(x, y)
+              return { x, y, iframe: hit === frame, hit: hit?.tagName, className: hit?.getAttribute('class') }
+            })
+          })
+          // Retain every failing cell for the red baseline, then fail the whole run below.
+          try { assert(frameHits.every(hit => hit.iframe), `${name} frame hit-test`) }
+          catch { frameHitFailures.push({ name, frameHits }) }
+        }
         if (shotNames.has(name)) await capture(name, surface)
         const hits = await hitRows()
         assert(hits.length >= 1 && hits.every(hit => hit.points.every(Boolean)), `${name} hit ${JSON.stringify(hits)}`)
@@ -232,7 +249,7 @@ try {
           journeys.push({ id: 'scroll', width, lens, theme, delta, anchor: scrolled.anchor, host: scrolled.host })
           await page.evaluate(() => scrollTo(0, 0))
         }
-        cells.push({ name, width, lens, theme, surface, playback, box: measured, host: box.host, list: box.list, frames: box.frames })
+        cells.push({ name, width, lens, theme, surface, playback, box: measured, host: box.host, list: box.list, frames: box.frames, frameHits })
       }
     }
     await fs.writeFile(`${output}/progress.json`, JSON.stringify({ completed: cells.length, lastWidth: width }))
@@ -353,6 +370,7 @@ try {
         })
         assert(visible.focused && visible.slot && visible.action, `D-15 ${lens} ${theme} ${input} ${JSON.stringify(visible)}`)
         if (lens === 'poster' && theme === 'light' && input === 'mouse') {
+          assert(await page.evaluate(() => document.documentElement.scrollWidth === innerWidth), 'D-15 capture overflow')
           const bytes = await page.screenshot({ path: `${output}/390-poster-light-cinema-playing-d15.png`, animations: 'disabled' })
           shots.push({ name: '390-poster-light-cinema-playing-d15', sha256: crypto.createHash('sha256').update(bytes).digest('hex') })
         }
@@ -425,6 +443,7 @@ try {
   }
   assert.deepEqual(errors, [])
   assert(!requests.some(request => request.mediaProvider || request.unexpected || request.failed))
+  assert.equal(frameHitFailures.length, 0, `${frameHitFailures.length} Cinema cells fail the five-point frame hit-test`)
 } catch (error) {
   failure = error.stack
   console.error(failure)
@@ -436,7 +455,7 @@ try {
   }
   const receipt = { browser: browser.version(), runtime, chrome, origin, dateUtc: new Date().toISOString(), cells: cells.length, journeys, shots,
     requests: { total: requests.length, fonts, mediaProvider: requests.filter(request => request.mediaProvider).length, unexpected: requests.filter(request => request.unexpected).length, failed: requests.filter(request => request.failed).length },
-    errors, failure }
+    errors, frameHitFailures, failure }
   await fs.writeFile(`${output}/player-receipt.json`, JSON.stringify(receipt))
   await fs.writeFile(`${output}/cells.json`, JSON.stringify(cells))
   await browser.close()

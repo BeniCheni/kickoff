@@ -1,0 +1,12 @@
+
+> kickoff@0.5.2 test
+> vitest run
+
+
+ RUN  v4.1.11 <WORKTREE>
+
+
+ Test Files  55 passed (55)
+      Tests  860 passed (860)
+   Start at  10:34:35
+   Duration  21.56s (transform 10.30s, setup 6.79s, import 29.22s, tests 96.66s, environment 26.34s)

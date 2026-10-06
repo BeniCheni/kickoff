@@ -415,6 +415,11 @@ it('H-B/H-E: the header shell stays 780 and empty copy is unchanged', () => {
 })
 
 it('the frame shows only on the selection it was asked to play', () => {
+  const originalRect = HTMLElement.prototype.getBoundingClientRect
+  vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
+    return this.hasAttribute('data-moments-cinema-slot')
+      ? new DOMRect(20, 80, 320, 200) : originalRect.call(this)
+  })
   renderVisit(); const [first, second] = archivalEdition
   openCard(first!.id); click('Play'); emitPlaying(3)
   const dialog = document.querySelector<HTMLElement>('[data-moments-player-dialog]')!
@@ -434,6 +439,9 @@ it('the frame shows only on the selection it was asked to play', () => {
   click('Enter Cinema')
   expect(dialog.getAttribute('data-placement')).toBe('cinema')
   expect(host.hasAttribute('inert')).toBe(true)
+  expect(host.style.width).toBe('0px')
+  expect(host.style.height).toBe('0px')
+  expect(host.style.display).not.toBe('none')
   const last = [...dialog.querySelectorAll<HTMLElement>('button:not([disabled]), a[href]')].at(-1)!
   last.focus()
   fireEvent.keyDown(last, { key: 'Tab' })
@@ -449,6 +457,8 @@ it('the frame shows only on the selection it was asked to play', () => {
   fireEvent.click(within(dialog).getByRole('button', { name: 'Play' }))
   expect(lastPlay().itemId).toBe(second!.id)
   expect(host.hasAttribute('inert')).toBe(false)
+  expect(host.style.width).toBe('320px')
+  expect(host.style.height).toBe('200px')
   click('Exit Cinema')
   expect(dialog.getAttribute('data-placement')).toBe('stage')
   click(/^Previous:/)
