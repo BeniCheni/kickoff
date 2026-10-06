@@ -6,6 +6,19 @@ branch. This is the proposal rung for a new program. It changes no code, propose
 number, calls no provider and decides no vendor, account or spend. Every fork ends in a
 recommendation and a line in section 15 for Beni to rule on.
 
+**Amended Tue 6 Oct 2026** by the CTO seat (Claude Code, Fable 5.1) on Beni's rulings of
+5 Oct 2026 on all fourteen decisions, his 6 Oct amendment to 15.2, and his fal spike of 4 to
+5 Oct (Appendix S). The review itself still made no provider call and spent nothing: every
+measured figure below comes from that separate spike, run outside every repository, and the
+spend caps and the database choice are now his rulings rather than this seat's
+recommendations. Where the spike or a later merge overtook a passage, the new text sits
+beside the old with its tag and source; the 4 Oct wording is recoverable in Git at
+`2a78489`. Before any prose changed, the branch was brought up to `origin/main` at `b5561b1`
+(which carries #159 and #164) by a merge commit, and the post-merge baseline was recorded:
+typecheck exit 0, 867 tests in 55 files, production CSS SHA-256 `a3e896cd54a93d13…`
+(39,043 bytes). Appendix M1's `f22157bc…` is the `30ca650` baseline, which #159 moved by one
+rule; the post-merge hash is the one this document is measured against from here on.
+
 ## 1. Verdict and one-page summary
 
 **Verdict.** Kickoff should inherit the course's *pipeline* (a keyframe, then image-to-video
@@ -19,22 +32,27 @@ plain video element on one allow-listed media origin, behind the existing explic
 permission gates) and a `generated` record kind that cannot carry a fixture. The largest
 unknowns are not architectural: subject consistency for the cats is untested on every route,
 the published-media host and all spend are Beni's to rule, and fal's terms and the EU
-labelling provision need counsel before a generated edition merges.
+labelling provision need counsel before a generated edition merges. *Amended 6 Oct 2026:*
+"untested on every route" is out of date — Beni's spike of 4 to 5 Oct ran each route once or
+twice, with no numeric scores (section 9, Appendix S); "Supabase" leaves the declined list,
+because Beni ruled the Studio's records onto Supabase Postgres through Drizzle (15.2, amended
+6 Oct; section 6.3); the spend caps are his numbers (15.8); and 15.12 replaced counsel by
+default with a primary-source read and a trigger for counsel.
 
 | # | Question | Recommendation | Who decides |
 |---|---|---|---|
 | A | What to take from the course | Inherit the fal pipeline shape and the prompt craft; adapt Stream and the admin surface; defer the database, auth and embeddings; reject Next.js for the reader, autoplay and CLIP-threshold test gates | CTO, recorded here |
-| B | Boundary | **Export PR.** The Studio opens a PR that edits `moments.json`; merge stays publication. No runtime feed | Beni (15.1) |
+| B | Boundary | **Export PR.** The Studio opens a PR that edits `moments.json`; merge stays publication. No runtime feed | Beni (15.1): **yes**, 5 Oct |
 | C | Studio hosting and database | **None in phase 1.** A local process on Beni's Mac with a SQLite file outside the repo. Cloudflare Workers with D1 is the hosted path when a visitor dialog is researched | Beni (15.2) |
-| D | Data model | A `generated` kind without a fixture, a `hosted` playback identity, a provenance record and a policy attestation; five collisions with the current contract, section 7 | Beni (15.5, 15.6) |
-| E | fal integration | Plain REST behind a typed port, queue plus polling, Studio-owned retries, an append-only cost ledger with per-job and per-session caps, a pinned model registry | Beni for the cap numbers (15.8) |
-| F | Subject consistency | Try reference-image keyframes first, then a FLUX.2 LoRA, then reference-to-video; Director last. All four need Beni's experiment | Beni (15.9) |
-| G | Playback and motion | Plain MP4 in a video element (adds no library; hls.js would add 113 to 177 kB gzip). Motion stays zero-dependency inside an extended Fergie Time budget | Beni (15.4, 15.10) |
+| D | Data model | A `generated` kind without a fixture, a `hosted` playback identity, a provenance record and a policy attestation; five collisions with the current contract, section 7 | Beni (15.5 **yes**, 15.6 **authored**; 5 Oct) |
+| E | fal integration | Plain REST behind a typed port, queue plus polling, Studio-owned retries, an append-only cost ledger with per-job and per-session caps, a pinned model registry | Beni for the cap numbers (15.8): **$1.50 a job, $6 a session, balance at or below $9.37**, 5 Oct; section 8.3 |
+| F | Subject consistency | Try reference-image keyframes first, then a FLUX.2 LoRA, then reference-to-video; Director last. All four need Beni's experiment *(4 Oct)*. Spiked 4 to 5 Oct: the keyframe route is pinned first as recipe v0; the LoRA and Director were tried and set aside (section 9) | Beni (15.9): **keyframes**, 5 Oct |
+| G | Playback and motion | Plain MP4 in a video element (adds no library; hls.js would add 113 to 177 kB gzip). Motion stays zero-dependency inside an extended Fergie Time budget | Beni (15.4 **later**, the host at ST4; 15.10 **yes**; 5 Oct) |
 | H | Auth and secrets | No auth on loopback, but a per-run token and an Origin check. Keys never enter the repo, GitHub Actions or a `VITE_` variable | CTO, recorded here |
-| I | Likeness and labelling | Enforce fictional-only in the schema, not in a guideline; one content policy covering both halves; counsel before first publication | Beni (15.11, 15.12) |
+| I | Likeness and labelling | Enforce fictional-only in the schema, not in a guideline; one content policy covering both halves; counsel before first publication *(4 Oct)*. Ruled 5 Oct: one policy with a per-clip human review checklist, and a primary-source read of fal's terms and Article 50 with counsel only on a trigger | Beni (15.11 **yes**, 15.12 **primary read plus trigger**; 5 Oct) |
 | J | Verification | A fal stub that proves logic and nothing about fal; Studio tests in their own workflow that is never a required check | CTO, recorded here |
-| K | Repository shape | A `studio/` folder in Kickoff with its own `package.json` and lockfile, not a workspace, excluded from the Tailwind scan | Beni (15.3) |
-| L | Roadmap | Eight slices, section 13; the reader slices are inert; the first visible change is a publication PR | Beni for numbers (15.14) |
+| K | Repository shape | A `studio/` folder in Kickoff with its own `package.json` and lockfile, not a workspace, excluded from the Tailwind scan | Beni (15.3): **folder**, 5 Oct |
+| L | Roadmap | Eight slices, section 13; the reader slices are inert; the first visible change is a publication PR | Beni for numbers (15.14): **decide later; number at publication**, 5 Oct |
 | M | Risks | Section 14; top five in the PR body | — |
 
 ## 2. Scope, authority and method
@@ -69,6 +87,13 @@ of its section.
 - **ROUTED** — supplied by Beni (the 3 Oct capture) or by the course's own text, not
   independently verified.
 - **UNVERIFIED** — not established this session.
+- **Spike tags** (added 6 Oct; Appendix S and every passage that cites the spike keep them
+  verbatim): **OBSERVED** — the spike run saw it happen, which is CONFIRMED by a real provider
+  run and closes the matching VERIFY LIVE; **DOCUMENTED** — a fal page or API said so on 4 or
+  5 Oct, which is CONFIRMED from a primary source, with the summarising-fetch caveat below
+  wherever the spike read a page rather than an API response; **UNVERIFIED** — the same word,
+  the same meaning. A spike figure Beni read from his fal dashboard rather than the operator
+  from a response header is additionally ROUTED, and Appendix S says which.
 
 **Method limits, stated once.** External pages were read through a fetch tool that returns a
 small model's reading of the page, not the raw text. Numbers were cross-checked where two
@@ -209,7 +234,8 @@ words, and copies no file, prompt, schema or image. Everything in section 5 mark
 ADAPT is a pattern to re-implement from this description, not from the source. Recommendation:
 Beni asks the instructor one question in writing, whether course participants may reuse
 exercise code in their own public repositories, **only if** a builder later wants to lift
-code rather than a pattern. Nothing in the roadmap depends on the answer.
+code rather than a pattern. Nothing in the roadmap depends on the answer. **Ruled 5 Oct
+(15.13): later** — exactly that condition.
 
 ## 5. Inherit, adapt, defer, reject
 
@@ -251,8 +277,8 @@ Evidence is CONFIRMED at the branch and file named. Costs are from Appendix A un
 | HONESTY.md | One sentence to amend at publication (F7) and a new rule for generated items | "Committed, diffed, reviewed" stops being true for Moments | As option 1 |
 | What it costs | Publication takes a PR cycle | A public service with CORS, uptime and abuse surface | A public service, for private media only |
 
-**Recommendation: option 1.** It is the only one that leaves K3 and K6 intact, and admin-only
-generation has no need for anything faster than a PR. Option 3 is kept open, not built: it
+**Recommendation: option 1.** **Ruled yes, 5 Oct (15.1).** It is the only one that leaves K3
+and K6 intact, and admin-only generation has no need for anything faster than a PR. Option 3 is kept open, not built: it
 becomes relevant only if published media must be private. **Reopening evidence:** a ruled
 visitor-facing generation flow, or a requirement that a clip be withdrawn faster than a
 revert and a Pages deploy.
@@ -303,9 +329,11 @@ per clip on an origin the code allow-lists. A 15-second clip is a quarter of a s
 
 **Recommendation:** build the reader's hosted adapter against a media origin that is a single
 constant, prove it on a synthetic clip in the acceptance build, and let Beni pick the host at
-the export slice (15.4). If asked to pick today: **Stream**, because it needs no domain, its
-floor covers thousands of clips, the course has already shown the token scoping, and it is the
-same account a hosted Studio would use. The same-origin option is the honest fallback if no
+the export slice (15.4). **Ruled 5 Oct (15.4): later** — the host is chosen at slice ST4, and
+the line that follows is this seat's lean, not a pending pick. If asked to pick today the lean
+is **Stream**, because it needs no domain, its floor covers thousands of clips, the course has
+already shown the token scoping, and it is the same account a hosted Studio would use; real
+clip sizes are now measured (below), which the 4 Oct text lacked. The same-origin option is the honest fallback if no
 new account is wanted for a first edition of a few clips. The YouTube option costs no code but
 merges the two halves Beni just separated and inherits every unverified YouTube behaviour.
 **Reopening evidence:** a real clip's size and bitrate from Beni's first spike; a decision
@@ -325,8 +353,9 @@ that clips must be private; phone playback that stalls on a progressive MP4.
 | The public reader | Sees how generation is built, in the open notebook | Same | Sees nothing |
 | Beni's ruling "build in a Kickoff branch" | Met | Met | Not met as worded |
 
-**Recommendation: the folder.** The private things (photos, keys, the database, unpublished
-clips, LoRA weights) never enter any repository; the code that handles them can be public.
+**Recommendation: the folder.** **Ruled folder, 5 Oct (15.3).** The private things (photos,
+keys, the database credentials, unpublished clips, LoRA weights) never enter any repository;
+the code that handles them can be public.
 The first Studio PR must carry the one-line Tailwind exclusion in `src/index.css` and prove
 the production CSS and the single-file hash unchanged, and must not add a required status
 check (section 12). **Reopening evidence:** a Studio dependency that will not run on the
@@ -400,7 +429,7 @@ All CONFIRMED against `src/lib/moments.ts` and its siblings at `30ca650`.
 | C4 | `category` is one of `prematch`, `highlights`, `celebrations` | None describes a fictional clip, and a Generated marker must not be a filterable-away category | `kind` carries the badge; the generated kind gets its own category enum |
 | C5 | `source.content.scope` has no value for fiction; `hasEmbedPermission` requires a known scope and a verification other than `unverified` | The gate would reject every generated item | Add a `generated-fiction` scope; verification is `watched` (Beni watched it) |
 | C6 | `hasEmbedPermission` looks only for `use === 'embed'`; `hosted-video` is in the enum and read by nothing | — | One playability rule that picks the use by provider: YouTube needs `embed`, hosted needs `hosted-video`. Every other clause is unchanged, including the lapse that parks a live frame |
-| C7 | `newestMoments` orders by verified fixture kickoff, and the architecture forbids inferring Newest from curation or upload time | A generated clip has no fixture chronology | Needs a ruling (15.6): generated items keep authored order after dated fixtures, or sort by generation instant under a label that says so |
+| C7 | `newestMoments` orders by verified fixture kickoff, and the architecture forbids inferring Newest from curation or upload time | A generated clip has no fixture chronology | Needs a ruling (15.6): generated items keep authored order after dated fixtures, or sort by generation instant under a label that says so. **Ruled authored, 5 Oct**: in Newest, generated items keep authored order after dated fixtures |
 | C8 | `PlayRequest` carries `videoId: string`; `App` takes one player factory for the visit | A mixed edition needs two playback mechanisms in one host | `PlayRequest` carries a provider-tagged media reference; one composite adapter owns both the YouTube frame and a video element **inside the same host**, so K4 holds (section 10.1) |
 | C9 | Recovery copy says the owner blocks playback and that an official source is available | Wrong for a hosted clip | Kind-specific recovery sentences, in the design brief |
 | C10 | `tests/moments.test.ts` pins the edition to `[]`; S7 replaces it with "every identity item passes the playability rule at build time" | A permission with an expiry would turn `verify` red on `main` at that instant, and the sync PR could no longer merge | Either generated permissions carry no expiry, or the build-time test evaluates at `curatedAt`. Decide in slice R1; it also affects the YouTube half |
@@ -427,7 +456,12 @@ generated       = strict {
   generation:  strict {
     studioId · generatedAt
     model:     { endpoint, pinnedOn }                  # the registry row, not a marketing name
-    promptSha256 · prompt?                             # 15.7: publish the prompt, or only its hash
+    promptSha256 · prompt                              # 15.7 ruled text (5 Oct): the prompt is published
+    promptExpansion: { ran, mode? }                    # pseudo-schema only: whether fal's prompt expansion
+                                                       # ran and in which mode. H3 with prompt_expansion_mode
+                                                       # "balanced" rewrote the prompt into about 1,900
+                                                       # characters of shot list and audio cues (OBSERVED);
+                                                       # whether to carry the expanded text too is R1's call
     inputs:    [{ role, sha256 }]                      # hashes only; a photo never enters the repo
     seed? · parents: [studioId]
   }
@@ -604,8 +638,8 @@ smoothness measurement was run; none is claimed.
 | `motion` with `LazyMotion` | 14.0.0, MIT | yes | +27.6 kB | |
 | `motion`, full component | 14.0.0, MIT | yes | +41.2 kB | Layout animation and exit presence |
 
-**Recommendation.** Stay zero-dependency: CSS, Web Animations and, behind a feature test, view
-transitions. Fergie Time's budget (150 ms, 180 ms, 220 ms; "Nothing else animates") is a
+**Recommendation.** **Ruled yes, 5 Oct (15.10).** Stay zero-dependency: CSS, Web Animations
+and, behind a feature test, view transitions. Fergie Time's budget (150 ms, 180 ms, 220 ms; "Nothing else animates") is a
 token-level rule, so *any* new motion, with or without a library, is a design-system decision
 for the Claude Design brief, not a builder's choice. If the brief specifies an interaction the
 platform cannot do (shared-element continuity on a browser without view transitions, physics),
@@ -677,7 +711,13 @@ headers; anything from `../Fergie Time Design System/`.
 ### 11.6 Likeness, labelling and content policy
 
 Not legal advice. Each item names the text, says what it appears to require, and is flagged
-for counsel.
+for counsel *(4 Oct)*. **Ruled 5 Oct (15.12): primary read plus trigger**, not counsel by
+default. Before the first generated edition merges, a session reads fal's Terms of Service
+output and licence clauses and EU AI Act Article 50, with the Act's definition of a deep fake,
+at primary source rather than through a summarising fetch, and quotes them into the content
+policy. Beni goes to counsel only if a clause restricts publishing or ownership, or the text
+cannot settle Article 50's scope. The "For counsel" column below is therefore the reading
+list for that primary read, and the trigger list for counsel.
 
 | Text | What it appears to say | Status | For counsel |
 |---|---|---|---|
@@ -697,8 +737,8 @@ for counsel.
 3. **A policy attestation is part of the record.** `fictionalOnly` is the literal `true`; the
    Studio will not export without a passed policy check, and the reader will not validate a
    generated record without it.
-4. **One content policy, two sections.** The slice-4 spec's S5.5 is a one-page source policy
-   for the first YouTube edition. Extend it into a single policy document: section one, real
+4. **One content policy, two sections** (ruled yes, 5 Oct; 15.11). The slice-4 spec's S5.5 is
+   a one-page source policy for the first YouTube edition. Extend it into a single policy document: section one, real
    sources (rights, permission basis, what counts as watched); section two, generated content:
    fictional players only; no real person's name, face, voice or number-and-name pairing; no
    real club crest, kit design or sponsor mark; no real competition branding or broadcaster
@@ -708,6 +748,15 @@ for counsel.
    watermark is VERIFY LIVE (inspect the first generated file); the Studio must not strip it.
 6. **Nothing is foreclosed for options B and C.** A stricter or different policy is a new
    policy version and a new attestation; no code path assumes fiction beyond the literal.
+7. **A per-clip human review checklist** (added 6 Oct from the spike; part of the 15.11
+   ruling). Every image and video model in the spike added crest-like marks, logo-like shapes,
+   garbled board text, numbers on shirts or extra players nobody asked for, and "no text, no
+   logos" in the prompt was ignored in places by all of them (OBSERVED), so "no real marks"
+   cannot be enforced by the prompt. The generated section of the policy carries a checklist
+   the Studio's Confirm step walks for every image and clip: extra players or officials; text
+   on boards, shirts or screens; logo-like or crest-like marks on kit, ball or boards; the
+   subject's identity and posture; the soundtrack. The attestation records that the checklist
+   was walked, by whom and when.
 
 ## 12. Verification and CI strategy
 
@@ -749,7 +798,7 @@ Claude Code, design by Claude Design.
 
 | Slice | What it is | Prerequisites | Leaves inert | Evidence | Gate | Class | Builder → reviewer |
 |---|---|---|---|---|---|---|---|
-| **P0** | This review, and Beni's rulings on section 15 | — | Everything | This document | Beni | docs | Claude Code |
+| **P0** | This review, and Beni's rulings on section 15 (ruled 5 Oct; 15.2 amended 6 Oct; recorded 6 Oct) | — | Everything | This document | Beni | docs | Claude Code |
 | **D1** | Claude Design brief on Fergie Time: the Generated badge, hosted-player chrome, kind-specific recovery copy, the motion budget's extension, the local admin surface | P0 rulings 15.5, 15.6, 15.10 | Everything | Design review cycle | Beni's sign-off | design | Claude Design → design review |
 | **R1** | Reader contract: the kind union, the hosted identity, provenance, the policy block, playability by provider, C10's decision | P0; coordination with PR #144 (C11) | Edition stays `[]`; no UI change | Contract tests; 72-cell inert comparison | Six-pass review | patch (no reader-visible capability) | Codex Astra → Claude Code |
 | **R2** | Hosted adapter inside the one host; mock; acceptance item with a synthetic same-origin clip; matrix cells | R1; **PR #144's Cinema cover resolved**; D1 for the chrome | Edition stays `[]`; nothing requested | Matrix; isolation check; a stub is not playback | Six-pass review | patch | Codex Astra → Claude Code |
@@ -757,7 +806,7 @@ Claude Code, design by Claude Design.
 | **ST2** | Beni's fal spike: the bake-off across consistency routes, under a written authority | ST1; ruling 15.8, 15.9 | The repo | Appendix S, filled by Beni | **Spend authority** | not a release | Beni |
 | **ST3** | The local review surface: lineage, Regenerate, Confirm, cost meter, refusal states | ST1; D1 | Reader | Studio tests; a browser pass on loopback | Six-pass review | patch (tooling) | Codex → Claude Code |
 | **ST4** | Media port for the chosen host; the export command that writes a branch, validates with the reader's schema and opens a draft PR | R1; ruling 15.4; ST2's evidence | Nothing is exported in this slice | Stubbed upload; a dry-run export diff | Six-pass review; **vendor ruling** | patch (tooling) | Codex Astra → Claude Code |
-| **PUB** | The first generated edition: the publication PR, the content policy, README and HONESTY corrections, CHANGELOG with "Deliberately not done" | R2, ST4, counsel (15.12), the policy (15.11) | — | Populated matrix on the production bundle; live confirmation on Pages | **Publication authority**; Beni's number and tag | minor (a new capability) | export by Studio → six-pass review |
+| **PUB** | The first generated edition: the publication PR, the content policy, README and HONESTY corrections, CHANGELOG with "Deliberately not done" | R2, ST4, the primary-source read (15.12; counsel only on its trigger), the policy with its review checklist (15.11) | — | Populated matrix on the production bundle; live confirmation on Pages | **Publication authority**; Beni's number and tag | minor (a new capability) | export by Studio → six-pass review |
 
 **Where the two halves meet.**
 
@@ -793,7 +842,7 @@ Claude Code, design by Claude Design.
 | 2 | A key or a photograph reaches the public repo or fal's public CDN | Beni; Studio builder | A key-shaped string in the tree or bundle; a photo URL still live after review |
 | 3 | The Studio folder changes the reader or stalls the sync: CSS drift, a required check that never runs, a root lockfile change | Studio builder; cold reviewer | Production CSS or single-file hash differs from `main`; a sync PR left open |
 | 4 | Subject consistency is not good enough on any affordable route | Beni (ST2) | Route 1 and route 2 both fail his eye inside the spike budget |
-| 5 | Terms and law: output ownership unread, Article 50 scope, trademarks in kits | Beni, with counsel | Before PUB; earlier if a clip is shared anywhere |
+| 5 | Terms and law: output ownership unread, Article 50 scope, trademarks in kits | Beni, with counsel *(4 Oct)*; ruled 5 Oct: a session's primary-source read, counsel only if a clause restricts publishing or ownership or Article 50's scope cannot be settled (15.12) | Before PUB; earlier if a clip is shared anywhere |
 | 6 | The Cinema cover finding stays open and blocks every visible player | Whoever rules on #144 | R2 is ready and #144 is not resolved |
 | 7 | Model churn: the pinned endpoint changes price or behaviour (15 Oct is the first known date) | Studio registry owner | A registry row past its price-valid date |
 | 8 | Spend: retries, batches, a localhost request from a web page | Beni; Studio builder | A ledger line without a matching estimate; the session cap hit |
@@ -817,8 +866,12 @@ Claude Code, design by Claude Design.
 - No code, schema, test, workflow, dependency, README or CHANGELOG change; the schema changes
   above are prose and pseudo-schema.
 - No version number, in this document or the PR.
-- No provider call, account, key or spend; every price is from a public page.
-- No vendor, host or cap decided for Beni.
+- No provider call, account, key or spend; every price is from a public page. *(Still true of
+  the review itself on 6 Oct. The measured figures in sections 8 to 10 and Appendix S come from
+  Beni's separate spike of 4 to 5 Oct, run outside every repository; the review copies its
+  summaries, costs and hash prefixes, never its media, photos or raw responses.)*
+- No vendor, host or cap decided for Beni. *(6 Oct: the caps and the database are now his
+  rulings, 15.8 and 15.2, recorded beside the recommendations; the host stays his, at ST4.)*
 - No smoothness or frame-rate measurement; bundle size only.
 - No review of, comment on or change to PR #144, #129 or #114. Section 10.4 is a reading of
   `main`, offered to #144's reviewer, not a finding against that PR.
@@ -829,22 +882,27 @@ Claude Code, design by Claude Design.
 
 ## 15. Decisions for Beni (one-word answers)
 
-| # | Decision | Recommendation | Answer with |
-|---|---|---|---|
-| 15.1 | The Studio publishes by opening a PR to `moments.json`; no runtime feed | Yes | yes / no |
-| 15.2 | Phase 1 Studio is a local process on your Mac with a SQLite file outside the repo; no hosting, no accounts beyond fal | Yes | yes / no |
-| 15.3 | The Studio's code lives in a `studio/` folder in Kickoff with its own lockfile | Folder | folder / private-repo |
-| 15.4 | Published clips are served from | Stream (may wait until slice ST4) | stream / r2 / pages / youtube / later |
-| 15.5 | Generated records are a separate kind with no fixture, and the reader plays them as plain MP4 in a video element | Yes | yes / no |
-| 15.6 | In Newest, generated items | Keep authored order after dated fixtures | authored / generated-date |
-| 15.7 | The published provenance carries the prompt text, or only its hash | Text | text / hash |
-| 15.8 | Spend caps for the Studio: per job, per session, and the prepaid balance | Your numbers; section 8.4 has the arithmetic | three numbers |
-| 15.9 | First consistency route to spike | Reference-image keyframes | keyframes / lora / reference-video |
-| 15.10 | Motion stays zero-dependency; any library waits for the design brief | Yes | yes / no |
-| 15.11 | One content policy covering real sources and generated content, extending S5.5 | Yes | yes / no |
-| 15.12 | Counsel reads fal's output terms and the Article 50 question before the first generated edition merges | Yes | yes / no |
-| 15.13 | Ask the instructor whether course code may be reused in public repositories | Only if a builder wants to lift code | yes / no / later |
-| 15.14 | The numbering fork: which number the first reader-visible Moments release takes, and whether the YouTube edition or the generated edition is first | Not proposed here | yours |
+Beni ruled on all fourteen on Mon 5 Oct 2026 and amended 15.2 on Tue 6 Oct 2026; the Answer
+column was added on 6 Oct. The Recommendation column is the 4 Oct text, unchanged, so that a
+ruling that differs from it can be read beside it. 15.9's wording was changed on 6 Oct from
+"to spike" to "to pin", because the spike had run by the time he answered.
+
+| # | Decision | Recommendation | Answer with | Answer (Beni) |
+|---|---|---|---|---|
+| 15.1 | The Studio publishes by opening a PR to `moments.json`; no runtime feed | Yes | yes / no | **Yes** (5 Oct). No runtime feed |
+| 15.2 | Phase 1 Studio is a local process on your Mac with a SQLite file outside the repo; no hosting, no accounts beyond fal | Yes | yes / no | **5 Oct: yes, a SQLite file. Amended 6 Oct, replacing that answer:** the phase 1 Studio is a local process on Beni's Mac whose records live in a Supabase Postgres project on the Free plan, reached through Drizzle ORM, as the course does. Accounts are fal and Supabase. Beni alone holds the database password and any Supabase access token, kept like the fal key (outside the worktree or in the macOS keychain); no agent and no GitHub workflow ever holds them, and Beni runs migrations himself. Section 6.3 |
+| 15.3 | The Studio's code lives in a `studio/` folder in Kickoff with its own lockfile | Folder | folder / private-repo | **Folder** (5 Oct), excluded from the Tailwind scan |
+| 15.4 | Published clips are served from | Stream (may wait until slice ST4) | stream / r2 / pages / youtube / later | **Later** (5 Oct): chosen at slice ST4. Section 6.4's Stream line is a lean, not a pending pick; clip sizes are now measured |
+| 15.5 | Generated records are a separate kind with no fixture, and the reader plays them as plain MP4 in a video element | Yes | yes / no | **Yes** (5 Oct) |
+| 15.6 | In Newest, generated items | Keep authored order after dated fixtures | authored / generated-date | **Authored** (5 Oct) |
+| 15.7 | The published provenance carries the prompt text, or only its hash | Text | text / hash | **Text** (5 Oct). The 7.3 pseudo-schema also records whether fal's prompt expansion ran and in which mode; carrying the expanded text too is R1's call |
+| 15.8 | Spend caps for the Studio: per job, per session, and the prepaid balance | Your numbers; section 8.4 has the arithmetic | three numbers | **$1.50 per job; $6 per session; the prepaid fal balance kept at or below $9.37, top-ups by hand only** (5 Oct). A job is one fal request, not a whole clip. Beni read fal's Billing page on 5 Oct and reports auto top-up off (his reading); whether fal offers a settable hard spend limit is UNVERIFIED. Arithmetic in 8.3 |
+| 15.9 | First consistency route to pin (the spike has run, Appendix S; reworded 6 Oct from "to spike") | Reference-image keyframes | keyframes / lora / reference-video | **Keyframes** (5 Oct), as recipe v0: reference photos, then `openai/gpt-image-2/edit` keyframes K0 to K2, then `minimax/h3-max-turbo/image-to-video` with K0 as `image_url` and K2 as `end_image_url`. Section 9 |
+| 15.10 | Motion stays zero-dependency; any library waits for the design brief | Yes | yes / no | **Yes** (5 Oct): any library waits for the Claude Design brief's motion spec |
+| 15.11 | One content policy covering real sources and generated content, extending S5.5 | Yes | yes / no | **Yes** (5 Oct). Its generated section carries a per-clip human review checklist (11.6, item 7), because every model in the spike added marks, text or players nobody asked for (OBSERVED) |
+| 15.12 | Counsel reads fal's output terms and the Article 50 question before the first generated edition merges | Yes | yes / no | **Primary read plus trigger** (5 Oct), not counsel by default: before the first generated edition merges, a session reads fal's Terms of Service output and licence clauses and EU AI Act Article 50, with the Act's definition of a deep fake, at primary source rather than through a summarising fetch, and quotes them into the content policy. Counsel only if a clause restricts publishing or ownership, or the text cannot settle Article 50's scope. Not legal advice |
+| 15.13 | Ask the instructor whether course code may be reused in public repositories | Only if a builder wants to lift code | yes / no / later | **Later** (5 Oct): only if a builder wants to lift code rather than a pattern |
+| 15.14 | The numbering fork: which number the first reader-visible Moments release takes, and whether the YouTube edition or the generated edition is first | Not proposed here | yours | **Decide later; number at publication** (5 Oct). Both halves keep building. Beni rules on which edition reaches readers first when the first publication PR is near, and names the number at that PR with the four-source check re-run that day. The check on 5 Oct read `package.json` 0.5.2, tag v0.5.2 (annotated, 17 Sep 2026), `CHANGELOG.md` `[0.5.2]` dated 2026-09-17, and no `docs/` file for v0.5.2, which is the hotfix convention in [docs/README.md](README.md); #159 merged on 6 Oct without changing the version. This document proposes no number |
 
 ## Appendix A: source ledger
 
