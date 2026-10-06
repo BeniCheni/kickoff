@@ -102,8 +102,12 @@ remote-debugging port. The browser-wide network guard is Playwright's browser CD
 on Playwright's own pipe. While Chrome runs, the receipt records three facts: the effective
 command line contains no `--remote-debugging-port`, the fresh profile contains no
 `DevToolsActivePort` file, and `lsof` shows no listening TCP socket on Chrome's process
-tree. The runner's own loopback server is a Node listener and is not part of that tree.
-Sandbox-on headless and headed stub launches are measured in the proof driver.
+tree. The third fact is recorded only when `ps` found that tree and `lsof` ran on it; an
+empty pid list or an `lsof` that did not run leaves it null, the receipt says how `lsof`
+ended, and the proof driver and the debugging-port control fail on anything but a found
+tree with a measured empty list. The runner's own loopback server is a Node listener and
+is not part of that tree. Sandbox-on headless and headed stub launches are measured in the
+proof driver.
 
 The page loads once. A is played cold, then Beni lets it advance before the runner pauses
 and records the sample. Stage and Cinema are captured at 390, 1000 and 360, always setting
@@ -170,14 +174,23 @@ skips redirect hops, so one browser-target CDP Fetch owner, opened with
 session id and no `Target.setAutoAttach` are required: on Playwright 1.62.1 and Chrome 154
 the paused events for out-of-process iframes, workers and the other loopback kinds arrive
 on that session, and `Fetch.failRequest` there stops the redirect. Page-target interceptors
-lost coverage when an out-of-process iframe rejoined its parent. Losing this session still
-stops the run. The one recorded exception is Chrome cancelling a paused response during
-document replacement: an exact `Fetch.continueResponse` InvalidParams (`-32602`, message
-`Invalid InterceptionId.`) is logged as cancellation, with no new request released.
-Playwright's client error omits the numeric code; the pipe protocol log carries it, and the
-guard passes that measured code and the exact message into the same predicate. Request-release,
-fulfilment and redirect-abort errors still stop. This is measured on the recorded Chrome
-version, not a promise about an untested browser version.
+lost coverage when an out-of-process iframe rejoined its parent. Losing the guard stops the
+run, and the guard listens for it on two events, because they fire for different losses:
+the session's `close` fires only for `Target.detachedFromTarget`, which an explicit detach
+sends and a Chrome that dies or is killed never does; the browser's `disconnected` fires
+when Chrome dies. Measured on Playwright 1.62.1 and Chrome 154.0.8037.98: SIGKILL on
+Chrome's main process fired `disconnected` and nothing on the session. A guard that listened
+on the session alone would have noticed Chrome's death only at the next page call, which
+during a typed prompt is after Beni answers or the ceiling fires. The one recorded exception
+is Chrome cancelling a paused response during document replacement: an exact
+`Fetch.continueResponse` InvalidParams (`-32602`, message `Invalid InterceptionId.`) is
+logged as cancellation, with no new request released. Playwright's client error omits the
+numeric code, so the guard cannot read it at runtime; it supplies the constant the pipe
+protocol log carried for that exact message on 6 Oct 2026, so at this layer the predicate
+is the method plus the exact message, and any other message stops the run. The real
+cancellation is timing-dependent: on this Mac three of six `redirect-top-meta` runs logged
+it. Request-release, fulfilment and redirect-abort errors still stop. This is measured on
+the recorded Chrome version, not a promise about an untested browser version.
 
 **Coverage:** initial same-site and cross-site frames, top frame, subsequent
 same-site/cross-site frame documents and a nested cross-site frame; document, first script,
@@ -350,11 +363,18 @@ stub fixture stays valid in stub mode. The five-minute runner default is unchang
 live example explicitly chooses fifteen minutes.
 
 The drivers at this change, measured on the branch rather than as a rewrite of the Pass 2
-paragraph above: **864 tests in 55 files**, **83 proof cases**, **65 pure mutants** and
-**106 browser mutants**. The 69 proof cases, 64 pure mutants and 47 browser mutants of
-Pass 2 remain the historical record of that pass. The additions are the 24-hour mutant,
-fourteen resource-kind redirect variants and their guard-off controls, the debugging-port
-mutant, and the skip-`Fetch.enable` controls.
+paragraph above: **867 tests in 55 files**, **83 proof cases**, **68 pure mutants** and
+**106 browser mutants**, recorded in [`receipts/s4b-tooling.json`](receipts/s4b-tooling.json)
+with the environment, the three endpoint facts, the guard-loss measurement and the
+coverage probes beyond the matrix. The 69 proof cases, 64 pure mutants and 47 browser
+mutants of Pass 2 remain the historical record of that pass, and the other committed
+receipts still carry them. The additions are the 24-hour mutant, fourteen resource-kind
+redirect variants and their guard-off controls, the debugging-port mutant, the
+skip-`Fetch.enable` controls, and from the cold review three guard mutants (browser loss,
+session loss, a loosened cancellation match) with their fake-browser tests. The
+skip-`Fetch.enable` host controls go red because no local frame is fulfilled without the
+enable, not because a host request escaped; they prove the session owns fulfilment, and
+the 42 loopback redirects are the coverage proof.
 
 
 The controlled production comparison uses current-main application source and PR source
