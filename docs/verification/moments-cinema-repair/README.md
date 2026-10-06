@@ -240,9 +240,13 @@ provider.
   committed checker asserts at 446 and gives the same counts. check-cinema.mjs asserts the
   old defect, so it fails against a repaired build by design.
 - **Removed from this directory.** deletion-red.json and deletion-restored.json. After
-  the loopback port was normalised they were leaf for leaf equal to repair-red.json and
-  repair-green.json: 2,960 leaves each and none differing, with only a one-line mutation
-  note of their own. The deletion control's counts stay in summary.json. Their SHA-256 at
+  the loopback port was normalised and stack frames were dropped they matched
+  repair-red.json (2,966 leaves against 2,965) and repair-green.json (2,905 against
+  2,904) leaf for leaf apart from their own provenance fields: a one-line mutation note
+  in each, and in the red pair the application SHA (the deletion run was made on the code
+  commit, the red run on the base). The first version of this sentence said 2,960 leaves
+  each and none differing; the executor seat's walk on 6 Oct 2026 did not reproduce that,
+  and the PM seat's did. The deletion control's counts stay in summary.json. Their SHA-256 at
   69cbd21, red then restored:
   2646b5c99934387b901328d645885e4028fa88238bf6556dbc5139c0ab7ade54
   3c0ec15cf388247c20f2e3fa593d868b31fab82a5c7f71826aad19638c3cfe98
