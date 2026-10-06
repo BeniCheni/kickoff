@@ -12,6 +12,7 @@ import { detectStop, stopReasons, type Evidence } from '../docs/verification/mom
 import { Telemetry, observations } from '../docs/verification/moments-observation/telemetry'
 import { instrumentAdapter } from '../docs/verification/moments-observation/instrumentation'
 import { redirectLocation, cancelledInterception } from '../docs/verification/moments-observation/redirect'
+import { guardNetwork, type GuardRoute, type GuardSession } from '../docs/verification/moments-observation/cdp-network.mjs'
 
 const origin = 'http://127.0.0.1:4318', instant = '2026-10-02T18:00:00Z'
 const authority = () => stubAuthority(origin)
@@ -323,4 +324,53 @@ it('only an expired response continuation is a cancellation, never a redirect or
   for (const method of ['Fetch.continueRequest', 'Fetch.failRequest', 'Fetch.fulfillRequest']) expect(cancelledInterception(method, -32602, 'Invalid InterceptionId.')).toBe(false)
   expect(cancelledInterception('Fetch.continueResponse', -32000, 'Invalid InterceptionId.')).toBe(false)
   expect(cancelledInterception('Fetch.continueResponse', -32602, 'Other failure')).toBe(false)
+})
+
+describe('browser-wide Fetch guard on the pipe session', () => {
+  type Send = GuardSession['send']
+  const fake = (send: Send) => {
+    const sessionListeners = new Map<string, ((params: never) => void)[]>(), browserListeners: (() => void)[] = []
+    const session: GuardSession = {
+      on: (event, listener) => { sessionListeners.set(event, [...(sessionListeners.get(event) ?? []), listener]) },
+      send, detach: async () => { for (const listener of sessionListeners.get('close') ?? []) listener(undefined as never) },
+    }
+    const browser = { newBrowserCDPSession: async () => session, on: (_event: 'disconnected', listener: () => void) => { browserListeners.push(listener) } }
+    const emit = (event: string, params: unknown) => { for (const listener of sessionListeners.get(event) ?? []) listener(params as never) }
+    return { browser, emit, disconnect: () => { for (const listener of browserListeners) listener() } }
+  }
+  const paused = (extra: object) => ({ requestId: 'r', frameId: 'f', resourceType: 'Fetch', request: { url: 'http://127.0.0.1:4318/x', method: 'GET', headers: {} }, ...extra })
+  const install = async (send: Send, route: (r: GuardRoute) => Promise<unknown> = async r => { await r.continue() }) => {
+    const f = fake(send); const failures: string[] = [], redirects: string[] = [], pending = new Set<Promise<unknown>>()
+    const guard = await guardNetwork(f.browser, route, r => { redirects.push(r.location) }, e => { failures.push(e.message) }, pending)
+    return { ...f, guard, failures, redirects, settle: () => Promise.all([...pending]) }
+  }
+  const ok: Send = async () => ({})
+  it('reports the guard lost when the browser disconnects, not only when the session detaches', async () => {
+    const died = await install(ok); died.disconnect()
+    expect(died.failures).toEqual(['browser-network-guard-disconnected'])
+    const detached = await install(ok); detached.guard.close(); await new Promise(r => setTimeout(r, 0))
+    expect(detached.failures).toEqual(['browser-network-guard-disconnected'])
+  })
+  it('fails a redirect response before its Location and reports the paused url', async () => {
+    const sent: string[] = []
+    const g = await install(async method => { sent.push(method); return {} })
+    g.emit('Fetch.requestPaused', paused({ responseStatusCode: 302, responseHeaders: [{ name: 'Location', value: '/landed' }] }))
+    await g.settle()
+    expect(sent).toEqual(['Fetch.enable', 'Fetch.failRequest']); expect(g.redirects).toEqual(['/landed']); expect(g.failures).toEqual([])
+  })
+  it('logs only the exact expired-continuation message as a cancellation; any other failure stops', async () => {
+    const throwing = (text: string): Send => async method => { if (method === 'Fetch.enable') return {}; throw new Error(text) }
+    const response = paused({ responseStatusCode: 200, responseHeaders: [] })
+    const exact = await install(throwing('Protocol error (Fetch.continueResponse): Invalid InterceptionId.'))
+    exact.emit('Fetch.requestPaused', response); await exact.settle()
+    expect(exact.failures).toEqual([])
+    expect(exact.guard.audit.filter(a => a.stage === 'cancelled-response')).toEqual([{ stage: 'cancelled-response', method: 'Fetch.continueResponse', code: -32602, message: 'Invalid InterceptionId.' }])
+    for (const text of ['Protocol error (Fetch.continueResponse): Invalid InterceptionId', 'Protocol error (Fetch.continueResponse): Invalid InterceptionId. extra', 'Protocol error (Fetch.continueResponse): Target closed']) {
+      const other = await install(throwing(text)); other.emit('Fetch.requestPaused', response); await other.settle()
+      expect(other.failures).toHaveLength(1); expect(other.guard.audit.some(a => a.stage === 'cancelled-response')).toBe(false)
+    }
+    const request = await install(throwing('Protocol error (Fetch.failRequest): Invalid InterceptionId.'), async r => { await r.abort() })
+    request.emit('Fetch.requestPaused', paused({})); await request.settle()
+    expect(request.failures).toEqual(['Invalid InterceptionId.'])
+  })
 })

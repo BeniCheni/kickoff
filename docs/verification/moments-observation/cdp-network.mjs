@@ -7,8 +7,11 @@
 // same session stops the redirect. Playwright retains DOM control only.
 import { redirectLocation, cancelledInterception } from './redirect.ts'
 
-// Playwright 1.62.1's client Error drops the JSON-RPC code. The pipe protocol log for
-// this exact message is {"code":-32602,"message":"Invalid InterceptionId."}.
+// Playwright 1.62.1's client Error drops the JSON-RPC code, so the code is not observable
+// here. The pipe protocol log for this exact message carried
+// {"code":-32602,"message":"Invalid InterceptionId."} (6 Oct 2026), and that constant is
+// supplied for that message only; at this layer the predicate is therefore the method and
+// the exact message. Any other message keeps NaN and stops the run.
 function exposedCdpError(error) {
   const text = String(error?.message ?? error)
   const match = text.match(/Protocol error \([^)]+\): (.*)$/)
@@ -32,7 +35,13 @@ export async function guardNetwork(browser, routeRequest, onRedirect, onFailure,
       throw new Error(parsed.message)
     }
   }
-  session.on('close', () => { onFailure(new Error('browser-network-guard-disconnected')) })
+  // The client session emits 'close' only for Target.detachedFromTarget, which a Chrome that
+  // dies or is killed never sends. Measured on Playwright 1.62.1 and Chrome 154.0.8037.98:
+  // SIGKILL on Chrome's main process fired the browser's 'disconnected' and nothing on the
+  // session; session.detach() fired the session's 'close' only. Both report the loss.
+  const lost = () => { onFailure(new Error('browser-network-guard-disconnected')) }
+  session.on('close', lost)
+  browser.on('disconnected', lost)
   session.on('Fetch.requestPaused', event => {
     audit.push({ url: event.request.url, frameId: event.frameId, stage: event.responseStatusCode === undefined ? 'request' : 'response', status: event.responseStatusCode })
     const task = (async () => {

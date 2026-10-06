@@ -64,17 +64,19 @@ async function endpointProof(profileDir) {
     for (const kid of kids.trim().split('\n').filter(Boolean)) walk(kid)
   }
   if (parent) walk(parent.trim().split(/\s+/)[0])
-  let listeners = []
+  // The third fact is measured only when the tree was found and lsof ran. An empty pid list
+  // or an lsof that did not run leaves listeningSockets null, never an empty list.
+  let listeningSockets = null, lsof = pids.length ? 'not run' : 'no chrome pids found'
   if (pids.length) {
-    try {
-      const out = execFileSync('lsof', ['-nP', '-a', '-iTCP', '-sTCP:LISTEN', '-p', pids.join(',')], { encoding: 'utf8' })
-      listeners = out.split('\n').filter(line => line && !line.startsWith('COMMAND'))
-    } catch (error) {
-      const out = String(error.stdout ?? '')
-      listeners = out.split('\n').filter(line => line && !line.startsWith('COMMAND'))
+    const parse = out => out.split('\n').filter(line => line && !line.startsWith('COMMAND'))
+    try { listeningSockets = parse(execFileSync('lsof', ['-nP', '-a', '-iTCP', '-sTCP:LISTEN', '-p', pids.join(',')], { encoding: 'utf8' })); lsof = 'exit 0' }
+    catch (error) {
+      // Measured here: lsof exits 1 with empty stdout and stderr when no socket matches.
+      if (error.status === 1 && typeof error.stdout === 'string' && !String(error.stderr ?? '').trim()) { listeningSockets = parse(error.stdout); lsof = 'exit 1' }
+      else lsof = 'failed: ' + (error.code ?? error.status ?? error.message)
     }
   }
-  return { devToolsActivePort, chromePids: pids, listeningSockets: listeners }
+  return { devToolsActivePort, chromePids: pids, listeningSockets, lsof }
 }
 function stop(reason) {
   if (result.stopReason) return
