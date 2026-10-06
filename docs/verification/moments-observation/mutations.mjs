@@ -26,6 +26,7 @@ add('extract-body', 'policy.ts', 'if (body) {', 'if (false && body) {')
 for (const reason of ['future-authority', 'duplicate-id', 'authority-hosts', 'invalid-origin', 'non-loopback-requires-https', 'origin-mismatch', 'stub-fictional-only', 'fictional-id-in-live']) {
   add('authority-' + reason, 'authority.ts', `throw new Refusal('${reason}')`, `void '${reason}'`)
 }
+add('authority-stale-authority', 'authority.ts', "throw new Refusal('stale-authority', (ageMs / 3600000) + ' hours')", "void 'stale-authority'")
 add('authority-id-pattern', 'authority.ts', 'id: youtubeVideoIdSchema', 'id: z.string()')
 add('authority-count', 'authority.ts', '}).strict()).min(1).max(2)', '}).strict()).min(1).max(3)')
 add('authority-extra-fields', 'authority.ts', '}).strict()\nexport type Authority', '})\nexport type Authority')
@@ -57,6 +58,9 @@ add('unreached-note', 'telemetry.ts', "'Id not reached.'", "'Attempt reached.'")
 add('resume-label-sample', 'telemetry.ts', "this.resumeSample = hook.value === true ? this.lastSample : undefined", "this.resumeSample = undefined")
 add('clipped-frame', 'browser-observer.js', "const exposedFrame = frame && clippedRect(frame)", "const exposedFrame = rect")
 add('cancelled-response', 'redirect.ts', "return method === 'Fetch.continueResponse'", "return false && method === 'Fetch.continueResponse'")
+add('guard-browser-loss', 'cdp-network.mjs', "browser.on('disconnected', lost)", 'void lost')
+add('guard-session-loss', 'cdp-network.mjs', "session.on('close', lost)", 'void 0')
+add('guard-cancellation-exact', 'cdp-network.mjs', 'if (cancelledInterception(method, parsed.code, parsed.message)) {', "if (parsed.message.startsWith('Invalid InterceptionId')) {")
 const receipts = []
 async function test(name, expected, dom = false) {
   const r = spawnSync('npm', ['test', '--', '--project', dom ? 'dom' : 'node', dom ? 'tests/dom/momentsObservationObserver.test.ts' : 'tests/momentsObservation.test.ts'], { cwd: source, encoding: 'utf8' })

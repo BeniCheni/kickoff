@@ -1,5 +1,8 @@
 // Stub-only loopback fixtures. No provider URL is ever a redirect Location.
-export const redirectVariants = ['top', 'same', 'cross', 'nested', 'firstsame', 'firstcross'].flatMap(scope => ['document', 'script', 'fetch', 'chain', 'meta', 'script-nav'].map(kind => `redirect-${scope}-${kind}`)).concat([301, 303, 307, 308].map(status => `redirect-status${status}-fetch`))
+const redirectScopes = ['top', 'same', 'cross', 'nested', 'firstsame', 'firstcross']
+const redirectKinds = ['document', 'script', 'fetch', 'chain', 'meta', 'script-nav']
+const resourceKinds = ['img', 'media', 'css', 'iframe', 'worker', 'sse', 'beacon']
+export const redirectVariants = redirectScopes.flatMap(scope => redirectKinds.map(kind => `redirect-${scope}-${kind}`)).concat([301, 303, 307, 308].map(status => `redirect-status${status}-fetch`)).concat(['cross', 'firstcross'].flatMap(scope => resourceKinds.map(kind => `redirect-${scope}-${kind}`)))
 export function fixtureURL(url, origin) {
   const u = new URL(url), local = new URL(origin)
   return u.port === local.port && (u.hostname === local.hostname || ['frame.s4a.test', 'nested.s4a.test'].includes(u.hostname)) && u.pathname.startsWith('/__s4a/')
@@ -22,6 +25,13 @@ export function serveFixture(request, response, origin, proof) {
   else if (kind === 'script') body = `<script src="${redirect}"></script>`
   else if (kind === 'fetch' || kind === 'chain') body = `<script>setTimeout(() => fetch('${redirect}${kind === 'chain' ? '&chain=1' : ''}').catch(()=>{}), 50)</script>`
   else if (kind === 'document') body = `<script>location.href="${redirect}"</script>`
+  else if (kind === 'img') body = '<img src="' + redirect + '">'
+  else if (kind === 'media') body = '<video src="' + redirect + '" preload="auto" muted></video>'
+  else if (kind === 'css') body = '<link rel="stylesheet" href="' + redirect + '">'
+  else if (kind === 'iframe') body = '<iframe src="' + redirect + '"></iframe>'
+  else if (kind === 'worker') body = "<script>const u = location.origin + '" + redirect + "'; new Worker(URL.createObjectURL(new Blob(['fetch(\"' + u + '\").catch(()=>{})'], { type: 'text/javascript' })))</script>"
+  else if (kind === 'sse') body = "<script>try { new EventSource(location.origin + '" + redirect + "') } catch (e) {}</script>"
+  else if (kind === 'beacon') body = "<script>navigator.sendBeacon(location.origin + '" + redirect + "', 'x')</script>"
   else if (kind === 'meta') body = '<meta http-equiv="refresh" content="0;url=/__s4a/landed">'
   else if (kind === 'script-nav') body = '<script>location.href="/__s4a/landed"</script>'
   response.setHeader('Content-Type', 'text/html'); response.end('<!doctype html><title>Loopback proof</title>' + body); return true

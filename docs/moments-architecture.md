@@ -744,8 +744,8 @@ Pass 2 (4 Oct 2026) changes the runner boundary under Beni's rulings, not the ap
 One browser-target CDP Fetch owner replaces competing per-frame/Playwright routing; every
 HTTP redirect stops before its Location. Loopback mutants must prove both the bypass and
 the restored guard, including first cross-site requests and process changes. The cost is a
-Chrome-version-sensitive CDP dependency and a loopback debugging endpoint; unsupported or
-lost interception refuses the run. No provider observation was performed.
+Chrome-version-sensitive CDP dependency on Playwright's pipe. Chrome opens no debugging
+port; unsupported or lost interception refuses the run. No provider observation was performed.
 
 Beni narrowed the spec in two places: authority may explicitly name additional host
 families, while other hosts abort and are disclosed as runner restrictions; thumbnail and

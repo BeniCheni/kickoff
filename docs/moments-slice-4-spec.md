@@ -40,6 +40,15 @@ S4 protocol and nothing else here:
 | Which hosts may the player contact? | **Record named hosts.** The written authority lists every host family beyond the two required; the runner prints the list in the confirmation Beni types. Any other host is aborted by the runner and flagged in the observation notes. |
 | What if the shelf shows another video? | **Stop on playback of another id.** A shelf thumbnail or storyboard image is recorded, not a stop. |
 
+Beni's rulings of 6 Oct 2026, on the tooling that precedes his S4b visit. They do not open a release:
+
+| Question | Ruling |
+|---|---|
+| How fresh is the written authority? | **24 hours.** Live mode refuses it when `now - at` is more than 24 hours, at the start and again at the typed confirmation. Exactly 24 hours is accepted. A second visit inside that window, with a new output directory, is still possible. Nothing marks an authority spent. |
+| The Chrome debugging port? | **Replace.** Chrome opens no debugging port. The network guard uses Playwright's own pipe. |
+| A shelf thumbnail with a query string? | **Stop.** The run fails closed. S4b observes the real shelf traffic. |
+| Escape once the picture has focus? | Stays on ideas row 100. It is not fixed before S4b. |
+
 Still open, and asked separately: (5) add a one-page first-edition source policy, S5.5,
 before edition ids are picked; (6) keep the S4 test ids separate from the edition ids. The
 PM seat recommends yes and separate. Neither blocks S1–S3. S4 needs an answer to (6); S6
@@ -203,9 +212,10 @@ The receipt states plainly that a green stub is not playback.
 
 ## S4 observation protocol (written now; runs only after both its gates)
 
-- **Environment:** installed Google Chrome, headed, fresh profile, version recorded. The
-  acceptance build with Beni's named ids, served on `127.0.0.1` with the port recorded. One
-  page load. No CI, cron, `workflow_dispatch` or Pages.
+- **Environment:** installed Google Chrome, headed, fresh profile, version recorded. Chrome
+  opens no debugging port. The acceptance build with Beni's named ids, served on `127.0.0.1`
+  with the port recorded. One page load. No CI, cron, `workflow_dispatch` or Pages. The written
+  authority is no older than 24 hours when the run starts and again at the typed confirmation.
 - **Ids:** at most two, named by Beni in writing. Each must pass the playability rule at the
   test instant. If Play does not appear, stop. Ideally one plays and one has embedding turned
   off by its uploader (error 150). If Beni names one id, the 150 path stays stub-only.
@@ -222,7 +232,7 @@ The receipt states plainly that a green stub is not playback.
     `youtube.com` and `youtube-nocookie.com` are always required; any other family the player
     needs (a thumbnail, media or avatar family, say) must be named before the visit. A name
     covers itself and its subdomains. The runner prints the list in the confirmation Beni
-    types before Chrome launches.
+    types before Chrome launches. That confirmation also re-checks the 24-hour bound.
   - **A provider family the authority leaves out stops the run.** A request to any other,
     non-provider host is aborted by the runner, counted by host and reason, and noted in the
     observation as a runner decision rather than a provider failure. An aborted request can

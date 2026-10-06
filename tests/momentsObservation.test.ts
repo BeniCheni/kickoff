@@ -12,14 +12,16 @@ import { detectStop, stopReasons, type Evidence } from '../docs/verification/mom
 import { Telemetry, observations } from '../docs/verification/moments-observation/telemetry'
 import { instrumentAdapter } from '../docs/verification/moments-observation/instrumentation'
 import { redirectLocation, cancelledInterception } from '../docs/verification/moments-observation/redirect'
+import { guardNetwork, type GuardRoute, type GuardSession } from '../docs/verification/moments-observation/cdp-network.mjs'
 
 const origin = 'http://127.0.0.1:4318', instant = '2026-10-02T18:00:00Z'
 const authority = () => stubAuthority(origin)
 const input = (override: Partial<RequestInput> = {}): RequestInput => ({ url: apiUrl, phase: 'after-play', resourceType: 'script',
   origin, namedIds: fictionalIds, hosts: providerDomains, seen: { api: false, frames: [] }, ...override })
-const refused = (value: unknown, reason: string, url = origin, mode: 'stub' | 'live' = 'stub') => {
-  expect(() => validateAuthority(value, url, instant, mode)).toThrow(reason)
+const refused = (value: unknown, reason: string, url = origin, mode: 'stub' | 'live' = 'stub', clock = instant) => {
+  expect(() => validateAuthority(value, url, clock, mode)).toThrow(reason)
 }
+const liveAuthority = (at: string) => ({ ...authority(), at, ids: [{ id: 'S4Fake00001', role: 'unknown' as const, source: 'own-upload' as const }] })
 
 describe('identity extraction and network policy', () => {
   it('redirect guard refuses Location before automatic redirect handling', () => {
@@ -99,6 +101,28 @@ describe('authority and generated edition', () => {
     const raw = authority(); raw.ids[0]!.id = id; refused(raw, 'malformed-video-id')
   })
   it('future-authority', () => refused({ ...authority(), at: '2099-01-01T00:00:00Z' }, 'future-authority'))
+  it('accepts an authority exactly 24 hours old in live mode and refuses one millisecond older', () => {
+    const at = '2026-10-02T00:00:00.000Z'
+    expect(validateAuthority(liveAuthority(at), origin, '2026-10-03T00:00:00.000Z', 'live').at).toBe(at)
+    const staleAt = '2026-10-03T00:00:00.001Z'
+    const ageMs = Date.parse(staleAt) - Date.parse(at)
+    expect(() => validateAuthority(liveAuthority(at), origin, staleAt, 'live')).toThrow(`stale-authority: ${ageMs / 3600000} hours`)
+  })
+  it('compares an offset instant, not its clock face', () => {
+    const at = '2026-10-02T05:30:00+05:30'
+    expect(validateAuthority(liveAuthority(at), origin, '2026-10-03T00:00:00.000Z', 'live').at).toBe(at)
+    refused(liveAuthority(at), 'stale-authority', origin, 'live', '2026-10-03T00:00:00.001Z')
+    refused(liveAuthority('2026-10-03T05:30:00.001+05:30'), 'future-authority', origin, 'live', '2026-10-03T00:00:00.000Z')
+  })
+  it('keeps a missing or malformed at on the schema refusal', () => {
+    refused({ ...authority(), at: '2026-10-02' }, 'authority-schema')
+    refused({ ...authority(), at: 'yesterday' }, 'authority-schema')
+  })
+  it('keeps the dated stub fixture valid in stub mode and refuses that same date in live mode', () => {
+    expect(validateAuthority(authority(), origin, '2027-01-01T00:00:00Z', 'stub')).toEqual(authority())
+    const ageMs = Date.parse('2026-10-03T00:00:00.001Z') - Date.parse(authority().at)
+    expect(() => validateAuthority(authority(), origin, '2026-10-03T00:00:00.001Z', 'live')).toThrow(`stale-authority: ${ageMs / 3600000} hours`)
+  })
   it('too-many-ids', () => { const raw = authority(); raw.ids.push({ ...raw.ids[0]!, id: 'S4Stub00003' }); refused(raw, 'too-many-ids') })
   it('duplicate-id', () => { const raw = authority(); raw.ids[1]!.id = raw.ids[0]!.id; refused(raw, 'duplicate-id') })
   it('origin-mismatch', () => refused(authority(), 'origin-mismatch', 'http://localhost:4318'))
@@ -300,4 +324,53 @@ it('only an expired response continuation is a cancellation, never a redirect or
   for (const method of ['Fetch.continueRequest', 'Fetch.failRequest', 'Fetch.fulfillRequest']) expect(cancelledInterception(method, -32602, 'Invalid InterceptionId.')).toBe(false)
   expect(cancelledInterception('Fetch.continueResponse', -32000, 'Invalid InterceptionId.')).toBe(false)
   expect(cancelledInterception('Fetch.continueResponse', -32602, 'Other failure')).toBe(false)
+})
+
+describe('browser-wide Fetch guard on the pipe session', () => {
+  type Send = GuardSession['send']
+  const fake = (send: Send) => {
+    const sessionListeners = new Map<string, ((params: never) => void)[]>(), browserListeners: (() => void)[] = []
+    const session: GuardSession = {
+      on: (event, listener) => { sessionListeners.set(event, [...(sessionListeners.get(event) ?? []), listener]) },
+      send, detach: async () => { for (const listener of sessionListeners.get('close') ?? []) listener(undefined as never) },
+    }
+    const browser = { newBrowserCDPSession: async () => session, on: (_event: 'disconnected', listener: () => void) => { browserListeners.push(listener) } }
+    const emit = (event: string, params: unknown) => { for (const listener of sessionListeners.get(event) ?? []) listener(params as never) }
+    return { browser, emit, disconnect: () => { for (const listener of browserListeners) listener() } }
+  }
+  const paused = (extra: object) => ({ requestId: 'r', frameId: 'f', resourceType: 'Fetch', request: { url: 'http://127.0.0.1:4318/x', method: 'GET', headers: {} }, ...extra })
+  const install = async (send: Send, route: (r: GuardRoute) => Promise<unknown> = async r => { await r.continue() }) => {
+    const f = fake(send); const failures: string[] = [], redirects: string[] = [], pending = new Set<Promise<unknown>>()
+    const guard = await guardNetwork(f.browser, route, r => { redirects.push(r.location) }, e => { failures.push(e.message) }, pending)
+    return { ...f, guard, failures, redirects, settle: () => Promise.all([...pending]) }
+  }
+  const ok: Send = async () => ({})
+  it('reports the guard lost when the browser disconnects, not only when the session detaches', async () => {
+    const died = await install(ok); died.disconnect()
+    expect(died.failures).toEqual(['browser-network-guard-disconnected'])
+    const detached = await install(ok); detached.guard.close(); await new Promise(r => setTimeout(r, 0))
+    expect(detached.failures).toEqual(['browser-network-guard-disconnected'])
+  })
+  it('fails a redirect response before its Location and reports the paused url', async () => {
+    const sent: string[] = []
+    const g = await install(async method => { sent.push(method); return {} })
+    g.emit('Fetch.requestPaused', paused({ responseStatusCode: 302, responseHeaders: [{ name: 'Location', value: '/landed' }] }))
+    await g.settle()
+    expect(sent).toEqual(['Fetch.enable', 'Fetch.failRequest']); expect(g.redirects).toEqual(['/landed']); expect(g.failures).toEqual([])
+  })
+  it('logs only the exact expired-continuation message as a cancellation; any other failure stops', async () => {
+    const throwing = (text: string): Send => async method => { if (method === 'Fetch.enable') return {}; throw new Error(text) }
+    const response = paused({ responseStatusCode: 200, responseHeaders: [] })
+    const exact = await install(throwing('Protocol error (Fetch.continueResponse): Invalid InterceptionId.'))
+    exact.emit('Fetch.requestPaused', response); await exact.settle()
+    expect(exact.failures).toEqual([])
+    expect(exact.guard.audit.filter(a => a.stage === 'cancelled-response')).toEqual([{ stage: 'cancelled-response', method: 'Fetch.continueResponse', code: -32602, message: 'Invalid InterceptionId.' }])
+    for (const text of ['Protocol error (Fetch.continueResponse): Invalid InterceptionId', 'Protocol error (Fetch.continueResponse): Invalid InterceptionId. extra', 'Protocol error (Fetch.continueResponse): Target closed']) {
+      const other = await install(throwing(text)); other.emit('Fetch.requestPaused', response); await other.settle()
+      expect(other.failures).toHaveLength(1); expect(other.guard.audit.some(a => a.stage === 'cancelled-response')).toBe(false)
+    }
+    const request = await install(throwing('Protocol error (Fetch.failRequest): Invalid InterceptionId.'), async r => { await r.abort() })
+    request.emit('Fetch.requestPaused', paused({})); await request.settle()
+    expect(request.failures).toEqual(['Invalid InterceptionId.'])
+  })
 })

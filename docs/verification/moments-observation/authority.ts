@@ -26,7 +26,11 @@ export function validateAuthority(raw: unknown, origin: string, now: string, mod
     throw new Refusal(reason, `${issue.path.join('.')}: ${issue.message}`)
   }
   const authority = parsed.data
-  if (Date.parse(authority.at) > Date.parse(now) || !Number.isFinite(Date.parse(now))) throw new Refusal('future-authority')
+  const atMs = Date.parse(authority.at)
+  const nowMs = Date.parse(now)
+  if (atMs > nowMs || !Number.isFinite(nowMs)) throw new Refusal('future-authority')
+  const ageMs = nowMs - atMs
+  if (mode === 'live' && ageMs > 24 * 60 * 60 * 1000) throw new Refusal('stale-authority', (ageMs / 3600000) + ' hours')
   if (new Set(authority.ids.map(i => i.id)).size !== authority.ids.length) throw new Refusal('duplicate-id')
   if (new Set(authority.hosts).size !== authority.hosts.length || !authority.hosts.includes('youtube.com') || !authority.hosts.includes('youtube-nocookie.com')) throw new Refusal('authority-hosts')
   let u: URL

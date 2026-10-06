@@ -25,7 +25,13 @@ authority is an attestation, not a cryptographic signature. Its exact schema has
 fields and no others:
 
 - `who`: exactly `Beni`.
-- `at`: an ISO instant with a timezone, not in the future.
+- `at`: an ISO instant with a timezone, not in the future. In live mode it is also no older
+  than 24 hours: exactly 24 hours is accepted, and one millisecond past that is
+  `stale-authority`, whose message names the age in hours. The runner checks it at the start
+  and again after the typed confirmation, because that prompt can stay open up to the safety
+  ceiling. Stub mode does not apply the bound. Its fixed fixture, dated 2026-10-02, is not an
+  attestation and must keep passing. A second live visit inside 24 hours with a new output
+  directory is still possible; nothing marks an authority spent.
 - `words`: Beni's actual written authorization, nonempty.
 - `hosts`: unique members of the six provider domain families below. Both the YouTube and
   nocookie families are required. A listed family includes its subdomains. Omitted families
@@ -91,9 +97,17 @@ fifteen minutes. It is operational protection, **not a product readiness timeout
 launch explicitly sets `chromiumSandbox: true`, in both modes. A launch failure refuses the
 run; no unsandboxed fallback exists. The receipt records Chrome's effective command line
 (with the temporary profile path redacted) and `navigator.webdriver`. This remains an
-automation-controlled browser; no flag hides that fact. The ephemeral loopback debugging
-endpoint is used for the browser-wide network guard. Sandbox-on headless and headed stub
-launches are measured in the proof driver.
+automation-controlled browser; no flag hides that fact. Chrome is launched with no
+remote-debugging port. The browser-wide network guard is Playwright's browser CDP session
+on Playwright's own pipe. While Chrome runs, the receipt records three facts: the effective
+command line contains no `--remote-debugging-port`, the fresh profile contains no
+`DevToolsActivePort` file, and `lsof` shows no listening TCP socket on Chrome's process
+tree. The third fact is recorded only when `ps` found that tree and `lsof` ran on it; an
+empty pid list or an `lsof` that did not run leaves it null, the receipt says how `lsof`
+ended, and the proof driver and the debugging-port control fail on anything but a found
+tree with a measured empty list. The runner's own loopback server is a Node listener and
+is not part of that tree. Sandbox-on headless and headed stub launches are measured in the
+proof driver.
 
 The page loads once. A is played cold, then Beni lets it advance before the runner pauses
 and records the sample. Stage and Cinema are captured at 390, 1000 and 360, always setting
@@ -155,24 +169,42 @@ loopback-resolved names. Provider DNS remains blocked in every stub launch. Serv
 are blocked. Provider-shaped local requests, aborts and continuations have separate counts.
 
 Every HTTP redirect ends the run before Location is followed. Playwright's route callback
-skips redirect hops; Pass 2 therefore removes that competing interceptor and uses one
-browser-target CDP Fetch owner for request policy and response decisions. Page-target
-interceptors lost coverage when an out-of-process iframe rejoined its parent. The browser
-target survives those transitions; failure or disconnection stops the run. The one recorded
-exception is Chrome cancelling a paused response during document replacement: an exact
-`Fetch.continueResponse` InvalidParams/expired-id response is logged as cancellation, with
-no new request released. Request-release, fulfilment and redirect-abort errors still stop. This is measured
-on the recorded Chrome version, not a promise about an untested browser version.
+skips redirect hops, so one browser-target CDP Fetch owner, opened with
+`newBrowserCDPSession()` on Playwright's pipe, decides requests and responses. No child
+session id and no `Target.setAutoAttach` are required: on Playwright 1.62.1 and Chrome 154
+the paused events for out-of-process iframes, workers and the other loopback kinds arrive
+on that session, and `Fetch.failRequest` there stops the redirect. Page-target interceptors
+lost coverage when an out-of-process iframe rejoined its parent. Losing the guard stops the
+run, and the guard listens for it on two events, because they fire for different losses:
+the session's `close` fires only for `Target.detachedFromTarget`, which an explicit detach
+sends and a Chrome that dies or is killed never does; the browser's `disconnected` fires
+when Chrome dies. Measured on Playwright 1.62.1 and Chrome 154.0.8037.98: SIGKILL on
+Chrome's main process fired `disconnected` and nothing on the session. A guard that listened
+on the session alone would have noticed Chrome's death only at the next page call, which
+during a typed prompt is after Beni answers or the ceiling fires. The one recorded exception
+is Chrome cancelling a paused response during document replacement: an exact
+`Fetch.continueResponse` InvalidParams (`-32602`, message `Invalid InterceptionId.`) is
+logged as cancellation, with no new request released. Playwright's client error omits the
+numeric code, so the guard cannot read it at runtime; it supplies the constant the pipe
+protocol log carried for that exact message on 6 Oct 2026, so at this layer the predicate
+is the method plus the exact message, and any other message stops the run. The real
+cancellation is timing-dependent: on this Mac three of six `redirect-top-meta` runs logged
+it at the builder's head and five of six at the reviewed fix. Request-release, fulfilment and redirect-abort errors still stop. This is measured on
+the recorded Chrome version, not a promise about an untested browser version.
 
-**Coverage measured in Pass 2:** initial same-site and cross-site frames, top frame,
-subsequent same-site/cross-site frame documents and a nested cross-site frame; document,
-first script, later fetch and two-hop chain redirects; 301, 302, 303, 307 and 308. Each
-redirect has a guard-off browser mutant that must reach the loopback Location, then a
-restored guard that must stop with zero target hits. Meta refresh and script-driven
-navigation are new requests: the corresponding twelve cases reach the loopback target
-through the policy and are recorded, without pretending they are HTTP redirects. These
-fixtures prove interception, not provider behavior. Binary identities, WebRTC, WebSockets,
-real media redirects and traffic outside the guarded HTTP lifecycle remain unmeasured.
+**Coverage:** initial same-site and cross-site frames, top frame, subsequent
+same-site/cross-site frame documents and a nested cross-site frame; document, first script,
+later fetch and two-hop chain redirects; 301, 302, 303, 307 and 308; and, at `cross` and
+`firstcross` only, image, media, stylesheet, iframe, worker, event stream and beacon.
+That is 54 redirect variants. The 42 that are HTTP redirects each have a guard-off browser
+mutant that must reach the loopback Location once, then a restored guard that must stop
+with zero target hits. Meta refresh and script-driven navigation are new requests: the
+corresponding twelve cases reach the loopback target through the policy and are recorded,
+without pretending they are HTTP redirects. A mutant that skips `Fetch.enable` on the pipe
+session must let those 42 redirects reach the Location once and must fail the extra-host
+and unlisted-host controls; restoring the enable turns them green. These fixtures prove
+interception, not provider behavior. Binary identities, WebRTC, WebSockets, real media
+redirects and traffic outside the guarded HTTP lifecycle remain unmeasured.
 
 The acceptance plugin alone adds observer events around original adapter dispatches,
 samples, ready/error/block callbacks and Play calls; exact source matches fail on drift.
@@ -275,7 +307,7 @@ Malformed provider codes are recorded as unknown with a note and no invalid nume
 they cannot prevent receipt serialization. Runner aborts appear in every completed note
 when any occurred during the visit.
 
-`receipt.json` contains the authority, source and dist hashes, request decisions, host counts,
+`receipt.json` contains the authority, its age in milliseconds at launch, source and dist hashes, request decisions, host counts,
 hook/DOM/click observations, schema observations, console messages, captures and hashes,
 manual answers, ceiling, stop reason and non-claims. PNGs and the raw authority accompany it.
 These records are for test identities; no curation write or import is offered.
@@ -323,11 +355,26 @@ New times, ports and browser files mean it is not expected to match the historic
 No archive belongs in the final tree. Committed copies redact local workspace/profile paths;
 raw external evidence retains exact launch provenance.
 
-The authority freshness/reuse finding stays open: old past timestamps can pass and the
-same authority can generate the same edition twice. Pass 2 recommends a 24-hour bound for
-Beni to rule on; it implements neither expiry nor consumption. A spent marker beside one
-receipt alone would not prevent reuse with another output directory. The five-minute
-runner default is unchanged; the live example explicitly chooses fifteen minutes.
+Beni ruled a 24-hour bound on 6 Oct 2026. Live mode refuses an older authority
+(`stale-authority`) at the start and again after the typed confirmation, and the message
+names the age in hours. Exactly 24 hours is accepted. Consumption is deliberately not
+implemented, so a second visit inside 24 hours with a new output directory still runs. The
+stub fixture stays valid in stub mode. The five-minute runner default is unchanged; the
+live example explicitly chooses fifteen minutes.
+
+The drivers at this change, measured on the branch rather than as a rewrite of the Pass 2
+paragraph above: **867 tests in 55 files**, **83 proof cases**, **68 pure mutants** and
+**106 browser mutants**, recorded in [`receipts/s4b-tooling.json`](receipts/s4b-tooling.json)
+with the environment, the three endpoint facts, the guard-loss measurement and the
+coverage probes beyond the matrix. The 69 proof cases, 64 pure mutants and 47 browser
+mutants of Pass 2 remain the historical record of that pass, and the other committed
+receipts still carry them. The additions are the 24-hour mutant, fourteen resource-kind
+redirect variants and their guard-off controls, the debugging-port mutant, the
+skip-`Fetch.enable` controls, and from the cold review three guard mutants (browser loss,
+session loss, a loosened cancellation match) with their fake-browser tests. The
+skip-`Fetch.enable` host controls go red because no local frame is fulfilled without the
+enable, not because a host request escaped; they prove the session owns fulfilment, and
+the 42 loopback redirects are the coverage proof.
 
 
 The controlled production comparison uses current-main application source and PR source
