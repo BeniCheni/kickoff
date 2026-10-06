@@ -60,7 +60,7 @@ add('clipped-frame', 'browser-observer.js', "const exposedFrame = frame && clipp
 add('cancelled-response', 'redirect.ts', "return method === 'Fetch.continueResponse'", "return false && method === 'Fetch.continueResponse'")
 add('guard-browser-loss', 'cdp-network.mjs', "browser.on('disconnected', lost)", 'void lost')
 add('guard-session-loss', 'cdp-network.mjs', "session.on('close', lost)", 'void 0')
-add('guard-cancellation-exact', 'cdp-network.mjs', "message === 'Invalid InterceptionId.' ? -32602", "message.startsWith('Invalid InterceptionId') ? -32602")
+add('guard-cancellation-exact', 'cdp-network.mjs', 'if (cancelledInterception(method, parsed.code, parsed.message)) {', "if (parsed.message.startsWith('Invalid InterceptionId')) {")
 const receipts = []
 async function test(name, expected, dom = false) {
   const r = spawnSync('npm', ['test', '--', '--project', dom ? 'dom' : 'node', dom ? 'tests/dom/momentsObservationObserver.test.ts' : 'tests/momentsObservation.test.ts'], { cwd: source, encoding: 'utf8' })

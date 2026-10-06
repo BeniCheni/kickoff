@@ -189,7 +189,7 @@ numeric code, so the guard cannot read it at runtime; it supplies the constant t
 protocol log carried for that exact message on 6 Oct 2026, so at this layer the predicate
 is the method plus the exact message, and any other message stops the run. The real
 cancellation is timing-dependent: on this Mac three of six `redirect-top-meta` runs logged
-it. Request-release, fulfilment and redirect-abort errors still stop. This is measured on
+it at the builder's head and five of six at the reviewed fix. Request-release, fulfilment and redirect-abort errors still stop. This is measured on
 the recorded Chrome version, not a promise about an untested browser version.
 
 **Coverage:** initial same-site and cross-site frames, top frame, subsequent
