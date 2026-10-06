@@ -396,8 +396,9 @@ already shown the token scoping, and it is the same account a hosted Studio woul
 sizes are now measured (below), which the 4 Oct text lacked. The same-origin option is the
 honest fallback if no new account is wanted for a first edition of a few clips. The YouTube
 option costs no code but merges the two halves Beni just separated and inherits every unverified
-YouTube behaviour. **Reopening evidence:** a real clip's size and bitrate from Beni's first
-spike; a decision that clips must be private; phone playback that stalls on a progressive MP4.
+YouTube behaviour.
+**Reopening evidence:** a real clip's size and bitrate from Beni's first spike; a decision that
+clips must be private; phone playback that stalls on a progressive MP4.
 
 *Measured 6 Oct, from the spike (OBSERVED, clip facts read with macOS's own tools):* an H3
 15-second clip is about 10 MB and a 5-second one 3.4 to 4.4 MB; a Wan 15-second clip is
@@ -826,8 +827,9 @@ else animates") is a token-level rule, so *any* new motion, with or without a li
 design-system decision for the Claude Design brief, not a builder's choice. If the brief
 specifies an interaction the platform cannot do (shared-element continuity on a browser without
 view transitions, physics), the first library to weigh is `motion/mini` at 3 kB, and K2 gains
-its first written exception. **Reopening evidence:** the design brief's motion spec; a
-browser-support table for view transitions on the phones Beni cares about.
+its first written exception.
+**Reopening evidence:** the design brief's motion spec; a browser-support table for view
+transitions on the phones Beni cares about.
 
 ### 10.4 The Cinema cover finding in PR #144
 
@@ -939,32 +941,34 @@ list for that primary read, and the trigger list for counsel.
 **What the architecture enforces, so that fictional-only holds without relying on memory:**
 
 1. **The badge comes from the type.** A `generated` record renders its Generated label in the
-   gallery card, the stage and Cinema, in page text and not only in pixels, and no option hides
-   it. That also meets the lighter fictional-work disclosure if it applies. 2. **No generated
-   item can claim a real fixture.** The generated shape has no fixture keys and is strict (C1);
-   a test asserts a generated record with a `fixtureId` fails. 3. **A policy attestation is part
-   of the record.** `fictionalOnly` is the literal `true`; the Studio will not export without a
-   passed policy check, and the reader will not validate a generated record without it. 4. **One
-   content policy, two sections** (ruled yes, 5 Oct; 15.11). The slice-4 spec's S5.5 is a
+   gallery card, the stage and Cinema, in page text and not only in pixels, and no option
+   hides it. That also meets the lighter fictional-work disclosure if it applies.
+2. **No generated item can claim a real fixture.** The generated shape has no fixture keys
+   and is strict (C1); a test asserts a generated record with a `fixtureId` fails.
+3. **A policy attestation is part of the record.** `fictionalOnly` is the literal `true`; the
+   Studio will not export without a passed policy check, and the reader will not validate a
+   generated record without it.
+4. **One content policy, two sections** (ruled yes, 5 Oct; 15.11). The slice-4 spec's S5.5 is a
    one-page source policy for the first YouTube edition. Extend it into a single policy
    document: section one, real sources (rights, permission basis, what counts as watched);
    section two, generated content: fictional players only; no real person's name, face, voice or
    number-and-name pairing; no real club crest, kit design or sponsor mark; no real competition
    branding or broadcaster graphics; no claim of a real result; no imitated real commentator;
    the label always visible; provenance retained. The policy version is what `policy.version`
-   records. 5. **Machine-readable marking.** Whether fal's outputs carry provenance metadata or
-   a watermark is VERIFY LIVE (inspect the first generated file); the Studio must not strip it.
-   6. **Nothing is foreclosed for options B and C.** A stricter or different policy is a new
-   policy version and a new attestation; no code path assumes fiction beyond the literal. 7. **A
-   per-clip human review checklist** (added 6 Oct from the spike; part of the 15.11 ruling).
-   Every image and video model in the spike added crest-like marks, logo-like shapes, garbled
-   board text, numbers on shirts or extra players nobody asked for, and "no text, no logos" in
-   the prompt was ignored in places by all of them (OBSERVED), so "no real marks" cannot be
-   enforced by the prompt. The generated section of the policy carries a checklist the Studio's
-   Confirm step walks for every image and clip: extra players or officials; text on boards,
-   shirts or screens; logo-like or crest-like marks on kit, ball or boards; the subject's
-   identity and posture; the soundtrack. The attestation records that the checklist was walked,
-   by whom and when.
+   records.
+5. **Machine-readable marking.** Whether fal's outputs carry provenance metadata or a
+   watermark is VERIFY LIVE (inspect the first generated file); the Studio must not strip it.
+6. **Nothing is foreclosed for options B and C.** A stricter or different policy is a new
+   policy version and a new attestation; no code path assumes fiction beyond the literal.
+7. **A per-clip human review checklist** (added 6 Oct from the spike; part of the 15.11
+   ruling). Every image and video model in the spike added crest-like marks, logo-like shapes,
+   garbled board text, numbers on shirts or extra players nobody asked for, and "no text, no
+   logos" in the prompt was ignored in places by all of them (OBSERVED), so "no real marks"
+   cannot be enforced by the prompt. The generated section of the policy carries a checklist
+   the Studio's Confirm step walks for every image and clip: extra players or officials; text
+   on boards, shirts or screens; logo-like or crest-like marks on kit, ball or boards; the
+   subject's identity and posture; the soundtrack. The attestation records that the checklist
+   was walked, by whom and when.
 
 ## 12. Verification and CI strategy
 
