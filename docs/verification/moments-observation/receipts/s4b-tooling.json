@@ -1,0 +1,218 @@
+{
+  "what": "S4b tooling cold review (PR #164, Pass 1), stub mode only, zero provider egress. Proof cases and browser mutants ran at proofAndBrowserMutantsAt, pure mutants at pureMutantsAt; paths and pids reduced to counts.",
+  "implementation": "4f7aa53431a1245e908898e58e17047544f6a2db",
+  "proofAndBrowserMutantsAt": "882dc3e18aed9296aaddce41de7ab1a3b38d4db4",
+  "pureMutantsAt": "4f7aa53431a1245e908898e58e17047544f6a2db",
+  "note": "The two heads differ only in mutations.mjs and docs: the first cancellation mutant was equivalent and the pure driver exited 1 at the earlier head with 67 of 68 recorded.",
+  "environment": {
+    "node": "v24.15.0",
+    "playwright": "1.62.1",
+    "chrome": "Google Chrome 154.0.8037.98",
+    "os": "darwin 27.0.0 arm64"
+  },
+  "suite": {
+    "tests": 867,
+    "files": 55,
+    "typecheck": "clean"
+  },
+  "productionStylesheet": {
+    "bytes": 39043,
+    "sha256": "a3e896cd54a93d13e5c18df3b653cfa48b02bc33f1588c8b790031a0c3949a5f"
+  },
+  "drivers": {
+    "proofCases": 83,
+    "pureMutants": 68,
+    "browserMutants": 106,
+    "providerContinuedAnywhere": 0
+  },
+  "endpointThreeWays": {
+    "cleanStubVisit": {
+      "launchCommandHasRemoteDebuggingPort": false,
+      "launchCommandHasRemoteDebuggingPipe": true,
+      "devToolsActivePort": false,
+      "chromePids": 7,
+      "listeningSockets": 0,
+      "lsof": "exit 1"
+    },
+    "debuggingPortMutantRed": {
+      "launchCommandHasRemoteDebuggingPort": true,
+      "devToolsActivePort": true,
+      "chromePids": 7,
+      "listeningSockets": 1,
+      "lsof": "exit 0",
+      "stopReason": "http-redirect-refused",
+      "locationHits": 0
+    },
+    "debuggingPortMutantGreen": {
+      "launchCommandHasRemoteDebuggingPort": false,
+      "devToolsActivePort": false,
+      "chromePids": 7,
+      "listeningSockets": 0,
+      "lsof": "exit 1",
+      "stopReason": "http-redirect-refused",
+      "locationHits": 0
+    },
+    "attacks": {
+      "lsofAbsentFromPath": {
+        "devToolsActivePort": false,
+        "chromePids": 7,
+        "listeningSockets": null,
+        "lsof": "failed: ENOENT"
+      },
+      "psParentUnmatched": {
+        "devToolsActivePort": false,
+        "chromePids": 0,
+        "listeningSockets": null,
+        "lsof": "no chrome pids found"
+      },
+      "proofDriverAssertion": "fails on both since 882dc3e; passed on both at 3761806"
+    }
+  },
+  "redirectControls": {
+    "guardOff": {
+      "rows": 42,
+      "redReachedLocationOnce": 42,
+      "greenRefusedWithZeroHits": 42
+    },
+    "skipFetchEnable": {
+      "rows": 42,
+      "redReachedLocationOnce": 42,
+      "greenRefusedWithZeroHits": 42
+    },
+    "hostControlsUnderSkipFetch": [
+      {
+        "control": "skip-fetch-extra-hosts",
+        "red": "Cannot read properties of undefined (reading 'evaluate')",
+        "green": "assertion passed"
+      },
+      {
+        "control": "skip-fetch-unlisted-host",
+        "red": "Cannot read properties of undefined (reading 'evaluate')",
+        "green": "assertion passed"
+      }
+    ]
+  },
+  "guardLoss": [
+    {
+      "mode": "sigkill",
+      "fired": [
+        "context.close",
+        "browser.disconnected"
+      ],
+      "sendAfter": "throws"
+    },
+    {
+      "mode": "detach",
+      "fired": [
+        "session.close"
+      ],
+      "sendAfter": "throws"
+    },
+    {
+      "mode": "contextclose",
+      "fired": [
+        "context.close",
+        "browser.disconnected"
+      ],
+      "sendAfter": "throws"
+    }
+  ],
+  "coverageBeyondTheMatrix": {
+    "scenarios": [
+      "popup-page-with-fetch-redirect",
+      "popup-document-redirect",
+      "blank-popup-navigated-by-opener",
+      "late-cross-frame-fetch",
+      "cross-in-cross-fetch",
+      "cross-in-cross-worker",
+      "cross-frame-shared-worker",
+      "top-fetch-control"
+    ],
+    "landedHits": {
+      "none": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "head": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "main": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "guardRedirects": {
+      "none": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "head": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "main": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    }
+  },
+  "cancellationProvoked": {
+    "variant": "redirect-top-meta",
+    "runs": 6,
+    "runsThatLoggedCancellation": 5,
+    "entry": {
+      "method": "Fetch.continueResponse",
+      "code": -32602,
+      "message": "Invalid InterceptionId."
+    }
+  },
+  "staleAuthorityMutant": {
+    "redTestFailures": 3,
+    "stillPassing": 109
+  },
+  "notVerified": [
+    "real provider behaviour, playback, ads, rights",
+    "redirects from real media hosts",
+    "WebRTC and WebSockets",
+    "another Chrome version or operating system",
+    "the typed-confirmation path in live mode",
+    "the Pages origin"
+  ]
+}
