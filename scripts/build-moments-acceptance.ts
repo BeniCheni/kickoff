@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url'
 import { build } from 'vite'
 import { parseMoments } from '../src/lib/moments'
 import { fixtureSchema } from '../src/lib/schema'
+import { instrumentAdapter } from '../docs/verification/moments-observation/instrumentation'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const args = process.argv.slice(2)
@@ -27,8 +28,14 @@ await build({
       if (importer && resolve(dirname(importer), source) === productionInput) return virtual
     },
     load(id) { if (id === virtual) return `export default ${JSON.stringify(edition)}` },
+    transform(code, id) {
+      if (id === resolve(root, 'src/lib/momentsPlayer.ts')) return instrumentAdapter(code)
+    },
     transformIndexHtml() {
-      return [{ tag: 'script', attrs: { type: 'module' }, children:
+      return [{ tag: 'script', attrs: { type: 'application/json', id: 'moments-observation-manifest' },
+        children: JSON.stringify({ sha: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
+          ids: edition.flatMap(m => m.source.identity ? [m.source.identity.videoId] : []), edition }).replaceAll('<', '\\u003c'), injectTo: 'head' },
+      { tag: 'script', attrs: { type: 'module' }, children:
         'document.title = "[Moments acceptance] " + document.title; document.documentElement.dataset.momentsAcceptance = "true";', injectTo: 'head' }]
     },
   }],

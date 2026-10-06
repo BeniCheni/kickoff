@@ -1,0 +1,1350 @@
+{
+  "sha": "a022828e5d399f391767f65dc89174c362b0d07b",
+  "count": 64,
+  "receipts": [
+    {
+      "name": "provider-before-play",
+      "file": "docs/verification/moments-observation/stops.ts",
+      "from": "return 'provider-before-play'",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "second-element",
+      "file": "docs/verification/moments-observation/stops.ts",
+      "from": "return 'second-element'",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  2 failed | 103 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "parent-changed",
+      "file": "docs/verification/moments-observation/stops.ts",
+      "from": "return 'parent-changed'",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "queue-covered",
+      "file": "docs/verification/moments-observation/stops.ts",
+      "from": "return 'queue-covered'",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "navigation-waits",
+      "file": "docs/verification/moments-observation/stops.ts",
+      "from": "return 'navigation-waits'",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "second-terminal-failure",
+      "file": "docs/verification/moments-observation/stops.ts",
+      "from": "return 'second-terminal-failure'",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  2 failed | 103 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "unsampled-position",
+      "file": "docs/verification/moments-observation/stops.ts",
+      "from": "return 'unsampled-position'",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  2 failed | 103 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "territory-150",
+      "file": "docs/verification/moments-observation/stops.ts",
+      "from": "return 'territory-150'",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "error-153",
+      "file": "docs/verification/moments-observation/stops.ts",
+      "from": "return 'error-153'",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  2 failed | 103 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "warm-autoplay-blocked",
+      "file": "docs/verification/moments-observation/stops.ts",
+      "from": "return 'warm-autoplay-blocked'",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  2 failed | 103 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "parked-return-blank",
+      "file": "docs/verification/moments-observation/stops.ts",
+      "from": "return 'parked-return-blank'",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  2 failed | 103 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "resume-at-zero",
+      "file": "docs/verification/moments-observation/stops.ts",
+      "from": "return 'resume-at-zero'",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  2 failed | 103 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "ineligible-play",
+      "file": "docs/verification/moments-observation/stops.ts",
+      "from": "return 'ineligible-play'",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "unnamed-id",
+      "file": "docs/verification/moments-observation/stops.ts",
+      "from": "return 'unnamed-id'",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  2 failed | 103 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "network-provider-before-play",
+      "file": "docs/verification/moments-observation/policy.ts",
+      "from": "return result('stop', 'provider-before-play')",
+      "to": "return result('release', 'provider-before-play')",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  7 failed | 98 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 7 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "network-unnamed-id",
+      "file": "docs/verification/moments-observation/policy.ts",
+      "from": "return result('stop', 'unnamed-id')",
+      "to": "return result('release', 'unnamed-id')",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  5 failed | 100 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 5 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "network-provider-url-refused",
+      "file": "docs/verification/moments-observation/policy.ts",
+      "from": "return result('stop', 'provider-url-refused')",
+      "to": "return result('release', 'provider-url-refused')",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  4 failed | 101 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 4 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "network-provider-host-not-authorized",
+      "file": "docs/verification/moments-observation/policy.ts",
+      "from": "return result('stop', 'provider-host-not-authorized')",
+      "to": "return result('release', 'provider-host-not-authorized')",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "network-second-api-request",
+      "file": "docs/verification/moments-observation/policy.ts",
+      "from": "return result('stop', 'second-api-request')",
+      "to": "return result('release', 'second-api-request')",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "network-second-frame-request",
+      "file": "docs/verification/moments-observation/policy.ts",
+      "from": "return result('stop', 'second-frame-request')",
+      "to": "return result('release', 'second-frame-request')",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "network-frame-before-api",
+      "file": "docs/verification/moments-observation/policy.ts",
+      "from": "return result('stop', 'frame-before-api')",
+      "to": "return result('release', 'frame-before-api')",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "network-provider-before-player",
+      "file": "docs/verification/moments-observation/policy.ts",
+      "from": "return result('stop', 'provider-before-player')",
+      "to": "return result('release', 'provider-before-player')",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "extract-path",
+      "file": "docs/verification/moments-observation/policy.ts",
+      "from": "ids.add(parts[index + 1]!)",
+      "to": "void parts[index + 1]",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  10 failed | 95 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 10 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "extract-parameters",
+      "file": "docs/verification/moments-observation/policy.ts",
+      "from": "ids.add(item)",
+      "to": "void item",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  3 failed | 102 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 3 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "extract-body",
+      "file": "docs/verification/moments-observation/policy.ts",
+      "from": "if (body) {",
+      "to": "if (false && body) {",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  6 failed | 99 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 6 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "authority-future-authority",
+      "file": "docs/verification/moments-observation/authority.ts",
+      "from": "throw new Refusal('future-authority')",
+      "to": "void 'future-authority'",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "authority-duplicate-id",
+      "file": "docs/verification/moments-observation/authority.ts",
+      "from": "throw new Refusal('duplicate-id')",
+      "to": "void 'duplicate-id'",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "authority-authority-hosts",
+      "file": "docs/verification/moments-observation/authority.ts",
+      "from": "throw new Refusal('authority-hosts')",
+      "to": "void 'authority-hosts'",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "authority-invalid-origin",
+      "file": "docs/verification/moments-observation/authority.ts",
+      "from": "throw new Refusal('invalid-origin')",
+      "to": "void 'invalid-origin'",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  3 failed | 102 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 3 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "authority-non-loopback-requires-https",
+      "file": "docs/verification/moments-observation/authority.ts",
+      "from": "throw new Refusal('non-loopback-requires-https')",
+      "to": "void 'non-loopback-requires-https'",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "authority-origin-mismatch",
+      "file": "docs/verification/moments-observation/authority.ts",
+      "from": "throw new Refusal('origin-mismatch')",
+      "to": "void 'origin-mismatch'",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "authority-stub-fictional-only",
+      "file": "docs/verification/moments-observation/authority.ts",
+      "from": "throw new Refusal('stub-fictional-only')",
+      "to": "void 'stub-fictional-only'",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "authority-fictional-id-in-live",
+      "file": "docs/verification/moments-observation/authority.ts",
+      "from": "throw new Refusal('fictional-id-in-live')",
+      "to": "void 'fictional-id-in-live'",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "authority-id-pattern",
+      "file": "docs/verification/moments-observation/authority.ts",
+      "from": "id: youtubeVideoIdSchema",
+      "to": "id: z.string()",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  4 failed | 101 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 4 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "authority-count",
+      "file": "docs/verification/moments-observation/authority.ts",
+      "from": "}).strict()).min(1).max(2)",
+      "to": "}).strict()).min(1).max(3)",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "authority-extra-fields",
+      "file": "docs/verification/moments-observation/authority.ts",
+      "from": "}).strict()\nexport type Authority",
+      "to": "})\nexport type Authority",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "edition-moment-id",
+      "file": "docs/verification/moments-observation/edition.ts",
+      "from": "`kickoff-moments-slice-4-test-${i + 1}`",
+      "to": "`wrong-item-${i + 1}`",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  2 failed | 103 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "edition-video-id",
+      "file": "docs/verification/moments-observation/edition.ts",
+      "from": "videoId: named.id",
+      "to": "videoId: 'S4Stub99999'",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  2 failed | 103 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "edition-permission-instant",
+      "file": "docs/verification/moments-observation/edition.ts",
+      "from": "new Date(authority.at).toISOString()",
+      "to": "'2099-01-01T00:00:00Z'",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  2 failed | 103 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "edition-fixture-validation",
+      "file": "docs/verification/moments-observation/edition.ts",
+      "from": ", fixtures)",
+      "to": ", [])",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "bundle-manifest",
+      "file": "docs/verification/moments-observation/edition.ts",
+      "from": "throw new Refusal('bundle-id-mismatch')",
+      "to": "void 0",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "bundle-hook",
+      "file": "docs/verification/moments-observation/edition.ts",
+      "from": "throw new Refusal('missing-observation-hooks')",
+      "to": "void 0",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "bundle-fictional",
+      "file": "docs/verification/moments-observation/edition.ts",
+      "from": "throw new Refusal('bundle-has-fictional-id')",
+      "to": "void 0",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "stub-continuation",
+      "file": "docs/verification/moments-observation/route.ts",
+      "from": "if (mode === 'stub') return local",
+      "to": "if (mode === 'stub') return route => route.continue()",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "live-confirmation",
+      "file": "docs/verification/moments-observation/route.ts",
+      "from": "throw new Error('confirmation-refused')",
+      "to": "void 0",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "stop-route",
+      "file": "docs/verification/moments-observation/route.ts",
+      "from": "await route.abort(); return",
+      "to": "await release(route); return",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "observation-150",
+      "file": "docs/verification/moments-observation/telemetry.ts",
+      "from": "code === 150 || code === 101 ? 'owner-blocked'",
+      "to": "code === 101 ? 'owner-blocked'",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  2 failed | 103 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "hook-dispatch",
+      "file": "docs/verification/moments-observation/instrumentation.ts",
+      "from": "observe('dispatch', event); originalHooks.dispatch(event)",
+      "to": "originalHooks.dispatch(event)",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "null-frame-hit",
+      "file": "docs/verification/moments-observation/browser-observer.js",
+      "from": "!!frame && hit === frame",
+      "to": "hit === frame",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 1 passed (2)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  2 passed (2)"
+        ]
+      }
+    },
+    {
+      "name": "redirect-refusal",
+      "file": "docs/verification/moments-observation/redirect.ts",
+      "from": "return headers.find(h => h.name.toLowerCase() === 'location')?.value ?? null",
+      "to": "return null",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "live-port-zero",
+      "file": "docs/verification/moments-observation/authority.ts",
+      "from": "throw new Refusal('live-port-zero')",
+      "to": "void 0",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "named-extra-host",
+      "file": "docs/verification/moments-observation/policy.ts",
+      "from": "if (!provider) return result('record', shelf ? 'shelf-image' : 'named-extra-host')",
+      "to": "if (!provider) return result('abort', 'unlisted-host')",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "extra-before-play",
+      "file": "docs/verification/moments-observation/policy.ts",
+      "from": "return result('abort', 'extra-host-before-play')",
+      "to": "return result('record', 'named-extra-host')",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "unlisted-host",
+      "file": "docs/verification/moments-observation/policy.ts",
+      "from": "return result('abort', 'unlisted-host')",
+      "to": "return result('record', 'named-extra-host')",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  3 failed | 102 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 3 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "shelf-images",
+      "file": "docs/verification/moments-observation/policy.ts",
+      "from": "!shelf && ids.some",
+      "to": "ids.some",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "host-syntax",
+      "file": "docs/verification/moments-observation/authority.ts",
+      "from": ".regex(/^(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\\.)+[a-z](?:[a-z0-9-]{0,61}[a-z0-9])?$/)",
+      "to": "",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "host-cap",
+      "file": "docs/verification/moments-observation/authority.ts",
+      "from": ".max(32)",
+      "to": ".max(100)",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "played-positive-sample",
+      "file": "docs/verification/moments-observation/telemetry.ts",
+      "from": "if (event.event === 'playing') this.playing = true",
+      "to": "if (event.event === 'playing') { this.playing = true; this.played.add(this.current.videoId) }",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "malformed-error",
+      "file": "docs/verification/moments-observation/telemetry.ts",
+      "from": "Number.isSafeInteger(hook.value) && hook.value >= 0",
+      "to": "true",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  5 failed | 100 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 5 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "stub-marker",
+      "file": "docs/verification/moments-observation/telemetry.ts",
+      "from": "stub ? 'STUB; ' : ''",
+      "to": "''",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "unreached-note",
+      "file": "docs/verification/moments-observation/telemetry.ts",
+      "from": "'Id not reached.'",
+      "to": "'Attempt reached.'",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  8 failed | 97 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 8 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "resume-label-sample",
+      "file": "docs/verification/moments-observation/telemetry.ts",
+      "from": "this.resumeSample = hook.value === true ? this.lastSample : undefined",
+      "to": "this.resumeSample = undefined",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  2 failed | 103 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    },
+    {
+      "name": "clipped-frame",
+      "file": "docs/verification/moments-observation/browser-observer.js",
+      "from": "const exposedFrame = frame && clippedRect(frame)",
+      "to": "const exposedFrame = rect",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 1 passed (2)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  2 passed (2)"
+        ]
+      }
+    },
+    {
+      "name": "cancelled-response",
+      "file": "docs/verification/moments-observation/redirect.ts",
+      "from": "return method === 'Fetch.continueResponse'",
+      "to": "return false && method === 'Fetch.continueResponse'",
+      "red": {
+        "exit": 1,
+        "counts": [
+          " Test Files  1 failed (1)",
+          "      Tests  1 failed | 104 passed (105)",
+          "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 1 \u23af\u23af\u23af\u23af\u23af\u23af\u23af"
+        ]
+      },
+      "green": {
+        "exit": 0,
+        "counts": [
+          " Test Files  1 passed (1)",
+          "      Tests  105 passed (105)"
+        ]
+      }
+    }
+  ]
+}

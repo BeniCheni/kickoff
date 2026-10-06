@@ -1,0 +1,200 @@
+{
+  "parent": "54d4e80544c4bb721476371e7d75353f0d43bea5",
+  "implementation": "a022828e5d399f391767f65dc89174c362b0d07b",
+  "parentRunnerProbeMethod": "Original runner and guard, with only the committed parent-runner-probes.patch fixture entries plus probe-fixtures.mjs. Every Location is on the local server; DNS guard retained.",
+  "parentRunner": [
+    {
+      "variant": "redirect-cross-script",
+      "exit": 1,
+      "receiptWritten": true,
+      "reason": "http-redirect-refused",
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      }
+    },
+    {
+      "variant": "redirect-cross-fetch",
+      "exit": 1,
+      "receiptWritten": true,
+      "reason": "http-redirect-refused",
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      }
+    },
+    {
+      "variant": "redirect-same-script",
+      "exit": 1,
+      "receiptWritten": true,
+      "reason": "probe-finished",
+      "proof": {
+        "locationHits": 1,
+        "probeFinished": true
+      }
+    },
+    {
+      "variant": "prompt-ceiling",
+      "exit": "hung",
+      "receiptWritten": false,
+      "reason": null,
+      "proof": null
+    },
+    {
+      "variant": "redirect-firstcross-script",
+      "exit": 1,
+      "receiptWritten": true,
+      "reason": "probe-finished",
+      "proof": {
+        "locationHits": 1,
+        "probeFinished": true
+      }
+    },
+    {
+      "variant": "redirect-firstcross-fetch",
+      "exit": 1,
+      "receiptWritten": true,
+      "reason": "probe-finished",
+      "proof": {
+        "locationHits": 1,
+        "probeFinished": true
+      }
+    },
+    {
+      "variant": "redirect-firstsame-script",
+      "exit": 1,
+      "receiptWritten": true,
+      "reason": "http-redirect-refused",
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      }
+    },
+    {
+      "variant": "redirect-nested-script",
+      "exit": 1,
+      "receiptWritten": true,
+      "reason": "http-redirect-refused",
+      "proof": {
+        "locationHits": 0,
+        "probeFinished": true
+      }
+    }
+  ],
+  "executionEdge": [
+    {
+      "sha": "8ec0ae8",
+      "driver": "runner",
+      "detected": true
+    },
+    {
+      "sha": "8ec0ae8",
+      "driver": "prove",
+      "detected": false
+    },
+    {
+      "sha": "8ec0ae8",
+      "driver": "runner-mutations",
+      "detected": false
+    },
+    {
+      "sha": "8ec0ae8",
+      "driver": "mutations",
+      "detected": false
+    },
+    {
+      "sha": "8ec0ae8",
+      "driver": "generate",
+      "detected": false
+    },
+    {
+      "sha": "e9e5324",
+      "driver": "runner",
+      "detected": true
+    },
+    {
+      "sha": "e9e5324",
+      "driver": "prove",
+      "detected": true
+    },
+    {
+      "sha": "e9e5324",
+      "driver": "runner-mutations",
+      "detected": true
+    },
+    {
+      "sha": "e9e5324",
+      "driver": "mutations",
+      "detected": true
+    },
+    {
+      "sha": "e9e5324",
+      "driver": "generate",
+      "detected": true
+    }
+  ],
+  "newTestsAgainstParent": {
+    "node": {
+      "failed": 13,
+      "passed": 90
+    },
+    "dom": {
+      "failed": 1,
+      "passed": 1
+    }
+  },
+  "callbackSequence": [
+    {
+      "sha": "85207d9",
+      "error": "[\n  {\n    \"code\": \"custom\",\n    \"message\": \"Error 150 records an owner block, not an unknown or territory diagnosis\",\n    \"path\": [\n      0\n    ]\n  }\n]"
+    },
+    {
+      "sha": "b37d566",
+      "result": [
+        {
+          "observedAt": "2026-10-04T23:00:00Z",
+          "environment": "STUB; stub",
+          "outcome": "owner-blocked",
+          "providerError": 150,
+          "note": "Test id S4Stub00001. Attempt reached. Malformed provider error callback observed; invalid code omitted. Synthetic stub events only; no provider playback observed. Error 150 is an owner block."
+        }
+      ]
+    }
+  ],
+  "authorityReuse": {
+    "authorityAgeHours": 791,
+    "reused": true,
+    "words": "fictional reusable evidence",
+    "basis": "S4 observation record from Beni's authority at 2026-09-02T00:00:00Z; not an edition permission. fictional reusable evidence"
+  },
+  "cancelledResponseRed": {
+    "sha": "b37d5666a7667a1b1ae76480911c784280878369",
+    "variant": "redirect-top-meta",
+    "reason": "response-guard-failed: Invalid InterceptionId.",
+    "locationHits": 1
+  },
+  "ctrlC": {
+    "implementation": "b37d5666a7667a1b1ae76480911c784280878369",
+    "port": 60162,
+    "exit": 1,
+    "reason": "operator-interrupt",
+    "receiptWritten": true
+  },
+  "archiveHashes": {
+    "full-evidence.tar.gz": "7b4e0dcbdbf91576efb8db453e97efeabcd4cac99b75707c120eb5662ce2bad3",
+    "final-local-checks.tar.gz": "ffc8bec71ac5afd22f2d8b6479010506f70b7bbd01cc49f4c328e5dcb9a3e240"
+  },
+  "driverBasePin": {
+    "parent": "54d4e80544c4bb721476371e7d75353f0d43bea5",
+    "command": "git diff --exit-code 11845cb21cfd0e87a1105e37e7b74e348739541c HEAD -- src",
+    "currentMain": "d1b20235360bc1e6bdb1f08681fe42eb26b771b6",
+    "parentPreconditionExit": 1,
+    "fixedDriver": "prove.mjs: 69 cases pass on merge tree 81dcfe4b5b40b9e0c2504698491c371440c5b56f"
+  },
+  "adapterDrift": {
+    "sha": "a022828e5d399f391767f65dc89174c362b0d07b",
+    "sourceEdited": false,
+    "assertion": "exact match rejects in-memory adapter declaration drift",
+    "result": "observation-hook-source-mismatch:   let player: YTPlayer | null = null"
+  }
+}

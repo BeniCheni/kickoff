@@ -1,0 +1,28 @@
+{
+  "implementation": "a022828e5d399f391767f65dc89174c362b0d07b",
+  "node": "24.15.0",
+  "npm": "11.12.1",
+  "playwright": "1.62.1",
+  "chrome": "154.0.8037.93",
+  "os": "Darwin 25.6.0 arm64",
+  "typecheck": "pass",
+  "tests": 860,
+  "testFiles": 55,
+  "protectedPaths": "empty diff from 11845cb: src .github package.json package-lock.json vite.config.ts index.html",
+  "merge": {
+    "main": "d1b20235360bc1e6bdb1f08681fe42eb26b771b6",
+    "tip": "a022828e5d399f391767f65dc89174c362b0d07b",
+    "tree": "81dcfe4b5b40b9e0c2504698491c371440c5b56f",
+    "commitCreated": false,
+    "typecheck": "pass",
+    "tests": 860,
+    "testFiles": 55,
+    "proofCases": 69
+  },
+  "proofCases": 69,
+  "pureMutants": 64,
+  "productionComparisonSnapshot": "11845cb21cfd0e87a1105e37e7b74e348739541c",
+  "s3": "Not rerun: instrumentation.ts and build-moments-acceptance.ts are unchanged.",
+  "redaction": "Committed receipts replace private filesystem locations with role markers. Raw external files preserve exact paths.",
+  "browserMutants": 47
+}

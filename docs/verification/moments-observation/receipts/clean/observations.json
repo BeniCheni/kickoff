@@ -1,0 +1,14 @@
+[
+  {
+    "observedAt": "2026-10-04T23:13:34.889Z",
+    "environment": "STUB; loopback http://127.0.0.1:65007; Chrome Google Chrome 154.0.8037.93; headless; darwin 25.6.0",
+    "outcome": "played",
+    "note": "Test id S4Stub00001. Attempt reached.  Synthetic stub events only; no provider playback observed. No territory diagnosis."
+  },
+  {
+    "observedAt": "2026-10-04T23:13:34.889Z",
+    "environment": "STUB; loopback http://127.0.0.1:65007; Chrome Google Chrome 154.0.8037.93; headless; darwin 25.6.0",
+    "outcome": "unknown",
+    "note": "Test id S4Stub00002. Attempt reached.  Synthetic stub events only; no provider playback observed. No territory diagnosis."
+  }
+]

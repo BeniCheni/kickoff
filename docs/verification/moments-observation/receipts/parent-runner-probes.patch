@@ -1,0 +1,81 @@
+--- a/docs/verification/moments-observation/runner.mjs
++++ b/docs/verification/moments-observation/runner.mjs
+@@ -1,3 +1,4 @@
++import { redirectVariants, fixtureURL, serveFixture, runRedirectProbe } from './probe-fixtures.mjs'
+ // Manual entry. Invoke with node --import tsx; a Playwright path is always explicit.
+ import fs from 'node:fs/promises'
+ import path from 'node:path'
+@@ -41,6 +42,8 @@
+   ], network: { providerContinued: 0, providerFulfilled: 0, providerAborted: 0, unhandledProviderResponses: [], bytesWhileParked: 0, wireHeaders: [], hosts: {} },
+ }
+ let context, server, profile, timer, terminal, authority, telemetry, page, stopping, ensureFrameGuard, pending = new Set()
++const redirectProbe = args.stub && redirectVariants.includes(args.variant)
++result.redirectProof = { locationHits: 0, probeFinished: false }
+ let phase = 'before-play', seen = { api: false, frames: [] }, parked = false
+ const now = () => new Date().toISOString()
+ const hash = bytes => crypto.createHash('sha256').update(bytes).digest('hex')
+@@ -71,7 +74,7 @@
+   if (args.live && args.headless) throw new Refusal('live-requires-headed-chrome')
+   if (!args.runtime || !args.chrome) throw new Refusal('runtime-and-chrome-required')
+   if (args.live && !args.authority) throw new Refusal('authority-required')
+-  if (!['clean', 'owner-blocked', 'cold-blocked', 'http-redirect-refused', ...stopReasons].includes(args.variant) || (args.live && args.variant !== 'clean')) throw new Refusal('invalid-variant')
++  if (!['clean', 'owner-blocked', 'cold-blocked', 'prompt-ceiling', 'http-redirect-refused', ...redirectVariants, ...stopReasons].includes(args.variant) || (args.live && args.variant !== 'clean')) throw new Refusal('invalid-variant')
+   const ceiling = Number(args['ceiling-ms'])
+   if (!Number.isInteger(ceiling) || ceiling < 100 || ceiling > 900000) throw new Refusal('invalid-safety-ceiling')
+   result.safetyCeiling = { milliseconds: ceiling, meaning: 'Operational total-run safety ceiling, not a product readiness timeout' }
+@@ -103,6 +106,7 @@
+   if (!args.origin) {
+     server = http.createServer(async (request, response) => {
+       try {
++        if (redirectProbe && serveFixture(request, response, origin, result.redirectProof)) return
+         const pathname = decodeURIComponent(new URL(request.url, origin).pathname)
+         if (mode === 'stub' && args.variant === 'http-redirect-refused' && pathname === '/redirect-check') {
+           response.writeHead(302, { Location: apiUrl }); response.end(); return
+@@ -140,6 +144,7 @@
+   // The total ceiling includes typed confirmation and every later manual checkpoint.
+   timer = setTimeout(() => stop('operational-safety-ceiling'), ceiling)
+   let confirmation = ''
++  if (mode === 'stub' && args.variant === 'prompt-ceiling') await ask('Stub-only open prompt; wait for the ceiling.')
+   if (mode === 'live') {
+     if (!process.stdin.isTTY) throw new Refusal('live-requires-beni-terminal')
+     confirmation = await ask(`Confirm this Chrome and allowlist. Type RELEASE ${origin} to launch the one visit.`)
+@@ -159,7 +164,7 @@
+   profile = await fs.mkdtemp(path.join(os.tmpdir(), 'kickoff-observation-chrome-'))
+   context = await chromium.launchPersistentContext(profile, { executablePath: args.chrome, headless: !!args.headless,
+     viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, reducedMotion: 'reduce', serviceWorkers: 'block',
+-    args: ['--disable-background-networking', '--disable-component-update', '--disable-domain-reliability', '--disable-sync', '--no-first-run', '--no-default-browser-check', '--disable-features=MediaRouter,OptimizationHints', ...(mode === 'stub' ? [dnsGuard] : [])] })
++    args: ['--disable-background-networking', '--disable-component-update', '--disable-domain-reliability', '--disable-sync', '--no-first-run', '--no-default-browser-check', '--disable-features=MediaRouter,OptimizationHints', ...(mode === 'stub' ? [dnsGuard + ', MAP *.s4a.test 127.0.0.1'] : [])] })
+   result.browser.launchedVersion = context.browser()?.version() ?? chromeVersion
+   result.browser.freshProfile = true
+   const handled = new WeakSet()
+@@ -167,7 +172,7 @@
+     const request = route.request(), url = request.url()
+     try { await ensureFrameGuard(request.frame()) }
+     catch (error) { await route.abort(); stop('response-guard-unavailable: ' + error.message); return }
+-    const decision = decideRequest({ url, body: request.postData() ?? '', resourceType: request.resourceType(), phase, origin,
++    const decision = decideRequest({ url: redirectProbe && fixtureURL(url, origin) ? origin + new URL(url).pathname : url, body: request.postData() ?? '', resourceType: request.resourceType(), phase, origin,
+       namedIds: authority.ids.map(i => i.id), hosts: authority.hosts, seen })
+     seen = decision.next
+     const record = { at: now(), url, method: request.method(), resourceType: request.resourceType(), phase, decision, parked,
+@@ -312,6 +317,10 @@
+     }
+   }
+   await snapshot('before-play')
++  if (args.variant.startsWith('redirect-first')) {
++    await runRedirectProbe(page, args.variant, origin, result.redirectProof)
++    ensure(); throw new Refusal('probe-finished')
++  }
+   if (args.variant === 'http-redirect-refused') await page.evaluate(() => fetch('/redirect-check').catch(() => {}))
+   if (args.variant === 'provider-before-play') await page.evaluate(() => { const s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api'; document.head.append(s) })
+   await click(/Open selection/)
+@@ -320,6 +329,10 @@
+   // Readiness has no product timeout. The total-run safety ceiling is the only deadline.
+   await page.waitForFunction(() => document.querySelector('[data-primary-action]')?.textContent.trim() === 'Pause' || document.querySelector('[data-recovery-copy]') || document.querySelector('[data-player-status]'))
+   await snapshot('A-cold-result')
++  if (redirectProbe) {
++    await runRedirectProbe(page, args.variant, origin, result.redirectProof)
++    ensure(); throw new Refusal('probe-finished')
++  }
+   result.onePress = { cold: telemetry.played.has(authority.ids[0].id) && !telemetry.events.some(e => e.kind === 'blocked'), warm: null,
+     meaning: mode === 'stub' ? 'Synthetic events only' : 'API event and one parent Play click; picture is a separate human observation' }
+   if (mode === 'stub' && !['clean', 'owner-blocked', 'cold-blocked', 'warm-autoplay-blocked', 'provider-before-play', 'error-153', 'navigation-waits', 'parked-return-blank', 'ineligible-play'].includes(args.variant)) {

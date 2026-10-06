@@ -10,6 +10,12 @@ releases.
 
 ### Changed
 
+- Cinema now puts the playing frame above its cover; readers cannot reach Cinema until a
+  Moments edition is published.
+
+- A manual Moments observation runner records guarded stub evidence for the separately
+  authorized provider visit. It does not publish an edition or change the deployed app.
+
 - When a permission lapse removes the focused Moments control, focus moves to Enter Cinema
   on the stage, or Exit Cinema when a cover-only Cinema stays open. A control the lapse
   leaves connected keeps focus. Playback button labels stay on one line on phones. The

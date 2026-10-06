@@ -1,0 +1,4029 @@
+{
+  "actualBaseSha": "bd157f1c0adaefe8f5826f744f3da0c41fd3ecc7",
+  "applicationSha": "6b5c15b53bc2707bc564680f6d6885fc7d661894",
+  "note": "Synthetic provider-shaped URLs were fulfilled locally or aborted.",
+  "receipt": {
+    "browser": "154.0.8037.93",
+    "origin": "http://127.0.0.1:65309",
+    "providerContinuations": 0,
+    "cells": [
+      {
+        "width": 390,
+        "transparent": false,
+        "beforePlay": {
+          "width": 390,
+          "scrollWidth": 390,
+          "placement": "cinema",
+          "frames": 0,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 0,
+            "height": 0,
+            "top": 183.828125,
+            "right": 20,
+            "bottom": 183.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 350,
+            "height": 200,
+            "top": 183.828125,
+            "right": 370,
+            "bottom": 383.828125,
+            "left": 20
+          },
+          "inert": true,
+          "display": "block",
+          "hits": [
+            {
+              "x": 195,
+              "y": 283.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 362,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 375.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 362,
+              "y": 375.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            }
+          ]
+        },
+        "stage": {
+          "width": 390,
+          "scrollWidth": 390,
+          "placement": "stage",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 354.328125,
+            "width": 350,
+            "height": 200,
+            "top": 354.328125,
+            "right": 370,
+            "bottom": 554.328125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 354.328125,
+            "width": 350,
+            "height": 200,
+            "top": 354.328125,
+            "right": 370,
+            "bottom": 554.328125,
+            "left": 20
+          },
+          "inert": false,
+          "display": "block",
+          "hits": [
+            {
+              "x": 195,
+              "y": 454.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 362.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 362,
+              "y": 362.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 546.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 362,
+              "y": 546.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            }
+          ]
+        },
+        "cinema": {
+          "width": 390,
+          "scrollWidth": 390,
+          "placement": "cinema",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 350,
+            "height": 200,
+            "top": 183.828125,
+            "right": 370,
+            "bottom": 383.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 350,
+            "height": 200,
+            "top": 183.828125,
+            "right": 370,
+            "bottom": 383.828125,
+            "left": 20
+          },
+          "inert": false,
+          "display": "block",
+          "hits": [
+            {
+              "x": 195,
+              "y": 283.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 362,
+              "y": 191.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 375.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 362,
+              "y": 375.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            }
+          ]
+        },
+        "pixels": {
+          "width": 350,
+          "height": 199,
+          "points": [
+            {
+              "x": 175,
+              "y": 99,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            },
+            {
+              "x": 8,
+              "y": 8,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            },
+            {
+              "x": 341,
+              "y": 8,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            },
+            {
+              "x": 8,
+              "y": 190,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            },
+            {
+              "x": 341,
+              "y": 190,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            }
+          ],
+          "perimeterFailures": 0
+        },
+        "clipped": {
+          "width": 390,
+          "scrollWidth": 390,
+          "placement": "cinema",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 0,
+            "height": 0,
+            "top": 183.828125,
+            "right": 20,
+            "bottom": 183.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 350,
+            "height": 200,
+            "top": 183.828125,
+            "right": 370,
+            "bottom": 383.828125,
+            "left": 20
+          },
+          "inert": true,
+          "display": "block",
+          "hits": [
+            {
+              "x": 195,
+              "y": 283.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 362,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 375.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 362,
+              "y": 375.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            }
+          ]
+        },
+        "clippedCaptureSha256": "13cb383e75336315d3030105afa3fa9acb26e64276830d58c01fa0553af91885",
+        "parked": {
+          "placement": "parked",
+          "inert": true,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        "fulfilled": 2,
+        "escaped": [],
+        "errors": [],
+        "failures": []
+      },
+      {
+        "width": 390,
+        "transparent": true,
+        "beforePlay": {
+          "width": 390,
+          "scrollWidth": 390,
+          "placement": "cinema",
+          "frames": 0,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 0,
+            "height": 0,
+            "top": 183.828125,
+            "right": 20,
+            "bottom": 183.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 350,
+            "height": 200,
+            "top": 183.828125,
+            "right": 370,
+            "bottom": 383.828125,
+            "left": 20
+          },
+          "inert": true,
+          "display": "block",
+          "hits": [
+            {
+              "x": 195,
+              "y": 283.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 362,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 375.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 362,
+              "y": 375.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            }
+          ]
+        },
+        "stage": {
+          "width": 390,
+          "scrollWidth": 390,
+          "placement": "stage",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 354.328125,
+            "width": 350,
+            "height": 200,
+            "top": 354.328125,
+            "right": 370,
+            "bottom": 554.328125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 354.328125,
+            "width": 350,
+            "height": 200,
+            "top": 354.328125,
+            "right": 370,
+            "bottom": 554.328125,
+            "left": 20
+          },
+          "inert": false,
+          "display": "block",
+          "hits": [
+            {
+              "x": 195,
+              "y": 454.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 362.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 362,
+              "y": 362.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 546.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 362,
+              "y": 546.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            }
+          ]
+        },
+        "cinema": {
+          "width": 390,
+          "scrollWidth": 390,
+          "placement": "cinema",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 350,
+            "height": 200,
+            "top": 183.828125,
+            "right": 370,
+            "bottom": 383.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 350,
+            "height": 200,
+            "top": 183.828125,
+            "right": 370,
+            "bottom": 383.828125,
+            "left": 20
+          },
+          "inert": false,
+          "display": "block",
+          "hits": [
+            {
+              "x": 195,
+              "y": 283.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 362,
+              "y": 191.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 375.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 362,
+              "y": 375.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            }
+          ]
+        },
+        "pixels": null,
+        "clipped": {
+          "width": 390,
+          "scrollWidth": 390,
+          "placement": "cinema",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 0,
+            "height": 0,
+            "top": 183.828125,
+            "right": 20,
+            "bottom": 183.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 350,
+            "height": 200,
+            "top": 183.828125,
+            "right": 370,
+            "bottom": 383.828125,
+            "left": 20
+          },
+          "inert": true,
+          "display": "block",
+          "hits": [
+            {
+              "x": 195,
+              "y": 283.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 362,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 375.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 362,
+              "y": 375.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            }
+          ]
+        },
+        "clippedCaptureSha256": "13cb383e75336315d3030105afa3fa9acb26e64276830d58c01fa0553af91885",
+        "parked": {
+          "placement": "parked",
+          "inert": true,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        "fulfilled": 2,
+        "escaped": [],
+        "errors": [],
+        "failures": []
+      },
+      {
+        "width": 1000,
+        "transparent": false,
+        "beforePlay": {
+          "width": 1000,
+          "scrollWidth": 1000,
+          "placement": "cinema",
+          "frames": 0,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 0,
+            "height": 0,
+            "top": 183.828125,
+            "right": 20,
+            "bottom": 183.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 632,
+            "height": 355.5,
+            "top": 183.828125,
+            "right": 652,
+            "bottom": 539.328125,
+            "left": 20
+          },
+          "inert": true,
+          "display": "block",
+          "hits": [
+            {
+              "x": 336,
+              "y": 361.578125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 644,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 531.328125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 644,
+              "y": 531.328125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            }
+          ]
+        },
+        "stage": {
+          "width": 1000,
+          "scrollWidth": 1000,
+          "placement": "stage",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 136.828125,
+            "width": 632,
+            "height": 355.5,
+            "top": 136.828125,
+            "right": 652,
+            "bottom": 492.328125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 136.828125,
+            "width": 632,
+            "height": 355.5,
+            "top": 136.828125,
+            "right": 652,
+            "bottom": 492.328125,
+            "left": 20
+          },
+          "inert": false,
+          "display": "block",
+          "hits": [
+            {
+              "x": 336,
+              "y": 314.578125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 144.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 644,
+              "y": 144.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 484.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 644,
+              "y": 484.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            }
+          ]
+        },
+        "cinema": {
+          "width": 1000,
+          "scrollWidth": 1000,
+          "placement": "cinema",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 632,
+            "height": 355.5,
+            "top": 183.828125,
+            "right": 652,
+            "bottom": 539.328125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 632,
+            "height": 355.5,
+            "top": 183.828125,
+            "right": 652,
+            "bottom": 539.328125,
+            "left": 20
+          },
+          "inert": false,
+          "display": "block",
+          "hits": [
+            {
+              "x": 336,
+              "y": 361.578125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 644,
+              "y": 191.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 531.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 644,
+              "y": 531.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            }
+          ]
+        },
+        "pixels": {
+          "width": 632,
+          "height": 355,
+          "points": [
+            {
+              "x": 316,
+              "y": 177,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            },
+            {
+              "x": 8,
+              "y": 8,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            },
+            {
+              "x": 623,
+              "y": 8,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            },
+            {
+              "x": 8,
+              "y": 346,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            },
+            {
+              "x": 623,
+              "y": 346,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            }
+          ],
+          "perimeterFailures": 0
+        },
+        "clipped": {
+          "width": 1000,
+          "scrollWidth": 1000,
+          "placement": "cinema",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 0,
+            "height": 0,
+            "top": 183.828125,
+            "right": 20,
+            "bottom": 183.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 632,
+            "height": 355.5,
+            "top": 183.828125,
+            "right": 652,
+            "bottom": 539.328125,
+            "left": 20
+          },
+          "inert": true,
+          "display": "block",
+          "hits": [
+            {
+              "x": 336,
+              "y": 361.578125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 644,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 531.328125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 644,
+              "y": 531.328125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            }
+          ]
+        },
+        "clippedCaptureSha256": "5114794e8ba8250ac27e6b795f8e5c4be2c5be3c3c345eed7ad6d7b7e9580d18",
+        "parked": {
+          "placement": "parked",
+          "inert": true,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        "fulfilled": 2,
+        "escaped": [],
+        "errors": [],
+        "failures": []
+      },
+      {
+        "width": 1000,
+        "transparent": true,
+        "beforePlay": {
+          "width": 1000,
+          "scrollWidth": 1000,
+          "placement": "cinema",
+          "frames": 0,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 0,
+            "height": 0,
+            "top": 183.828125,
+            "right": 20,
+            "bottom": 183.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 632,
+            "height": 355.5,
+            "top": 183.828125,
+            "right": 652,
+            "bottom": 539.328125,
+            "left": 20
+          },
+          "inert": true,
+          "display": "block",
+          "hits": [
+            {
+              "x": 336,
+              "y": 361.578125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 644,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 531.328125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 644,
+              "y": 531.328125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            }
+          ]
+        },
+        "stage": {
+          "width": 1000,
+          "scrollWidth": 1000,
+          "placement": "stage",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 136.828125,
+            "width": 632,
+            "height": 355.5,
+            "top": 136.828125,
+            "right": 652,
+            "bottom": 492.328125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 136.828125,
+            "width": 632,
+            "height": 355.5,
+            "top": 136.828125,
+            "right": 652,
+            "bottom": 492.328125,
+            "left": 20
+          },
+          "inert": false,
+          "display": "block",
+          "hits": [
+            {
+              "x": 336,
+              "y": 314.578125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 144.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 644,
+              "y": 144.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 484.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 644,
+              "y": 484.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            }
+          ]
+        },
+        "cinema": {
+          "width": 1000,
+          "scrollWidth": 1000,
+          "placement": "cinema",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 632,
+            "height": 355.5,
+            "top": 183.828125,
+            "right": 652,
+            "bottom": 539.328125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 632,
+            "height": 355.5,
+            "top": 183.828125,
+            "right": 652,
+            "bottom": 539.328125,
+            "left": 20
+          },
+          "inert": false,
+          "display": "block",
+          "hits": [
+            {
+              "x": 336,
+              "y": 361.578125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 644,
+              "y": 191.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 531.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 644,
+              "y": 531.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            }
+          ]
+        },
+        "pixels": null,
+        "clipped": {
+          "width": 1000,
+          "scrollWidth": 1000,
+          "placement": "cinema",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 0,
+            "height": 0,
+            "top": 183.828125,
+            "right": 20,
+            "bottom": 183.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 632,
+            "height": 355.5,
+            "top": 183.828125,
+            "right": 652,
+            "bottom": 539.328125,
+            "left": 20
+          },
+          "inert": true,
+          "display": "block",
+          "hits": [
+            {
+              "x": 336,
+              "y": 361.578125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 644,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 531.328125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 644,
+              "y": 531.328125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            }
+          ]
+        },
+        "clippedCaptureSha256": "5114794e8ba8250ac27e6b795f8e5c4be2c5be3c3c345eed7ad6d7b7e9580d18",
+        "parked": {
+          "placement": "parked",
+          "inert": true,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        "fulfilled": 2,
+        "escaped": [],
+        "errors": [],
+        "failures": []
+      },
+      {
+        "width": 360,
+        "transparent": false,
+        "beforePlay": {
+          "width": 360,
+          "scrollWidth": 360,
+          "placement": "cinema",
+          "frames": 0,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 0,
+            "height": 0,
+            "top": 183.828125,
+            "right": 20,
+            "bottom": 183.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 320,
+            "height": 200,
+            "top": 183.828125,
+            "right": 340,
+            "bottom": 383.828125,
+            "left": 20
+          },
+          "inert": true,
+          "display": "block",
+          "hits": [
+            {
+              "x": 180,
+              "y": 283.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 332,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 375.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 332,
+              "y": 375.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            }
+          ]
+        },
+        "stage": {
+          "width": 360,
+          "scrollWidth": 360,
+          "placement": "stage",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 354.328125,
+            "width": 320,
+            "height": 200,
+            "top": 354.328125,
+            "right": 340,
+            "bottom": 554.328125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 354.328125,
+            "width": 320,
+            "height": 200,
+            "top": 354.328125,
+            "right": 340,
+            "bottom": 554.328125,
+            "left": 20
+          },
+          "inert": false,
+          "display": "block",
+          "hits": [
+            {
+              "x": 180,
+              "y": 454.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 362.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 332,
+              "y": 362.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 546.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 332,
+              "y": 546.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            }
+          ]
+        },
+        "cinema": {
+          "width": 360,
+          "scrollWidth": 360,
+          "placement": "cinema",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 320,
+            "height": 200,
+            "top": 183.828125,
+            "right": 340,
+            "bottom": 383.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 320,
+            "height": 200,
+            "top": 183.828125,
+            "right": 340,
+            "bottom": 383.828125,
+            "left": 20
+          },
+          "inert": false,
+          "display": "block",
+          "hits": [
+            {
+              "x": 180,
+              "y": 283.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 332,
+              "y": 191.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 375.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 332,
+              "y": 375.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            }
+          ]
+        },
+        "pixels": {
+          "width": 320,
+          "height": 199,
+          "points": [
+            {
+              "x": 160,
+              "y": 99,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            },
+            {
+              "x": 8,
+              "y": 8,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            },
+            {
+              "x": 311,
+              "y": 8,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            },
+            {
+              "x": 8,
+              "y": 190,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            },
+            {
+              "x": 311,
+              "y": 190,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            }
+          ],
+          "perimeterFailures": 0
+        },
+        "clipped": {
+          "width": 360,
+          "scrollWidth": 360,
+          "placement": "cinema",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 0,
+            "height": 0,
+            "top": 183.828125,
+            "right": 20,
+            "bottom": 183.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 320,
+            "height": 200,
+            "top": 183.828125,
+            "right": 340,
+            "bottom": 383.828125,
+            "left": 20
+          },
+          "inert": true,
+          "display": "block",
+          "hits": [
+            {
+              "x": 180,
+              "y": 283.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 332,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 375.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 332,
+              "y": 375.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            }
+          ]
+        },
+        "clippedCaptureSha256": "ce9fb2c04a33301d2cd3b87f1f3b9cda17e80f4c6c43462b46f4b94d27756765",
+        "parked": {
+          "placement": "parked",
+          "inert": true,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        "fulfilled": 2,
+        "escaped": [],
+        "errors": [],
+        "failures": []
+      },
+      {
+        "width": 360,
+        "transparent": true,
+        "beforePlay": {
+          "width": 360,
+          "scrollWidth": 360,
+          "placement": "cinema",
+          "frames": 0,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 0,
+            "height": 0,
+            "top": 183.828125,
+            "right": 20,
+            "bottom": 183.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 320,
+            "height": 200,
+            "top": 183.828125,
+            "right": 340,
+            "bottom": 383.828125,
+            "left": 20
+          },
+          "inert": true,
+          "display": "block",
+          "hits": [
+            {
+              "x": 180,
+              "y": 283.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 332,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 375.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 332,
+              "y": 375.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            }
+          ]
+        },
+        "stage": {
+          "width": 360,
+          "scrollWidth": 360,
+          "placement": "stage",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 354.328125,
+            "width": 320,
+            "height": 200,
+            "top": 354.328125,
+            "right": 340,
+            "bottom": 554.328125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 354.328125,
+            "width": 320,
+            "height": 200,
+            "top": 354.328125,
+            "right": 340,
+            "bottom": 554.328125,
+            "left": 20
+          },
+          "inert": false,
+          "display": "block",
+          "hits": [
+            {
+              "x": 180,
+              "y": 454.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 362.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 332,
+              "y": 362.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 546.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 332,
+              "y": 546.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            }
+          ]
+        },
+        "cinema": {
+          "width": 360,
+          "scrollWidth": 360,
+          "placement": "cinema",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 320,
+            "height": 200,
+            "top": 183.828125,
+            "right": 340,
+            "bottom": 383.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 320,
+            "height": 200,
+            "top": 183.828125,
+            "right": 340,
+            "bottom": 383.828125,
+            "left": 20
+          },
+          "inert": false,
+          "display": "block",
+          "hits": [
+            {
+              "x": 180,
+              "y": 283.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 332,
+              "y": 191.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 375.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 332,
+              "y": 375.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            }
+          ]
+        },
+        "pixels": null,
+        "clipped": {
+          "width": 360,
+          "scrollWidth": 360,
+          "placement": "cinema",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 0,
+            "height": 0,
+            "top": 183.828125,
+            "right": 20,
+            "bottom": 183.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 320,
+            "height": 200,
+            "top": 183.828125,
+            "right": 340,
+            "bottom": 383.828125,
+            "left": 20
+          },
+          "inert": true,
+          "display": "block",
+          "hits": [
+            {
+              "x": 180,
+              "y": 283.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 332,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 375.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 332,
+              "y": 375.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            }
+          ]
+        },
+        "clippedCaptureSha256": "ce9fb2c04a33301d2cd3b87f1f3b9cda17e80f4c6c43462b46f4b94d27756765",
+        "parked": {
+          "placement": "parked",
+          "inert": true,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        "fulfilled": 2,
+        "escaped": [],
+        "errors": [],
+        "failures": []
+      }
+    ],
+    "edges": [
+      {
+        "width": 375,
+        "transparent": false,
+        "beforePlay": {
+          "width": 375,
+          "scrollWidth": 375,
+          "placement": "cinema",
+          "frames": 0,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 0,
+            "height": 0,
+            "top": 183.828125,
+            "right": 20,
+            "bottom": 183.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 335,
+            "height": 200,
+            "top": 183.828125,
+            "right": 355,
+            "bottom": 383.828125,
+            "left": 20
+          },
+          "inert": true,
+          "display": "block",
+          "hits": [
+            {
+              "x": 187.5,
+              "y": 283.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 347,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 375.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 347,
+              "y": 375.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            }
+          ]
+        },
+        "stage": {
+          "width": 375,
+          "scrollWidth": 375,
+          "placement": "stage",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 354.328125,
+            "width": 335,
+            "height": 200,
+            "top": 354.328125,
+            "right": 355,
+            "bottom": 554.328125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 354.328125,
+            "width": 335,
+            "height": 200,
+            "top": 354.328125,
+            "right": 355,
+            "bottom": 554.328125,
+            "left": 20
+          },
+          "inert": false,
+          "display": "block",
+          "hits": [
+            {
+              "x": 187.5,
+              "y": 454.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 362.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 347,
+              "y": 362.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 546.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 347,
+              "y": 546.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            }
+          ]
+        },
+        "cinema": {
+          "width": 375,
+          "scrollWidth": 375,
+          "placement": "cinema",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 335,
+            "height": 200,
+            "top": 183.828125,
+            "right": 355,
+            "bottom": 383.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 335,
+            "height": 200,
+            "top": 183.828125,
+            "right": 355,
+            "bottom": 383.828125,
+            "left": 20
+          },
+          "inert": false,
+          "display": "block",
+          "hits": [
+            {
+              "x": 187.5,
+              "y": 283.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 347,
+              "y": 191.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 375.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 347,
+              "y": 375.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            }
+          ]
+        },
+        "pixels": {
+          "width": 335,
+          "height": 199,
+          "points": [
+            {
+              "x": 167,
+              "y": 99,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            },
+            {
+              "x": 8,
+              "y": 8,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            },
+            {
+              "x": 326,
+              "y": 8,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            },
+            {
+              "x": 8,
+              "y": 190,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            },
+            {
+              "x": 326,
+              "y": 190,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            }
+          ],
+          "perimeterFailures": 0
+        },
+        "clipped": {
+          "width": 375,
+          "scrollWidth": 375,
+          "placement": "cinema",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 0,
+            "height": 0,
+            "top": 183.828125,
+            "right": 20,
+            "bottom": 183.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 335,
+            "height": 200,
+            "top": 183.828125,
+            "right": 355,
+            "bottom": 383.828125,
+            "left": 20
+          },
+          "inert": true,
+          "display": "block",
+          "hits": [
+            {
+              "x": 187.5,
+              "y": 283.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 347,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 375.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 347,
+              "y": 375.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            }
+          ]
+        },
+        "clippedCaptureSha256": "7cc556c963ab67907c740998c986b70c6f7c2851b5a171428cd74dd6b04dad16",
+        "parked": {
+          "placement": "parked",
+          "inert": true,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        "fulfilled": 2,
+        "escaped": [],
+        "errors": [],
+        "failures": []
+      },
+      {
+        "width": 375,
+        "transparent": true,
+        "beforePlay": {
+          "width": 375,
+          "scrollWidth": 375,
+          "placement": "cinema",
+          "frames": 0,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 0,
+            "height": 0,
+            "top": 183.828125,
+            "right": 20,
+            "bottom": 183.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 335,
+            "height": 200,
+            "top": 183.828125,
+            "right": 355,
+            "bottom": 383.828125,
+            "left": 20
+          },
+          "inert": true,
+          "display": "block",
+          "hits": [
+            {
+              "x": 187.5,
+              "y": 283.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 347,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 375.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 347,
+              "y": 375.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            }
+          ]
+        },
+        "stage": {
+          "width": 375,
+          "scrollWidth": 375,
+          "placement": "stage",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 354.328125,
+            "width": 335,
+            "height": 200,
+            "top": 354.328125,
+            "right": 355,
+            "bottom": 554.328125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 354.328125,
+            "width": 335,
+            "height": 200,
+            "top": 354.328125,
+            "right": 355,
+            "bottom": 554.328125,
+            "left": 20
+          },
+          "inert": false,
+          "display": "block",
+          "hits": [
+            {
+              "x": 187.5,
+              "y": 454.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 362.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 347,
+              "y": 362.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 546.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 347,
+              "y": 546.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            }
+          ]
+        },
+        "cinema": {
+          "width": 375,
+          "scrollWidth": 375,
+          "placement": "cinema",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 335,
+            "height": 200,
+            "top": 183.828125,
+            "right": 355,
+            "bottom": 383.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 335,
+            "height": 200,
+            "top": 183.828125,
+            "right": 355,
+            "bottom": 383.828125,
+            "left": 20
+          },
+          "inert": false,
+          "display": "block",
+          "hits": [
+            {
+              "x": 187.5,
+              "y": 283.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 347,
+              "y": 191.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 375.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 347,
+              "y": 375.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            }
+          ]
+        },
+        "pixels": null,
+        "clipped": {
+          "width": 375,
+          "scrollWidth": 375,
+          "placement": "cinema",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 0,
+            "height": 0,
+            "top": 183.828125,
+            "right": 20,
+            "bottom": 183.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 335,
+            "height": 200,
+            "top": 183.828125,
+            "right": 355,
+            "bottom": 383.828125,
+            "left": 20
+          },
+          "inert": true,
+          "display": "block",
+          "hits": [
+            {
+              "x": 187.5,
+              "y": 283.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 347,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 375.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 347,
+              "y": 375.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            }
+          ]
+        },
+        "clippedCaptureSha256": "7cc556c963ab67907c740998c986b70c6f7c2851b5a171428cd74dd6b04dad16",
+        "parked": {
+          "placement": "parked",
+          "inert": true,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        "fulfilled": 2,
+        "escaped": [],
+        "errors": [],
+        "failures": []
+      },
+      {
+        "width": 887,
+        "transparent": false,
+        "beforePlay": {
+          "width": 887,
+          "scrollWidth": 887,
+          "placement": "cinema",
+          "frames": 0,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 0,
+            "height": 0,
+            "top": 183.828125,
+            "right": 20,
+            "bottom": 183.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 847,
+            "height": 476.4375,
+            "top": 183.828125,
+            "right": 867,
+            "bottom": 660.265625,
+            "left": 20
+          },
+          "inert": true,
+          "display": "block",
+          "hits": [
+            {
+              "x": 443.5,
+              "y": 422.046875,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 859,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 652.265625,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 859,
+              "y": 652.265625,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            }
+          ]
+        },
+        "stage": {
+          "width": 887,
+          "scrollWidth": 887,
+          "placement": "stage",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 301.828125,
+            "width": 847,
+            "height": 476.4375,
+            "top": 301.828125,
+            "right": 867,
+            "bottom": 778.265625,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 301.828125,
+            "width": 847,
+            "height": 476.4375,
+            "top": 301.828125,
+            "right": 867,
+            "bottom": 778.265625,
+            "left": 20
+          },
+          "inert": false,
+          "display": "block",
+          "hits": [
+            {
+              "x": 443.5,
+              "y": 540.046875,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 309.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 859,
+              "y": 309.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 770.265625,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 859,
+              "y": 770.265625,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            }
+          ]
+        },
+        "cinema": {
+          "width": 887,
+          "scrollWidth": 887,
+          "placement": "cinema",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 847,
+            "height": 476.4375,
+            "top": 183.828125,
+            "right": 867,
+            "bottom": 660.265625,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 847,
+            "height": 476.4375,
+            "top": 183.828125,
+            "right": 867,
+            "bottom": 660.265625,
+            "left": 20
+          },
+          "inert": false,
+          "display": "block",
+          "hits": [
+            {
+              "x": 443.5,
+              "y": 422.046875,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 859,
+              "y": 191.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 652.265625,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 859,
+              "y": 652.265625,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            }
+          ]
+        },
+        "pixels": {
+          "width": 847,
+          "height": 476,
+          "points": [
+            {
+              "x": 423,
+              "y": 238,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            },
+            {
+              "x": 8,
+              "y": 8,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            },
+            {
+              "x": 838,
+              "y": 8,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            },
+            {
+              "x": 8,
+              "y": 467,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            },
+            {
+              "x": 838,
+              "y": 467,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            }
+          ],
+          "perimeterFailures": 0
+        },
+        "clipped": {
+          "width": 887,
+          "scrollWidth": 887,
+          "placement": "cinema",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 0,
+            "height": 0,
+            "top": 183.828125,
+            "right": 20,
+            "bottom": 183.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 847,
+            "height": 476.4375,
+            "top": 183.828125,
+            "right": 867,
+            "bottom": 660.265625,
+            "left": 20
+          },
+          "inert": true,
+          "display": "block",
+          "hits": [
+            {
+              "x": 443.5,
+              "y": 422.046875,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 859,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 652.265625,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 859,
+              "y": 652.265625,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            }
+          ]
+        },
+        "clippedCaptureSha256": "24723aa7755ce8108084f644d84ff03157a1791b13e9a82b61bda87add2b07b1",
+        "parked": {
+          "placement": "parked",
+          "inert": true,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        "fulfilled": 2,
+        "escaped": [],
+        "errors": [],
+        "failures": []
+      },
+      {
+        "width": 887,
+        "transparent": true,
+        "beforePlay": {
+          "width": 887,
+          "scrollWidth": 887,
+          "placement": "cinema",
+          "frames": 0,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 0,
+            "height": 0,
+            "top": 183.828125,
+            "right": 20,
+            "bottom": 183.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 847,
+            "height": 476.4375,
+            "top": 183.828125,
+            "right": 867,
+            "bottom": 660.265625,
+            "left": 20
+          },
+          "inert": true,
+          "display": "block",
+          "hits": [
+            {
+              "x": 443.5,
+              "y": 422.046875,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 859,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 652.265625,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 859,
+              "y": 652.265625,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            }
+          ]
+        },
+        "stage": {
+          "width": 887,
+          "scrollWidth": 887,
+          "placement": "stage",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 301.828125,
+            "width": 847,
+            "height": 476.4375,
+            "top": 301.828125,
+            "right": 867,
+            "bottom": 778.265625,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 301.828125,
+            "width": 847,
+            "height": 476.4375,
+            "top": 301.828125,
+            "right": 867,
+            "bottom": 778.265625,
+            "left": 20
+          },
+          "inert": false,
+          "display": "block",
+          "hits": [
+            {
+              "x": 443.5,
+              "y": 540.046875,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 309.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 859,
+              "y": 309.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 770.265625,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 859,
+              "y": 770.265625,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            }
+          ]
+        },
+        "cinema": {
+          "width": 887,
+          "scrollWidth": 887,
+          "placement": "cinema",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 847,
+            "height": 476.4375,
+            "top": 183.828125,
+            "right": 867,
+            "bottom": 660.265625,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 847,
+            "height": 476.4375,
+            "top": 183.828125,
+            "right": 867,
+            "bottom": 660.265625,
+            "left": 20
+          },
+          "inert": false,
+          "display": "block",
+          "hits": [
+            {
+              "x": 443.5,
+              "y": 422.046875,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 859,
+              "y": 191.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 652.265625,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 859,
+              "y": 652.265625,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            }
+          ]
+        },
+        "pixels": null,
+        "clipped": {
+          "width": 887,
+          "scrollWidth": 887,
+          "placement": "cinema",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 0,
+            "height": 0,
+            "top": 183.828125,
+            "right": 20,
+            "bottom": 183.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 847,
+            "height": 476.4375,
+            "top": 183.828125,
+            "right": 867,
+            "bottom": 660.265625,
+            "left": 20
+          },
+          "inert": true,
+          "display": "block",
+          "hits": [
+            {
+              "x": 443.5,
+              "y": 422.046875,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 859,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 652.265625,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 859,
+              "y": 652.265625,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            }
+          ]
+        },
+        "clippedCaptureSha256": "24723aa7755ce8108084f644d84ff03157a1791b13e9a82b61bda87add2b07b1",
+        "parked": {
+          "placement": "parked",
+          "inert": true,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        "fulfilled": 2,
+        "escaped": [],
+        "errors": [],
+        "failures": []
+      },
+      {
+        "width": 888,
+        "transparent": false,
+        "beforePlay": {
+          "width": 888,
+          "scrollWidth": 888,
+          "placement": "cinema",
+          "frames": 0,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 0,
+            "height": 0,
+            "top": 183.828125,
+            "right": 20,
+            "bottom": 183.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 520,
+            "height": 292.5,
+            "top": 183.828125,
+            "right": 540,
+            "bottom": 476.328125,
+            "left": 20
+          },
+          "inert": true,
+          "display": "block",
+          "hits": [
+            {
+              "x": 280,
+              "y": 330.078125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 532,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 468.328125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 532,
+              "y": 468.328125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            }
+          ]
+        },
+        "stage": {
+          "width": 888,
+          "scrollWidth": 888,
+          "placement": "stage",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 259.828125,
+            "width": 520,
+            "height": 292.5,
+            "top": 259.828125,
+            "right": 540,
+            "bottom": 552.328125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 259.828125,
+            "width": 520,
+            "height": 292.5,
+            "top": 259.828125,
+            "right": 540,
+            "bottom": 552.328125,
+            "left": 20
+          },
+          "inert": false,
+          "display": "block",
+          "hits": [
+            {
+              "x": 280,
+              "y": 406.078125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 267.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 532,
+              "y": 267.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 544.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 532,
+              "y": 544.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            }
+          ]
+        },
+        "cinema": {
+          "width": 888,
+          "scrollWidth": 888,
+          "placement": "cinema",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 520,
+            "height": 292.5,
+            "top": 183.828125,
+            "right": 540,
+            "bottom": 476.328125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 520,
+            "height": 292.5,
+            "top": 183.828125,
+            "right": 540,
+            "bottom": 476.328125,
+            "left": 20
+          },
+          "inert": false,
+          "display": "block",
+          "hits": [
+            {
+              "x": 280,
+              "y": 330.078125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 532,
+              "y": 191.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 468.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 532,
+              "y": 468.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            }
+          ]
+        },
+        "pixels": {
+          "width": 520,
+          "height": 292,
+          "points": [
+            {
+              "x": 260,
+              "y": 146,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            },
+            {
+              "x": 8,
+              "y": 8,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            },
+            {
+              "x": 511,
+              "y": 8,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            },
+            {
+              "x": 8,
+              "y": 283,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            },
+            {
+              "x": 511,
+              "y": 283,
+              "rgba": [
+                34,
+                51,
+                68,
+                255
+              ],
+              "match": true
+            }
+          ],
+          "perimeterFailures": 0
+        },
+        "clipped": {
+          "width": 888,
+          "scrollWidth": 888,
+          "placement": "cinema",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 0,
+            "height": 0,
+            "top": 183.828125,
+            "right": 20,
+            "bottom": 183.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 520,
+            "height": 292.5,
+            "top": 183.828125,
+            "right": 540,
+            "bottom": 476.328125,
+            "left": 20
+          },
+          "inert": true,
+          "display": "block",
+          "hits": [
+            {
+              "x": 280,
+              "y": 330.078125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 532,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 468.328125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 532,
+              "y": 468.328125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            }
+          ]
+        },
+        "clippedCaptureSha256": "114053bd4aa87bb81c3049df46c4567f68504ebe462a298508a666733f02faea",
+        "parked": {
+          "placement": "parked",
+          "inert": true,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        "fulfilled": 2,
+        "escaped": [],
+        "errors": [],
+        "failures": []
+      },
+      {
+        "width": 888,
+        "transparent": true,
+        "beforePlay": {
+          "width": 888,
+          "scrollWidth": 888,
+          "placement": "cinema",
+          "frames": 0,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 0,
+            "height": 0,
+            "top": 183.828125,
+            "right": 20,
+            "bottom": 183.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 520,
+            "height": 292.5,
+            "top": 183.828125,
+            "right": 540,
+            "bottom": 476.328125,
+            "left": 20
+          },
+          "inert": true,
+          "display": "block",
+          "hits": [
+            {
+              "x": 280,
+              "y": 330.078125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 532,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 468.328125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 532,
+              "y": 468.328125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            }
+          ]
+        },
+        "stage": {
+          "width": 888,
+          "scrollWidth": 888,
+          "placement": "stage",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 259.828125,
+            "width": 520,
+            "height": 292.5,
+            "top": 259.828125,
+            "right": 540,
+            "bottom": 552.328125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 259.828125,
+            "width": 520,
+            "height": 292.5,
+            "top": 259.828125,
+            "right": 540,
+            "bottom": 552.328125,
+            "left": 20
+          },
+          "inert": false,
+          "display": "block",
+          "hits": [
+            {
+              "x": 280,
+              "y": 406.078125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 267.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 532,
+              "y": 267.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 544.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 532,
+              "y": 544.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            }
+          ]
+        },
+        "cinema": {
+          "width": 888,
+          "scrollWidth": 888,
+          "placement": "cinema",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 520,
+            "height": 292.5,
+            "top": 183.828125,
+            "right": 540,
+            "bottom": 476.328125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 520,
+            "height": 292.5,
+            "top": 183.828125,
+            "right": 540,
+            "bottom": 476.328125,
+            "left": 20
+          },
+          "inert": false,
+          "display": "block",
+          "hits": [
+            {
+              "x": 280,
+              "y": 330.078125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 532,
+              "y": 191.828125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 28,
+              "y": 468.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            },
+            {
+              "x": 532,
+              "y": 468.328125,
+              "iframe": true,
+              "cover": false,
+              "node": "IFRAME",
+              "className": null
+            }
+          ]
+        },
+        "pixels": null,
+        "clipped": {
+          "width": 888,
+          "scrollWidth": 888,
+          "placement": "cinema",
+          "frames": 1,
+          "host": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 0,
+            "height": 0,
+            "top": 183.828125,
+            "right": 20,
+            "bottom": 183.828125,
+            "left": 20
+          },
+          "slot": {
+            "x": 20,
+            "y": 183.828125,
+            "width": 520,
+            "height": 292.5,
+            "top": 183.828125,
+            "right": 540,
+            "bottom": 476.328125,
+            "left": 20
+          },
+          "inert": true,
+          "display": "block",
+          "hits": [
+            {
+              "x": 280,
+              "y": 330.078125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 532,
+              "y": 191.828125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 28,
+              "y": 468.328125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            },
+            {
+              "x": 532,
+              "y": 468.328125,
+              "iframe": false,
+              "cover": true,
+              "node": "SPAN",
+              "className": "moments-cover-word"
+            }
+          ]
+        },
+        "clippedCaptureSha256": "114053bd4aa87bb81c3049df46c4567f68504ebe462a298508a666733f02faea",
+        "parked": {
+          "placement": "parked",
+          "inert": true,
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "width": 0,
+            "height": 0,
+            "top": 0,
+            "right": 0,
+            "bottom": 0,
+            "left": 0
+          }
+        },
+        "fulfilled": 2,
+        "escaped": [],
+        "errors": [],
+        "failures": []
+      }
+    ],
+    "failures": []
+  }
+}

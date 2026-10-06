@@ -1,0 +1,117 @@
+{
+  "sha": "a022828e5d399f391767f65dc89174c362b0d07b",
+  "browser": "154.0.8037.93",
+  "port": 49593,
+  "cells": [
+    {
+      "width": 390,
+      "query": "",
+      "scrollWidth": 390,
+      "frames": 0,
+      "header": "KICKOFF\nBROOKLYN · ET\nV0.5.2 · 1496 FIXTURES · SYNCED 2026-10-02 18:35 UTC\nDARK MODE",
+      "body": "KICKOFF\nBROOKLYN · ET\nV0.5.2 · 1496 FIXTURES · SYNCED 2026-10-02 18:35 UTC\nDARK MODE\nFIXTURES\nTABLE\nMOMENTS\nLEDGER\nPOSTER\nBROADCAST\nData may have moved. Last synced 2 days ago (2026-10-02). Fixtures get rescheduled — run npm run sync before staking anything on a kickoff time.\nNEXT MATCHDAY — NOTHING LEFT TODAY\nFRI 9 OCT\n3 MATCHES · FIRST 2:30 PM · LAST 3:00 PM\n2:30\nPM\nBorussia Dortmund v Werder Bremen\n2:45\nPM\nRC Lens v Olympique Lyonnais\n3:00\nPM\nMálaga v Espanyol\n📺 WHERE TO WATCH\nUS streaming & TV, by competition\nFILTERS\nAll 14 competitions shown\nWEEKLY\nMONTHLY\n‹\nSep 28 – October 4, 2026\nJUMP TO TODAY\n›\nMON 28 · TUE 29 · WED 30 · THU 1 · FRI",
+      "url": "",
+      "providerAttempts": 0,
+      "errors": []
+    },
+    {
+      "width": 390,
+      "query": "?tab=table",
+      "scrollWidth": 390,
+      "frames": 0,
+      "header": "KICKOFF\nBROOKLYN · ET\nV0.5.2 · 1496 FIXTURES · SYNCED 2026-10-02 18:35 UTC\nDARK MODE",
+      "body": "KICKOFF\nBROOKLYN · ET\nV0.5.2 · 1496 FIXTURES · SYNCED 2026-10-02 18:35 UTC\nDARK MODE\nFIXTURES\nTABLE\nMOMENTS\nLEDGER\nPOSTER\nBROADCAST\nData may have moved. Last synced 2 days ago (2026-10-02). Fixtures get rescheduled — run npm run sync before staking anything on a kickoff time.\n🇪🇸 La Liga\n🏴 Premier League\n🇮🇹 Serie A\n🇫🇷 Ligue 1\n🇩🇪 Bundesliga\n⭐ Champions League\nAS OF MATCHDAY 7 OF 38 · SYNCED 2D AGO\n2 clubs have a game in hand — sort by PPG to compare like with like.\nZONES & KEY\n▾\nPOS\nCLUB\nGD\nPTS\nCHAMPIONS LEAGUE\n· 1–5\n1\n–\nBAR\nBarcelona\nW\nW\nW\nW\n·\nSat · GET (H)\n+24\n21\n7 pl\n2\n–\nATM\nAtlético\nL\nW\nW\nW\n·\nSat · ALA (A)\n+9\n16\n7 pl\n3\n–\nBET\nBetis\n",
+      "url": "?tab=table",
+      "providerAttempts": 0,
+      "errors": []
+    },
+    {
+      "width": 390,
+      "query": "?only=laliga,ucl&date=2026-10-10",
+      "scrollWidth": 390,
+      "frames": 0,
+      "header": "KICKOFF\nBROOKLYN · ET\nV0.5.2 · 1496 FIXTURES · SYNCED 2026-10-02 18:35 UTC\nDARK MODE",
+      "body": "KICKOFF\nBROOKLYN · ET\nV0.5.2 · 1496 FIXTURES · SYNCED 2026-10-02 18:35 UTC\nDARK MODE\nFIXTURES\nTABLE\nMOMENTS\nLEDGER\nPOSTER\nBROADCAST\nData may have moved. Last synced 2 days ago (2026-10-02). Fixtures get rescheduled — run npm run sync before staking anything on a kickoff time.\nNEXT MATCHDAY — NOTHING LEFT TODAY\nFRI 9 OCT\n1 MATCHES · KICKOFF 3:00 PM\n3:00\nPM\nMálaga v Espanyol\n📺 WHERE TO WATCH\nUS streaming & TV, by competition\nFILTERS\n2 of 14 competitions shown\nWEEKLY\nMONTHLY\n‹\nOct 5 – October 11, 2026\nJUMP TO TODAY\n›\nMON 5 · TUE 6 · WED 7 · THU 8 — NO FIXTURES\nFRI 9 OCT\n1 MATCH\n3:00 PM\nMálaga vs Espanyol\n🇪🇸 La Liga · La Rosaleda\n🇪🇸\n9:00 PM ",
+      "url": "?only=laliga%2Cucl&date=2026-10-10",
+      "providerAttempts": 0,
+      "errors": []
+    },
+    {
+      "width": 390,
+      "query": "?tab=table&only=laliga",
+      "scrollWidth": 390,
+      "frames": 0,
+      "header": "KICKOFF\nBROOKLYN · ET\nV0.5.2 · 1496 FIXTURES · SYNCED 2026-10-02 18:35 UTC\nDARK MODE",
+      "body": "KICKOFF\nBROOKLYN · ET\nV0.5.2 · 1496 FIXTURES · SYNCED 2026-10-02 18:35 UTC\nDARK MODE\nFIXTURES\nTABLE\nMOMENTS\nLEDGER\nPOSTER\nBROADCAST\nData may have moved. Last synced 2 days ago (2026-10-02). Fixtures get rescheduled — run npm run sync before staking anything on a kickoff time.\n🇪🇸 La Liga\n🏴 Premier League\n🇮🇹 Serie A\n🇫🇷 Ligue 1\n🇩🇪 Bundesliga\n⭐ Champions League\nAS OF MATCHDAY 7 OF 38 · SYNCED 2D AGO\n2 clubs have a game in hand — sort by PPG to compare like with like.\nZONES & KEY\n▾\nPOS\nCLUB\nGD\nPTS\nCHAMPIONS LEAGUE\n· 1–5\n1\n–\nBAR\nBarcelona\nW\nW\nW\nW\n·\nSat · GET (H)\n+24\n21\n7 pl\n2\n–\nATM\nAtlético\nL\nW\nW\nW\n·\nSat · ALA (A)\n+9\n16\n7 pl\n3\n–\nBET\nBetis\n",
+      "url": "?tab=table&only=laliga",
+      "providerAttempts": 0,
+      "errors": []
+    },
+    {
+      "width": 390,
+      "query": "?tab=moments",
+      "scrollWidth": 390,
+      "frames": 0,
+      "header": "KICKOFF\nBROOKLYN · ET\nV0.5.2 · 1496 FIXTURES · SYNCED 2026-10-02 18:35 UTC\nDARK MODE",
+      "body": "KICKOFF\nBROOKLYN · ET\nV0.5.2 · 1496 FIXTURES · SYNCED 2026-10-02 18:35 UTC\nDARK MODE\nFIXTURES\nTABLE\nMOMENTS\nLEDGER\nPOSTER\nBROADCAST\n\nHAND-CURATED · LINKED TO RIGHTS HOLDERS · NEVER PLAYED HERE\n\nNo moments curated yet.",
+      "url": "?tab=moments",
+      "providerAttempts": 0,
+      "errors": []
+    },
+    {
+      "width": 1000,
+      "query": "",
+      "scrollWidth": 1000,
+      "frames": 0,
+      "header": "KICKOFF\nBROOKLYN · ET\nV0.5.2 · 1496 FIXTURES · SYNCED 2026-10-02 18:35 UTC\nDARK MODE",
+      "body": "KICKOFF\nBROOKLYN · ET\nV0.5.2 · 1496 FIXTURES · SYNCED 2026-10-02 18:35 UTC\nDARK MODE\nFIXTURES\nTABLE\nMOMENTS\nLEDGER\nPOSTER\nBROADCAST\nData may have moved. Last synced 2 days ago (2026-10-02). Fixtures get rescheduled — run npm run sync before staking anything on a kickoff time.\nNEXT MATCHDAY — NOTHING LEFT TODAY\nFRI 9 OCT\n3 MATCHES · FIRST 2:30 PM · LAST 3:00 PM\n2:30\nPM\nBorussia Dortmund v Werder Bremen\n2:45\nPM\nRC Lens v Olympique Lyonnais\n3:00\nPM\nMálaga v Espanyol\n📺 WHERE TO WATCH\nUS streaming & TV, by competition\nFILTERS\nAll 14 competitions shown\nWEEKLY\nMONTHLY\n‹\nSep 28 – October 4, 2026\nJUMP TO TODAY\n›\nMON 28 · TUE 29 · WED 30 · THU 1 · FRI",
+      "url": "",
+      "providerAttempts": 0,
+      "errors": []
+    },
+    {
+      "width": 1000,
+      "query": "?tab=table",
+      "scrollWidth": 1000,
+      "frames": 0,
+      "header": "KICKOFF\nBROOKLYN · ET\nV0.5.2 · 1496 FIXTURES · SYNCED 2026-10-02 18:35 UTC\nDARK MODE",
+      "body": "KICKOFF\nBROOKLYN · ET\nV0.5.2 · 1496 FIXTURES · SYNCED 2026-10-02 18:35 UTC\nDARK MODE\nFIXTURES\nTABLE\nMOMENTS\nLEDGER\nPOSTER\nBROADCAST\nData may have moved. Last synced 2 days ago (2026-10-02). Fixtures get rescheduled — run npm run sync before staking anything on a kickoff time.\n🇪🇸 La Liga\n🏴 Premier League\n🇮🇹 Serie A\n🇫🇷 Ligue 1\n🇩🇪 Bundesliga\n⭐ Champions League\nAS OF MATCHDAY 7 OF 38 · SYNCED 2D AGO\n2 clubs have a game in hand — sort by PPG to compare like with like.\nZONES & KEY\n▾\nPOS\nCLUB\nPL\nW\nD\nL\nGF\nGA\nGD\nPTS\nPPG\nFORM →\nNEXT\nCHAMPIONS LEAGUE\n· 1–5\n1\n–\nBAR\nBarcelona\n7\n7\n0\n0\n31\n7\n+24\n21\n3.00\nW\nW\nW\nW\n·\nSat · GET (H)\n12:30 PM EDT\n2\n–\nATM\nA",
+      "url": "?tab=table",
+      "providerAttempts": 0,
+      "errors": []
+    },
+    {
+      "width": 1000,
+      "query": "?only=laliga,ucl&date=2026-10-10",
+      "scrollWidth": 1000,
+      "frames": 0,
+      "header": "KICKOFF\nBROOKLYN · ET\nV0.5.2 · 1496 FIXTURES · SYNCED 2026-10-02 18:35 UTC\nDARK MODE",
+      "body": "KICKOFF\nBROOKLYN · ET\nV0.5.2 · 1496 FIXTURES · SYNCED 2026-10-02 18:35 UTC\nDARK MODE\nFIXTURES\nTABLE\nMOMENTS\nLEDGER\nPOSTER\nBROADCAST\nData may have moved. Last synced 2 days ago (2026-10-02). Fixtures get rescheduled — run npm run sync before staking anything on a kickoff time.\nNEXT MATCHDAY — NOTHING LEFT TODAY\nFRI 9 OCT\n1 MATCHES · KICKOFF 3:00 PM\n3:00\nPM\nMálaga v Espanyol\n📺 WHERE TO WATCH\nUS streaming & TV, by competition\nFILTERS\n2 of 14 competitions shown\nWEEKLY\nMONTHLY\n‹\nOct 5 – October 11, 2026\nJUMP TO TODAY\n›\nMON 5 · TUE 6 · WED 7 · THU 8 — NO FIXTURES\nFRI 9 OCT\n1 MATCH\n3:00 PM\nMálaga vs Espanyol\n🇪🇸 La Liga · La Rosaleda\n🇪🇸\n9:00 PM ",
+      "url": "?only=laliga%2Cucl&date=2026-10-10",
+      "providerAttempts": 0,
+      "errors": []
+    },
+    {
+      "width": 1000,
+      "query": "?tab=table&only=laliga",
+      "scrollWidth": 1000,
+      "frames": 0,
+      "header": "KICKOFF\nBROOKLYN · ET\nV0.5.2 · 1496 FIXTURES · SYNCED 2026-10-02 18:35 UTC\nDARK MODE",
+      "body": "KICKOFF\nBROOKLYN · ET\nV0.5.2 · 1496 FIXTURES · SYNCED 2026-10-02 18:35 UTC\nDARK MODE\nFIXTURES\nTABLE\nMOMENTS\nLEDGER\nPOSTER\nBROADCAST\nData may have moved. Last synced 2 days ago (2026-10-02). Fixtures get rescheduled — run npm run sync before staking anything on a kickoff time.\n🇪🇸 La Liga\n🏴 Premier League\n🇮🇹 Serie A\n🇫🇷 Ligue 1\n🇩🇪 Bundesliga\n⭐ Champions League\nAS OF MATCHDAY 7 OF 38 · SYNCED 2D AGO\n2 clubs have a game in hand — sort by PPG to compare like with like.\nZONES & KEY\n▾\nPOS\nCLUB\nPL\nW\nD\nL\nGF\nGA\nGD\nPTS\nPPG\nFORM →\nNEXT\nCHAMPIONS LEAGUE\n· 1–5\n1\n–\nBAR\nBarcelona\n7\n7\n0\n0\n31\n7\n+24\n21\n3.00\nW\nW\nW\nW\n·\nSat · GET (H)\n12:30 PM EDT\n2\n–\nATM\nA",
+      "url": "?tab=table&only=laliga",
+      "providerAttempts": 0,
+      "errors": []
+    },
+    {
+      "width": 1000,
+      "query": "?tab=moments",
+      "scrollWidth": 1000,
+      "frames": 0,
+      "header": "KICKOFF\nBROOKLYN · ET\nV0.5.2 · 1496 FIXTURES · SYNCED 2026-10-02 18:35 UTC\nDARK MODE",
+      "body": "KICKOFF\nBROOKLYN · ET\nV0.5.2 · 1496 FIXTURES · SYNCED 2026-10-02 18:35 UTC\nDARK MODE\nFIXTURES\nTABLE\nMOMENTS\nLEDGER\nPOSTER\nBROADCAST\n\nHAND-CURATED · LINKED TO RIGHTS HOLDERS · NEVER PLAYED HERE\n\nNo moments curated yet.",
+      "url": "?tab=moments",
+      "providerAttempts": 0,
+      "errors": []
+    }
+  ]
+}

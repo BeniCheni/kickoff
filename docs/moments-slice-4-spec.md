@@ -6,6 +6,10 @@ only: `git diff --stat 9188cb6 7636b08` touches `src/data/*.json` and `docs/sync
 and nothing else. This file supersedes `docs/moments-player-plan.md` §9, which stays as the
 original archive. It assigns no version number.
 
+Amended Sun 4 Oct 2026 for two of Beni's rulings on the S4a runner (draft PR #144, Pass 2):
+**Hosts** and **Shelf**. Only the rulings table, the S4 stage row, the S4 protocol and the
+Unverified table changed; everything else is as written on 1 Oct.
+
 ## Authority
 
 Rulings this spec carries, in force before it was written:
@@ -27,6 +31,23 @@ Beni's rulings on the slice-4 plan, 1 Oct 2026:
 | Is a demo edition in this plan? | **In** — behind a separate publication yes |
 | Who names the video ids? | **Beni** |
 | Does slice 4 stay a non-release until a reader can use Moments? | **Yes** |
+
+Beni's rulings of 4 Oct 2026, on the S4a observation runner (PR #144, Pass 2). They narrow the
+S4 protocol and nothing else here:
+
+| Question | Ruling |
+|---|---|
+| Which hosts may the player contact? | **Record named hosts.** The written authority lists every host family beyond the two required; the runner prints the list in the confirmation Beni types. Any other host is aborted by the runner and flagged in the observation notes. |
+| What if the shelf shows another video? | **Stop on playback of another id.** A shelf thumbnail or storyboard image is recorded, not a stop. |
+
+Beni's rulings of 6 Oct 2026, on the tooling that precedes his S4b visit. They do not open a release:
+
+| Question | Ruling |
+|---|---|
+| How fresh is the written authority? | **24 hours.** Live mode refuses it when `now - at` is more than 24 hours, at the start and again at the typed confirmation. Exactly 24 hours is accepted. A second visit inside that window, with a new output directory, is still possible. Nothing marks an authority spent. |
+| The Chrome debugging port? | **Replace.** Chrome opens no debugging port. The network guard uses Playwright's own pipe. |
+| A shelf thumbnail with a query string? | **Stop.** The run fails closed. S4b observes the real shelf traffic. |
+| Escape once the picture has focus? | Stays on ideas row 100. It is not fixed before S4b. |
 
 Still open, and asked separately: (5) add a one-page first-edition source policy, S5.5,
 before edition ids are picked; (6) keep the S4 test ids separate from the edition ids. The
@@ -83,7 +104,7 @@ Through S6, a reader of `https://benicheni.github.io/kickoff/` sees exactly toda
 | S1 | This spec | Nothing | Everything | Review against `docs/moments-architecture.md` | None |
 | S2 | Connect the permission check; test seam; acceptance build and edition; probes into the repo | Nothing | Pages, edition, provider | Gate tests fail before and pass after; build grep; 72-cell inert comparison | None |
 | S3 | Integration acceptance on the S2 tip, as the S2 PR's builder evidence | Nothing | Zero provider egress | Receipts below | None |
-| S4 | Loopback real-provider observation | Nothing | Pages, CI, every unnamed id | Protocol below | **Provider authority** + ids named in writing |
+| S4 | Loopback real-provider observation | Nothing | Pages, CI, every unnamed id | Protocol below | **Provider authority** + host families and ids named in writing |
 | S5 | Optional same-origin staging observation | Nothing at `/kickoff/` | `/kickoff/` | Referer and 153 on HTTPS | Its own yes, asked after S4 |
 | S5.5 | First-edition source policy (if ask 5 is yes) | Nothing | Everything | Review | Ask 5 |
 | S6 | Initial-edition proposal | Nothing | Edition, Pages | Branch CI validates the draft outside `moments.json` | None beyond S4 |
@@ -191,9 +212,10 @@ The receipt states plainly that a green stub is not playback.
 
 ## S4 observation protocol (written now; runs only after both its gates)
 
-- **Environment:** installed Google Chrome, headed, fresh profile, version recorded. The
-  acceptance build with Beni's named ids, served on `127.0.0.1` with the port recorded. One
-  page load. No CI, cron, `workflow_dispatch` or Pages.
+- **Environment:** installed Google Chrome, headed, fresh profile, version recorded. Chrome
+  opens no debugging port. The acceptance build with Beni's named ids, served on `127.0.0.1`
+  with the port recorded. One page load. No CI, cron, `workflow_dispatch` or Pages. The written
+  authority is no older than 24 hours when the run starts and again at the typed confirmation.
 - **Ids:** at most two, named by Beni in writing. Each must pass the playability rule at the
   test instant. If Play does not appear, stop. Ideally one plays and one has embedding turned
   off by its uploader (error 150). If Beni names one id, the 150 path stays stub-only.
@@ -203,10 +225,28 @@ The receipt states plainly that a green stub is not playback.
   3. Previous returns to A: reload-and-seek, and the resume sentence.
 - **Network allowlist, enforced:** every provider host is aborted before Play. After Play,
   only `https://www.youtube.com/iframe_api` and one `www.youtube-nocookie.com/embed/<named
-  id>` frame per named id are released. Further requests the player then makes (media,
-  images) are let through and recorded host by host; none is described as expected in
-  advance. Any request carrying a video id that was not named is aborted, and that ends the
-  run.
+  id>` frame per named id are released. Further requests the player then makes (scripts,
+  media, images) are released only to host families Beni's written authority names, and are
+  recorded host by host; none is described as expected in advance.
+  - **Hosts are named, not discovered.** The authority lists every host family it permits.
+    `youtube.com` and `youtube-nocookie.com` are always required; any other family the player
+    needs (a thumbnail, media or avatar family, say) must be named before the visit. A name
+    covers itself and its subdomains. The runner prints the list in the confirmation Beni
+    types before Chrome launches. That confirmation also re-checks the 24-hour bound.
+  - **A provider family the authority leaves out stops the run.** A request to any other,
+    non-provider host is aborted by the runner, counted by host and reason, and noted in the
+    observation as a runner decision rather than a provider failure. An aborted request can
+    change what Beni sees, so the picture and ad answers describe this allowlist, not the
+    provider's unrestricted behaviour.
+  - **Another id.** Any request carrying a video id that was not named is aborted, and that
+    ends the run, with one exception: **a shelf image.** An image request whose path is
+    `/vi/<id>/…`, `/vi_webp/<id>/…`, `/an_webp/<id>/…` or `/sb/<id>/…` with exactly one id,
+    no body and no query string, on an authorised host, after the API script has been
+    released, is recorded as a shelf image instead. A frame, document, API, fetch or media
+    request for another id still stops the run: that is playback, not display.
+  - **Limits of the id check.** It reads recognised identity locations only. An id inside an
+    opaque media signature, a binary body or an unknown parameter is not seen, so “no unnamed
+    id” is a claim about what the runner can read.
 - **Observe:**
   - picture on stage and in Cinema at 390 and 1000; at 360, the 16:10 box and any letterboxing;
   - one-press playback, cold and warm; `onAutoplayBlocked`;
@@ -214,7 +254,8 @@ The receipt states plainly that a green stub is not playback.
     `allowfullscreen`);
   - the Referer header actually sent on the frame request; error 153 or not; ads;
   - park and return: same element, same position, bytes fetched while parked;
-  - queue hit-tests on the live frame; console; reducer snapshots.
+  - queue hit-tests on the live frame; console; reducer snapshots;
+  - hosts contacted and runner aborts, counted by host and reason; shelf images recorded.
 - **Stop, and do not continue to another id or origin:**
   - any provider request before Play;
   - a second iframe or API script;
@@ -229,7 +270,8 @@ The receipt states plainly that a green stub is not playback.
   - the parked player returns blank, or the instance died;
   - the resume sentence after a zero sample;
   - Play shown for an item that fails the rule;
-  - any id not named.
+  - a provider family the authority does not name;
+  - any id not named, other than a shelf image.
 - **Output:** dated `source.availability` observations, with an environment string naming
   loopback and the Chrome version, for S6. Nothing is written to `moments.json`.
 - **What it does not prove:** anything about the Pages origin. Pages is HTTPS, on another
@@ -272,6 +314,7 @@ The receipt states plainly that a green stub is not playback.
 | Item | First step that can observe it |
 |---|---|
 | Real playback, ads, ready-window duration (no timeout is invented), one-press playback, attribute retention, 16:10 letterboxing in desktop Chrome, parked decoding | S4, as one sample each |
+| Which host families the real player contacts, and whether its shelf thumbnails carry a query string (as built, one would stop the run) | S4, as one sample; a stop there is itself the finding |
 | Deployed Pages Referer and error 153 | S5 or S8 |
 | Physical devices, Safari, Firefox, screen-reader speech, Android and iOS Back, CloseWatcher, browser zoom | Nothing in this plan; disclosed under “Deliberately not done” unless Beni adds a device pass |
 | Rights | No test; the permission basis is an authored judgment |
