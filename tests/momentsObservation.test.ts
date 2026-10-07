@@ -302,6 +302,30 @@ describe('Pass 2 observation honesty and authority boundaries', () => {
     expect(image('https://i.ytimg.com:444/vi/S4Stub99999/hqdefault.jpg')).toMatchObject({ action: 'stop', reason: 'provider-url-refused' })
     expect(image('https://user@i.ytimg.com/vi/S4Stub99999/hqdefault.jpg')).toMatchObject({ action: 'stop', reason: 'provider-url-refused' })
   })
+  it('stops a shelf query whose escapes spell a nested URL, a second key, whitespace or a second encoding', () => {
+    // Pass 1 (7 Oct 2026): the raw-only alphabet let %XX spell anything, so each of these was recorded as a shelf image.
+    // The extractor follows only a lower-case `http(s):` at the start of a value, so the upper-case and double-encoded
+    // forms also hid their second id from the one-id check.
+    const seen = { api: true, frames: [] as const }
+    const image = (url: string) => decideRequest(input({ url, resourceType: 'image', seen }))
+    const base = 'https://i.ytimg.com/vi/S4Stub99999/hqdefault.jpg'
+    const rs = '&rs=AOn4CLDRBT62N1_6CyJy49C2YL2wz4po6g'
+    for (const value of [
+      'https%3A%2F%2Fx.test%2F', '%68ttps%3A%2F%2Fx.test%2F', 'HTTPS%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DS4Stub99998',
+      'Https%3A%2F%2Fwww.youtube-nocookie.com%2Fembed%2FS4Stub99998', 'https%253A%252F%252Fwww.youtube.com%252Fwatch%253Fv%253DS4Stub99998',
+      'data%3Atext%2Fhtml%2Cx', 'a%26v%3DS4Stub99998', 'a%20b', 'a%0Ab', '%C3%A9', '%25', '%C3',
+    ]) {
+      expect(image(base + '?sqp=' + value + rs), value).toMatchObject({ action: 'stop', reason: 'unnamed-id' })
+      expect(image(base + '?rs=' + value), value).toMatchObject({ action: 'stop', reason: 'unnamed-id' })
+    }
+    // An escape that spells a token character is still a token, and a lower-case nested URL that the extractor reads still stops on its id.
+    for (const value of ['a%2Fb', 'a%2Bb', 'a%3D', '-oaymwEmCIAFEOAD8quKqQMa8AEB-AH-BYAC4AOKAgwIABABGEMgUyhlMA8=']) {
+      expect(image(base + '?sqp=' + value + rs), value).toMatchObject({ action: 'record', reason: 'shelf-image', ids: ['S4Stub99999'] })
+    }
+    expect(image(base + '?sqp=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DS4Stub99998')).toMatchObject({ action: 'stop', reason: 'unnamed-id', ids: ['S4Stub99999', 'S4Stub99998'] })
+    // A pair without `=` is not a key: `rsX` must not be read as key `rs` with value `rsX`.
+    for (const query of ['?rsX', '?sqpX', '?sqp', '?=a', '?sqp=a&rsX']) expect(image(base + query), query).toMatchObject({ action: 'stop', reason: 'unnamed-id' })
+  })
   it('PLAYING alone is unknown; a later positive sample confirms only the current named attempt', () => {
     const t = new Telemetry(fictionalIds)
     t.accept({ kind: 'play', value: { itemId: 'a', attempt: 1, videoId: fictionalIds[0] } })

@@ -49,7 +49,7 @@ const run = async (name, extra, reason = null) => {
     assert(receipt.observations.every(o => o.note.includes('Runner aborts')))
   }
   if (name === 'shelf-images') assert.equal(receipt.requests.filter(r => r.decision.reason === 'shelf-image').length, 3)
-  if (name === 'shelf-query-stop') assert.equal(receipt.requests.filter(r => r.decision.reason === 'unnamed-id').length, 1)
+  if (name === 'shelf-query-stop' || name === 'shelf-query-nested') assert.equal(receipt.requests.filter(r => r.decision.reason === 'unnamed-id').length, 1)
   if (name === 'malformed-error') assert(receipt.observations[0].note.includes('Malformed'))
   if (reason === null) {
     assert.equal(receipt.pageLoads, 1)
@@ -65,6 +65,7 @@ for (const variant of redirectVariants) await run(variant, ['--port', '0', '--va
 await run('prompt-ceiling', ['--port', '0', '--variant', 'prompt-ceiling', '--ceiling-ms', '100'], 'operational-safety-ceiling')
 for (const variant of ['extra-hosts', 'shelf-images', 'malformed-error']) await run(variant, ['--port', '0', '--variant', variant])
 await run('shelf-query-stop', ['--port', '0', '--variant', 'shelf-query-stop'], 'unnamed-id')
+await run('shelf-query-nested', ['--port', '0', '--variant', 'shelf-query-nested'], 'unnamed-id')
 await run('sandbox-headed', ['--port', '0'])
 const original = stubAuthority('http://127.0.0.1:4318')
 const refusals = [
