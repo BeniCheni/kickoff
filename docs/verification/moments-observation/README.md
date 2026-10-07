@@ -406,6 +406,16 @@ cases** (`shelf-query-nested` stops `unnamed-id`), **77 pure mutants** (`shelf-q
 controls held on 155. Recorded in
 [`receipts/shelf-sqp-rs-pass-1.json`](receipts/shelf-sqp-rs-pass-1.json).
 
+The drivers at the 7 Oct base64url narrowing, on code `7eb5e2d09d6885780de5b75b7f59af1b6e89abad`:
+**869 tests in 55 files**, **85 proof cases**, **78 pure mutants** and **108 browser mutants**,
+recorded in [`receipts/shelf-base64url.json`](receipts/shelf-base64url.json). Against the
+merged PR #168 tip `70de992` the tests, proof cases and browser mutants are equal, and the
+pure mutants gain one (`shelf-query-base64url`, which puts the wider decoded alphabet back
+and goes red on `a%2Fb`). `shelf-query-charset` and `shelf-query-decoded` target the
+base64url line. `shelf-query-nested` still stops `unnamed-id`; its browser control restores
+the raw check and the visit completes with one shelf image. Chrome launched
+155.0.8059.40. All 84 redirect controls held. Every proof case and every mutant kept zero
+provider continuations.
 
 The controlled production comparison uses current-main application source and PR source
 with the exact committed `11845cb` data bytes in both disposable archives: no fixtures are

@@ -1,0 +1,79 @@
+{
+  "what": "Shelf sqp and rs values narrowed to base64url with up to two = of padding, after one percent-decode. Stub mode only. Zero provider egress. Paths and process ids reduced to counts.",
+  "code": "7eb5e2d09d6885780de5b75b7f59af1b6e89abad",
+  "base": "70de99249d080be2b62c6b8e6de1999995564283",
+  "environment": {
+    "node": "v24.15.0",
+    "npm": "11.12.1",
+    "playwright": "1.62.1",
+    "chrome": "Google Chrome 155.0.8059.40",
+    "chromeLaunched": "155.0.8059.40",
+    "os": "darwin 27.0.0 arm64"
+  },
+  "suite": {
+    "tests": 869,
+    "files": 55,
+    "typecheck": "clean"
+  },
+  "productionStylesheet": {
+    "bytes": 39043,
+    "sha256": "a3e896cd54a93d13e5c18df3b653cfa48b02bc33f1588c8b790031a0c3949a5f"
+  },
+  "drivers": {
+    "proofCases": 85,
+    "pureMutants": 78,
+    "browserMutants": 108,
+    "providerContinuedAnywhere": 0
+  },
+  "against70de992": {
+    "tests": "869 equal",
+    "proofCases": "85 equal",
+    "pureMutants": "77 to 78",
+    "browserMutants": "108 equal",
+    "why": "One pure mutant, shelf-query-base64url. No new proof case and no new browser mutant. The nested control's from string now matches the base64url line."
+  },
+  "redBeforeTheNarrowing": "On the previous alphabet, before policy.ts changed, two tests failed. The first assertion of each recorded ?sqp=a%2Fb as shelf-image. The same file then passed, 114 tests, once the value had to match ^[A-Za-z0-9_-]+={0,2}$.",
+  "pureMutantReds": [
+    {
+      "name": "shelf-query-charset",
+      "failedOn": "Deleting the base64url check recorded ?sqp=https://x.test/ as shelf-image. Restored, it stops unnamed-id. Driver at this code: red exit 1, green exit 0."
+    },
+    {
+      "name": "shelf-query-decoded",
+      "failedOn": "Checking the raw value for %XX recorded ?sqp=a%2Fb as shelf-image, and https%3A%2F%2Fx.test%2F as shelf-image. Restored, both stop unnamed-id. Driver at this code: red exit 1, green exit 0."
+    },
+    {
+      "name": "shelf-query-base64url",
+      "failedOn": "Putting back [A-Za-z0-9_.=+/-] on the decoded token recorded ?sqp=a%2Fb as shelf-image. Restored, it stops unnamed-id. Driver at this code: red exit 1, green exit 0."
+    }
+  ],
+  "proof": {
+    "shelfImages": "complete, 3 shelf images, provider continued 0, unhandled provider responses 0",
+    "shelfQueryStop": "stopped unnamed-id, 1 such request, provider continued 0, unhandled provider responses 0",
+    "shelfQueryNested": "stopped unnamed-id, 1 such request, provider continued 0, unhandled provider responses 0",
+    "cases": 85,
+    "providerContinued": 0
+  },
+  "browser": {
+    "shelfImages": {
+      "mutantRed": "stopped unnamed-id, provider continued 0",
+      "mutantGreen": "complete, 3 shelf images, provider continued 0"
+    },
+    "shelfQueryStop": {
+      "mutantRed": "completed and recorded the disallowed-key thumbnail as shelf-image, one id, provider continued 0",
+      "mutantGreen": "stopped unnamed-id, provider continued 0"
+    },
+    "shelfQueryNested": {
+      "mutantRed": "completed and recorded the upper-case nested URL as shelf-image, one id S4Stub99999, provider continued 0",
+      "mutantGreen": "stopped unnamed-id, provider continued 0"
+    },
+    "redirectControls": "42 guard-off reds reached the loopback Location once; 42 restored greens reached it zero times. The same 42 held for skip-Fetch.enable."
+  },
+  "cleanVisitEndpoint": {
+    "chromeProcesses": 7,
+    "listeningSockets": 0,
+    "devToolsActivePort": false,
+    "remoteDebuggingPortOnTheCommand": false,
+    "lsof": "exit 1"
+  }
+}
