@@ -380,6 +380,14 @@ skip-`Fetch.enable` host controls go red because no local frame is fulfilled wit
 enable, not because a host request escaped; they prove the session owns fulfilment, and
 the 42 loopback redirects are the coverage proof.
 
+The drivers at the 7 Oct shelf-query change, on code `5fcc7d7b64507eb0324766b2d94dca2b665245ff`:
+**868 tests in 55 files**, **84 proof cases**, **73 pure mutants** and **107 browser mutants**,
+recorded in [`receipts/shelf-sqp-rs.json`](receipts/shelf-sqp-rs.json). Against the 6 Oct
+tooling totals that is one test, one proof case (`shelf-query-stop`), five pure mutants and
+one browser mutant. The earlier proof cases still match their expected stop or completion.
+`shelf-images` still completes, and now records three shelf images. Every proof case and
+every mutant kept zero provider continuations.
+
 
 The controlled production comparison uses current-main application source and PR source
 with the exact committed `11845cb` data bytes in both disposable archives: no fixtures are
