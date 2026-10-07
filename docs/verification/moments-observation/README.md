@@ -395,6 +395,16 @@ one browser mutant. The earlier proof cases still match their expected stop or c
 `shelf-images` still completes, and now records three shelf images. Every proof case and
 every mutant kept zero provider continuations.
 
+The PR #168 cold review re-ran all three drivers on Chrome 155.0.8059.40, which had replaced
+154.0.8037.98 on this Mac overnight: main `415f4eda` 83 / 68 / 106, the draft parent and the
+builder head 84 / 73 / 107, case for case equal to each other and, where they overlap, to
+main. At its code `16d01bc` (the decoded alphabet): **869 tests in 55 files**, **85 proof
+cases** (`shelf-query-nested` stops `unnamed-id`), **77 pure mutants** (`shelf-query-decoded`,
+`-decode-error`, `-pair` and `-named` added) and **108 browser mutants** (the
+`shelf-query-nested` control restores the raw check and the visit completes). All 84 redirect
+controls held on 155. Recorded in
+[`receipts/shelf-sqp-rs-pass-1.json`](receipts/shelf-sqp-rs-pass-1.json).
+
 
 The controlled production comparison uses current-main application source and PR source
 with the exact committed `11845cb` data bytes in both disposable archives: no fixtures are
