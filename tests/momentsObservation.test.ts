@@ -269,6 +269,39 @@ describe('Pass 2 observation honesty and authority boundaries', () => {
       expect(decideRequest(input({ url: url + '?v=S4Stub99998', resourceType: 'image' }))).toMatchObject({ action: 'stop', reason: 'unnamed-id' })
     }
   })
+  it('records a shelf thumbnail whose only query is sqp and rs, and stops every other query', () => {
+    const seen = { api: true, frames: [] as const }
+    const image = (url: string, extra: Partial<RequestInput> = {}) => decideRequest(input({ url, resourceType: 'image', seen, ...extra }))
+    const recorded = { action: 'record', reason: 'shelf-image', ids: ['S4Stub99999'] }
+    const hq = 'https://i.ytimg.com/vi/S4Stub99999/hqdefault.jpg?sqp=-oaymwEbCKgBEF5IVfKriqkDDggBFQAAiEIYAXABwAEG&rs=AOn4CLDRBT62N1_6CyJy49C2YL2wz4po6g'
+    expect(image(hq)).toMatchObject(recorded)
+    expect(image('https://i.ytimg.com/vi/S4Stub99999/sddefault.jpg?sqp=-oaymwEbCKgBEF5IVfKriqkDDggBFQAAiEIYAXABwAEG=')).toMatchObject(recorded)
+    for (const label of ['vi', 'vi_webp', 'an_webp', 'sb']) {
+      expect(image(`https://i.ytimg.com/${label}/S4Stub99999/hqdefault.jpg?sqp=-oaymwEbCKgBEF5IVfKriqkDDggBFQAAiEIYAXABwAEG&rs=AOn4CLDRBT62N1_6CyJy49C2YL2wz4po6g`)).toMatchObject(recorded)
+    }
+    const base = 'https://i.ytimg.com/vi/S4Stub99999/hqdefault.jpg'
+    for (const query of ['?sqp=a', '?rs=b', '?sqp=a&rs=b', '?rs=b&sqp=a', '?sqp=' + 'a'.repeat(256), '?sqp=a%2Fb', '?sqp=a+b']) {
+      expect(image(base + query)).toMatchObject(recorded)
+    }
+    const stop = (url: string, extra: Partial<RequestInput> = {}) => expect(image(url, extra), url).toMatchObject({ action: 'stop', reason: 'unnamed-id' })
+    stop(base + '?sqp=a&rs=b&v=S4Stub99998')
+    stop(base + '?sqp=a&extra=b')
+    stop(base + '?SQP=a')
+    stop(base + '?sqp=a&sqp=b')
+    stop(base + '?sqp=')
+    stop(base + '?sqp=' + 'a'.repeat(257))
+    stop(base + '?sqp=https://x.test/')
+    stop(base + '?sqp=%G1')
+    for (const resourceType of ['document', 'fetch', 'xhr', 'media', 'script']) stop(hq, { resourceType })
+    stop(hq, { body: 'not-empty' })
+    stop('https://i.ytimg.com/vi/S4Stub99999/sb/S4Stub99998/hqdefault.jpg')
+    expect(image('https://i.ytimg.com/vi/S4Stub00001/hqdefault.jpg?sqp=-oaymwEbCKgBEF5IVfKriqkDDggBFQAAiEIYAXABwAEG&rs=AOn4CLDRBT62N1_6CyJy49C2YL2wz4po6g')).toMatchObject({ action: 'record', reason: 'player-request', ids: ['S4Stub00001'] })
+    expect(image('https://i.ytimg.com/vi/S4Stub00001/hqdefault.jpg')).toMatchObject({ action: 'record', reason: 'shelf-image', ids: ['S4Stub00001'] })
+    expect(image('https://i.ytimg.com/vi/S4Stub00001/hqdefault.jpg?extra=1')).toMatchObject({ action: 'record', reason: 'player-request', ids: ['S4Stub00001'] })
+    expect(decideRequest(input({ url: 'http://i.ytimg.com/vi/S4Stub99999/hqdefault.jpg', resourceType: 'image', seen }))).toMatchObject({ action: 'stop', reason: 'provider-url-refused' })
+    expect(image('https://i.ytimg.com:444/vi/S4Stub99999/hqdefault.jpg')).toMatchObject({ action: 'stop', reason: 'provider-url-refused' })
+    expect(image('https://user@i.ytimg.com/vi/S4Stub99999/hqdefault.jpg')).toMatchObject({ action: 'stop', reason: 'provider-url-refused' })
+  })
   it('PLAYING alone is unknown; a later positive sample confirms only the current named attempt', () => {
     const t = new Telemetry(fictionalIds)
     t.accept({ kind: 'play', value: { itemId: 'a', attempt: 1, videoId: fictionalIds[0] } })

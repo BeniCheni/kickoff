@@ -1,5 +1,13 @@
 // Independent of the immutable S2/S3 stub. Everything here is synthetic.
 (() => {
+  const variant = window.__observationVariant
+  if (variant === 'shelf-images' || variant === 'shelf-query-stop') {
+    const image = new Image()
+    const query = variant === 'shelf-query-stop'
+      ? '?sqp=-oaymwEbCKgBEF5IVfKriqkDDggBFQAAiEIYAXABwAEG&rs=AOn4CLDRBT62N1_6CyJy49C2YL2wz4po6g&extra=1'
+      : '?sqp=-oaymwEbCKgBEF5IVfKriqkDDggBFQAAiEIYAXABwAEG&rs=AOn4CLDRBT62N1_6CyJy49C2YL2wz4po6g'
+    image.src = 'https://i.ytimg.com/vi/S4Stub99999/hqdefault.jpg' + query
+  }
   const players = []
   class Player {
     constructor(element, options) {

@@ -142,9 +142,13 @@ entry elements, including removed/replaced ones, rather than counting downstream
 
 An unnamed playback identity stops even on a named extra host. Under Beni's 4 Oct ruling,
 image requests with exactly one thumbnail/storyboard path identity (`vi`, `vi_webp`,
-`an_webp`, `sb`), no body and no query are recorded as shelf images rather than stopping.
-Document, API/fetch and media requests still stop on an unnamed identity. This intentionally
-narrows the spec's broader unnamed-id stop; the PM amends the spec separately. The extractor recognizes embed,
+`an_webp`, `sb`) and no body are recorded as shelf images rather than stopping. Beni's
+7 Oct ruling allows that image an empty query, or a query whose only keys are `sqp` and
+`rs`, each key once, each value nonempty and at most 256 characters, made only of letters,
+digits, `_`, `.`, `-`, `=`, `+`, `/` and percent-escapes of the form `%XX`. Any other query
+stops with `unnamed-id`. A named id with any query stays a player request. Document, API,
+fetch, XHR and media requests still stop on an unnamed identity. This intentionally
+narrows the spec's broader unnamed-id stop; the spec's S4 protocol carries the same rule. The extractor recognizes embed,
 watch/v, short/live, short-link, thumbnail/storyboard paths, repeated identity parameters,
 video_id/docid and JSON videoId fields, including duplicate explicit keys. It follows
 nested URLs three levels. It cannot identify IDs hidden in opaque signatures, binary
@@ -245,7 +249,7 @@ claim that the unchanged application generated that defect.
 | 11 | Blank/dead return | Element loss: yes; blankness: human | `unsure` remains uncertainty and continues. |
 | 12 | Resume after zero | Adapter regression or wrong copy | Uses the sample when the resume signal was emitted; a later zero does not falsely invalidate an existing label. |
 | 13 | Ineligible Play | Regression only in this protocol | Generated items are permitted without expiry. The variant evaluates the rule at year 2000; it does not read a failing page. |
-| 14 | Unnamed playback id | Yes | Frame/API/media identities stop; recognized shelf image identities are recorded under Beni's ruling. |
+| 14 | Unnamed playback id | Yes | Frame, API, fetch, XHR and media identities stop. A shelf image is recorded when its query is empty or only `sqp` and `rs`, under Beni's 7 Oct ruling. |
 
 For row 5, live evidence is a conservative local-commit check, not introspection into a
 cross-origin implementation. A delayed local commit also stops; the runner cannot prove
@@ -362,7 +366,7 @@ implemented, so a second visit inside 24 hours with a new output directory still
 stub fixture stays valid in stub mode. The five-minute runner default is unchanged; the
 live example explicitly chooses fifteen minutes.
 
-The drivers at this change, measured on the branch rather than as a rewrite of the Pass 2
+The drivers at the 6 Oct tooling change, measured on that branch rather than as a rewrite of the Pass 2
 paragraph above: **867 tests in 55 files**, **83 proof cases**, **68 pure mutants** and
 **106 browser mutants**, recorded in [`receipts/s4b-tooling.json`](receipts/s4b-tooling.json)
 with the environment, the three endpoint facts, the guard-loss measurement and the
