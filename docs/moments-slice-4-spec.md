@@ -10,7 +10,9 @@ Amended Sun 4 Oct 2026 for two of Beni's rulings on the S4a runner (draft PR #14
 **Hosts** and **Shelf**. Only the rulings table, the S4 stage row, the S4 protocol and the
 Unverified table changed; everything else is as written on 1 Oct. Amended again on 6 and
 7 Oct 2026 for his S4b tooling rulings (PRs #164 and #168), in the same places: a rulings
-table for each day, the S4 protocol and the Unverified table.
+table for each day, the S4 protocol and the Unverified table. Amended once more on 7 Oct
+2026 after PR #168 merged: the 7 Oct table's Base64url row, and the shelf alphabet in the
+S4 protocol.
 
 ## Authority
 
@@ -51,11 +53,12 @@ Beni's rulings of 6 Oct 2026, on the tooling that precedes his S4b visit. They d
 | A shelf thumbnail with a query string? | **Stop.** The run fails closed. S4b observes the real shelf traffic. |
 | Escape once the picture has focus? | Stays on ideas row 100. It is not fixed before S4b. |
 
-Beni's ruling of 7 Oct 2026, after the 6 Oct visit showed the request the 6 Oct Stop was waiting for. It narrows that Stop for one shape and does not open a release:
+Beni's rulings of 7 Oct 2026. The first, after the 6 Oct visit showed the request the 6 Oct Stop was waiting for, narrows that Stop for one shape. The second, after that rule merged, narrows each value to base64url. Neither opens a release:
 
 | Question | Ruling |
 |---|---|
 | A shelf thumbnail with a query string? | **Allow, narrowly: only `sqp` and `rs`.** The real player requests them. |
+| Base64url? | **Yes**: each `sqp` and `rs` value, after one percent-decode, is base64url with up to two `=` of padding. |
 
 Still open, and asked separately: (5) add a one-page first-edition source policy, S5.5,
 before edition ids are picked; (6) keep the S4 test ids separate from the edition ids. The
@@ -252,12 +255,13 @@ The receipt states plainly that a green stub is not playback.
     and no body, on an authorised host, after the API script has been released, is recorded
     as a shelf image instead. Its query is empty, or every key is exactly `sqp` or `rs`
     (case-sensitive), each key once, and every value is nonempty and at most 256 characters
-    and, once percent-decoded, only letters, digits, `_`, `.`, `-`, `=`, `+` and `/`. An
-    escape may spell one of those characters (`%2F`, `%3D`) and nothing else, so a nested URL
-    with a scheme, in any case or encoding, a smuggled `&`, whitespace or a second layer of
-    escapes stops the run, as does anything else in the query. A scheme-less path spelled
-    from that alphabet, such as `//www.youtube.com/embed/<id>`, is recorded: the id check
-    does not read an id there (see its limits below). A frame, document, API, fetch, XHR or
+    and, once percent-decoded, base64url with up to two `=` of padding: letters, digits,
+    `_` and `-`, and `=` only at the end. An escape may spell one of those characters
+    (`%3D` is one pad) and nothing else, so a nested URL with a scheme, in any case or
+    encoding, a smuggled `&`, whitespace, a second layer of escapes, or `.`, `+` or `/`
+    stops the run, as does anything else in the query. A scheme-less path such as
+    `//www.youtube.com/embed/<id>` stops: those characters are outside the alphabet
+    (Beni's Base64url ruling, 7 Oct 2026). A frame, document, API, fetch, XHR or
     media request for another id still stops the run: that is playback, not display.
   - **Limits of the id check.** It reads recognised identity locations only. An id inside an
     opaque media signature, a binary body or an unknown parameter is not seen, so “no unnamed

@@ -145,12 +145,13 @@ image requests with exactly one thumbnail/storyboard path identity (`vi`, `vi_we
 `an_webp`, `sb`) and no body are recorded as shelf images rather than stopping. Beni's
 7 Oct ruling allows that image an empty query, or a query whose only keys are `sqp` and
 `rs`, each key once, each value nonempty and at most 256 characters and, once
-percent-decoded, made only of letters, digits, `_`, `.`, `-`, `=`, `+` and `/`. An escape
-may spell one of those characters and nothing else, so a nested URL with a scheme, in any
-case or encoding, a smuggled `&`, whitespace or a second layer of escapes stops (the PR #168
-cold review found the raw-only alphabet let `%XX` spell all of them). A scheme-less path
-spelled from the alphabet, such as `//www.youtube.com/embed/<id>`, is recorded; no id is read
-from it. The 6 Oct values were base64url with `=` padding. Any other query stops with
+percent-decoded, base64url with up to two `=` of padding (letters, digits, `_` and `-`,
+then `=` only at the end). An escape may spell one of those characters and nothing else,
+so a nested URL with a scheme, in any case or encoding, a smuggled `&`, whitespace or a
+second layer of escapes stops (the PR #168 cold review found the raw-only alphabet let
+`%XX` spell all of them). `.`, `+` and `/` stop too. A scheme-less path such as
+`//www.youtube.com/embed/<id>` stops; Beni's Base64url ruling the same day closed it.
+The 6 Oct values were already base64url with `=` padding. Any other query stops with
 `unnamed-id`. A named id with any query stays a player request. Document, API,
 fetch, XHR and media requests still stop on an unnamed identity. This intentionally
 narrows the spec's broader unnamed-id stop; the spec's S4 protocol carries the same rule. The extractor recognizes embed,
