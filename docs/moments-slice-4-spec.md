@@ -8,7 +8,9 @@ original archive. It assigns no version number.
 
 Amended Sun 4 Oct 2026 for two of Beni's rulings on the S4a runner (draft PR #144, Pass 2):
 **Hosts** and **Shelf**. Only the rulings table, the S4 stage row, the S4 protocol and the
-Unverified table changed; everything else is as written on 1 Oct.
+Unverified table changed; everything else is as written on 1 Oct. Amended again on 6 and
+7 Oct 2026 for his S4b tooling rulings (PRs #164 and #168), in the same places: a rulings
+table for each day, the S4 protocol and the Unverified table.
 
 ## Authority
 
@@ -48,6 +50,12 @@ Beni's rulings of 6 Oct 2026, on the tooling that precedes his S4b visit. They d
 | The Chrome debugging port? | **Replace.** Chrome opens no debugging port. The network guard uses Playwright's own pipe. |
 | A shelf thumbnail with a query string? | **Stop.** The run fails closed. S4b observes the real shelf traffic. |
 | Escape once the picture has focus? | Stays on ideas row 100. It is not fixed before S4b. |
+
+Beni's ruling of 7 Oct 2026, after the 6 Oct visit showed the request the 6 Oct Stop was waiting for. It narrows that Stop for one shape and does not open a release:
+
+| Question | Ruling |
+|---|---|
+| A shelf thumbnail with a query string? | **Allow, narrowly: only `sqp` and `rs`.** The real player requests them. |
 
 Still open, and asked separately: (5) add a one-page first-edition source policy, S5.5,
 before edition ids are picked; (6) keep the S4 test ids separate from the edition ids. The
@@ -240,10 +248,17 @@ The receipt states plainly that a green stub is not playback.
     provider's unrestricted behaviour.
   - **Another id.** Any request carrying a video id that was not named is aborted, and that
     ends the run, with one exception: **a shelf image.** An image request whose path is
-    `/vi/<id>/…`, `/vi_webp/<id>/…`, `/an_webp/<id>/…` or `/sb/<id>/…` with exactly one id,
-    no body and no query string, on an authorised host, after the API script has been
-    released, is recorded as a shelf image instead. A frame, document, API, fetch or media
-    request for another id still stops the run: that is playback, not display.
+    `/vi/<id>/…`, `/vi_webp/<id>/…`, `/an_webp/<id>/…` or `/sb/<id>/…` with exactly one id
+    and no body, on an authorised host, after the API script has been released, is recorded
+    as a shelf image instead. Its query is empty, or every key is exactly `sqp` or `rs`
+    (case-sensitive), each key once, and every value is nonempty and at most 256 characters
+    and, once percent-decoded, only letters, digits, `_`, `.`, `-`, `=`, `+` and `/`. An
+    escape may spell one of those characters (`%2F`, `%3D`) and nothing else, so a nested URL
+    with a scheme, in any case or encoding, a smuggled `&`, whitespace or a second layer of
+    escapes stops the run, as does anything else in the query. A scheme-less path spelled
+    from that alphabet, such as `//www.youtube.com/embed/<id>`, is recorded: the id check
+    does not read an id there (see its limits below). A frame, document, API, fetch, XHR or
+    media request for another id still stops the run: that is playback, not display.
   - **Limits of the id check.** It reads recognised identity locations only. An id inside an
     opaque media signature, a binary body or an unknown parameter is not seen, so “no unnamed
     id” is a claim about what the runner can read.
@@ -271,7 +286,7 @@ The receipt states plainly that a green stub is not playback.
   - the resume sentence after a zero sample;
   - Play shown for an item that fails the rule;
   - a provider family the authority does not name;
-  - any id not named, other than a shelf image.
+  - any id not named, other than a shelf image whose query is empty or only `sqp` and `rs`.
 - **Output:** dated `source.availability` observations, with an environment string naming
   loopback and the Chrome version, for S6. Nothing is written to `moments.json`.
 - **What it does not prove:** anything about the Pages origin. Pages is HTTPS, on another
@@ -314,7 +329,7 @@ The receipt states plainly that a green stub is not playback.
 | Item | First step that can observe it |
 |---|---|
 | Real playback, ads, ready-window duration (no timeout is invented), one-press playback, attribute retention, 16:10 letterboxing in desktop Chrome, parked decoding | S4, as one sample each |
-| Which host families the real player contacts, and whether its shelf thumbnails carry a query string (as built, one would stop the run) | S4, as one sample; a stop there is itself the finding |
+| Which host families the real player contacts, and whether its shelf thumbnails carry a query string | Observed once, on 6 Oct 2026: about 1.3 seconds after Play the player requested one thumbnail of another video whose only query keys were `sqp` and `rs`. Before Beni's 7 Oct ruling that request stopped the run. Other query keys, and thumbnails on other hosts, remain unobserved |
 | Deployed Pages Referer and error 153 | S5 or S8 |
 | Physical devices, Safari, Firefox, screen-reader speech, Android and iOS Back, CloseWatcher, browser zoom | Nothing in this plan; disclosed under “Deliberately not done” unless Beni adds a device pass |
 | Rights | No test; the permission basis is an authored judgment |

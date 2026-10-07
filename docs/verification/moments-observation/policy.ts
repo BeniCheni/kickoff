@@ -48,6 +48,28 @@ export function extractIds(url: string, body = ''): string[] {
   return [...ids]
 }
 
+/** Empty, or only `sqp` and `rs`, each once, with a bounded token value. Keys are case-sensitive.
+ * The alphabet binds the value after one percent-decode, so an escape can spell only a token
+ * character: never the `:` of a nested URL, the `%` of a second encoding, `&` or whitespace. */
+export function shelfQueryAllowed(search: string): boolean {
+  if (search === '') return true
+  const seen = new Set<string>()
+  for (const pair of search.slice(1).split('&')) {
+    const eq = pair.indexOf('=')
+    if (eq <= 0) return false
+    const key = pair.slice(0, eq)
+    const value = pair.slice(eq + 1)
+    if (key !== 'sqp' && key !== 'rs') return false
+    if (seen.has(key)) return false
+    seen.add(key)
+    if (value.length === 0 || value.length > 256) return false
+    let token: string
+    try { token = decodeURIComponent(value) } catch { return false }
+    if (!/^[A-Za-z0-9_.=+/-]+$/.test(token)) return false
+  }
+  return true
+}
+
 export type RequestState = { api: boolean; frames: readonly string[] }
 export type Decision = { action: 'release' | 'record' | 'abort' | 'stop'; reason: string; provider: boolean; ids: string[]; next: RequestState }
 export type RequestInput = {
@@ -59,7 +81,8 @@ export function decideRequest(input: RequestInput): Decision {
   const u = new URL(input.url), provider = providerHost(u.hostname), ids = extractIds(input.url, input.body)
   const result = (action: Decision['action'], reason: string, next = seen): Decision => ({ action, reason, next, provider, ids })
   const authorized = input.hosts.some(host => u.hostname === host || u.hostname.endsWith('.' + host))
-  const shelf = input.resourceType === 'image' && !input.body && /^\/(?:vi|vi_webp|an_webp|sb)\/[^/]+\//.test(u.pathname) && !u.search && ids.length === 1
+  // A named id with any query stays a player request. Shelf is the unnamed exception, and a named image with an empty query.
+  const shelf = input.resourceType === 'image' && !input.body && /^\/(?:vi|vi_webp|an_webp|sb)\/[^/]+\//.test(u.pathname) && shelfQueryAllowed(u.search) && ids.length === 1 && (!u.search || ids.some(id => !namedIds.includes(id)))
   if (!provider) {
     if (u.origin === input.origin || (u.protocol === 'https:' && ['fonts.googleapis.com', 'fonts.gstatic.com'].includes(u.hostname))) return result('release', 'local-or-fonts')
     if (!authorized) return result('abort', 'unlisted-host')

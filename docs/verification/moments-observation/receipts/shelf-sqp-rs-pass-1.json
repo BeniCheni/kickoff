@@ -1,0 +1,125 @@
+{
+  "what": "PR #168 Pass 1 (Claude Code, cold review). Stub mode only; zero provider egress. Driver counts re-run in this session at main, the builder head and the review code; paths and process ids reduced to counts.",
+  "base": "415f4eda7afdf0216d7f908ed50819c75b9ccef0",
+  "builderHead": "aaaae0313ef506e1b86888d12a97831d7236d7d8",
+  "reviewCode": "16d01bc1a1d5ea5def9298737852d8f2a1bfa5ef",
+  "environment": {
+    "node": "v24.15.0",
+    "npm": "11.12.1",
+    "playwright": "1.62.1",
+    "chrome": "Google Chrome 155.0.8059.40 (the 6 Oct visit and the builder ran 154.0.8037.98)",
+    "os": "darwin 27.0.0 arm64"
+  },
+  "suite": {
+    "main": "867 tests in 55 files",
+    "builderHead": "868 tests in 55 files",
+    "reviewCode": "869 tests in 55 files",
+    "typecheck": "clean at each"
+  },
+  "productionStylesheet": {
+    "bytes": 39043,
+    "sha256": "a3e896cd54a93d13e5c18df3b653cfa48b02bc33f1588c8b790031a0c3949a5f",
+    "at": "main, builder head and review code; the whole production dist is byte-identical to main at both"
+  },
+  "drivers": {
+    "main": {
+      "sha": "415f4eda7afdf0216d7f908ed50819c75b9ccef0",
+      "proofCases": 83,
+      "pureMutants": 68,
+      "browserMutants": 106,
+      "providerContinuedAnywhere": 0,
+      "chromeLaunched": [
+        "155.0.8059.40"
+      ]
+    },
+    "parent": {
+      "sha": "5fcc7d7b64507eb0324766b2d94dca2b665245ff",
+      "proofCases": 84,
+      "pureMutants": 73,
+      "browserMutants": 107,
+      "providerContinuedAnywhere": 0,
+      "chromeLaunched": [
+        "155.0.8059.40"
+      ]
+    },
+    "head": {
+      "sha": "aaaae0313ef506e1b86888d12a97831d7236d7d8",
+      "proofCases": 84,
+      "pureMutants": 73,
+      "browserMutants": 107,
+      "providerContinuedAnywhere": 0,
+      "chromeLaunched": [
+        "155.0.8059.40"
+      ]
+    },
+    "review": {
+      "sha": "16d01bc1a1d5ea5def9298737852d8f2a1bfa5ef",
+      "proofCases": 85,
+      "pureMutants": 77,
+      "browserMutants": 108,
+      "providerContinuedAnywhere": 0,
+      "chromeLaunched": [
+        "155.0.8059.40"
+      ]
+    }
+  },
+  "caseForCase": "Common proof cases, browser mutant rows and pure mutants are equal between main and the builder head (83, 106, 68), between the draft parent and the builder head (84, 107, 73) and between the builder head and the review code (84, 107, 73). The additions are the shelf cases only.",
+  "finding": {
+    "atBuilderHead": "Recorded as shelf-image, one id, at aaaae03: ?sqp=https%3A%2F%2Fx.test%2F; ?sqp=HTTPS%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DS4Stub99998 (second unnamed id not extracted); a%26v%3DS4Stub99998; a%20b; a%0Ab; %C3%A9. Main stopped each unnamed-id.",
+    "runnerReproduction": "A scratch stub at aaaae03 requesting the upper-case form completed with three shelf images and providerContinued 0; Chrome sent the URL unchanged.",
+    "fix": "The value alphabet binds the value after one percent-decode."
+  },
+  "pureMutantsAdded": [
+    "shelf-query-decoded",
+    "shelf-query-decode-error",
+    "shelf-query-pair",
+    "shelf-query-named"
+  ],
+  "pureMutantRetargeted": "shelf-query-charset now deletes the decoded-alphabet check",
+  "equivalentByConstruction": [
+    "eq === 0 (an empty key fails the key allowlist)",
+    "value.length === 0 (the token regex needs one character)",
+    "the decode catch's return (an undecodable value keeps its %)"
+  ],
+  "browserAtReviewCode": {
+    "shelf-images": {
+      "red": "unnamed-id",
+      "redAssertion": false,
+      "green": "receipt-missing",
+      "greenAssertion": true,
+      "proof": {
+        "exit": 0,
+        "stop": null,
+        "providerContinued": 0
+      }
+    },
+    "shelf-query-stop": {
+      "red": "receipt-missing",
+      "redAssertion": false,
+      "green": "unnamed-id",
+      "greenAssertion": true,
+      "proof": {
+        "exit": 1,
+        "stop": "unnamed-id",
+        "providerContinued": 0
+      }
+    },
+    "shelf-query-nested": {
+      "red": "receipt-missing",
+      "redAssertion": false,
+      "green": "unnamed-id",
+      "greenAssertion": true,
+      "proof": {
+        "exit": 1,
+        "stop": "unnamed-id",
+        "providerContinued": 0
+      }
+    }
+  },
+  "redirectControlsAtReviewCode": {
+    "count": 84,
+    "redReachedLocationOnce": 84,
+    "greenReachedLocationZero": 84
+  },
+  "notVerified": "Real provider traffic, other query keys, hover previews, ads, playback, Chrome 154 at the review code, live mode, the Pages origin."
+}

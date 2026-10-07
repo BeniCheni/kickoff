@@ -142,12 +142,23 @@ entry elements, including removed/replaced ones, rather than counting downstream
 
 An unnamed playback identity stops even on a named extra host. Under Beni's 4 Oct ruling,
 image requests with exactly one thumbnail/storyboard path identity (`vi`, `vi_webp`,
-`an_webp`, `sb`), no body and no query are recorded as shelf images rather than stopping.
-Document, API/fetch and media requests still stop on an unnamed identity. This intentionally
-narrows the spec's broader unnamed-id stop; the PM amends the spec separately. The extractor recognizes embed,
+`an_webp`, `sb`) and no body are recorded as shelf images rather than stopping. Beni's
+7 Oct ruling allows that image an empty query, or a query whose only keys are `sqp` and
+`rs`, each key once, each value nonempty and at most 256 characters and, once
+percent-decoded, made only of letters, digits, `_`, `.`, `-`, `=`, `+` and `/`. An escape
+may spell one of those characters and nothing else, so a nested URL with a scheme, in any
+case or encoding, a smuggled `&`, whitespace or a second layer of escapes stops (the PR #168
+cold review found the raw-only alphabet let `%XX` spell all of them). A scheme-less path
+spelled from the alphabet, such as `//www.youtube.com/embed/<id>`, is recorded; no id is read
+from it. The 6 Oct values were base64url with `=` padding. Any other query stops with
+`unnamed-id`. A named id with any query stays a player request. Document, API,
+fetch, XHR and media requests still stop on an unnamed identity. This intentionally
+narrows the spec's broader unnamed-id stop; the spec's S4 protocol carries the same rule. The extractor recognizes embed,
 watch/v, short/live, short-link, thumbnail/storyboard paths, repeated identity parameters,
 video_id/docid and JSON videoId fields, including duplicate explicit keys. It follows
-nested URLs three levels. It cannot identify IDs hidden in opaque signatures, binary
+nested URLs three levels, but only a value that begins with a lower-case `http:` or
+`https:`; an upper-case scheme or leading whitespace hides a nested id from a player request
+(ideas row 102). It cannot identify IDs hidden in opaque signatures, binary
 bodies, unknown parameter names, arbitrary encodings or an undocumented protocol. An
 eleven-character opaque media token is not assumed to be a video ID. This is conservative
 about recognized identity fields, not a claim to decode all provider traffic.
@@ -245,7 +256,7 @@ claim that the unchanged application generated that defect.
 | 11 | Blank/dead return | Element loss: yes; blankness: human | `unsure` remains uncertainty and continues. |
 | 12 | Resume after zero | Adapter regression or wrong copy | Uses the sample when the resume signal was emitted; a later zero does not falsely invalidate an existing label. |
 | 13 | Ineligible Play | Regression only in this protocol | Generated items are permitted without expiry. The variant evaluates the rule at year 2000; it does not read a failing page. |
-| 14 | Unnamed playback id | Yes | Frame/API/media identities stop; recognized shelf image identities are recorded under Beni's ruling. |
+| 14 | Unnamed playback id | Yes | Frame, API, fetch, XHR and media identities stop. A shelf image is recorded when its query is empty or only `sqp` and `rs`, under Beni's 7 Oct ruling. |
 
 For row 5, live evidence is a conservative local-commit check, not introspection into a
 cross-origin implementation. A delayed local commit also stops; the runner cannot prove
@@ -362,7 +373,7 @@ implemented, so a second visit inside 24 hours with a new output directory still
 stub fixture stays valid in stub mode. The five-minute runner default is unchanged; the
 live example explicitly chooses fifteen minutes.
 
-The drivers at this change, measured on the branch rather than as a rewrite of the Pass 2
+The drivers at the 6 Oct tooling change, measured on that branch rather than as a rewrite of the Pass 2
 paragraph above: **867 tests in 55 files**, **83 proof cases**, **68 pure mutants** and
 **106 browser mutants**, recorded in [`receipts/s4b-tooling.json`](receipts/s4b-tooling.json)
 with the environment, the three endpoint facts, the guard-loss measurement and the
@@ -375,6 +386,24 @@ session loss, a loosened cancellation match) with their fake-browser tests. The
 skip-`Fetch.enable` host controls go red because no local frame is fulfilled without the
 enable, not because a host request escaped; they prove the session owns fulfilment, and
 the 42 loopback redirects are the coverage proof.
+
+The drivers at the 7 Oct shelf-query change, on code `5fcc7d7b64507eb0324766b2d94dca2b665245ff`:
+**868 tests in 55 files**, **84 proof cases**, **73 pure mutants** and **107 browser mutants**,
+recorded in [`receipts/shelf-sqp-rs.json`](receipts/shelf-sqp-rs.json). Against the 6 Oct
+tooling totals that is one test, one proof case (`shelf-query-stop`), five pure mutants and
+one browser mutant. The earlier proof cases still match their expected stop or completion.
+`shelf-images` still completes, and now records three shelf images. Every proof case and
+every mutant kept zero provider continuations.
+
+The PR #168 cold review re-ran all three drivers on Chrome 155.0.8059.40, which had replaced
+154.0.8037.98 on this Mac overnight: main `415f4eda` 83 / 68 / 106, the draft parent and the
+builder head 84 / 73 / 107, case for case equal to each other and, where they overlap, to
+main. At its code `16d01bc` (the decoded alphabet): **869 tests in 55 files**, **85 proof
+cases** (`shelf-query-nested` stops `unnamed-id`), **77 pure mutants** (`shelf-query-decoded`,
+`-decode-error`, `-pair` and `-named` added) and **108 browser mutants** (the
+`shelf-query-nested` control restores the raw check and the visit completes). All 84 redirect
+controls held on 155. Recorded in
+[`receipts/shelf-sqp-rs-pass-1.json`](receipts/shelf-sqp-rs-pass-1.json).
 
 
 The controlled production comparison uses current-main application source and PR source

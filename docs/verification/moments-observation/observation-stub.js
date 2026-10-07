@@ -1,5 +1,17 @@
-// Independent of the immutable S2/S3 stub. Everything here is synthetic.
+// Independent of the immutable S2/S3 stub. Everything here is synthetic except the shelf
+// query's sqp and rs values, copied from the 6 Oct visit's thumbnail URL and served under a
+// fictional id: sqp decodes to image parameters (168 by 94, quality 85); rs is an opaque signature.
 (() => {
+  const variant = window.__observationVariant
+  if (variant === 'shelf-images' || variant === 'shelf-query-stop' || variant === 'shelf-query-nested') {
+    const image = new Image()
+    const query = variant === 'shelf-query-stop'
+      ? '?sqp=-oaymwEbCKgBEF5IVfKriqkDDggBFQAAiEIYAXABwAEG&rs=AOn4CLDRBT62N1_6CyJy49C2YL2wz4po6g&extra=1'
+      : variant === 'shelf-query-nested'
+        ? '?sqp=HTTPS%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DS4Stub99998&rs=AOn4CLDRBT62N1_6CyJy49C2YL2wz4po6g'
+        : '?sqp=-oaymwEbCKgBEF5IVfKriqkDDggBFQAAiEIYAXABwAEG&rs=AOn4CLDRBT62N1_6CyJy49C2YL2wz4po6g'
+    image.src = 'https://i.ytimg.com/vi/S4Stub99999/hqdefault.jpg' + query
+  }
   const players = []
   class Player {
     constructor(element, options) {

@@ -109,7 +109,7 @@ try {
   if (args.live && args.headless) throw new Refusal('live-requires-headed-chrome')
   if (!args.runtime || !args.chrome) throw new Refusal('runtime-and-chrome-required')
   if (args.live && !args.authority) throw new Refusal('authority-required')
-  if (!['clean', 'owner-blocked', 'cold-blocked', 'http-redirect-refused', ...redirectVariants, 'prompt-ceiling', 'malformed-error', 'extra-hosts', 'shelf-images', ...stopReasons].includes(args.variant) || (args.live && args.variant !== 'clean')) throw new Refusal('invalid-variant')
+  if (!['clean', 'owner-blocked', 'cold-blocked', 'http-redirect-refused', ...redirectVariants, 'prompt-ceiling', 'malformed-error', 'extra-hosts', 'shelf-images', 'shelf-query-stop', 'shelf-query-nested', ...stopReasons].includes(args.variant) || (args.live && args.variant !== 'clean')) throw new Refusal('invalid-variant')
   const ceiling = Number(args['ceiling-ms'])
   if (!Number.isInteger(ceiling) || ceiling < 100 || ceiling > 900000) throw new Refusal('invalid-safety-ceiling')
   result.safetyCeiling = { milliseconds: ceiling, meaning: 'Operational total-run safety ceiling, not a product readiness timeout' }

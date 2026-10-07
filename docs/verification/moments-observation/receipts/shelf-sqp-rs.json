@@ -1,0 +1,75 @@
+{
+  "what": "Shelf thumbnails whose only query keys are sqp and rs. Stub mode only. Zero provider egress. Paths and process ids reduced to counts.",
+  "code": "5fcc7d7b64507eb0324766b2d94dca2b665245ff",
+  "base": "415f4eda7afdf0216d7f908ed50819c75b9ccef0",
+  "environment": {
+    "node": "v24.15.0",
+    "npm": "11.12.1",
+    "playwright": "1.62.1",
+    "chrome": "Google Chrome 154.0.8037.98",
+    "os": "darwin 27.0.0 arm64"
+  },
+  "suite": {
+    "tests": 868,
+    "files": 55,
+    "typecheck": "clean"
+  },
+  "productionStylesheet": {
+    "bytes": 39043,
+    "sha256": "a3e896cd54a93d13e5c18df3b653cfa48b02bc33f1588c8b790031a0c3949a5f"
+  },
+  "drivers": {
+    "proofCases": 84,
+    "pureMutants": 73,
+    "browserMutants": 107,
+    "providerContinuedAnywhere": 0
+  },
+  "againstThe6OctToolingTotals": {
+    "tests": "867 to 868",
+    "proofCases": "83 to 84",
+    "pureMutants": "68 to 73",
+    "browserMutants": "106 to 107"
+  },
+  "featureRedBeforeTheRule": "The observed hqdefault URL with sqp and rs stopped unnamed-id instead of recording shelf-image.",
+  "pureMutantReds": [
+    {
+      "name": "shelf-query-keys",
+      "failedOn": "A thumbnail with an extra key was recorded as shelf-image. Restored, it stops unnamed-id."
+    },
+    {
+      "name": "shelf-query-repeat",
+      "failedOn": "A repeated sqp was recorded as shelf-image. Restored, it stops unnamed-id."
+    },
+    {
+      "name": "shelf-query-charset",
+      "failedOn": "A value of https://x.test/ was recorded as shelf-image. Restored, it stops unnamed-id."
+    },
+    {
+      "name": "shelf-query-length",
+      "failedOn": "A 257-character value was recorded as shelf-image. Restored, it stops unnamed-id."
+    },
+    {
+      "name": "shelf-query-one-id",
+      "failedOn": "A path with two extracted ids was recorded as shelf-image. Restored, it stops unnamed-id."
+    }
+  ],
+  "browser": {
+    "shelfImages": {
+      "proof": "complete, 3 shelf images, provider continued 0, unhandled provider responses 0",
+      "mutantRed": "stopped unnamed-id, provider continued 0",
+      "mutantGreen": "complete, 3 shelf images, provider continued 0"
+    },
+    "shelfQueryStop": {
+      "proof": "stopped unnamed-id, 1 such request, provider continued 0, unhandled provider responses 0",
+      "mutantRed": "completed and recorded the disallowed-key thumbnail as shelf-image, provider continued 0",
+      "mutantGreen": "stopped unnamed-id, provider continued 0"
+    }
+  },
+  "cleanVisitEndpoint": {
+    "chromeProcesses": 7,
+    "listeningSockets": 0,
+    "devToolsActivePort": false,
+    "remoteDebuggingPortOnTheCommand": false,
+    "lsof": "exit 1"
+  }
+}
