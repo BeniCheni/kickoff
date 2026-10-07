@@ -8,7 +8,9 @@ original archive. It assigns no version number.
 
 Amended Sun 4 Oct 2026 for two of Beni's rulings on the S4a runner (draft PR #144, Pass 2):
 **Hosts** and **Shelf**. Only the rulings table, the S4 stage row, the S4 protocol and the
-Unverified table changed; everything else is as written on 1 Oct.
+Unverified table changed; everything else is as written on 1 Oct. Amended again on 6 and
+7 Oct 2026 for his S4b tooling rulings (PRs #164 and #168), in the same places: a rulings
+table for each day, the S4 protocol and the Unverified table.
 
 ## Authority
 
@@ -249,9 +251,13 @@ The receipt states plainly that a green stub is not playback.
     `/vi/<id>/…`, `/vi_webp/<id>/…`, `/an_webp/<id>/…` or `/sb/<id>/…` with exactly one id
     and no body, on an authorised host, after the API script has been released, is recorded
     as a shelf image instead. Its query is empty, or every key is exactly `sqp` or `rs`
-    (case-sensitive), each key once, and every value is nonempty, at most 256 characters,
-    and only letters, digits, `_`, `.`, `-`, `=`, `+`, `/` and percent-escapes of the form
-    `%XX`. Anything else in the query stops the run. A frame, document, API, fetch, XHR or
+    (case-sensitive), each key once, and every value is nonempty and at most 256 characters
+    and, once percent-decoded, only letters, digits, `_`, `.`, `-`, `=`, `+` and `/`. An
+    escape may spell one of those characters (`%2F`, `%3D`) and nothing else, so a nested URL
+    with a scheme, in any case or encoding, a smuggled `&`, whitespace or a second layer of
+    escapes stops the run, as does anything else in the query. A scheme-less path spelled
+    from that alphabet, such as `//www.youtube.com/embed/<id>`, is recorded: the id check
+    does not read an id there (see its limits below). A frame, document, API, fetch, XHR or
     media request for another id still stops the run: that is playback, not display.
   - **Limits of the id check.** It reads recognised identity locations only. An id inside an
     opaque media signature, a binary body or an unknown parameter is not seen, so “no unnamed

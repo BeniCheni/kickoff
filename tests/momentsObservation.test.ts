@@ -325,6 +325,8 @@ describe('Pass 2 observation honesty and authority boundaries', () => {
     expect(image(base + '?sqp=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DS4Stub99998')).toMatchObject({ action: 'stop', reason: 'unnamed-id', ids: ['S4Stub99999', 'S4Stub99998'] })
     // A pair without `=` is not a key: `rsX` must not be read as key `rs` with value `rsX`.
     for (const query of ['?rsX', '?sqpX', '?sqp', '?=a', '?sqp=a&rsX']) expect(image(base + query), query).toMatchObject({ action: 'stop', reason: 'unnamed-id' })
+    // Stated limit, not a goal: a scheme-less path spelled from the alphabet is recorded, and the id check reads no id there.
+    expect(image(base + '?sqp=%2F%2Fwww.youtube.com%2Fembed%2FS4Stub99998')).toMatchObject({ action: 'record', reason: 'shelf-image', ids: ['S4Stub99999'] })
   })
   it('PLAYING alone is unknown; a later positive sample confirms only the current named attempt', () => {
     const t = new Telemetry(fictionalIds)

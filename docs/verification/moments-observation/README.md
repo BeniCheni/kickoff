@@ -144,14 +144,21 @@ An unnamed playback identity stops even on a named extra host. Under Beni's 4 Oc
 image requests with exactly one thumbnail/storyboard path identity (`vi`, `vi_webp`,
 `an_webp`, `sb`) and no body are recorded as shelf images rather than stopping. Beni's
 7 Oct ruling allows that image an empty query, or a query whose only keys are `sqp` and
-`rs`, each key once, each value nonempty and at most 256 characters, made only of letters,
-digits, `_`, `.`, `-`, `=`, `+`, `/` and percent-escapes of the form `%XX`. Any other query
-stops with `unnamed-id`. A named id with any query stays a player request. Document, API,
+`rs`, each key once, each value nonempty and at most 256 characters and, once
+percent-decoded, made only of letters, digits, `_`, `.`, `-`, `=`, `+` and `/`. An escape
+may spell one of those characters and nothing else, so a nested URL with a scheme, in any
+case or encoding, a smuggled `&`, whitespace or a second layer of escapes stops (the PR #168
+cold review found the raw-only alphabet let `%XX` spell all of them). A scheme-less path
+spelled from the alphabet, such as `//www.youtube.com/embed/<id>`, is recorded; no id is read
+from it. The 6 Oct values were base64url with `=` padding. Any other query stops with
+`unnamed-id`. A named id with any query stays a player request. Document, API,
 fetch, XHR and media requests still stop on an unnamed identity. This intentionally
 narrows the spec's broader unnamed-id stop; the spec's S4 protocol carries the same rule. The extractor recognizes embed,
 watch/v, short/live, short-link, thumbnail/storyboard paths, repeated identity parameters,
 video_id/docid and JSON videoId fields, including duplicate explicit keys. It follows
-nested URLs three levels. It cannot identify IDs hidden in opaque signatures, binary
+nested URLs three levels, but only a value that begins with a lower-case `http:` or
+`https:`; an upper-case scheme or leading whitespace hides a nested id from a player request
+(ideas row 102). It cannot identify IDs hidden in opaque signatures, binary
 bodies, unknown parameter names, arbitrary encodings or an undocumented protocol. An
 eleven-character opaque media token is not assumed to be a video ID. This is conservative
 about recognized identity fields, not a claim to decode all provider traffic.
