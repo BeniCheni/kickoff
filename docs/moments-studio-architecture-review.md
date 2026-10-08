@@ -44,7 +44,7 @@ default with a primary-source read and a trigger for counsel.
 | A | What to take from the course | Inherit the fal pipeline shape and the prompt craft; adapt Stream and the admin surface; defer the database, auth and embeddings; reject Next.js for the reader, autoplay and CLIP-threshold test gates. *6 Oct: the database moved from defer to inherit-the-pattern and adopt-the-vendor on Beni's 15.2 amendment (section 5)* | CTO, recorded here |
 | B | Boundary | **Export PR.** The Studio opens a PR that edits `moments.json`; merge stays publication. No runtime feed | Beni (15.1): **yes**, 5 Oct |
 | C | Studio hosting and database | **None in phase 1.** A local process on Beni's Mac with a SQLite file outside the repo. Cloudflare Workers with D1 is the hosted path when a visitor dialog is researched *(4 Oct)*. **Ruled 5 Oct: local process, SQLite. Amended 6 Oct: local process, records in a Supabase Postgres project (Free plan) through Drizzle ORM; accounts fal and Supabase; Beni alone holds the database credentials** (section 6.3) | Beni (15.2, amended 6 Oct) |
-| D | Data model | A `generated` kind without a fixture, a `hosted` playback identity, a provenance record and a policy attestation; five collisions with the current contract, section 7 | Beni (15.5 **yes**, 15.6 **authored**; 5 Oct) |
+| D | Data model | A `generated` kind without a fixture, a `hosted` playback identity, a provenance record and a policy attestation; five collisions with the current contract, section 7. *8 Oct:* section 7.2 lists twelve collisions, C1–C12, not five. Each still collides with `src/lib/moments.ts` and its siblings on `origin/main` (`81a1093`; those files identical to `30ca650`) | Beni (15.5 **yes**, 15.6 **authored**; 5 Oct) |
 | E | fal integration | Plain REST behind a typed port, queue plus polling, Studio-owned retries, an append-only cost ledger with per-job and per-session caps, a pinned model registry | Beni for the cap numbers (15.8): **$1.50 a job, $6 a session, balance at or below $9.37**, 5 Oct; section 8.3 |
 | F | Subject consistency | Try reference-image keyframes first, then a FLUX.2 LoRA, then reference-to-video; Director last. All four need Beni's experiment *(4 Oct)*. Spiked 4 to 5 Oct: the keyframe route is pinned first as recipe v0; the LoRA and Director were tried and set aside (section 9) | Beni (15.9): **keyframes**, 5 Oct |
 | G | Playback and motion | Plain MP4 in a video element (adds no library; hls.js would add 113 to 177 kB gzip). Motion stays zero-dependency inside an extended Fergie Time budget | Beni (15.4 **later**, the host at ST4; 15.10 **yes**; 5 Oct) |
@@ -358,7 +358,11 @@ be re-read at its URL before anyone relies on it (risk 11):
   IPv4 only with an add-on; the shared session pooler (port 5432) works over IPv4 and IPv6 on
   every plan; transaction mode (port 6543) is for serverless and edge functions. Which mode the
   Studio uses is ST1's call; the session pooler is the safe default for a long-lived local
-  process on an IPv4 network.
+  process on an IPv4 network. *8 Oct, `curl` of
+  `https://supabase.com/docs/guides/database/connecting-to-postgres`:* the page says the shared
+  pooler is IPv4-only on every plan. Direct connection is still IPv6 on Free and IPv4 with the
+  add-on, and session mode is still port 5432. The "IPv4 and IPv6" clause is the 6 Oct reading.
+  The session-pooler default for an IPv4 network is unchanged.
 - Supabase pricing page: Free has 500 MB per project, a limit of 2 active projects, projects
   "paused after 1 week of inactivity", 5 GB egress and 1 GB file storage; Pro is from $25 a
   month, never paused, with spend caps on by default.
@@ -1020,7 +1024,7 @@ Claude Code, design by Claude Design.
 | **ST2** | Beni's fal spike: the bake-off across consistency routes, under a written authority. *6 Oct:* **done as a pre-ST1 spike** on 4 to 5 Oct, outside the repo and before ST1 existed, under Beni's per-step "GO" and a $15 ceiling (closed $0.63 over, a breach he accepted after the fact); Appendix S is the receipt. Further runs need a new written authority and land in Appendix S | ST1; ruling 15.8, 15.9 *(4 Oct)*. Ran before both | The repo | Appendix S, filled 6 Oct from the spike | **Spend authority** | not a release | Beni |
 | **ST3** | The local review surface: lineage, Regenerate, Confirm, cost meter, refusal states | ST1; D1 | Reader | Studio tests; a browser pass on loopback | Six-pass review | patch (tooling) | Codex → Claude Code |
 | **ST4** | Media port for the chosen host; the export command that writes a branch, validates with the reader's schema and opens a draft PR | R1; ruling 15.4; ST2's evidence | Nothing is exported in this slice | Stubbed upload; a dry-run export diff | Six-pass review; **vendor ruling** | patch (tooling) | Codex Astra → Claude Code |
-| **PUB** | The first generated edition: the publication PR, the content policy, README and HONESTY corrections, CHANGELOG with "Deliberately not done" | R2, ST4, the primary-source read (15.12; counsel only on its trigger), the policy with its review checklist (15.11) | — | Populated matrix on the production bundle; live confirmation on Pages | **Publication authority**; Beni's number and tag | minor (a new capability) | export by Studio → six-pass review |
+| **PUB** | The first generated edition: the publication PR, the content policy, README and HONESTY corrections, CHANGELOG with "Deliberately not done". *8 Oct:* a hosted MP4 is not a YouTube player, but the privacy page Beni ruled for S7 on 7 Oct will have to cover hosted media when this slice ships | R2, ST4, the primary-source read (15.12; counsel only on its trigger), the policy with its review checklist (15.11) | — | Populated matrix on the production bundle; live confirmation on Pages | **Publication authority**; Beni's number and tag | minor (a new capability) | export by Studio → six-pass review |
 
 **Where the two halves meet.**
 
