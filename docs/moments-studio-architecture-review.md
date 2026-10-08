@@ -511,7 +511,7 @@ All CONFIRMED against `src/lib/moments.ts` and its siblings at `30ca650`.
 | C8 | `PlayRequest` carries `videoId: string`; `App` takes one player factory for the visit | A mixed edition needs two playback mechanisms in one host | `PlayRequest` carries a provider-tagged media reference; one composite adapter owns both the YouTube frame and a video element **inside the same host**, so K4 holds (section 10.1) |
 | C9 | Recovery copy says the owner blocks playback and that an official source is available | Wrong for a hosted clip | Kind-specific recovery sentences, in the design brief |
 | C10 | `tests/moments.test.ts` pins the edition to `[]`; S7 replaces it with "every identity item passes the playability rule at build time" | A permission with an expiry would turn `verify` red on `main` at that instant, and the sync PR could no longer merge | Either generated permissions carry no expiry, or the build-time test evaluates at `curatedAt`. Decide in slice R1; it also affects the YouTube half |
-| C11 | PR #144's runner generates acceptance editions with YouTube identities | A union that keeps `'youtube'` byte-compatible leaves those editions valid | Land the union additively; coordinate with whoever holds #144 when R1 is built |
+| C11 | PR #144's runner generates acceptance editions with YouTube identities | A union that keeps `'youtube'` byte-compatible leaves those editions valid | Land the union additively; coordinate with whoever holds #144 when R1 is built. *8 Oct:* #144 merged on 4 Oct (Brooklyn; 00:17 UTC on 5 Oct, squash `5bb8947`; `gh pr view 144`, and section 10.4). The coordination is with the runner on `main`, not with an open draft |
 | C12 | PR #114's matrix counts frames plus video elements per cell | A video element changes the expected count | Update the expectation in the adapter slice |
 
 ### 7.3 The generated kind, as pseudo-schema
@@ -1014,7 +1014,7 @@ Claude Code, design by Claude Design.
 |---|---|---|---|---|---|---|---|
 | **P0** | This review, and Beni's rulings on section 15 (ruled 5 Oct; 15.2 amended 6 Oct; recorded 6 Oct) | — | Everything | This document | Beni | docs | Claude Code |
 | **D1** | Claude Design brief on Fergie Time: the Generated badge, hosted-player chrome, kind-specific recovery copy, the motion budget's extension, the local admin surface | P0 rulings 15.5, 15.6, 15.10 | Everything | Design review cycle | Beni's sign-off | design | Claude Design → design review |
-| **R1** | Reader contract: the kind union, the hosted identity, provenance, the policy block, playability by provider, C10's decision | P0; coordination with PR #144 (C11) | Edition stays `[]`; no UI change | Contract tests; 72-cell inert comparison | Six-pass review | patch (no reader-visible capability) | Codex Astra → Claude Code |
+| **R1** | Reader contract: the kind union, the hosted identity, provenance, the policy block, playability by provider, C10's decision | P0; coordination with PR #144 (C11). *8 Oct:* #144 merged on 4 Oct (squash `5bb8947`; section 10.4). The coordination is with the landed runner, not an open PR | Edition stays `[]`; no UI change | Contract tests; 72-cell inert comparison | Six-pass review | patch (no reader-visible capability) | Codex Astra → Claude Code |
 | **R2** | Hosted adapter inside the one host; mock; acceptance item with a synthetic same-origin clip; matrix cells | R1; **PR #144's Cinema cover resolved** *(4 Oct)* — **met 6 Oct by PR #159, squash `967aa23`** (10.4); D1 for the chrome | Edition stays `[]`; nothing requested | Matrix; isolation check; a stub is not playback | Six-pass review | patch | Codex Astra → Claude Code |
 | **ST1** | Studio core, local and offline: the isolated folder, the Tailwind exclusion, registry, state machine, ledger, caps, fal port and stub, a command-line entry; *6 Oct (15.2):* the Drizzle Postgres schema, the generated migrations, the PGlite-backed tests and a migrate command Beni runs | P0 rulings 15.2 (amended 6 Oct), 15.3. Beni creating the Supabase project is his own account action, needed before first live use, not before ST1 merges | No key, no network, no reader change: still true for the slice's own verification, which runs on PGlite | Studio tests; CSS and single-file hashes equal | Six-pass review | patch (tooling) | Codex lighter or Cursor → Claude Code |
 | **ST2** | Beni's fal spike: the bake-off across consistency routes, under a written authority. *6 Oct:* **done as a pre-ST1 spike** on 4 to 5 Oct, outside the repo and before ST1 existed, under Beni's per-step "GO" and a $15 ceiling (closed $0.63 over, a breach he accepted after the fact); Appendix S is the receipt. Further runs need a new written authority and land in Appendix S | ST1; ruling 15.8, 15.9 *(4 Oct)*. Ran before both | The repo | Appendix S, filled 6 Oct from the spike | **Spend authority** | not a release | Beni |
@@ -1032,7 +1032,8 @@ Claude Code, design by Claude Design.
    so neither half is gated by it any more (10.4).*
 4. **One build-time rule.** C10's decision about permission expiry applies to both.
 5. **Sequence.** The YouTube half continues S4b to S8 untouched. R1 is additive to it. R2
-   waits for #144 to merge so two builders are never in the player host at once.
+   waits for #144 to merge so two builders are never in the player host at once. *8 Oct:*
+   #144 merged on 4 Oct (squash `5bb8947`; section 10.4), so that wait is over.
 
 **Deferred, with the reason.**
 
@@ -1093,7 +1094,8 @@ Claude Code, design by Claude Design.
   rulings, 15.8 and 15.2, recorded beside the recommendations; the host stays his, at ST4.)*
 - No smoothness or frame-rate measurement; bundle size only.
 - No review of, comment on or change to PR #144, #129 or #114. Section 10.4 is a reading of
-  `main`, offered to #144's reviewer, not a finding against that PR.
+  `main`, offered to #144's reviewer, not a finding against that PR. *8 Oct:* #144 merged on
+  4 Oct (squash `5bb8947`; section 10.4); this bullet records the 4 Oct scope, not a live hold.
 - The course app was not run; its release zips were not downloaded; nothing was copied.
 - No Claude Design brief and no motion-library decision; both follow this document.
 - No design for visitors, beyond not foreclosing one.
