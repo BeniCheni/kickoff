@@ -280,7 +280,8 @@ describe('Pass 2 observation honesty and authority boundaries', () => {
       expect(image(`https://i.ytimg.com/${label}/S4Stub99999/hqdefault.jpg?sqp=-oaymwEbCKgBEF5IVfKriqkDDggBFQAAiEIYAXABwAEG&rs=AOn4CLDRBT62N1_6CyJy49C2YL2wz4po6g`)).toMatchObject(recorded)
     }
     const base = 'https://i.ytimg.com/vi/S4Stub99999/hqdefault.jpg'
-    for (const query of ['?sqp=a', '?rs=b', '?sqp=a&rs=b', '?rs=b&sqp=a', '?sqp=' + 'a'.repeat(256), '?sqp=a%2Fb', '?sqp=a+b']) {
+    const unpadded = 'A'.repeat(43)
+    for (const query of ['?sqp=a', '?rs=b', '?sqp=a&rs=b', '?rs=b&sqp=a', '?sqp=' + 'a'.repeat(256), '?sqp=a==', '?sqp=' + unpadded]) {
       expect(image(base + query)).toMatchObject(recorded)
     }
     const stop = (url: string, extra: Partial<RequestInput> = {}) => expect(image(url, extra), url).toMatchObject({ action: 'stop', reason: 'unnamed-id' })
@@ -292,6 +293,13 @@ describe('Pass 2 observation honesty and authority boundaries', () => {
     stop(base + '?sqp=' + 'a'.repeat(257))
     stop(base + '?sqp=https://x.test/')
     stop(base + '?sqp=%G1')
+    stop(base + '?sqp=a%2Fb')
+    stop(base + '?sqp=a+b')
+    stop(base + '?sqp=a.b')
+    stop(base + '?sqp=a/b')
+    stop(base + '?sqp=a=b')
+    stop(base + '?sqp=a===')
+    stop(base + '?sqp=%3D')
     for (const resourceType of ['document', 'fetch', 'xhr', 'media', 'script']) stop(hq, { resourceType })
     stop(hq, { body: 'not-empty' })
     stop('https://i.ytimg.com/vi/S4Stub99999/sb/S4Stub99998/hqdefault.jpg')
@@ -318,15 +326,20 @@ describe('Pass 2 observation honesty and authority boundaries', () => {
       expect(image(base + '?sqp=' + value + rs), value).toMatchObject({ action: 'stop', reason: 'unnamed-id' })
       expect(image(base + '?rs=' + value), value).toMatchObject({ action: 'stop', reason: 'unnamed-id' })
     }
-    // An escape that spells a token character is still a token, and a lower-case nested URL that the extractor reads still stops on its id.
-    for (const value of ['a%2Fb', 'a%2Bb', 'a%3D', '-oaymwEmCIAFEOAD8quKqQMa8AEB-AH-BYAC4AOKAgwIABABGEMgUyhlMA8=']) {
+    // An escape that spells a base64url character, or trailing padding, is still a token. `/` and `+` are not.
+    // A lower-case nested URL that the extractor reads still stops on its id.
+    for (const value of ['a%3D', '-oaymwEmCIAFEOAD8quKqQMa8AEB-AH-BYAC4AOKAgwIABABGEMgUyhlMA8=']) {
       expect(image(base + '?sqp=' + value + rs), value).toMatchObject({ action: 'record', reason: 'shelf-image', ids: ['S4Stub99999'] })
+    }
+    for (const value of ['a%2Fb', 'a%2Bb']) {
+      expect(image(base + '?sqp=' + value + rs), value).toMatchObject({ action: 'stop', reason: 'unnamed-id' })
+      expect(image(base + '?rs=' + value), value).toMatchObject({ action: 'stop', reason: 'unnamed-id' })
     }
     expect(image(base + '?sqp=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DS4Stub99998')).toMatchObject({ action: 'stop', reason: 'unnamed-id', ids: ['S4Stub99999', 'S4Stub99998'] })
     // A pair without `=` is not a key: `rsX` must not be read as key `rs` with value `rsX`.
     for (const query of ['?rsX', '?sqpX', '?sqp', '?=a', '?sqp=a&rsX']) expect(image(base + query), query).toMatchObject({ action: 'stop', reason: 'unnamed-id' })
-    // Stated limit, not a goal: a scheme-less path spelled from the alphabet is recorded, and the id check reads no id there.
-    expect(image(base + '?sqp=%2F%2Fwww.youtube.com%2Fembed%2FS4Stub99998')).toMatchObject({ action: 'record', reason: 'shelf-image', ids: ['S4Stub99999'] })
+    // The scheme-less path is closed by Beni's Base64url ruling.
+    expect(image(base + '?sqp=%2F%2Fwww.youtube.com%2Fembed%2FS4Stub99998')).toMatchObject({ action: 'stop', reason: 'unnamed-id' })
   })
   it('PLAYING alone is unknown; a later positive sample confirms only the current named attempt', () => {
     const t = new Telemetry(fictionalIds)

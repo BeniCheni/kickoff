@@ -145,12 +145,13 @@ image requests with exactly one thumbnail/storyboard path identity (`vi`, `vi_we
 `an_webp`, `sb`) and no body are recorded as shelf images rather than stopping. Beni's
 7 Oct ruling allows that image an empty query, or a query whose only keys are `sqp` and
 `rs`, each key once, each value nonempty and at most 256 characters and, once
-percent-decoded, made only of letters, digits, `_`, `.`, `-`, `=`, `+` and `/`. An escape
-may spell one of those characters and nothing else, so a nested URL with a scheme, in any
-case or encoding, a smuggled `&`, whitespace or a second layer of escapes stops (the PR #168
-cold review found the raw-only alphabet let `%XX` spell all of them). A scheme-less path
-spelled from the alphabet, such as `//www.youtube.com/embed/<id>`, is recorded; no id is read
-from it. The 6 Oct values were base64url with `=` padding. Any other query stops with
+percent-decoded, base64url with up to two `=` of padding (letters, digits, `_` and `-`,
+then `=` only at the end). An escape may spell one of those characters and nothing else,
+so a nested URL with a scheme, in any case or encoding, a smuggled `&`, whitespace or a
+second layer of escapes stops (the PR #168 cold review found the raw-only alphabet let
+`%XX` spell all of them). `.`, `+` and `/` stop too. A scheme-less path such as
+`//www.youtube.com/embed/<id>` stops; Beni's Base64url ruling the same day closed it.
+The 6 Oct values were already base64url with `=` padding. Any other query stops with
 `unnamed-id`. A named id with any query stays a player request. Document, API,
 fetch, XHR and media requests still stop on an unnamed identity. This intentionally
 narrows the spec's broader unnamed-id stop; the spec's S4 protocol carries the same rule. The extractor recognizes embed,
@@ -405,6 +406,16 @@ cases** (`shelf-query-nested` stops `unnamed-id`), **77 pure mutants** (`shelf-q
 controls held on 155. Recorded in
 [`receipts/shelf-sqp-rs-pass-1.json`](receipts/shelf-sqp-rs-pass-1.json).
 
+The drivers at the 7 Oct base64url narrowing, on code `7eb5e2d09d6885780de5b75b7f59af1b6e89abad`:
+**869 tests in 55 files**, **85 proof cases**, **78 pure mutants** and **108 browser mutants**,
+recorded in [`receipts/shelf-base64url.json`](receipts/shelf-base64url.json). Against the
+merged PR #168 tip `70de992` the tests, proof cases and browser mutants are equal, and the
+pure mutants gain one (`shelf-query-base64url`, which puts the wider decoded alphabet back
+and goes red on `a%2Fb`). `shelf-query-charset` and `shelf-query-decoded` target the
+base64url line. `shelf-query-nested` still stops `unnamed-id`; its browser control restores
+the raw check and the visit completes with one shelf image. Chrome launched
+155.0.8059.40. All 84 redirect controls held. Every proof case and every mutant kept zero
+provider continuations.
 
 The controlled production comparison uses current-main application source and PR source
 with the exact committed `11845cb` data bytes in both disposable archives: no fixtures are

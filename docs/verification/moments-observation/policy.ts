@@ -49,8 +49,9 @@ export function extractIds(url: string, body = ''): string[] {
 }
 
 /** Empty, or only `sqp` and `rs`, each once, with a bounded token value. Keys are case-sensitive.
- * The alphabet binds the value after one percent-decode, so an escape can spell only a token
- * character: never the `:` of a nested URL, the `%` of a second encoding, `&` or whitespace. */
+ * After one percent-decode the value is base64url with up to two `=` of padding
+ * (`[A-Za-z0-9_-]`, `=` only at the end). An escape can spell only one of those characters:
+ * never `.`, `+`, `/`, the `:` of a nested URL, the `%` of a second encoding, `&` or whitespace. */
 export function shelfQueryAllowed(search: string): boolean {
   if (search === '') return true
   const seen = new Set<string>()
@@ -65,7 +66,7 @@ export function shelfQueryAllowed(search: string): boolean {
     if (value.length === 0 || value.length > 256) return false
     let token: string
     try { token = decodeURIComponent(value) } catch { return false }
-    if (!/^[A-Za-z0-9_.=+/-]+$/.test(token)) return false
+    if (!/^[A-Za-z0-9_-]+={0,2}$/.test(token)) return false
   }
   return true
 }
