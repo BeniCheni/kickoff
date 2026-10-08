@@ -220,7 +220,7 @@ Through S6, a reader of `https://benicheni.github.io/kickoff/` sees exactly toda
 | S5 | Optional same-origin staging observation | Nothing at `/kickoff/` | `/kickoff/` | Referer and 153 on HTTPS | Its own written authority, asked after the S4b receipts (yes in principle, 2 Oct) |
 | S5.5 | First-edition source policy: `docs/moments-content-policy.md`, section one | Nothing | Everything | A cold read by a vendor other than Claude | Ask 5 (yes, 1 Oct); ruled 7 Oct |
 | S6a | Rows 66 and 68 (Amendment A8) | Nothing | Edition, Pages | Typecheck, tests, browser matrix | Beni's rulings (2 Oct) |
-| S6b | Edition tooling: snapshot projection, sync-neutral draft test, populated-bundle matrix (A4–A6) | Nothing | Edition, Pages | Tests; isolation check | None |
+| S6b | Edition tooling: snapshot projection, sync-neutral draft test, populated-bundle matrix (A4–A6), and the content policy's keyless APIs Explorer Made For Kids trial on one id | Nothing | Edition, Pages | Tests; isolation check | None |
 | S6c | Initial-edition proposal, with a per-id observation run (A3) | Nothing | Edition, Pages | Draft validated outside `moments.json`; one authority per observation run | S5.5 ruled; ids Beni's |
 | S7 | The publication PR; **merging it is the publication decision** | Gallery; Play on permitted items; a picture after Play | Unpermitted items stay links; no autoplay on entry | Six-pass 360; populated matrix on the production bundle; revert branch staged (A10) | **Publication authority** |
 | S8 | Live confirmation on Pages, then the tag | As S7 | — | Pages run for the merge SHA; live probe; next sync green | Beni's number and tag |
@@ -411,7 +411,7 @@ checkout outside the repo, with two of his own uploads as the test ids (ask 6).
 | Visit | When (EDT) | Runner | Outcome |
 |---|---|---|---|
 | 1 | Tue 6 Oct, before visit 2 | `f8079b6` | Stopped `parked-return-blank`: Beni answered "yes" to the blank-or-dead question on a player showing error 150, an id whose uploader had embedding turned off at the time. A correct stop on an honest answer, not a defect. Recorded from the PM seat's notes; the receipt no longer exists |
-| 2 | Tue 6 Oct, 20:34 | `f8079b6` | Stopped `unnamed-id` about 1.3 s after Play on a thumbnail of another video whose query was only `sqp` and `rs`. Beni ruled Allow, narrowly (PR #168), then Base64url (PR #171). The receipt no longer exists |
+| 2 | Tue 6 Oct, 20:34 | `f8079b6` | Stopped `unnamed-id` about 1.3 s after Play on a thumbnail of another video whose query was only `sqp` and `rs`. Beni ruled Allow, narrowly (PR #168), then Base64url (PR #171). Recorded from the PM seat's notes; the receipt no longer exists |
 | 3 | Wed 7 Oct, 13:29–13:33 | `70de992` | **Complete, no stop.** Chrome 155.0.8059.40, headed; the authority 12 minutes old at launch; the acceptance build from the edition generated on 6 Oct (the same two ids), its served bytes verified against the local build |
 
 Visit 3, as its receipt and Beni's answers record it:
