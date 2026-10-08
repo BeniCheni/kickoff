@@ -76,10 +76,11 @@ the item is removed, in a PR the same day. Any S8 stop is met by the staged reve
 
 Read on 7 Oct 2026 from the primary sources: the YouTube Terms of Service (effective 15 Dec
 2023), and the YouTube API Services Terms, Developer Policies and Required Minimum
-Functionality (each last updated 14 Sep 2026). The API Terms define the API services as those
-"made available on the YouTube Developer Site"; the IFrame Player API that Moments loads is
-documented there and its reference points to all three. Kickoff becomes an "API Client" at
-publication on that reading.
+Functionality (each last updated 14 Sep 2026). The API Terms define "YouTube API Services"
+as the services made available by YouTube, "including those YouTube API services made
+available on the YouTube Developer Site", plus the documentation and the data provided
+through them; the IFrame Player API that Moments loads is documented there and its reference
+points to all three. Kickoff becomes an "API Client" at publication on that reading.
 
 - **A privacy policy users agree to** before using the client's features, linking Google's
   Privacy Policy (III.A.2). Kickoff has none today. Ruled: S7 ships a short privacy page,
