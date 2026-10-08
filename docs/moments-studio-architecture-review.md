@@ -1321,7 +1321,7 @@ here):
 - Credits used $15.63; balance $9.37 of $25 bought. The ledger's $15.6265 matches to the cent.
 - Director billed $4.16, so $4.158 is confirmed and the $4.25 header theory is dead; that
   closes the spike's open question 1.
-- Total Cost $15.46 against credits used $15.63.
+- Total Cost $15.46 against credits used $15.63. *8 Oct:* the ten per-endpoint figures in the next bullet sum to $15.45, one cent under this Total Cost (one-line sum of the figures as written). That cent stays unresolved with the gap below; it is not an explanation.
 - Per endpoint: flux-2-trainer $6.40, Director $4.16, Wan 3.0 $1.25, H3 image-to-video $1.05,
   flux-2/edit $0.65, gpt-image-2/edit $0.53, flux-2/lora/edit $0.50, H3 reference-to-video
   $0.50, Seedance $0.35, flux-2/lora $0.06.
