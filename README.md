@@ -121,10 +121,10 @@ state — is in **[docs/HONESTY.md](docs/HONESTY.md)**.
 
 This is the part I'd read first if I weren't a football person.
 
-**Nobody types the code.** The app has 621 tests across 47 files, a scheduled data sync that
-opens and merges its own pull requests, and a design system; every line was written by a
-coding agent under a written spec, and every commit is authored under that agent's name so
-`git log` never has to guess who did what.
+**Nobody types the code.** The app has 869 tests across 55 files (counted 8 Oct 2026), a
+scheduled data sync that opens and merges its own pull requests, and a design system; every
+line was written by a coding agent under a written spec, and every commit is authored under
+that agent's name so `git log` never has to guess who did what.
 
 **Every version climbs a ladder of documents**, all archived in [`docs/`](docs/README.md):
 a *proposal* (an audit of the repo plus directions), a *design brief* (run against the
