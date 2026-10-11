@@ -14,6 +14,13 @@ table for each day, the S4 protocol and the Unverified table. Amended once more 
 2026 after PR #168 merged: the 7 Oct table's Base64url row, and the shelf alphabet in the
 S4 protocol.
 
+**Amended Thu 8 Oct 2026** by the PM seat, with three things. Beni's rulings of 2 Oct 2026
+and the Amendments A1–A10 the Planner seat wrote that day (step P0), which were committed but
+never pushed and reach `main` only now; where one of them and a later dated table here
+disagree, the later table governs. Ask 5 answered: the first-edition source policy is
+section one of `docs/moments-content-policy.md` (Beni's rulings of 7 Oct). And S4b's result:
+three visits, the third complete (section "S4b, as run").
+
 ## Authority
 
 Rulings this spec carries, in force before it was written:
@@ -60,14 +67,107 @@ Beni's rulings of 7 Oct 2026. The first, after the 6 Oct visit showed the reques
 | A shelf thumbnail with a query string? | **Allow, narrowly: only `sqp` and `rs`.** The real player requests them. |
 | Base64url? | **Yes**: each `sqp` and `rs` value, after one percent-decode, is base64url with up to two `=` of padding. |
 
-Still open, and asked separately: (5) add a one-page first-edition source policy, S5.5,
-before edition ids are picked; (6) keep the S4 test ids separate from the edition ids. The
-PM seat recommends yes and separate. Neither blocks S1–S3. S4 needs an answer to (6); S6
-needs an answer to (5).
+Asked separately on 1 Oct 2026 and **answered yes to both** the same day (recorded in
+`docs/moments-slice-4-review-prompt.md` and `docs/moments-slice-4-pass-2-brief.md`; this
+spec was left unedited until #138 merged): (5) add a one-page first-edition source policy,
+S5.5, before edition ids are picked; (6) keep the S4 test ids separate from the edition ids. Ask 5 is met by
+`docs/moments-content-policy.md`, section one (S5.5), ruled by Beni on 7 Oct 2026.
 
 **This spec authorises none of the following:** a request to any provider host; an edition
 in `src/curated/moments.json`; a staging site; a workflow, cron or CI change on the sync or
 Pages path; a version, tag or release. Each has its own gate below.
+
+## Amendments, 2 Oct 2026
+
+Beni's rulings of 2 Oct 2026, first-hand to the Planner seat, in answer to the fourteen
+questions of the slice-4 remainder plan:
+
+| Question | Ruling |
+|---|---|
+| Split S4 into S4a (the runner, no provider) and S4b (the run)? | **Yes** |
+| Loader reading for the stop condition “a second iframe or API script” (A2) | **Ratified** |
+| The CLAUDE.md authorship bullet: commits take the identity of the agent doing the work | **Ratified** |
+| Review depth for docs-only and tooling-only PRs | **Full** — every slice-4 PR gets the six-pass 360 |
+| Row 66, recovery copy for provider codes 2 and 5 | **Name** what the provider reported |
+| Row 68, Play on the single-file build | **Link-only** |
+| S4b inputs (authority, ids) | **Not given.** Beni's reply delegated implementation choices only; ids and provider authority stay Beni's, per run, in writing (the Planner seat's reading, restated to Beni the same day) |
+| S5, the throwaway staging observation | **Yes** in principle; asked again after the S4b receipts are read, under its own written authority |
+| Edition fixtures only from committed snapshot history | **Yes** |
+| First-edition size | **Five** items or fewer |
+| Permission expiry on first-edition permissions | **Yes** |
+| Observe each edition id before S7 | **Yes** |
+| The S7 version number | **Not yet given** |
+| Revert pre-authorised on any S8 stop | **Yes** |
+
+**A1. S4 splits.** S4a builds and proves the observation runner against the local stub: no
+provider request, no ids, no authority. Its gate is this spec. S4b is the real run: S4a merged
+and cold-reviewed, Beni's written provider authority for that run, and at most two test ids
+Beni names. Beni runs S4b. A stop condition ends it, and a retry needs fresh authority. The
+protocol below is what S4a implements and S4b performs. *8 Oct:* S4a merged as PR #144 on 4 Oct, with
+three tooling follow-ups (#164, #168, #171); S4b ran on 6 and 7 Oct (section "S4b, as run").
+
+**A2. The loader reading.** The stop condition “a second iframe or API script” counts the
+`<iframe>` and `<script>` elements the page creates; the adapter creates one
+`<script data-moments-youtube-api>` (`src/lib/momentsPlayer.ts`). Requests that provider
+scripts then make, including any further script the IFrame API loader fetches, are recorded
+host by host and are not stops, as the protocol already says of media and images. That the
+loader fetches a second `youtube.com` script is the Planner seat's knowledge of the API, not
+something in the repo or observed; the stub replaces the loader wholesale and cannot model it.
+The S4b receipt is what establishes it. *8 Oct:* it did. Visit 3's receipt shows the loader
+fetching `www-widgetapi.js` from `www.youtube.com`, recorded as a player request and not a stop.
+
+**A3. Test ids and edition ids (ask 6).** S4 observations attach to the test ids and are not
+edition data. An edition item's `source.availability` comes only from a separate run of the
+same runner on that item's own id: at most two ids per run, each run under its own written
+authority, the S6c-approved ids being the writing. This replaces S6's “the S4/S5
+observations” as per-item evidence.
+
+**A4. Where edition fixtures come from.** Fixture facts come only from a cited committed
+snapshot row, through a generator; none is typed. A fixture older than every committed
+snapshot is excluded unless Beni rules otherwise. On 2 Oct 2026 the pool is the 101 fixtures
+in `1fad342` with a kickoff before 2 Sep 2026 (30 La Liga, 20 Premier League, 20 Serie A, 18
+Ligue 1, 9 Bundesliga, four domestic cup or super-cup ties; all exact times; none a Champions
+League match; none in the current snapshot). It grows by one day per day; the first Champions League kickoff in
+the current snapshot is 8 Sep 2026. The row's `status` comes from the earliest snapshot in
+which the match is `full_time`, found by the tool. *8 Oct:* the counts above are 2 Oct's; the pool has grown by
+one day a day since, and S6b counts it on the draft date.
+
+**A5. The sync window only moves forward.** The window is today −30 to +150 in Brooklyn
+dates (2 Sep 2026 to 1 Mar 2027 on 2 Oct). Its start never moves back, so a fixture outside it
+today stays outside; `scripts/sync.ts` accepts a manual `--from`, but the cron never passes
+one. The rule for an edition is that every fixture kicks off before (draft date −30 days) and
+is absent from the merge-day snapshot, checked at S6c and again at S7. Finding 4 stays
+accurate for a fixture inside the window.
+
+**A6. The S6 draft test is sync-neutral.** CI checks out shallow, so the edition's provenance
+rows are committed in the repo, as `fixture-provenance.json` is for the acceptance edition.
+The draft's test checks the schema, byte-equality with that provenance and absence from the
+live snapshot, and never evaluates a permission against the wall clock. The history-backed
+provenance check is ideas row 76 and stays local.
+
+**A7. S7's test instant.** “Every identity item passes the playability rule at build time” is
+read as: passes `hasEmbedPermission` at the edition's newest `checkedAt`, never at the wall
+clock. A wall-clock assertion over an `expiresAt` turns `verify` red in a sync PR on the
+expiry day, which blocks auto-merge, and inside `npm run build` could stop Pages deploying.
+First-edition permissions carry an `expiresAt`; the app's runtime rule, which parks the player
+at a lapse, is what enforces it.
+
+**A8. Rows and severity.** Rows 66 and 68 move from S7 to S6a, a small code PR that carries
+Beni's rulings above. Row 65 stays deferred and is disclosed at S7. From the S6c approval on,
+a finding on the player path is rated as reader-reachable, which is high under the 30 Sep
+ruling; the S6c proposal gives rows 56–60, 64–66, 68 and 71 one line each (fix, disclose, or
+unreachable with the chosen items).
+
+**A9. Review.** Every slice-4 PR runs the full six-pass 360. A PR the Planner seat writes (P0,
+S5.5, S6c) is cold-reviewed by a vendor other than Claude. *8 Oct:* Beni's routing of 7 Oct softens the first
+sentence: the six-pass 360 is for the larger PRs, a fast-track PR gets one cold pass that
+reviews and merges, and the PM seat judges which shape fits. The independence rule holds:
+the vendor that wrote a PR never gives its only cold read. #164, #168, #171 and #153 ran
+fast-track.
+
+**A10. Revert.** Before the S7 merge a revert branch is staged and proven green
+(`moments.json` back to `[]`, the replaced test restored). Any S8 stop condition is met by
+merging it; the pre-authorisation covers that merge's decision, and Beni still clicks it.
 
 ## What the repo says that the archived §9 does not
 
@@ -115,11 +215,14 @@ Through S6, a reader of `https://benicheni.github.io/kickoff/` sees exactly toda
 | S1 | This spec | Nothing | Everything | Review against `docs/moments-architecture.md` | None |
 | S2 | Connect the permission check; test seam; acceptance build and edition; probes into the repo | Nothing | Pages, edition, provider | Gate tests fail before and pass after; build grep; 72-cell inert comparison | None |
 | S3 | Integration acceptance on the S2 tip, as the S2 PR's builder evidence | Nothing | Zero provider egress | Receipts below | None |
-| S4 | Loopback real-provider observation | Nothing | Pages, CI, every unnamed id | Protocol below | **Provider authority** + host families and ids named in writing |
-| S5 | Optional same-origin staging observation | Nothing at `/kickoff/` | `/kickoff/` | Referer and 153 on HTTPS | Its own yes, asked after S4 |
-| S5.5 | First-edition source policy (if ask 5 is yes) | Nothing | Everything | Review | Ask 5 |
-| S6 | Initial-edition proposal | Nothing | Edition, Pages | Branch CI validates the draft outside `moments.json` | None beyond S4 |
-| S7 | The publication PR; **merging it is the publication decision** | Gallery; Play on permitted items; a picture after Play | Unpermitted items stay links; no autoplay on entry | Six-pass 360; populated matrix on the production bundle | **Publication authority** |
+| S4a | The observation runner, proven against the stub (Amendment A1) | Nothing | Pages, edition, CI, provider | Stop-condition table with red/green proof; zero provider egress | None beyond this spec |
+| S4b | Loopback real-provider observation, run by Beni | Nothing | Pages, CI, every unnamed id | Protocol below | **Provider authority** + host families and ids named in writing, per run |
+| S5 | Optional same-origin staging observation | Nothing at `/kickoff/` | `/kickoff/` | Referer and 153 on HTTPS | Its own written authority, asked after the S4b receipts (yes in principle, 2 Oct) |
+| S5.5 | First-edition source policy: `docs/moments-content-policy.md`, section one | Nothing | Everything | A cold read by a vendor other than Claude | Ask 5 (yes, 1 Oct); ruled 7 Oct |
+| S6a | Rows 66 and 68 (Amendment A8) | Nothing | Edition, Pages | Typecheck, tests, browser matrix | Beni's rulings (2 Oct) |
+| S6b | Edition tooling: snapshot projection, sync-neutral draft test, populated-bundle matrix (A4–A6), and the content policy's keyless APIs Explorer Made For Kids trial on one id | Nothing | Edition, Pages | Tests; isolation check | None |
+| S6c | Initial-edition proposal, with a per-id observation run (A3) | Nothing | Edition, Pages | Draft validated outside `moments.json`; one authority per observation run | S5.5 ruled; ids Beni's |
+| S7 | The publication PR; **merging it is the publication decision** | Gallery; Play on permitted items; a picture after Play | Unpermitted items stay links; no autoplay on entry | Six-pass 360; populated matrix on the production bundle; revert branch staged (A10) | **Publication authority** |
 | S8 | Live confirmation on Pages, then the tag | As S7 | — | Pages run for the merge SHA; live probe; next sync green | Beni's number and tag |
 
 S2 and S3 ship as one pull request: S3's receipts are the builder's acceptance evidence for
@@ -223,6 +326,9 @@ The receipt states plainly that a green stub is not playback.
 
 ## S4 observation protocol (written now; runs only after both its gates)
 
+Since Amendment A1 this is the protocol S4a implements in a runner and S4b performs. The
+amended stop reading is A2; the output attaches to test ids, not edition items (A3).
+
 - **Environment:** installed Google Chrome, headed, fresh profile, version recorded. Chrome
   opens no debugging port. The acceptance build with Beni's named ids, served on `127.0.0.1`
   with the port recorded. One page load. No CI, cron, `workflow_dispatch` or Pages. The written
@@ -277,7 +383,7 @@ The receipt states plainly that a green stub is not playback.
   - hosts contacted and runner aborts, counted by host and reason; shelf images recorded.
 - **Stop, and do not continue to another id or origin:**
   - any provider request before Play;
-  - a second iframe or API script;
+  - a second iframe or API script (the page's own elements; reading in A2);
   - the iframe's parent changes;
   - the live box covers a queue row, or `elementFromPoint` on a row hits the frame;
   - navigation waits on a cross-origin reply;
@@ -291,10 +397,42 @@ The receipt states plainly that a green stub is not playback.
   - Play shown for an item that fails the rule;
   - a provider family the authority does not name;
   - any id not named, other than a shelf image whose query is empty or only `sqp` and `rs`.
-- **Output:** dated `source.availability` observations, with an environment string naming
-  loopback and the Chrome version, for S6. Nothing is written to `moments.json`.
+- **Output:** dated `source.availability`-shaped observations, with an environment string
+  naming loopback and the Chrome version, for the test ids (A3). Nothing is written to
+  `moments.json`.
 - **What it does not prove:** anything about the Pages origin. Pages is HTTPS, on another
   origin, with no port. A loopback pass or failure predicts nothing there.
+
+## S4b, as run
+
+Beni ran three visits from his own Mac under his written authority, each from a fresh
+checkout outside the repo, with two of his own uploads as the test ids (ask 6).
+
+| Visit | When (EDT) | Runner | Outcome |
+|---|---|---|---|
+| 1 | Tue 6 Oct, before visit 2 | `f8079b6` | Stopped `parked-return-blank`: Beni answered "yes" to the blank-or-dead question on a player showing error 150, an id whose uploader had embedding turned off at the time. A correct stop on an honest answer, not a defect. Recorded from the PM seat's notes; the receipt no longer exists |
+| 2 | Tue 6 Oct, 20:34 | `f8079b6` | Stopped `unnamed-id` about 1.3 s after Play on a thumbnail of another video whose query was only `sqp` and `rs`. Beni ruled Allow, narrowly (PR #168), then Base64url (PR #171). Recorded from the PM seat's notes; the receipt no longer exists |
+| 3 | Wed 7 Oct, 13:29–13:33 | `70de992` | **Complete, no stop.** Chrome 155.0.8059.40, headed; the authority 12 minutes old at launch; the acceptance build from the edition generated on 6 Oct (the same two ids), its served bytes verified against the local build |
+
+Visit 3, as its receipt and Beni's answers record it:
+
+- Both test ids `played`, the strict rule (a current-attempt PLAYING then a positive sample).
+  The second was listed as expected owner-blocked; Beni had turned its embedding back on
+  before the visit, so the error-150 path is proven by the stub only.
+- One press, cold and warm. No ad. Parking kept the same element and parent, reported zero
+  bytes while parked, and returned a picture, not a blank.
+- The picture was Beni's own Fenway clip, with YouTube's own "AI" label drawn by the player.
+  The clip is 16:10 and the box is 16:9, so the player pillarboxed it at 390 and 1000.
+- 62 requests continued to the named families and none was refused among them; the runner
+  refused 21 to `www.gstatic.com` and `www.google.com`, which the authority did not name,
+  and every observation note says so. One thumbnail of another video was recorded as a shelf
+  image; every thumbnail carried only `sqp` and `rs`, all 18 values base64url.
+- `scrollWidth` equalled the width at every checkpoint (390, 1000, 360).
+
+These are observations of the test ids on loopback, not edition data (A3). An edition id
+still needs its own run. The receipts stay on Beni's Mac: they record full request URLs,
+including his public address in the video-stream URLs (ideas row 103), and none is
+committed or quoted here.
 
 ## S5–S8 in outline
 
@@ -308,40 +446,47 @@ The receipt states plainly that a green stub is not playback.
   - the id Beni named;
   - the fixture row copied from a cited snapshot SHA;
   - content verified as watched;
-  - an `embed` permission with its basis in Beni's words;
-  - the S4/S5 observations;
+  - an `embed` permission with its basis in Beni's words, and a source that qualifies under
+    `docs/moments-content-policy.md` section one (official channels only; a recorded Made For
+    Kids lookup, or the item is out);
+  - the per-id observation run, not the S4/S5 test-id observations (A3);
+  - an `expiresAt` on the permission (ruling of 2 Oct), 90 days after its `checkedAt` (7 Oct);
   - title, spoiler-light copy, cover and order.
 
   Every fixture is outside the sync window on the intended merge date, unless Beni accepts the
-  Step 0 coupling (finding 4) in writing. The proposal names the rollback: revert to `[]`,
-  which Pages redeploys.
+  Step 0 coupling (finding 4) in writing (rule and pool in A4 and A5). The proposal names the
+  rollback: revert to `[]`, which Pages redeploys.
 - **S7.** The edition; the empty-edition test replaced by “the committed edition validates
-  and every identity item passes the playability rule at build time”, named in the PR as a
-  replacement; the README corrected; rows 66 and 68 resolved as Beni rules and row 65
-  disclosed; a CHANGELOG section with “Deliberately not done”; the version strings. The
-  number is Beni's.
+  and every identity item passes the playability rule at the edition's newest `checkedAt`”
+  (A7, not the wall clock), named in the PR as a replacement; the README corrected; rows 66
+  and 68 already closed in S6a and row 65 disclosed; a CHANGELOG section with “Deliberately
+  not done”; the version strings. The number is Beni's. Added 8 Oct, from the primary read
+  of 7 Oct in the content policy: publishing an embed makes Kickoff a YouTube "API Client",
+  so S7 also ships the privacy page and the notice at first Play that Beni ruled on 7 Oct
+  (Developer Policies III.A.2), shows YouTube as the source of what it displays (III.F.2.a),
+  and carries each item's Made For Kids lookup (III.E.4.j) in its proposal.
 - **S8.**
   - The Pages run succeeds for the merge SHA.
   - In one Chrome: no provider request before Play; a picture after Play; the Referer and
     153 on the real origin; Fixtures and Table unchanged.
   - The next sync run is green.
-  - Any stop condition means revert.
+  - Any stop condition means revert, through the staged revert branch (A10).
   - Then the tag.
 
 ## Unverified, and where each item gets observed
 
 | Item | First step that can observe it |
 |---|---|
-| Real playback, ads, ready-window duration (no timeout is invented), one-press playback, attribute retention, 16:10 letterboxing in desktop Chrome, parked decoding | S4, as one sample each |
-| Which host families the real player contacts, and whether its shelf thumbnails carry a query string | Observed once, on 6 Oct 2026: about 1.3 seconds after Play the player requested one thumbnail of another video whose only query keys were `sqp` and `rs`. Before Beni's 7 Oct ruling that request stopped the run. Other query keys, and thumbnails on other hosts, remain unobserved |
+| Real playback, ads, ready-window duration (no timeout is invented), one-press playback, attribute retention, 16:10 letterboxing in desktop Chrome, parked decoding, the IFrame API loader's own requests (A2) | **Observed once on the test ids, 7 Oct 2026** (S4b visit 3, below): both ids played; one press, cold and warm; no ad; the second id's first `playing` about 0.6 s after its Play; parked with zero bytes reported and not blank at return; a 16:10 clip pillarboxed in the 16:9 box at 390 and 1000; the loader fetched one further `youtube.com` script, recorded and not a stop, as A2 reads it. The iframe kept its element and parent throughout; its attributes were not read separately, so attribute retention stays unobserved |
+| Which host families the real player contacts, and whether its shelf thumbnails carry a query string | Observed on 6 Oct (a thumbnail of another video, only `sqp` and `rs`, stopped run 2 before Beni's 7 Oct ruling) and on 7 Oct (visit 3): `www.youtube.com`, `www.youtube-nocookie.com`, `i.ytimg.com`, `yt3.ggpht.com` and three `googlevideo.com` hosts; the runner refused `www.gstatic.com` 16 times and `www.google.com` 5 times as hosts the authority did not name; one shelf image, and all 18 `sqp` and `rs` values base64url. Other query keys, other thumbnail hosts and anything after the first four minutes remain unobserved |
 | Deployed Pages Referer and error 153 | S5 or S8 |
 | Physical devices, Safari, Firefox, screen-reader speech, Android and iOS Back, CloseWatcher, browser zoom | Nothing in this plan; disclosed under “Deliberately not done” unless Beni adds a device pass |
-| Rights | No test; the permission basis is an authored judgment |
+| Rights | No test; the permission basis is an authored judgment under the content policy's section one (official channels only; Beni, 7 Oct) |
 
 ## Deferred, with when each must be decided
 
 - Row 65, Cinema reading order: may stay deferred past publication if disclosed.
-- Row 66, copy for provider codes 2 and 5: decided before S7, because an edition makes it
-  reachable.
-- Row 68, Play on the single-file build: decided before S7, for the same reason.
+- Row 66, copy for provider codes 2 and 5: ruled on 2 Oct (name what the provider reported);
+  built in S6a, before S7, because an edition makes it reachable.
+- Row 68, Play on the single-file build: ruled on 2 Oct (link-only); built in S6a.
 - The long-term curation and video data source strategy: outside slice 4 (ask 5).
