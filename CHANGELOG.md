@@ -10,10 +10,10 @@ releases.
 
 ### Changed
 
-- The scheduled sync keeps a four-times-a-day backbone and adds an hourly check on match
-  days (Sun, Tue, Wed, Fri, Sat, 11:00–23:00 UTC, skipping the backbone hours). A quiet
-  check whose snapshot is under 20 hours old fetches and stops. A real change, or a
-  snapshot that has reached 20 hours, still publishes through the same self-merging PR.
+- The scheduled sync keeps a four-times-a-day backbone and adds an hourly check across the
+  rest of the day, every day (11:00–23:00 UTC, skipping the two backbone hours inside it).
+  A quiet check is published only once the snapshot on `main` is 20 hours old; under that it
+  fetches and stops. A real change still publishes through the same self-merging PR.
   GitHub's scheduler can still deliver those slots late.
 
 - Cinema now puts the playing frame above its cover; readers cannot reach Cinema until a

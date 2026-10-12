@@ -100,15 +100,18 @@ of this app. The basis for deferring the built reader: 30 sync runs since 1 Sep 
 failures — an in-product surface would be designed against an event with no observed base rate.
 `docs/v0.2.6-ideas.md` row 15 holds that work until the rate justifies it.
 
-`.github/workflows/sync.yml` runs `npm run sync` on two crons: `23 1,7,13,19 * * *` every
-day, and `23 11,12,14-18,20-23 * * 0,2,3,5,6` on Sun/Tue/Wed/Fri/Sat. That is a four-slot
-backbone plus an hourly live window on match days, *as scheduled*. GitHub's cron is UTC and
-does not follow DST, so the live window sits an hour earlier once EST starts. What is
+`.github/workflows/sync.yml` runs `npm run sync` on two crons, both every day:
+`23 1,7,13,19 * * *` and `23 11,12,14-18,20-23 * * *`. That is a four-slot backbone plus an
+hourly window across the rest of the day, *as scheduled* — the day list that once narrowed
+that window to "match days" was dropped in the PR #183 review, because the snapshot itself
+holds hundreds of future Thursday kickoffs and dozens of Monday ones. GitHub's cron is UTC
+and does not follow DST, so the window sits an hour earlier once EST starts. What is
 scheduled is not what is delivered: GitHub's cron has run up to about four hours late here,
 so runs may bunch or go missing, and no copy in this repo promises an interval. A run opens
 or updates one rolling PR (`sync/scheduled` → `main`) only when the diff reports a change,
-or when the committed snapshot is 20 hours old or older. A quiet check inside that window
-fetches and stays green; it opens no PR. The workflow never pushes straight to `main`.
+or when the snapshot committed on `main` is 20 hours old or older — measured on that commit,
+never on the file the run has just written. A quiet check inside that window fetches and
+stays green; it opens no PR. The workflow never pushes straight to `main`.
 
 **Every sync PR this workflow opens, including a quiet refresh of a snapshot 20 hours old
 or older, merges after `verify` is green.** The
@@ -143,8 +146,8 @@ Mechanics that have not changed: `workflow_dispatch` (with a `dry_run` input map
 summary now states the verdict the run would have obeyed. Needs the repo's "Allow GitHub
 Actions to create and approve pull requests" setting on (enabled 2026-09-01) — no secret, no
 PAT. A real run publishes the generated fixture, meta and standings snapshot through
-`sync/scheduled` when the diff reports a change, or when the committed snapshot is 20 hours
-old or older (including `changed=false` with `standings=unchanged` on that daily refresh).
+`sync/scheduled` when the diff reports a change, or when the snapshot committed on `main` is
+20 hours old or older (including `changed=false` with `standings=unchanged` on that refresh).
 A quiet check inside 20 hours fetches, reports, and stops; the run is green and the header
 stamp does not move. A legacy `standings=failed` report fails closed. Quiet commits, when
 they do publish, say `sync: verified unchanged` and carry the full report line; all three
