@@ -118,14 +118,21 @@ reproduced in §7 below).
 ### R1 — the reader contract, and the generated kind's still rendering
 - **Scope.** The review's §7.2–7.4: the `curated | generated` union, with an absent kind
   meaning curated; the hosted identity; provenance (the prompt as text, 15.7); the policy
-  block (`fictionalOnly: true`); playability by provider (C6); and C10, the expiry rule, taken
-  as S7's A7 rule (playability at the edition's newest `checkedAt`, never the wall clock). On
-  the UI side, D5's still-rendering parts (§2 above), with the copy verbatim from §3.
-- **The address.** D5 §10 says the record's address is the release address. The review's C2
-  says code builds the URL from one allow-listed origin constant, so a record cannot point
-  anywhere else. Settle both: the record carries the release tag and the asset id, and code
-  builds `https://github.com/BeniCheni/kickoff/releases/download/<tag>/<assetId>.mp4`. Never a
-  signed redirect.
+  block (`fictionalOnly: true`); playability by provider (C6); and C10's expiry choice, which
+  R1's brief still decides. Amendment A7 already settles the YouTube edition: playability at
+  the edition's newest `checkedAt`, never the wall clock, and first-edition permissions carry
+  an `expiresAt` ([moments-slice-4-spec.md](moments-slice-4-spec.md)). C10's generated choice
+  is a different one: either generated permissions carry no expiry, or the build-time test
+  evaluates at `curatedAt`. Those are not the same instant, and this plan does not pick one.
+  On the UI side, D5's still-rendering parts (§2 above), with the copy verbatim from §3.
+- **The address.** A proposal for R1's brief. D5 §10, under the proposals §11
+  brings back to Beni, says `source.identity.url` is the release address
+  `github.com/<owner>/<repo>/releases/download/<tag>/<assetId>.mp4`, never a signed redirect.
+  The review's C2 says the URL is built in code from one allow-listed origin constant and the
+  record cannot name a host. This plan would meet both by having the record carry the release
+  tag and the asset id, and having code build
+  `https://github.com/BeniCheni/kickoff/releases/download/<tag>/<assetId>.mp4`. Never a
+  signed redirect. R1's brief asks Beni before the schema locks the shape (§8).
 - **The A-06 refusal.** `validate-moments` refuses any `kind: "generated"` record while the
   A-06 record (§5) holds no answer. That keeps the edition free of generated clips until PUB
   whoever merges, and it is the repository half of A-06.
@@ -135,7 +142,8 @@ reproduced in §7 below).
   - Contract tests, with each refusal red then green.
   - T11 for the generated kind: filters, Newest placement, saved, spoiler-light, queue.
   - The 72-cell inert comparison on the production bundle.
-  - The stylesheet's new size and hash, recorded. This is the first reader PR to change CSS.
+  - The stylesheet's new size and hash, recorded. Reader CSS has changed in earlier PRs,
+    including the Cinema repair (PR #159). R1 records the hash this slice produces.
 - **Default route.** Codex (GPT-6.1 Sol High) builds; full pipeline (Pass 1 Claude Code).
 
 ### S6c — the initial-edition proposal (unchanged from the slice-4 spec)
@@ -154,14 +162,19 @@ reproduced in §7 below).
     from `src/index.css`, with a unit test that the two blocks are equal; the three font
     links; the theme from `prefers-color-scheme` without JavaScript and from `kickoff-theme`
     with it; the stamp set by hand.
-- **Dark until S7.** The shell foot and the Cinema line render only while the published
-  edition holds at least one playable item. The edition is `[]` today, so readers see nothing
-  until S7's edition turns them on, and the privacy page sits at an unlinked URL until then.
-  This is the one place the plan sequences D5 rather than building it as drawn: after S7 the
-  foot is on every tab, exactly as §13 draws it.
+- **Dark until S7.** S6d builds the notice, the page, the shell foot and the Cinema line, and
+  ships them unlinked. While the published edition is `[]`, the shell foot is not rendered and
+  `public/privacy.html` sits at an unlinked URL, so readers of the production bundle see
+  nothing. This is the one place the plan sequences D5 rather than building it as drawn.
+  After S7 the foot is on every tab, exactly as D5 §13 and A-07 draw it — Fixtures, Table and
+  Moments — and it stays on if the edition later has no playable item. Playability does not
+  gate it. The Cinema line is the dialog's own link (D-25, D5 §13): it is in the focus cycle
+  while Cinema is open, and the shell foot is inert behind it (T16).
 - **Proves.** T5, T14 and T16, and the notice parts of T2. The shell foot must belong to the
   inert background while Cinema is open (T16). The acceptance build, which holds YouTube
-  items, shows everything.
+  items, shows the foot on every tab and the Cinema line. The production bundle, edition
+  `[]`, shows no foot. T14 on the production bundle is S7's proof that the foot is then on
+  every tab.
 - **Default route.** Cursor (Grok 4.7 Extra High) builds; full pipeline, because this is what
   readers will meet at S7.
 
@@ -169,7 +182,8 @@ reproduced in §7 below).
 - **Scope.**
   - The edition: the empty-edition test replaced by the A7 playability test, the README and
     CHANGELOG, and the version strings.
-  - The chrome lighting up as the edition makes it reachable.
+  - The shell foot turned on, on every tab, and left on (A-07, D5 §13). S7 does not leave it
+    gated on a playable item.
   - The privacy stamp set to the PR's date and version.
   - Developer Policies III.A and III.C re-read at source on the day.
   - Any terms wording Beni or counsel changed.
@@ -280,14 +294,18 @@ gate too, as D5 draws it. Tests: T15.
 | T11 | Runtime filtering, save, spoiler-light and queue for the generated kind | R1, R2 |
 | T12 | Studio operations and persistence | ST3 (stub), ST1 |
 | T13 | Publication-day refresh: setting, redirect, sources, stamp, prices | S7, PUB |
-| T14 | The shell foot in the real app: every tab × lens × theme at 360, 375, 390 and about 1000, nothing above it moves, `?only=` and `&date=` unchanged | S6d |
+| T14 | The shell foot in the real app: every tab × lens × theme at 360, 375, 390 and about 1000, nothing above it moves, `?only=` and `&date=` unchanged | S6d (acceptance build); S7 (production bundle, every tab) |
 | T15 | The A-06 record and its two enforcement points | R1, ST4 |
 | T16 | The Cinema's own link, inside the dialog's focus cycle; the shell foot inert behind it | S6d |
 | T17 | D-45 — closed 12 Oct (D5 check addendum) | done |
 
 ## 8 · What stays Beni's
 
-- **The 16:9 run.** It costs $0.075 today and $0.125 from 15 Oct (derived).
+- **The 16:9 run.** $0.075 was the measured price on 11 Oct, and $0.125 from 15 Oct is the
+  derived later estimate (D5 §12). Refresh the quote on or after 15 Oct rather than treating
+  $0.075 as a current price (T7).
+- **R1.** The address shape in §4: tag and asset id in the record, the URL built in code,
+  against C2 and D5 §10. Asked in R1's brief, before the schema locks it.
 - **S6c.** The ids and one observation authority per id.
 - **S7.** Publication authority, the number (15.14), and any terms wording change (counsel
   only if he asks).
@@ -302,7 +320,7 @@ gate too, as D5 draws it. Tests: T15.
 
 - No code, test, workflow, dependency, README or CHANGELOG change, and no version or tag.
 - No slice prompt: each is written on its day.
-- No ruling for Beni. §5's record and §4's sequencing are proposals he can change.
+- No ruling for Beni. §5's record, §4's sequencing and §4's address shape are proposals he can change.
 - The D5 canvas, Beni's captures and the Fergie Time mirror are not committed.
 - No re-sync of the design system: Fergie Time is Beni's, local-only.
 - No new provider observation, upload, release, tag or spend.
