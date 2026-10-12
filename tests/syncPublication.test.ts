@@ -236,3 +236,36 @@ describe('workflow publication gate', () => {
     expect(summary).toContain('## DATA FAILED')
   })
 })
+
+// The cadence is a claim like any other. A day list once named Sun/Tue/Wed/Fri/Sat the
+// "match days", while the committed snapshot held 239 future Thursday kickoffs and 23 Monday
+// ones; and two crons that share an hour queue a second fetch behind the first, because
+// cancel-in-progress is false. Both are pinned here rather than left to a comment.
+describe('the sync schedule', () => {
+  const crons = [...workflow.matchAll(/^ {4}- cron: '([^']+)'$/gm)].map((m) => m[1]!)
+  const fields = (cron: string) => cron.split(' ')
+  const hours = (cron: string) => new Set(fields(cron)[1]!.split(',').flatMap((part) => {
+    const [from, to] = part.split('-').map(Number) as [number, number?]
+    return to === undefined ? [from] : Array.from({ length: to - from + 1 }, (_, i) => from + i)
+  }))
+
+  it('is a daily backbone plus an hourly window, on every day of the week', () => {
+    expect(crons).toHaveLength(2)
+    for (const cron of crons) {
+      const [minute, , dayOfMonth, month, dayOfWeek] = fields(cron)
+      expect(minute).toBe('23')
+      // No day restriction: a Thursday European night and a Monday Serie A night are match
+      // days too, and skipping a quiet day in the cron is the gate this workflow refuses.
+      expect([dayOfMonth, month, dayOfWeek]).toEqual(['*', '*', '*'])
+    }
+    expect([...hours(crons[0]!)].sort((a, b) => a - b)).toEqual([1, 7, 13, 19])
+    expect([...hours(crons[1]!)].sort((a, b) => a - b)).toEqual([11, 12, 14, 15, 16, 17, 18, 20, 21, 22, 23])
+  })
+
+  it('never schedules the same hour twice', () => {
+    const backbone = hours(crons[0]!)
+    for (const hour of hours(crons[1]!)) expect(backbone.has(hour)).toBe(false)
+    const covered = new Set([...backbone, ...hours(crons[1]!)])
+    for (let hour = 11; hour <= 23; hour++) expect(covered.has(hour)).toBe(true)
+  })
+})

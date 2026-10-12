@@ -14,24 +14,29 @@ name: Scheduled sync
 # bad commit. Reasoning: docs/v0.2.2-proposal.md §C; the original no-auto-merge decision and
 # why the *empty* report still needs v0.4.0: docs/v0.2.0-proposal.md.
 #
-# Cadence: a four-slot backbone plus an hourly live window on match days. Backbone, every
-# day, UTC :23 at 01, 07, 13 and 19 — a postponement on a quiet Monday still lands. Live
-# window, Sun/Tue/Wed/Fri/Sat, UTC :23 at 11, 12, 14–18 and 20–23 (about 07:00–19:00 ET
-# while daylight saving holds, an hour earlier once EST starts). Hours 13 and 19 stay on
-# the backbone only, so those minutes are not queued twice: cancel-in-progress is false,
-# and a second run would wait and fetch again. GitHub's cron is UTC and does not follow
-# DST. The minute is :23 because GitHub documents the top of every hour as its high-load
-# window. A schedule is what is asked for, not what is delivered — runs here have arrived
-# up to about four hours late, and some slots never appear. No copy promises an interval.
-# There is deliberately no "skip quiet days" gate in front of the fetch: the fetch is the
-# check. The gate after the fetch publishes when the diff reports a change, or when the
-# committed snapshot is 20 hours old or older. A quiet check inside that window stops
-# before verify, commit and Pages, and the run stays green.
+# Cadence: a four-slot backbone plus an hourly window across the rest of the day, every
+# day. Backbone, UTC :23 at 01, 07, 13 and 19. Window, UTC :23 at 11, 12, 14–18 and 20–23
+# (about 07:00–19:00 ET while daylight saving holds, an hour earlier once EST starts).
+# Hours 13 and 19 stay on the backbone only, so no minute is queued twice:
+# cancel-in-progress is false, and a second run would wait and then fetch again. The
+# window was written as Sun/Tue/Wed/Fri/Sat — "match days" — and this repo's own snapshot
+# falsified the name in review: 10 Oct's held 239 future Thursday kickoffs (UEL and UECL
+# league phase, a bigger day than Tuesday or Friday) and 23 Monday ones (Serie A, La Liga,
+# the Premier League). A day list is also the "skip quiet days" gate this file has refused
+# since v0.2.0, moved into the cron, and Actions minutes are free on a public repo, so it
+# bought nothing and cost two nights an hourly check. GitHub's cron is UTC and does not
+# follow DST. The minute is :23 because GitHub documents the top of every hour as its
+# high-load window. A schedule is what is asked for, not what is delivered — runs here
+# have arrived up to about four hours late, and some slots never appear. No copy promises
+# an interval. The fetch is the check, so nothing gates it; the gate after the fetch
+# publishes when the diff reports a change, or when the snapshot committed on main — not
+# the file this run has just written — is 20 hours old or older. A quiet check inside that
+# window stops before verify, commit and Pages, and the run stays green.
 
 on:
   schedule:
     - cron: '23 1,7,13,19 * * *'
-    - cron: '23 11,12,14-18,20-23 * * 0,2,3,5,6'
+    - cron: '23 11,12,14-18,20-23 * * *'
   workflow_dispatch:
     inputs:
       dry_run:
