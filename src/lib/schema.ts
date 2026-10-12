@@ -45,7 +45,7 @@ export const fixtureSchema = z.object({
   venueCountry: z.string().min(1).optional(),
   home: teamSchema,
   away: teamSchema,
-  status: z.enum(['scheduled', 'in_play', 'full_time', 'postponed', 'cancelled']),
+  status: z.enum(['scheduled', 'in_play', 'full_time', 'postponed', 'cancelled', 'suspended', 'abandoned']),
   /**
    * Whether the *time* (not the date) is settled.
    *  - `exact`             the league has set the kickoff time
@@ -127,6 +127,16 @@ export type StandingRow = z.infer<typeof standingRowSchema>
 export type StandingsFile = z.infer<typeof standingsFileSchema>
 export type FixtureStatus = Fixture['status']
 export type TimeConfidence = Fixture['timeConfidence']
+
+/**
+ * A stored kickoff that is no longer a promise. Suspended and abandoned joined postponed
+ * and cancelled after ESPN sent them (La Liga event 401882849, 10 Oct 2026): one unmapped
+ * name was aborting the whole snapshot, including every other league's table.
+ */
+const UNSETTLED_STATUSES = new Set<FixtureStatus>(['postponed', 'cancelled', 'suspended', 'abandoned'])
+export function unsettledStatus(status: FixtureStatus): boolean {
+  return UNSETTLED_STATUSES.has(status)
+}
 
 /**
  * Fixture identity.

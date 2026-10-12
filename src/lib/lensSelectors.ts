@@ -1,4 +1,4 @@
-import type { Fixture } from './schema'
+import { unsettledStatus, type Fixture } from './schema'
 import { COMPETITIONS, competitionRank, type CompetitionKey } from './competitions'
 import { brooklynDate, fixtureTimes, posterDayTitle } from './time'
 
@@ -52,7 +52,8 @@ export function dominantCompetition(list: readonly Fixture[]): CompetitionKey | 
 /**
  * Earliest and latest fixtures with a league-set kickoff time. Placeholder times are
  * excluded — a sub-line must never derive "FIRST 3:00 PM" from a provider filler — and so
- * are postponed/cancelled fixtures, whose old kickoff instants are no longer promises.
+ * are unsettled fixtures (postponed, cancelled, suspended, abandoned), whose old kickoff
+ * instants are no longer promises.
  */
 export function kickoffBounds(
   fixtures: readonly Fixture[],
@@ -61,7 +62,7 @@ export function kickoffBounds(
   let last: Fixture | null = null
   for (const f of fixtures) {
     if (f.timeConfidence !== 'exact') continue
-    if (f.status === 'postponed' || f.status === 'cancelled') continue
+    if (unsettledStatus(f.status)) continue
     if (!first || f.kickoffUtc < first.kickoffUtc) first = f
     if (!last || f.kickoffUtc > last.kickoffUtc) last = f
   }
@@ -111,8 +112,9 @@ export function posterSubLine(fixtures: readonly Fixture[]): string {
  * The one gate for "not yet kicked off", shared by every hero (v0.2.2): Ledger's Next-up
  * strip through `upcoming`, Poster's Tonight's slate through `planSlate`. Two heroes with two
  * clocks was the bug (docs/v0.3.0-ideas.md row 3); two copies of one gate would be the same
- * bug in disguise. Scheduled only — a postponed or cancelled match has no honest kickoff to
- * promise, and an in-play match (a snapshot's or a real one) has kicked off. A league-set
+ * bug in disguise. Scheduled only — a postponed, cancelled, suspended or abandoned match has
+ * no honest kickoff to promise, and an in-play match (a snapshot's or a real one) has kicked
+ * off. A league-set
  * time must still be ahead of `nowUtcIso`, so a fixture drops out at its kickoff minute; a
  * placeholder (TBC) time is trusted only to the day and is never evicted by arithmetic on an
  * instant the league never set — the caller's date filter is what retires it.

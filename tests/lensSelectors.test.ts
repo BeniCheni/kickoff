@@ -55,11 +55,13 @@ describe('Poster day-header count versus league-set times', () => {
     const tbd = fx({ competition: 'pl', timeConfidence: 'tbd' })
     expect(posterSubLine([tbc, tbd])).toBe('2 MATCHES · 1 LEAGUE · 2 TBC')
   })
-  it('postponed and cancelled exact times do not become FIRST or get counted as TBC', () => {
+  it('postponed, cancelled, suspended and abandoned exact times do not become FIRST or get counted as TBC', () => {
     expect(posterSubLine([
       fx({ competition: 'pl', status: 'postponed' }),
       fx({ competition: 'pl', status: 'cancelled' }),
-    ])).toBe('2 MATCHES · 1 LEAGUE')
+      fx({ competition: 'pl', status: 'suspended' }),
+      fx({ competition: 'pl', status: 'abandoned' }),
+    ])).toBe('4 MATCHES · 1 LEAGUE')
   })
   it('retains singular labels for a one-fixture input', () => {
     expect(posterSubLine([fx({ competition: 'pl' })])).toBe('1 MATCH · 1 LEAGUE · FIRST KICKOFF 1:00 PM')
@@ -126,7 +128,7 @@ describe('kickoffBounds', () => {
     expect(kickoffBounds([fx({ competition: 'pl', timeConfidence: 'tbd' })])).toBeNull()
   })
 
-  it('never derives a bound from a postponed or cancelled fixture', () => {
+  it('never derives a bound from a postponed, cancelled, suspended or abandoned fixture', () => {
     const post = fx({
       competition: 'pl',
       status: 'postponed',
@@ -137,11 +139,21 @@ describe('kickoffBounds', () => {
       status: 'cancelled',
       kickoffUtc: '2026-08-30T22:00:00.000Z',
     })
+    const stopped = fx({
+      competition: 'bundesliga',
+      status: 'suspended',
+      kickoffUtc: '2026-08-30T11:00:00.000Z',
+    })
+    const abandoned = fx({
+      competition: 'ligue1',
+      status: 'abandoned',
+      kickoffUtc: '2026-08-30T23:00:00.000Z',
+    })
     const real = fx({ competition: 'seriea', kickoffUtc: '2026-08-30T17:00:00.000Z' })
-    const bounds = kickoffBounds([post, real, gone])
+    const bounds = kickoffBounds([post, real, gone, stopped, abandoned])
     expect(bounds?.first).toBe(real)
     expect(bounds?.last).toBe(real)
-    expect(kickoffBounds([post, gone])).toBeNull()
+    expect(kickoffBounds([post, gone, stopped, abandoned])).toBeNull()
   })
 
   it('returns the same fixture as first and last for a one-kickoff slate', () => {
@@ -398,7 +410,7 @@ describe('stale LIVE exact boundary (synthetic, never a snapshot edit)', () => {
     expect(fixture.status).toBe('in_play')
   })
   it('does not call any other stored status stale LIVE', () => {
-    const fixtures = (['scheduled', 'full_time', 'postponed', 'cancelled'] as const)
+    const fixtures = (['scheduled', 'full_time', 'postponed', 'cancelled', 'suspended', 'abandoned'] as const)
       .map((status) => fx({ competition: 'pl', status }))
     expect(staleLiveIds(fixtures, '2026-09-01T00:00:00.000Z').size).toBe(0)
   })
@@ -433,6 +445,7 @@ describe('approximate NEXT uses days, never filler-time ordering', () => {
   it('retires TBC by Brooklyn midnight; excludes postponed/cancelled and expired exact fixtures', () => {
     const a = tbc()
     const list = [a, { ...exact(), status: 'postponed' as const }, { ...exact(), status: 'cancelled' as const },
+      { ...exact(), status: 'suspended' as const }, { ...exact(), status: 'abandoned' as const },
       { ...exact(), kickoffUtc: '2026-10-11T04:00:00.000Z' }]
     expect(tickerSegments(list, '2026-10-11', '2026-10-11T04:00:00.000Z', WINDOW_TO)).toEqual([EMPTY_NEXT])
   })
@@ -503,8 +516,8 @@ describe('hasKickedOff — the complement of stillToKickOff over scheduled fixtu
     }
   })
 
-  it('is scheduled-only: a stored in_play, full_time, postponed or cancelled status is never re-derived from the clock', () => {
-    for (const status of ['in_play', 'full_time', 'postponed', 'cancelled'] as const) {
+  it('is scheduled-only: a stored in_play, full_time, postponed, cancelled, suspended or abandoned status is never re-derived from the clock', () => {
+    for (const status of ['in_play', 'full_time', 'postponed', 'cancelled', 'suspended', 'abandoned'] as const) {
       expect(hasKickedOff(fx({ competition: 'laliga', kickoffUtc: K, status }), '2026-09-07T17:40:00.000Z')).toBe(false)
     }
   })

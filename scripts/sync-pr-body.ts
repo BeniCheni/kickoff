@@ -67,7 +67,7 @@ export function renderSyncPrBody(summary: unknown, reportLine: string, log: stri
       paragraphs.push('Standings availability changed; no table rows changed.')
     }
     paragraphs.push(report.urgent > 0
-      ? `${quantity(report.urgent, 'fixture change record')} flagged time-sensitive by the sync rules (near kickoff, postponement/cancellation, or score/team correction).`
+      ? `${quantity(report.urgent, 'fixture change record')} flagged time-sensitive by the sync rules (near kickoff, postponement/cancellation/suspension/abandonment, or score/team correction).`
       : 'No fixture changes were flagged time-sensitive by the sync rules.')
     if (kinds.some(({ kind, count }) => count > 0 && step0Kinds.includes(kind))) {
       paragraphs.push('If a reported change affects an open position, independently re-verify that fixture against primary sources (Step 0), then re-read the app after publication.' +

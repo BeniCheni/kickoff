@@ -45,6 +45,11 @@ export class UnmappedStatusError extends Error {
  * confident, wrong score. None of the five leagues and four cups this app syncs can currently
  * reach extra time inside the fetched window (the cups have already been played), so this earns
  * its own design the day a synced fixture actually needs it, rather than a guess today.
+ * STATUS_DELAYED, STATUS_FORFEIT, STATUS_RAIN_DELAY and any other unnamed value still abort.
+ *
+ * STATUS_SUSPENDED and STATUS_ABANDONED are mapped. ESPN sent both for La Liga event
+ * 401882849 on 10 Oct 2026 (Rayo Vallecano v Athletic Club), and the unmapped name aborted
+ * the snapshot before any league's table could update.
  */
 const STATUS: Record<string, FixtureStatus> = {
   STATUS_SCHEDULED: 'scheduled',
@@ -57,6 +62,8 @@ const STATUS: Record<string, FixtureStatus> = {
   STATUS_POSTPONED: 'postponed',
   STATUS_CANCELED: 'cancelled',
   STATUS_CANCELLED: 'cancelled',
+  STATUS_SUSPENDED: 'suspended',
+  STATUS_ABANDONED: 'abandoned',
 }
 
 /**
@@ -166,6 +173,8 @@ export function normalizeEvent(
   const venue = comp.venue?.fullName
   if (venue) fixture.venue = venue
 
+  // A suspension or abandonment can carry a score (often 0-0). That number is not a
+  // full-time result, so only `full_time` stores one.
   if (status === 'full_time') {
     const h = Number(homeC.score)
     const a = Number(awayC.score)

@@ -10,6 +10,12 @@ releases.
 
 ### Changed
 
+- The scheduled sync keeps a four-times-a-day backbone and adds an hourly check on match
+  days (Sun, Tue, Wed, Fri, Sat, 11:00–23:00 UTC, skipping the backbone hours). A quiet
+  check whose snapshot is under 20 hours old fetches and stops. A real change, or a
+  snapshot that has reached 20 hours, still publishes through the same self-merging PR.
+  GitHub's scheduler can still deliver those slots late.
+
 - Cinema now puts the playing frame above its cover; readers cannot reach Cinema until a
   Moments edition is published.
 
@@ -36,6 +42,11 @@ releases.
   recovery sentence after a title that has no mark of its own.
 
 ### Fixed
+
+- A suspended or abandoned match is stored as its own status, with its own label, and it
+  is urgent at any horizon. Its score is not stored as a full-time result, and its kickoff
+  is not treated as a promise. One La Liga abandonment was aborting the whole snapshot, so
+  every other league's table — including Arsenal's — stayed on the last green sync.
 
 - The inactive Moments player carries a returning selection’s last-known position with its
   load (including a repeated Play before it settles), shows resume feedback only after a sample greater than zero, and explicitly sets its embed

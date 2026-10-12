@@ -172,14 +172,18 @@ describe('workflow publication gate', () => {
     const code = reportShell.replaceAll('${{ steps.sync.outputs.sync_exit }}', exit)
     expect(r.run(code).status).toBe(expected)
   })
-  it('routes quiet checks through validation, commit, required verify and merge; excludes dry runs', () => {
+  it('publishes through verify, commit and merge only when the gate says so; a dry run never publishes', () => {
     const names = ['Verify the written snapshot', 'Commit and push the rolling sync branch', 'Open or update the sync PR', "Approve the PR's held verify run", 'Merge the snapshot once verify is green', 'Confirm merge and request Pages delivery', 'Classify a red run']
     for (const name of names) {
       const condition = name === 'Classify a red run'
         ? "if: failure() && github.event.inputs.dry_run != 'true'\n"
-        : "if: steps.mode.outputs.dry_run == 'false'\n"
+        : "if: steps.mode.outputs.dry_run == 'false' && steps.gate.outputs.publish == 'true'\n"
       expect(step(name)).toContain(condition)
     }
+    const gate = step('Decide whether this run publishes')
+    expect(gate).toContain("steps.report.conclusion == 'success'")
+    expect(gate).toContain('npx tsx scripts/publish-gate.ts')
+    expect(step('Record the change digest')).toContain("steps.gate.outputs.publish == 'true'")
     expect(step('Record the change digest')).toContain("&& steps.report.outputs.changed == 'true'")
     expect(step('Commit and push the rolling sync branch')).toContain('src/data/fixtures.json src/data/meta.json src/data/standings.json')
     expect(step('Publish only from main')).toContain('refs/heads/main')

@@ -25,11 +25,13 @@ const TODAY = '2026-08-30'
 const NOON = '2026-08-30T16:00:00.000Z'
 
 describe('upcoming', () => {
-  it('never surfaces a postponed or cancelled fixture, even with a confident time', () => {
+  it('never surfaces a postponed, cancelled, suspended or abandoned fixture, even with a confident time', () => {
     const post = fx({ competition: 'pl', status: 'postponed', kickoffUtc: '2026-08-30T19:00:00.000Z' })
     const gone = fx({ competition: 'laliga', status: 'cancelled', kickoffUtc: '2026-08-30T20:00:00.000Z' })
+    const stopped = fx({ competition: 'bundesliga', status: 'suspended', kickoffUtc: '2026-08-30T18:00:00.000Z' })
+    const abandoned = fx({ competition: 'ligue1', status: 'abandoned', kickoffUtc: '2026-08-30T17:00:00.000Z' })
     const ok = fx({ competition: 'seriea', kickoffUtc: '2026-08-30T21:00:00.000Z' })
-    expect(upcoming(TODAY, NOON, ALL, 10, [post, gone, ok])).toEqual([ok])
+    expect(upcoming(TODAY, NOON, ALL, 10, [post, gone, stopped, abandoned, ok])).toEqual([ok])
   })
 
   it('excludes full-time and in-play fixtures — next up means not yet kicked off', () => {
@@ -84,8 +86,8 @@ describe('stillToKickOff — the one gate both heroes share (v0.2.2)', () => {
     expect(stillToKickOff(f, NOON)).toBe(false)
   })
 
-  it('postponed, cancelled and full-time fixtures are never still to come, whatever their instant', () => {
-    for (const status of ['postponed', 'cancelled', 'full_time'] as const) {
+  it('postponed, cancelled, suspended, abandoned and full-time fixtures are never still to come, whatever their instant', () => {
+    for (const status of ['postponed', 'cancelled', 'suspended', 'abandoned', 'full_time'] as const) {
       const f = fx({ competition: 'pl', status, kickoffUtc: '2026-08-30T19:00:00.000Z' })
       expect(stillToKickOff(f, NOON)).toBe(false)
     }
@@ -171,16 +173,19 @@ describe('planSlate — Poster\'s hero, decided on the clock', () => {
   // Found in the v0.2.2 review: the planner's date came from a scan over every status, so a
   // date holding only a postponed fixture was "the next matchday", its slate was empty, and
   // the hero showed "No upcoming fixtures" with a real matchday waiting behind it.
-  it('a date that holds only postponed or cancelled fixtures is not a matchday — the hero skips to the one behind it', () => {
+  it('a date that holds only postponed, cancelled, suspended or abandoned fixtures is not a matchday — the hero skips to the one behind it', () => {
     const postponed = fx({ competition: 'pl', status: 'postponed', kickoffUtc: '2026-09-01T18:00:00.000Z' })
     const cancelled = fx({ competition: 'laliga', status: 'cancelled', kickoffUtc: '2026-09-01T20:00:00.000Z' })
+    const suspended = fx({ competition: 'bundesliga', status: 'suspended', kickoffUtc: '2026-09-01T16:00:00.000Z' })
+    const abandoned = fx({ competition: 'ligue1', status: 'abandoned', kickoffUtc: '2026-09-01T14:00:00.000Z' })
     const real = fx({ competition: 'seriea', kickoffUtc: '2026-09-03T18:45:00.000Z' })
-    expect(nextMatchday(TODAY, ALL, [postponed, cancelled, real])).toBe('2026-09-03')
-    expect(planSlate(TODAY, NOON, ALL, [postponed, cancelled, real])).toEqual({
+    const dead = [postponed, cancelled, suspended, abandoned]
+    expect(nextMatchday(TODAY, ALL, [...dead, real])).toBe('2026-09-03')
+    expect(planSlate(TODAY, NOON, ALL, [...dead, real])).toEqual({
       date: '2026-09-03', slate: [real], isTonight: false,
     })
     // …and when nothing scheduled is behind it, the answer is "nothing ahead", not an empty day.
-    expect(planSlate(TODAY, NOON, ALL, [postponed, cancelled])).toEqual({
+    expect(planSlate(TODAY, NOON, ALL, dead)).toEqual({
       date: null, slate: [], isTonight: false,
     })
   })
