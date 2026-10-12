@@ -13,6 +13,8 @@ it('Newest uses verified fixture chronology, stable editorial ties and no curati
   expect(newestMoments(edition)).toEqual(['new1', 'new2', 'old', 'unknown1', 'unknown2'])
   expect(knownKickoff({ ...edition[1]!, fixture: { ...edition[1]!.fixture, status: 'postponed' as const } })).toBe(false)
   expect(knownKickoff({ ...edition[1]!, fixture: { ...edition[1]!.fixture, status: 'cancelled' as const } })).toBe(false)
+  expect(knownKickoff({ ...edition[1]!, fixture: { ...edition[1]!.fixture, status: 'suspended' as const } })).toBe(false)
+  expect(knownKickoff({ ...edition[1]!, fixture: { ...edition[1]!.fixture, status: 'abandoned' as const } })).toBe(false)
 })
 it('fictional queue inputs carry no fixture, competition, source or cover identity', () => {
   for (const item of fictionalEdition) {

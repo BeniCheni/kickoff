@@ -145,6 +145,8 @@ describe('normalizeEvent — status mapping', () => {
     STATUS_POSTPONED: 'postponed',
     STATUS_CANCELED: 'cancelled',
     STATUS_CANCELLED: 'cancelled',
+    STATUS_SUSPENDED: 'suspended',
+    STATUS_ABANDONED: 'abandoned',
   }
 
   it('maps every ESPN status name this app knows about', () => {
@@ -157,7 +159,7 @@ describe('normalizeEvent — status mapping', () => {
     // Real ESPN statuses this app has never seen in a synced window — not a guess about
     // spelling, a guess that the map is complete.
     for (const name of [
-      'STATUS_DELAYED', 'STATUS_SUSPENDED', 'STATUS_ABANDONED', 'STATUS_FORFEIT',
+      'STATUS_DELAYED', 'STATUS_FORFEIT',
       'STATUS_FINAL_AET', 'STATUS_FINAL_PEN', 'STATUS_RAIN_DELAY',
     ]) {
       let threw: unknown
@@ -169,6 +171,16 @@ describe('normalizeEvent — status mapping', () => {
       expect(threw).toBeInstanceOf(UnmappedStatusError)
       expect((threw as UnmappedStatusError).statusName).toBe(name)
       expect((threw as UnmappedStatusError).eventId).toBe(String(template.id))
+    }
+  })
+
+  it('stores a suspension or abandonment without treating the score as a result', () => {
+    for (const name of ['STATUS_SUSPENDED', 'STATUS_ABANDONED'] as const) {
+      const event = structuredClone(withStatus(name))
+      for (const competitor of event.competitions[0].competitors) competitor.score = '0'
+      const fixture = normalizeEvent(event, 'ligue1', AT)!
+      expect(fixture.status).toBe(MAPPED[name])
+      expect(fixture.result).toBeUndefined()
     }
   })
 
@@ -189,7 +201,7 @@ describe('espnProvider.fetchWindow — unmapped statuses abort before any write'
     const template = ligue1.find((x: any) => x.name.includes('Marseille'))
     const good = template
     const bad1 = { ...template, id: 'bad-delayed', status: { type: { name: 'STATUS_DELAYED' } } }
-    const bad2 = { ...template, id: 'bad-abandoned', status: { type: { name: 'STATUS_ABANDONED' } } }
+    const bad2 = { ...template, id: 'bad-forfeit', status: { type: { name: 'STATUS_FORFEIT' } } }
 
     vi.stubGlobal(
       'fetch',
@@ -200,20 +212,20 @@ describe('espnProvider.fetchWindow — unmapped statuses abort before any write'
     )
 
     await expect(espnProvider.fetchWindow('2026-08-21', '2026-08-21')).rejects.toThrow(
-      /STATUS_DELAYED[\s\S]*STATUS_ABANDONED|STATUS_ABANDONED[\s\S]*STATUS_DELAYED/,
+      /STATUS_DELAYED[\s\S]*STATUS_FORFEIT|STATUS_FORFEIT[\s\S]*STATUS_DELAYED/,
     )
   })
 
   it('never writes a fixture for the offenders it collected', async () => {
     const template = ligue1.find((x: any) => x.name.includes('Marseille'))
-    const bad = { ...template, id: 'bad-suspended', status: { type: { name: 'STATUS_SUSPENDED' } } }
+    const bad = { ...template, id: 'bad-delayed', status: { type: { name: 'STATUS_DELAYED' } } }
 
     vi.stubGlobal(
       'fetch',
       vi.fn(async () => ({ ok: true, json: async () => ({ events: [bad] }) })),
     )
 
-    await expect(espnProvider.fetchWindow('2026-08-21', '2026-08-21')).rejects.toThrow(/STATUS_SUSPENDED/)
+    await expect(espnProvider.fetchWindow('2026-08-21', '2026-08-21')).rejects.toThrow(/STATUS_DELAYED/)
   })
 
   it('still reports a non-2xx response as a hard failure, unrelated to status mapping', async () => {

@@ -1,4 +1,5 @@
 import type { Moment } from './moments'
+import { unsettledStatus } from './schema'
 
 /** An isolated harness can exercise a queue without inventing football/source identities. */
 export type UnlinkedSelection = {
@@ -29,7 +30,7 @@ export function momentNote(moment: GalleryMoment, spoiler: boolean): string {
 }
 export function knownKickoff(moment: GalleryMoment): boolean {
   return !!moment.fixture && moment.fixture.timeConfidence === 'exact'
-    && !['postponed', 'cancelled'].includes(moment.fixture.status)
+    && !unsettledStatus(moment.fixture.status)
 }
 /** Unknown instants sort after known fixtures, retaining their authored relative order.
  * Equal verified instants retain editorial ties. No curation/upload chronology is used. */

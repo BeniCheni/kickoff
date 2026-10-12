@@ -1,4 +1,4 @@
-import type { Fixture, StandingRow, StandingsFile } from '../src/lib/schema'
+import { unsettledStatus, type Fixture, type StandingRow, type StandingsFile } from '../src/lib/schema'
 import { brooklynDate } from '../src/lib/time'
 
 /**
@@ -173,7 +173,7 @@ export function diffFixtures(
     if (before.status !== after.status) {
       changes.push({
         kind: 'STATUS_CHANGED', id, label: label(after),
-        urgent: urgent || after.status === 'postponed' || after.status === 'cancelled',
+        urgent: urgent || unsettledStatus(after.status),
         detail: `${before.status} -> ${after.status}`,
       })
     }
@@ -342,8 +342,9 @@ export type MergeVerdict = 'auto' | 'hold'
  * merge itself unless one of these is true, each a line that has cost money in the betting
  * pipeline's Step 0 or would hide a partial report:
  *
- *   - anything urgent — inside −6 h..+72 h of now, or a result/team correction or postponement/cancellation at any
- *     horizon (the same rule as exit code 1);
+ *   - anything urgent — inside −6 h..+72 h of now, or a postponement, cancellation,
+ *     suspension, abandonment, or a result/team correction at any horizon
+ *     (the same rule as exit code 1);
  *   - a DISAPPEARED or HOME_AWAY_INVERTED line at any horizon — a vanished fixture and an
  *     inverted moneyline are the two that cost money far out;
  *   - legacy standings=failed input — held defensively. Since v0.2.5, current standings
@@ -361,7 +362,7 @@ export function mergeVerdict(
 ): { verdict: MergeVerdict; reasons: string[] } {
   const reasons: string[] = []
   const urgent = changes.filter((c) => c.urgent && c.kind !== 'NEW').length
-  if (urgent > 0) reasons.push(`${urgent} urgent change(s) — inside 72h, a postponement/cancellation, or a result/team correction`)
+  if (urgent > 0) reasons.push(`${urgent} urgent change(s) — inside 72h, a postponement/cancellation/suspension/abandonment, or a result/team correction`)
   const disappeared = changes.filter((c) => c.kind === 'DISAPPEARED').length
   if (disappeared > 0) reasons.push(`${disappeared} DISAPPEARED line(s), at any horizon`)
   const inverted = changes.filter((c) => c.kind === 'HOME_AWAY_INVERTED').length

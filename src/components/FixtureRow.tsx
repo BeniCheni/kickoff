@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { COMPETITIONS } from '../lib/competitions'
 import { fixtureTimes } from '../lib/time'
-import type { Fixture } from '../lib/schema'
+import { unsettledStatus, type Fixture } from '../lib/schema'
 
 const STATUS_LABEL: Record<Fixture['status'], string | null> = {
   scheduled: null,
@@ -9,6 +9,8 @@ const STATUS_LABEL: Record<Fixture['status'], string | null> = {
   full_time: 'FT',
   postponed: 'POSTPONED',
   cancelled: 'CANCELLED',
+  suspended: 'SUSPENDED',
+  abandoned: 'ABANDONED',
 }
 
 /**
@@ -28,7 +30,7 @@ export function FixtureRow({ fixture, hot = false, stale = false }: { fixture: F
   const marquee = comp.group !== 'domestic'
   const isStale = fixture.status === 'in_play' && stale
   const status = isStale ? 'KICKED OFF' : STATUS_LABEL[fixture.status]
-  const unsettled = fixture.status === 'postponed' || fixture.status === 'cancelled'
+  const unsettled = unsettledStatus(fixture.status)
   const placeholder = fixture.timeConfidence !== 'exact'
   const [expanded, setExpanded] = useState(false)
 

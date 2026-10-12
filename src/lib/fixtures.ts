@@ -72,8 +72,8 @@ export function upcoming(
 
 /**
  * The next date after `fromDate` with at least one *scheduled* fixture surviving the
- * filters. Scheduled only: a postponed or cancelled fixture keeps its dead instant in the
- * snapshot, so a date that holds nothing else is not a matchday — a scan over every status
+ * filters. Scheduled only: a postponed, cancelled, suspended or abandoned fixture keeps its
+ * dead instant in the snapshot, so a date that holds nothing else is not a matchday — a scan over every status
  * once handed `planSlate` such a date, and the hero showed "No upcoming fixtures" with a real
  * matchday waiting behind it (found in the v0.2.2 review, on fabricated fixtures). Any date
  * after today's is ahead of now by construction, so "scheduled" is the whole gate here.
@@ -99,8 +99,8 @@ export function nextMatchday(
  * says so ("Next matchday — nothing left today", `MATCHES` not `REMAINING`). The flip is
  * clock-driven: it happens at the last kickoff, not at the next snapshot. `date` is null
  * only when no scheduled fixture is ahead under the filters, and a non-null `date` always
- * comes with a non-empty `slate` — `nextMatchday` skips the dates that hold only postponed
- * or cancelled fixtures.
+ * comes with a non-empty `slate` — `nextMatchday` skips the dates that hold only postponed,
+ * cancelled, suspended or abandoned fixtures.
  */
 export function planSlate(
   today: string,

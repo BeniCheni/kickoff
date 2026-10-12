@@ -24,9 +24,11 @@ export type FixtureProvider = {
  * A status name ESPN sent that this map doesn't cover — including a missing one. Thrown by
  * `normalizeEvent` rather than falling back to `scheduled`, because a fallback here is exactly
  * the failure class this project exists to kill: inventing scheduledness for a fixture whose
- * real state (delayed, suspended, abandoned, gone to penalties) the sync simply doesn't know.
- * `fetchWindow` catches these, collects every offender across the whole run, and throws once
- * so a single sync reports everything it doesn't understand rather than dying on the first.
+ * real state (delayed, forfeited, gone to extra time or penalties) the sync simply doesn't
+ * know. `fetchWindow` catches these, collects every offender across the whole run, and throws
+ * once so a single sync reports everything it doesn't understand rather than dying on the
+ * first. The price is deliberate and it is steep: one unknown name in one league refuses the
+ * whole snapshot, every other league's table included — which is what froze 10–12 Oct 2026.
  */
 export class UnmappedStatusError extends Error {
   constructor(
@@ -42,9 +44,16 @@ export class UnmappedStatusError extends Error {
  * Deliberately NOT mapped: STATUS_FINAL_AET / STATUS_FINAL_PEN / STATUS_SHOOTOUT. ESPN's score
  * after extra time (or a penalty shootout) is not the 90-minute result the books settle a
  * Moneyline/Match Result market on — mapping either straight to `full_time` would render a
- * confident, wrong score. None of the five leagues and four cups this app syncs can currently
- * reach extra time inside the fetched window (the cups have already been played), so this earns
- * its own design the day a synced fixture actually needs it, rather than a guess today.
+ * confident, wrong score — so this earns its own design the day a synced fixture actually
+ * needs it, rather than a guess today. That day now has a date: the 10 Oct 2026 window
+ * (2026-09-10 .. 2027-03-09) already holds three one-off knockouts that can reach extra time
+ * or penalties — Supercoppa Italiana Inter v Lazio on 22 Dec 2026, and both Supercopa de
+ * España semi-finals on 2 and 3 Feb 2027. Until then STATUS_DELAYED, STATUS_FORFEIT,
+ * STATUS_RAIN_DELAY and any other unnamed value still abort, these three included.
+ *
+ * STATUS_SUSPENDED and STATUS_ABANDONED are mapped. ESPN sent both for La Liga event
+ * 401882849 on 10 Oct 2026 (Rayo Vallecano v Athletic Club), and the unmapped name aborted
+ * the snapshot before any league's table could update.
  */
 const STATUS: Record<string, FixtureStatus> = {
   STATUS_SCHEDULED: 'scheduled',
@@ -57,6 +66,8 @@ const STATUS: Record<string, FixtureStatus> = {
   STATUS_POSTPONED: 'postponed',
   STATUS_CANCELED: 'cancelled',
   STATUS_CANCELLED: 'cancelled',
+  STATUS_SUSPENDED: 'suspended',
+  STATUS_ABANDONED: 'abandoned',
 }
 
 /**
@@ -166,6 +177,8 @@ export function normalizeEvent(
   const venue = comp.venue?.fullName
   if (venue) fixture.venue = venue
 
+  // A suspension or abandonment can carry a score (often 0-0). That number is not a
+  // full-time result, so only `full_time` stores one.
   if (status === 'full_time') {
     const h = Number(homeC.score)
     const a = Number(awayC.score)

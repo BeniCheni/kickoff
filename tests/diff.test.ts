@@ -215,12 +215,14 @@ describe('bug class 4 — a fixture that never existed', () => {
 })
 
 describe('other transitions', () => {
-  it('treats a postponement as urgent even when kickoff is far off', () => {
-    const before = [fx({ id: 'c', kickoffUtc: '2026-12-01T18:45:00.000Z' })]
-    const after = [fx({ id: 'c', kickoffUtc: '2026-12-01T18:45:00.000Z', status: 'postponed' })]
-    const [c] = diffFixtures(before, after, { now: NOW })
-    expect(c!.kind).toBe('STATUS_CHANGED')
-    expect(c!.urgent).toBe(true)
+  it('treats a postponement, suspension or abandonment as urgent even when kickoff is far off', () => {
+    for (const status of ['postponed', 'suspended', 'abandoned'] as const) {
+      const before = [fx({ id: 'c', kickoffUtc: '2026-12-01T18:45:00.000Z' })]
+      const after = [fx({ id: 'c', kickoffUtc: '2026-12-01T18:45:00.000Z', status })]
+      const [c] = diffFixtures(before, after, { now: NOW })
+      expect(c!.kind).toBe('STATUS_CHANGED')
+      expect(c!.urgent).toBe(true)
+    }
   })
 
   it('does not treat a newly-published fixture as urgent', () => {
@@ -400,7 +402,7 @@ describe('the merge verdict — hold only what a human must read (v0.2.2)', () =
   it('one urgent line of any kind holds the PR — the same rule as exit code 1', () => {
     const r = mergeVerdict([change('TIME_CHANGED', false), change('DATE_MOVED', true)], 'changed')
     expect(r.verdict).toBe('hold')
-    expect(r.reasons).toEqual(['1 urgent change(s) — inside 72h, a postponement/cancellation, or a result/team correction'])
+    expect(r.reasons).toEqual(['1 urgent change(s) — inside 72h, a postponement/cancellation/suspension/abandonment, or a result/team correction'])
   })
 
   it('an urgent NEW line is not a reason — NEW is never urgent, and hasUrgentChanges agrees', () => {

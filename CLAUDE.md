@@ -100,16 +100,23 @@ of this app. The basis for deferring the built reader: 30 sync runs since 1 Sep 
 failures — an in-product surface would be designed against an event with no observed base rate.
 `docs/v0.2.6-ideas.md` row 15 holds that work until the rate justifies it.
 
-`.github/workflows/sync.yml` runs `npm run sync` on a cron of `23 1,4,7,10,13,16,19,22 * * *`
-— every three hours *as scheduled*, keeping 00:23 and 12:23 EDT in the set, an hour early
-under EST because GitHub's cron is UTC. What is scheduled is not what is delivered: GitHub's
-cron has run three to four and a half hours late here, so runs may bunch or go missing, and
-no copy in this repo promises "every three hours". It opens or updates one rolling PR
-(`sync/scheduled` → `main`) carrying the diff report — it never pushes straight to `main`.
+`.github/workflows/sync.yml` runs `npm run sync` on two crons, both every day:
+`23 1,7,13,19 * * *` and `23 11,12,14-18,20-23 * * *`. That is a four-slot backbone plus an
+hourly window across the rest of the day, *as scheduled* — the day list that once narrowed
+that window to "match days" was dropped in the PR #183 review, because the snapshot itself
+holds hundreds of future Thursday kickoffs and dozens of Monday ones. GitHub's cron is UTC
+and does not follow DST, so the window sits an hour earlier once EST starts. What is
+scheduled is not what is delivered: GitHub's cron has run up to about four hours late here,
+so runs may bunch or go missing, and no copy in this repo promises an interval. A run opens
+or updates one rolling PR (`sync/scheduled` → `main`) only when the diff reports a change,
+or when the snapshot committed on `main` is 20 hours old or older — measured on that commit,
+never on the file the run has just written. A quiet check inside that window fetches and
+stays green; it opens no PR. The workflow never pushes straight to `main`.
 
-**Every successful sync PR, including a quiet verification, merges after `verify` is green.** The
+**Every sync PR this workflow opens, including a quiet refresh of a snapshot 20 hours old
+or older, merges after `verify` is green.** The
 `mergeVerdict` in `scripts/diff.ts` still reports `hold` when anything is urgent (inside
-−6 h..+72 h, or a postponement/cancellation or result/team correction at any horizon), or when any `DISAPPEARED` or
+−6 h..+72 h, or a postponement, cancellation, suspension, abandonment, or result/team correction at any horizon), or when any `DISAPPEARED` or
 `HOME_AWAY_INVERTED` line appears at any horizon; it reports `auto` otherwise. This is a
 reader-facing signal in the PR report, not a release gate. The legacy `standings=failed`
 report remains visible for compatibility, although current standings failures exit 2 before
@@ -138,13 +145,17 @@ Mechanics that have not changed: `workflow_dispatch` (with a `dry_run` input map
 `npm run sync -- --check`) tests the workflow without waiting for the schedule, and its
 summary now states the verdict the run would have obeyed. Needs the repo's "Allow GitHub
 Actions to create and approve pull requests" setting on (enabled 2026-09-01) — no secret, no
-PAT. In v0.4.0, every successful real run publishes the generated fixture, meta and standings
-snapshot through `sync/scheduled`, including `changed=false` with `standings=unchanged`.
-A legacy `standings=failed` report fails closed. Quiet commits say `sync: verified unchanged`
-and carry the full report line; all three generated files move together to preserve the
-snapshot boundary and rolling-window counts. A failed or dry run publishes nothing.
-The header stamp advances after that PR merges and Pages deploys, or a local checkout pulls.
-The unchanged cron does not promise a delivery interval.
+PAT. A real run publishes the generated fixture, meta and standings snapshot through
+`sync/scheduled` when the diff reports a change, or when the snapshot committed on `main` is
+20 hours old or older (including `changed=false` with `standings=unchanged` on that refresh).
+A quiet check inside 20 hours fetches, reports, and stops; the run is green and the header
+stamp does not move. A legacy `standings=failed` report fails closed. Quiet commits, when
+they do publish, say `sync: verified unchanged` and carry the full report line; all three
+generated files move together to preserve the snapshot boundary and rolling-window counts.
+A failed or dry run publishes nothing. The header stamp advances after a publishing PR
+merges and Pages deploys, or a local checkout pulls. The schedule does not promise a
+delivery interval. `STATUS_SUSPENDED` and `STATUS_ABANDONED` are stored statuses; every
+other unmapped ESPN status still aborts the snapshot with exit 2 before any write.
 
 `docs/sync-digest.md` keeps the latest 30 change-bearing reports on main, with bounded
 excerpts and full Actions-log links. It is generated in the snapshot PR, so proposed entries
