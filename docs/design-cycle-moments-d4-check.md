@@ -1,6 +1,6 @@
 # Moments D4 — Codex's delta check (archived Mon 12 Oct 2026, TZ=America/New_York)
 
-Written by Codex (GPT-6.1 Sol High) on Sun 11 Oct 2026. Verdict: ready after one named fix, D-45 (the dropped geometry matrix); the global link verified on the real app by a disposable last-child experiment. Its block 5 holds the merged test list the build plan adopts as T1 to T17. Its evidence (probe scripts, captures, JSON) stays local at `~/kickoff-d2-review/`; nothing from it is committed.
+Written by Codex (GPT-6.1 Sol High) on Mon 12 Oct 2026 (the report's own date line: Mon Oct 12 10:35:30 EDT 2026). The prompt that asked for it is dated Sun 11 Oct. Verdict: ready after one named fix, D-45 (the dropped geometry matrix); the global link verified on the real app by a disposable last-child experiment. Its block 5 holds the merged test list the build plan adopts as T1 to T17. Its evidence (probe scripts, captures, JSON) stays local at `~/kickoff-d2-review/`; nothing from it is committed.
 
 ---
 
