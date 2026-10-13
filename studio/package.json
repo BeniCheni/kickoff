@@ -10,7 +10,8 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "migrate": "tsx db/migrate.ts"
+    "migrate": "tsx db/migrate.ts",
+    "cli": "tsx cli.ts"
   },
   "dependencies": {
     "drizzle-orm": "0.45.4",

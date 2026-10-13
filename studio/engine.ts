@@ -56,6 +56,7 @@ export type SubmitInput = {
   photograph?: Uint8Array
   subjectId?: string
   parentGenerationId?: string
+  keyframe?: { localPath: string; sha256: string; bytes: number }
 }
 
 type EngineOptions = {
@@ -280,6 +281,21 @@ export function createStudio(options: EngineOptions) {
             status: 'draft',
           }).returning()
           if (!gen) throw new Error('generation insert returned nothing')
+          if (input.keyframe) {
+            const [k0] = await tx.insert(asset).values({
+              role: 'keyframe',
+              sha256: input.keyframe.sha256,
+              mime: 'image/jpeg',
+              bytes: input.keyframe.bytes,
+              localPath: input.keyframe.localPath,
+            }).returning()
+            if (!k0) throw new Error('keyframe insert returned nothing')
+            await tx.insert(generationInput).values({
+              generationId: gen.id,
+              assetId: k0.id,
+              role: 'first',
+            })
+          }
           if (input.subjectId) {
             await tx.insert(generationSubject).values({ generationId: gen.id, subjectId: input.subjectId })
           }

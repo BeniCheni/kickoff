@@ -48,10 +48,14 @@ export type FalTransport = {
 const COMPLETED_BODY = { video: { url: 'https://studio-stub.invalid/clip.mp4' } }
 const CLIP_BYTES = new Uint8Array([0x00, 0x00, 0x00, 0x18, 0x66, 0x74, 0x79, 0x70])
 
-export function createFalStub(script: ScriptName): FalTransport {
+export type StubCursor = {
+  statusCalls: number
+  requestSequence: number
+}
+
+export function createFalStub(script: ScriptName, cursor?: StubCursor): FalTransport {
   const calls: FalCall[] = []
-  let statusCalls = 0
-  let requestSequence = 0
+  const state = cursor ?? { statusCalls: 0, requestSequence: 0 }
 
   function note(kind: FalCall['kind'], headers: Record<string, string>, extra: Partial<FalCall> = {}) {
     calls.push({ kind, headers, ...extra })
@@ -62,16 +66,16 @@ export function createFalStub(script: ScriptName): FalTransport {
     async submit(input) {
       note('submit', input.headers, { endpoint: input.endpoint, body: input.body })
       if (script === 'out-of-credit') throw new OutOfCreditError()
-      requestSequence += 1
-      return { request_id: `req-stub-${requestSequence}` }
+      state.requestSequence += 1
+      return { request_id: `req-stub-${state.requestSequence}` }
     },
     async status(input) {
       note('status', input.headers)
-      statusCalls += 1
+      state.statusCalls += 1
       if (script === 'timeout') return { status: 'IN_QUEUE' }
       if (script === 'queued-then-completed' || script === 'duplicate-delivery') {
-        if (statusCalls === 1) return { status: 'IN_QUEUE' }
-        if (statusCalls === 2) return { status: 'IN_PROGRESS' }
+        if (state.statusCalls === 1) return { status: 'IN_QUEUE' }
+        if (state.statusCalls === 2) return { status: 'IN_PROGRESS' }
         return { status: 'COMPLETED' }
       }
       return { status: 'COMPLETED' }
