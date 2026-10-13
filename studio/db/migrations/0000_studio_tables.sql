@@ -7,7 +7,8 @@ CREATE TABLE "studio"."article50_answer" (
 	"recorded_on" timestamp with time zone NOT NULL,
 	"recorded_by" text NOT NULL,
 	"source" text NOT NULL,
-	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "article50_answer_nonblank" CHECK (char_length(btrim("answer")) > 0)
 );
 --> statement-breakpoint
 ALTER TABLE "studio"."article50_answer" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
@@ -101,6 +102,9 @@ CREATE TABLE "studio"."job" (
 	"session_id" uuid,
 	"attempt" integer NOT NULL,
 	"provider_request_id" text,
+	"status_url" text,
+	"response_url" text,
+	"cancel_url" text,
 	"idempotency_key" text NOT NULL,
 	"estimate_usd" numeric(14, 6) NOT NULL,
 	"status" text NOT NULL,
@@ -217,8 +221,12 @@ CREATE TABLE "studio"."videos" (
 	"generated_at" timestamp with time zone NOT NULL,
 	"attestation_summary" text NOT NULL,
 	"fallback_status" text NOT NULL,
+	"removal_status" text,
+	"video_removed_at" timestamp with time zone,
+	"thumbnail_removed_at" timestamp with time zone,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "videos_fallback_status" CHECK ("fallback_status" in ('pending', 'delivered', 'missing')),
+	CONSTRAINT "videos_fallback_status" CHECK ("fallback_status" in ('pending', 'failed', 'merged')),
+	CONSTRAINT "videos_removal_status" CHECK ("removal_status" is null or "removal_status" in ('pending', 'failed', 'merged')),
 	CONSTRAINT "videos_withdrawn_clears_published" CHECK ("unpublished_at" is null or "published_at" is null)
 );
 --> statement-breakpoint
@@ -250,4 +258,5 @@ CREATE UNIQUE INDEX "job_provider_request_id" ON "studio"."job" USING btree ("pr
 CREATE UNIQUE INDEX "job_generation_attempt" ON "studio"."job" USING btree ("generation_id","attempt");--> statement-breakpoint
 CREATE UNIQUE INDEX "model_registry_id" ON "studio"."model" USING btree ("registry_id");--> statement-breakpoint
 CREATE UNIQUE INDEX "policy_answer_line" ON "studio"."policy_answer" USING btree ("policy_check_id","line");--> statement-breakpoint
-CREATE UNIQUE INDEX "videos_public_id" ON "studio"."videos" USING btree ("public_id");
+CREATE UNIQUE INDEX "videos_public_id" ON "studio"."videos" USING btree ("public_id");--> statement-breakpoint
+CREATE UNIQUE INDEX "videos_job_id" ON "studio"."videos" USING btree ("job_id");

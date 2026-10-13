@@ -25,14 +25,17 @@ function segment(marker: number, text: string): Uint8Array {
 /** A synthetic JPEG with fake GPS and device tags. Built at run time, never a photograph. */
 export function taggedJpeg(): Uint8Array {
   const exif = segment(0xe1, 'Exif\0Make=SyntheticCam Model=ST1-Device GPSLatitude=40.6782 GPSLongitude=-73.9442')
+  const icc = segment(0xe2, 'ICC_PROFILE\0DisplayP3-synthetic')
+  const adobe = segment(0xee, 'Adobe\0APP14-synthetic')
   const xmp = segment(0xe1, 'http://ns.adobe.com/xap/1.0/\0<x:xmpmeta>GPSLatitude=40.6782 device=SyntheticCam</x:xmpmeta>')
   const comment = segment(0xfe, 'device=SyntheticCam GPSLongitude=-73.9442')
   const body = minimalJpeg.subarray(2)
-  const out = new Uint8Array(2 + exif.length + xmp.length + comment.length + body.length)
+  const chunks = [exif, icc, adobe, xmp, comment, body]
+  const out = new Uint8Array(2 + chunks.reduce((sum, chunk) => sum + chunk.length, 0))
   out[0] = 0xff
   out[1] = 0xd8
   let offset = 2
-  for (const chunk of [exif, xmp, comment, body]) {
+  for (const chunk of chunks) {
     out.set(chunk, offset)
     offset += chunk.length
   }

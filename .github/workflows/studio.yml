@@ -7,11 +7,13 @@ on:
     paths:
       - 'studio/**'
       - '.github/workflows/studio.yml'
+      - 'src/index.css'
   push:
     branches: [main]
     paths:
       - 'studio/**'
       - '.github/workflows/studio.yml'
+      - 'src/index.css'
 
 permissions:
   contents: read
@@ -32,3 +34,12 @@ jobs:
         working-directory: studio
       - run: npm test
         working-directory: studio
+      - run: npm ci
+      - run: npm run build
+      - name: Tailwind probe stays out of the reader CSS
+        run: |
+          css=$(ls dist/assets/index-*.css)
+          if grep -q 'fa11e0' "$css"; then
+            echo "tailwind probe class reached the reader CSS"
+            exit 1
+          fi

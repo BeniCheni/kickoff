@@ -1,10 +1,14 @@
-/** Header names follow fal's `x-fal-*` family named in the architecture review §8.1. */
+/**
+ * Spellings read 13 Oct 2026:
+ * https://fal.ai/docs/model-apis/model-endpoints/reliability
+ * https://fal.ai/docs/documentation/model-apis/common-parameters
+ */
 export const FAL_HEADER = {
-  noRetry: 'x-fal-no-retry',
-  disableFallback: 'x-fal-disable-fallback',
-  requestTimeout: 'x-fal-request-timeout',
-  storeIo: 'x-fal-store-io',
-  objectLifecycle: 'x-fal-object-lifecycle-preference',
+  noRetry: 'X-Fal-No-Retry',
+  disableFallback: 'x-app-fal-disable-fallback',
+  requestTimeout: 'X-Fal-Request-Start-Timeout',
+  storeIo: 'X-Fal-Store-IO',
+  objectLifecycle: 'X-Fal-Object-Lifecycle-Preference',
 } as const
 
 const PHOTO_LIFETIME_SECONDS = 86_400
@@ -16,7 +20,7 @@ export function falHeaders(options: {
 }): Record<string, string> {
   const headers: Record<string, string> = {
     [FAL_HEADER.noRetry]: '1',
-    [FAL_HEADER.disableFallback]: '1',
+    [FAL_HEADER.disableFallback]: 'true',
     [FAL_HEADER.requestTimeout]: String(options.requestTimeoutSeconds),
   }
   if (options.key) headers.authorization = `Key ${options.key}`

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { FAL_HEADER, falHeaders } from '../fal/headers.ts'
 import { createNetworkGuard, NetworkGuardError, STUB_HOST } from '../fal/guard.ts'
 import { createLiveTransport, liveFalArmed, selectFalTransport } from '../fal/live.ts'
+import { QueueUrlError } from '../fal/urls.ts'
 import { statusResponseSchema } from '../fal/schemas.ts'
 import { createFalStub, OutOfCreditError } from '../fal/stub.ts'
 
@@ -78,13 +79,63 @@ describe('network guard', () => {
     expect(seen).toEqual([])
     expect(blocked.calls).toEqual([])
   })
+
+  it('sends the key on submit, status, result and cancel, each to the stored queue URL', async () => {
+    const seen: { url: string; authorization: string | null; method: string }[] = []
+    const fetchImpl = (async (input: Parameters<typeof fetch>[0], init?: Parameters<typeof fetch>[1]) => {
+      const headers = new Headers(init?.headers)
+      const url = String(input)
+      seen.push({ url, authorization: headers.get('authorization'), method: init?.method ?? 'GET' })
+      if (init?.method === 'POST') {
+        return new Response(JSON.stringify({
+          request_id: 'req-1',
+          status_url: 'https://queue.fal.run/fal-ai/flux/schnell/requests/req-1/status',
+          response_url: 'https://queue.fal.run/fal-ai/flux/schnell/requests/req-1/response',
+          cancel_url: 'https://queue.fal.run/fal-ai/flux/schnell/requests/req-1/cancel',
+        }), { status: 200 })
+      }
+      if (url.endsWith('/status')) return new Response(JSON.stringify({ status: 'IN_QUEUE' }), { status: 200 })
+      if (url.endsWith('/cancel')) return new Response(JSON.stringify({ status: 'CANCELLATION_REQUESTED' }), { status: 202 })
+      return new Response(JSON.stringify({ video: { url: 'https://studio-stub.invalid/clip.mp4' } }), {
+        status: 200,
+        headers: { 'x-fal-billable-units': '15' },
+      })
+    }) as typeof fetch
+    const live = createLiveTransport('SECRET-KEY', fetchImpl, true)
+    const submitted = await live.submit({ endpoint: 'fal-ai/flux/schnell', body: { prompt: 'x' }, headers: {} })
+    await live.status({ requestId: 'req-1', statusUrl: submitted.status_url, headers: {} })
+    await live.result({ requestId: 'req-1', responseUrl: submitted.response_url, headers: {} })
+    await live.cancel({ requestId: 'req-1', cancelUrl: submitted.cancel_url, headers: {} })
+    expect(seen.map((call) => call.url)).toEqual([
+      'https://queue.fal.run/fal-ai/flux/schnell',
+      'https://queue.fal.run/fal-ai/flux/schnell/requests/req-1/status',
+      'https://queue.fal.run/fal-ai/flux/schnell/requests/req-1/response',
+      'https://queue.fal.run/fal-ai/flux/schnell/requests/req-1/cancel',
+    ])
+    expect(seen.every((call) => call.authorization === 'Key SECRET-KEY')).toBe(true)
+  })
+
+  it('refuses a queue URL on another origin and does not send the key', async () => {
+    const seen: string[] = []
+    const fetchImpl = (async (input: Parameters<typeof fetch>[0]) => {
+      seen.push(String(input))
+      throw new Error('fetch was called')
+    }) as typeof fetch
+    const live = createLiveTransport('SECRET-KEY', fetchImpl, true)
+    await expect(live.status({
+      requestId: 'req-1',
+      statusUrl: 'https://evil.example/requests/req-1/status',
+      headers: {},
+    })).rejects.toBeInstanceOf(QueueUrlError)
+    expect(seen).toEqual([])
+  })
 })
 
 describe('fal headers', () => {
   it('sends no-retry, no fallback, and a timeout on every call, and the photo limits only with a photograph', () => {
     const plain = falHeaders({ requestTimeoutSeconds: 120, carriesPhotograph: false })
     expect(plain[FAL_HEADER.noRetry]).toBe('1')
-    expect(plain[FAL_HEADER.disableFallback]).toBe('1')
+    expect(plain[FAL_HEADER.disableFallback]).toBe('true')
     expect(plain[FAL_HEADER.requestTimeout]).toBe('120')
     expect(plain[FAL_HEADER.storeIo]).toBeUndefined()
 

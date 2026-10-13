@@ -4,8 +4,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { liveDatabaseArmed, runCli, type CliIo } from '../cli.ts'
-import { sha256 } from '../hash.ts'
-import { minimalJpeg, taggedJpeg } from './jpeg.ts'
+import { minimalJpeg } from './jpeg.ts'
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const VIDEO = 'minimax/h3-max-turbo/image-to-video'
@@ -67,22 +66,30 @@ describe('command line', () => {
     const data = mkdtempSync(path.join(tmpdir(), 'kickoff-studio-data-'))
     const media = mkdtempSync(path.join(tmpdir(), 'kickoff-studio-media-'))
     const keyframe = path.join(media, 'k0.jpg')
-    const photo = path.join(media, 'photo.jpg')
     writeFileSync(keyframe, minimalJpeg)
-    writeFileSync(photo, taggedJpeg())
     const env = {
       STUDIO_DATA_DIR: data,
       STUDIO_MEDIA_DIR: media,
       STUDIO_NOW: '2026-10-12T16:00:00.000Z',
     }
+    const refusedLive = capture()
+    expect(await runCli([
+      'submit', '--endpoint', VIDEO, '--prompt', 'a fictional cat', '--duration', '15',
+      '--resolution', '480P', '--seed', '1', '--keyframe', keyframe, '--live',
+    ], env, refusedLive)).toBe(1)
+    expect(refusedLive.err.join('\n')).toMatch(/STUDIO_LIVE/)
+    expect(refusedLive.err.join('\n')).toMatch(/FAL_KEY/)
+    expect(refusedLive.err.join('\n')).not.toMatch(/SECRET|postgres:\/\//)
+    expect(refusedLive.out).toEqual([])
+
     const submitted = capture()
     expect(await runCli([
       'submit', '--endpoint', VIDEO, '--prompt', 'a fictional cat', '--duration', '15',
-      '--resolution', '480P', '--seed', '1', '--keyframe', keyframe, '--photo', photo, '--live',
+      '--resolution', '480P', '--seed', '1', '--keyframe', keyframe,
     ], env, submitted)).toBe(0)
     expect(submitted.out[0]).toContain('submitted')
     expect(submitted.out[0]).toContain('req-stub-1')
-    expect(submitted.out[0]).toContain(sha256(minimalJpeg))
+    expect(submitted.out[0]).toContain('transport=stub')
     const job = jobOf(submitted.out[0] ?? '')
 
     let outcome = ''
@@ -95,7 +102,8 @@ describe('command line', () => {
 
     const downloaded = capture()
     expect(await runCli(['download', '--job', job], env, downloaded)).toBe(0)
-    expect(downloaded.out[0]).toBe('downloaded')
+    expect(downloaded.out[0]).toContain('downloaded')
+    expect(downloaded.out[0]).toContain('transport=stub')
     const kept = capture()
     expect(await runCli([
       'keep', '--job', job, '--answers', 'clear,clear,clear,clear,clear',
@@ -127,7 +135,9 @@ describe('command line', () => {
 
     const withdrawn = capture()
     expect(await runCli(['unpublish', '--job', job], env, withdrawn)).toBe(0)
-    expect(withdrawn.out).toEqual(['withdrawn'])
+    expect(withdrawn.out[0]).toContain('withdrawn')
+    expect(withdrawn.out[0]).toContain('removal=merged')
+    expect(withdrawn.out[0]).not.toContain('live=true')
     const relist = capture()
     expect(await runCli([
       'publish', '--job', job, '--public-id', 'fenway-2', '--title', 'Fenway', '--position', '1',

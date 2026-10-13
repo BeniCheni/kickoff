@@ -14,6 +14,13 @@ export const PREPAID_CEILING_USD = '9.370000'
 export const TIMEOUT_CEILING_MS = 10 * 60 * 1000
 export const TIMEOUT_CEILING_LABEL = 'proposal' as const
 
+/**
+ * A proposal, beside the A-05 ceiling. Seconds fal will wait for a runner to
+ * start, sent as X-Fal-Request-Start-Timeout. Not a settled deadline.
+ */
+export const REQUEST_START_TIMEOUT_SECONDS = 120
+export const REQUEST_START_TIMEOUT_LABEL = 'proposal' as const
+
 export function decideBudget(estimate: string, sessionSpend: string): 'ok' | 'budget-refused' {
   if (cmpUsd(estimate, PER_JOB_CAP_USD) > 0) return 'budget-refused'
   if (cmpUsd(addUsd(sessionSpend, estimate), SESSION_CAP_USD) > 0) return 'budget-refused'

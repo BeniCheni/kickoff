@@ -24,27 +24,43 @@ import {
   videos,
   studioTables,
 } from './db/schema.ts'
-import { decideBudget, PER_JOB_CAP_USD, PREPAID_CEILING_USD, SESSION_CAP_USD, TIMEOUT_CEILING_LABEL, TIMEOUT_CEILING_MS } from './caps.ts'
+import { decideBudget, PER_JOB_CAP_USD, PREPAID_CEILING_USD, REQUEST_START_TIMEOUT_SECONDS, SESSION_CAP_USD, TIMEOUT_CEILING_LABEL, TIMEOUT_CEILING_MS } from './caps.ts'
 import { falHeaders } from './fal/headers.ts'
-import { resultState, resultEnvelopeSchema, statusResponseSchema, submitResponseSchema } from './fal/schemas.ts'
+import { cancelResponseSchema, resultState, resultEnvelopeSchema, statusResponseSchema, submitResponseSchema } from './fal/schemas.ts'
 import { OutOfCreditError, ResultExpiredError, type FalTransport } from './fal/stub.ts'
+import { isQueueOrigin } from './fal/urls.ts'
 import { cacheKey as makeCacheKey, sha256 } from './hash.ts'
 import { aboveManualCeiling, jobExposure, reconcileAmount, sessionExposure, type LedgerView } from './ledger.ts'
 import { addUsd } from './money.ts'
 import { preparePhotograph } from './photos/strip.ts'
 import { estimateUsd, selectRegistry, unknownParam, type RegistryRow } from './registry.ts'
-import type { StoragePort, StoredObject } from './storage/port.ts'
+import { siteCopyStatus, type SiteCopyOutcome, type StoragePort, type StoredObject } from './storage/port.ts'
 import type { PgliteDatabase } from 'drizzle-orm/pglite'
 
 export type StudioDatabase = PgliteDatabase<typeof studioTables>
 
 const IN_FLIGHT = new Set<JobState>(['submitted', 'queued', 'in-progress', 'completed'])
+const CANCELLABLE = new Set<JobState>(['submitted', 'queued', 'in-progress'])
+const CLOSE_BLOCKED = new Set<JobState>(['submitted', 'queued', 'in-progress'])
 const STORED = new Set<JobState>(['downloaded', 'kept', 'published', 'withdrawn'])
 
 export type StudioFlags = {
   breakLedgerWrite: boolean
   breakAfterAccept: boolean
   breakRecordWrite: boolean
+  breakWithdrawWrite: boolean
+}
+
+type LedgerLine = { settlement: string; amountUsd: string | null }
+
+function isSubmitUnconfirmed(row: { status: string; providerRequestId: string | null }, lines: readonly LedgerLine[]): boolean {
+  if (row.status !== 'draft' || row.providerRequestId) return false
+  if (lines.some((line) => line.settlement === 'reconciled')) return false
+  return lines.some((line) => line.settlement === 'pending')
+}
+
+function photographDataUri(bytes: Uint8Array): string {
+  return `data:image/jpeg;base64,${Buffer.from(bytes).toString('base64')}`
 }
 
 export type SubmitInput = {
@@ -96,8 +112,13 @@ function views(lines: readonly {
 export function createStudio(options: EngineOptions) {
   const clock = options.clock ?? (() => new Date())
   const timeoutCeilingMs = options.timeoutCeilingMs ?? TIMEOUT_CEILING_MS
-  const requestTimeoutSeconds = options.requestTimeoutSeconds ?? 120
-  const flags = options.flags ?? { breakLedgerWrite: false, breakAfterAccept: false, breakRecordWrite: false }
+  const requestTimeoutSeconds = options.requestTimeoutSeconds ?? REQUEST_START_TIMEOUT_SECONDS
+  const flags = options.flags ?? {
+    breakLedgerWrite: false,
+    breakAfterAccept: false,
+    breakRecordWrite: false,
+    breakWithdrawWrite: false,
+  }
   assertOutsideWorktree(options.mediaDir, options.repoRoot)
   const { db, fal, storage } = options
 
@@ -143,6 +164,9 @@ export function createStudio(options: EngineOptions) {
     substate?: 'download-failed' | 'result-expired' | null
     refusalReason?: string | null
     requestId?: string
+    statusUrl?: string
+    responseUrl?: string
+    cancelUrl?: string
     finished?: boolean
     submitted?: boolean
   } = {}) {
@@ -151,6 +175,9 @@ export function createStudio(options: EngineOptions) {
       ...(extra.substate !== undefined ? { completedSubstate: extra.substate } : {}),
       ...(extra.refusalReason !== undefined ? { refusalReason: extra.refusalReason } : {}),
       ...(extra.requestId !== undefined ? { providerRequestId: extra.requestId } : {}),
+      ...(extra.statusUrl !== undefined ? { statusUrl: extra.statusUrl } : {}),
+      ...(extra.responseUrl !== undefined ? { responseUrl: extra.responseUrl } : {}),
+      ...(extra.cancelUrl !== undefined ? { cancelUrl: extra.cancelUrl } : {}),
       ...(extra.finished ? { finishedAt: clock() } : {}),
       ...(extra.submitted ? { submittedAt: clock() } : {}),
     }).where(eq(job.id, jobId))
@@ -164,6 +191,87 @@ export function createStudio(options: EngineOptions) {
 
   async function headers(carriesPhotograph: boolean) {
     return falHeaders({ requestTimeoutSeconds, carriesPhotograph })
+  }
+
+  function recordFailure(error: unknown) {
+    const message = error instanceof Error
+      ? `${error.message} ${error.cause instanceof Error ? error.cause.message : ''}`
+      : String(error)
+    if (message.includes('Article 50')) return { outcome: 'gate-closed' as const, live: false as const }
+    if (message.includes('videos_live_position')) {
+      return { outcome: 'record-failed' as const, live: false as const, listedAgain: true as const, reason: 'position-taken' as const }
+    }
+    if (message.includes('videos_public_id')) {
+      return { outcome: 'record-failed' as const, live: false as const, listedAgain: true as const, reason: 'public-id-taken' as const }
+    }
+    return { outcome: 'record-failed' as const, live: false as const, listedAgain: true as const, reason: 'unspecified' as const }
+  }
+
+  async function finishFallback(videoId: string, publicId: string, sourceSha256: string, retried: boolean) {
+    let outcome: SiteCopyOutcome = 'checks-failed'
+    try {
+      outcome = (await storage.deliverFallback({ publicId, sourceSha256 })).outcome
+    } catch {
+      outcome = 'checks-failed'
+    }
+    await db.update(videos).set({ fallbackStatus: siteCopyStatus(outcome) }).where(eq(videos.id, videoId))
+    if (outcome === 'checks-failed') {
+      return { outcome: 'checks-failed' as const, live: true as const, retryable: true as const }
+    }
+    return {
+      outcome: 'published' as const,
+      live: true as const,
+      fallback: outcome,
+      ...(retried ? { fallbackRetried: true as const } : {}),
+    }
+  }
+
+  async function deleteRemaining(videoId: string) {
+    const [row] = await db.select().from(videos).where(eq(videos.id, videoId))
+    if (!row) throw new Error('missing catalog row')
+    let videoRemoved = row.videoRemovedAt !== null
+    let thumbnailRemoved = row.thumbnailRemovedAt !== null
+    let attempted = 0
+    if (!videoRemoved) {
+      const [videoAsset] = await db.select().from(asset).where(eq(asset.id, row.videoAssetId))
+      if (!videoAsset?.bucket || !videoAsset.objectPath) videoRemoved = true
+      else {
+        attempted += 1
+        try {
+          await storage.remove({ bucket: videoAsset.bucket, objectPath: videoAsset.objectPath })
+          await db.update(videos).set({ videoRemovedAt: clock() }).where(eq(videos.id, row.id))
+          videoRemoved = true
+        } catch {
+          videoRemoved = false
+        }
+      }
+    }
+    if (!thumbnailRemoved) {
+      const [thumbnail] = await db.select().from(asset).where(eq(asset.id, row.thumbnailAssetId))
+      if (!thumbnail?.bucket || !thumbnail.objectPath) thumbnailRemoved = true
+      else {
+        attempted += 1
+        try {
+          await storage.remove({ bucket: thumbnail.bucket, objectPath: thumbnail.objectPath })
+          await db.update(videos).set({ thumbnailRemovedAt: clock() }).where(eq(videos.id, row.id))
+          thumbnailRemoved = true
+        } catch {
+          thumbnailRemoved = false
+        }
+      }
+    }
+    return { videoRemoved, thumbnailRemoved, attempted }
+  }
+
+  async function runRemoval(videoId: string, publicId: string): Promise<{ outcome: SiteCopyOutcome }> {
+    let outcome: SiteCopyOutcome = 'checks-failed'
+    try {
+      outcome = (await storage.removeSiteCopy({ publicId })).outcome
+    } catch {
+      outcome = 'checks-failed'
+    }
+    await db.update(videos).set({ removalStatus: siteCopyStatus(outcome) }).where(eq(videos.id, videoId))
+    return { outcome }
   }
 
   return {
@@ -194,20 +302,26 @@ export function createStudio(options: EngineOptions) {
     async submit(input: SubmitInput) {
       const row = selectRegistry(input.endpoint, input.params, clock())
       if (!row) return { outcome: 'not-in-registry' as const }
-      const unknown = unknownParam(row, input.params)
-      if (unknown) return { outcome: 'param-not-allowed' as const, param: unknown }
-      const usd = estimateUsd(row, input.params)
-      if (!usd) return { outcome: 'not-in-registry' as const }
 
       let photographHash: string | undefined
       const body: Record<string, unknown> = { ...input.params }
       const hashes = [...(input.inputHashes ?? [])]
       if (input.photograph) {
-        const prepared = preparePhotograph(input.photograph)
+        let prepared: { bytes: Uint8Array; sha256: string }
+        try {
+          prepared = preparePhotograph(input.photograph)
+        } catch (error) {
+          if (error instanceof Error && error.message === 'not a jpeg') return { outcome: 'not-a-jpeg' as const }
+          throw error
+        }
         photographHash = prepared.sha256
         hashes.push(prepared.sha256)
-        body.image_urls = [Buffer.from(prepared.bytes).toString('base64')]
+        body.image_urls = [photographDataUri(prepared.bytes)]
       }
+      const unknown = unknownParam(row, body)
+      if (unknown) return { outcome: 'param-not-allowed' as const, param: unknown }
+      const usd = estimateUsd(row, input.params)
+      if (!usd) return { outcome: 'not-in-registry' as const }
       const key = makeCacheKey({
         registryId: row.id,
         params: input.params,
@@ -232,6 +346,12 @@ export function createStudio(options: EngineOptions) {
       if (latest?.status === 'refused') return { outcome: 'refused' as const, jobId: latest.id, retried: false as const }
       if (latest && IN_FLIGHT.has(latest.status as JobState)) {
         return { outcome: 'in-flight' as const, jobId: latest.id, status: latest.status }
+      }
+      if (latest?.status === 'draft' && !latest.requestId) {
+        const prior = await db.select().from(ledger).where(eq(ledger.jobId, latest.id))
+        if (isSubmitUnconfirmed({ status: latest.status, providerRequestId: latest.requestId }, prior)) {
+          return { outcome: 'submit-unconfirmed' as const, jobId: latest.id }
+        }
       }
 
       const open = await currentSession()
@@ -334,15 +454,20 @@ export function createStudio(options: EngineOptions) {
       }
 
       const carriesPhotograph = Boolean(input.photograph)
-      let accepted: { request_id: string }
+      let accepted: { request_id: string; status_url: string; response_url: string; cancel_url: string }
       try {
         const raw = await fal.submit({
           endpoint: row.endpoint,
           body,
           headers: await headers(carriesPhotograph),
         })
-        accepted = submitResponseSchema.parse(raw)
         if (flags.breakAfterAccept) throw new Error('database unavailable')
+        const parsed = submitResponseSchema.safeParse(raw)
+        if (!parsed.success) return { outcome: 'provider-urls-missing' as const, jobId: prepared.jobId }
+        if (!isQueueOrigin(parsed.data.status_url) || !isQueueOrigin(parsed.data.response_url) || !isQueueOrigin(parsed.data.cancel_url)) {
+          return { outcome: 'provider-urls-refused' as const, jobId: prepared.jobId }
+        }
+        accepted = parsed.data
       } catch (error) {
         if (error instanceof OutOfCreditError) {
           await db.insert(ledger).values({
@@ -377,6 +502,9 @@ export function createStudio(options: EngineOptions) {
 
       await setJob(prepared.jobId, prepared.generationId, 'submitted', {
         requestId: accepted.request_id,
+        statusUrl: accepted.status_url,
+        responseUrl: accepted.response_url,
+        cancelUrl: accepted.cancel_url,
         submitted: true,
       })
       return {
@@ -390,7 +518,11 @@ export function createStudio(options: EngineOptions) {
     async poll(jobId: string) {
       const [current] = await db.select().from(job).where(eq(job.id, jobId))
       if (!current) return { outcome: 'missing' as const }
-      if (!current.providerRequestId) return { outcome: 'not-resubmitted' as const, jobId }
+      if (!current.providerRequestId) {
+        const lines = await db.select().from(ledger).where(eq(ledger.jobId, jobId))
+        if (isSubmitUnconfirmed(current, lines)) return { outcome: 'submit-unconfirmed' as const, jobId }
+        return { outcome: 'not-resubmitted' as const, jobId }
+      }
       if (current.status === 'cancelled') return { outcome: 'cancelled' as const, chargeRetained: true as const }
       const settled = new Set<JobState>(['failed', 'refused', 'downloaded', 'kept', 'published', 'withdrawn', 'discarded', 'budget-refused', 'timed-out'])
       if (current.status === 'completed') {
@@ -401,17 +533,26 @@ export function createStudio(options: EngineOptions) {
       } else if (settled.has(current.status as JobState)) {
         return { outcome: 'duplicate-delivery' as const, status: current.status }
       }
+      if (!current.statusUrl || !current.responseUrl || !isQueueOrigin(current.statusUrl) || !isQueueOrigin(current.responseUrl)) {
+        return { outcome: 'provider-urls-missing' as const, jobId }
+      }
 
       const started = current.submittedAt ?? current.createdAt
-      if (clock().getTime() - started.getTime() > timeoutCeilingMs && IN_FLIGHT.has(current.status as JobState)) {
+      const pastCeiling = clock().getTime() - started.getTime() > timeoutCeilingMs && IN_FLIGHT.has(current.status as JobState)
+      const status = statusResponseSchema.parse(await fal.status({
+        requestId: current.providerRequestId,
+        statusUrl: current.statusUrl,
+        headers: await headers(false),
+      }))
+      if ('httpStatus' in status) {
+        await setJob(current.id, current.generationId, 'failed', { finished: true })
+        await recordEvent(jobId, 'provider-http', { httpStatus: status.httpStatus, timeoutType: status.timeoutType })
+        return { outcome: 'failed' as const, jobId, httpStatus: status.httpStatus, timeoutType: status.timeoutType }
+      }
+      if (pastCeiling && status.status !== 'COMPLETED') {
         await setJob(current.id, current.generationId, 'timed-out', { finished: true })
         return { outcome: 'timed-out' as const, label: TIMEOUT_CEILING_LABEL, ceilingMs: timeoutCeilingMs }
       }
-
-      const status = statusResponseSchema.parse(await fal.status({
-        requestId: current.providerRequestId,
-        headers: await headers(false),
-      }))
       if (status.status === 'IN_QUEUE') {
         await setJob(current.id, current.generationId, 'queued')
         return { outcome: 'queued' as const, jobId }
@@ -423,6 +564,7 @@ export function createStudio(options: EngineOptions) {
 
       const envelope = resultEnvelopeSchema.parse(await fal.result({
         requestId: current.providerRequestId,
+        responseUrl: current.responseUrl,
         headers: await headers(false),
       }))
       const mapped = resultState(envelope.httpStatus, envelope.body)
@@ -461,16 +603,74 @@ export function createStudio(options: EngineOptions) {
 
     async resume(jobId: string) {
       const [current] = await db.select().from(job).where(eq(job.id, jobId))
-      if (!current?.providerRequestId) return { outcome: 'not-resubmitted' as const, jobId }
+      if (!current) return { outcome: 'missing' as const }
+      if (!current.providerRequestId) {
+        const lines = await db.select().from(ledger).where(eq(ledger.jobId, jobId))
+        if (isSubmitUnconfirmed(current, lines)) return { outcome: 'submit-unconfirmed' as const, jobId }
+        return { outcome: 'not-resubmitted' as const, jobId }
+      }
       return this.poll(jobId)
+    },
+
+    async attachRequest(input: { jobId: string; requestId: string; statusUrl: string; responseUrl: string; cancelUrl: string }) {
+      if (!isQueueOrigin(input.statusUrl) || !isQueueOrigin(input.responseUrl) || !isQueueOrigin(input.cancelUrl)) {
+        return { outcome: 'url-refused' as const, jobId: input.jobId }
+      }
+      const [current] = await db.select().from(job).where(eq(job.id, input.jobId))
+      if (!current) return { outcome: 'missing' as const }
+      const lines = await db.select().from(ledger).where(eq(ledger.jobId, current.id))
+      if (!isSubmitUnconfirmed(current, lines)) return { outcome: 'not-unconfirmed' as const, jobId: current.id }
+      const before = lines.length
+      await setJob(current.id, current.generationId, 'submitted', {
+        requestId: input.requestId,
+        statusUrl: input.statusUrl,
+        responseUrl: input.responseUrl,
+        cancelUrl: input.cancelUrl,
+        submitted: true,
+      })
+      const after = await db.select().from(ledger).where(eq(ledger.jobId, current.id))
+      if (after.length !== before) throw new Error('attach-request wrote a ledger line')
+      return { outcome: 'attached' as const, jobId: current.id }
+    },
+
+    async closeSession() {
+      const [open] = await db.select().from(session).where(isNull(session.closedAt)).limit(1)
+      if (!open) return { outcome: 'no-open-session' as const }
+      const jobs = await db.select().from(job).where(eq(job.sessionId, open.id))
+      const jobIds: string[] = []
+      for (const row of jobs) {
+        const lines = await db.select().from(ledger).where(eq(ledger.jobId, row.id))
+        const unsettledCompletion = row.status === 'completed' && !lines.some((line) => line.settlement === 'reconciled')
+        if (CLOSE_BLOCKED.has(row.status as JobState) || isSubmitUnconfirmed(row, lines) || unsettledCompletion) {
+          jobIds.push(row.id)
+        }
+      }
+      if (jobIds.length > 0) return { outcome: 'close-refused' as const, jobIds }
+      const totalUsd = await spend(open.id)
+      await db.update(session).set({ closedAt: clock() }).where(eq(session.id, open.id))
+      return { outcome: 'closed' as const, sessionId: open.id, totalUsd }
     },
 
     async cancel(jobId: string) {
       const [current] = await db.select().from(job).where(eq(job.id, jobId))
       if (!current) return { outcome: 'missing' as const }
-      if (current.providerRequestId) {
-        await fal.cancel({ requestId: current.providerRequestId, headers: await headers(false) })
+      if (!CANCELLABLE.has(current.status as JobState)) {
+        return {
+          outcome: 'cancel-refused' as const,
+          jobId,
+          status: current.status,
+          ...(current.status === 'published' ? { hint: 'use unpublish' as const } : {}),
+        }
       }
+      if (!current.providerRequestId || !current.cancelUrl || !isQueueOrigin(current.cancelUrl)) {
+        return { outcome: 'cancel-refused' as const, jobId, status: current.status }
+      }
+      const parsed = cancelResponseSchema.safeParse(await fal.cancel({
+        requestId: current.providerRequestId,
+        cancelUrl: current.cancelUrl,
+        headers: await headers(false),
+      }))
+      if (!parsed.success) return { outcome: 'cancel-unconfirmed' as const, jobId }
       await setJob(current.id, current.generationId, 'cancelled', { finished: true })
       const lines = await db.select().from(ledger).where(eq(ledger.jobId, jobId))
       return { outcome: 'cancelled' as const, chargeRetained: lines.length > 0, exposure: jobExposure(views(lines)) }
@@ -558,13 +758,21 @@ export function createStudio(options: EngineOptions) {
     },
 
     async recordGate(input: { answer: string; disclosure: string; recordedBy: string; source: string }) {
+      const answer = input.answer.trim()
+      if (!answer) return { outcome: 'gate-empty' as const }
+      const [existing] = await db.select().from(article50Answer).limit(1)
+      if (existing) {
+        return { outcome: 'gate-already-recorded' as const, recordedOn: existing.recordedOn.toISOString() }
+      }
+      const recordedOn = clock()
       await db.insert(article50Answer).values({
-        answer: input.answer,
+        answer,
         disclosure: input.disclosure,
-        recordedOn: clock(),
+        recordedOn,
         recordedBy: input.recordedBy,
         source: input.source,
       })
+      return { outcome: 'gate-recorded' as const, recordedOn: recordedOn.toISOString() }
     },
 
     async publish(input: { jobId: string; publicId: string; title: string; position: number; editorialNote?: string }) {
@@ -573,14 +781,8 @@ export function createStudio(options: EngineOptions) {
       if (current.status === 'withdrawn') return { outcome: 'not-relisted' as const }
       const [existingVideo] = await db.select().from(videos).where(eq(videos.jobId, input.jobId)).limit(1)
       if (current.status === 'published') {
-        if (existingVideo?.fallbackStatus === 'missing') {
-          try {
-            await storage.deliverFallback({ publicId: existingVideo.publicId, sourceSha256: 'retry' })
-            await db.update(videos).set({ fallbackStatus: 'delivered' }).where(eq(videos.id, existingVideo.id))
-            return { outcome: 'published' as const, live: true as const, fallbackRetried: true as const }
-          } catch {
-            return { outcome: 'fallback-missing' as const, live: true as const, retryable: true as const }
-          }
+        if (existingVideo?.fallbackStatus === 'failed') {
+          return finishFallback(existingVideo.id, existingVideo.publicId, 'retry', true)
         }
         return { outcome: 'already-published' as const }
       }
@@ -629,6 +831,7 @@ export function createStudio(options: EngineOptions) {
             localPath: videoAsset.localPath,
             sha256: videoAsset.sha256,
             publicId: input.publicId,
+            mime: videoAsset.mime,
           })
           await saved(videoAsset.id, object)
           videoAsset.bucket = object.bucket
@@ -643,6 +846,7 @@ export function createStudio(options: EngineOptions) {
             localPath: thumbnail.localPath ?? k0.localPath,
             sha256: thumbnail.sha256,
             publicId: input.publicId,
+            mime: thumbnail.mime,
           })
           await saved(thumbnail.id, object)
           thumbnail.bucket = object.bucket
@@ -683,46 +887,74 @@ export function createStudio(options: EngineOptions) {
           await tx.update(generation).set({ status: 'published' }).where(eq(generation.id, gen.id))
         })
       } catch (error) {
-        const message = error instanceof Error ? `${error.message} ${error.cause instanceof Error ? error.cause.message : ''}` : ''
-        if (message.includes('Article 50')) return { outcome: 'gate-closed' as const, live: false as const }
-        return { outcome: 'record-failed' as const, live: false as const, listedAgain: true as const }
+        return recordFailure(error)
       }
       await recordEvent(current.id, 'published')
 
       const [liveRow] = await db.select().from(videos).where(eq(videos.jobId, current.id))
+      if (!liveRow) return { outcome: 'record-failed' as const, live: false as const, listedAgain: true as const, reason: 'unspecified' as const }
+      return finishFallback(liveRow.id, input.publicId, thumbnail.sha256, false)
+    },
+
+    async unpublish(jobId: string, options?: { deleteFiles?: boolean }) {
+      const [current] = await db.select().from(job).where(eq(job.id, jobId))
+      const [row] = await db.select().from(videos).where(eq(videos.jobId, jobId))
+      if (!current || !row || current.status !== 'published') {
+        if (current?.status === 'withdrawn') return { outcome: 'already-withdrawn' as const, jobId }
+        return { outcome: 'not-published' as const }
+      }
+      if (flags.breakWithdrawWrite) {
+        return { outcome: 'withdraw-failed' as const, live: true as const, filesTouched: false as const }
+      }
       try {
-        await storage.deliverFallback({ publicId: input.publicId, sourceSha256: thumbnail.sha256 })
-        if (liveRow) await db.update(videos).set({ fallbackStatus: 'delivered' }).where(eq(videos.id, liveRow.id))
-        return { outcome: 'published' as const, live: true as const }
+        await db.transaction(async (tx) => {
+          await tx.update(videos).set({ publishedAt: null, unpublishedAt: clock() }).where(eq(videos.id, row.id))
+          await tx.update(job).set({ status: 'withdrawn' }).where(eq(job.id, jobId))
+          await tx.update(generation).set({ status: 'withdrawn' }).where(eq(generation.id, current.generationId))
+          await tx.insert(event).values({ jobId, at: clock(), type: 'unpublished' })
+        })
       } catch {
-        if (liveRow) await db.update(videos).set({ fallbackStatus: 'missing' }).where(eq(videos.id, liveRow.id))
-        return { outcome: 'fallback-missing' as const, live: true as const, retryable: true as const }
+        return { outcome: 'withdraw-failed' as const, live: true as const, filesTouched: false as const }
+      }
+
+      const deleted = options?.deleteFiles
+        ? await deleteRemaining(row.id)
+        : { videoRemoved: false, thumbnailRemoved: false, videoFailed: false, thumbnailFailed: false }
+      const removal = await runRemoval(row.id, row.publicId)
+      return {
+        outcome: 'withdrawn' as const,
+        listed: false as const,
+        deleteRequested: Boolean(options?.deleteFiles),
+        videoRemoved: deleted.videoRemoved,
+        thumbnailRemoved: deleted.thumbnailRemoved,
+        filesReadable: Boolean(options?.deleteFiles) && (!deleted.videoRemoved || !deleted.thumbnailRemoved),
+        removal: removal.outcome,
       }
     },
 
-    async unpublish(jobId: string) {
+    async retryDelete(jobId: string) {
       const [current] = await db.select().from(job).where(eq(job.id, jobId))
       const [row] = await db.select().from(videos).where(eq(videos.jobId, jobId))
-      if (!current || !row || current.status !== 'published') return { outcome: 'not-published' as const }
-      const [videoAsset] = await db.select().from(asset).where(eq(asset.id, row.videoAssetId))
-      const [thumbnail] = await db.select().from(asset).where(eq(asset.id, row.thumbnailAssetId))
-      try {
-        if (videoAsset?.bucket && videoAsset.objectPath) {
-          await storage.remove({ bucket: videoAsset.bucket, objectPath: videoAsset.objectPath })
-        }
-        if (thumbnail?.bucket && thumbnail.objectPath) {
-          await storage.remove({ bucket: thumbnail.bucket, objectPath: thumbnail.objectPath })
-        }
-      } catch {
-        return { outcome: 'remove-failed' as const, live: true as const }
+      if (!current || !row || current.status !== 'withdrawn') return { outcome: 'not-withdrawn' as const }
+      const deleted = await deleteRemaining(row.id)
+      return {
+        outcome: 'delete-retried' as const,
+        listed: false as const,
+        videoRemoved: deleted.videoRemoved,
+        thumbnailRemoved: deleted.thumbnailRemoved,
+        filesReadable: !deleted.videoRemoved || !deleted.thumbnailRemoved,
+        idempotent: deleted.attempted === 0,
       }
-      await db.transaction(async (tx) => {
-        await tx.update(videos).set({ publishedAt: null, unpublishedAt: clock() }).where(eq(videos.id, row.id))
-        await tx.update(job).set({ status: 'withdrawn' }).where(eq(job.id, jobId))
-        await tx.update(generation).set({ status: 'withdrawn' }).where(eq(generation.id, current.generationId))
-        await tx.insert(event).values({ jobId, at: clock(), type: 'unpublished' })
-      })
-      return { outcome: 'withdrawn' as const }
+    },
+
+    async retryRemoval(jobId: string) {
+      const [current] = await db.select().from(job).where(eq(job.id, jobId))
+      const [row] = await db.select().from(videos).where(eq(videos.jobId, jobId))
+      if (!current || !row || current.status !== 'withdrawn') return { outcome: 'not-withdrawn' as const }
+      if (row.removalStatus === 'merged') return { outcome: 'merged' as const, idempotent: true as const, listed: false as const }
+      if (row.removalStatus === 'pending') return { outcome: 'pending' as const, idempotent: true as const, listed: false as const }
+      const removal = await runRemoval(row.id, row.publicId)
+      return { outcome: removal.outcome, listed: false as const, idempotent: false as const }
     },
 
     async list() {

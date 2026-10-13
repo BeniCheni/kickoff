@@ -30,6 +30,7 @@ export type FalCall = {
   headers: Record<string, string>
   endpoint?: string
   body?: Record<string, unknown>
+  url?: string
 }
 
 export type FalTransport = {
@@ -38,9 +39,9 @@ export type FalTransport = {
     body: Record<string, unknown>
     headers: Record<string, string>
   }): Promise<SubmitResponse>
-  status(input: { requestId: string; headers: Record<string, string> }): Promise<StatusResponse>
-  result(input: { requestId: string; headers: Record<string, string> }): Promise<ResultEnvelope>
-  cancel(input: { requestId: string; headers: Record<string, string> }): Promise<{ httpStatus: number; body: unknown }>
+  status(input: { requestId: string; statusUrl?: string; headers: Record<string, string> }): Promise<StatusResponse>
+  result(input: { requestId: string; responseUrl?: string; headers: Record<string, string> }): Promise<ResultEnvelope>
+  cancel(input: { requestId: string; cancelUrl?: string; headers: Record<string, string> }): Promise<{ httpStatus: number; body: unknown }>
   download(input: { requestId: string; headers: Record<string, string> }): Promise<Uint8Array>
   readonly calls: readonly FalCall[]
 }
@@ -67,10 +68,17 @@ export function createFalStub(script: ScriptName, cursor?: StubCursor): FalTrans
       note('submit', input.headers, { endpoint: input.endpoint, body: input.body })
       if (script === 'out-of-credit') throw new OutOfCreditError()
       state.requestSequence += 1
-      return { request_id: `req-stub-${state.requestSequence}` }
+      const requestId = `req-stub-${state.requestSequence}`
+      const base = `https://queue.fal.run/${input.endpoint}/requests/${requestId}`
+      return {
+        request_id: requestId,
+        status_url: `${base}/status`,
+        response_url: `${base}/response`,
+        cancel_url: `${base}/cancel`,
+      }
     },
     async status(input) {
-      note('status', input.headers)
+      note('status', input.headers, { url: input.statusUrl })
       state.statusCalls += 1
       if (script === 'timeout') return { status: 'IN_QUEUE' }
       if (script === 'queued-then-completed' || script === 'duplicate-delivery') {
@@ -81,7 +89,7 @@ export function createFalStub(script: ScriptName, cursor?: StubCursor): FalTrans
       return { status: 'COMPLETED' }
     },
     async result(input) {
-      note('result', input.headers)
+      note('result', input.headers, { url: input.responseUrl })
       if (script === 'error-payload') {
         return {
           httpStatus: 422,
@@ -99,7 +107,7 @@ export function createFalStub(script: ScriptName, cursor?: StubCursor): FalTrans
       return { httpStatus: 200, billableUnits: '15', body: COMPLETED_BODY }
     },
     async cancel(input) {
-      note('cancel', input.headers)
+      note('cancel', input.headers, { url: input.cancelUrl })
       return { httpStatus: 202, body: { status: 'CANCELLATION_REQUESTED' } }
     },
     async download(input) {

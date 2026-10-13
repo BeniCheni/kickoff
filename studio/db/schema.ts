@@ -187,6 +187,9 @@ export const job = studio.table('job', {
   sessionId: uuid('session_id').references(() => session.id),
   attempt: integer('attempt').notNull(),
   providerRequestId: text('provider_request_id'),
+  statusUrl: text('status_url'),
+  responseUrl: text('response_url'),
+  cancelUrl: text('cancel_url'),
   idempotencyKey: text('idempotency_key').notNull(),
   estimateUsd: money('estimate_usd').notNull(),
   status: text('status').notNull(),
@@ -268,7 +271,9 @@ export const article50Answer = studio.table('article50_answer', {
   recordedBy: text('recorded_by').notNull(),
   source: text('source').notNull(),
   createdAt: createdAt(),
-}).enableRLS()
+}, () => [
+  check('article50_answer_nonblank', sql.raw(`char_length(btrim("answer")) > 0`)),
+]).enableRLS()
 
 export const videos = studio.table('videos', {
   id: id(),
@@ -291,10 +296,17 @@ export const videos = studio.table('videos', {
   generatedAt: timestamp('generated_at', { withTimezone: true, mode: 'date' }).notNull(),
   attestationSummary: text('attestation_summary').notNull(),
   fallbackStatus: text('fallback_status').notNull(),
+  removalStatus: text('removal_status'),
+  videoRemovedAt: timestamp('video_removed_at', { withTimezone: true, mode: 'date' }),
+  thumbnailRemovedAt: timestamp('thumbnail_removed_at', { withTimezone: true, mode: 'date' }),
   createdAt: createdAt(),
 }, (table) => [
   uniqueIndex('videos_public_id').on(table.publicId),
-  check('videos_fallback_status', oneOf('fallback_status', ['pending', 'delivered', 'missing'])),
+  uniqueIndex('videos_job_id').on(table.jobId),
+  check('videos_fallback_status', oneOf('fallback_status', ['pending', 'failed', 'merged'])),
+  check('videos_removal_status', sql.raw(
+    `"removal_status" is null or "removal_status" in ('pending', 'failed', 'merged')`,
+  )),
   check('videos_withdrawn_clears_published', sql.raw(
     `"unpublished_at" is null or "published_at" is null`,
   )),

@@ -2,15 +2,21 @@ import { z } from 'zod'
 
 export const submitResponseSchema = z.object({
   request_id: z.string().min(1),
-  status_url: z.string().optional(),
-  response_url: z.string().optional(),
-  cancel_url: z.string().optional(),
+  status_url: z.string().min(1),
+  response_url: z.string().min(1),
+  cancel_url: z.string().min(1),
 })
 
-export const statusResponseSchema = z.object({
-  status: z.enum(['IN_QUEUE', 'IN_PROGRESS', 'COMPLETED']),
-  queue_position: z.number().optional(),
-})
+export const statusResponseSchema = z.union([
+  z.object({
+    status: z.enum(['IN_QUEUE', 'IN_PROGRESS', 'COMPLETED']),
+    queue_position: z.number().optional(),
+  }),
+  z.object({
+    httpStatus: z.number().int(),
+    timeoutType: z.string().nullable(),
+  }),
+])
 
 export const resultEnvelopeSchema = z.object({
   httpStatus: z.number().int(),

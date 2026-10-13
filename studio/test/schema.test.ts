@@ -119,15 +119,25 @@ describe('read-only catalog role', () => {
       seed: '20261004',
       generatedAt: clip.when,
       attestationSummary: 'policy v1 · 5 of 5 clear',
-      fallbackStatus: 'delivered',
+      fallbackStatus: 'merged',
     })
+    const [withdrawnJob] = await db.insert(job).values({
+      generationId: clip.generationId,
+      sessionId: clip.sessionId,
+      attempt: 2,
+      idempotencyKey: 'idem-withdrawn',
+      estimateUsd: '0.225000',
+      status: 'withdrawn',
+      finishedAt: clip.when,
+    }).returning()
+    if (!withdrawnJob) throw new Error('withdrawn job insert returned nothing')
     await db.insert(videos).values({
       publicId: 'withdrawn-clip',
       title: 'Withdrawn',
       position: 2,
       publishedAt: null,
       unpublishedAt: clip.when,
-      jobId: clip.jobId,
+      jobId: withdrawnJob.id,
       generationId: clip.generationId,
       videoAssetId: clip.videoAssetId,
       thumbnailAssetId: clip.thumbnailId,
@@ -136,7 +146,7 @@ describe('read-only catalog role', () => {
       prompt: 'should not be listed',
       generatedAt: clip.when,
       attestationSummary: 'policy v1 · 5 of 5 clear',
-      fallbackStatus: 'delivered',
+      fallbackStatus: 'merged',
     })
 
     await client.exec('SET ROLE studio_reader')
@@ -150,7 +160,15 @@ describe('read-only catalog role', () => {
     const detail = await rows<Record<string, unknown>>(client, `SELECT * FROM catalog.video`)
     expect(Object.keys(detail[0] ?? {})).toEqual([...publishedDetailColumns])
     expect(detail[0]?.prompt).toBe('the published prompt')
-    expect(JSON.stringify(detail)).not.toContain('draft-prompt-secret')
+    expect(detail[0]?.id).toBe('fenway-strike')
+    expect(listed[0]?.id).toBe('fenway-strike')
+    const published = JSON.stringify(listed) + JSON.stringify(detail)
+    expect(published).not.toContain('draft-prompt-secret')
+    expect(published).not.toContain(clip.jobId)
+    expect(published).not.toContain(withdrawnJob.id)
+    expect(published).not.toContain(clip.videoAssetId)
+    expect(published).not.toContain(clip.thumbnailId)
+    expect(published).not.toContain(clip.generationId)
 
     await expect(client.query('SELECT prompt FROM studio.generation')).rejects.toThrow(/permission denied/i)
     await expect(client.query('SELECT amount_usd FROM studio.ledger')).rejects.toThrow(/permission denied/i)
@@ -183,6 +201,13 @@ describe('publication gate', () => {
       attestationSummary: 'policy v1 · 5 of 5 clear',
       fallbackStatus: 'pending' as const,
     }
+    await expect(db.insert(article50Answer).values({
+      answer: '   ',
+      disclosure: 'blank',
+      recordedOn: clip.when,
+      recordedBy: 'the test',
+      source: 'schema test',
+    })).rejects.toThrow()
     await expect(db.insert(videos).values(row)).rejects.toSatisfy(throwsMatching(/Article 50/))
     await db.insert(article50Answer).values({
       answer: 'recorded for the test',
@@ -207,6 +232,46 @@ describe('publication gate', () => {
       .rejects.toSatisfy(throwsMatching(/not relisted/))
     await expect(db.update(job).set({ status: 'published' }).where(eq(job.id, clip.jobId)))
       .rejects.toSatisfy(throwsMatching(/not relisted/))
+  })
+
+  it('refuses a second catalog row for a withdrawn job', async () => {
+    const { db } = await freshDatabase()
+    const clip = await seedClip(db)
+    await markKept(db, clip.generationId, clip.jobId)
+    await db.insert(article50Answer).values({
+      answer: 'recorded for the test',
+      disclosure: 'the test disclosure',
+      recordedOn: clip.when,
+      recordedBy: 'the test',
+      source: 'schema test',
+    })
+    const row = {
+      publicId: 'fenway-strike',
+      title: 'Fenway',
+      position: 1,
+      publishedAt: clip.when,
+      jobId: clip.jobId,
+      generationId: clip.generationId,
+      videoAssetId: clip.videoAssetId,
+      thumbnailAssetId: clip.thumbnailId,
+      endpoint: 'minimax/h3-max-turbo/image-to-video',
+      pinnedOn: '2026-10-05',
+      prompt: 'the published prompt',
+      generatedAt: clip.when,
+      attestationSummary: 'policy v1 · 5 of 5 clear',
+      fallbackStatus: 'merged' as const,
+    }
+    const [published] = await db.insert(videos).values(row).returning()
+    if (!published) throw new Error('catalog insert returned nothing')
+    await db.update(job).set({ status: 'published' }).where(eq(job.id, clip.jobId))
+    await db.update(videos).set({ publishedAt: null, unpublishedAt: clip.when }).where(eq(videos.id, published.id))
+    await db.update(job).set({ status: 'withdrawn' }).where(eq(job.id, clip.jobId))
+    await expect(db.insert(videos).values({
+      ...row,
+      publicId: 'fenway-again',
+      publishedAt: null,
+      unpublishedAt: clip.when,
+    })).rejects.toSatisfy(throwsMatching(/videos_job_id|duplicate key/i))
   })
 
   it('refuses Keep without five Clear answers', async () => {

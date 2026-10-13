@@ -10,7 +10,7 @@ import { CHECKLIST_LINES, type ChecklistAnswer, studioTables } from './db/schema
 import { parseEnvFile, resolveEnvFile, runMigrate } from './db/migrate.ts'
 import { COPY } from './copy.ts'
 import { createStudio, type Studio, type StudioDatabase } from './engine.ts'
-import { selectFalTransport } from './fal/live.ts'
+import { missingLivePieces, selectFalTransport } from './fal/live.ts'
 import { createFalStub, type ScriptName, type StubCursor } from './fal/stub.ts'
 import { sha256 } from './hash.ts'
 import { redact } from './log/redact.ts'
@@ -41,11 +41,15 @@ const USAGE = [
   'discard --job <id>',
   'cancel --job <id>',
   'publish --job <id> --public-id <slug> --title <title> --position <n> [--note <text>]',
-  'unpublish --job <id>',
+  'unpublish --job <id> [--delete]',
+  'retry-delete --job <id>',
+  'retry-removal --job <id>',
+  'close-session',
+  'attach-request --job <id> --request-id <id> --status-url <url> --response-url <url> --cancel-url <url>',
   'record-gate --answer <text> --disclosure <text> --by <name> --source <source>',
   'record-balance --amount <usd>',
   'migrate',
-  'Offline unless --live is set together with STUDIO_LIVE=1 and the secret the command needs.',
+  'Offline unless --live is set together with STUDIO_LIVE=1 and FAL_KEY. --live refuses, and names the missing piece, when either is absent.',
 ].join('\n')
 
 export type CliIo = {
@@ -74,6 +78,10 @@ function parseArgs(argv: readonly string[]) {
     const arg = argv[index]
     if (arg === '--live') {
       live = true
+      continue
+    }
+    if (arg === '--delete') {
+      flags.delete = '1'
       continue
     }
     if (!arg?.startsWith('--')) throw new Error(`unexpected argument ${arg ?? ''}`)
@@ -136,7 +144,10 @@ async function openStudio(env: NodeJS.ProcessEnv, live: boolean) {
     failVideo: fails.has('video'),
     failThumbnail: fails.has('thumbnail'),
     failFallback: fails.has('fallback'),
+    failRemoval: fails.has('removal'),
     failRemove: fails.has('remove'),
+    failRemoveVideo: fails.has('video-remove'),
+    failRemoveThumbnail: fails.has('thumbnail-remove'),
   })
   const stub = createFalStub(scriptFrom(env), cursor)
   const fal = selectFalTransport({
@@ -229,6 +240,15 @@ export async function runCli(argv: readonly string[], env: NodeJS.ProcessEnv, io
     }
     const loaded = loadEnv(env)
     const { flags, live } = parseArgs(rest)
+    const touchesFal = new Set(['submit', 'poll', 'resume', 'download', 'cancel'])
+    if (live && touchesFal.has(command)) {
+      const missing = missingLivePieces(loaded)
+      if (missing.length > 0) {
+        io.stderr(`refused: --live needs ${missing.join(' and ')}`)
+        return 1
+      }
+    }
+    const transport = live && missingLivePieces(loaded).length === 0 ? 'live' : 'stub'
     if (command === 'migrate') {
       await runMigrate(loaded)
       io.stdout('migrated')
@@ -278,14 +298,14 @@ export async function runCli(argv: readonly string[], env: NodeJS.ProcessEnv, io
           keyframe,
         })
         if (result.outcome === 'submitted') {
-          io.stdout(line('submitted', { job: result.jobId, request: result.requestId, sha256: result.sentSha256 }))
+          io.stdout(line('submitted', { job: result.jobId, request: result.requestId, sha256: result.sentSha256, transport }))
           return
         }
-        if (result.outcome === 'budget-refused' || result.outcome === 'cache-hit' || result.outcome === 'in-flight') {
-          io.stdout(line(result.outcome, { job: 'jobId' in result ? result.jobId : undefined }))
+        if (result.outcome === 'budget-refused' || result.outcome === 'cache-hit' || result.outcome === 'in-flight' || result.outcome === 'submit-unconfirmed' || result.outcome === 'provider-urls-missing') {
+          io.stdout(line(result.outcome, { job: 'jobId' in result ? result.jobId : undefined, transport }))
           return
         }
-        io.stdout(result.outcome)
+        io.stdout(line(result.outcome, { transport }))
         explain(io, result.outcome)
         return
       }
@@ -293,13 +313,13 @@ export async function runCli(argv: readonly string[], env: NodeJS.ProcessEnv, io
         const result = command === 'poll'
           ? await studio.poll(required(flags, 'job'))
           : await studio.resume(required(flags, 'job'))
-        io.stdout(line(result.outcome, { job: 'jobId' in result ? result.jobId : undefined }))
+        io.stdout(line(result.outcome, { job: 'jobId' in result ? result.jobId : undefined, transport }))
         explain(io, result.outcome)
         return
       }
       if (command === 'download') {
         const result = await studio.download(required(flags, 'job'))
-        io.stdout(line(result.outcome))
+        io.stdout(line(result.outcome, { transport }))
         explain(io, result.outcome)
         return
       }
@@ -334,17 +354,40 @@ export async function runCli(argv: readonly string[], env: NodeJS.ProcessEnv, io
       }
       if (command === 'cancel') {
         const result = await studio.cancel(required(flags, 'job'))
-        io.stdout(line(result.outcome, { charge: 'chargeRetained' in result ? result.chargeRetained : undefined }))
+        io.stdout(line(result.outcome, {
+          charge: 'chargeRetained' in result ? result.chargeRetained : undefined,
+          hint: 'hint' in result ? result.hint : undefined,
+          transport,
+        }))
+        return
+      }
+      if (command === 'close-session') {
+        const result = await studio.closeSession()
+        io.stdout(line(result.outcome, {
+          total: result.outcome === 'closed' ? result.totalUsd : undefined,
+          jobs: result.outcome === 'close-refused' ? result.jobIds.join(',') : undefined,
+        }))
+        return
+      }
+      if (command === 'attach-request') {
+        const result = await studio.attachRequest({
+          jobId: required(flags, 'job'),
+          requestId: required(flags, 'request-id'),
+          statusUrl: required(flags, 'status-url'),
+          responseUrl: required(flags, 'response-url'),
+          cancelUrl: required(flags, 'cancel-url'),
+        })
+        io.stdout(line(result.outcome, { job: 'jobId' in result ? result.jobId : undefined }))
         return
       }
       if (command === 'record-gate') {
-        await studio.recordGate({
+        const result = await studio.recordGate({
           answer: required(flags, 'answer'),
           disclosure: required(flags, 'disclosure'),
           recordedBy: required(flags, 'by'),
           source: required(flags, 'source'),
         })
-        io.stdout('gate-recorded')
+        io.stdout(line(result.outcome, { recordedOn: 'recordedOn' in result ? result.recordedOn : undefined }))
         return
       }
       if (command === 'record-balance') {
@@ -372,7 +415,25 @@ export async function runCli(argv: readonly string[], env: NodeJS.ProcessEnv, io
         return
       }
       if (command === 'unpublish') {
-        io.stdout((await studio.unpublish(required(flags, 'job'))).outcome)
+        const result = await studio.unpublish(required(flags, 'job'), { deleteFiles: flags.delete === '1' })
+        io.stdout(line(result.outcome, {
+          removal: 'removal' in result ? result.removal : undefined,
+          filesReadable: 'filesReadable' in result ? result.filesReadable : undefined,
+          live: 'live' in result ? result.live : undefined,
+        }))
+        return
+      }
+      if (command === 'retry-delete') {
+        const result = await studio.retryDelete(required(flags, 'job'))
+        io.stdout(line(result.outcome, {
+          filesReadable: 'filesReadable' in result ? result.filesReadable : undefined,
+          idempotent: 'idempotent' in result ? result.idempotent : undefined,
+        }))
+        return
+      }
+      if (command === 'retry-removal') {
+        const result = await studio.retryRemoval(required(flags, 'job'))
+        io.stdout(line(result.outcome, { idempotent: 'idempotent' in result ? result.idempotent : undefined }))
         return
       }
       throw new Error(`unknown command ${command}`)

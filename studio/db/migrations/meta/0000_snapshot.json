@@ -58,7 +58,12 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
-      "checkConstraints": {},
+      "checkConstraints": {
+        "article50_answer_nonblank": {
+          "name": "article50_answer_nonblank",
+          "value": "char_length(btrim(\"answer\")) > 0"
+        }
+      },
       "isRLSEnabled": true
     },
     "studio.asset": {
@@ -724,6 +729,24 @@
         },
         "provider_request_id": {
           "name": "provider_request_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status_url": {
+          "name": "status_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "response_url": {
+          "name": "response_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cancel_url": {
+          "name": "cancel_url",
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -1527,6 +1550,24 @@
           "primaryKey": false,
           "notNull": true
         },
+        "removal_status": {
+          "name": "removal_status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "video_removed_at": {
+          "name": "video_removed_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "thumbnail_removed_at": {
+          "name": "thumbnail_removed_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp with time zone",
@@ -1541,6 +1582,21 @@
           "columns": [
             {
               "expression": "public_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "videos_job_id": {
+          "name": "videos_job_id",
+          "columns": [
+            {
+              "expression": "job_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -1616,7 +1672,11 @@
       "checkConstraints": {
         "videos_fallback_status": {
           "name": "videos_fallback_status",
-          "value": "\"fallback_status\" in ('pending', 'delivered', 'missing')"
+          "value": "\"fallback_status\" in ('pending', 'failed', 'merged')"
+        },
+        "videos_removal_status": {
+          "name": "videos_removal_status",
+          "value": "\"removal_status\" is null or \"removal_status\" in ('pending', 'failed', 'merged')"
         },
         "videos_withdrawn_clears_published": {
           "name": "videos_withdrawn_clears_published",

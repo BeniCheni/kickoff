@@ -11,6 +11,9 @@ describe('photograph metadata', () => {
     expect(text).toContain('GPSLongitude=-73.9442')
     expect(text).toContain('SyntheticCam')
     expect(text).toContain('ST1-Device')
+    expect(text).toContain('ICC_PROFILE')
+    expect(text).toContain('DisplayP3-synthetic')
+    expect(text).toContain('APP14-synthetic')
 
     const stripped = stripMetadata(tagged)
     const sent = new TextDecoder().decode(stripped)
@@ -18,6 +21,9 @@ describe('photograph metadata', () => {
     expect(sent).not.toContain('GPSLongitude')
     expect(sent).not.toContain('SyntheticCam')
     expect(sent).not.toContain('ST1-Device')
+    expect(sent).not.toContain('ICC_PROFILE')
+    expect(sent).not.toContain('DisplayP3-synthetic')
+    expect(sent).not.toContain('APP14-synthetic')
     expect(stripped).toEqual(minimalJpeg)
 
     const prepared = preparePhotograph(tagged)

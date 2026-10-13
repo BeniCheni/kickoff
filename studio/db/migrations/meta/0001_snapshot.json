@@ -58,7 +58,12 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
-      "checkConstraints": {},
+      "checkConstraints": {
+        "article50_answer_nonblank": {
+          "name": "article50_answer_nonblank",
+          "value": "char_length(btrim(\"answer\")) > 0"
+        }
+      },
       "isRLSEnabled": true
     },
     "studio.asset": {
@@ -201,16 +206,16 @@
         "balance_entry_session_id_session_id_fk": {
           "name": "balance_entry_session_id_session_id_fk",
           "tableFrom": "balance_entry",
+          "tableTo": "session",
+          "schemaTo": "studio",
           "columnsFrom": [
             "session_id"
           ],
-          "tableTo": "session",
-          "schemaTo": "studio",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -267,16 +272,16 @@
         "event_job_id_job_id_fk": {
           "name": "event_job_id_job_id_fk",
           "tableFrom": "event",
+          "tableTo": "job",
+          "schemaTo": "studio",
           "columnsFrom": [
             "job_id"
           ],
-          "tableTo": "job",
-          "schemaTo": "studio",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -381,16 +386,16 @@
         "generation_model_id_model_id_fk": {
           "name": "generation_model_id_model_id_fk",
           "tableFrom": "generation",
+          "tableTo": "model",
+          "schemaTo": "studio",
           "columnsFrom": [
             "model_id"
           ],
-          "tableTo": "model",
-          "schemaTo": "studio",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -467,39 +472,39 @@
             }
           ],
           "isUnique": true,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "generation_input_generation_id_generation_id_fk": {
           "name": "generation_input_generation_id_generation_id_fk",
           "tableFrom": "generation_input",
+          "tableTo": "generation",
+          "schemaTo": "studio",
           "columnsFrom": [
             "generation_id"
           ],
-          "tableTo": "generation",
-          "schemaTo": "studio",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "generation_input_asset_id_asset_id_fk": {
           "name": "generation_input_asset_id_asset_id_fk",
           "tableFrom": "generation_input",
+          "tableTo": "asset",
+          "schemaTo": "studio",
           "columnsFrom": [
             "asset_id"
           ],
-          "tableTo": "asset",
-          "schemaTo": "studio",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -562,39 +567,39 @@
             }
           ],
           "isUnique": true,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "generation_parent_generation_id_generation_id_fk": {
           "name": "generation_parent_generation_id_generation_id_fk",
           "tableFrom": "generation_parent",
+          "tableTo": "generation",
+          "schemaTo": "studio",
           "columnsFrom": [
             "generation_id"
           ],
-          "tableTo": "generation",
-          "schemaTo": "studio",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "generation_parent_parent_id_generation_id_fk": {
           "name": "generation_parent_parent_id_generation_id_fk",
           "tableFrom": "generation_parent",
+          "tableTo": "generation",
+          "schemaTo": "studio",
           "columnsFrom": [
             "parent_id"
           ],
-          "tableTo": "generation",
-          "schemaTo": "studio",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -652,39 +657,39 @@
             }
           ],
           "isUnique": true,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "generation_subject_generation_id_generation_id_fk": {
           "name": "generation_subject_generation_id_generation_id_fk",
           "tableFrom": "generation_subject",
+          "tableTo": "generation",
+          "schemaTo": "studio",
           "columnsFrom": [
             "generation_id"
           ],
-          "tableTo": "generation",
-          "schemaTo": "studio",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "generation_subject_subject_id_subject_id_fk": {
           "name": "generation_subject_subject_id_subject_id_fk",
           "tableFrom": "generation_subject",
+          "tableTo": "subject",
+          "schemaTo": "studio",
           "columnsFrom": [
             "subject_id"
           ],
-          "tableTo": "subject",
-          "schemaTo": "studio",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -724,6 +729,24 @@
         },
         "provider_request_id": {
           "name": "provider_request_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "status_url": {
+          "name": "status_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "response_url": {
+          "name": "response_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cancel_url": {
+          "name": "cancel_url",
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -790,9 +813,9 @@
             }
           ],
           "isUnique": true,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "job_provider_request_id": {
           "name": "job_provider_request_id",
@@ -805,9 +828,9 @@
             }
           ],
           "isUnique": true,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         },
         "job_generation_attempt": {
           "name": "job_generation_attempt",
@@ -826,39 +849,39 @@
             }
           ],
           "isUnique": true,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "job_generation_id_generation_id_fk": {
           "name": "job_generation_id_generation_id_fk",
           "tableFrom": "job",
+          "tableTo": "generation",
+          "schemaTo": "studio",
           "columnsFrom": [
             "generation_id"
           ],
-          "tableTo": "generation",
-          "schemaTo": "studio",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "job_session_id_session_id_fk": {
           "name": "job_session_id_session_id_fk",
           "tableFrom": "job",
+          "tableTo": "session",
+          "schemaTo": "studio",
           "columnsFrom": [
             "session_id"
           ],
-          "tableTo": "session",
-          "schemaTo": "studio",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -960,30 +983,30 @@
         "ledger_job_id_job_id_fk": {
           "name": "ledger_job_id_job_id_fk",
           "tableFrom": "ledger",
+          "tableTo": "job",
+          "schemaTo": "studio",
           "columnsFrom": [
             "job_id"
           ],
-          "tableTo": "job",
-          "schemaTo": "studio",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "ledger_session_id_session_id_fk": {
           "name": "ledger_session_id_session_id_fk",
           "tableFrom": "ledger",
+          "tableTo": "session",
+          "schemaTo": "studio",
           "columnsFrom": [
             "session_id"
           ],
-          "tableTo": "session",
-          "schemaTo": "studio",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1086,9 +1109,9 @@
             }
           ],
           "isUnique": true,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {},
@@ -1170,25 +1193,25 @@
             }
           ],
           "isUnique": true,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "policy_answer_policy_check_id_policy_check_id_fk": {
           "name": "policy_answer_policy_check_id_policy_check_id_fk",
           "tableFrom": "policy_answer",
+          "tableTo": "policy_check",
+          "schemaTo": "studio",
           "columnsFrom": [
             "policy_check_id"
           ],
-          "tableTo": "policy_check",
-          "schemaTo": "studio",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1266,16 +1289,16 @@
         "policy_check_generation_id_generation_id_fk": {
           "name": "policy_check_generation_id_generation_id_fk",
           "tableFrom": "policy_check",
+          "tableTo": "generation",
+          "schemaTo": "studio",
           "columnsFrom": [
             "generation_id"
           ],
-          "tableTo": "generation",
-          "schemaTo": "studio",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1527,6 +1550,24 @@
           "primaryKey": false,
           "notNull": true
         },
+        "removal_status": {
+          "name": "removal_status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "video_removed_at": {
+          "name": "video_removed_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "thumbnail_removed_at": {
+          "name": "thumbnail_removed_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp with time zone",
@@ -1547,67 +1588,82 @@
             }
           ],
           "isUnique": true,
-          "with": {},
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
+        },
+        "videos_job_id": {
+          "name": "videos_job_id",
+          "columns": [
+            {
+              "expression": "job_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {
         "videos_job_id_job_id_fk": {
           "name": "videos_job_id_job_id_fk",
           "tableFrom": "videos",
+          "tableTo": "job",
+          "schemaTo": "studio",
           "columnsFrom": [
             "job_id"
           ],
-          "tableTo": "job",
-          "schemaTo": "studio",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "videos_generation_id_generation_id_fk": {
           "name": "videos_generation_id_generation_id_fk",
           "tableFrom": "videos",
+          "tableTo": "generation",
+          "schemaTo": "studio",
           "columnsFrom": [
             "generation_id"
           ],
-          "tableTo": "generation",
-          "schemaTo": "studio",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "videos_video_asset_id_asset_id_fk": {
           "name": "videos_video_asset_id_asset_id_fk",
           "tableFrom": "videos",
+          "tableTo": "asset",
+          "schemaTo": "studio",
           "columnsFrom": [
             "video_asset_id"
           ],
-          "tableTo": "asset",
-          "schemaTo": "studio",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "videos_thumbnail_asset_id_asset_id_fk": {
           "name": "videos_thumbnail_asset_id_asset_id_fk",
           "tableFrom": "videos",
+          "tableTo": "asset",
+          "schemaTo": "studio",
           "columnsFrom": [
             "thumbnail_asset_id"
           ],
-          "tableTo": "asset",
-          "schemaTo": "studio",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1616,7 +1672,11 @@
       "checkConstraints": {
         "videos_fallback_status": {
           "name": "videos_fallback_status",
-          "value": "\"fallback_status\" in ('pending', 'delivered', 'missing')"
+          "value": "\"fallback_status\" in ('pending', 'failed', 'merged')"
+        },
+        "videos_removal_status": {
+          "name": "videos_removal_status",
+          "value": "\"removal_status\" is null or \"removal_status\" in ('pending', 'failed', 'merged')"
         },
         "videos_withdrawn_clears_published": {
           "name": "videos_withdrawn_clears_published",
@@ -1628,10 +1688,10 @@
   },
   "enums": {},
   "schemas": {},
-  "views": {},
   "sequences": {},
   "roles": {},
   "policies": {},
+  "views": {},
   "_meta": {
     "columns": {},
     "schemas": {},
