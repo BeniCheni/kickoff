@@ -4,6 +4,7 @@ import { PGlite } from '@electric-sql/pglite'
 import { drizzle } from 'drizzle-orm/pglite'
 import { migrate } from 'drizzle-orm/pglite/migrator'
 import { studioTables } from '../db/schema.ts'
+import type { StudioDatabase } from '../engine.ts'
 
 const migrationsFolder = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../db/migrations')
 
@@ -14,7 +15,7 @@ export async function freshDatabase() {
   return { client, db }
 }
 
-export type StudioDatabase = Awaited<ReturnType<typeof freshDatabase>>['db']
+export type { StudioDatabase }
 export type StudioClient = Awaited<ReturnType<typeof freshDatabase>>['client']
 
 export function errorText(error: unknown): string {
