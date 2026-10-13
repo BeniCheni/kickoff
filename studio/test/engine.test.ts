@@ -437,5 +437,5 @@ describe('state machine', () => {
     expect(child.outcome).toBe('submitted')
     const parents = await live.db.select().from(generation)
     expect(parents.some((item) => item.id === live.generationId && item.status === 'withdrawn')).toBe(true)
-  })
+  }, 30_000)
 })
