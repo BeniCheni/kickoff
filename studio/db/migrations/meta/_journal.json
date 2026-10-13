@@ -1,0 +1,20 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1791858864929,
+      "tag": "0000_studio_tables",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791858878392,
+      "tag": "0001_catalog_gate",
+      "breakpoints": true
+    }
+  ]
+}
