@@ -738,6 +738,32 @@ describe('state machine', () => {
     const delivered = await fallback.db.select().from(videos)
     expect(delivered[0]?.fallbackStatus).toBe('merged')
 
+    const digested = await keptClip()
+    await digested.studio.recordGate({ answer: 'recorded', disclosure: 'x', recordedBy: 'a', source: 'A-06' })
+    const digests: string[] = []
+    const deliver = digested.storage.port.deliverFallback.bind(digested.storage.port)
+    digested.storage.port.deliverFallback = async (input) => {
+      digests.push(input.sourceSha256)
+      return deliver(input)
+    }
+    digested.storageScript.failFallback = true
+    const firstCopy = await digested.studio.publish({
+      jobId: digested.jobId,
+      publicId: 'fenway',
+      title: 'Fenway',
+      position: 1,
+    })
+    expect(firstCopy).toMatchObject({ outcome: 'checks-failed', live: true, retryable: true })
+    digested.storageScript.failFallback = false
+    const secondCopy = await digested.studio.publish({
+      jobId: digested.jobId,
+      publicId: 'fenway',
+      title: 'Fenway',
+      position: 1,
+    })
+    expect(secondCopy).toMatchObject({ outcome: 'published', live: true, fallbackRetried: true })
+    expect(digests).toEqual(['k0-hash', 'k0-hash'])
+
     const live = await keptClip()
     await live.studio.recordGate({
       answer: 'recorded',

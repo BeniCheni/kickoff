@@ -916,7 +916,9 @@ export function createStudio(options: EngineOptions) {
       const [existingVideo] = await db.select().from(videos).where(eq(videos.jobId, input.jobId)).limit(1)
       if (current.status === 'published') {
         if (existingVideo?.fallbackStatus === 'failed') {
-          return finishFallback(existingVideo.id, existingVideo.publicId, 'retry', true)
+          const [thumb] = await db.select().from(asset).where(eq(asset.id, existingVideo.thumbnailAssetId))
+          if (!thumb) return { outcome: 'not-ready' as const }
+          return finishFallback(existingVideo.id, existingVideo.publicId, thumb.sha256, true)
         }
         return { outcome: 'already-published' as const }
       }
