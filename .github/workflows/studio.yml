@@ -27,7 +27,9 @@ jobs:
         with:
           node-version: 24
           cache: npm
-          cache-dependency-path: studio/package-lock.json
+          cache-dependency-path: |
+            package-lock.json
+            studio/package-lock.json
       - run: npm ci
         working-directory: studio
       - run: npm run typecheck
