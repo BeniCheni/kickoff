@@ -1,0 +1,75 @@
+# Moments D4 — the delta-check prompt for Codex (archived Mon 12 Oct 2026, TZ=America/New_York)
+
+Written by the PM seat on Sun 11 Oct 2026 for Codex (GPT-6.1 Sol High), after verifying the D4 export (fingerprint `90482cdb…1e01`), and delivered in chat.
+
+---
+
+````text
+$kickoff-design-review
+
+Moments D4 — delta check: Claude Design's last design revision (three fixes and Beni's eight Pass 3 rulings, including a new link on every tab), against D3 and your Pass 2.5 (Codex, GPT-6.1 Sol High)
+
+You are the independent check seat for one design revision in github.com/BeniCheni/kickoff, in Codex on GPT-6.1 Sol at High. A Codex session ran Pass 2.5 on D3 earlier today (/Users/benicheni/kickoff-d2-review/d3-synthesis.md): it closed 20 of the 21 findings, left D-24 waiting on Beni, opened D-42, D-43 and D-44, and gave the verdict "ready after named fixes". Beni then gave his Pass 3 rulings. The PM seat (Claude Code) sent Claude Design (Fable 5.1 Extra, the builder) a D4 brief (/Users/benicheni/kickoff-s55-run/d4-brief.md): fix the three findings, record the rulings, and design a global "Privacy & terms" link. Claude Design returned D4. Read the kickoff-design-review skill (.agents/skills/kickoff-design-review/SKILL.md and references/browser-evidence.md) by hand first. This is a delta check: confirm the fixes and the rulings, test the new link, and make sure nothing that was closed has reopened. You do not redesign, edit the artifact or write product code, and you answer nothing for Beni.
+
+Beni's Pass 3 rulings, Sun 11 Oct 2026, given first-hand to the PM seat. They are settled; do not reopen them. A-01 Accept (Play-as-agreement as drawn, with no outside policy review; both review seats had recommended Review). A-02 Define (the privacy page's #terms is Kickoff's own terms for III.A.1; the wording stays editable before S7; D-24 closes on this). A-03 Retain (GitHub Releases; §10's mechanisms stay proposals for the implementation plan). A-04 Disclose (frame 13's public-at-upload confirmation is the decided behaviour). A-05 Propose (10 minutes stays a proposal). A-06 Clarify (an explicit answer on EU AI Act Article 50 is required before any generated clip is published; who gives it is not named). A-07 Global (one "Privacy & terms" link reachable on every tab: Fixtures, Table and Moments). This is a narrow exception to the settled rule that Fixtures and Table are untouched; it covers that link and nothing else. A-08 Curated (Q12's "/ YouTube" rule validates src/curated/moments.json only). Everything settled before them still stands: the D1 brief's settled items, Studio rulings §15.1–15.14, the 7 Oct source rulings, Q1–Q12, and the unrun 16:9 run.
+
+Your session may be bounded, so the work is five ordered blocks. Create the report first and append to it after every block; if you run low, stop at a block boundary and say what you did not reach. Inside each block, run your own probes first, then check the Appendix PM items tagged to it.
+
+Hard limits, as in Pass 2.5. Nothing under ~/s4b or ~/kickoff-s4b. In every design folder, uploads/ and the capture PNGs are Beni's: never copy them, or any id or URL they show, outside the design folder and your report folder. _ds/ never goes into the repo. No edits to any design folder or repository file; no commit, push, branch, PR, issue, release, tag, setting change or GitHub comment. No request to fal, Supabase, any YouTube or Google host or any Google API, except reading public policy pages if a check needs them. Never press Play. No `runner.mjs --live`, no authority file, no spend. You may run `npm ci --no-audit --no-fund`, the stub generator and `npm run build:acceptance` in your review worktree. No other install, no `npm audit fix`, no `npm run sync`. Run `TZ=America/New_York date` before writing any date.
+
+Setup:
+
+```bash
+git -C /Users/benicheni/Documents/Claude/Projects/Kickoff fetch origin
+git -C /Users/benicheni/Documents/Claude/Projects/Kickoff worktree add --detach /Users/benicheni/kickoff-d4-check-codex origin/main
+cd /Users/benicheni/kickoff-d4-check-codex
+git log --oneline -3
+git diff --stat 2199649 HEAD -- src public index.html scripts package.json
+npm ci --no-audit --no-fund
+mkdir -p /Users/benicheni/kickoff-d2-review/d4-run
+node --import tsx docs/verification/moments-observation/generate.mjs --stub /Users/benicheni/kickoff-d2-review/d4-run/edition.json
+npm run build:acceptance -- /Users/benicheni/kickoff-d2-review/d4-run/edition.json
+cd "/Users/benicheni/Moments Studio admin surface design D4" && shasum -a 256 -c "Kickoff Moments - D4 manifest.sha256"
+shasum -a 256 "/Users/benicheni/Moments Studio admin surface design D4/Kickoff Moments - D4 manifest.sha256"
+cd "/Users/benicheni/Moments Studio admin surface design D4" && find . -type f ! -name '.DS_Store' -print0 | LC_ALL=C sort -z | xargs -0 shasum -a 256 > /Users/benicheni/kickoff-d2-review/d4-run/folder-manifest.sha256
+diff /Users/benicheni/kickoff-s55-run/d4-folder-manifest.sha256 /Users/benicheni/kickoff-d2-review/d4-run/folder-manifest.sha256
+```
+
+The target. The export folder /Users/benicheni/Moments Studio admin surface design D4. Its fingerprint is the SHA-256 of "Kickoff Moments - D4 manifest.sha256" itself: 90482cdba17a25ffd233640af022dbe071ed6a37dedd11e028dffdc5cfb61e01, over 13 files (the D4 canvas, spec and response, and every file under d4/, including a new d4/shell.jsx). On Sun 11 Oct at 14:25 ET the PM seat checked three things. All 13 lines pass `shasum -c` and the fingerprint reproduces. Every file in the D3 folder manifest (~/kickoff-s55-run/d3-folder-manifest.sha256) is byte-identical in the D4 folder except .thumbnail and github.md (export metadata). The folder holds 72 files; the PM's whole-folder manifest is ~/kickoff-s55-run/d4-folder-manifest.sha256 (SHA-256 1bf6e4574d9e4e73e86cc64dd49eb6558c593e7ad75f3300da7e5b127b185dc0). The 15 added files are the D4 set plus uploads/d3-synthesis.md, which is your Pass 2.5 report, byte-identical. If any check differs, stop and report. Read "Kickoff Moments - D4 response.md", the D4 spec (§0 and §0b changelog, §7 decisions log, §8 keyboard order, §13 the global link) and Claude Design's notes on the canvas. Main should not have changed under src, public, scripts, index.html or package files since 2199649; if it has, separate that drift from a design defect.
+
+Render as in Pass 2.5. Serve the D4 folder on 127.0.0.1:8765 and open "Kickoff Moments - D4 design canvas.html" with the tab visible. Call `window.__placeRows()` and dispatch `d3:remeasure` (or D4's equivalent, if its notes name one) before reading. The canvas is heavy (Claude Design reports 114 frames and about 23,000 nodes): use CDP probes, not whole-page image capture. Serve the stub acceptance build (dist-acceptance) on 127.0.0.1:4318 and block every request that does not go to 127.0.0.1. Reuse and adapt your Pass 2.5 scripts in ~/kickoff-d2-review/probes under new names. Continue the evidence index from P-31, and number any new finding from D-45. Stop all servers and close Chrome at the end.
+
+The blocks, in order. Every claim needs a probe you ran or a page you read.
+
+1. Pin and delta map. Record the setup results. Diff d3/ against d4/ and the D3 spec against the D4 spec. Every change must map to D-42, D-43, D-44, one of A-01 to A-08, the §12 refresh, or the A-07 link. Anything else is a new finding. Settled decisions must be unchanged.
+2. The three fixes. D-42: the privacy sentence on 9a–d, data and deck attributes the nothing-before-Play observation to the 7 Oct loopback test visit, points to docs/moments-slice-4-spec.md "S4b, as run" on main (open it and confirm it says what the sentence relies on), says the receipts are unpublished, and quotes no id or URL. D-43: the four artefacts are named accurately wherever the D3 spec misnamed them (the acceptance template docs/verification/moments-acceptance/edition.json; the generator edition.ts with generate.mjs; the committed stub receipts; Beni's uncommitted visit receipts), no "observed visit" claim remains, and A-08's rationale is the corrected one. D-44: the frame-step withdrawal is in the changelog, and no shortcut is required. Give each one outcome: closed, open (with what is missing) or not verified.
+3. The rulings as recorded. A-01 to A-08 each appear as "decided 11 Oct" with Beni's actual answer, and A-01 records that he chose Accept against both seats' Review. Run negative searches across d4/ and the D4 spec: no "pending A-01" left as a live label (the spec's changelog may mention it as removed, and the canvas's H5 receipt holds the withdrawn D-42 and D-43 phrases as search strings), no "PROPOSED" left on #terms (A-02), and the §10 mechanisms still labelled proposals (A-03). Check the A-06 gate (PM21) and A-08's scope wording. D-24 should now close on A-02; confirm the record supports that.
+4. The global link (A-07). On the canvas, the link appears on Fixtures, Table and Moments at 360, 390 and 1000, across Ledger, Poster and Broadcast and both themes, with an accessible name, a keyboard position, contrast that passes WCAG AA, and `scrollWidth` equal to the width. Claude Design's own probes are claims; take your own measurements. Cinema keeps its own link (PM24). Then test the "nothing above the link moves" claim against the real app (PM22, PM23). Read the shell in src (App.tsx and the shell's CSS) for flex, grid, min-height, sticky or fixed rules that adding a last child could affect. Then, in a disposable page of the stub acceptance build, append a block of the link's reported outer height (53.5 px at 1000, 70 px at 360 and 390) as the wrapper's last child, after the route content, and record the before and after rects of every element above it on Fixtures, Table and Moments, in each lens. Also record any fixed or sticky element (Broadcast's marquee, for one) that would cover the appended block. Label it as an experiment on a disposable page, not the artifact, and reload to the baseline afterwards. Then re-verify D-25 under the new arrangement (PM26): a "Privacy & terms" link is reachable from every reader state Pass 2.5 listed, through the shell foot or Cinema's own link.
+5. No regression, then verdict. Re-run the Pass 2.5 checks that D4 could have disturbed:
+   - the copy deck against the DOM;
+   - accessible names and tab stops on frames 10, 12 and 13 (frame 13 is now 8 stops because of the A-06 gate);
+   - contrast, including the new link's pairs;
+   - motion in no-preference and reduce (PM27);
+   - the canvas's measured geometry against your P-22 app measurements. The app's CSS has not changed, so P-22 still stands; re-measure the app only if the diff in setup shows drift.
+
+   Then give the outcome table (D-42, D-43, D-44, D-24 and any D-45 onward, plus a regression line for the 20 already closed). Give the verdict: ready for the implementation plan, ready after named fixes, or blocked. Finish with the merged implementation-plan test list from d3-synthesis.md block 7, updated with anything D4 adds: the global link's real-app test across every tab, lens and theme; the A-06 gate's release condition and record; Cinema's own link.
+
+Output. One report at /Users/benicheni/kickoff-d2-review/d4-delta-check.md; leave the earlier reports untouched. Head it with your seat, the date, the D4 fingerprint, your folder-manifest hash, the worktree SHA and the Chrome version. Evidence goes in evidence/ under P-numbered names. Nothing goes to GitHub. Then, in chat, for Beni: one line with the verdict; one line per open or new finding; and any one-word question a new D4 choice created, with the recommendation first. Remove the worktree with `git -C /Users/benicheni/Documents/Claude/Projects/Kickoff worktree remove --force /Users/benicheni/kickoff-d4-check-codex`, stop the servers, close Chrome, and stop.
+
+Appendix PM: the PM seat's pre-read of D4, Sun 11 Oct 2026, after reading the D4 response and spot-reading d4/data.js and the spec. Claims to verify, not findings.
+- PM21 (block 3). A-06 is drawn only in its closed state. The Export frame shows "Answer on file: none. Export stays unavailable until one is recorded." (d4/data.js:131–132). Confirm is disabled with a `role="status"` reason, so frame 13 has 8 tab stops instead of 9. Four things to check:
+  - The cleared state, A-04's approved confirmation, is described in the spec ("Confirm enters before Cancel once the gate is recorded", §8) but appears not to be drawn. Is the description enough for a builder?
+  - Nothing says where the answer is recorded or what reads it. Is that a design gap, or a plan item?
+  - The gate blocks the whole Export, including "Open the PR without uploading", which publishes nothing until merge. Is that over-reach, or a reasonable reading of "before any generated clip is published"?
+  - A merge made outside the Studio would bypass a Studio-only gate.
+
+  Claude Design offered to move the gate outside the Studio UI as a process gate (response §4). The PM seat's current view, for you to test rather than adopt: keep the disabled control, and have the implementation plan name where the answer is recorded, adding a validate-moments rule that refuses generated records while no answer is recorded. That rule would cover merges too.
+- PM22 (block 4). "ShellFoot appended after the route in App.tsx" and "Δ 0 above the foot" (H6) are canvas claims. Only the real shell's layout rules and the disposable-page experiment settle them.
+- PM23 (block 4). Claude Design says the Table excerpts at 1000 compress three columns to fit the 740 px shell, and that the Fixtures and Table bodies are illustrative design-system excerpts. So those frames are not a faithful Fixtures or Table. Judge "nothing moves" on the real app only.
+- PM24 (block 4). Cinema keeps its own link because its dialog sits fixed over the shell. Confirm in the app code that Cinema covers the shell and keeps focus inside it, so the shell foot is unreachable while Cinema is open and Cinema's own link is what satisfies "at all times" there.
+- PM25 (block 4). The foot is 53.5 px tall at 1000 and 70 px at 360 and 390 (its text wraps to two lines). Check that the wrap clips nothing and that the touch target and focus ring are adequate at 360. At 1000 on Moments, the link moves from the 960 px gallery outdent to the 740 px shell column; check that reads as intended.
+- PM26 (block 4). Moments' per-state foot lines are folded into the shell foot. Pass 2.5 closed D-25 on those per-state lines, so re-verify D-25 under the new arrangement.
+- PM27 (block 5). Claude Design reports that the motion inventory is no longer zero. The design system's CompetitionChip carries a 150 ms opacity transition where the section 15 Fixtures excerpts draw it. Check that this is the existing budget token and the shipped app's own behaviour, not new motion introduced by D4.
+
+Not authorised: everything under the hard limits; any change to a design folder, the repo, a branch, a PR, an issue, a release or a setting; any merge, tag or version; `npm run sync` or `npm audit fix`; any other seat's work; answering Beni's questions. Report every outcome as it happened.
+````
