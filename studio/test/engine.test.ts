@@ -252,6 +252,18 @@ describe('state machine', () => {
     expect(lines[0]?.settlement).toBe('pending')
   })
 
+  it('does not cancel when the cancel response has no status', async () => {
+    const { db, studio, fal } = await openStudio()
+    const submitted = await studio.submit(videoInput('bad-cancel'))
+    if (submitted.outcome !== 'submitted') throw new Error('not submitted')
+    expect((await studio.poll(submitted.jobId)).outcome).toBe('queued')
+    fal.cancel = (async () => ({ unexpected: true })) as unknown as typeof fal.cancel
+    const result = await studio.cancel(submitted.jobId)
+    expect(result).toMatchObject({ outcome: 'cancel-unconfirmed', jobId: submitted.jobId })
+    const [row] = await db.select().from(job).where(eq(job.id, submitted.jobId))
+    expect(row?.status).toBe('queued')
+  })
+
   it('does not resubmit when the request id was never stored', async () => {
     const { db, studio, fal, flags } = await openStudio()
     flags.breakAfterAccept = true
