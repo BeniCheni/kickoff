@@ -49,7 +49,6 @@ export type StudioFlags = {
   breakLedgerWrite: boolean
   breakAfterAccept: boolean
   breakRecordWrite: boolean
-  breakWithdrawWrite: boolean
 }
 
 type LedgerLine = { settlement: string; amountUsd: string | null }
@@ -147,7 +146,6 @@ export function createStudio(options: EngineOptions) {
     breakLedgerWrite: false,
     breakAfterAccept: false,
     breakRecordWrite: false,
-    breakWithdrawWrite: false,
   }
   assertOutsideWorktree(options.mediaDir, options.repoRoot)
   const { db, fal, storage } = options
@@ -1026,9 +1024,6 @@ export function createStudio(options: EngineOptions) {
       if (!current || !row || current.status !== 'published') {
         if (current?.status === 'withdrawn') return { outcome: 'already-withdrawn' as const, jobId }
         return { outcome: 'not-published' as const }
-      }
-      if (flags.breakWithdrawWrite) {
-        return { outcome: 'withdraw-failed' as const, live: true as const, filesTouched: false as const }
       }
       try {
         await db.transaction(async (tx) => {

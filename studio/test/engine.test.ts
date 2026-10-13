@@ -38,7 +38,6 @@ async function openStudio(script: ScriptName = 'queued-then-completed') {
     breakLedgerWrite: false,
     breakAfterAccept: false,
     breakRecordWrite: false,
-    breakWithdrawWrite: false,
   }
   let now = new Date('2026-10-12T16:00:00.000Z')
   const studio = createStudio({
@@ -869,11 +868,34 @@ describe('state machine', () => {
     const blocked = await keptClip()
     await blocked.studio.recordGate({ answer: 'recorded', disclosure: 'x', recordedBy: 'a', source: 'A-06' })
     await blocked.studio.publish({ jobId: blocked.jobId, publicId: 'fenway', title: 'Fenway', position: 1 })
-    blocked.flags.breakWithdrawWrite = true
+    await blocked.client.exec(`
+      CREATE FUNCTION studio.reject_unpublished_event() RETURNS trigger
+      LANGUAGE plpgsql AS $$
+      BEGIN
+        IF NEW.type = 'unpublished' THEN
+          RAISE EXCEPTION 'unpublished rejected';
+        END IF;
+        RETURN NEW;
+      END;
+      $$;
+      CREATE TRIGGER reject_unpublished_event
+      BEFORE INSERT ON studio.event
+      FOR EACH ROW EXECUTE FUNCTION studio.reject_unpublished_event();
+    `)
+    async function snapshot(client: StudioClient) {
+      const jobs = await client.query('SELECT * FROM studio.job ORDER BY id')
+      const generations = await client.query('SELECT * FROM studio.generation ORDER BY id')
+      const clips = await client.query('SELECT * FROM studio.videos ORDER BY id')
+      const notes = await client.query('SELECT * FROM studio.event ORDER BY id')
+      return JSON.stringify({ jobs: jobs.rows, generations: generations.rows, clips: clips.rows, notes: notes.rows })
+    }
+    const calls = [...blocked.storage.calls]
+    const before = await snapshot(blocked.client)
     const withdrawFailed = await blocked.studio.unpublish(blocked.jobId, { deleteFiles: true })
     expect(withdrawFailed).toMatchObject({ outcome: 'withdraw-failed', live: true, filesTouched: false })
     expect(await counts(blocked.client)).toEqual({ list: 1, detail: 1 })
-    expect(blocked.storage.calls.some((call) => call.startsWith('remove:') || call === 'removal')).toBe(false)
+    expect(blocked.storage.calls).toEqual(calls)
+    expect(await snapshot(blocked.client)).toBe(before)
 
     const videoFails = await keptClip()
     await videoFails.studio.recordGate({ answer: 'recorded', disclosure: 'x', recordedBy: 'a', source: 'A-06' })
