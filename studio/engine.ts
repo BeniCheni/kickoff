@@ -27,12 +27,12 @@ import {
 import { hasVisibleAnswer } from './answer.ts'
 import { decideBudget, PER_JOB_CAP_USD, PREPAID_CEILING_USD, REQUEST_START_TIMEOUT_SECONDS, SESSION_CAP_USD, TIMEOUT_CEILING_LABEL, TIMEOUT_CEILING_MS } from './caps.ts'
 import { falHeaders } from './fal/headers.ts'
-import { cancelResponseSchema, resultState, resultEnvelopeSchema, statusResponseSchema, submitResponseSchema } from './fal/schemas.ts'
+import { cancelResponseSchema, resultState, resultEnvelopeSchema, statusResponseSchema, submitEnvelopeSchema, submitResponseSchema } from './fal/schemas.ts'
 import { OutOfCreditError, ResultExpiredError, type FalTransport } from './fal/stub.ts'
 import { isQueueOrigin } from './fal/urls.ts'
 import { cacheKey as makeCacheKey, sha256 } from './hash.ts'
 import { aboveManualCeiling, jobExposure, reconcileAmount, sessionExposure, type LedgerView } from './ledger.ts'
-import { addUsd } from './money.ts'
+import { addUsd, formatUsd, parseUsd } from './money.ts'
 import { preparePhotograph } from './photos/strip.ts'
 import { estimateUsd, selectRegistry, unknownParam, type RegistryRow } from './registry.ts'
 import { siteCopyStatus, type SiteCopyOutcome, type StoragePort, type StoredObject } from './storage/port.ts'
@@ -58,6 +58,35 @@ function isSubmitUnconfirmed(row: { status: string; providerRequestId: string | 
   if (row.status !== 'draft' || row.providerRequestId) return false
   if (lines.some((line) => line.settlement === 'reconciled')) return false
   return lines.some((line) => line.settlement === 'pending')
+}
+
+/** fal's reliability page, read 13 Oct 2026: failed requests that return 5xx are not billed. */
+const SERVER_ERROR_BILLING = 'https://fal.ai/docs/model-apis/model-endpoints/reliability'
+
+function requestIdOf(body: unknown): string | null {
+  if (!body || typeof body !== 'object') return null
+  const id = (body as { request_id?: unknown }).request_id
+  return typeof id === 'string' && id.length > 0 ? id : null
+}
+
+function falErrorType(body: unknown): string | null {
+  if (!body || typeof body !== 'object') return null
+  const record = body as { error_type?: unknown; error?: unknown }
+  if (typeof record.error_type === 'string' && record.error_type.length > 0) return record.error_type
+  if (record.error && typeof record.error === 'object') {
+    const type = (record.error as { type?: unknown }).type
+    if (typeof type === 'string' && type.length > 0) return type
+  }
+  return null
+}
+
+function acceptedQueueBody(body: unknown): { request_id: string; status_url: string; response_url: string; cancel_url: string } | null {
+  const parsed = submitResponseSchema.safeParse(body)
+  if (!parsed.success) return null
+  if (!isQueueOrigin(parsed.data.status_url) || !isQueueOrigin(parsed.data.response_url) || !isQueueOrigin(parsed.data.cancel_url)) {
+    return null
+  }
+  return parsed.data
 }
 
 function photographDataUri(bytes: Uint8Array): string {
@@ -344,9 +373,12 @@ export function createStudio(options: EngineOptions) {
         status: job.status,
         requestId: job.providerRequestId,
       }).from(job).innerJoin(generation, eq(generation.id, job.generationId)).where(eq(generation.cacheKey, key)).orderBy(desc(job.createdAt)).limit(1)
-      if (latest?.status === 'refused') return { outcome: 'refused' as const, jobId: latest.id, retried: false as const }
+      if (latest?.status === 'refused' && latest.requestId) return { outcome: 'refused' as const, jobId: latest.id, retried: false as const }
       if (latest && IN_FLIGHT.has(latest.status as JobState)) {
         return { outcome: 'in-flight' as const, jobId: latest.id, status: latest.status }
+      }
+      if (latest?.status === 'draft' && latest.requestId) {
+        return { outcome: 'urls-unusable' as const, jobId: latest.id, requestId: latest.requestId }
       }
       if (latest?.status === 'draft' && !latest.requestId) {
         const prior = await db.select().from(ledger).where(eq(ledger.jobId, latest.id))
@@ -463,12 +495,54 @@ export function createStudio(options: EngineOptions) {
           headers: await headers(carriesPhotograph),
         })
         if (flags.breakAfterAccept) throw new Error('database unavailable')
-        const parsed = submitResponseSchema.safeParse(raw)
-        if (!parsed.success) return { outcome: 'provider-urls-missing' as const, jobId: prepared.jobId }
-        if (!isQueueOrigin(parsed.data.status_url) || !isQueueOrigin(parsed.data.response_url) || !isQueueOrigin(parsed.data.cancel_url)) {
-          return { outcome: 'provider-urls-refused' as const, jobId: prepared.jobId }
+        const envelope = submitEnvelopeSchema.safeParse(raw)
+        if (!envelope.success) {
+          await recordEvent(prepared.jobId, 'submit-unconfirmed', { reason: 'unparsed' })
+          return { outcome: 'submit-unconfirmed' as const, jobId: prepared.jobId }
         }
-        accepted = parsed.data
+        const { httpStatus, body: responseBody } = envelope.data
+        const requestId = requestIdOf(responseBody)
+        const parsedUrls = acceptedQueueBody(responseBody)
+        if (httpStatus >= 400 && !requestId) {
+          const mapped = resultState(httpStatus, responseBody)
+          const errorType = falErrorType(responseBody)
+          if (httpStatus >= 500 && httpStatus <= 599) {
+            const sessionLines = await db.select().from(ledger).where(eq(ledger.sessionId, open.id))
+            const others = sessionExposure(views(sessionLines).filter((line) => line.jobId !== prepared.jobId))
+            await db.insert(ledger).values({
+              jobId: prepared.jobId,
+              sessionId: open.id,
+              at: clock(),
+              amountUsd: '0.000000',
+              estimateUsd: usd,
+              basis: 'provider_reported',
+              settlement: 'reconciled',
+              billableUnits: '0.000000',
+              unitPriceUsd: row.price.usd,
+              runningSessionTotal: addUsd(others, '0.000000'),
+            })
+          }
+          await setJob(prepared.jobId, prepared.generationId, mapped, {
+            refusalReason: mapped === 'refused' ? 'safety-checker' : null,
+            finished: true,
+          })
+          await recordEvent(prepared.jobId, 'provider-submit', {
+            httpStatus,
+            errorType,
+            ...(httpStatus >= 500 && httpStatus <= 599 ? { billing: SERVER_ERROR_BILLING } : {}),
+          })
+          return { outcome: mapped, jobId: prepared.jobId, httpStatus, errorType }
+        }
+        if (requestId && !parsedUrls) {
+          await db.update(job).set({ providerRequestId: requestId }).where(eq(job.id, prepared.jobId))
+          await recordEvent(prepared.jobId, 'urls-unusable', { httpStatus, requestId })
+          return { outcome: 'urls-unusable' as const, jobId: prepared.jobId, requestId }
+        }
+        if (!parsedUrls) {
+          await recordEvent(prepared.jobId, 'submit-unconfirmed', { httpStatus })
+          return { outcome: 'submit-unconfirmed' as const, jobId: prepared.jobId }
+        }
+        accepted = parsedUrls
       } catch (error) {
         if (error instanceof OutOfCreditError) {
           await db.insert(ledger).values({
@@ -498,7 +572,10 @@ export function createStudio(options: EngineOptions) {
         if (error instanceof Error && error.message === 'database unavailable') {
           return { outcome: 'database-unavailable' as const, jobId: prepared.jobId }
         }
-        throw error
+        await recordEvent(prepared.jobId, 'submit-unconfirmed', {
+          reason: error instanceof Error ? error.name : 'error',
+        })
+        return { outcome: 'submit-unconfirmed' as const, jobId: prepared.jobId }
       }
 
       await setJob(prepared.jobId, prepared.generationId, 'submitted', {
@@ -634,6 +711,39 @@ export function createStudio(options: EngineOptions) {
       return { outcome: 'attached' as const, jobId: current.id }
     },
 
+    async settleUnconfirmed(input: { jobId: string; notAccepted: boolean; evidence: string; amountUsd?: string }) {
+      if (!input.notAccepted || !hasVisibleAnswer(input.evidence)) {
+        return { outcome: 'settle-refused' as const, jobId: input.jobId }
+      }
+      const [current] = await db.select().from(job).where(eq(job.id, input.jobId))
+      if (!current) return { outcome: 'missing' as const }
+      const lines = await db.select().from(ledger).where(eq(ledger.jobId, current.id))
+      if (!isSubmitUnconfirmed(current, lines)) return { outcome: 'not-unconfirmed' as const, jobId: current.id }
+      let entered: string | undefined
+      if (input.amountUsd !== undefined) {
+        entered = formatUsd(parseUsd(input.amountUsd))
+        if (!current.sessionId) return { outcome: 'settle-refused' as const, jobId: current.id }
+        const sessionLines = await db.select().from(ledger).where(eq(ledger.sessionId, current.sessionId))
+        const others = sessionExposure(views(sessionLines).filter((line) => line.jobId !== current.id))
+        await db.insert(ledger).values({
+          jobId: current.id,
+          sessionId: current.sessionId,
+          at: clock(),
+          amountUsd: entered,
+          estimateUsd: current.estimateUsd,
+          basis: 'reconciled',
+          settlement: 'reconciled',
+          runningSessionTotal: addUsd(others, entered),
+        })
+      }
+      await setJob(current.id, current.generationId, 'failed', { finished: true })
+      await recordEvent(current.id, 'submit-not-accepted', {
+        evidence: input.evidence,
+        ...(entered ? { amountUsd: entered } : {}),
+      })
+      return { outcome: 'failed' as const, jobId: current.id, estimatePending: entered === undefined }
+    },
+
     async closeSession() {
       const [open] = await db.select().from(session).where(isNull(session.closedAt)).limit(1)
       if (!open) return { outcome: 'no-open-session' as const }
@@ -642,7 +752,8 @@ export function createStudio(options: EngineOptions) {
       for (const row of jobs) {
         const lines = await db.select().from(ledger).where(eq(ledger.jobId, row.id))
         const unsettledCompletion = row.status === 'completed' && !lines.some((line) => line.settlement === 'reconciled')
-        if (CLOSE_BLOCKED.has(row.status as JobState) || isSubmitUnconfirmed(row, lines) || unsettledCompletion) {
+        const urlsUnusable = row.status === 'draft' && row.providerRequestId !== null
+        if (CLOSE_BLOCKED.has(row.status as JobState) || isSubmitUnconfirmed(row, lines) || urlsUnusable || unsettledCompletion) {
           jobIds.push(row.id)
         }
       }

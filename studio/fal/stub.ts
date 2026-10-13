@@ -1,4 +1,4 @@
-import type { ResultEnvelope, StatusResponse, SubmitResponse } from './schemas.ts'
+import type { ResultEnvelope, StatusResponse, SubmitEnvelope } from './schemas.ts'
 
 export type ScriptName =
   | 'queued-then-completed'
@@ -38,7 +38,7 @@ export type FalTransport = {
     endpoint: string
     body: Record<string, unknown>
     headers: Record<string, string>
-  }): Promise<SubmitResponse>
+  }): Promise<SubmitEnvelope>
   status(input: { requestId: string; statusUrl?: string; headers: Record<string, string> }): Promise<StatusResponse>
   result(input: { requestId: string; responseUrl?: string; headers: Record<string, string> }): Promise<ResultEnvelope>
   cancel(input: { requestId: string; cancelUrl?: string; headers: Record<string, string> }): Promise<{ httpStatus: number; body: unknown }>
@@ -71,10 +71,13 @@ export function createFalStub(script: ScriptName, cursor?: StubCursor): FalTrans
       const requestId = `req-stub-${state.requestSequence}`
       const base = `https://queue.fal.run/${input.endpoint}/requests/${requestId}`
       return {
-        request_id: requestId,
-        status_url: `${base}/status`,
-        response_url: `${base}/response`,
-        cancel_url: `${base}/cancel`,
+        httpStatus: 200,
+        body: {
+          request_id: requestId,
+          status_url: `${base}/status`,
+          response_url: `${base}/response`,
+          cancel_url: `${base}/cancel`,
+        },
       }
     },
     async status(input) {

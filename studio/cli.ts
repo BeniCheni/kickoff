@@ -46,6 +46,7 @@ const USAGE = [
   'retry-removal --job <id>',
   'close-session',
   'attach-request --job <id> --request-id <id> --status-url <url> --response-url <url> --cancel-url <url>',
+  'settle-unconfirmed --job <id> --not-accepted --evidence <text> [--amount <usd>]',
   'record-gate --answer <text> --disclosure <text> --by <name> --source <source>',
   'record-balance --amount <usd>',
   'migrate',
@@ -82,6 +83,10 @@ function parseArgs(argv: readonly string[]) {
     }
     if (arg === '--delete') {
       flags.delete = '1'
+      continue
+    }
+    if (arg === '--not-accepted') {
+      flags['not-accepted'] = '1'
       continue
     }
     if (!arg?.startsWith('--')) throw new Error(`unexpected argument ${arg ?? ''}`)
@@ -301,7 +306,7 @@ export async function runCli(argv: readonly string[], env: NodeJS.ProcessEnv, io
           io.stdout(line('submitted', { job: result.jobId, request: result.requestId, sha256: result.sentSha256, transport }))
           return
         }
-        if (result.outcome === 'budget-refused' || result.outcome === 'cache-hit' || result.outcome === 'in-flight' || result.outcome === 'submit-unconfirmed' || result.outcome === 'provider-urls-missing') {
+        if (result.outcome === 'budget-refused' || result.outcome === 'cache-hit' || result.outcome === 'in-flight' || result.outcome === 'submit-unconfirmed' || result.outcome === 'urls-unusable' || result.outcome === 'failed' || result.outcome === 'refused' || result.outcome === 'database-unavailable') {
           io.stdout(line(result.outcome, { job: 'jobId' in result ? result.jobId : undefined, transport }))
           return
         }
@@ -367,6 +372,16 @@ export async function runCli(argv: readonly string[], env: NodeJS.ProcessEnv, io
           total: result.outcome === 'closed' ? result.totalUsd : undefined,
           jobs: result.outcome === 'close-refused' ? result.jobIds.join(',') : undefined,
         }))
+        return
+      }
+      if (command === 'settle-unconfirmed') {
+        const result = await studio.settleUnconfirmed({
+          jobId: required(flags, 'job'),
+          notAccepted: flags['not-accepted'] === '1',
+          evidence: required(flags, 'evidence'),
+          ...(flags.amount ? { amountUsd: flags.amount } : {}),
+        })
+        io.stdout(line(result.outcome, { job: 'jobId' in result ? result.jobId : undefined }))
         return
       }
       if (command === 'attach-request') {

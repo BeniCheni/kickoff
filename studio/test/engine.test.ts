@@ -4,7 +4,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { eq } from 'drizzle-orm'
 import { afterEach, describe, expect, it } from 'vitest'
-import { CHECKLIST_LINES, asset, generation, generationInput, job, ledger, videos } from '../db/schema.ts'
+import { CHECKLIST_LINES, asset, event, generation, generationInput, job, ledger, videos } from '../db/schema.ts'
 import { createStudio, type Studio, type StudioFlags } from '../engine.ts'
 import { FAL_HEADER } from '../fal/headers.ts'
 import type { ScriptName } from '../fal/stub.ts'
@@ -296,6 +296,160 @@ describe('state machine', () => {
     expect(await db.select().from(ledger)).toHaveLength(1)
     const polled = await studio.poll(crashed.jobId)
     expect(polled.outcome).toBe('queued')
+  })
+
+  it('fails a 422 submit that has no request id and keeps the estimate pending', async () => {
+    const { db, studio, fal } = await openStudio()
+    fal.submit = async () => ({ httpStatus: 422, body: { detail: 'bad input', error_type: 'validation' } })
+    const refused = await studio.submit(videoInput('422'))
+    expect(refused).toMatchObject({ outcome: 'failed', httpStatus: 422, errorType: 'validation' })
+    if (refused.outcome !== 'failed') throw new Error('no job')
+    const [row] = await db.select().from(job).where(eq(job.id, refused.jobId))
+    expect(row?.status).toBe('failed')
+    expect(row?.providerRequestId).toBeNull()
+    const lines = await db.select().from(ledger).where(eq(ledger.jobId, refused.jobId))
+    expect(lines.some((line) => line.settlement === 'pending')).toBe(true)
+    expect(lines.some((line) => line.settlement === 'reconciled')).toBe(false)
+    const notes = await db.select().from(event).where(eq(event.jobId, refused.jobId))
+    expect(notes.some((note) => note.type === 'provider-submit' && note.detail !== null && typeof note.detail === 'object' && (note.detail as { httpStatus?: number }).httpStatus === 422 && (note.detail as { errorType?: string }).errorType === 'validation')).toBe(true)
+  })
+
+  it('refuses a 422 safety submit that has no request id', async () => {
+    const { db, studio, fal } = await openStudio()
+    fal.submit = async () => ({
+      httpStatus: 422,
+      body: { detail: 'content_policy_violation: likeness', error_type: 'content_policy_violation' },
+    })
+    const refused = await studio.submit(videoInput('safety-submit'))
+    expect(refused).toMatchObject({ outcome: 'refused', httpStatus: 422, errorType: 'content_policy_violation' })
+    if (refused.outcome !== 'refused') throw new Error('no job')
+    const [row] = await db.select().from(job).where(eq(job.id, refused.jobId))
+    expect(row?.status).toBe('refused')
+    const lines = await db.select().from(ledger).where(eq(ledger.jobId, refused.jobId))
+    expect(lines.some((line) => line.settlement === 'reconciled')).toBe(false)
+  })
+
+  it('reconciles a 5xx submit at zero because fal does not bill it', async () => {
+    const { db, studio, fal } = await openStudio()
+    fal.submit = async () => ({ httpStatus: 500, body: { error_type: 'internal_server_error' } })
+    const failed = await studio.submit(videoInput('500'))
+    expect(failed).toMatchObject({ outcome: 'failed', httpStatus: 500, errorType: 'internal_server_error' })
+    if (failed.outcome !== 'failed') throw new Error('no job')
+    const lines = await db.select().from(ledger).where(eq(ledger.jobId, failed.jobId))
+    expect(lines.some((line) => line.settlement === 'reconciled' && line.amountUsd === '0.000000')).toBe(true)
+    const notes = await db.select().from(event).where(eq(event.jobId, failed.jobId))
+    expect(notes.some((note) => note.type === 'provider-submit' && note.detail !== null && typeof note.detail === 'object' && (note.detail as { billing?: string }).billing === 'https://fal.ai/docs/model-apis/model-endpoints/reliability')).toBe(true)
+  })
+
+  it('leaves a thrown submit unconfirmed and does not resubmit it', async () => {
+    const { db, studio, fal } = await openStudio()
+    let submits = 0
+    fal.submit = async () => {
+      submits += 1
+      throw new Error('socket hang up')
+    }
+    const first = await studio.submit(videoInput('thrown'))
+    expect(first).toMatchObject({ outcome: 'submit-unconfirmed' })
+    if (!('jobId' in first) || !first.jobId) throw new Error('no job')
+    const second = await studio.submit(videoInput('thrown'))
+    expect(second).toMatchObject({ outcome: 'submit-unconfirmed', jobId: first.jobId })
+    expect(submits).toBe(1)
+    expect(await db.select().from(ledger)).toHaveLength(1)
+    const [row] = await db.select().from(job).where(eq(job.id, first.jobId))
+    expect(row?.status).toBe('draft')
+    expect(row?.providerRequestId).toBeNull()
+  })
+
+  it('stores a request id that came back with foreign URLs and does not resubmit', async () => {
+    const { db, studio, fal } = await openStudio()
+    let submits = 0
+    fal.submit = async () => {
+      submits += 1
+      return {
+        httpStatus: 200,
+        body: {
+          request_id: 'req-foreign',
+          status_url: 'https://evil.example/status',
+          response_url: 'https://evil.example/response',
+          cancel_url: 'https://evil.example/cancel',
+        },
+      }
+    }
+    const first = await studio.submit(videoInput('foreign'))
+    expect(first).toMatchObject({ outcome: 'urls-unusable', requestId: 'req-foreign' })
+    if (first.outcome !== 'urls-unusable') throw new Error('no job')
+    const [row] = await db.select().from(job).where(eq(job.id, first.jobId))
+    expect(row?.providerRequestId).toBe('req-foreign')
+    expect(row?.statusUrl).toBeNull()
+    expect(row?.status).toBe('draft')
+    const second = await studio.submit(videoInput('foreign'))
+    expect(second).toMatchObject({ outcome: 'urls-unusable', jobId: first.jobId })
+    expect(submits).toBe(1)
+    expect((await studio.closeSession()).outcome).toBe('close-refused')
+  })
+
+  it('allows another submit after a definitive refusal', async () => {
+    const { db, studio, fal } = await openStudio()
+    const real = fal.submit.bind(fal)
+    let submits = 0
+    fal.submit = async (input) => {
+      submits += 1
+      if (submits === 1) return { httpStatus: 422, body: { detail: 'bad input', error_type: 'validation' } }
+      return real(input)
+    }
+    const first = await studio.submit(videoInput('again'))
+    expect(first).toMatchObject({ outcome: 'failed' })
+    const second = await studio.submit(videoInput('again'))
+    expect(second).toMatchObject({ outcome: 'submitted' })
+    expect(submits).toBe(2)
+    expect(await db.select().from(job)).toHaveLength(2)
+  })
+
+  it('closes the session after a definitive refusal and after settle-unconfirmed', async () => {
+    const refused = await openStudio()
+    refused.fal.submit = async () => ({ httpStatus: 422, body: { detail: 'bad input' } })
+    const failed = await refused.studio.submit(videoInput('close-refused'))
+    expect(failed).toMatchObject({ outcome: 'failed' })
+    expect((await refused.studio.closeSession()).outcome).toBe('closed')
+
+    const ambiguous = await openStudio()
+    ambiguous.fal.submit = async () => {
+      throw new Error('socket hang up')
+    }
+    const hung = await ambiguous.studio.submit(videoInput('settle'))
+    expect(hung).toMatchObject({ outcome: 'submit-unconfirmed' })
+    if (!('jobId' in hung) || !hung.jobId) throw new Error('no job')
+    expect((await ambiguous.studio.closeSession()).outcome).toBe('close-refused')
+    const settled = await ambiguous.studio.settleUnconfirmed({
+      jobId: hung.jobId,
+      notAccepted: true,
+      evidence: 'the fal dashboard shows no request',
+    })
+    expect(settled).toMatchObject({ outcome: 'failed', estimatePending: true })
+    const [row] = await ambiguous.db.select().from(job).where(eq(job.id, hung.jobId))
+    expect(row?.status).toBe('failed')
+    const lines = await ambiguous.db.select().from(ledger).where(eq(ledger.jobId, hung.jobId))
+    expect(lines.some((line) => line.settlement === 'pending')).toBe(true)
+    expect(lines.some((line) => line.settlement === 'reconciled')).toBe(false)
+    const notes = await ambiguous.db.select().from(event).where(eq(event.jobId, hung.jobId))
+    expect(notes.some((note) => note.type === 'submit-not-accepted' && note.detail !== null && typeof note.detail === 'object' && (note.detail as { evidence?: string }).evidence === 'the fal dashboard shows no request')).toBe(true)
+    expect((await ambiguous.studio.closeSession()).outcome).toBe('closed')
+
+    const priced = await openStudio()
+    priced.fal.submit = async () => {
+      throw new Error('socket hang up')
+    }
+    const pricedJob = await priced.studio.submit(videoInput('priced'))
+    if (!('jobId' in pricedJob) || !pricedJob.jobId) throw new Error('no job')
+    const entered = await priced.studio.settleUnconfirmed({
+      jobId: pricedJob.jobId,
+      notAccepted: true,
+      evidence: 'fal support quoted this',
+      amountUsd: '0.100000',
+    })
+    expect(entered).toMatchObject({ outcome: 'failed', estimatePending: false })
+    const pricedLines = await priced.db.select().from(ledger).where(eq(ledger.jobId, pricedJob.jobId))
+    expect(pricedLines.some((line) => line.settlement === 'reconciled' && line.amountUsd === '0.100000' && line.basis === 'reconciled')).toBe(true)
   })
 
   it('refuses the submit when the estimate cannot be written', async () => {

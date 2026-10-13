@@ -103,9 +103,11 @@ describe('network guard', () => {
     }) as typeof fetch
     const live = createLiveTransport('SECRET-KEY', fetchImpl, true)
     const submitted = await live.submit({ endpoint: 'fal-ai/flux/schnell', body: { prompt: 'x' }, headers: {} })
-    await live.status({ requestId: 'req-1', statusUrl: submitted.status_url, headers: {} })
-    await live.result({ requestId: 'req-1', responseUrl: submitted.response_url, headers: {} })
-    await live.cancel({ requestId: 'req-1', cancelUrl: submitted.cancel_url, headers: {} })
+    expect(submitted.httpStatus).toBe(200)
+    const urls = submitted.body as { status_url: string; response_url: string; cancel_url: string }
+    await live.status({ requestId: 'req-1', statusUrl: urls.status_url, headers: {} })
+    await live.result({ requestId: 'req-1', responseUrl: urls.response_url, headers: {} })
+    await live.cancel({ requestId: 'req-1', cancelUrl: urls.cancel_url, headers: {} })
     expect(seen.map((call) => call.url)).toEqual([
       'https://queue.fal.run/fal-ai/flux/schnell',
       'https://queue.fal.run/fal-ai/flux/schnell/requests/req-1/status',

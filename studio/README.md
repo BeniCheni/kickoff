@@ -32,7 +32,7 @@ The role `studio_reader` is created `NOLOGIN` with `SELECT` on `catalog.videos` 
 
 ## Commands
 
-`estimate`, `submit`, `poll`, `resume`, `download`, `list`, `keep`, `discard`, `cancel`, `publish`, `unpublish`, `retry-delete`, `retry-removal`, `close-session`, `attach-request`, `record-gate`, `record-balance`, and `migrate`.
+`estimate`, `submit`, `poll`, `resume`, `download`, `list`, `keep`, `discard`, `cancel`, `publish`, `unpublish`, `retry-delete`, `retry-removal`, `close-session`, `attach-request`, `settle-unconfirmed`, `record-gate`, `record-balance`, and `migrate`.
 
 `keep` takes five answers, checklist order: extra players, text on boards, logo-like marks, subject identity, soundtrack. Each is `clear`, `present`, or `unsure`. Keep needs five `clear` answers. `record-gate` records the Article 50 answer (who answers is not named). An empty or blank answer is refused, and a second answer is refused with the date already recorded. This slice has no command to amend that answer. Publish refuses until that row exists, in the database as well as in this process.
 
@@ -42,7 +42,11 @@ The thumbnail is the keyframe the clip starts from (K0), which the Studio alread
 
 Prices, caps, and the ten-minute timeout are in the code. The timeout is a proposal (A-05), not a settled ceiling. The 120-second start timeout sent to fal is a proposal too. The prepaid balance is whatever you last entered with `record-balance`. The Studio does not read it from fal. The caps are $1.50 for one request and $6 for a session. A session closes only when you run `close-session`. Nothing closes it by time. Closing resets the $6 window. It does not change the prepaid balance, which stays yours to keep at or below $9.37 by hand. `close-session` refuses while a job in that session is in flight or its submit is unconfirmed, and it names those jobs. `budget-refused` is a state. A failed ledger write is `database-unavailable` and is not retried around the failure.
 
-If fal accepts a submit and the request id is never stored, the job stays `submit-unconfirmed`. A later `submit` or `resume` names that job, makes no fal call, and writes no ledger line. The pending estimate still counts against the session. The queue page documents idempotency for webhook delivery, not for a repeated submit, so the Studio cannot ask fal whether the first submit landed. You clear it with `attach-request`, passing the request id and the status, response, and cancel URLs you find at fal. `poll` resumes after that. An out-of-credit draft, reconciled at $0, can be submitted again.
+A definitive refusal is an error status and no request id. A 422 whose body matches the safety words becomes `refused`; any other error status becomes `failed`. The status and fal's error type are recorded on an event. A 5xx is reconciled at $0 because [Reliability](https://fal.ai/docs/model-apis/model-endpoints/reliability) (read 13 Oct 2026) says failed requests that return 5xx are not billed. A 422 is not on that page, so its estimate stays pending. Either way a later submit of the same inputs is allowed, and `close-session` is not blocked.
+
+An ambiguous send — a thrown network error, a timeout, or a crash after the request left — stays `submit-unconfirmed`. Nothing resubmits it. The pending estimate still counts. `attach-request` takes the request id and the status, response, and cancel URLs. `settle-unconfirmed --job <id> --not-accepted --evidence "<text>"` records your evidence that fal never accepted it, moves the job to `failed`, and leaves the estimate pending unless you pass `--amount` with a figure you entered. The Studio does not write a $0 line for that case.
+
+A response that carries a request id but no usable queue URLs stores that id in the same write. The job stays off the resubmit path until `attach-request`. `close-session` still refuses it, because fal may have accepted the request. An out-of-credit draft, reconciled at $0, can be submitted again.
 
 `STUDIO_STUB` selects the script: `queued-then-completed` (the default), `error-payload`, `safety-refusal`, `timeout`, `expired-result`, `duplicate-delivery`, `out-of-credit`. `STUDIO_STORAGE_FAIL` is a comma list of `video`, `thumbnail`, `fallback`, `remove`.
 

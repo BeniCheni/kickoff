@@ -7,6 +7,11 @@ export const submitResponseSchema = z.object({
   cancel_url: z.string().min(1),
 })
 
+export const submitEnvelopeSchema = z.object({
+  httpStatus: z.number().int(),
+  body: z.unknown(),
+})
+
 export const statusResponseSchema = z.union([
   z.object({
     status: z.enum(['IN_QUEUE', 'IN_PROGRESS', 'COMPLETED']),
@@ -30,6 +35,7 @@ export const cancelResponseSchema = z.object({
 })
 
 export type SubmitResponse = z.infer<typeof submitResponseSchema>
+export type SubmitEnvelope = z.infer<typeof submitEnvelopeSchema>
 export type StatusResponse = z.infer<typeof statusResponseSchema>
 export type ResultEnvelope = z.infer<typeof resultEnvelopeSchema>
 

@@ -1,7 +1,7 @@
 import { REQUEST_START_TIMEOUT_SECONDS } from '../caps.ts'
 import { falHeaders } from './headers.ts'
 import { createNetworkGuard } from './guard.ts'
-import type { SubmitResponse } from './schemas.ts'
+import type { SubmitEnvelope } from './schemas.ts'
 import { OutOfCreditError, type FalTransport } from './stub.ts'
 import { assertQueueUrl, QUEUE_ORIGIN } from './urls.ts'
 
@@ -46,11 +46,17 @@ export function createLiveTransport(key: string, fetchImpl: typeof fetch, allowL
         headers: authorized(input.headers, { 'content-type': 'application/json' }),
         body: JSON.stringify(input.body),
       })
-      if (response.status === 403) {
-        const text = await response.text()
-        if (text.includes('Exhausted balance')) throw new OutOfCreditError()
+      const text = await response.text()
+      if (response.status === 403 && text.includes('Exhausted balance')) throw new OutOfCreditError()
+      let body: unknown = null
+      if (text) {
+        try {
+          body = JSON.parse(text) as unknown
+        } catch {
+          body = text
+        }
       }
-      return await response.json() as SubmitResponse
+      return { httpStatus: response.status, body } satisfies SubmitEnvelope
     },
     async status(input) {
       const url = assertQueueUrl(input.statusUrl ?? '')
