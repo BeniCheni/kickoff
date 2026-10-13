@@ -24,6 +24,7 @@ import {
   videos,
   studioTables,
 } from './db/schema.ts'
+import { hasVisibleAnswer } from './answer.ts'
 import { decideBudget, PER_JOB_CAP_USD, PREPAID_CEILING_USD, REQUEST_START_TIMEOUT_SECONDS, SESSION_CAP_USD, TIMEOUT_CEILING_LABEL, TIMEOUT_CEILING_MS } from './caps.ts'
 import { falHeaders } from './fal/headers.ts'
 import { cancelResponseSchema, resultState, resultEnvelopeSchema, statusResponseSchema, submitResponseSchema } from './fal/schemas.ts'
@@ -758,8 +759,8 @@ export function createStudio(options: EngineOptions) {
     },
 
     async recordGate(input: { answer: string; disclosure: string; recordedBy: string; source: string }) {
+      if (!hasVisibleAnswer(input.answer)) return { outcome: 'gate-empty' as const }
       const answer = input.answer.trim()
-      if (!answer) return { outcome: 'gate-empty' as const }
       const [existing] = await db.select().from(article50Answer).limit(1)
       if (existing) {
         return { outcome: 'gate-already-recorded' as const, recordedOn: existing.recordedOn.toISOString() }

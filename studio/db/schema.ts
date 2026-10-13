@@ -272,7 +272,7 @@ export const article50Answer = studio.table('article50_answer', {
   source: text('source').notNull(),
   createdAt: createdAt(),
 }, () => [
-  check('article50_answer_nonblank', sql.raw(`char_length(btrim("answer")) > 0`)),
+  check('article50_answer_nonblank', sql.raw(`"answer" ~ '[^[:space:]]'`)),
 ]).enableRLS()
 
 export const videos = studio.table('videos', {

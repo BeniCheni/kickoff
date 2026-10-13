@@ -234,6 +234,54 @@ describe('publication gate', () => {
       .rejects.toSatisfy(throwsMatching(/not relisted/))
   })
 
+  it('refuses a whitespace-only Article 50 answer and keeps publication blocked', async () => {
+    const samples = [
+      ['tab', String.raw`E'\t'`],
+      ['newline', String.raw`E'\n'`],
+      ['carriage return', String.raw`E'\r'`],
+      ['spaces', `'   '`],
+      ['mix', String.raw`E' \t\n\r'`],
+    ] as const
+    for (const [name, literal] of samples) {
+      const { db, client } = await freshDatabase()
+      const clip = await seedClip(db)
+      await markKept(db, clip.generationId, clip.jobId)
+      const insert = client.query(`
+        INSERT INTO studio.article50_answer (answer, disclosure, recorded_on, recorded_by, source)
+        VALUES (${literal}, 'blank', timestamptz '2026-10-12 16:00:00+00', 'the test', 'schema test')
+      `)
+      await expect(insert, name).rejects.toThrow()
+      const answers = await client.query('SELECT answer FROM studio.article50_answer')
+      expect(answers.rows, name).toEqual([])
+      await expect(db.insert(videos).values({
+        publicId: 'fenway-strike',
+        title: 'Fenway',
+        position: 1,
+        publishedAt: clip.when,
+        jobId: clip.jobId,
+        generationId: clip.generationId,
+        videoAssetId: clip.videoAssetId,
+        thumbnailAssetId: clip.thumbnailId,
+        endpoint: 'minimax/h3-max-turbo/image-to-video',
+        pinnedOn: '2026-10-05',
+        prompt: 'the published prompt',
+        generatedAt: clip.when,
+        attestationSummary: 'policy v1 · 5 of 5 clear',
+        fallbackStatus: 'pending',
+      }), name).rejects.toSatisfy(throwsMatching(/Article 50/))
+      const listed = await client.query('SELECT id FROM catalog.videos')
+      expect(listed.rows, name).toEqual([])
+    }
+
+    const { client } = await freshDatabase()
+    const noBreak = await client.query(`
+      INSERT INTO studio.article50_answer (answer, disclosure, recorded_on, recorded_by, source)
+      VALUES (chr(160), 'blank', timestamptz '2026-10-12 16:00:00+00', 'the test', 'schema test')
+      RETURNING answer
+    `).then(() => 'accepted' as const).catch(() => 'refused' as const)
+    expect(noBreak).toBe('accepted')
+  })
+
   it('refuses a second catalog row for a withdrawn job', async () => {
     const { db } = await freshDatabase()
     const clip = await seedClip(db)

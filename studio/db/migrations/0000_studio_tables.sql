@@ -8,7 +8,7 @@ CREATE TABLE "studio"."article50_answer" (
 	"recorded_by" text NOT NULL,
 	"source" text NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "article50_answer_nonblank" CHECK (char_length(btrim("answer")) > 0)
+	CONSTRAINT "article50_answer_nonblank" CHECK ("answer" ~ '[^[:space:]]')
 );
 --> statement-breakpoint
 ALTER TABLE "studio"."article50_answer" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint

@@ -654,13 +654,15 @@ describe('state machine', () => {
 
   it('rejects an empty Article 50 answer and names a second one', async () => {
     const opened = await keptClip()
-    const empty = await opened.studio.recordGate({
-      answer: '   ',
-      disclosure: 'pending',
-      recordedBy: 'unspecified',
-      source: 'A-06',
-    })
-    expect(empty).toEqual({ outcome: 'gate-empty' })
+    for (const answer of ['   ', '\t', '\n', '\r', ' \t\n\r', '\u00A0']) {
+      const empty = await opened.studio.recordGate({
+        answer,
+        disclosure: 'pending',
+        recordedBy: 'unspecified',
+        source: 'A-06',
+      })
+      expect(empty).toEqual({ outcome: 'gate-empty' })
+    }
     const closed = await opened.studio.publish({
       jobId: opened.jobId,
       publicId: 'fenway',

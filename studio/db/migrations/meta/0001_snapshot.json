@@ -61,7 +61,7 @@
       "checkConstraints": {
         "article50_answer_nonblank": {
           "name": "article50_answer_nonblank",
-          "value": "char_length(btrim(\"answer\")) > 0"
+          "value": "\"answer\" ~ '[^[:space:]]'"
         }
       },
       "isRLSEnabled": true
