@@ -793,9 +793,21 @@ export function createStudio(options: EngineOptions) {
         headers: await headers(false),
       }))
       if (!parsed.success) return { outcome: 'cancel-unconfirmed' as const, jobId }
-      await setJob(current.id, current.generationId, 'cancelled', { finished: true })
-      const lines = await db.select().from(ledger).where(eq(ledger.jobId, jobId))
-      return { outcome: 'cancelled' as const, chargeRetained: lines.length > 0, exposure: jobExposure(views(lines)) }
+      const reported = parsed.data.body && typeof parsed.data.body === 'object'
+        ? (parsed.data.body as { status?: unknown }).status
+        : undefined
+      if (parsed.data.httpStatus === 202 && reported === 'CANCELLATION_REQUESTED') {
+        await setJob(current.id, current.generationId, 'cancelled', { finished: true })
+        const lines = await db.select().from(ledger).where(eq(ledger.jobId, jobId))
+        return { outcome: 'cancelled' as const, chargeRetained: lines.length > 0, exposure: jobExposure(views(lines)) }
+      }
+      if (parsed.data.httpStatus === 400 && reported === 'ALREADY_COMPLETED') {
+        return { outcome: 'cancel-already-completed' as const, jobId }
+      }
+      if (parsed.data.httpStatus === 404 && reported === 'NOT_FOUND') {
+        return { outcome: 'cancel-not-found' as const, jobId }
+      }
+      return { outcome: 'cancel-unconfirmed' as const, jobId }
     },
 
     async download(jobId: string) {
