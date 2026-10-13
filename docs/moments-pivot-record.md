@@ -1,0 +1,71 @@
+# Moments — the pivot of 12 Oct 2026, Beni's rulings, and what they supersede
+
+Recorded by the PM seat (Claude Code, Opus 5.5) on Tue 13 Oct 2026 (TZ=America/New_York), from Beni's answers given first-hand to the PM seat on Mon 12 and Tue 13 Oct. This is the record later briefs start from. Where it conflicts with [moments-d5-build-plan.md](moments-d5-build-plan.md), the slice-4 spec or the Studio review, this record wins. It changes no code and names no version.
+
+## 1 · The pivot (Mon 12 Oct, evening)
+
+Beni attached the ByteByteGo course's MewTube app (weeks 1–2: Next.js, Drizzle on Supabase, Better Auth, Cloudflare media) as the architecture he wants Moments to follow. Its code has no licence: builders may read its patterns and copy nothing. He then ruled:
+
+| Ruling | What it means |
+|---|---|
+| **YouTube: Drop** | Moments stops showing curated YouTube highlights. It becomes a gallery of Kickoff's own generated videos only: Fenway and Frankenstein, made in the local Studio through fal |
+| **Server: Full Next.js** | The whole Kickoff app moves from a Vite app on GitHub Pages to Next.js on Vercel, reading published videos from the Studio's Supabase Postgres through Drizzle on the server. No browser talks to the database. The PM seat recommended a Studio export to a static edition, then a Supabase Edge Function; Beni chose the full move knowing it is the largest rewrite |
+| **Thumbnails: Supabase first, site as fail-safe** | Videos and thumbnails are served from Supabase Storage; the site carries a fallback copy of each thumbnail |
+| **Publication** | Publishing is a Studio action that writes to the database and is live at once, no longer a PR per edition |
+| **Watch page** | Likes, comments and view counts are **omitted**: Kickoff keeps no accounts, comments or analytics. **Autoplay-next** is added: after a Play the reader pressed, the next video in Up next order starts by itself. Nothing ever starts on entry or re-entry |
+
+## 2 · Design D6 and Beni's answers (Mon 12 Oct)
+
+Claude Design drew D6 for the pivot, and Codex gave it a Pass 1 cold review (12 findings, D-46 to D-57). Beni then answered D6's questions:
+
+| # | Answer | | # | Answer |
+|---|---|---|---|---|
+| Q13 shortcuts | **Native** (the browser's, once the video has focus) | | Q19 fallback thumbnail delivery | **PR**: a thumbnail-only PR that runs `verify` and auto-merges, never a direct push to main |
+| Q14 Cinema | **Theater**: the overlay becomes the watch page's theater mode | | Q20 watch address | **Query**: `?tab=moments&watch=<id>`, keeping every existing parameter on entry and exit |
+| Q15 terms | **Keep** a two-sentence Terms of use | | Q21 relisting | **No**: a withdrawn clip is never relisted |
+| Q16 autoplay default | **On** (Codex had recommended Off) | | Q22 thumbnail box | **Record**: each card follows the video's own frame |
+| Q17 memory | **Key**: `kickoff-moments-autoplay-v1`, listed on the privacy page | | A-09 fail-safe scope | **Scoped**: the site's copy covers a thumbnail that fails while the list still loads. When the database is down there are no cards; Supabase Pro is the protection against a pause |
+| Q18 spoiler-light | **Remove** | | A-10 hidden tab | **Pause**: the countdown and automatic start stop while the tab is hidden |
+| | | | A-11 checks | **Preserve**: nothing reaches main without the required checks |
+
+The design is being revised to D7 against those findings and answers. Its records are archived when D7 settles.
+
+## 3 · The migration plan's answers (Tue 13 Oct)
+
+Codex wrote the migration plan, [nextjs-migration-plan.md](nextjs-migration-plan.md), from the PM seat's brief, [nextjs-migration-plan-prompt.md](nextjs-migration-plan-prompt.md). The PM seat scored it in [nextjs-migration-plan-review.md](nextjs-migration-plan-review.md). Beni answered its ten questions, recorded as N0-Q1 to N0-Q10 to keep them apart from the design's Q numbers:
+
+| # | Question | Answer |
+|---|---|---|
+| N0-Q1 | Public address | **Vercel**: the assigned `vercel.app` address, recorded when the project exists |
+| N0-Q2 | The double-click single-file build | **Keep**: a separate one-file offline build of Fixtures and Table |
+| N0-Q3 | Where the new app is built | **Parallel**: a `web/` folder beside the current app; it moves to the root after cutover |
+| N0-Q4 | Supabase Pro | **Public**: before the public cutover |
+| N0-Q5 | Vercel plan | **Hobby**, on Beni's confirmation that Kickoff is personal and non-commercial, and only if a test proves Vercel deploys the sync bot's merges |
+| N0-Q6 | The app's read-only database login in Vercel | **Yes**: the first database credential held anywhere but Beni's Mac |
+| N0-Q7 | Where Step 0 reads Kickoff after cutover | **Live**: the public Vercel site, with `http://localhost:5173/` as the fallback. The PM seat and Codex had recommended Local |
+| N0-Q8 | How long the old Pages address forwards | **Forever** |
+| N0-Q9 | What previews show in Moments | **Stub**: synthetic test records, no database credential |
+| N0-Q10 | The cutover's release class | **Minor**; the number stays Beni's |
+
+## 4 · What this supersedes
+
+- **Studio rulings.** 15.1, publication by a PR per edition, is reversed. 15.4 and A-03 (GitHub Releases as the host) are replaced by Supabase Storage. 15.2, 15.3, 15.5–15.14, the caps and recipe v0 stand.
+- **The reader's old constraints.** K2 (the reader's runtime dependencies are only react, react-dom and zod) and K3 (nothing is fetched before Play) give way: the app gains a server and Drizzle, and thumbnails load with the gallery. The video file is still not requested until Play.
+- **D5.** Superseded where it meets the pivot: the YouTube notice and source line (A-01, A-08, B1, B3), the GitHub Releases rows (§10), the typographic covers as the main picture (they become the last fallback), and the Cinema overlay. The Generated badge, provenance (15.7), native controls (Q2), sound on at Play (Q5), the motion budget, the A-06 Article 50 gate and the global Privacy & terms link (A-07) stand.
+- **Slice 4.** S6a to S8, the YouTube edition, are cancelled. S4b's visits and the S5.5 content policy stand as history.
+- **The D5 build plan.** [moments-d5-build-plan.md](moments-d5-build-plan.md) is superseded where it conflicts with this record; it carries a dated note saying so.
+- **Briefs that never ran.** The S6a brief and the first ST1 brief. ST1 was rebuilt from its second brief as draft PR #187.
+
+## 5 · Where the work stands (13 Oct)
+
+| Track | State |
+|---|---|
+| ST1, the Studio core | Draft PR #187: the Supabase schema with a public `catalog`, the publication gate in the database, and offline stubs. In review |
+| D6 → D7, the reader's design | D7 drawn against Codex's D6 findings and Beni's answers; its re-check is under way |
+| N0, the migration plan | Scored, and answered by Beni (§3). Slices N1 to N8 get their build briefs one at a time, after ST1 and D7 are accepted |
+
+## 6 · Corrections the PM seat owes
+
+- **The direct push to main.** In D6's review the PM seat said a direct push from Beni's Mac would "likely be refused". Codex showed that main's ruleset lets the admin role bypass the required `verify`, so it would be *accepted without* `verify`. That is why Q19 is PR.
+- **ST1's views.** The N0 brief said the app's login reads `catalog.videos` only. ST1 correctly built a list view (`catalog.videos`) and a detail view (`catalog.video`), as its own brief asked. The plan's proposed single-view migration follows from the brief's error; it is withdrawn, and the app's login reads both public views and nothing in the `studio` schema.
+- **The double-click build.** The N0 brief said CLAUDE.md and the README describe the single-file build. They do not; CONTRIBUTING.md and vite.config.ts do. Codex caught it.

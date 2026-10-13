@@ -1,5 +1,7 @@
 # Moments — the build plan from design D5: the generated kind in the reader, YouTube's publication duties, the Studio, and clip hosting
 
+> **Superseded in part, Tue 13 Oct 2026.** Beni's pivot of 12 Oct makes Moments generated-only, moves the app to Next.js on Vercel and publishes from the Studio's database. [moments-pivot-record.md](moments-pivot-record.md) records the rulings and wins where the two differ; the migration plan is [nextjs-migration-plan.md](nextjs-migration-plan.md). This plan's YouTube stages (S6a–S8), its GitHub Releases hosting and its PR-per-edition publication no longer apply. The text below is kept as written.
+
 Written by the PM seat (Claude Code, Opus 5.5) on Mon 12 Oct 2026 (TZ=America/New_York),
 against `main` at `3937d02`. This is a sequence and a set of slice contracts. It is not a
 build prompt: each slice gets its own prompt from the PM seat, written against `main` on the
