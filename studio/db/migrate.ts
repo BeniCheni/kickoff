@@ -38,7 +38,7 @@ export function parseEnvFile(text: string): Record<string, string> {
 }
 
 export function redactConnectionText(text: string): string {
-  return text.replace(/postgres(?:ql)?:\/\/\S+/gi, 'postgres://[redacted]')
+  return text.replace(/postgres(?:ql)?:\/\/\S+/gi, '[connection-redacted]')
 }
 
 export async function runMigrate(env: NodeJS.ProcessEnv = process.env): Promise<void> {
