@@ -45,7 +45,7 @@ const USAGE = [
   'retry-delete --job <id>',
   'retry-removal --job <id>',
   'close-session',
-  'attach-request --job <id> --request-id <id> --status-url <url> --response-url <url> --cancel-url <url>',
+  'attach-request --job <id> --request-id <id>',
   'settle-unconfirmed --job <id> --not-accepted --evidence <text> [--amount <usd>]',
   'record-gate --answer <text> --disclosure <text> --by <name> --source <source>',
   'record-balance --amount <usd>',
@@ -388,9 +388,6 @@ export async function runCli(argv: readonly string[], env: NodeJS.ProcessEnv, io
         const result = await studio.attachRequest({
           jobId: required(flags, 'job'),
           requestId: required(flags, 'request-id'),
-          statusUrl: required(flags, 'status-url'),
-          responseUrl: required(flags, 'response-url'),
-          cancelUrl: required(flags, 'cancel-url'),
         })
         io.stdout(line(result.outcome, { job: 'jobId' in result ? result.jobId : undefined }))
         return

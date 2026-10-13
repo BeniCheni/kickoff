@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { FAL_HEADER, falHeaders } from '../fal/headers.ts'
 import { createNetworkGuard, NetworkGuardError, STUB_HOST } from '../fal/guard.ts'
 import { createLiveTransport, liveFalArmed, selectFalTransport } from '../fal/live.ts'
-import { QueueUrlError } from '../fal/urls.ts'
+import { QueueUrlError, queueAddresses } from '../fal/urls.ts'
 import { statusResponseSchema } from '../fal/schemas.ts'
 import { createFalStub, OutOfCreditError } from '../fal/stub.ts'
 
@@ -130,6 +130,20 @@ describe('network guard', () => {
       headers: {},
     })).rejects.toBeInstanceOf(QueueUrlError)
     expect(seen).toEqual([])
+  })
+})
+
+describe('queue addresses', () => {
+  it('builds the three routes the queue page lists on the submit response', () => {
+    expect(queueAddresses('fal-ai/flux/schnell', '764cabcf-b745-4b3e-ae38-1200304cf45b')).toEqual({
+      statusUrl: 'https://queue.fal.run/fal-ai/flux/schnell/requests/764cabcf-b745-4b3e-ae38-1200304cf45b/status',
+      responseUrl: 'https://queue.fal.run/fal-ai/flux/schnell/requests/764cabcf-b745-4b3e-ae38-1200304cf45b/response',
+      cancelUrl: 'https://queue.fal.run/fal-ai/flux/schnell/requests/764cabcf-b745-4b3e-ae38-1200304cf45b/cancel',
+    })
+    expect(queueAddresses('minimax/h3-max-turbo/image-to-video', 'req-from-fal').statusUrl).toBe(
+      'https://queue.fal.run/minimax/h3-max-turbo/image-to-video/requests/req-from-fal/status',
+    )
+    expect(() => queueAddresses('minimax/h3-max-turbo/image-to-video', '../other')).toThrow(QueueUrlError)
   })
 })
 

@@ -287,15 +287,17 @@ describe('state machine', () => {
     const attached = await studio.attachRequest({
       jobId: crashed.jobId,
       requestId: 'req-from-fal',
-      statusUrl: 'https://queue.fal.run/minimax/h3-max-turbo/image-to-video/requests/req-from-fal/status',
-      responseUrl: 'https://queue.fal.run/minimax/h3-max-turbo/image-to-video/requests/req-from-fal/response',
-      cancelUrl: 'https://queue.fal.run/minimax/h3-max-turbo/image-to-video/requests/req-from-fal/cancel',
     })
     expect(attached).toMatchObject({ outcome: 'attached', jobId: crashed.jobId })
+    const [stored] = await db.select().from(job).where(eq(job.id, crashed.jobId))
+    expect(stored?.statusUrl).toBe('https://queue.fal.run/minimax/h3-max-turbo/image-to-video/requests/req-from-fal/status')
+    expect(stored?.responseUrl).toBe('https://queue.fal.run/minimax/h3-max-turbo/image-to-video/requests/req-from-fal/response')
+    expect(stored?.cancelUrl).toBe('https://queue.fal.run/minimax/h3-max-turbo/image-to-video/requests/req-from-fal/cancel')
     expect(fal.calls.filter((call) => call.kind === 'submit')).toHaveLength(1)
     expect(await db.select().from(ledger)).toHaveLength(1)
     const polled = await studio.poll(crashed.jobId)
     expect(polled.outcome).toBe('queued')
+    expect(fal.calls.some((call) => call.kind === 'status' && call.url === stored?.statusUrl)).toBe(true)
   })
 
   it('fails a 422 submit that has no request id and keeps the estimate pending', async () => {
@@ -386,6 +388,22 @@ describe('state machine', () => {
     expect(second).toMatchObject({ outcome: 'urls-unusable', jobId: first.jobId })
     expect(submits).toBe(1)
     expect((await studio.closeSession()).outcome).toBe('close-refused')
+    const attached = await studio.attachRequest({ jobId: first.jobId, requestId: 'req-foreign' })
+    expect(attached).toMatchObject({ outcome: 'attached' })
+    const [stored] = await db.select().from(job).where(eq(job.id, first.jobId))
+    expect(stored?.statusUrl).toBe('https://queue.fal.run/minimax/h3-max-turbo/image-to-video/requests/req-foreign/status')
+    expect(stored?.statusUrl).not.toContain('evil.example')
+    expect((await studio.poll(first.jobId)).outcome).toBe('queued')
+    expect(fal.calls.some((call) => call.kind === 'status' && call.url === stored?.statusUrl)).toBe(true)
+  })
+
+  it('polls the status URL stored at submit', async () => {
+    const { db, studio, fal } = await openStudio()
+    const submitted = await studio.submit(videoInput('stored-url'))
+    if (submitted.outcome !== 'submitted') throw new Error('not submitted')
+    const [row] = await db.select().from(job).where(eq(job.id, submitted.jobId))
+    expect((await studio.poll(submitted.jobId)).outcome).toBe('queued')
+    expect(fal.calls.some((call) => call.kind === 'status' && call.url === row?.statusUrl)).toBe(true)
   })
 
   it('allows another submit after a definitive refusal', async () => {

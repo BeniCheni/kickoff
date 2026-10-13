@@ -29,7 +29,7 @@ import { decideBudget, PER_JOB_CAP_USD, PREPAID_CEILING_USD, REQUEST_START_TIMEO
 import { falHeaders } from './fal/headers.ts'
 import { cancelResponseSchema, resultState, resultEnvelopeSchema, statusResponseSchema, submitEnvelopeSchema, submitResponseSchema } from './fal/schemas.ts'
 import { OutOfCreditError, ResultExpiredError, type FalTransport } from './fal/stub.ts'
-import { isQueueOrigin } from './fal/urls.ts'
+import { isQueueOrigin, queueAddresses } from './fal/urls.ts'
 import { cacheKey as makeCacheKey, sha256 } from './hash.ts'
 import { aboveManualCeiling, jobExposure, reconcileAmount, sessionExposure, type LedgerView } from './ledger.ts'
 import { addUsd, formatUsd, parseUsd } from './money.ts'
@@ -690,20 +690,32 @@ export function createStudio(options: EngineOptions) {
       return this.poll(jobId)
     },
 
-    async attachRequest(input: { jobId: string; requestId: string; statusUrl: string; responseUrl: string; cancelUrl: string }) {
-      if (!isQueueOrigin(input.statusUrl) || !isQueueOrigin(input.responseUrl) || !isQueueOrigin(input.cancelUrl)) {
-        return { outcome: 'url-refused' as const, jobId: input.jobId }
-      }
+    async attachRequest(input: { jobId: string; requestId: string }) {
       const [current] = await db.select().from(job).where(eq(job.id, input.jobId))
       if (!current) return { outcome: 'missing' as const }
       const lines = await db.select().from(ledger).where(eq(ledger.jobId, current.id))
-      if (!isSubmitUnconfirmed(current, lines)) return { outcome: 'not-unconfirmed' as const, jobId: current.id }
+      const urlsUnusable = current.status === 'draft' && current.providerRequestId !== null
+      if (!isSubmitUnconfirmed(current, lines) && !urlsUnusable) {
+        return { outcome: 'not-unconfirmed' as const, jobId: current.id }
+      }
+      if (current.providerRequestId && current.providerRequestId !== input.requestId) {
+        return { outcome: 'request-id-mismatch' as const, jobId: current.id }
+      }
+      const [gen] = await db.select().from(generation).where(eq(generation.id, current.generationId))
+      const [pinned] = gen ? await db.select().from(model).where(eq(model.id, gen.modelId)) : []
+      if (!pinned) return { outcome: 'missing' as const }
+      let urls: { statusUrl: string; responseUrl: string; cancelUrl: string }
+      try {
+        urls = queueAddresses(pinned.endpoint, input.requestId)
+      } catch {
+        return { outcome: 'url-refused' as const, jobId: current.id }
+      }
       const before = lines.length
       await setJob(current.id, current.generationId, 'submitted', {
         requestId: input.requestId,
-        statusUrl: input.statusUrl,
-        responseUrl: input.responseUrl,
-        cancelUrl: input.cancelUrl,
+        statusUrl: urls.statusUrl,
+        responseUrl: urls.responseUrl,
+        cancelUrl: urls.cancelUrl,
         submitted: true,
       })
       const after = await db.select().from(ledger).where(eq(ledger.jobId, current.id))
