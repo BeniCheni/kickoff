@@ -1,0 +1,28 @@
+{
+  "name": "@kickoff/studio",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Kickoff Moments Studio, local and offline. Not a release of the reader.",
+  "engines": {
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "migrate": "tsx db/migrate.ts"
+  },
+  "dependencies": {
+    "drizzle-orm": "0.45.4",
+    "postgres": "3.4.9",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.9",
+    "@types/node": "26.2.0",
+    "drizzle-kit": "0.31.11",
+    "tsx": "4.23.12",
+    "typescript": "7.0.2",
+    "vitest": "4.1.11"
+  }
+}
