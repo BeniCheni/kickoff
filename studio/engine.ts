@@ -508,36 +508,50 @@ export function createStudio(options: EngineOptions) {
         if (httpStatus >= 400 && !requestId) {
           const mapped = resultState(httpStatus, responseBody)
           const errorType = falErrorType(responseBody)
-          if (httpStatus >= 500 && httpStatus <= 599) {
-            const sessionLines = await db.select().from(ledger).where(eq(ledger.sessionId, open.id))
-            const others = sessionExposure(views(sessionLines).filter((line) => line.jobId !== prepared.jobId))
-            await db.insert(ledger).values({
-              jobId: prepared.jobId,
-              sessionId: open.id,
-              at: clock(),
-              amountUsd: '0.000000',
-              estimateUsd: usd,
-              basis: 'provider_reported',
-              settlement: 'reconciled',
-              billableUnits: '0.000000',
-              unitPriceUsd: row.price.usd,
-              runningSessionTotal: addUsd(others, '0.000000'),
+          try {
+            await db.transaction(async (tx) => {
+              const writer = tx as unknown as StudioDatabase
+              if (httpStatus >= 500 && httpStatus <= 599) {
+                const sessionLines = await writer.select().from(ledger).where(eq(ledger.sessionId, open.id))
+                const others = sessionExposure(views(sessionLines).filter((line) => line.jobId !== prepared.jobId))
+                await writer.insert(ledger).values({
+                  jobId: prepared.jobId,
+                  sessionId: open.id,
+                  at: clock(),
+                  amountUsd: '0.000000',
+                  estimateUsd: usd,
+                  basis: 'provider_reported',
+                  settlement: 'reconciled',
+                  billableUnits: '0.000000',
+                  unitPriceUsd: row.price.usd,
+                  runningSessionTotal: addUsd(others, '0.000000'),
+                })
+              }
+              await setJob(prepared.jobId, prepared.generationId, mapped, {
+                refusalReason: mapped === 'refused' ? 'safety-checker' : null,
+                finished: true,
+              }, writer)
+              await recordEvent(prepared.jobId, 'provider-submit', {
+                httpStatus,
+                errorType,
+                ...(httpStatus >= 500 && httpStatus <= 599 ? { billing: SERVER_ERROR_BILLING } : {}),
+              }, writer)
             })
+          } catch {
+            return { outcome: 'database-unavailable' as const, jobId: prepared.jobId }
           }
-          await setJob(prepared.jobId, prepared.generationId, mapped, {
-            refusalReason: mapped === 'refused' ? 'safety-checker' : null,
-            finished: true,
-          })
-          await recordEvent(prepared.jobId, 'provider-submit', {
-            httpStatus,
-            errorType,
-            ...(httpStatus >= 500 && httpStatus <= 599 ? { billing: SERVER_ERROR_BILLING } : {}),
-          })
           return { outcome: mapped, jobId: prepared.jobId, httpStatus, errorType }
         }
         if (requestId && !parsedUrls) {
-          await db.update(job).set({ providerRequestId: requestId }).where(eq(job.id, prepared.jobId))
-          await recordEvent(prepared.jobId, 'urls-unusable', { httpStatus, requestId })
+          try {
+            await db.transaction(async (tx) => {
+              const writer = tx as unknown as StudioDatabase
+              await writer.update(job).set({ providerRequestId: requestId }).where(eq(job.id, prepared.jobId))
+              await recordEvent(prepared.jobId, 'urls-unusable', { httpStatus, requestId }, writer)
+            })
+          } catch {
+            return { outcome: 'database-unavailable' as const, jobId: prepared.jobId }
+          }
           return { outcome: 'urls-unusable' as const, jobId: prepared.jobId, requestId }
         }
         if (!parsedUrls) {
@@ -713,13 +727,17 @@ export function createStudio(options: EngineOptions) {
         return { outcome: 'url-refused' as const, jobId: current.id }
       }
       const before = lines.length
-      await setJob(current.id, current.generationId, 'submitted', {
-        requestId: input.requestId,
-        statusUrl: urls.statusUrl,
-        responseUrl: urls.responseUrl,
-        cancelUrl: urls.cancelUrl,
-        submitted: true,
-      })
+      try {
+        await setJob(current.id, current.generationId, 'submitted', {
+          requestId: input.requestId,
+          statusUrl: urls.statusUrl,
+          responseUrl: urls.responseUrl,
+          cancelUrl: urls.cancelUrl,
+          submitted: true,
+        })
+      } catch {
+        return { outcome: 'database-unavailable' as const, jobId: current.id }
+      }
       const after = await db.select().from(ledger).where(eq(ledger.jobId, current.id))
       if (after.length !== before) throw new Error('attach-request wrote a ledger line')
       return { outcome: 'attached' as const, jobId: current.id }
@@ -807,7 +825,11 @@ export function createStudio(options: EngineOptions) {
         ? (parsed.data.body as { status?: unknown }).status
         : undefined
       if (parsed.data.httpStatus === 202 && reported === 'CANCELLATION_REQUESTED') {
-        await setJob(current.id, current.generationId, 'cancelled', { finished: true })
+        try {
+          await setJob(current.id, current.generationId, 'cancelled', { finished: true })
+        } catch {
+          return { outcome: 'database-unavailable' as const, jobId }
+        }
         const lines = await db.select().from(ledger).where(eq(ledger.jobId, jobId))
         return { outcome: 'cancelled' as const, chargeRetained: lines.length > 0, exposure: jobExposure(views(lines)) }
       }

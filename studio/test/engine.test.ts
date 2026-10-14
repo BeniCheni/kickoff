@@ -396,6 +396,37 @@ describe('state machine', () => {
     expect(notes.some((note) => note.type === 'provider-submit' && note.detail !== null && typeof note.detail === 'object' && (note.detail as { billing?: string }).billing === 'https://fal.ai/docs/model-apis/model-endpoints/reliability')).toBe(true)
   })
 
+  it('keeps a 5xx refusal unconfirmed when its evidence event is rejected', async () => {
+    const opened = await openStudio()
+    await opened.client.exec(`
+      CREATE FUNCTION studio.reject_provider_submit() RETURNS trigger
+      LANGUAGE plpgsql AS $$
+      BEGIN
+        IF NEW.type = 'provider-submit' THEN
+          RAISE EXCEPTION 'provider evidence rejected';
+        END IF;
+        RETURN NEW;
+      END;
+      $$;
+      CREATE TRIGGER reject_provider_submit
+      BEFORE INSERT ON studio.event
+      FOR EACH ROW EXECUTE FUNCTION studio.reject_provider_submit();
+    `)
+    opened.fal.submit = async () => ({ httpStatus: 500, body: { error_type: 'internal_server_error' } })
+    const failed = await opened.studio.submit(videoInput('500-rollback'))
+    expect(failed).toMatchObject({ outcome: 'database-unavailable' })
+    if (!('jobId' in failed) || !failed.jobId) throw new Error('no job')
+    const [row] = await opened.db.select().from(job).where(eq(job.id, failed.jobId))
+    expect(row?.status).toBe('draft')
+    expect(row?.providerRequestId).toBeNull()
+    const lines = await opened.db.select().from(ledger).where(eq(ledger.jobId, failed.jobId))
+    expect(lines.some((line) => line.settlement === 'reconciled')).toBe(false)
+    expect(lines.some((line) => line.settlement === 'pending')).toBe(true)
+    const again = await opened.studio.submit(videoInput('500-rollback'))
+    expect(again).toMatchObject({ outcome: 'submit-unconfirmed', jobId: failed.jobId })
+    expect((await opened.studio.closeSession()).outcome).toBe('close-refused')
+  })
+
   it('leaves a thrown submit unconfirmed and does not resubmit it', async () => {
     const { db, studio, fal } = await openStudio()
     let submits = 0
