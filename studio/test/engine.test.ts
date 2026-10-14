@@ -523,6 +523,51 @@ describe('state machine', () => {
     expect(pricedLines.some((line) => line.settlement === 'reconciled' && line.amountUsd === '0.100000' && line.basis === 'reconciled')).toBe(true)
   })
 
+  it('rolls settlement back when the evidence event is rejected', async () => {
+    async function settle(seed: string, amountUsd?: string) {
+      const opened = await openStudio()
+      opened.fal.submit = async () => {
+        throw new Error('socket hang up')
+      }
+      const first = await opened.studio.submit(videoInput(seed))
+      expect(first).toMatchObject({ outcome: 'submit-unconfirmed' })
+      if (!('jobId' in first) || !first.jobId) throw new Error('no job')
+      const before = await opened.db.select().from(ledger).where(eq(ledger.jobId, first.jobId))
+      await opened.client.exec(`
+        CREATE FUNCTION studio.reject_settlement_evidence() RETURNS trigger
+        LANGUAGE plpgsql AS $$
+        BEGIN
+          IF NEW.type = 'submit-not-accepted' THEN
+            RAISE EXCEPTION 'evidence rejected';
+          END IF;
+          RETURN NEW;
+        END;
+        $$;
+        CREATE TRIGGER reject_settlement_evidence
+        BEFORE INSERT ON studio.event
+        FOR EACH ROW EXECUTE FUNCTION studio.reject_settlement_evidence();
+      `)
+      const settled = await opened.studio.settleUnconfirmed({
+        jobId: first.jobId,
+        notAccepted: true,
+        evidence: 'the dashboard shows no request',
+        ...(amountUsd ? { amountUsd } : {}),
+      })
+      expect(settled).toMatchObject({ outcome: 'database-unavailable', jobId: first.jobId })
+      const [row] = await opened.db.select().from(job).where(eq(job.id, first.jobId))
+      expect(row?.status).toBe('draft')
+      expect(row?.providerRequestId).toBeNull()
+      const lines = await opened.db.select().from(ledger).where(eq(ledger.jobId, first.jobId))
+      expect(lines).toEqual(before)
+      expect(lines.some((line) => line.settlement === 'reconciled')).toBe(false)
+      const again = await opened.studio.submit(videoInput(seed))
+      expect(again).toMatchObject({ outcome: 'submit-unconfirmed', jobId: first.jobId })
+      expect((await opened.studio.closeSession()).outcome).toBe('close-refused')
+    }
+    await settle('rollback')
+    await settle('priced-rollback', '0.100000')
+  })
+
   it('refuses the submit when the estimate cannot be written', async () => {
     const { db, studio, fal, flags } = await openStudio()
     flags.breakLedgerWrite = true

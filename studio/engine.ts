@@ -184,8 +184,8 @@ export function createStudio(options: EngineOptions) {
     return created
   }
 
-  async function recordEvent(jobId: string, type: string, detail?: unknown) {
-    await db.insert(event).values({ jobId, at: clock(), type, detail: detail ?? null })
+  async function recordEvent(jobId: string, type: string, detail?: unknown, writer: StudioDatabase = db) {
+    await writer.insert(event).values({ jobId, at: clock(), type, detail: detail ?? null })
   }
 
   async function setJob(jobId: string, generationId: string, status: JobState, extra: {
@@ -197,24 +197,28 @@ export function createStudio(options: EngineOptions) {
     cancelUrl?: string
     finished?: boolean
     submitted?: boolean
-  } = {}) {
-    await db.update(job).set({
-      status,
-      ...(extra.substate !== undefined ? { completedSubstate: extra.substate } : {}),
-      ...(extra.refusalReason !== undefined ? { refusalReason: extra.refusalReason } : {}),
-      ...(extra.requestId !== undefined ? { providerRequestId: extra.requestId } : {}),
-      ...(extra.statusUrl !== undefined ? { statusUrl: extra.statusUrl } : {}),
-      ...(extra.responseUrl !== undefined ? { responseUrl: extra.responseUrl } : {}),
-      ...(extra.cancelUrl !== undefined ? { cancelUrl: extra.cancelUrl } : {}),
-      ...(extra.finished ? { finishedAt: clock() } : {}),
-      ...(extra.submitted ? { submittedAt: clock() } : {}),
-    }).where(eq(job.id, jobId))
-    await db.update(generation).set({
-      status,
-      ...(extra.refusalReason !== undefined ? { refusalReason: extra.refusalReason } : {}),
-      ...(status === 'kept' || status === 'discarded' ? { reviewed: status } : {}),
-    }).where(eq(generation.id, generationId))
-    await recordEvent(jobId, status)
+  } = {}, writer?: StudioDatabase) {
+    const apply = async (tx: StudioDatabase) => {
+      await tx.update(job).set({
+        status,
+        ...(extra.substate !== undefined ? { completedSubstate: extra.substate } : {}),
+        ...(extra.refusalReason !== undefined ? { refusalReason: extra.refusalReason } : {}),
+        ...(extra.requestId !== undefined ? { providerRequestId: extra.requestId } : {}),
+        ...(extra.statusUrl !== undefined ? { statusUrl: extra.statusUrl } : {}),
+        ...(extra.responseUrl !== undefined ? { responseUrl: extra.responseUrl } : {}),
+        ...(extra.cancelUrl !== undefined ? { cancelUrl: extra.cancelUrl } : {}),
+        ...(extra.finished ? { finishedAt: clock() } : {}),
+        ...(extra.submitted ? { submittedAt: clock() } : {}),
+      }).where(eq(job.id, jobId))
+      await tx.update(generation).set({
+        status,
+        ...(extra.refusalReason !== undefined ? { refusalReason: extra.refusalReason } : {}),
+        ...(status === 'kept' || status === 'discarded' ? { reviewed: status } : {}),
+      }).where(eq(generation.id, generationId))
+      await recordEvent(jobId, status, undefined, tx)
+    }
+    if (writer) await apply(writer)
+    else await db.transaction(async (tx) => apply(tx as unknown as StudioDatabase))
   }
 
   async function headers(carriesPhotograph: boolean) {
@@ -725,33 +729,39 @@ export function createStudio(options: EngineOptions) {
       if (!input.notAccepted || !hasVisibleAnswer(input.evidence)) {
         return { outcome: 'settle-refused' as const, jobId: input.jobId }
       }
-      const [current] = await db.select().from(job).where(eq(job.id, input.jobId))
-      if (!current) return { outcome: 'missing' as const }
-      const lines = await db.select().from(ledger).where(eq(ledger.jobId, current.id))
-      if (!isSubmitUnconfirmed(current, lines)) return { outcome: 'not-unconfirmed' as const, jobId: current.id }
-      let entered: string | undefined
-      if (input.amountUsd !== undefined) {
-        entered = formatUsd(parseUsd(input.amountUsd))
-        if (!current.sessionId) return { outcome: 'settle-refused' as const, jobId: current.id }
-        const sessionLines = await db.select().from(ledger).where(eq(ledger.sessionId, current.sessionId))
-        const others = sessionExposure(views(sessionLines).filter((line) => line.jobId !== current.id))
-        await db.insert(ledger).values({
-          jobId: current.id,
-          sessionId: current.sessionId,
-          at: clock(),
-          amountUsd: entered,
-          estimateUsd: current.estimateUsd,
-          basis: 'reconciled',
-          settlement: 'reconciled',
-          runningSessionTotal: addUsd(others, entered),
+      const entered = input.amountUsd === undefined ? undefined : formatUsd(parseUsd(input.amountUsd))
+      try {
+        return await db.transaction(async (tx) => {
+          const writer = tx as unknown as StudioDatabase
+          const [current] = await writer.select().from(job).where(eq(job.id, input.jobId))
+          if (!current) return { outcome: 'missing' as const }
+          const lines = await writer.select().from(ledger).where(eq(ledger.jobId, current.id))
+          if (!isSubmitUnconfirmed(current, lines)) return { outcome: 'not-unconfirmed' as const, jobId: current.id }
+          if (entered !== undefined) {
+            if (!current.sessionId) return { outcome: 'settle-refused' as const, jobId: current.id }
+            const sessionLines = await writer.select().from(ledger).where(eq(ledger.sessionId, current.sessionId))
+            const others = sessionExposure(views(sessionLines).filter((line) => line.jobId !== current.id))
+            await writer.insert(ledger).values({
+              jobId: current.id,
+              sessionId: current.sessionId,
+              at: clock(),
+              amountUsd: entered,
+              estimateUsd: current.estimateUsd,
+              basis: 'reconciled',
+              settlement: 'reconciled',
+              runningSessionTotal: addUsd(others, entered),
+            })
+          }
+          await setJob(current.id, current.generationId, 'failed', { finished: true }, writer)
+          await recordEvent(current.id, 'submit-not-accepted', {
+            evidence: input.evidence,
+            ...(entered ? { amountUsd: entered } : {}),
+          }, writer)
+          return { outcome: 'failed' as const, jobId: current.id, estimatePending: entered === undefined }
         })
+      } catch {
+        return { outcome: 'database-unavailable' as const, jobId: input.jobId }
       }
-      await setJob(current.id, current.generationId, 'failed', { finished: true })
-      await recordEvent(current.id, 'submit-not-accepted', {
-        evidence: input.evidence,
-        ...(entered ? { amountUsd: entered } : {}),
-      })
-      return { outcome: 'failed' as const, jobId: current.id, estimatePending: entered === undefined }
     },
 
     async closeSession() {
