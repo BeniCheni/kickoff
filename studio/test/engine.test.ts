@@ -4,6 +4,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { eq } from 'drizzle-orm'
 import { afterEach, describe, expect, it } from 'vitest'
+import { BLANK_CODE_POINTS } from '../answer.ts'
 import { CHECKLIST_LINES, asset, event, generation, generationInput, job, ledger, videos } from '../db/schema.ts'
 import { createStudio, type Studio, type StudioFlags } from '../engine.ts'
 import { FAL_HEADER } from '../fal/headers.ts'
@@ -904,7 +905,11 @@ describe('state machine', () => {
 
   it('rejects an empty Article 50 answer and names a second one', async () => {
     const opened = await keptClip()
-    for (const answer of ['   ', '\t', '\n', '\r', ' \t\n\r', '\u00A0']) {
+    const blanks = [
+      ...BLANK_CODE_POINTS.map((code) => String.fromCodePoint(code)),
+      String.fromCodePoint(...BLANK_CODE_POINTS),
+    ]
+    for (const answer of blanks) {
       const empty = await opened.studio.recordGate({
         answer,
         disclosure: 'pending',
@@ -935,6 +940,21 @@ describe('state machine', () => {
       source: 'A-06',
     })
     expect(second).toEqual({ outcome: 'gate-already-recorded', recordedOn: recorded.recordedOn })
+    const other = await keptClip()
+    const wrapped = `${String.fromCodePoint(BLANK_CODE_POINTS[0]!)}visible${String.fromCodePoint(BLANK_CODE_POINTS[BLANK_CODE_POINTS.length - 1]!)}`
+    const shown = await other.studio.recordGate({
+      answer: wrapped,
+      disclosure: 'pending',
+      recordedBy: 'unspecified',
+      source: 'A-06',
+    })
+    expect(shown.outcome).toBe('gate-recorded')
+    const evidence = await other.studio.settleUnconfirmed({
+      jobId: other.jobId,
+      notAccepted: true,
+      evidence: String.fromCodePoint(0x200B),
+    })
+    expect(evidence).toMatchObject({ outcome: 'settle-refused' })
   })
 
   it('withdraws before deleting files, and each failure stays unlisted', async () => {

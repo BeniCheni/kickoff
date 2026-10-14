@@ -8,7 +8,7 @@ CREATE TABLE "studio"."article50_answer" (
 	"recorded_by" text NOT NULL,
 	"source" text NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "article50_answer_nonblank" CHECK ("answer" ~ '[^[:space:]]')
+	CONSTRAINT "article50_answer_nonblank" CHECK ("answer" ~ U&'[^[:space:]\0009\000A\000B\000C\000D\0020\00A0\1680\2000\2001\2002\2003\2004\2005\2006\2007\2008\2009\200A\200B\200C\200D\2028\2029\202F\205F\2060\3000\FEFF]')
 );
 --> statement-breakpoint
 ALTER TABLE "studio"."article50_answer" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
