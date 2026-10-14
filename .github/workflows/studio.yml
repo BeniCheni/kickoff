@@ -1,0 +1,47 @@
+name: Studio
+
+# The Studio suite. Path-filtered, and never a required check: a required check
+# that this filter skips stays pending and would block the sync bot's pull request.
+on:
+  pull_request:
+    paths:
+      - 'studio/**'
+      - '.github/workflows/studio.yml'
+      - 'src/index.css'
+  push:
+    branches: [main]
+    paths:
+      - 'studio/**'
+      - '.github/workflows/studio.yml'
+      - 'src/index.css'
+
+permissions:
+  contents: read
+
+jobs:
+  studio:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            studio/package-lock.json
+      - run: npm ci
+        working-directory: studio
+      - run: npm run typecheck
+        working-directory: studio
+      - run: npm test
+        working-directory: studio
+      - run: npm ci
+      - run: npm run build
+      - name: Tailwind probe stays out of the reader CSS
+        run: |
+          css=$(ls dist/assets/index-*.css)
+          if grep -q 'fa11e0' "$css"; then
+            echo "tailwind probe class reached the reader CSS"
+            exit 1
+          fi

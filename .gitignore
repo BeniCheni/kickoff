@@ -6,3 +6,7 @@ _to_delete/
 .DS_Store
 tsconfig*.tsbuildinfo
 dist-acceptance/
+studio/.env
+studio/.env.*
+studio/cache/
+studio/output/
