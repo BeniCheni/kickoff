@@ -11,7 +11,8 @@
     "typecheck": "NEXT_TELEMETRY_DISABLED=1 next typegen && tsc --noEmit",
     "test": "vitest run",
     "build": "NEXT_TELEMETRY_DISABLED=1 next build",
-    "start": "NEXT_TELEMETRY_DISABLED=1 next start"
+    "start": "NEXT_TELEMETRY_DISABLED=1 next start",
+    "check:css": "node scripts/check-css.mjs"
   },
   "dependencies": {
     "next": "16.4.1",

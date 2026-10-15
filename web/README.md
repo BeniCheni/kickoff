@@ -13,8 +13,14 @@ Next output; Cache Components is disabled for the migration's chosen rendering m
 `next typegen` first so a clean checkout needs no build-generated file committed.
 See [Next TypeScript documentation](https://nextjs.org/docs/app/api-reference/config/typescript).
 
-Tailwind automatic source detection is disabled. The explicit scan list is empty
-until the boundary probe is added in N1 step 2.
+Tailwind automatic source detection is disabled with `source(none)`. Its only
+explicit source is `web/app/` (`@source "./"` relative to app/globals.css).
+It never scans root src/, docs/, studio/, or web tests/tooling. Add a named source
+deliberately when a later slice shares code. The reader retains automatic root
+detection, excluding design-cycle Moments archives, studio/ and web/.
+`npm run check:css` checks both built outputs after the root and web builds: the
+web probe must be present in web and absent from the reader; reader utility
+selectors and selected archived-doc selectors must be absent from web.
 
 Versions checked 2026-10-15: Next 16.4.1 is the registry's stable release on the
 [16.x Active LTS line](https://nextjs.org/support-policy). React/React DOM 19.3.1

@@ -1,3 +1,4 @@
+// Tailwind boundary probe (never applied): outline-[#bada71]
 export default function Home() {
   return (
     <main>
