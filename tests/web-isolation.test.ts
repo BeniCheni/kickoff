@@ -43,6 +43,7 @@ test('the actual root Vitest discovery contains only root tests', () => {
 
 test('every project in the root tsc build graph excludes web', () => {
   const seen = new Set<string>()
+  const rootReal = realpathSync(root)
   const visit = (config: string) => {
     const absolute = path.resolve(root, config)
     if (seen.has(absolute)) return
@@ -51,8 +52,9 @@ test('every project in the root tsc build graph excludes web', () => {
     for (const ref of parsed.references ?? []) visit(path.resolve(path.dirname(absolute), ref.path))
     const listed = run('typescript/bin/tsc', ['-p', absolute, '--listFilesOnly']).trim().split('\n').filter(Boolean)
     for (const file of listed) {
-      const resolved = realpathSync(file)
-      expect(resolved, `web entered ${config}`).not.toContain(`${path.sep}web${path.sep}`)
+      const relative = path.relative(rootReal, realpathSync(file))
+      const insideWeb = relative === 'web' || relative.startsWith(`web${path.sep}`)
+      expect(insideWeb, `web entered ${config}: ${relative}`).toBe(false)
     }
   }
   visit('tsconfig.json')
