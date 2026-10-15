@@ -46,3 +46,9 @@ Next build and scans all `.next/static/**/*.js` for Studio/database markers.
 `node scripts/prove-isolation.mjs <evidence-directory>` demonstrates failing and
 passing assertions in disposable source/bundle copies, without editing the reader.
 The scanner does not claim to detect arbitrary obfuscated/computed module paths.
+
+From the repo root, `node web/scripts/probe-server-imports.mjs` imports eleven
+reader modules in fresh Node processes using the existing root tsx loader. One
+mode removes browser globals; another traces reads with inert stubs, including
+dependency source lines. The checked-in `verification/server-imports.json` is
+the N1 observation, not a claim that calling exported hooks is server-safe.
