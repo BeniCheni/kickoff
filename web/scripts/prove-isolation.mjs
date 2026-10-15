@@ -56,7 +56,7 @@ try {
   const built = path.join(scratch, 'client')
   fs.cpSync(path.join(root, 'web/.next/static'), built, { recursive: true })
   const checker = [path.join(root, 'web/scripts/check-client.mjs'), built]
-  const markers = ['studio/', 'drizzle', 'postgres://', 'postgresql://', 'DATABASE_URL', 'FAL_KEY', 'STUDIO_ENV_FILE', 'STUDIO_LIVE', 'STUDIO_DATA_DIR', 'STUDIO_MEDIA_DIR', 'STUDIO_NOW', 'STUDIO_STUB', 'STUDIO_STORAGE_FAIL']
+  const markers = ['studio/', 'drizzle', 'postgres' + '://', 'postgresql' + '://', 'DATABASE_URL', 'FAL_KEY', 'STUDIO_ENV_FILE', 'STUDIO_LIVE', 'STUDIO_DATA_DIR', 'STUDIO_MEDIA_DIR', 'STUDIO_NOW', 'STUDIO_STUB', 'STUDIO_STORAGE_FAIL']
   for (const [index, marker] of markers.entries()) {
     const probe = path.join(built, '__n1_probe.js')
     fs.writeFileSync(probe, `${JSON.stringify(marker)};\n`)

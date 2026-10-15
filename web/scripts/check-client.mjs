@@ -13,7 +13,7 @@ function filesUnder(dir) {
 const files = filesUnder(directory)
 assert.ok(files.length, 'No built client JavaScript; run the web build first')
 const markers = [
-  'studio/', 'drizzle', 'postgres://', 'postgresql://', 'DATABASE_URL',
+  'studio/', 'drizzle', 'postgres' + '://', 'postgresql' + '://', 'DATABASE_URL',
   'FAL_KEY', 'STUDIO_ENV_FILE', 'STUDIO_LIVE', 'STUDIO_DATA_DIR', 'STUDIO_MEDIA_DIR',
   'STUDIO_NOW', 'STUDIO_STUB', 'STUDIO_STORAGE_FAIL',
 ]
