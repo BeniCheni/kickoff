@@ -15,7 +15,7 @@ After steps 1–4: the same root typecheck/tests/builds passed; 883 tests in 57 
 (the four new root isolation assertions). Run the comparison after both builds:
 
 ```sh
-node web/scripts/check-reader-parity.mjs /Users/benicheni/kickoff-n1-evidence/baseline
+node web/scripts/check-reader-parity.mjs <baseline-directory>
 ```
 
 [reader-parity.json](reader-parity.json) records every relative path, byte count and
