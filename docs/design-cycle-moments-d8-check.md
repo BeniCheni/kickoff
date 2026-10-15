@@ -1,6 +1,6 @@
 # Moments D8 — Codex's delta check, both runs (archived Thu 15 Oct 2026, TZ=America/New_York)
 
-Written by Codex (GPT-6.1 Sol High) on Tue 13 Oct 2026. Run 2, first below, is the check. Verdict: ready after named fixes. Closed: D-48, D-51, D-57, D-58, D-60, D-61, D-62 and D-63 (re-proved against #187 at `6609df9`). Open: D-47 and D-59. New: D-64. Run 1, kept after it, stopped at preflight because the D7 report and its evidence had been deleted. Its evidence (probe scripts, captures, JSON) stays local at `~/kickoff-d6-review/`; nothing from it is committed.
+Written by Codex (GPT-6.1 Sol High) on Tue 13 Oct 2026. Run 2, first below, is the check. Verdict: ready after named fixes. Closed on the design: D-48, D-51, D-57 and D-58. Closed against #187 at `6609df9`: D-60, D-61, D-62 and D-63 (D-63's withdrawal rollback re-proved). Open: D-47 and D-59. New: D-64. Run 1, kept after it, stopped at preflight because the D7 report and its evidence had been deleted. Its evidence (probe scripts, captures, JSON) stays local at `~/kickoff-d6-review/`; nothing from it is committed.
 
 ---
 

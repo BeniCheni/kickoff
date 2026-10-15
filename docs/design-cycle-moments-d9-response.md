@@ -1,6 +1,6 @@
 # Moments D9 — Claude Design's response (archived Thu 15 Oct 2026, TZ=America/New_York)
 
-Written by Claude Design (Fable 5.1 Extra) on Tue 13 Oct 2026 with D9 (fingerprint `0286a20b…78c0`): the five text fixes, and nothing else moved.
+Written by Claude Design (Fable 5.1 Extra) on Tue 13 Oct 2026 with D9 (fingerprint `0286a20b…78c0`): the five rows below (D-64, D-47, D-59, D-61, and D-58's severity). The response calls the round text-only — no new frame, layout, geometry or behaviour — and states two editorial changes besides those rows.
 
 ---
 
