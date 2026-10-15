@@ -30,6 +30,9 @@ export type ClockEnv = {
 export type Clock = {
   subscribe: (onChange: () => void) => () => void
   getSnapshot: () => ClockSnapshot
+  /** Server render and the hydration render. The browser singleton returns the live
+   *  snapshot; a request clock returns the snapshot it was given, even after catch-up. */
+  getServerSnapshot: () => ClockSnapshot
   /** Test/debug hook: how many subscribers are currently holding the clock running. */
   subscriberCount: () => number
 }
@@ -39,11 +42,12 @@ const MINUTE_MS = 60_000
  *  a hair before it (which would re-read the same, not-yet-rolled minute). */
 const SETTLE_MS = 50
 
-function snapshotAt(instant: number): ClockSnapshot {
-  // Floored to the minute. Every consumer compares against kickoff instants that sit on
-  // :00 seconds, or measures hours since a sync — none can tell :00.050 from :23.456 —
-  // while a catch-up tick (focus, visibilitychange) inside the minute the armed timer
-  // already covers *must* come out identical, or every alt-tab re-renders the app.
+/** Floored to the minute. Every consumer compares against kickoff instants that sit on
+ *  :00 seconds, or measures hours since a sync — none can tell :00.050 from :23.456 —
+ *  while a catch-up tick (focus, visibilitychange) inside the minute the armed timer
+ *  already covers *must* come out identical, or every alt-tab re-renders the app.
+ *  `today` uses the explicit America/New_York formatter. */
+export function clockSnapshotAt(instant: number): ClockSnapshot {
   const d = new Date(instant - (instant % MINUTE_MS))
   return { nowUtcIso: d.toISOString(), today: todayIso(d) }
 }
@@ -52,14 +56,17 @@ function msToNextMinute(instant: number): number {
   return MINUTE_MS - (instant % MINUTE_MS) + SETTLE_MS
 }
 
-export function createClock(env: ClockEnv): Clock {
-  let snapshot = snapshotAt(env.now())
+export function createClock(env: ClockEnv, initial?: ClockSnapshot): Clock {
+  // A request passes its one snapshot in and does not sample until subscribe.
+  // The browser singleton omits it and samples at creation, as the Vite app always has.
+  const serverSnapshot = initial
+  let snapshot = initial ?? clockSnapshotAt(env.now())
   const subscribers = new Set<() => void>()
   let timerId: number | null = null
   let unlisten: (() => void) | null = null
 
   function notifyIfChanged() {
-    const next = snapshotAt(env.now())
+    const next = clockSnapshotAt(env.now())
     // A visibility-triggered tick can land in the same minute the armed timer already
     // covers — the snapshot is minute-floored, so "same minute" is literally "same string",
     // and keeping the old object's identity is what stops a spurious re-render.
@@ -91,7 +98,7 @@ export function createClock(env: ClockEnv): Clock {
         // A subscriber can arrive after real time has moved on since this module loaded
         // (or since the last unsubscribe) — resync before arming so the first tick's delay
         // is measured from now, not from a stale snapshot.
-        snapshot = snapshotAt(env.now())
+        snapshot = clockSnapshotAt(env.now())
         armTimer()
         unlisten = env.listen(notifyIfChanged)
       }
@@ -106,6 +113,9 @@ export function createClock(env: ClockEnv): Clock {
     },
     getSnapshot() {
       return snapshot
+    },
+    getServerSnapshot() {
+      return serverSnapshot ?? snapshot
     },
     subscriberCount() {
       return subscribers.size
@@ -131,22 +141,26 @@ type BrowserGlobals = {
 }
 const browser = globalThis as unknown as BrowserGlobals
 
-/** The live environment's clock — what `useNow()` reads by default. */
-export const clock: Clock = createClock({
-  now: () => Date.now(),
-  setTimeout: (cb, ms) => browser.window.setTimeout(cb, ms),
-  clearTimeout: (id) => browser.window.clearTimeout(id),
-  listen: (fire) => {
-    const onVisibility = () => {
-      if (browser.document.visibilityState === 'visible') fire()
-    }
-    browser.document.addEventListener('visibilitychange', onVisibility)
-    browser.window.addEventListener('focus', fire)
-    browser.window.addEventListener('pageshow', fire)
-    return () => {
-      browser.document.removeEventListener('visibilitychange', onVisibility)
-      browser.window.removeEventListener('focus', fire)
-      browser.window.removeEventListener('pageshow', fire)
-    }
-  },
-})
+/** The live environment's clock — what `useNow()` reads when no request clock is provided. */
+export function browserClockEnv(): ClockEnv {
+  return {
+    now: () => Date.now(),
+    setTimeout: (cb, ms) => browser.window.setTimeout(cb, ms),
+    clearTimeout: (id) => browser.window.clearTimeout(id),
+    listen: (fire) => {
+      const onVisibility = () => {
+        if (browser.document.visibilityState === 'visible') fire()
+      }
+      browser.document.addEventListener('visibilitychange', onVisibility)
+      browser.window.addEventListener('focus', fire)
+      browser.window.addEventListener('pageshow', fire)
+      return () => {
+        browser.document.removeEventListener('visibilitychange', onVisibility)
+        browser.window.removeEventListener('focus', fire)
+        browser.window.removeEventListener('pageshow', fire)
+      }
+    },
+  }
+}
+
+export const clock: Clock = createClock(browserClockEnv())

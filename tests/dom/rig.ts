@@ -1,6 +1,6 @@
 import { vi } from 'vitest'
 import { act } from '@testing-library/react'
-import { clock } from '../../src/lib/clock'
+import { clock, clockSnapshotAt, createClock, browserClockEnv, type ClockSnapshot } from '../../src/lib/clock'
 
 /**
  * The rig: what a component test needs that jsdom does not give it, each piece reaching the
@@ -104,7 +104,21 @@ export function primeClock(at: Date): () => void {
   }
 }
 
-/** Let `ms` of fake time pass; the clock's armed timer fires 50 ms past each minute. */
+/** A request-scoped clock on the real browser listeners, held at `at` until release.
+ *  Unlike `primeClock`, nothing subscribes early: the mounted `useNow` is the first
+ *  subscriber, so catch-up is the effect's own sample. */
+export function mountRequestClock(at: Date, initial?: ClockSnapshot) {
+  vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'Date'], now: at })
+  const snapshot = initial ?? clockSnapshotAt(at.getTime())
+  const store = createClock(browserClockEnv(), snapshot)
+  return {
+    snapshot,
+    store,
+    release() {
+      vi.useRealTimers()
+    },
+  }
+}
 export function tick(ms: number): void {
   act(() => {
     vi.advanceTimersByTime(ms)

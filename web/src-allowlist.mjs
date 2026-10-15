@@ -11,6 +11,7 @@ export const SRC_ALLOWLIST = [
   'src/components/StalenessBanner.tsx',
   'src/components/TabNav.tsx',
   'src/components/ViewBoundary.tsx',
+  'src/lib/RequestClock.tsx',
   'src/lib/clock.ts',
   'src/lib/fixtures.ts',
   'src/lib/lens.ts',
