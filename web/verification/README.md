@@ -65,3 +65,20 @@ load differ. Later exact-tip receipts belong in the PR body.
 pages.yml, sync.yml and studio.yml are unchanged. src/index.css makes studio.yml run
 under its existing filter. Its original reader-CSS probe still passes; verify now
 also checks the same marker. No workflow dispatch, merge or deployment is requested.
+
+## Final inventory and local scaffold check (steps 6–7)
+
+`node web/scripts/probe-server-imports.mjs` records eleven modules in two fresh
+Node processes each; [server-imports.json](server-imports.json) includes exact
+accessing lines and reader call sites. The [contract inventory](../../docs/nextjs-migration-n1-inventory.md)
+maps every current list/detail column, the missing design facts, private Studio
+states, grants, sources and versions. After writing it, root typecheck, 883 tests
+in 57 files, both root builds, web typecheck, 2 tests in 2 files, web build and both
+bundle guards passed. All 12 reader build files still matched the baseline.
+
+The production scaffold was opened at 127.0.0.1:5174 in the built-in browser.
+At measured widths 360, 375, 390 and 1000, document scroll width equalled viewport
+width. Its only content was the unreleased-scaffold heading and disclosure; zero
+image/video/iframe elements and no page warning/error logs. Temporary tabs and
+viewport overrides were cleaned up. This is a scaffold smoke check, not a migrated
+reader matrix. The explicit byte-identity acceptance rule covers the reader here.
