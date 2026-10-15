@@ -37,3 +37,12 @@ also pass. This resolves scaffold tooling only, not N2 hydration or pre-paint wo
 
 Every direct dependency is MIT except TypeScript (Apache-2.0), verified from the
 installed packages. Exact versions are in package.json and package-lock.json.
+
+Isolation checks live in the new root `tests/web-isolation.test.ts` and web's
+`test/isolation.test.ts`: literal static/type/dynamic imports and re-exports,
+actual Vitest discovery in each package, and files selected by every project in
+the root TypeScript reference graph. `npm run check:client` requires a completed
+Next build and scans all `.next/static/**/*.js` for Studio/database markers.
+`node scripts/prove-isolation.mjs <evidence-directory>` demonstrates failing and
+passing assertions in disposable source/bundle copies, without editing the reader.
+The scanner does not claim to detect arbitrary obfuscated/computed module paths.
