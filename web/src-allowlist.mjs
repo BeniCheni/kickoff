@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url'
  *  are absent on purpose. */
 export const SRC_ALLOWLIST = [
   'src/components/LensSwitcher.tsx',
+  'src/components/MomentsEmpty.tsx',
   'src/components/StalenessBanner.tsx',
   'src/components/TabNav.tsx',
   'src/components/ViewBoundary.tsx',

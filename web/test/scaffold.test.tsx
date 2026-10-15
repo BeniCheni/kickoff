@@ -4,13 +4,16 @@ import { clockSnapshotAt } from '../../src/lib/clock'
 import { RequestClock } from '../../src/lib/RequestClock'
 import { Shell } from '../app/shell'
 
-test('the only page identifies itself as an unreleased scaffold', () => {
+test('the shell header carries the root version and leaves fixtures for N3', () => {
   const html = renderToStaticMarkup(
     <RequestClock snapshot={clockSnapshotAt(Date.parse('2026-09-14T16:00:00Z'))}>
       <Shell search="" />
     </RequestClock>,
   )
-  expect(html).toContain('unreleased scaffold')
-  expect(html).toContain('It shows no fixtures.')
-  expect(html).not.toMatch(/<video|<iframe|<img|v\d+\.\d+\.\d+/)
+  expect(html).toContain('Kickoff')
+  expect(html).toContain('Brooklyn · ET')
+  expect(html).toContain('Not ported yet (N3)')
+  expect(html).toContain('v0.5.2')
+  expect(html).not.toContain('v0.0.0')
+  expect(html).not.toMatch(/<video|<iframe|<img/)
 })

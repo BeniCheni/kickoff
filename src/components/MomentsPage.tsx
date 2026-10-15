@@ -7,6 +7,7 @@ import { fixtureTimes, niceDate, syncStamp } from '../lib/time'
 import { MomentCover } from './MomentCover'
 import { PlaybackActions, SourceLink } from './MomentsPlayback'
 import { MomentsSessionProvider, useMomentsSession } from './MomentsSessionProvider'
+import { MomentsEmpty } from './MomentsEmpty'
 
 const CATEGORY_LABELS = { prematch: 'Pre-match', highlights: 'Highlights', celebrations: 'Celebrations' }
 
@@ -220,11 +221,6 @@ export function MomentsPage() {
   // Also usable by isolated component tests; App supplies the persistent owner.
   if (!session) return <MomentsSessionProvider><MomentsPage /></MomentsSessionProvider>
   // Keep this production-empty markup byte-for-byte equivalent to the pre-gallery route.
-  if (session.edition.length === 0) return <main aria-label="Moments">
-    <div className="rounded-[5px] border border-line border-l-3 border-l-floodlight bg-floodlight-bg px-2.5 py-2">
-      <p className="label-caps text-[9.5px] text-floodlight-strong">Hand-curated · linked to rights holders · never played here</p>
-    </div>
-    <p className="mt-5 text-[13px] text-ink-muted">No moments curated yet.</p>
-  </main>
+  if (session.edition.length === 0) return <MomentsEmpty />
   return <Gallery />
 }
