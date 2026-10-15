@@ -1,0 +1,27 @@
+{
+  "readAt": "2026-10-15",
+  "throttling": "4x CPU, Slow 4G (1.6 Mbps down, 750 Kbps up, 150 ms)",
+  "chrome": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+  "puppeteerCore": "24.23.0",
+  "license": "Apache-2.0",
+  "pngDirectory": "/tmp/kickoff-n2-filmstrip",
+  "head": {
+    "stylesheetLink": false,
+    "themeScriptBeforeStyleTag": true
+  },
+  "bootstrap": {
+    "previousSha256": "2be0c0a4f468079dc9bfc30b7326466070718e85dd84dd2cfd0aab7b77174f05",
+    "previousBytes": 648,
+    "sha256": "97383c82a81cd0222c55e36619f9649fb5f1db5d30811c469c974856352b487e",
+    "bytes": 719,
+    "why": "The IIFE now calls decideThemeAndLens through readBootTheme and assigns dataset.lens and dataset.theme from that object. The minifier keeps those two functions. The lens parse, storage keys, resolveTheme choice and dataset writes are the same, and the 160-combination bootstrap test passes."
+  },
+  "cases": [
+    { "id": "poster-default", "painted": ["rgb(247, 245, 238)"], "sha256": "89374da565adc3f580c41a4e178b4d138048f0125c06a2a9036cb355d6ce288b" },
+    { "id": "broadcast-dark-default", "painted": ["rgb(14, 28, 21)"], "sha256": "b11a75493c30fe05c5ca20a552312c659602b0143280e598f34c1670889abf3f" },
+    { "id": "broadcast-stored-light", "painted": ["rgb(247, 245, 238)"], "sha256": "89374da565adc3f580c41a4e178b4d138048f0125c06a2a9036cb355d6ce288b" },
+    { "id": "system-change", "painted": ["rgb(14, 28, 21)", "rgb(247, 245, 238)"], "sha256": "89374da565adc3f580c41a4e178b4d138048f0125c06a2a9036cb355d6ce288b" },
+    { "id": "blocked-storage", "painted": ["rgb(14, 28, 21)"], "sha256": "b11a75493c30fe05c5ca20a552312c659602b0143280e598f34c1670889abf3f" },
+    { "id": "reduced-motion", "painted": ["rgb(14, 28, 21)"], "sha256": "b11a75493c30fe05c5ca20a552312c659602b0143280e598f34c1670889abf3f" }
+  ]
+}

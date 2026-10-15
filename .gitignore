@@ -12,6 +12,7 @@ studio/cache/
 studio/output/
 # The unreleased sibling Next.js package owns these generated/local files.
 web/.next/
+web/generated/
 web/out/
 web/next-env.d.ts
 web/.env*

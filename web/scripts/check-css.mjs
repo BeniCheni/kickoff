@@ -17,7 +17,8 @@ function readCSS(dir) {
   return files.map(file => readFileSync(file, 'utf8')).join('\n')
 }
 const reader = readCSS(path.join(root, 'dist/assets'))
-const web = readCSS(path.join(root, 'web/.next/static'))
+const shellCss = path.join(root, 'web/generated/shell.css')
+const web = readFileSync(shellCss, 'utf8')
 assert.ok(web.includes('bada71'), 'web probe missing: scan check would be vacuous')
 assert.ok(!reader.includes('bada71'), 'web probe reached reader CSS')
 assert.ok(!reader.includes('fa11e0'), 'Studio probe reached reader CSS')

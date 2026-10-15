@@ -1,2 +1,7 @@
 @import 'tailwindcss' source(none);
 @source "./";
+
+/* Paint probe for the before-paint filmstrip. The real tokens replace this when the
+   shell stylesheet is shared. Values are the reader --bg light and dark. */
+body { background: #f7f5ee; }
+html[data-theme='dark'] body { background: #0e1c15; }
