@@ -17,6 +17,10 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
     <html lang="en" suppressHydrationWarning>
       <head>
         <script data-kickoff-theme="" dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <script dangerouslySetInnerHTML={{ __html: "document.write('<link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap\">')" }} />
         <style data-kickoff-shell="" dangerouslySetInnerHTML={{ __html: themeCss }} />
       </head>
       <body>
