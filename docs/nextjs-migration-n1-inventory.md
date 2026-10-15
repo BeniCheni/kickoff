@@ -116,9 +116,9 @@ for a reviewed public projection, not permission for the reader to query studio.
 
 Rows A3, A4, A5 and A7 cite a chain the archived D9 wording does not spell out.
 D9 defers those provenance rows at docs/design-cycle-moments-d9-spec.md:137
-("as D6 §3"). D6's spec is not archived in this repo. The words are in
-docs/design-cycle-moments-d5-spec.md: A3 at line 159, A4 at line 160, A5 at
-line 163, and A7 at line 165.
+("as D6 §3"). D6's §3 lists them at docs/design-cycle-moments-d6-spec.md:146,
+and the words first appear in docs/design-cycle-moments-d5-spec.md: A3 at line
+159, A4 at line 160, A5 at line 163, and A7 at line 165.
 
 The remaining provenance facts are present or derivable: generated_at; endpoint;
 pinned_on; nullable seed; prompt as submitted; attestation_summary; MIME, duration,
