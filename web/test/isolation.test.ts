@@ -10,4 +10,4 @@ test('web Vitest discovers only its own tests', () => {
   ], { cwd: root, encoding: 'utf8', timeout: 30_000 })) as { file: string }[]
   expect(listed.length).toBeGreaterThan(0)
   for (const { file } of listed) expect(path.relative(root, file)).toMatch(/^test[/\\]/)
-})
+}, 30_000)
