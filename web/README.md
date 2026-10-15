@@ -34,6 +34,10 @@ The newest TypeScript 6 patch, 6.0.3, is pinned here only. The root stays on 7.
 `node scripts/check-typescript-plugin.mjs` proves the actual Next plugin reports
 an invalid runtime export against an in-memory file; Next typegen/typecheck/build
 also pass. This resolves scaffold tooling only, not N2 hydration or pre-paint work.
+`scripts/check-typescript-plugin.mjs` imports Next's internal
+`next/dist/server/typescript`. Next is pinned exactly, so the internal path can
+move only in a PR that bumps Next, and that PR must re-prove U01. The check
+stays inside `typecheck`.
 
 Every direct dependency is MIT except TypeScript (Apache-2.0), verified from the
 installed packages. Exact versions are in package.json and package-lock.json.
@@ -43,9 +47,14 @@ Isolation checks live in the new root `tests/web-isolation.test.ts` and web's
 actual Vitest discovery in each package, and files selected by every project in
 the root TypeScript reference graph. `npm run check:client` requires a completed
 Next build and scans all `.next/static/**/*.js` for Studio/database markers.
-`node scripts/prove-isolation.mjs <evidence-directory>` demonstrates failing and
-passing assertions in disposable source/bundle copies, without editing the reader.
-The scanner does not claim to detect arbitrary obfuscated/computed module paths.
+`check:client` reads only the client JavaScript under `.next/static`. A value
+that a server component renders reaches readers through the prerendered HTML
+and RSC payloads under `.next/server`, which no N1 check reads. N4 owns that
+gap, through the plan's server-only data access and client sentinel (plan §2
+and §6). `node scripts/prove-isolation.mjs <evidence-directory>` demonstrates
+failing and passing assertions in disposable source/bundle copies, without
+editing the reader. The scanner does not claim to detect arbitrary
+obfuscated/computed module paths.
 
 From the repo root, `node web/scripts/probe-server-imports.mjs` imports eleven
 reader modules in fresh Node processes using the existing root tsx loader. One
