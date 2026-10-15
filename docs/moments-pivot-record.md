@@ -1,6 +1,6 @@
 # Moments — the pivot of 12 Oct 2026, Beni's rulings, and what they supersede
 
-Recorded by the PM seat (Claude Code, Opus 5.5) on Tue 13 Oct 2026 (TZ=America/New_York), from Beni's answers given first-hand to the PM seat on Mon 12 and Tue 13 Oct. This is the record later briefs start from. Where it conflicts with [moments-d5-build-plan.md](moments-d5-build-plan.md), the slice-4 spec or the Studio review, this record wins. It changes no code and names no version.
+Recorded by the PM seat (Claude Code, Opus 5.5) on Tue 13 Oct 2026 (TZ=America/New_York), from Beni's answers given first-hand to the PM seat on Mon 12 and Tue 13 Oct. This is the record later briefs start from. Where it conflicts with [moments-d5-build-plan.md](moments-d5-build-plan.md), the slice-4 spec or the Studio review, this record wins. It changes no code and names no version. Updated on Thu 15 Oct 2026: §2b records the design's later answers, and §4 to §6 are brought up to date.
 
 ## 1 · The pivot (Mon 12 Oct, evening)
 
@@ -28,7 +28,23 @@ Claude Design drew D6 for the pivot, and Codex gave it a Pass 1 cold review (12 
 | Q18 spoiler-light | **Remove** | | A-10 hidden tab | **Pause**: the countdown and automatic start stop while the tab is hidden |
 | | | | A-11 checks | **Preserve**: nothing reaches main without the required checks |
 
-The design is being revised to D7 against those findings and answers. Its records are archived when D7 settles.
+The design was then revised through D7, D8 and D9; §2b continues.
+
+## 2b · Designs D7 to D9, and Beni's answers (Tue 13 Oct)
+
+Codex's synthesis of D7 closed eight of D6's findings and found five places where D7 and the Studio build (#187) disagreed, D-59 to D-63. Beni answered them, and two questions after the D8 check, all as the PM seat recommended. On Q26, Codex had recommended the clip's first frame.
+
+| # | Answer |
+|---|---|
+| Q23 media addresses | **Stored**: the site reads each video's and thumbnail's bucket and object path from the record and never builds one. The keys are `<public id>/video-<sha8>.mp4` and `<public id>/thumbnail-<sha8>.jpg`, each with its content type set at upload |
+| Q24 the site's copy | **Nested**: `public/moments/thumbnails/<public id>.jpg` |
+| Q25 public ids | **Public**: the watch address and the copy's file name use the video's public id; asset and job UUIDs never appear publicly |
+| Q26 the thumbnail | **Keyframe**: K0, the keyframe the clip starts from |
+| Q27 Unpublish | **Withdraw**: one transaction withdraws the clip first, so it leaves the site at once. Deleting its files is a separate, optional step with its own retry, and the site's copy is removed by a pull request |
+| D-64 files a Publish never recorded | **Defer**: they stay in Storage, unlisted but readable by their stored addresses, until the next Publish reuses them. Deleting them without publishing arrives with the real Storage upload |
+| The last design fixes | **Touch-up**: a text-only D9 round rather than an errata note |
+
+The Studio side of Q23 to Q27 was built in #187's Pass 2. Claude Design drew D8 and then D9, and Codex found D9 ready as the design source for the Next.js build, with no open finding (fingerprint `0286a20b…78c0`). Its spec is [design-cycle-moments-d9-spec.md](design-cycle-moments-d9-spec.md); [README.md](README.md) lists the cycle's full record.
 
 ## 3 · The migration plan's answers (Tue 13 Oct)
 
@@ -53,19 +69,21 @@ Codex wrote the migration plan, [nextjs-migration-plan.md](nextjs-migration-plan
 - **The reader's old constraints.** K2 (the reader's runtime dependencies are only react, react-dom and zod) and K3 (nothing is fetched before Play) give way: the app gains a server and Drizzle, and thumbnails load with the gallery. The video file is still not requested until Play.
 - **D5.** Superseded where it meets the pivot: the YouTube notice and source line (A-01, A-08, B1, B3), the GitHub Releases rows (§10), the typographic covers as the main picture (they become the last fallback), and the Cinema overlay. The Generated badge, provenance (15.7), native controls (Q2), sound on at Play (Q5), the motion budget, the A-06 Article 50 gate and the global Privacy & terms link (A-07) stand.
 - **Slice 4.** S6a to S8, the YouTube edition, are cancelled. S4b's visits and the S5.5 content policy stand as history.
+- **D6 to D8.** Superseded by D9 wherever they differ. D7's fixed `moments/videos/<assetId>.mp4` paths, its `public/thumbs/` copy, its "first frame" thumbnail and its delete-before-withdraw order give way to Q23 to Q27.
 - **The D5 build plan.** [moments-d5-build-plan.md](moments-d5-build-plan.md) is superseded where it conflicts with this record; it carries a dated note saying so.
 - **Briefs that never ran.** The S6a brief and the first ST1 brief. ST1 was rebuilt from its second brief as draft PR #187.
 
-## 5 · Where the work stands (13 Oct)
+## 5 · Where the work stands (15 Oct)
 
 | Track | State |
 |---|---|
-| ST1, the Studio core | Draft PR #187: the Supabase schema with a public `catalog`, the publication gate in the database, and offline stubs. In review |
-| D6 → D7, the reader's design | D7 drawn against Codex's D6 findings and Beni's answers; its re-check is under way |
-| N0, the migration plan | Scored, and answered by Beni (§3). Slices N1 to N8 get their build briefs one at a time, after ST1 and D7 are accepted |
+| ST1, the Studio core | Merged as #187 (`ca78a5e`, 13 Oct): the Supabase schema with a public `catalog`, the publication gate in the database, and offline stubs. The real Storage upload and the real fallback pull request are later slices |
+| D6 → D9, the reader's design | Settled at D9 (§2b), accepted by Codex on 13 Oct |
+| N0, the migration plan | Scored, and answered by Beni (§3). ST1 and the design are accepted, so N1, the inert `web/` scaffold, is next. Slices N1 to N8 get their build briefs one at a time |
 
 ## 6 · Corrections the PM seat owes
 
 - **The direct push to main.** In D6's review the PM seat said a direct push from Beni's Mac would "likely be refused". Codex showed that main's ruleset lets the admin role bypass the required `verify`, so it would be *accepted without* `verify`. That is why Q19 is PR.
 - **ST1's views.** The N0 brief said the app's login reads `catalog.videos` only. ST1 correctly built a list view (`catalog.videos`) and a detail view (`catalog.video`), as its own brief asked. The plan's proposed single-view migration follows from the brief's error; it is withdrawn, and the app's login reads both public views and nothing in the `studio` schema.
 - **The double-click build.** The N0 brief said CLAUDE.md and the README describe the single-file build. They do not; CONTRIBUTING.md and vite.config.ts do. Codex caught it.
+- **ST1's storage keys.** The D8 brief described ST1's object keys as they were at `0831550`, without extensions. #187's Pass 2 added `.mp4` and `.jpg` the same afternoon, so D8 drew the old shape; D9 corrected it.
