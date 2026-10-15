@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { COMPETITION_KEYS } from '../src/lib/competitions'
-import { canonicalSearch, parseDateParam, parseOnlyParam } from '../src/lib/urlCodecs'
+import { canonicalSearch, parseDateParam, parseOnlyParam, searchParamsToQuery } from '../src/lib/urlCodecs'
 
 const TODAY = '2026-08-30'
 
@@ -17,6 +17,26 @@ describe('canonicalSearch — normalize the address without changing decoder sem
   })
   it('canonicalizes duplicate owned keys to the same first value the hook renders', () => {
     expect(canonicalSearch('?lens=ledger&lens=broadcast&only=pl,pl', TODAY)).toBe('?lens=ledger&only=pl')
+  })
+  it('keeps every owned key, watch, repeated unknowns, an empty only and would leave a fragment to the caller', () => {
+    const query = searchParamsToQuery([
+      ['tab', 'moments'],
+      ['lens', 'broadcast'],
+      ['view', 'month'],
+      ['date', '2026-09-12'],
+      ['only', ''],
+      ['league', 'pl'],
+      ['watch', 'clip-1'],
+      ['x', ['', '2']],
+    ])
+    expect(query.startsWith('?')).toBe(true)
+    expect(canonicalSearch(query, TODAY)).toBe('?tab=moments&lens=broadcast&view=month&date=2026-09-12&only=&league=pl&watch=clip-1&x=&x=2')
+    expect(canonicalSearch(query, TODAY) + '#note').toBe('?tab=moments&lens=broadcast&view=month&date=2026-09-12&only=&league=pl&watch=clip-1&x=&x=2#note')
+  })
+
+  it('keeps an old pinned date when today rolls onto a later day', () => {
+    expect(canonicalSearch('?date=2026-09-12', '2026-09-12')).toBe('')
+    expect(canonicalSearch('?date=2026-09-12', '2026-09-14')).toBe('?date=2026-09-12')
   })
   it('is idempotent across defaults, junk, filters and all nondefault views', () => {
     for (const search of ['', '?lens=ledger&tab=table&league=pl&view=month', '?only=garbage', '?only=', '?date=2026-13-45&ref=a+b']) {

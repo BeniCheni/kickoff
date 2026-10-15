@@ -1,4 +1,15 @@
-import { useCallback, useEffect, useEffectEvent, useState } from 'react'
+import { createContext, createElement, useCallback, useContext, useEffect, useEffectEvent, useRef, useState, type ReactNode } from 'react'
+import { canonicalSearch } from './urlCodecs'
+
+/**
+ * The request's search string, when a server render supplies one. Absent on the Vite
+ * app, which keeps reading `window.location`.
+ */
+export const SearchContext = createContext<string | null>(null)
+
+export function SearchProvider({ search, children }: { search: string; children: ReactNode }) {
+  return createElement(SearchContext.Provider, { value: search }, children)
+}
 
 /**
  * View state lives in the URL query string so a view survives a reload and can be sent to
@@ -16,8 +27,10 @@ export function useUrlState<T>(
   decode: (s: string) => T,
   history: 'replace' | 'push' = 'replace',
 ): [T, (v: T) => void] {
+  const provided = useContext(SearchContext)
   const [value, setValue] = useState<T>(() => {
-    const raw = new URLSearchParams(window.location.search).get(key)
+    const search = provided ?? (typeof window === 'undefined' ? '' : window.location.search)
+    const raw = new URLSearchParams(search).get(key)
     if (raw === null) return initial
     try {
       return decode(raw)
@@ -61,4 +74,18 @@ export function useUrlState<T>(
   }, [key])
 
   return [value, set]
+}
+
+/** Once per load, as App has always done. A later tick must not unpin a date that has
+ *  become today. The fragment is kept. */
+export function useCanonicalSearch(today: string) {
+  const normalized = useRef(false)
+  useEffect(() => {
+    if (normalized.current) return
+    normalized.current = true
+    const search = canonicalSearch(window.location.search, today)
+    if (search !== window.location.search) {
+      window.history.replaceState(window.history.state, '', window.location.pathname + search + window.location.hash)
+    }
+  }, [today])
 }

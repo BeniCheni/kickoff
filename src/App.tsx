@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useNow } from './lib/useNow'
 import { META, SYNC_STAMP } from './lib/fixtures'
-import { useUrlState } from './lib/useUrlState'
-import { canonicalSearch, encodeTab, parseTab } from './lib/urlCodecs'
+import { useUrlState, useCanonicalSearch } from './lib/useUrlState'
+import { encodeTab, parseTab } from './lib/urlCodecs'
 import { DEFAULT_LENS, encodeLens, parseLens, type Lens } from './lib/lens'
 import { readStoredTheme, resolveThemeFromEnvironment, themeStorageKey, writeStoredTheme, type Theme } from './lib/theme'
 import { TabNav, type Tab } from './components/TabNav'
@@ -53,15 +53,7 @@ export default function App({ momentsEdition = MOMENTS, momentsStorage, momentsR
   // The lens is a view preference, not navigation — replace history, default omitted.
   const [lens, setLens] = useUrlState<Lens>('lens', DEFAULT_LENS, encodeLens, parseLens, 'replace')
 
-  const normalized = useRef(false)
-  useEffect(() => {
-    if (normalized.current) return
-    normalized.current = true
-    const search = canonicalSearch(window.location.search, today)
-    if (search !== window.location.search) {
-      window.history.replaceState(window.history.state, '', window.location.pathname + search + window.location.hash)
-    }
-  }, [today])
+  useCanonicalSearch(today)
 
   const prevLens = useRef<Lens | null>(null)
   const fadeTimer = useRef<number | undefined>(undefined)
