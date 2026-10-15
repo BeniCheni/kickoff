@@ -23,10 +23,37 @@ web probe must be present in web and absent from the reader; reader utility
 selectors and selected archived-doc selectors must be absent from web.
 
 Versions checked 2026-10-15: Next 16.4.1 is the registry's stable release on the
-[16.x Active LTS line](https://nextjs.org/support-policy). React/React DOM 19.3.1
-satisfy Next's `^19.0.0` peer range and the reader's `^19.2.8` range; the reader's
-lockfile is unchanged. Tailwind/PostCSS integration is 4.3.3; Vitest 4.1.11 matches
-the reader's runner. Node engines mirror the root; local checks use Node 24.15.0.
+[16.x Active LTS line](https://nextjs.org/support-policy). React and React DOM are
+pinned to **19.2.8**, the version the root lock resolves. The root lock does not
+change in N2, so the live app's React does not change. Tailwind/PostCSS
+integration is 4.3.3; Vitest 4.1.11 matches the reader's runner. Node engines
+mirror the root; local checks use Node 24.15.0.
+
+One React, checked 2026-10-15. Turbopack's root is the repo root, widened from
+N1's `web/` only far enough to compile shared modules in `../src`. It is not set
+any higher. Aliases in `react-resolution.mjs` send every `react`, `react-dom`
+and `react/jsx-runtime` import, including those from `../src`, to
+`web/node_modules`. The file tracer still notices the repo lock's
+`react/package.json` when the importer lives under `../src`; that one manifest
+is excluded. The JavaScript that runs is not that copy.
+
+The App Router **client** ships Next's vendored React, not web's installed copy.
+`npm run build` ends in `node scripts/check-one-react.mjs`, which reads
+`.next/static`. On this build the only `.version` export is
+`19.3.0-canary-278794d7-20261002` (Next 16.4.1's compiled React). `19.2.8` does
+not appear in the client chunks. The probe's `useRef` binds to that vendored
+module. The server trace's React package is `web/node_modules/react` at 19.2.8,
+loaded through Next's `vendored['react-ssr']` entry. Vitest aliases the same
+web copy, and rendering `LensSwitcher` from `../src` fails if a second React is
+the one calling hooks. `node scripts/prove-one-react.mjs` shows a copied React
+package and a second client version fail, then the built client passes.
+
+web/ may import from `../src` only the modules in `src-allowlist.mjs`. The list
+is the ceiling: shell components, the lib modules they need, the theme decision
+and the DOM rig. It does not include `src/main.tsx`, `src/App.tsx`, a Moments
+session, player or YouTube module, or anything under `studio/`.
+`node scripts/prove-allowlist.mjs` fails a disposable `src/App.tsx` import and
+passes the real tree. src/ never imports web/; web/ never imports studio/.
 
 U01: Next 16.4.1 builds with TypeScript 7.0.2 through its CLI checker, but TypeScript
 7 lacks the JavaScript compiler API used by Next's language-service plugin.

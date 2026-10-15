@@ -10,15 +10,15 @@
     "dev": "NEXT_TELEMETRY_DISABLED=1 next dev",
     "typecheck": "NEXT_TELEMETRY_DISABLED=1 next typegen && tsc --noEmit && node scripts/check-typescript-plugin.mjs",
     "test": "vitest run",
-    "build": "NEXT_TELEMETRY_DISABLED=1 next build",
+    "build": "NEXT_TELEMETRY_DISABLED=1 next build && node scripts/check-one-react.mjs",
     "start": "NEXT_TELEMETRY_DISABLED=1 next start",
     "check:css": "node scripts/check-css.mjs",
     "check:client": "node scripts/check-client.mjs"
   },
   "dependencies": {
     "next": "16.4.1",
-    "react": "19.3.1",
-    "react-dom": "19.3.1"
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.3.3",
