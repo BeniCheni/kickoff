@@ -114,6 +114,12 @@ for a reviewed public projection, not permission for the reader to query studio.
 | A6 | Auditable K0/recipe statement and actual thumbnail file metadata | Append thumbnail_source, thumbnail_recipe_version, thumbnail_mime, thumbnail_bytes, thumbnail_width and thumbnail_height to V; add thumbnail_width/height to L if Q22 validation cannot guarantee equality with the clip. Metadata comes from the actual thumbnail asset; source/recipe need an explicit validated publication snapshot. The current pipeline copies K0 bytes/hash/MIME but does not store a recipe version or prove the rendered first frame. Measure/validate K0 and clip dimensions before promising equality |
 | A7 | “AAC stereo, generated with the picture” | Append audio_codec, audio_channels and soundtrack_origin to V only after storing actual media inspection and generation provenance. These fields are absent even from today's asset table; additive backing metadata is a prerequisite, not something a view expression can invent. Video MIME and the model name cannot prove them |
 
+Rows A3, A4, A5 and A7 cite a chain the archived D9 wording does not spell out.
+D9 defers those provenance rows at docs/design-cycle-moments-d9-spec.md:137
+("as D6 §3"). D6's spec is not archived in this repo. The words are in
+docs/design-cycle-moments-d5-spec.md: A3 at line 159, A4 at line 160, A5 at
+line 163, and A7 at line 165.
+
 The remaining provenance facts are present or derivable: generated_at; endpoint;
 pinned_on; nullable seed; prompt as submitted; attestation_summary; MIME, duration,
 dimensions, bytes and digest; stored video/thumbnail coordinates. The summary carries
@@ -272,6 +278,12 @@ configuration. All direct packages are pinned exactly in web/package.json.
 | Tailwind and its PostCSS plugin | 4.3.3 / 4.3.3 | [Next integration](https://tailwindcss.com/docs/installation/framework-guides/nextjs), [explicit sources](https://tailwindcss.com/docs/detecting-classes-in-source-files); PostCSS 8.5.30 |
 | Node | local 24.15.0; CI 24 | [Release lines](https://nodejs.org/en/about/previous-releases). Engines copied exactly from root: ^22.22.2 or ^24.15.0 or >=26.0.0; no independent lower floor |
 | Vitest | 4.1.11 | Same runner as root; independent config and explicit test directory |
+
+Before N2 shares any src/ module into web/, N2 must settle one React version in
+both lockfiles (the root lock resolves react and react-dom 19.2.8 while web/
+pins 19.3.1, and the root's ^19.2.8 already admits 19.3.1), one resolution for
+shared code, and a test that the built client carries one React; N1 decides
+none of this.
 
 The fallback from TS7 satisfies U01's **build or type-plugin** compatibility rule.
 Both the Next CLI build/typegen and the in-memory editor-plugin diagnostic were
