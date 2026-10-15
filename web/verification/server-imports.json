@@ -1,0 +1,282 @@
+{
+  "node": "24.15.0",
+  "globals": [
+    "window",
+    "document",
+    "localStorage",
+    "navigator"
+  ],
+  "rows": [
+    {
+      "module": "src/lib/urlCodecs.ts",
+      "plain": {
+        "imported": true,
+        "error": null,
+        "touches": []
+      },
+      "trace": {
+        "imported": true,
+        "error": null,
+        "touches": []
+      }
+    },
+    {
+      "module": "src/lib/lens.ts",
+      "plain": {
+        "imported": true,
+        "error": null,
+        "touches": []
+      },
+      "trace": {
+        "imported": true,
+        "error": null,
+        "touches": []
+      }
+    },
+    {
+      "module": "src/lib/theme.ts",
+      "plain": {
+        "imported": true,
+        "error": null,
+        "touches": []
+      },
+      "trace": {
+        "imported": true,
+        "error": null,
+        "touches": []
+      }
+    },
+    {
+      "module": "src/lib/time.ts",
+      "plain": {
+        "imported": true,
+        "error": null,
+        "touches": []
+      },
+      "trace": {
+        "imported": true,
+        "error": null,
+        "touches": []
+      }
+    },
+    {
+      "module": "src/lib/clock.ts",
+      "plain": {
+        "imported": true,
+        "error": null,
+        "touches": []
+      },
+      "trace": {
+        "imported": true,
+        "error": null,
+        "touches": []
+      }
+    },
+    {
+      "module": "src/lib/useNow.ts",
+      "plain": {
+        "imported": true,
+        "error": null,
+        "touches": []
+      },
+      "trace": {
+        "imported": true,
+        "error": null,
+        "touches": []
+      }
+    },
+    {
+      "module": "src/lib/fixtures.ts",
+      "plain": {
+        "imported": true,
+        "error": null,
+        "touches": []
+      },
+      "trace": {
+        "imported": true,
+        "error": null,
+        "touches": [
+          {
+            "global": "navigator",
+            "file": "node_modules/zod/v4/core/util.js",
+            "line": 152,
+            "source": "if (typeof navigator !== \"undefined\" && navigator?.userAgent?.includes(\"Cloudflare\")) {",
+            "readerCaller": {
+              "file": "src/lib/schema.ts",
+              "line": 14,
+              "source": "export const teamSchema = z.object({"
+            }
+          },
+          {
+            "global": "navigator",
+            "file": "node_modules/zod/v4/core/util.js",
+            "line": 152,
+            "source": "if (typeof navigator !== \"undefined\" && navigator?.userAgent?.includes(\"Cloudflare\")) {",
+            "readerCaller": {
+              "file": "src/lib/schema.ts",
+              "line": 14,
+              "source": "export const teamSchema = z.object({"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "module": "src/lib/standings.ts",
+      "plain": {
+        "imported": true,
+        "error": null,
+        "touches": []
+      },
+      "trace": {
+        "imported": true,
+        "error": null,
+        "touches": [
+          {
+            "global": "navigator",
+            "file": "node_modules/zod/v4/core/util.js",
+            "line": 152,
+            "source": "if (typeof navigator !== \"undefined\" && navigator?.userAgent?.includes(\"Cloudflare\")) {",
+            "readerCaller": {
+              "file": "src/lib/schema.ts",
+              "line": 14,
+              "source": "export const teamSchema = z.object({"
+            }
+          },
+          {
+            "global": "navigator",
+            "file": "node_modules/zod/v4/core/util.js",
+            "line": 152,
+            "source": "if (typeof navigator !== \"undefined\" && navigator?.userAgent?.includes(\"Cloudflare\")) {",
+            "readerCaller": {
+              "file": "src/lib/schema.ts",
+              "line": 14,
+              "source": "export const teamSchema = z.object({"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "module": "src/lib/competitions.ts",
+      "plain": {
+        "imported": true,
+        "error": null,
+        "touches": []
+      },
+      "trace": {
+        "imported": true,
+        "error": null,
+        "touches": []
+      }
+    },
+    {
+      "module": "src/lib/schema.ts",
+      "plain": {
+        "imported": true,
+        "error": null,
+        "touches": []
+      },
+      "trace": {
+        "imported": true,
+        "error": null,
+        "touches": [
+          {
+            "global": "navigator",
+            "file": "node_modules/zod/v4/core/util.js",
+            "line": 152,
+            "source": "if (typeof navigator !== \"undefined\" && navigator?.userAgent?.includes(\"Cloudflare\")) {",
+            "readerCaller": {
+              "file": "src/lib/schema.ts",
+              "line": 14,
+              "source": "export const teamSchema = z.object({"
+            }
+          },
+          {
+            "global": "navigator",
+            "file": "node_modules/zod/v4/core/util.js",
+            "line": 152,
+            "source": "if (typeof navigator !== \"undefined\" && navigator?.userAgent?.includes(\"Cloudflare\")) {",
+            "readerCaller": {
+              "file": "src/lib/schema.ts",
+              "line": 14,
+              "source": "export const teamSchema = z.object({"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "module": "src/themeBoot.ts",
+      "plain": {
+        "imported": false,
+        "error": {
+          "name": "ReferenceError",
+          "message": "window is not defined"
+        },
+        "touches": []
+      },
+      "trace": {
+        "imported": true,
+        "error": null,
+        "touches": [
+          {
+            "global": "window",
+            "file": "src/themeBoot.ts",
+            "line": 6,
+            "source": "const lens = parseLens(new URLSearchParams(window.location.search).get('lens'))",
+            "readerCaller": {
+              "file": "src/themeBoot.ts",
+              "line": 6,
+              "source": "const lens = parseLens(new URLSearchParams(window.location.search).get('lens'))"
+            }
+          },
+          {
+            "global": "document",
+            "file": "src/themeBoot.ts",
+            "line": 7,
+            "source": "document.documentElement.dataset.lens = lens",
+            "readerCaller": {
+              "file": "src/themeBoot.ts",
+              "line": 7,
+              "source": "document.documentElement.dataset.lens = lens"
+            }
+          },
+          {
+            "global": "document",
+            "file": "src/themeBoot.ts",
+            "line": 8,
+            "source": "document.documentElement.dataset.theme = resolveThemeFromEnvironment(lens)",
+            "readerCaller": {
+              "file": "src/themeBoot.ts",
+              "line": 8,
+              "source": "document.documentElement.dataset.theme = resolveThemeFromEnvironment(lens)"
+            }
+          },
+          {
+            "global": "localStorage",
+            "file": "src/lib/theme.ts",
+            "line": 50,
+            "source": "return parseTheme(env.localStorage?.getItem(key) ?? null)",
+            "readerCaller": {
+              "file": "src/lib/theme.ts",
+              "line": 50,
+              "source": "return parseTheme(env.localStorage?.getItem(key) ?? null)"
+            }
+          },
+          {
+            "global": "localStorage",
+            "file": "src/lib/theme.ts",
+            "line": 50,
+            "source": "return parseTheme(env.localStorage?.getItem(key) ?? null)",
+            "readerCaller": {
+              "file": "src/lib/theme.ts",
+              "line": 50,
+              "source": "return parseTheme(env.localStorage?.getItem(key) ?? null)"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

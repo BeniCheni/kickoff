@@ -10,3 +10,9 @@ studio/.env
 studio/.env.*
 studio/cache/
 studio/output/
+# The unreleased sibling Next.js package owns these generated/local files.
+web/.next/
+web/out/
+web/next-env.d.ts
+web/.env*
+web/.vercel/

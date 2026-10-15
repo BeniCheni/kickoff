@@ -1,0 +1,66 @@
+{
+  "identical": true,
+  "files": 12,
+  "manifest": [
+    {
+      "file": "dist/assets/index-DNFlpoCc.css",
+      "bytes": 39043,
+      "sha256": "a3e896cd54a93d13e5c18df3b653cfa48b02bc33f1588c8b790031a0c3949a5f"
+    },
+    {
+      "file": "dist/assets/index-mGfR7jWP.js",
+      "bytes": 1040071,
+      "sha256": "54efa164b9183f2a6266726dd4b9ff8c2881e709486a9a5e523694bd6f766475"
+    },
+    {
+      "file": "dist/favicon-192.png",
+      "bytes": 1706,
+      "sha256": "4308e7ecd71fc2b2f693631dd495d6ff3959705b08a0fd6e78c4226204ffacec"
+    },
+    {
+      "file": "dist/favicon-32.png",
+      "bytes": 248,
+      "sha256": "7029b21dccbb0090b5905c82f8135f0eea68987602e512076b4b9e3c7186cd4c"
+    },
+    {
+      "file": "dist/favicon-512.png",
+      "bytes": 10030,
+      "sha256": "832162dda57344b5bf62bb0070a07ff1a2907057ed4059f7097f07d369fb7008"
+    },
+    {
+      "file": "dist/favicon-64.png",
+      "bytes": 965,
+      "sha256": "4372588d93f02f6dbae63197a59e7ae6f2fd92264241a5eb20fc568de8cd4239"
+    },
+    {
+      "file": "dist/index.html",
+      "bytes": 1751,
+      "sha256": "52372de76be52bfa5d799524d384ed201622697756b38910b9136acf328e78dd"
+    },
+    {
+      "file": "dist-single/favicon-192.png",
+      "bytes": 1706,
+      "sha256": "4308e7ecd71fc2b2f693631dd495d6ff3959705b08a0fd6e78c4226204ffacec"
+    },
+    {
+      "file": "dist-single/favicon-32.png",
+      "bytes": 248,
+      "sha256": "7029b21dccbb0090b5905c82f8135f0eea68987602e512076b4b9e3c7186cd4c"
+    },
+    {
+      "file": "dist-single/favicon-512.png",
+      "bytes": 10030,
+      "sha256": "832162dda57344b5bf62bb0070a07ff1a2907057ed4059f7097f07d369fb7008"
+    },
+    {
+      "file": "dist-single/favicon-64.png",
+      "bytes": 965,
+      "sha256": "4372588d93f02f6dbae63197a59e7ae6f2fd92264241a5eb20fc568de8cd4239"
+    },
+    {
+      "file": "dist-single/index.html",
+      "bytes": 1080818,
+      "sha256": "f8b8d59095ecc218bb1eea6f74a9adf2e4ecbeebd8f3bbbb0b3782c7af356daf"
+    }
+  ]
+}
