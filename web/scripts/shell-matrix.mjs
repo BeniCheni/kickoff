@@ -93,13 +93,16 @@ try {
           placeholder: document.body.innerText.includes('Not ported yet (N3)'),
         }
       })
+      const buttonHandle = await page.$('header button')
+      const ax = buttonHandle ? await page.accessibility.snapshot({ root: buttonHandle }) : null
+      measured.themeName = ax?.name ?? ''
       const shot = await page.screenshot({ type: 'png' })
       const file = path.join(outDir, `${name}-${id}.png`)
       writeFileSync(file, shot)
       pair[name] = { ...measured, logs, sha256: createHash('sha256').update(shot).digest('hex') }
       await context.close()
     }
-    const keys = ['scrollEqual', 'theme', 'lens', 'header', 'wordmark', 'nav', 'lensBox', 'themeButton', 'themeLabel', 'banner']
+    const keys = ['scrollEqual', 'theme', 'lens', 'header', 'wordmark', 'nav', 'lensBox', 'themeButton', 'themeLabel', 'themeName', 'banner']
     const diffs = []
     for (const key of keys) {
       if (JSON.stringify(pair.vite[key]) !== JSON.stringify(pair.next[key])) diffs.push(key)
@@ -114,6 +117,7 @@ try {
   await browser.close()
 }
 const summary = {
+  compares: 'Next production shell against the Vite app at the same tip. 72 cells: 3 tabs × 3 lenses × 2 themes × 360, 375, 390 and 1000. Compared: header, tab row, lens switcher, theme button geometry, the theme button accessible name, banner, moments empty markup, theme, lens, and scrollWidth === innerWidth. Fixtures and Table bodies are placeholders and are not compared.',
   frozen,
   cells: rows.length,
   differing: rows.filter(row => row.diffs.length).map(row => ({ id: row.id, diffs: row.diffs })),

@@ -1,4 +1,6 @@
 {
+  "compares": "Next production server at http://127.0.0.1:5184 against Vite preview of dist/ built from 66078d43acc269a8e051f0ea6324806517737dfb on http://127.0.0.1:5182. 72 cells: 3 tabs \u00d7 3 lenses \u00d7 2 themes \u00d7 360, 375, 390 and 1000. Date frozen at 2026-10-15T20:00:00.000Z. Both theme keys stubbed. Viewport set before navigation. Compared: header, tab row, lens switcher, theme button geometry, the theme button's accessible name, banner presence, Moments empty markup, theme, lens, and scrollWidth === innerWidth. Fixtures and Table bodies are placeholders and are not compared.",
+  "tip": "66078d43acc269a8e051f0ea6324806517737dfb",
   "frozenUtc": "2026-10-15T20:00:00.000Z",
   "cells": 72,
   "differing": [],
@@ -134,7 +136,7 @@
     },
     {
       "file": "vite-fixtures-broadcast-light-360.png",
-      "sha256": "e784deffc0d351dd90424e17b975fb19942722e0a7cb6cd880e4e674f05dc54d"
+      "sha256": "332733af6244b9eb2b56934bb08aa4800364cb6df1589f432d9fa622f6dd8252"
     },
     {
       "file": "next-fixtures-broadcast-light-360.png",
@@ -142,7 +144,7 @@
     },
     {
       "file": "vite-fixtures-broadcast-light-375.png",
-      "sha256": "9b8b5f4268d962735cf92998bc864cc74f264044ceb9937997c17e016a9ac721"
+      "sha256": "9976e6444de92ca69002b3411e79fa7976fb722fe12b7b8d9d496a943a0ea8b0"
     },
     {
       "file": "next-fixtures-broadcast-light-375.png",
@@ -150,15 +152,15 @@
     },
     {
       "file": "vite-fixtures-broadcast-light-390.png",
-      "sha256": "55fd69e5d3962f77f839ac01714541ffeb04415ac78137a34133bf2c7b7968ff"
+      "sha256": "1d107359d24c39bec52fb3eddfb1eb92661e095698c48697b2ff873336883c09"
     },
     {
       "file": "next-fixtures-broadcast-light-390.png",
-      "sha256": "d3f432c44be5a22af977c7ddda844cc7ea14d7d91e4e9ba635c0c1f862da46bd"
+      "sha256": "7421cd20ea20414d84a17d1e8c596e85a847397b21a35930aa24ac67e1aa19ed"
     },
     {
       "file": "vite-fixtures-broadcast-light-1000.png",
-      "sha256": "0de4442f7af67ab2bbd7c684bde429364f66d2dd6b878db5d22ed2c4ab7df2b5"
+      "sha256": "b72a65d6165dd3929e9feb89ef0759fd2a46d9c7451bc8c99dd6214746f6659d"
     },
     {
       "file": "next-fixtures-broadcast-light-1000.png",
@@ -166,7 +168,7 @@
     },
     {
       "file": "vite-fixtures-broadcast-dark-360.png",
-      "sha256": "4ed7f1138d0ba622122e8fcbecd07628ff3cd25c3c2d4423456bc02b99b72aa1"
+      "sha256": "c02ee6c4e37a89141d9ffb495743850ebc1846386a541b0ad114b2d589d67715"
     },
     {
       "file": "next-fixtures-broadcast-dark-360.png",
@@ -174,7 +176,7 @@
     },
     {
       "file": "vite-fixtures-broadcast-dark-375.png",
-      "sha256": "a02bf1dce0aa5f5f2d875f4c591daeec2086c9fd9d05eddbb3530af1dfaa12ad"
+      "sha256": "d6ebfec823eae13edd88939201d817cbba3e98e29410e88dbcb0680598cd067a"
     },
     {
       "file": "next-fixtures-broadcast-dark-375.png",
@@ -182,7 +184,7 @@
     },
     {
       "file": "vite-fixtures-broadcast-dark-390.png",
-      "sha256": "8f7bb05c70c525f0680381dba6aa8fec00777efd44c033e31d76470292ff9417"
+      "sha256": "787a39f3dda87f8aa3b181665e64476f16c410a9f3f3149dfa81b925101e4bcf"
     },
     {
       "file": "next-fixtures-broadcast-dark-390.png",
@@ -190,7 +192,7 @@
     },
     {
       "file": "vite-fixtures-broadcast-dark-1000.png",
-      "sha256": "ae661d60ffde827e762c687327c1543fa407715ff51433e399c9a716f13c59ac"
+      "sha256": "440aa1bcb4d20a98792125d57e6b8450a3e76ef043d73e8d53df69c04320e0f7"
     },
     {
       "file": "next-fixtures-broadcast-dark-1000.png",
@@ -198,7 +200,7 @@
     },
     {
       "file": "vite-table-ledger-light-360.png",
-      "sha256": "d584b415e37778affc681f06e03c4a9cb5fbcf36776c85ff093f52917e9275e1"
+      "sha256": "6978179f07d048ddba2f93cf2ba7a23a21500ec6c9d8953de08f012e28e63ab0"
     },
     {
       "file": "next-table-ledger-light-360.png",
@@ -230,7 +232,7 @@
     },
     {
       "file": "vite-table-ledger-dark-360.png",
-      "sha256": "ed9965ec64c5950cb0b13c050b4d992f203d808a7cf61d1c789a0f62ff198ea0"
+      "sha256": "46c23960f8ca78bcca6f483dd798c1b318fc5210b09c672419663cc1c1a567d9"
     },
     {
       "file": "next-table-ledger-dark-360.png",
@@ -238,7 +240,7 @@
     },
     {
       "file": "vite-table-ledger-dark-375.png",
-      "sha256": "d58a8d2e4111c2cfc244dfc38c78098e2789773c92b491990feb57ea7042311c"
+      "sha256": "b902771583fc0d092f2d79d3247555b492012360fce00a66146fd140e956b9dd"
     },
     {
       "file": "next-table-ledger-dark-375.png",
@@ -246,7 +248,7 @@
     },
     {
       "file": "vite-table-ledger-dark-390.png",
-      "sha256": "e1b22da6714c551e7785e0b3099574ccc3abf3a79a2edb5c54deba0c892c6735"
+      "sha256": "c29609b9a31da52125d82be1514c21bd32cd39f45d8d0fc09dc5fc32264a9728"
     },
     {
       "file": "next-table-ledger-dark-390.png",
@@ -278,7 +280,7 @@
     },
     {
       "file": "vite-table-poster-light-390.png",
-      "sha256": "b44fb35086c0a052d02675b65902012af72611898abacdd4d4e106f22ac076cc"
+      "sha256": "1a34cccfc17194b60ecc4587f75a4af3228fe568147f66e52a8300ceb3ced75f"
     },
     {
       "file": "next-table-poster-light-390.png",
@@ -286,7 +288,7 @@
     },
     {
       "file": "vite-table-poster-light-1000.png",
-      "sha256": "bbff78be9bb0e199432fff2162b86dc64f3a189b723879a5c9d2152799dc02db"
+      "sha256": "8cb3c8eb4eaf4ea26e837e6e6aa571cb956907063e6013050927c1ca1d78632a"
     },
     {
       "file": "next-table-poster-light-1000.png",
@@ -294,7 +296,7 @@
     },
     {
       "file": "vite-table-poster-dark-360.png",
-      "sha256": "23ecd5cbb259692b6eefc0eb36ed849ef12e9aef52babdc92a94934c1397b48f"
+      "sha256": "12150ef493b34dd9965a11b4c946e0b9a708d29dd89348dce556dfc18255efb9"
     },
     {
       "file": "next-table-poster-dark-360.png",
@@ -302,7 +304,7 @@
     },
     {
       "file": "vite-table-poster-dark-375.png",
-      "sha256": "59abbcbb8be7a03ac305575c3567024c89fc92801ccf81e0a1082e88598e523e"
+      "sha256": "99310a2fd2f3164269c8b56c7e974929d8606f0b2bad412cb4edb20c49542d2e"
     },
     {
       "file": "next-table-poster-dark-375.png",
@@ -310,7 +312,7 @@
     },
     {
       "file": "vite-table-poster-dark-390.png",
-      "sha256": "a8ef739aac0c5896f2ad3682c59f66a7489830b8e8930b3bd920dfdd2108b7eb"
+      "sha256": "05f0669c5c93fe5f9aff72233dfeb825ebc9a96bd176f455cf6c809035241bfc"
     },
     {
       "file": "next-table-poster-dark-390.png",
@@ -346,7 +348,7 @@
     },
     {
       "file": "next-table-broadcast-light-390.png",
-      "sha256": "357c2d8d7291774acff89652ea4170f6b6e37cfffe4ef23b7431d4b5520af574"
+      "sha256": "607a9c0a407ab2fabf41f39d16df4b526122029245f6fb04fed714a7421fde1b"
     },
     {
       "file": "vite-table-broadcast-light-1000.png",
@@ -358,7 +360,7 @@
     },
     {
       "file": "vite-table-broadcast-dark-360.png",
-      "sha256": "48d4ba8a10a04653092549af148bd0e548b1bbbf50808bcda80922be190f6648"
+      "sha256": "0a12e193063cd1675c00d9e93472d8062b780080a34cea0881412d56ecb08405"
     },
     {
       "file": "next-table-broadcast-dark-360.png",
@@ -366,7 +368,7 @@
     },
     {
       "file": "vite-table-broadcast-dark-375.png",
-      "sha256": "31f7e84706ac89dc0289415a6e70fb962b9dee2e6f06ab3c1d16dde099dfbf81"
+      "sha256": "11124197e9738a9d643f6a7d9e83278ea8c6e492354c251a6d5eb034c0687716"
     },
     {
       "file": "next-table-broadcast-dark-375.png",
@@ -374,7 +376,7 @@
     },
     {
       "file": "vite-table-broadcast-dark-390.png",
-      "sha256": "fa9d841eaa95cdaa3456c46870a9b5ff38fbd92e71c7e040d3c0ec2aec7ede9d"
+      "sha256": "295e1e26352b414eb8e4fe9b0a1eb64f7f051f6a9c60e2b87c9b928e68ecb3be"
     },
     {
       "file": "next-table-broadcast-dark-390.png",
@@ -580,21 +582,5 @@
       "file": "next-moments-broadcast-dark-1000.png",
       "sha256": "862d19a789ab827b97632f1f3e60e3a2c151d8aceba4576e38a5678cf40580fd"
     }
-  ],
-  "readerStylesheet": {
-    "file": "dist/assets/index-DNFlpoCc.css",
-    "bytes": 39043,
-    "sha256": "a3e896cd54a93d13e5c18df3b653cfa48b02bc33f1588c8b790031a0c3949a5f",
-    "sameAsBase": true
-  },
-  "readerJavaScript": {
-    "base": "dist/assets/index-DdM8Fqh4.js",
-    "tip": "dist/assets/index-66j4q84h.js",
-    "why": "Shared clock, URL and theme modules changed. The stylesheet bytes did not."
-  },
-  "offline": {
-    "baseBytes": 1081304,
-    "tipBytes": 1081845,
-    "fileUrl": "opened fixtures and Table from file:// with no page error"
-  }
+  ]
 }
