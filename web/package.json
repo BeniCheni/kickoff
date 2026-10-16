@@ -17,12 +17,12 @@
   },
   "dependencies": {
     "next": "16.4.1",
-    "puppeteer-core": "24.23.0",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.3.3",
+    "puppeteer-core": "24.23.0",
     "@types/node": "24.19.2",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
