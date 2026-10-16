@@ -743,7 +743,7 @@
       "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=broadcast"
     }
   ],
-  "note": "First pass: 70 of 72 cells matched. fixtures-ledger-light-375 and table-broadcast-light-390 differed only by 0.1px on box edges (same elements; text, tokens, focus, history and scroll were not in the diff). A second pass of those two matched. The Broadcast ticker was paused before measurement.",
+  "note": "First pass: 70 of 72 cells matched. fixtures-ledger-light-375 and table-broadcast-light-390 differed only by 0.1px on box edges (same elements; text, tokens, focus, history and scroll were not in the diff). A second pass of those two matched. The Broadcast ticker was paused before measurement. The receipt measured ac4965f's dist/, and later commits changed no app input; the tip's dist/ is byte-identical to it.",
   "rerun": {
     "cells": [
       "fixtures-ledger-light-375",
