@@ -5,7 +5,7 @@ import path from 'node:path'
 import puppeteer from 'puppeteer-core'
 
 const chrome = process.env.CHROME_PATH ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
-const fileUrl = process.env.KICKOFF_OFFLINE_FILE ?? 'file:///Users/benicheni/kickoff-n3-cursor/dist-offline/index.html'
+const fileUrl = process.env.KICKOFF_OFFLINE_FILE ?? new URL('../../dist-offline/index.html', import.meta.url).href
 const outDir = path.resolve(process.argv[2] ?? '/tmp/kickoff-n3-offline')
 const frozen = '2026-10-15T20:00:00.000Z'
 mkdirSync(outDir, { recursive: true })
@@ -67,10 +67,9 @@ async function open(browser, search, theme, width, options = {}) {
     momentsButton: [...document.querySelectorAll('nav[aria-label="Primary"] button')].some(element => element.textContent === 'Moments'),
     activeTab: document.querySelector('nav[aria-label="Primary"] button[aria-current="page"]')?.textContent ?? '',
     text: (document.body.innerText ?? '').replace(/\s+/g, ' ').trim().slice(0, 4000),
-    url: location.pathname + location.search + location.hash,
+    searchHash: location.search + location.hash,
   }))
   measured.logs = logs.filter(line => !/favicon/i.test(line))
-  measured.captureUrl = page.url()
   if (options.shot) {
     const shot = await page.screenshot({ type: 'png' })
     writeFileSync(path.join(outDir, options.shot), shot)
@@ -96,14 +95,14 @@ try {
     if (measured.momentsButton) problems.push('moments-tab')
     if (measured.theme !== theme) problems.push('theme')
     if (measured.lens !== lens) problems.push('lens')
-    rows.push({ id, problems, sha256: measured.sha256, captureUrl: measured.captureUrl, logs: measured.logs })
+    rows.push({ id, problems, sha256: measured.sha256, searchHash: measured.searchHash, logs: measured.logs })
     console.log(problems.length ? `DIFF ${id} ${problems.join(',')}` : `OK ${id}`)
   }
 
   const moments = await open(browser, 'tab=moments&watch=clip', 'light', 390)
   const momentsText = moments.text.toLowerCase()
-  const momentsOk = moments.url.includes('tab=moments') && moments.url.includes('watch=clip') && momentsText.includes('filters') && !moments.momentsButton && moments.logs.length === 0
-  console.log(momentsOk ? 'OK moments-url' : 'DIFF moments-url', moments.url, moments.logs, momentsText.slice(0, 120))
+  const momentsOk = moments.searchHash.includes('tab=moments') && moments.searchHash.includes('watch=clip') && momentsText.includes('filters') && !moments.momentsButton && moments.logs.length === 0
+  console.log(momentsOk ? 'OK moments-url' : 'DIFF moments-url', moments.searchHash, moments.logs, momentsText.slice(0, 120))
 
   const blocked = await open(browser, '', 'light', 390, { blockStorage: true })
   const blockedOk = blocked.logs.length === 0 && blocked.text.toLowerCase().includes('filters') && blocked.label === 'Offline snapshot'
@@ -119,22 +118,22 @@ try {
   console.log(monthOk ? 'OK month-filter' : 'DIFF month-filter', month.text.slice(0, 180))
 
   const league = await open(browser, 'tab=table&league=bundesliga&kept=1', 'light', 1000)
-  const leagueOk = league.text.includes('Bundesliga') && league.url.includes('kept=1') && league.scrollEqual
-  console.log(leagueOk ? 'OK league' : 'DIFF league', league.url)
+  const leagueOk = league.text.includes('Bundesliga') && league.searchHash.includes('kept=1') && league.scrollEqual
+  console.log(leagueOk ? 'OK league' : 'DIFF league', league.searchHash)
 
   rows.push(
-    { id: 'moments-url', problems: momentsOk ? [] : ['behavior'], url: moments.url, logs: moments.logs },
-    { id: 'blocked-storage', problems: blockedOk ? [] : ['behavior'], logs: blocked.logs },
-    { id: 'stale', problems: staleOk ? [] : ['behavior'], frozen: staleFrozen },
-    { id: 'month-filter', problems: monthOk ? [] : ['behavior'] },
-    { id: 'league-unknown-key', problems: leagueOk ? [] : ['behavior'], url: league.url },
+    { id: 'moments-url', problems: momentsOk ? [] : ['behavior'], searchHash: moments.searchHash, logs: moments.logs },
+    { id: 'blocked-storage', problems: blockedOk ? [] : ['behavior'], searchHash: blocked.searchHash, logs: blocked.logs },
+    { id: 'stale', problems: staleOk ? [] : ['behavior'], searchHash: stale.searchHash, frozen: staleFrozen },
+    { id: 'month-filter', problems: monthOk ? [] : ['behavior'], searchHash: month.searchHash },
+    { id: 'league-unknown-key', problems: leagueOk ? [] : ['behavior'], searchHash: league.searchHash },
   )
 } finally {
   await browser.close()
 }
 
 const summary = {
-  compares: `The offline Fixtures-and-Table file at ${fileUrl}, opened from file://. 48 cells: 2 tabs × 3 lenses × 2 themes × 360, 375, 390 and 1000, plus ?tab=moments left untouched, a throwing localStorage, the 72-hour stale warning, a month filter, and a league with an unknown key. Date frozen at ${frozen} except the stale cell. Ticker animation paused. Viewport set before navigation. No Moments tab is rendered.`,
+  compares: `The offline Fixtures-and-Table file, opened from file://. The file URL defaults to dist-offline/index.html resolved from import.meta.url. 48 cells: 2 tabs × 3 lenses × 2 themes × 360, 375, 390 and 1000, plus ?tab=moments left untouched, a throwing localStorage, the 72-hour stale warning, a month filter, and a league with an unknown key. Date frozen at ${frozen} except the stale cell. Ticker animation paused. Viewport set before navigation. No Moments tab is rendered. Each cell records location.search + location.hash.`,
   frozenUtc: frozen,
   cells: rows.length,
   differing: rows.filter(row => row.problems.length),
