@@ -16,6 +16,11 @@ import { useNow } from '../../src/lib/useNow'
 import { SearchProvider, useCanonicalSearch, useUrlState } from '../../src/lib/useUrlState'
 import { encodeTab, parseTab } from '../../src/lib/urlCodecs'
 
+/** Empty until N5 mounts the Privacy & terms link. Renders no element. */
+export function PrivacyFoot() {
+  return null
+}
+
 export function Shell({ search }: { search: string }) {
   return <SearchProvider search={search}><ShellInner /></SearchProvider>
 }
@@ -49,6 +54,7 @@ function ShellInner() {
           {tab === 'table' ? <TablePage /> : <FixturesPage today={today} lens={lens} />}
         </ViewBoundary></div>
       )}
+      <PrivacyFoot />
     </div>
   )
 }
