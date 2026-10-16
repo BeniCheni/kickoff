@@ -19,7 +19,10 @@ export function composite(fg: RGB, bg: RGB, alpha: number): RGB {
   // Keep fractional sRGB channels: rounding to a hex before measuring hides near failures.
   return fg.map((v, i) => v * alpha + bg[i]! * (1 - alpha)) as RGB
 }
-export const css = readFileSync(new URL('../src/index.css', import.meta.url), 'utf8')
+export const css = [
+  readFileSync(new URL('../src/index.css', import.meta.url), 'utf8'),
+  readFileSync(new URL('../src/shell.css', import.meta.url), 'utf8'),
+].join('\n')
 function palette(css: string, theme: 'light' | 'dark'): Record<string, string> {
   const block = css.match(theme === 'light' ? /:root\s*\{([^}]+)\}/ : /\[data-theme='dark'\]\s*\{([^}]+)\}/)![1]!
   return Object.fromEntries([...block.matchAll(/--([\w-]+):\s*([^;]+);/g)].map((m) => [m[1]!, m[2]!.trim()]))

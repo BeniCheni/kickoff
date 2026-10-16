@@ -1,0 +1,586 @@
+{
+  "compares": "Next production server at http://127.0.0.1:5184 against Vite preview of dist/ built from 66078d43acc269a8e051f0ea6324806517737dfb on http://127.0.0.1:5182. 72 cells: 3 tabs \u00d7 3 lenses \u00d7 2 themes \u00d7 360, 375, 390 and 1000. Date frozen at 2026-10-15T20:00:00.000Z. Both theme keys stubbed. Viewport set before navigation. Compared: header, tab row, lens switcher, theme button geometry, the theme button's accessible name, banner presence, Moments empty markup, theme, lens, and scrollWidth === innerWidth. Fixtures and Table bodies are placeholders and are not compared.",
+  "tip": "66078d43acc269a8e051f0ea6324806517737dfb",
+  "frozenUtc": "2026-10-15T20:00:00.000Z",
+  "cells": 72,
+  "differing": [],
+  "pngDirectory": "/tmp/kickoff-n2-matrix",
+  "pngs": [
+    {
+      "file": "vite-fixtures-ledger-light-360.png",
+      "sha256": "2e1b34e7423272b095920dde9464b673b6d7af2fd8dbc826c0338b2d0090d45a"
+    },
+    {
+      "file": "next-fixtures-ledger-light-360.png",
+      "sha256": "51215fbf888d66e455d955cb341434e5b82af66510d4445c2880ab5b0c9569d1"
+    },
+    {
+      "file": "vite-fixtures-ledger-light-375.png",
+      "sha256": "123cdd96bcb7f59b07d2dfa295cb4a7404cff3e92dabd500a47fe92212da4174"
+    },
+    {
+      "file": "next-fixtures-ledger-light-375.png",
+      "sha256": "d09191072aea6c52ac3618a3d59f1411f7918ac0a1a241b5c696377c9a19a520"
+    },
+    {
+      "file": "vite-fixtures-ledger-light-390.png",
+      "sha256": "d79d963634446c28e89f3118fd31c9a94536d18b637d2d5c0d48d226ebb36241"
+    },
+    {
+      "file": "next-fixtures-ledger-light-390.png",
+      "sha256": "399cb7f1daf744107886b2c4e3f5c0e21effed8230aa211d67db1af27efeafd2"
+    },
+    {
+      "file": "vite-fixtures-ledger-light-1000.png",
+      "sha256": "e77d2ab0dc471eb6b3c3429f5a719ce5a7d81bf3fee5fe25cdac3cc759657b13"
+    },
+    {
+      "file": "next-fixtures-ledger-light-1000.png",
+      "sha256": "0d3ea8da292883edfcf7685155a1c52f4b0cc299fa0bdb9bff5a5cb196452589"
+    },
+    {
+      "file": "vite-fixtures-ledger-dark-360.png",
+      "sha256": "88594a78cfd2f92c50b4c2a69fd26aa2aa1406abef179803cc4c80abdc57cccf"
+    },
+    {
+      "file": "next-fixtures-ledger-dark-360.png",
+      "sha256": "0a7c035506debab10f9e1233f27ae2419c352f28badb9386b68ef38096b5e95a"
+    },
+    {
+      "file": "vite-fixtures-ledger-dark-375.png",
+      "sha256": "ea83d3a64de549b6d5fe793b1f0555a52c2ab56189c2f6df621aec81096ec91c"
+    },
+    {
+      "file": "next-fixtures-ledger-dark-375.png",
+      "sha256": "a735ace92474bdbe8a2da2ad633380987651319cf393d96640357e538ee3c0cb"
+    },
+    {
+      "file": "vite-fixtures-ledger-dark-390.png",
+      "sha256": "bafd39f03056c607e4253663ccd4bebed342305782380fb6b8861da66b84c9ef"
+    },
+    {
+      "file": "next-fixtures-ledger-dark-390.png",
+      "sha256": "b28f0a240b81516841fe0ecdca4ddcf10a06e0f5bfa1718b8bae60a6befdc12f"
+    },
+    {
+      "file": "vite-fixtures-ledger-dark-1000.png",
+      "sha256": "6a7b5f5a75180f463856092981ffc9b06352b5e27bf65f0b1f905838a250d166"
+    },
+    {
+      "file": "next-fixtures-ledger-dark-1000.png",
+      "sha256": "bd909af7c736acdaf8583619b3bb910f9dd8cd66f9c53266adbfe4d287b51b40"
+    },
+    {
+      "file": "vite-fixtures-poster-light-360.png",
+      "sha256": "8315729009810f86c7439f2f99717fe7bf587e8d1056931e67f9785d8b080238"
+    },
+    {
+      "file": "next-fixtures-poster-light-360.png",
+      "sha256": "2831265a58814f4d8bb0ce7e104e0fd0f41e18f85f98cea08a65cbf01709e7ee"
+    },
+    {
+      "file": "vite-fixtures-poster-light-375.png",
+      "sha256": "dd32837a37d42e7cc4a2951126f3627eadc552e4f2fffd100f748334049231f6"
+    },
+    {
+      "file": "next-fixtures-poster-light-375.png",
+      "sha256": "f75875ac2bc3f3887a09b712a96daa66a716938045790ff3c993644a6e72ef77"
+    },
+    {
+      "file": "vite-fixtures-poster-light-390.png",
+      "sha256": "d37a6f8bcf30577dfe60001c7d0e90d7fd319ebd30351c95efaa769c7e4eaf79"
+    },
+    {
+      "file": "next-fixtures-poster-light-390.png",
+      "sha256": "985d093f1924984aa97ea8f8cd19df14d47ad6c770bc75d30369fe11ea2399d2"
+    },
+    {
+      "file": "vite-fixtures-poster-light-1000.png",
+      "sha256": "8aaf279bd706300f818203069245e1a2198264ec662b1234d4a3a3f92ed7038f"
+    },
+    {
+      "file": "next-fixtures-poster-light-1000.png",
+      "sha256": "5709870f2ffba82db6b0f00c10dd563950a9e60120dab26481c670425942916f"
+    },
+    {
+      "file": "vite-fixtures-poster-dark-360.png",
+      "sha256": "88e308e3a19db0a55ee8c4344594da81248ae7b5b94db9c3b9b412a57c1bca12"
+    },
+    {
+      "file": "next-fixtures-poster-dark-360.png",
+      "sha256": "2158eebc781ada61f4fedff89b291d700d9500277f6b6787535bc68094250658"
+    },
+    {
+      "file": "vite-fixtures-poster-dark-375.png",
+      "sha256": "6bdb285aca94659a820874a0bce4c25ad2e0c8fcc8e3b6d3f5a0ed8f4e3c326b"
+    },
+    {
+      "file": "next-fixtures-poster-dark-375.png",
+      "sha256": "6a354a53229f98c91980f722fcb92d6c08dc398c5e08bc5a42e7ec44acd827da"
+    },
+    {
+      "file": "vite-fixtures-poster-dark-390.png",
+      "sha256": "2c2d4d72b60176fab5a40c6f806f5670b0c1c755f7312febf713a09588e24245"
+    },
+    {
+      "file": "next-fixtures-poster-dark-390.png",
+      "sha256": "67dde32c846e1d6b81ee3e4cbc644ba83e1de9d0208af1d962467ee5867bf77c"
+    },
+    {
+      "file": "vite-fixtures-poster-dark-1000.png",
+      "sha256": "3b44e15f8aa01d5cab671d8a2f88381c56243e767c6c9eadf23205c9452009c6"
+    },
+    {
+      "file": "next-fixtures-poster-dark-1000.png",
+      "sha256": "019227e51a57523b08f260ce310e81f6c00266c345c3de6ac82a0b9d353c9936"
+    },
+    {
+      "file": "vite-fixtures-broadcast-light-360.png",
+      "sha256": "332733af6244b9eb2b56934bb08aa4800364cb6df1589f432d9fa622f6dd8252"
+    },
+    {
+      "file": "next-fixtures-broadcast-light-360.png",
+      "sha256": "bc3fa321d5cb1786d2581d45159c6af6990db73d5c9f645ad2d2109140543868"
+    },
+    {
+      "file": "vite-fixtures-broadcast-light-375.png",
+      "sha256": "9976e6444de92ca69002b3411e79fa7976fb722fe12b7b8d9d496a943a0ea8b0"
+    },
+    {
+      "file": "next-fixtures-broadcast-light-375.png",
+      "sha256": "5f0c5a760261fb67b3aefc9c967567c93953e56142ccf50028acfd4a09e2dc8a"
+    },
+    {
+      "file": "vite-fixtures-broadcast-light-390.png",
+      "sha256": "1d107359d24c39bec52fb3eddfb1eb92661e095698c48697b2ff873336883c09"
+    },
+    {
+      "file": "next-fixtures-broadcast-light-390.png",
+      "sha256": "7421cd20ea20414d84a17d1e8c596e85a847397b21a35930aa24ac67e1aa19ed"
+    },
+    {
+      "file": "vite-fixtures-broadcast-light-1000.png",
+      "sha256": "b72a65d6165dd3929e9feb89ef0759fd2a46d9c7451bc8c99dd6214746f6659d"
+    },
+    {
+      "file": "next-fixtures-broadcast-light-1000.png",
+      "sha256": "25ae1a84bd23e496bb2a0553f9ff2739e6c13dfcb0dcbb7b524597638184e45f"
+    },
+    {
+      "file": "vite-fixtures-broadcast-dark-360.png",
+      "sha256": "c02ee6c4e37a89141d9ffb495743850ebc1846386a541b0ad114b2d589d67715"
+    },
+    {
+      "file": "next-fixtures-broadcast-dark-360.png",
+      "sha256": "ddcf0ada48e8f31a689bf3abeb75a29467701269a33016f0146bc0185dbab665"
+    },
+    {
+      "file": "vite-fixtures-broadcast-dark-375.png",
+      "sha256": "d6ebfec823eae13edd88939201d817cbba3e98e29410e88dbcb0680598cd067a"
+    },
+    {
+      "file": "next-fixtures-broadcast-dark-375.png",
+      "sha256": "c60128161b8954d7977baf9569ff1e795d0818781ce0fbf8821917b87927ac21"
+    },
+    {
+      "file": "vite-fixtures-broadcast-dark-390.png",
+      "sha256": "787a39f3dda87f8aa3b181665e64476f16c410a9f3f3149dfa81b925101e4bcf"
+    },
+    {
+      "file": "next-fixtures-broadcast-dark-390.png",
+      "sha256": "7bfa1d71b47ef1d428b124f046d24004f320b7ad7bdb6a50b1cf546c6caa187f"
+    },
+    {
+      "file": "vite-fixtures-broadcast-dark-1000.png",
+      "sha256": "440aa1bcb4d20a98792125d57e6b8450a3e76ef043d73e8d53df69c04320e0f7"
+    },
+    {
+      "file": "next-fixtures-broadcast-dark-1000.png",
+      "sha256": "a1a64cfcbe7fe4f34534cacd981aab3ed3284ee5740e0cb56b8d41bd8ce00ba6"
+    },
+    {
+      "file": "vite-table-ledger-light-360.png",
+      "sha256": "6978179f07d048ddba2f93cf2ba7a23a21500ec6c9d8953de08f012e28e63ab0"
+    },
+    {
+      "file": "next-table-ledger-light-360.png",
+      "sha256": "648ba283a0543ca2b5033bc470fb609d6f4abbd99fbaca8b20751ad75a6b2e6c"
+    },
+    {
+      "file": "vite-table-ledger-light-375.png",
+      "sha256": "ef9bce9928c18888b941ce0538de0d17ea4715ad602cf0c0b5637b56722ff41a"
+    },
+    {
+      "file": "next-table-ledger-light-375.png",
+      "sha256": "cab837df2149ae30c5754cab290d5dc797c2b67199641fcfb1e589d942f8b72e"
+    },
+    {
+      "file": "vite-table-ledger-light-390.png",
+      "sha256": "d2d627305fc17d62b58ad2dd88ced944dae22d620d679e8b217662ff30e68cb8"
+    },
+    {
+      "file": "next-table-ledger-light-390.png",
+      "sha256": "97628c70c2ba41e2fadf4f69b7f92b8cdff8baf62c3f4ce0689eaf6d90b89084"
+    },
+    {
+      "file": "vite-table-ledger-light-1000.png",
+      "sha256": "dfc8b0c3de85458e17d6829c6de3fc11f92626abd3811791409262753907c7ac"
+    },
+    {
+      "file": "next-table-ledger-light-1000.png",
+      "sha256": "d621b08218ded4429077f8ba8f10eb8f7cf2ae88312c53a95baf4aaac67696b2"
+    },
+    {
+      "file": "vite-table-ledger-dark-360.png",
+      "sha256": "46c23960f8ca78bcca6f483dd798c1b318fc5210b09c672419663cc1c1a567d9"
+    },
+    {
+      "file": "next-table-ledger-dark-360.png",
+      "sha256": "c4f759ec419fb6d23218dee445bbb4b0641571c08c70c62375debf34d2f37e9b"
+    },
+    {
+      "file": "vite-table-ledger-dark-375.png",
+      "sha256": "b902771583fc0d092f2d79d3247555b492012360fce00a66146fd140e956b9dd"
+    },
+    {
+      "file": "next-table-ledger-dark-375.png",
+      "sha256": "cc335a0469e7e511733454d19a344f2f850806dc1fa048e3e9d7b3347f3bae8e"
+    },
+    {
+      "file": "vite-table-ledger-dark-390.png",
+      "sha256": "c29609b9a31da52125d82be1514c21bd32cd39f45d8d0fc09dc5fc32264a9728"
+    },
+    {
+      "file": "next-table-ledger-dark-390.png",
+      "sha256": "663dca8837825e92eefd592668800b7c9811225723e6c3e58abb86dde3e99fc3"
+    },
+    {
+      "file": "vite-table-ledger-dark-1000.png",
+      "sha256": "accedbfda8ca1e8d3390f11c6bb8264bde6aaa277856d68927d7cf240ca42735"
+    },
+    {
+      "file": "next-table-ledger-dark-1000.png",
+      "sha256": "c71ff6dc6003ac036ca1b7e385e78c14da775dc45c03689366a53c360f7ef22e"
+    },
+    {
+      "file": "vite-table-poster-light-360.png",
+      "sha256": "eb354d167afdf0ba11afe63f5d28b10db184bbb015e17003f6d6b4ed12ace13d"
+    },
+    {
+      "file": "next-table-poster-light-360.png",
+      "sha256": "c8a91d7e22fad4b5c7343c563b15c2e357d61d8b316a65c9651715b5972dd2b9"
+    },
+    {
+      "file": "vite-table-poster-light-375.png",
+      "sha256": "644c42b847f4ae0b50e37306d7e20325a438c4036e3e1b95dbe1b6ee90825e58"
+    },
+    {
+      "file": "next-table-poster-light-375.png",
+      "sha256": "4fc7e0563d30be2493af0bb12c5028e49eb4b62cefdcc6dd93183a603a46f584"
+    },
+    {
+      "file": "vite-table-poster-light-390.png",
+      "sha256": "1a34cccfc17194b60ecc4587f75a4af3228fe568147f66e52a8300ceb3ced75f"
+    },
+    {
+      "file": "next-table-poster-light-390.png",
+      "sha256": "b97b9f9e1e99dc2fb271ff719efef33981304439c9727ef57d45658e99109518"
+    },
+    {
+      "file": "vite-table-poster-light-1000.png",
+      "sha256": "8cb3c8eb4eaf4ea26e837e6e6aa571cb956907063e6013050927c1ca1d78632a"
+    },
+    {
+      "file": "next-table-poster-light-1000.png",
+      "sha256": "fc8ca63be800b62e7ba0dbb41131136ba812d898fd1ee79add1dde0b066142dc"
+    },
+    {
+      "file": "vite-table-poster-dark-360.png",
+      "sha256": "12150ef493b34dd9965a11b4c946e0b9a708d29dd89348dce556dfc18255efb9"
+    },
+    {
+      "file": "next-table-poster-dark-360.png",
+      "sha256": "9ce8ddfa1d99e67a46571a91c4ad95ed60ca4de178919468cfa969e272a79b0c"
+    },
+    {
+      "file": "vite-table-poster-dark-375.png",
+      "sha256": "99310a2fd2f3164269c8b56c7e974929d8606f0b2bad412cb4edb20c49542d2e"
+    },
+    {
+      "file": "next-table-poster-dark-375.png",
+      "sha256": "37a733a20e16340cd2c392642e175fe176799fd928c2244a3797206d313e7969"
+    },
+    {
+      "file": "vite-table-poster-dark-390.png",
+      "sha256": "05f0669c5c93fe5f9aff72233dfeb825ebc9a96bd176f455cf6c809035241bfc"
+    },
+    {
+      "file": "next-table-poster-dark-390.png",
+      "sha256": "392d7073fd48d00282e743da9823949d84cf1c1c8d8c196b58d35fdad33cb178"
+    },
+    {
+      "file": "vite-table-poster-dark-1000.png",
+      "sha256": "b8e2ad53a978a4efcfa61de6917e297b44a0c555c8e2a97f37fb61eea0ff5ee8"
+    },
+    {
+      "file": "next-table-poster-dark-1000.png",
+      "sha256": "b7b3d819da82f252e72eca3715f89bad55ce747adc144b6ee6151d222a35aed3"
+    },
+    {
+      "file": "vite-table-broadcast-light-360.png",
+      "sha256": "a26dbab52b75cc601852c87ad30a06ab246a8ee59505ff02358be3f31555afe8"
+    },
+    {
+      "file": "next-table-broadcast-light-360.png",
+      "sha256": "f2f2ef721941baa11ff1ad715aeb7f597af44a2f672053fbf170483698084037"
+    },
+    {
+      "file": "vite-table-broadcast-light-375.png",
+      "sha256": "54fa1b63d7cec3423b324baa3218693574bb76a1823d7fda8797c285ab8415a7"
+    },
+    {
+      "file": "next-table-broadcast-light-375.png",
+      "sha256": "225128c053d3c04bfd0ab001f4fac8af3f41831f7987b428b90b2ab48b93749d"
+    },
+    {
+      "file": "vite-table-broadcast-light-390.png",
+      "sha256": "cd1f9203abd90425297928c7b0dcb2fd23bf909601c836b86d3af76b356d0b9f"
+    },
+    {
+      "file": "next-table-broadcast-light-390.png",
+      "sha256": "607a9c0a407ab2fabf41f39d16df4b526122029245f6fb04fed714a7421fde1b"
+    },
+    {
+      "file": "vite-table-broadcast-light-1000.png",
+      "sha256": "48d743abebf434f6055348d9a6d78d2a56b8bf05cd317c5e96beb7333eae2220"
+    },
+    {
+      "file": "next-table-broadcast-light-1000.png",
+      "sha256": "a0fd08daba07ab784fd68ee7643d21981800918a92f4b45d047a8c63ccd4a98e"
+    },
+    {
+      "file": "vite-table-broadcast-dark-360.png",
+      "sha256": "0a12e193063cd1675c00d9e93472d8062b780080a34cea0881412d56ecb08405"
+    },
+    {
+      "file": "next-table-broadcast-dark-360.png",
+      "sha256": "28f56db8c282712813686dea55d61bdebf6d17ddec636dca30c64162d19afb99"
+    },
+    {
+      "file": "vite-table-broadcast-dark-375.png",
+      "sha256": "11124197e9738a9d643f6a7d9e83278ea8c6e492354c251a6d5eb034c0687716"
+    },
+    {
+      "file": "next-table-broadcast-dark-375.png",
+      "sha256": "2498a9fe897e0dd1a83dd4e870bc710ad55f731be4399dc650492e9fa3bea67b"
+    },
+    {
+      "file": "vite-table-broadcast-dark-390.png",
+      "sha256": "295e1e26352b414eb8e4fe9b0a1eb64f7f051f6a9c60e2b87c9b928e68ecb3be"
+    },
+    {
+      "file": "next-table-broadcast-dark-390.png",
+      "sha256": "80a72c667fff34a29cab00fb0f2fec66f929b3f44a79dcbfa7ea3c2c8d9e3812"
+    },
+    {
+      "file": "vite-table-broadcast-dark-1000.png",
+      "sha256": "b7b267854e7678bd0c488a5353c18f9880ddb7faaea838e29c38e88f4ba90e8f"
+    },
+    {
+      "file": "next-table-broadcast-dark-1000.png",
+      "sha256": "264007a75a1d48c600d26d474149625a8ac5a03928b5e23c6f28db1dc480e5cb"
+    },
+    {
+      "file": "vite-moments-ledger-light-360.png",
+      "sha256": "77de7c8cd4d93c4e1b8571476677f4e409ff32e8adce712e415025537c2f7cb2"
+    },
+    {
+      "file": "next-moments-ledger-light-360.png",
+      "sha256": "77de7c8cd4d93c4e1b8571476677f4e409ff32e8adce712e415025537c2f7cb2"
+    },
+    {
+      "file": "vite-moments-ledger-light-375.png",
+      "sha256": "d81732f649556e31bf27ba3c0fc96244bbf272447c09ddf4b63f3c7376f991de"
+    },
+    {
+      "file": "next-moments-ledger-light-375.png",
+      "sha256": "d81732f649556e31bf27ba3c0fc96244bbf272447c09ddf4b63f3c7376f991de"
+    },
+    {
+      "file": "vite-moments-ledger-light-390.png",
+      "sha256": "b0d6a10fc9cd6b8248ec9dd84a6c7b2a3566585b1218c5bdbb56a91450bc530a"
+    },
+    {
+      "file": "next-moments-ledger-light-390.png",
+      "sha256": "b0d6a10fc9cd6b8248ec9dd84a6c7b2a3566585b1218c5bdbb56a91450bc530a"
+    },
+    {
+      "file": "vite-moments-ledger-light-1000.png",
+      "sha256": "b77a39dbe4b0f62215a1be7e5b6360b0cb8450517b81616551c892b314e75398"
+    },
+    {
+      "file": "next-moments-ledger-light-1000.png",
+      "sha256": "b77a39dbe4b0f62215a1be7e5b6360b0cb8450517b81616551c892b314e75398"
+    },
+    {
+      "file": "vite-moments-ledger-dark-360.png",
+      "sha256": "81c33baa6479c8fe0e795858f27f3440dbba1e895ae4a2c43111abfd6207f89a"
+    },
+    {
+      "file": "next-moments-ledger-dark-360.png",
+      "sha256": "81c33baa6479c8fe0e795858f27f3440dbba1e895ae4a2c43111abfd6207f89a"
+    },
+    {
+      "file": "vite-moments-ledger-dark-375.png",
+      "sha256": "4c326106462880ea574973ff8846e3caee206936ae6680f017649279d08b7b67"
+    },
+    {
+      "file": "next-moments-ledger-dark-375.png",
+      "sha256": "4c326106462880ea574973ff8846e3caee206936ae6680f017649279d08b7b67"
+    },
+    {
+      "file": "vite-moments-ledger-dark-390.png",
+      "sha256": "78492f4dc00a1132ed9cc1a475a615a4071b6d31b8b9276e1b8b643d73775a28"
+    },
+    {
+      "file": "next-moments-ledger-dark-390.png",
+      "sha256": "78492f4dc00a1132ed9cc1a475a615a4071b6d31b8b9276e1b8b643d73775a28"
+    },
+    {
+      "file": "vite-moments-ledger-dark-1000.png",
+      "sha256": "24cda960e337e8e7916ccecb08c9f1d737d8ddbf6a403bf1ebc5443e3fb72bf9"
+    },
+    {
+      "file": "next-moments-ledger-dark-1000.png",
+      "sha256": "24cda960e337e8e7916ccecb08c9f1d737d8ddbf6a403bf1ebc5443e3fb72bf9"
+    },
+    {
+      "file": "vite-moments-poster-light-360.png",
+      "sha256": "20c2c231457dd506bc8cb38112774b14f7e78bf06e50c24880fdfe4e3707389a"
+    },
+    {
+      "file": "next-moments-poster-light-360.png",
+      "sha256": "20c2c231457dd506bc8cb38112774b14f7e78bf06e50c24880fdfe4e3707389a"
+    },
+    {
+      "file": "vite-moments-poster-light-375.png",
+      "sha256": "1e5784958d0bbf97c3ed162ee3960f94b5eab33180f39d4e543023a6dfed68fd"
+    },
+    {
+      "file": "next-moments-poster-light-375.png",
+      "sha256": "1e5784958d0bbf97c3ed162ee3960f94b5eab33180f39d4e543023a6dfed68fd"
+    },
+    {
+      "file": "vite-moments-poster-light-390.png",
+      "sha256": "5acd4dec60e1816429c0d160ee271f82d0da2511d9192e6697542d406bcbfab0"
+    },
+    {
+      "file": "next-moments-poster-light-390.png",
+      "sha256": "5acd4dec60e1816429c0d160ee271f82d0da2511d9192e6697542d406bcbfab0"
+    },
+    {
+      "file": "vite-moments-poster-light-1000.png",
+      "sha256": "b10aabccad93bb790e95c00a1d12f7ca102d8587b8f46a0003583267c4a3ff68"
+    },
+    {
+      "file": "next-moments-poster-light-1000.png",
+      "sha256": "b10aabccad93bb790e95c00a1d12f7ca102d8587b8f46a0003583267c4a3ff68"
+    },
+    {
+      "file": "vite-moments-poster-dark-360.png",
+      "sha256": "99f3544c9935355d392590f5aea2fb917df72e1a958431f5162bb2ada74aa948"
+    },
+    {
+      "file": "next-moments-poster-dark-360.png",
+      "sha256": "99f3544c9935355d392590f5aea2fb917df72e1a958431f5162bb2ada74aa948"
+    },
+    {
+      "file": "vite-moments-poster-dark-375.png",
+      "sha256": "48f6d3535f855ce4b02cb73cd665401e3dc8b6cc69eecaf57512676dfb05bf44"
+    },
+    {
+      "file": "next-moments-poster-dark-375.png",
+      "sha256": "48f6d3535f855ce4b02cb73cd665401e3dc8b6cc69eecaf57512676dfb05bf44"
+    },
+    {
+      "file": "vite-moments-poster-dark-390.png",
+      "sha256": "59e4b9e740c45e42893281fd2b8d9d7dc1ab606e1797c35d959f46a7fd9a184b"
+    },
+    {
+      "file": "next-moments-poster-dark-390.png",
+      "sha256": "59e4b9e740c45e42893281fd2b8d9d7dc1ab606e1797c35d959f46a7fd9a184b"
+    },
+    {
+      "file": "vite-moments-poster-dark-1000.png",
+      "sha256": "c01bc69cb4ede917a62ae78b06af3270c1944c882ab66d4b6e79faf5ee30895c"
+    },
+    {
+      "file": "next-moments-poster-dark-1000.png",
+      "sha256": "c01bc69cb4ede917a62ae78b06af3270c1944c882ab66d4b6e79faf5ee30895c"
+    },
+    {
+      "file": "vite-moments-broadcast-light-360.png",
+      "sha256": "176dcb948bdb8b03d0e875d0cb414a4df86eaef60a3d4f24d3e7e973cb1fa420"
+    },
+    {
+      "file": "next-moments-broadcast-light-360.png",
+      "sha256": "176dcb948bdb8b03d0e875d0cb414a4df86eaef60a3d4f24d3e7e973cb1fa420"
+    },
+    {
+      "file": "vite-moments-broadcast-light-375.png",
+      "sha256": "4125551a1e9b37cc4c30a4a54aedb6d3f0996d331e35f19d974a882f2c3fd574"
+    },
+    {
+      "file": "next-moments-broadcast-light-375.png",
+      "sha256": "4125551a1e9b37cc4c30a4a54aedb6d3f0996d331e35f19d974a882f2c3fd574"
+    },
+    {
+      "file": "vite-moments-broadcast-light-390.png",
+      "sha256": "2c00c4bf659717fd548ec0eaaecb2af5fb3ea20a17324ecc5194cb03e8f727e0"
+    },
+    {
+      "file": "next-moments-broadcast-light-390.png",
+      "sha256": "2c00c4bf659717fd548ec0eaaecb2af5fb3ea20a17324ecc5194cb03e8f727e0"
+    },
+    {
+      "file": "vite-moments-broadcast-light-1000.png",
+      "sha256": "a7f8e246631353cc3b2d38d6d9591dadf513ea7f4ef2e50f425d73b15cca1432"
+    },
+    {
+      "file": "next-moments-broadcast-light-1000.png",
+      "sha256": "a7f8e246631353cc3b2d38d6d9591dadf513ea7f4ef2e50f425d73b15cca1432"
+    },
+    {
+      "file": "vite-moments-broadcast-dark-360.png",
+      "sha256": "f75d0eb1fd3e868781b84f9b6187ce78a79d4c4677f3977f03e51603ce609a1b"
+    },
+    {
+      "file": "next-moments-broadcast-dark-360.png",
+      "sha256": "f75d0eb1fd3e868781b84f9b6187ce78a79d4c4677f3977f03e51603ce609a1b"
+    },
+    {
+      "file": "vite-moments-broadcast-dark-375.png",
+      "sha256": "fa4e7d5140dce64faeaff3f4375c41550e2bb4e4bcca01838981bb060e0a7b97"
+    },
+    {
+      "file": "next-moments-broadcast-dark-375.png",
+      "sha256": "fa4e7d5140dce64faeaff3f4375c41550e2bb4e4bcca01838981bb060e0a7b97"
+    },
+    {
+      "file": "vite-moments-broadcast-dark-390.png",
+      "sha256": "fabdecb98c42c8397437598ceada81ca35888c02c0d70666bed508f919e47c44"
+    },
+    {
+      "file": "next-moments-broadcast-dark-390.png",
+      "sha256": "fabdecb98c42c8397437598ceada81ca35888c02c0d70666bed508f919e47c44"
+    },
+    {
+      "file": "vite-moments-broadcast-dark-1000.png",
+      "sha256": "862d19a789ab827b97632f1f3e60e3a2c151d8aceba4576e38a5678cf40580fd"
+    },
+    {
+      "file": "next-moments-broadcast-dark-1000.png",
+      "sha256": "862d19a789ab827b97632f1f3e60e3a2c151d8aceba4576e38a5678cf40580fd"
+    }
+  ]
+}

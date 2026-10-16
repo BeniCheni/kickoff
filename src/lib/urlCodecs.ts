@@ -64,3 +64,15 @@ export function canonicalSearch(search: string, today: string): string {
   const result = params.toString()
   return result ? `?${result}` : ''
 }
+
+/** Rebuild a query from the multi-value search object a server page receives.
+ *  Insertion order is kept. Repeated keys stay repeated. Blank values stay blank. */
+export function searchParamsToQuery(entries: Iterable<[string, string | readonly string[]]>): string {
+  const params = new URLSearchParams()
+  for (const [key, value] of entries) {
+    if (typeof value === 'string') params.append(key, value)
+    else for (const item of value) params.append(key, item)
+  }
+  const result = params.toString()
+  return result ? `?${result}` : ''
+}

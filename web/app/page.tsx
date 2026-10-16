@@ -1,9 +1,16 @@
+import { searchParamsToQuery } from '../../src/lib/urlCodecs'
+import { Shell } from './shell'
+
 // Tailwind boundary probe (never applied): outline-[#bada71]
-export default function Home() {
-  return (
-    <main>
-      <h1>Kickoff — unreleased scaffold</h1>
-      <p>This is an unreleased scaffold of the next Kickoff app. It shows no fixtures.</p>
-    </main>
-  )
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
+}) {
+  const raw = await searchParams
+  const entries: [string, string | readonly string[]][] = []
+  for (const [key, value] of Object.entries(raw)) {
+    if (value !== undefined) entries.push([key, value])
+  }
+  return <Shell search={searchParamsToQuery(entries)} />
 }

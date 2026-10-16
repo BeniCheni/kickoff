@@ -4,6 +4,11 @@ Baseline: main `2837b011c9830ff37260d15907ad597efcea529e`. Local environment:
 Node 24.15.0, npm 11.12.1, macOS. Read date: 2026-10-15, after running
 `TZ=America/New_York date`. Receipts describe the N1 build, not public delivery.
 
+N2 receipts in this directory are `one-react.json`, `shell-matrix.json`,
+`theme-filmstrip.json`, and `vite-before-after.json` from the reader
+before-and-after pass. PNGs stay outside the repo. Their SHA-256s are inside
+the receipts.
+
 ## Reader identity (step 5)
 
 Before edits: `npm ci --no-audit --no-fund`, `npm run typecheck`, `npm test`,

@@ -1,10 +1,18 @@
-import { useSyncExternalStore } from 'react'
-import { clock } from './clock'
+import { createContext, useContext, useSyncExternalStore } from 'react'
+import { clock, type Clock } from './clock'
 
 /**
- * The one ticking clock every component reads. Re-renders its caller once a minute (or
- * immediately on a visibility/focus catch-up tick) — see clock.ts for the mechanism.
+ * Set by a request-scoped provider. The Vite app has no provider, so it keeps reading
+ * the module clock. On the server a missing provider throws: that clock is one
+ * process-wide store and must not render a request.
  */
+export const ClockContext = createContext<Clock | null>(null)
+
 export function useNow() {
-  return useSyncExternalStore(clock.subscribe, clock.getSnapshot)
+  const provided = useContext(ClockContext)
+  if (!provided && typeof window === 'undefined') {
+    throw new Error('Kickoff needs a request clock on the server')
+  }
+  const store = provided ?? clock
+  return useSyncExternalStore(store.subscribe, store.getSnapshot, store.getServerSnapshot)
 }

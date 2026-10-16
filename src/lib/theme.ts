@@ -1,4 +1,5 @@
 import type { Lens } from './lens'
+import { parseLens } from './lens'
 
 export type Theme = 'light' | 'dark'
 
@@ -62,16 +63,40 @@ export function writeStoredTheme(key: ThemeKey, theme: Theme): void {
 }
 
 /**
+ * The one theme and lens decision. Callers pass what they read; this function does not
+ * touch storage, matchMedia or the document.
+ */
+export function decideThemeAndLens(
+  lensRaw: string | null,
+  storedTheme: Theme | null,
+  storedBroadcastTheme: Theme | null,
+  prefersDark: boolean,
+): { lens: Lens; theme: Theme } {
+  const lens = parseLens(lensRaw)
+  return {
+    lens,
+    theme: resolveTheme(lens, storedTheme, storedBroadcastTheme, prefersDark),
+  }
+}
+
+/**
  * resolveTheme fed from the live environment — the single call both the inline
  * bootstrap and App's lens effect use, with the storage keys coming from
  * themeStorageKey so no caller ever spells a key literal again.
  */
 export function resolveThemeFromEnvironment(lens: Lens): Theme {
-  return resolveTheme(
+  return decideThemeAndLens(
     lens,
-    // The shared non-Broadcast key (Ledger's and Poster's alike), not "Ledger's key" — spelled
-    // through a lens so no caller spells the literal; the key name itself is never renamed,
-    // that would drop every existing reader's stored theme.
+    readStoredTheme(themeStorageKey('ledger')),
+    readStoredTheme(themeStorageKey('broadcast')),
+    env.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false,
+  ).theme
+}
+
+/** The bootstrap's read of the URL plus the live environment. */
+export function readBootTheme(search: string): { lens: Lens; theme: Theme } {
+  return decideThemeAndLens(
+    new URLSearchParams(search).get('lens'),
     readStoredTheme(themeStorageKey('ledger')),
     readStoredTheme(themeStorageKey('broadcast')),
     env.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false,

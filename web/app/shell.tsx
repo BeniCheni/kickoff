@@ -1,0 +1,50 @@
+'use client'
+
+import pkg from '../../package.json'
+import { AppHeader } from '../../src/components/AppHeader'
+import { TabNav } from '../../src/components/TabNav'
+import { LensSwitcher } from '../../src/components/LensSwitcher'
+import { StalenessBanner } from '../../src/components/StalenessBanner'
+import { ViewBoundary } from '../../src/components/ViewBoundary'
+import { MomentsEmpty } from '../../src/components/MomentsEmpty'
+import { DEFAULT_LENS, encodeLens, parseLens } from '../../src/lib/lens'
+import { useThemeController } from '../../src/lib/useThemeController'
+import { useNow } from '../../src/lib/useNow'
+import { SearchProvider, useCanonicalSearch, useUrlState } from '../../src/lib/useUrlState'
+import { encodeTab, parseTab } from '../../src/lib/urlCodecs'
+
+export function Shell({ search }: { search: string }) {
+  return <SearchProvider search={search}><ShellInner /></SearchProvider>
+}
+
+function ShellInner() {
+  const { today } = useNow()
+  const [tab, setTab] = useUrlState('tab', 'fixtures', encodeTab, parseTab, 'push')
+  const [lens, setLens] = useUrlState('lens', DEFAULT_LENS, encodeLens, parseLens, 'replace')
+  useCanonicalSearch(today)
+  const { toggle } = useThemeController(lens)
+
+  return (
+    <div className="mx-auto max-w-[780px] px-5 pt-7 pb-16">
+      <AppHeader
+        version={pkg.version}
+        onToggleTheme={toggle}
+        themeLabel={(
+          <>
+            <span className="dark:hidden">Dark mode</span>
+            <span className="hidden dark:inline">Light mode</span>
+          </>
+        )}
+      />
+      <TabNav tab={tab} onSelect={setTab}>
+        <LensSwitcher lens={lens} onSelect={setLens} />
+      </TabNav>
+      {tab === 'moments' ? <ViewBoundary key={`${tab}:${lens}`}><MomentsEmpty /></ViewBoundary> : (
+        <div data-moments-background="route"><ViewBoundary key={`${tab}:${lens}`}>
+          <StalenessBanner />
+          <p>Not ported yet (N3)</p>
+        </ViewBoundary></div>
+      )}
+    </div>
+  )
+}

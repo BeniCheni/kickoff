@@ -7,21 +7,22 @@
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
   },
   "scripts": {
-    "dev": "NEXT_TELEMETRY_DISABLED=1 next dev",
+    "dev": "node ../node_modules/tsx/dist/cli.mjs ../scripts/write-theme-head.ts && node scripts/write-shell-css.mjs && NEXT_TELEMETRY_DISABLED=1 next dev",
     "typecheck": "NEXT_TELEMETRY_DISABLED=1 next typegen && tsc --noEmit && node scripts/check-typescript-plugin.mjs",
     "test": "vitest run",
-    "build": "NEXT_TELEMETRY_DISABLED=1 next build",
+    "build": "node ../node_modules/tsx/dist/cli.mjs ../scripts/write-theme-head.ts && node scripts/write-shell-css.mjs && NEXT_TELEMETRY_DISABLED=1 next build && node scripts/check-one-react.mjs",
     "start": "NEXT_TELEMETRY_DISABLED=1 next start",
     "check:css": "node scripts/check-css.mjs",
     "check:client": "node scripts/check-client.mjs"
   },
   "dependencies": {
     "next": "16.4.1",
-    "react": "19.3.1",
-    "react-dom": "19.3.1"
+    "react": "19.2.8",
+    "react-dom": "19.2.8"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.3.3",
+    "puppeteer-core": "24.23.0",
     "@types/node": "24.19.2",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",

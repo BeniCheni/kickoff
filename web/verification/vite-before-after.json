@@ -1,0 +1,662 @@
+{
+  "compares": "Vite preview of the merge-base dist at 02650bc594c076d6310ed76148cad61e9e258dd0 (http://127.0.0.1:5181) against Vite preview of dist/ built from 66078d43acc269a8e051f0ea6324806517737dfb (http://127.0.0.1:5182). 72 cells: 3 tabs \u00d7 3 lenses \u00d7 2 themes \u00d7 360, 375, 390 and 1000. Date frozen at 2026-10-15T20:00:00.000Z. Both theme keys stubbed. Viewport set before each navigation. Compared: scrollWidth === innerWidth, 15 computed tokens on html, body color and font, geometry of the header, tab row and route (up to 600 boxes each), header and route text, the theme button's accessible name, a 14-step Tab focus order, and the URL plus active tab after a tab push, Back and Forward.",
+  "base": "02650bc594c076d6310ed76148cad61e9e258dd0",
+  "tip": "66078d43acc269a8e051f0ea6324806517737dfb",
+  "frozenUtc": "2026-10-15T20:00:00.000Z",
+  "cells": 72,
+  "differing": [
+    {
+      "id": "fixtures-ledger-dark-375",
+      "diffs": [
+        "navBoxes",
+        "mainBoxes"
+      ]
+    },
+    {
+      "id": "fixtures-poster-light-375",
+      "diffs": [
+        "navBoxes",
+        "mainBoxes"
+      ]
+    },
+    {
+      "id": "fixtures-poster-dark-375",
+      "diffs": [
+        "navBoxes",
+        "mainBoxes"
+      ]
+    },
+    {
+      "id": "fixtures-broadcast-light-360",
+      "diffs": [
+        "mainBoxes"
+      ]
+    },
+    {
+      "id": "fixtures-broadcast-light-375",
+      "diffs": [
+        "mainBoxes"
+      ]
+    },
+    {
+      "id": "fixtures-broadcast-light-390",
+      "diffs": [
+        "mainBoxes"
+      ]
+    },
+    {
+      "id": "fixtures-broadcast-light-1000",
+      "diffs": [
+        "mainBoxes"
+      ]
+    },
+    {
+      "id": "fixtures-broadcast-dark-360",
+      "diffs": [
+        "mainBoxes"
+      ]
+    },
+    {
+      "id": "fixtures-broadcast-dark-375",
+      "diffs": [
+        "mainBoxes"
+      ]
+    },
+    {
+      "id": "fixtures-broadcast-dark-390",
+      "diffs": [
+        "mainBoxes"
+      ]
+    },
+    {
+      "id": "fixtures-broadcast-dark-1000",
+      "diffs": [
+        "mainBoxes"
+      ]
+    }
+  ],
+  "pngDirectory": "/tmp/kickoff-n2-vite-before-after",
+  "pngs": [
+    {
+      "file": "base-fixtures-ledger-light-360.png",
+      "sha256": "4d0bcd4bbe9680a5fe37375b3656b1434cdec1065fc6704bf1aa011ebcf75815"
+    },
+    {
+      "file": "tip-fixtures-ledger-light-360.png",
+      "sha256": "8d949a093bd0588e8c4edfd4c044daf922a322ccf1dbea23661d12ab2abfadd9"
+    },
+    {
+      "file": "base-fixtures-ledger-light-375.png",
+      "sha256": "ec90ab71f9612de266b0f113ee2e750ca9605f716a1e4facba9cdbe50cdc4f51"
+    },
+    {
+      "file": "tip-fixtures-ledger-light-375.png",
+      "sha256": "d77b44a5329507ce018324a25cbcd98cf0de7227ebc52a757a141cb47f9231af"
+    },
+    {
+      "file": "base-fixtures-ledger-light-390.png",
+      "sha256": "018a2c011bb3bcbbf0aba89f5f3954144437e5a6f5ef48dee62d0e0655389b2d"
+    },
+    {
+      "file": "tip-fixtures-ledger-light-390.png",
+      "sha256": "29ca938b48ae53452ec9964454c6518e995825256fd61f932bc63cb296b84944"
+    },
+    {
+      "file": "base-fixtures-ledger-light-1000.png",
+      "sha256": "ceaedf161b58037ea1db225cbd3e9ca226cd99822f77dba3b5acd8c2dd712134"
+    },
+    {
+      "file": "tip-fixtures-ledger-light-1000.png",
+      "sha256": "ceaedf161b58037ea1db225cbd3e9ca226cd99822f77dba3b5acd8c2dd712134"
+    },
+    {
+      "file": "base-fixtures-ledger-dark-360.png",
+      "sha256": "7ce76b64ff3576bd51c7e41243d9c45b8b21e50f9ea8da2f6133fa3763867494"
+    },
+    {
+      "file": "tip-fixtures-ledger-dark-360.png",
+      "sha256": "962bac0ba19ba672739932ff67f0d5f6edd056e01281fbd2da7c5f070fc8689e"
+    },
+    {
+      "file": "base-fixtures-ledger-dark-375.png",
+      "sha256": "f75cc4e1bf90362e5dcf82aaa82264a1d52cca1f3caa8034723b70f128594461"
+    },
+    {
+      "file": "tip-fixtures-ledger-dark-375.png",
+      "sha256": "37c19487ed54dd81394ef4d865ef089535c82039392c996aff3d43a2faba00f9"
+    },
+    {
+      "file": "base-fixtures-ledger-dark-390.png",
+      "sha256": "27569f0370d706ea6d4dc2dfc0a2d965cf01d8a2d120fb59f879e037e247def2"
+    },
+    {
+      "file": "tip-fixtures-ledger-dark-390.png",
+      "sha256": "27569f0370d706ea6d4dc2dfc0a2d965cf01d8a2d120fb59f879e037e247def2"
+    },
+    {
+      "file": "base-fixtures-ledger-dark-1000.png",
+      "sha256": "4bcd3f00d351e5988cb14b1e1b633d645c02266f60329120e3a0deb91871b782"
+    },
+    {
+      "file": "tip-fixtures-ledger-dark-1000.png",
+      "sha256": "4bcd3f00d351e5988cb14b1e1b633d645c02266f60329120e3a0deb91871b782"
+    },
+    {
+      "file": "base-fixtures-poster-light-360.png",
+      "sha256": "d2a5a3bf0261407b7af4ad75d1ff0bcfb984021789daeb89e7ae24f3112658dc"
+    },
+    {
+      "file": "tip-fixtures-poster-light-360.png",
+      "sha256": "d2a5a3bf0261407b7af4ad75d1ff0bcfb984021789daeb89e7ae24f3112658dc"
+    },
+    {
+      "file": "base-fixtures-poster-light-375.png",
+      "sha256": "a831d65c3caec82f1ed99b9acaabb17d7c0cba417221010c0550b5f17a0c3319"
+    },
+    {
+      "file": "tip-fixtures-poster-light-375.png",
+      "sha256": "e7d1252146eb8971a3d7e4bb903131943f1c98090ca8a3e3d8f05fd26007d969"
+    },
+    {
+      "file": "base-fixtures-poster-light-390.png",
+      "sha256": "d14136135b20f7a46d76a1e688b3f2fcd4d94dda5dfb59bb547d689c0563bc1f"
+    },
+    {
+      "file": "tip-fixtures-poster-light-390.png",
+      "sha256": "d14136135b20f7a46d76a1e688b3f2fcd4d94dda5dfb59bb547d689c0563bc1f"
+    },
+    {
+      "file": "base-fixtures-poster-light-1000.png",
+      "sha256": "aa462bf2b09576d0774ef84970d8e20873dcc896cc9e54e8a4cb748e1acf1906"
+    },
+    {
+      "file": "tip-fixtures-poster-light-1000.png",
+      "sha256": "aa462bf2b09576d0774ef84970d8e20873dcc896cc9e54e8a4cb748e1acf1906"
+    },
+    {
+      "file": "base-fixtures-poster-dark-360.png",
+      "sha256": "221080b689363e84e44b3c6ef035bc4116b6742d0bd391e06aa89f00b8d16694"
+    },
+    {
+      "file": "tip-fixtures-poster-dark-360.png",
+      "sha256": "221080b689363e84e44b3c6ef035bc4116b6742d0bd391e06aa89f00b8d16694"
+    },
+    {
+      "file": "base-fixtures-poster-dark-375.png",
+      "sha256": "83679b3479f80d564cef6e7672ea2633adc91fdfebd16b3e3da48bba44b2c181"
+    },
+    {
+      "file": "tip-fixtures-poster-dark-375.png",
+      "sha256": "53af43b749a75bca23c42485461847457123c597524d84111f1f9cf96e130a69"
+    },
+    {
+      "file": "base-fixtures-poster-dark-390.png",
+      "sha256": "14bd7b646f50c4bd0490271e7991cf2bd4b8ca34d6f88e7bba500ead539378ad"
+    },
+    {
+      "file": "tip-fixtures-poster-dark-390.png",
+      "sha256": "14bd7b646f50c4bd0490271e7991cf2bd4b8ca34d6f88e7bba500ead539378ad"
+    },
+    {
+      "file": "base-fixtures-poster-dark-1000.png",
+      "sha256": "360f38941e7b62265a4fcca53fd96e36035338952e889a87016723c32703ce89"
+    },
+    {
+      "file": "tip-fixtures-poster-dark-1000.png",
+      "sha256": "a59939d0f3d03d492692a851b098e13aee546d514f14ed2097c927207ff7a846"
+    },
+    {
+      "file": "base-fixtures-broadcast-light-360.png",
+      "sha256": "d568c365bc8a98448f68cfbadb0aeb4af64dd4b4c09bc98b7a4c8892aad348fb"
+    },
+    {
+      "file": "tip-fixtures-broadcast-light-360.png",
+      "sha256": "6593166d16be83a9e2f95fa89dd874fc4886d0f662fbb346bf38b5491501df93"
+    },
+    {
+      "file": "base-fixtures-broadcast-light-375.png",
+      "sha256": "a8131a232c327c5c4252cea9c437fd0df53ba51db2032c4dcc2264d2eda6c329"
+    },
+    {
+      "file": "tip-fixtures-broadcast-light-375.png",
+      "sha256": "bc9998f98ba9a78b2e54f12037c6c9ea375538d6ac6467e304c77db7ae3870df"
+    },
+    {
+      "file": "base-fixtures-broadcast-light-390.png",
+      "sha256": "5c3e135f14ec37a35a9b1f0a791877943a1ea207fa1d116ae7fa3d731fc5ec24"
+    },
+    {
+      "file": "tip-fixtures-broadcast-light-390.png",
+      "sha256": "562e94da2fa6e589819a8c76b20341e89f7a90c73535a38fd57c0db315d8419d"
+    },
+    {
+      "file": "base-fixtures-broadcast-light-1000.png",
+      "sha256": "305e3f8028ab27851e91ba5d3de11791cc2abfbc8cd72c639951c5adaa7cd361"
+    },
+    {
+      "file": "tip-fixtures-broadcast-light-1000.png",
+      "sha256": "1e9ef6b21343a4302ac80fe1a6e18bbb86c75396e9732c90c649e72c8f47cbfb"
+    },
+    {
+      "file": "base-fixtures-broadcast-dark-360.png",
+      "sha256": "1ad5d792223123bdd873453487c2ee55676b738ae449c221412b42e2d7090386"
+    },
+    {
+      "file": "tip-fixtures-broadcast-dark-360.png",
+      "sha256": "1ad5d792223123bdd873453487c2ee55676b738ae449c221412b42e2d7090386"
+    },
+    {
+      "file": "base-fixtures-broadcast-dark-375.png",
+      "sha256": "53064a07dd7b5a4cb20e9b164614037d2208bb83a02676fcaa649d0582da621f"
+    },
+    {
+      "file": "tip-fixtures-broadcast-dark-375.png",
+      "sha256": "53064a07dd7b5a4cb20e9b164614037d2208bb83a02676fcaa649d0582da621f"
+    },
+    {
+      "file": "base-fixtures-broadcast-dark-390.png",
+      "sha256": "cd798758704fd6404aaf4d4652ff07ccbe9a112f9c506ce82d33ce9f1e2ed3a9"
+    },
+    {
+      "file": "tip-fixtures-broadcast-dark-390.png",
+      "sha256": "cd798758704fd6404aaf4d4652ff07ccbe9a112f9c506ce82d33ce9f1e2ed3a9"
+    },
+    {
+      "file": "base-fixtures-broadcast-dark-1000.png",
+      "sha256": "8891ea30b85dd877a39417d766d7770365c54e6d7eacd9b6f5a6175c7736c84d"
+    },
+    {
+      "file": "tip-fixtures-broadcast-dark-1000.png",
+      "sha256": "8891ea30b85dd877a39417d766d7770365c54e6d7eacd9b6f5a6175c7736c84d"
+    },
+    {
+      "file": "base-table-ledger-light-360.png",
+      "sha256": "bca75f19cc59cdf4cff3d1d62f0c5416c56a86298db4dc8ad73f0a5465db8144"
+    },
+    {
+      "file": "tip-table-ledger-light-360.png",
+      "sha256": "bca75f19cc59cdf4cff3d1d62f0c5416c56a86298db4dc8ad73f0a5465db8144"
+    },
+    {
+      "file": "base-table-ledger-light-375.png",
+      "sha256": "84de57dbb0a8c9936784b15079a093991f728cdeccf2756b16bbd870d4ed75fb"
+    },
+    {
+      "file": "tip-table-ledger-light-375.png",
+      "sha256": "84de57dbb0a8c9936784b15079a093991f728cdeccf2756b16bbd870d4ed75fb"
+    },
+    {
+      "file": "base-table-ledger-light-390.png",
+      "sha256": "aa3a4baaf4b873717633c01b0852977f7fdfc248d9889d15508d15357c5bcb93"
+    },
+    {
+      "file": "tip-table-ledger-light-390.png",
+      "sha256": "aa3a4baaf4b873717633c01b0852977f7fdfc248d9889d15508d15357c5bcb93"
+    },
+    {
+      "file": "base-table-ledger-light-1000.png",
+      "sha256": "3eed3bc6a5fa9ff76b3416107b5ad0a5fd48a24407f9b59a3d1d30ed859e8817"
+    },
+    {
+      "file": "tip-table-ledger-light-1000.png",
+      "sha256": "3eed3bc6a5fa9ff76b3416107b5ad0a5fd48a24407f9b59a3d1d30ed859e8817"
+    },
+    {
+      "file": "base-table-ledger-dark-360.png",
+      "sha256": "0be265557631be6cbb2a84e6c703139f3d29e6e910e9172cd690e69707907c96"
+    },
+    {
+      "file": "tip-table-ledger-dark-360.png",
+      "sha256": "5b529f1cb0b193dad199a60831a5fdf5a493645cdf4d0a0524ede776cf462be9"
+    },
+    {
+      "file": "base-table-ledger-dark-375.png",
+      "sha256": "c28e3bc08e326966b675b38113655f3b7e873080487399dbee00ac33a02b51e2"
+    },
+    {
+      "file": "tip-table-ledger-dark-375.png",
+      "sha256": "c28e3bc08e326966b675b38113655f3b7e873080487399dbee00ac33a02b51e2"
+    },
+    {
+      "file": "base-table-ledger-dark-390.png",
+      "sha256": "dc345b177f8bac0271228b5956a1983a7fe5e999573787467a32b8b4b940d0f6"
+    },
+    {
+      "file": "tip-table-ledger-dark-390.png",
+      "sha256": "dc345b177f8bac0271228b5956a1983a7fe5e999573787467a32b8b4b940d0f6"
+    },
+    {
+      "file": "base-table-ledger-dark-1000.png",
+      "sha256": "b50ddbdda4a7b11a45ad067f102378033a0e52cc0669e6204d847eafb4335c47"
+    },
+    {
+      "file": "tip-table-ledger-dark-1000.png",
+      "sha256": "b50ddbdda4a7b11a45ad067f102378033a0e52cc0669e6204d847eafb4335c47"
+    },
+    {
+      "file": "base-table-poster-light-360.png",
+      "sha256": "23db23586207fc5864a157c33521dafc9553379485a2a435e8777e6262c1610b"
+    },
+    {
+      "file": "tip-table-poster-light-360.png",
+      "sha256": "23db23586207fc5864a157c33521dafc9553379485a2a435e8777e6262c1610b"
+    },
+    {
+      "file": "base-table-poster-light-375.png",
+      "sha256": "70f543e150b8f007286efea678073011641a8fe77bd3e9b24aa73b0b65f7f9d4"
+    },
+    {
+      "file": "tip-table-poster-light-375.png",
+      "sha256": "70f543e150b8f007286efea678073011641a8fe77bd3e9b24aa73b0b65f7f9d4"
+    },
+    {
+      "file": "base-table-poster-light-390.png",
+      "sha256": "20fda57484fade54b072bd0d08a079285d10916428cd1753149db2fe4d4010ce"
+    },
+    {
+      "file": "tip-table-poster-light-390.png",
+      "sha256": "20fda57484fade54b072bd0d08a079285d10916428cd1753149db2fe4d4010ce"
+    },
+    {
+      "file": "base-table-poster-light-1000.png",
+      "sha256": "9fae9aacfc3faa161b46b83b34cfc13028e97da7936c6ba4b69a84f48a737be2"
+    },
+    {
+      "file": "tip-table-poster-light-1000.png",
+      "sha256": "9fae9aacfc3faa161b46b83b34cfc13028e97da7936c6ba4b69a84f48a737be2"
+    },
+    {
+      "file": "base-table-poster-dark-360.png",
+      "sha256": "a9194db071d06846e360977ff3a832a2d548e5231009e0c1ce464a43b9a23f7d"
+    },
+    {
+      "file": "tip-table-poster-dark-360.png",
+      "sha256": "a9194db071d06846e360977ff3a832a2d548e5231009e0c1ce464a43b9a23f7d"
+    },
+    {
+      "file": "base-table-poster-dark-375.png",
+      "sha256": "7f4cafad31a6533e0d4b2c8a4fd063544c82c19d9f4ca0c3cf995a66e312c5ae"
+    },
+    {
+      "file": "tip-table-poster-dark-375.png",
+      "sha256": "7f4cafad31a6533e0d4b2c8a4fd063544c82c19d9f4ca0c3cf995a66e312c5ae"
+    },
+    {
+      "file": "base-table-poster-dark-390.png",
+      "sha256": "1417df70c18ed960bf6bdb14b8f5e0279e1d579f06849d1c7b849b1c9a524c3d"
+    },
+    {
+      "file": "tip-table-poster-dark-390.png",
+      "sha256": "1417df70c18ed960bf6bdb14b8f5e0279e1d579f06849d1c7b849b1c9a524c3d"
+    },
+    {
+      "file": "base-table-poster-dark-1000.png",
+      "sha256": "44304dde01690d3684e3e2f7e195a9f7a029827581dea49b6e078b9da31004df"
+    },
+    {
+      "file": "tip-table-poster-dark-1000.png",
+      "sha256": "44304dde01690d3684e3e2f7e195a9f7a029827581dea49b6e078b9da31004df"
+    },
+    {
+      "file": "base-table-broadcast-light-360.png",
+      "sha256": "022f60b3d130005722c11f67899d85e127487dbcc49e50855e7ecd5bbede6a54"
+    },
+    {
+      "file": "tip-table-broadcast-light-360.png",
+      "sha256": "022f60b3d130005722c11f67899d85e127487dbcc49e50855e7ecd5bbede6a54"
+    },
+    {
+      "file": "base-table-broadcast-light-375.png",
+      "sha256": "4331e23d600286e302991160341cca3337ccb44c3de935fa6534b4c9fb42db27"
+    },
+    {
+      "file": "tip-table-broadcast-light-375.png",
+      "sha256": "a9b2234391d2f4d35b06260357826a4d39dbf50a95a6f5c39530ec11e2d17e47"
+    },
+    {
+      "file": "base-table-broadcast-light-390.png",
+      "sha256": "afdee283c28e38dbe35a9835999149db252312e47645a6f59446582825b5f602"
+    },
+    {
+      "file": "tip-table-broadcast-light-390.png",
+      "sha256": "afdee283c28e38dbe35a9835999149db252312e47645a6f59446582825b5f602"
+    },
+    {
+      "file": "base-table-broadcast-light-1000.png",
+      "sha256": "9782cf07c26a4662d5db2df7559ea717a2084faadcf16531d569ea556db6c1ca"
+    },
+    {
+      "file": "tip-table-broadcast-light-1000.png",
+      "sha256": "9782cf07c26a4662d5db2df7559ea717a2084faadcf16531d569ea556db6c1ca"
+    },
+    {
+      "file": "base-table-broadcast-dark-360.png",
+      "sha256": "8192ef132cb7b4fced875c065f4a7d4f9452652d974db61575fc01b38215000b"
+    },
+    {
+      "file": "tip-table-broadcast-dark-360.png",
+      "sha256": "8192ef132cb7b4fced875c065f4a7d4f9452652d974db61575fc01b38215000b"
+    },
+    {
+      "file": "base-table-broadcast-dark-375.png",
+      "sha256": "907754e6019f03faf2fa9d767bdaa3f5684d101cdd38d914626a9f1ca9bd374a"
+    },
+    {
+      "file": "tip-table-broadcast-dark-375.png",
+      "sha256": "faae2234f2b80c8b21bec5c27b5e3ac9abd386488729e1bb8e88b034e5a02824"
+    },
+    {
+      "file": "base-table-broadcast-dark-390.png",
+      "sha256": "f441ae4a3170f4f8bac5b4d5c8f7afdc104e8c086867bc23ef19b939c4640bcb"
+    },
+    {
+      "file": "tip-table-broadcast-dark-390.png",
+      "sha256": "72658b92732b2ec6c5daf4daf4dc1953b1c5fda5926d9536e95349967d6c91db"
+    },
+    {
+      "file": "base-table-broadcast-dark-1000.png",
+      "sha256": "c52c244d522a38a94ff1fbfcbc351e73550ad302f57a2738fef6f074c45c9358"
+    },
+    {
+      "file": "tip-table-broadcast-dark-1000.png",
+      "sha256": "db486c9a2c9131089ef68848d917b9f87c4410621de357c612f78c13808f11ed"
+    },
+    {
+      "file": "base-moments-ledger-light-360.png",
+      "sha256": "08b3b77f14cda95d900ef8e8dd50b7b535f6caf0d7474052a5f5147f8ee421ce"
+    },
+    {
+      "file": "tip-moments-ledger-light-360.png",
+      "sha256": "08b3b77f14cda95d900ef8e8dd50b7b535f6caf0d7474052a5f5147f8ee421ce"
+    },
+    {
+      "file": "base-moments-ledger-light-375.png",
+      "sha256": "5f5d8e8f5888ab62262a3827182bcea89aee71eda2b1aa56f10f802008d0bfc0"
+    },
+    {
+      "file": "tip-moments-ledger-light-375.png",
+      "sha256": "eee29d9f548bf7cdaa18a6c9659ded0a42b7e0b2e4faec360f0b2f01e315531c"
+    },
+    {
+      "file": "base-moments-ledger-light-390.png",
+      "sha256": "3f76369ba77d55cec44f8356e86e86833679b96d3591c099a2280fe358c6a192"
+    },
+    {
+      "file": "tip-moments-ledger-light-390.png",
+      "sha256": "3f76369ba77d55cec44f8356e86e86833679b96d3591c099a2280fe358c6a192"
+    },
+    {
+      "file": "base-moments-ledger-light-1000.png",
+      "sha256": "f0f5c74dd24493b768f164d133075c685f62b7cf20d1d39dc80a441ba87a5bcf"
+    },
+    {
+      "file": "tip-moments-ledger-light-1000.png",
+      "sha256": "f0f5c74dd24493b768f164d133075c685f62b7cf20d1d39dc80a441ba87a5bcf"
+    },
+    {
+      "file": "base-moments-ledger-dark-360.png",
+      "sha256": "81b4976fb530a806b685aec5083f1dc8b71b21dd44d9a3a1ac100ae68b0ae113"
+    },
+    {
+      "file": "tip-moments-ledger-dark-360.png",
+      "sha256": "81b4976fb530a806b685aec5083f1dc8b71b21dd44d9a3a1ac100ae68b0ae113"
+    },
+    {
+      "file": "base-moments-ledger-dark-375.png",
+      "sha256": "6d90704d600853411107cfe1a28a0ed78190de163c52bf86ec150abcd2a0f60d"
+    },
+    {
+      "file": "tip-moments-ledger-dark-375.png",
+      "sha256": "6d90704d600853411107cfe1a28a0ed78190de163c52bf86ec150abcd2a0f60d"
+    },
+    {
+      "file": "base-moments-ledger-dark-390.png",
+      "sha256": "6e30093c382740a3e77f3280b1a68ca8197fb4c237371215bed2547224888a42"
+    },
+    {
+      "file": "tip-moments-ledger-dark-390.png",
+      "sha256": "aa542a2e3b3404500d4e3bf24921b5ea23076c9314e246d8d9b45a5db9af5bed"
+    },
+    {
+      "file": "base-moments-ledger-dark-1000.png",
+      "sha256": "ec492b6b8623700abfd774b87166f1fb4222ddc97055c392e238f04e9b192d5a"
+    },
+    {
+      "file": "tip-moments-ledger-dark-1000.png",
+      "sha256": "ec492b6b8623700abfd774b87166f1fb4222ddc97055c392e238f04e9b192d5a"
+    },
+    {
+      "file": "base-moments-poster-light-360.png",
+      "sha256": "a3c223870909b7a4e2dc7411b2b99994e689cd869a93e9985e999b770f94b99c"
+    },
+    {
+      "file": "tip-moments-poster-light-360.png",
+      "sha256": "a3c223870909b7a4e2dc7411b2b99994e689cd869a93e9985e999b770f94b99c"
+    },
+    {
+      "file": "base-moments-poster-light-375.png",
+      "sha256": "18fddb0fe2b3e07ec7ce586d7237d3d915e246eda317bb1cb7eec51fe16c6764"
+    },
+    {
+      "file": "tip-moments-poster-light-375.png",
+      "sha256": "18fddb0fe2b3e07ec7ce586d7237d3d915e246eda317bb1cb7eec51fe16c6764"
+    },
+    {
+      "file": "base-moments-poster-light-390.png",
+      "sha256": "b6ea6ea82067dee04f5a77a6f8daa6e6211c6628e5f6968d5ac652592e21cdbe"
+    },
+    {
+      "file": "tip-moments-poster-light-390.png",
+      "sha256": "b6ea6ea82067dee04f5a77a6f8daa6e6211c6628e5f6968d5ac652592e21cdbe"
+    },
+    {
+      "file": "base-moments-poster-light-1000.png",
+      "sha256": "e52a5e6cba6189064fa49b1dacc3d58beb72e67c8a820649f4813b1b0cafafbd"
+    },
+    {
+      "file": "tip-moments-poster-light-1000.png",
+      "sha256": "e52a5e6cba6189064fa49b1dacc3d58beb72e67c8a820649f4813b1b0cafafbd"
+    },
+    {
+      "file": "base-moments-poster-dark-360.png",
+      "sha256": "ccdaf7c70c56b6e4993cd92bc91d5ad71925a939284e2bb8104a7a78fd165b9a"
+    },
+    {
+      "file": "tip-moments-poster-dark-360.png",
+      "sha256": "ccdaf7c70c56b6e4993cd92bc91d5ad71925a939284e2bb8104a7a78fd165b9a"
+    },
+    {
+      "file": "base-moments-poster-dark-375.png",
+      "sha256": "ef01d1c70d78c294022cd5684004869789af159a8027f1e516c17743184acd42"
+    },
+    {
+      "file": "tip-moments-poster-dark-375.png",
+      "sha256": "ef01d1c70d78c294022cd5684004869789af159a8027f1e516c17743184acd42"
+    },
+    {
+      "file": "base-moments-poster-dark-390.png",
+      "sha256": "1509959d6959c79b206b447745d146635226887ce19e31c4a1ec58b77303eea2"
+    },
+    {
+      "file": "tip-moments-poster-dark-390.png",
+      "sha256": "1509959d6959c79b206b447745d146635226887ce19e31c4a1ec58b77303eea2"
+    },
+    {
+      "file": "base-moments-poster-dark-1000.png",
+      "sha256": "b06909ab9c2963fe1efc524258c5bb22b635a93679426d82ff6fa57608d6bc2e"
+    },
+    {
+      "file": "tip-moments-poster-dark-1000.png",
+      "sha256": "b06909ab9c2963fe1efc524258c5bb22b635a93679426d82ff6fa57608d6bc2e"
+    },
+    {
+      "file": "base-moments-broadcast-light-360.png",
+      "sha256": "9a1cd09adc95a6c55805beebdc81d835c27a6ece347057edc508c8c252000693"
+    },
+    {
+      "file": "tip-moments-broadcast-light-360.png",
+      "sha256": "9a1cd09adc95a6c55805beebdc81d835c27a6ece347057edc508c8c252000693"
+    },
+    {
+      "file": "base-moments-broadcast-light-375.png",
+      "sha256": "4e2b2427610725993d289dd975b1451e070197e891b757f8a59eb624ebe774a2"
+    },
+    {
+      "file": "tip-moments-broadcast-light-375.png",
+      "sha256": "4e2b2427610725993d289dd975b1451e070197e891b757f8a59eb624ebe774a2"
+    },
+    {
+      "file": "base-moments-broadcast-light-390.png",
+      "sha256": "5fe59691a22cc8637c90c92326493d9f8beada422ec583b582013b128329e31e"
+    },
+    {
+      "file": "tip-moments-broadcast-light-390.png",
+      "sha256": "5fe59691a22cc8637c90c92326493d9f8beada422ec583b582013b128329e31e"
+    },
+    {
+      "file": "base-moments-broadcast-light-1000.png",
+      "sha256": "443c80307fb626c908e3dc9ad97b7c3364046606c296f0dffca444d8e3d67a37"
+    },
+    {
+      "file": "tip-moments-broadcast-light-1000.png",
+      "sha256": "443c80307fb626c908e3dc9ad97b7c3364046606c296f0dffca444d8e3d67a37"
+    },
+    {
+      "file": "base-moments-broadcast-dark-360.png",
+      "sha256": "554698835bd7edcf4edbcb2998d45f726cf500909392b7aa1dde9fdb1de3726a"
+    },
+    {
+      "file": "tip-moments-broadcast-dark-360.png",
+      "sha256": "c3426be1d3689f5d556249d3b7603412ec55da8a6b765ed4e957a91b4bd96cce"
+    },
+    {
+      "file": "base-moments-broadcast-dark-375.png",
+      "sha256": "63590dc69e408ab62b5644a3d1d2f31e4340ffb4a4eacdde26cee3e072d4c2ed"
+    },
+    {
+      "file": "tip-moments-broadcast-dark-375.png",
+      "sha256": "63590dc69e408ab62b5644a3d1d2f31e4340ffb4a4eacdde26cee3e072d4c2ed"
+    },
+    {
+      "file": "base-moments-broadcast-dark-390.png",
+      "sha256": "d31ab8ea88aaf81951e77b88aca1ce7ec0538dd826b6d2fdc94ba1d03f8d0f1c"
+    },
+    {
+      "file": "tip-moments-broadcast-dark-390.png",
+      "sha256": "d31ab8ea88aaf81951e77b88aca1ce7ec0538dd826b6d2fdc94ba1d03f8d0f1c"
+    },
+    {
+      "file": "base-moments-broadcast-dark-1000.png",
+      "sha256": "4fea1006837790bea3b7a677880108fd15416d0fd7458ca6496b850f0885be99"
+    },
+    {
+      "file": "tip-moments-broadcast-dark-1000.png",
+      "sha256": "4fea1006837790bea3b7a677880108fd15416d0fd7458ca6496b850f0885be99"
+    }
+  ],
+  "rerun": {
+    "baseAgainstBase": "The same 11 cells, both sides the base preview on 5181. The three 375 cells matched. The eight Broadcast Fixtures cells differed only in ticker-track x (tenths of a pixel, or about 4px on the marquee), and those elements are marked ticker.",
+    "baseAgainstTipAgain": "fixtures-ledger-dark-375, fixtures-poster-light-375 and fixtures-poster-dark-375 matched on a second base-against-tip run.",
+    "remains": "No difference remains outside the Broadcast ticker's x offset. That offset also moves when the base is compared with itself. Header, tokens, focus order, history and the other 64 cells matched on the first pass."
+  }
+}

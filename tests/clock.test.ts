@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
-import { createClock, type ClockEnv } from '../src/lib/clock'
+import { createClock, clockSnapshotAt, type ClockEnv } from '../src/lib/clock'
 import { todayIso } from '../src/lib/time'
+import { encodeDate } from '../src/lib/urlCodecs'
 
 /**
  * A fully controlled fake environment: `now` only moves when the test moves it, `setTimeout`
@@ -245,5 +246,37 @@ describe('createClock — the US fall-back night', () => {
     h.fireListeners()
     expect(clock.getSnapshot().today).toBe('2026-11-01')
     expect(clock.getSnapshot().nowUtcIso).toBe(new Date(h.nowMs()).toISOString())
+  })
+})
+
+describe('a request snapshot stays the hydration snapshot', () => {
+  it('samples the browser on subscribe and keeps the request object for the server render', () => {
+    const initial = clockSnapshotAt(Date.parse('2026-09-01T12:00:10.000Z'))
+    const h = fakeEnv(Date.parse('2026-09-01T12:05:10.000Z'))
+    const store = createClock(h.env, initial)
+    expect(store.getServerSnapshot()).toBe(initial)
+    expect(store.getSnapshot()).toBe(initial)
+    expect(store.getServerSnapshot().today).toBe('2026-09-01')
+    store.subscribe(() => {})
+    expect(store.getServerSnapshot()).toBe(initial)
+    expect(store.getSnapshot().nowUtcIso).toBe('2026-09-01T12:05:00.000Z')
+  })
+
+  it('names Brooklyn today during the week Europe has fallen back and the US has not', () => {
+    // 03:30Z on 27 Oct 2026 is 23:30 EDT on the 26th. A UTC date or a fixed offset of -5 would miss it.
+    const snap = clockSnapshotAt(Date.parse('2026-10-27T03:30:00.000Z'))
+    expect(snap.nowUtcIso).toBe('2026-10-27T03:30:00.000Z')
+    expect(snap.today).toBe('2026-10-26')
+  })
+
+  it('leaves an unpinned date out of the URL and keeps an older pin when today rolls', () => {
+    const sunday = clockSnapshotAt(Date.parse('2026-09-14T03:59:00.000Z'))
+    expect(sunday.today).toBe('2026-09-13')
+    expect(encodeDate(sunday.today, sunday.today)).toBeNull()
+    expect(encodeDate('2026-09-12', sunday.today)).toBe('2026-09-12')
+    const monday = clockSnapshotAt(Date.parse('2026-09-14T04:01:00.000Z'))
+    expect(monday.today).toBe('2026-09-14')
+    expect(encodeDate('2026-09-12', monday.today)).toBe('2026-09-12')
+    expect(encodeDate(monday.today, monday.today)).toBeNull()
   })
 })

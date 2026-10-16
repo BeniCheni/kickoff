@@ -17,7 +17,7 @@ describe('player bundle boundary', () => {
   })
 
   it('Ledger has no variant and index.html does not load the provider', () => {
-    const css = readFileSync('src/index.css', 'utf8')
+    const css = readFileSync('src/index.css', 'utf8') + readFileSync('src/shell.css', 'utf8')
     const html = readFileSync('index.html', 'utf8')
     expect(css).not.toMatch(/@variant ledger|\[data-lens=ledger\]|\[data-lens="ledger"\]/)
     expect(html).not.toMatch(/youtube|iframe_api|youtube-nocookie/)
