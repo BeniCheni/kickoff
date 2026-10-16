@@ -55,20 +55,28 @@ of web. Shell utilities are shared on purpose. The reader keeps `@source not '..
 
 Versions checked 2026-10-15: Next 16.4.1 is the registry's stable release on the
 [16.x Active LTS line](https://nextjs.org/support-policy). React and React DOM are
-pinned to **19.2.8**, the version the root lock resolves. That pin binds Vitest
-and types. The root lock does not change in N2, so the live app's React does not
-change. Tailwind/PostCSS integration is 4.3.3; Vitest 4.1.11 matches the reader's
-runner. Node engines mirror the root; local checks use Node 24.15.0.
+pinned to **19.2.8**, the version the root lock resolves. That pin stays
+installed. TypeScript resolves types from it. The root lock does not change, so
+the live app's React does not change. Tailwind/PostCSS integration is 4.3.3;
+Vitest 4.1.11 matches the reader's runner. Node engines mirror the root; local
+checks use Node 24.15.0.
 
 One React, recorded 2026-10-16 (N2-Q1 Record). Next's vendored React,
 `19.3.0-canary-278794d7-20261002` in Next 16.4.1, renders the server HTML and
-hydrates the client. That is one copy, with no skew between them. `19.2.8` binds
-Vitest and types. The Vite app keeps the root lock's 19.2.8, so the two apps run
-different React builds until N7.
+hydrates the client. That is one copy, with no skew between them. The Vite app
+keeps the root lock's 19.2.8, so the two apps run different React builds until N7.
 
-web/'s tests run React 19.2.8 while the app runs Next's vendored canary. N3
-decides whether web's Vitest should resolve Next's compiled React instead. N2
-decides nothing about it.
+N3-Q1 **Compiled** (16 Oct 2026). Vitest resolves Next's compiled React for every
+entry these tests import: `react`, `react-dom`, `react-dom/client`,
+`react-dom/server` and `react/jsx-runtime`. The aliases are `vitestReactAliases`
+in `react-resolution.mjs`. They are not the aliases Next's build uses. A test
+fails when its `react` is a different copy from `next/dist/compiled/react`,
+including a second copy that prints the same version. Which file runs which:
+
+- `test/one-react.test.tsx` — the compiled canary, all five entries
+- `test/header-shared.test.tsx` — the compiled canary, `react/jsx-runtime` and `react-dom/server`
+- `test/scaffold.test.tsx` — the compiled canary, `react/jsx-runtime` and `react-dom/server`
+- `test/allowlist.test.ts`, `test/isolation.test.ts`, `test/snapshot.test.ts` — no React
 
 Turbopack's root is the repo root, widened from N1's `web/` only far enough to
 compile shared modules in `../src`. It is not set any higher. Aliases in
