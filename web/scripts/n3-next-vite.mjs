@@ -66,14 +66,30 @@ async function measure(browser, origin, search, theme, width, shotName) {
   await page.addStyleTag({ content: '.ticker-track{animation:none!important}' })
   await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
   const measured = await page.evaluate((tokenNames) => {
-    const round = value => Math.round(value)
-    const box = element => {
-      if (!element) return null
-      const rect = element.getBoundingClientRect()
-      const style = getComputedStyle(element)
+    const round = value => Math.round(value * 10) / 10
+    const region = root => {
+      if (!root) return { count: 0, boxes: [] }
+      const elements = [root, ...root.querySelectorAll('*')].filter(element => {
+        const className = typeof element.className === 'string' ? element.className : ''
+        // Next keeps both theme labels mounted so hydration markup is stable. Vite renders one string.
+        return className !== 'dark:hidden' && className !== 'hidden dark:inline'
+      })
       return {
-        x: round(rect.x), y: round(rect.y), w: round(rect.width), h: round(rect.height),
-        color: style.color, background: style.backgroundColor, font: style.font,
+        count: elements.length,
+        boxes: elements.slice(0, 600).map(element => {
+          const rect = element.getBoundingClientRect()
+          const style = getComputedStyle(element)
+          const className = typeof element.className === 'string' ? element.className : ''
+          return {
+            tag: element.tagName,
+            className: className.slice(0, 80),
+            ticker: element.closest('.ticker-track, .ticker') !== null,
+            x: round(rect.x), y: round(rect.y), w: round(rect.width), h: round(rect.height),
+            color: style.color,
+            background: style.backgroundColor,
+            font: style.font.replace(/["']/g, ''),
+          }
+        }),
       }
     }
     const style = getComputedStyle(document.documentElement)
@@ -92,17 +108,15 @@ async function measure(browser, origin, search, theme, width, shotName) {
     const header = document.querySelector('header')
     const route = document.querySelector('[data-moments-background="route"]')
       ?? document.querySelector('main')
-    const text = (route?.innerText ?? '').replace(/\s+/g, ' ').trim()
     return {
       scrollEqual: document.documentElement.scrollWidth === window.innerWidth,
       theme: document.documentElement.dataset.theme ?? '',
       lens: document.documentElement.dataset.lens ?? '',
       tokens,
-      header: box(header),
-      nav: box(document.querySelector('nav[aria-label="Primary"]')),
-      themeButton: box(header?.querySelector('button') ?? null),
-      route: box(route),
-      routeText: text.slice(0, 2500),
+      header: region(header),
+      nav: region(document.querySelector('nav[aria-label="Primary"]')),
+      route: region(route),
+      routeText: (route?.innerText ?? '').replace(/\s+/g, ' ').trim(),
       activeTab: document.querySelector('nav[aria-label="Primary"] button[aria-current="page"]')?.textContent ?? '',
       ticker: document.querySelector('[data-ticker]')?.getAttribute('data-ticker') ?? '',
       privacy: document.body.innerText.includes('Privacy'),
@@ -137,10 +151,69 @@ async function measure(browser, origin, search, theme, width, shotName) {
   return measured
 }
 
+function same(left, right) {
+  return JSON.stringify(left) === JSON.stringify(right)
+}
+
+function widthOnly(left, right) {
+  if (!Array.isArray(left) || !Array.isArray(right) || left.length !== right.length) return false
+  let differed = false
+  for (let index = 0; index < left.length; index += 1) {
+    const a = left[index]
+    const b = right[index]
+    const keys = new Set([...Object.keys(a), ...Object.keys(b)])
+    for (const key of keys) {
+      if (a[key] === b[key]) continue
+      if (key !== 'w' || typeof a.w !== 'number' || typeof b.w !== 'number' || Math.abs(a.w - b.w) > 0.1) return false
+      differed = true
+    }
+  }
+  return differed
+}
+
 function diffMeasured(vite, next, moments) {
-  const keys = ['scrollEqual', 'theme', 'lens', 'tokens', 'header', 'nav', 'themeButton', 'themeName', 'privacy', 'history']
-  if (!moments) keys.push('route', 'routeText', 'activeTab', 'ticker')
-  return keys.filter(key => JSON.stringify(vite[key]) !== JSON.stringify(next[key]))
+  const diffs = ['scrollEqual', 'theme', 'lens', 'tokens', 'themeName', 'privacy', 'history']
+    .filter(key => !same(vite[key], next[key]))
+  for (const key of ['header', 'nav']) {
+    if (vite[key].count !== next[key].count) diffs.push(`${key}Count`)
+    if (!same(vite[key].boxes, next[key].boxes)) diffs.push(`${key}Boxes`)
+  }
+  if (!moments) {
+    if (vite.route.count !== next.route.count) diffs.push('routeCount')
+    if (!same(vite.route.boxes, next.route.boxes)) diffs.push('routeBoxes')
+    if (vite.routeText !== next.routeText) diffs.push('routeText')
+    if (vite.activeTab !== next.activeTab) diffs.push('activeTab')
+    if (vite.ticker !== next.ticker) diffs.push('ticker')
+  }
+  return diffs
+}
+
+function subpixelWidthOnly(vite, next, diffs) {
+  if (diffs.length === 0) return false
+  return diffs.every(key => {
+    if (!key.endsWith('Boxes')) return false
+    const region = key.slice(0, -'Boxes'.length)
+    return widthOnly(vite[region].boxes, next[region].boxes)
+  })
+}
+
+function countsOf(measured) {
+  return { header: measured.header.count, nav: measured.nav.count, route: measured.route.count }
+}
+
+const rerunCells = []
+
+async function rerunSubpixel(id, search, theme, width, shotPrefix, moments, vite, next, diffs) {
+  if (!subpixelWidthOnly(vite, next, diffs)) return { vite, next, diffs, rerun: null }
+  const first = diffs.slice()
+  const vite2 = await measure(browser, viteOrigin, search, theme, width, `${shotPrefix}-rerun-vite-${id}.png`)
+  const next2 = await measure(browser, nextOrigin, search, theme, width, `${shotPrefix}-rerun-next-${id}.png`)
+  const again = diffMeasured(vite2, next2, moments)
+  if (vite2.logs.length || next2.logs.length || vite2.hydration || next2.hydration) again.push('console')
+  const record = { first, diffs: again }
+  rerunCells.push({ id, ...record })
+  console.log(again.length ? `RERUN DIFF ${id} ${again.join(',')}` : `RERUN OK ${id} was ${first.join(',')}`)
+  return { vite: again.length ? vite2 : vite, next: again.length ? next2 : next, diffs: again.length ? again : [], rerun: record }
 }
 
 const browser = await puppeteer.launch({ executablePath: chrome, headless: true, args: ['--disable-gpu'] })
@@ -153,11 +226,23 @@ try {
     const search = params.toString()
     const id = `${tab}-${lens}-${theme}-${width}`
     if (only && id !== only) continue
-    const vite = await measure(browser, viteOrigin, search, theme, width, `vite-${id}.png`)
-    const next = await measure(browser, nextOrigin, search, theme, width, `next-${id}.png`)
-    const diffs = diffMeasured(vite, next, tab === 'moments')
+    let vite = await measure(browser, viteOrigin, search, theme, width, `vite-${id}.png`)
+    let next = await measure(browser, nextOrigin, search, theme, width, `next-${id}.png`)
+    let diffs = diffMeasured(vite, next, tab === 'moments')
     if (vite.logs.length || next.logs.length || vite.hydration || next.hydration) diffs.push('console')
-    rows.push({ id, kind: 'matrix', diffs, viteLogs: vite.logs, nextLogs: next.logs, vite: { sha256: vite.sha256, captureUrl: vite.captureUrl }, next: { sha256: next.sha256, captureUrl: next.captureUrl } })
+    const settled = await rerunSubpixel(id, search, theme, width, 'matrix', tab === 'moments', vite, next, diffs)
+    vite = settled.vite
+    next = settled.next
+    diffs = settled.diffs
+    rows.push({
+      id, kind: 'matrix', diffs,
+      counts: { vite: countsOf(vite), next: countsOf(next) },
+      routeTextLength: { vite: vite.routeText.length, next: next.routeText.length },
+      rerun: settled.rerun,
+      viteLogs: vite.logs, nextLogs: next.logs,
+      vite: { sha256: vite.sha256, captureUrl: vite.captureUrl },
+      next: { sha256: next.sha256, captureUrl: next.captureUrl },
+    })
     if (diffs.includes('tokens')) {
       const delta = Object.keys(vite.tokens).filter(key => vite.tokens[key] !== next.tokens[key])
         .map(key => `${key} vite=${JSON.stringify(vite.tokens[key])} next=${JSON.stringify(next.tokens[key])}`)
@@ -177,16 +262,23 @@ try {
     ['ticker', 'lens=broadcast', 'dark', 390],
   ]
   for (const [id, search, theme, width] of only ? [] : extras) {
-    const vite = await measure(browser, viteOrigin, search, theme, width, `vite-extra-${id}.png`)
-    const next = await measure(browser, nextOrigin, search, theme, width, `next-extra-${id}.png`)
-    const diffs = diffMeasured(vite, next, false)
+    let vite = await measure(browser, viteOrigin, search, theme, width, `vite-extra-${id}.png`)
+    let next = await measure(browser, nextOrigin, search, theme, width, `next-extra-${id}.png`)
+    let diffs = diffMeasured(vite, next, false)
     if (vite.logs.length || next.logs.length || vite.hydration || next.hydration) diffs.push('console')
+    const settled = await rerunSubpixel(id, search, theme, width, 'extra', false, vite, next, diffs)
+    vite = settled.vite
+    next = settled.next
+    diffs = settled.diffs
     const expectText = []
     if (id === 'tbc-week') expectText.push('not yet set')
     if (id === 'abandoned-week') expectText.push('ABANDONED')
     if (id === 'ticker' && (vite.ticker === '' || next.ticker === '')) diffs.push('ticker')
     rows.push({
       id, kind: 'extra', search, diffs,
+      counts: { vite: countsOf(vite), next: countsOf(next) },
+      routeTextLength: { vite: vite.routeText.length, next: next.routeText.length },
+      rerun: settled.rerun,
       viteHas: expectText.filter(piece => vite.routeText.includes(piece) || piece === 'data-ticker'),
       nextHas: expectText.filter(piece => next.routeText.includes(piece)),
       viteLogs: vite.logs, nextLogs: next.logs,
@@ -200,10 +292,11 @@ try {
 }
 
 const summary = {
-  compares: `Next production at ${nextOrigin} against Vite preview at ${viteOrigin}. 72 cells (3 tabs × 3 lenses × 2 themes × 360, 375, 390, 1000) plus month, one competition filter, a pinned date, an empty competition set, a TBC week, an abandoned week, every league table, and the Broadcast ticker. Date frozen at ${frozen}. Both theme keys stubbed. Viewport set before navigation. Ticker animation paused. PNGs captured at the cell route. Moments compares the shell only; its body stays the N2 empty state on Next. Compared: scrollWidth === innerWidth, computed tokens, header nav and theme-button geometry rounded to the pixel, theme accessible name, route text, and console or hydration warnings.`,
+  compares: `Next production at ${nextOrigin} against Vite preview at ${viteOrigin}. 72 cells (3 tabs × 3 lenses × 2 themes × 360, 375, 390, 1000) plus month, one competition filter, a pinned date, an empty competition set, a TBC week, an abandoned week, every league table, and the Broadcast ticker. Date frozen at ${frozen}. Both theme keys stubbed. Viewport set before navigation. Ticker animation paused. PNGs captured at the cell route. Moments compares the shell only; its body stays the N2 empty state on Next. Compared: the inner boxes, up to 600 per region at 0.1 px, with color, background and font; the full route text; and the element counts. The two Next theme-label spans (dark:hidden and hidden dark:inline) are left out of the header count; Vite renders one label string. Also scrollWidth === innerWidth, computed tokens, the theme button's accessible name, history, and console or hydration warnings. A cell whose only difference is a sub-pixel box width is re-run and that re-run is recorded.`,
   frozenUtc: frozen,
   cells: rows.length,
   differing: rows.filter(row => row.diffs.length).map(row => ({ id: row.id, diffs: row.diffs, viteLogs: row.viteLogs, nextLogs: row.nextLogs })),
+  rerun: { cells: rerunCells.map(cell => cell.id), differing: rerunCells.filter(cell => cell.diffs.length).map(cell => cell.id), rows: rerunCells },
   rows,
 }
 writeFileSync(path.join(outDir, 'summary.json'), JSON.stringify(summary, null, 2))
