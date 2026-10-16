@@ -28,6 +28,9 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
+      - run: npm run build:offline
+      - name: Offline bundle contains no Next, Studio, database, or Moments player
+        run: node node_modules/tsx/dist/cli.mjs scripts/scan-offline-bundle.ts
       - run: npm ci --no-audit --no-fund
         working-directory: web
       - run: npm run typecheck

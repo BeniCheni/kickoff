@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 import type { Tab } from '../lib/urlCodecs'
 export type { Tab } from '../lib/urlCodecs'
 
-const TABS: Array<{ key: Tab; label: string }> = [
+const DEFAULT_TABS: ReadonlyArray<{ key: Tab; label: string }> = [
   { key: 'fixtures', label: 'Fixtures' },
   { key: 'table', label: 'Table' },
   { key: 'moments', label: 'Moments' },
@@ -23,10 +23,13 @@ export function TabNav({
   tab,
   onSelect,
   children,
+  tabs = DEFAULT_TABS,
 }: {
   tab: Tab
   onSelect: (t: Tab) => void
   children?: ReactNode
+  /** Defaults to Fixtures, Table and Moments. The offline build passes the first two. */
+  tabs?: ReadonlyArray<{ key: Tab; label: string }>
 }) {
   return (
     <nav
@@ -35,7 +38,7 @@ export function TabNav({
       className="mb-5 flex flex-wrap-reverse items-start gap-x-4 border-b-[1.5px] border-line"
     >
       <div className="flex gap-x-4">
-        {TABS.map(({ key, label }) => (
+        {tabs.map(({ key, label }) => (
           <button
             key={key}
             onClick={() => onSelect(key)}
