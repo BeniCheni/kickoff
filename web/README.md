@@ -25,6 +25,7 @@ See [Next TypeScript documentation](https://nextjs.org/docs/app/api-reference/co
 Tailwind automatic source detection is disabled with `source(none)`. Sources are
 exactly `web/app/` plus these shared files, named in `app/globals.css`:
 
+- `src/components/AppHeader.tsx`
 - `src/components/TabNav.tsx`
 - `src/components/LensSwitcher.tsx`
 - `src/components/StalenessBanner.tsx`
@@ -71,8 +72,8 @@ reproduce it. The file-tracer check is gone: it did not observe the renderer.
 
 web/ may import from `../src` only the modules in `src-allowlist.mjs`:
 
-- `src/components/LensSwitcher.tsx`, `MomentsEmpty.tsx`, `StalenessBanner.tsx`, `TabNav.tsx`, `ViewBoundary.tsx`
-- `src/lib/RequestClock.tsx`, `clock.ts`, `fixtures.ts`, `lens.ts`, `theme.ts`, `time.ts`, `urlCodecs.ts`, `useNow.ts`, `useUrlState.ts`
+- `src/components/AppHeader.tsx`, `LensSwitcher.tsx`, `MomentsEmpty.tsx`, `StalenessBanner.tsx`, `TabNav.tsx`, `ViewBoundary.tsx`
+- `src/lib/RequestClock.tsx`, `clock.ts`, `fixtures.ts`, `lens.ts`, `theme.ts`, `time.ts`, `urlCodecs.ts`, `useNow.ts`, `useThemeController.ts`, `useUrlState.ts`
 
 It does not include `src/main.tsx`, `src/App.tsx`, a Moments session, player or
 YouTube module, or anything under `studio/`.

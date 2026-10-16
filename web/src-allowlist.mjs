@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url'
  *  src/main.tsx, src/App.tsx, Moments session/player/YouTube modules and studio/
  *  are absent on purpose. */
 export const SRC_ALLOWLIST = [
+  'src/components/AppHeader.tsx',
   'src/components/LensSwitcher.tsx',
   'src/components/MomentsEmpty.tsx',
   'src/components/StalenessBanner.tsx',
@@ -20,6 +21,7 @@ export const SRC_ALLOWLIST = [
   'src/lib/time.ts',
   'src/lib/urlCodecs.ts',
   'src/lib/useNow.ts',
+  'src/lib/useThemeController.ts',
   'src/lib/useUrlState.ts',
 ]
 

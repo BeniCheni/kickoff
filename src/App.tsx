@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { useNow } from './lib/useNow'
-import { META, SYNC_STAMP } from './lib/fixtures'
 import { useUrlState, useCanonicalSearch } from './lib/useUrlState'
 import { encodeTab, parseTab } from './lib/urlCodecs'
 import { DEFAULT_LENS, encodeLens, parseLens, type Lens } from './lib/lens'
-import { readStoredTheme, resolveThemeFromEnvironment, themeStorageKey, writeStoredTheme, type Theme } from './lib/theme'
+import { useThemeController } from './lib/useThemeController'
 import { TabNav, type Tab } from './components/TabNav'
+import { AppHeader } from './components/AppHeader'
 import { LensSwitcher } from './components/LensSwitcher'
 import { FixturesPage } from './components/FixturesPage'
 import { MomentsPage } from './components/MomentsPage'
@@ -37,9 +37,6 @@ export default function App({ momentsEdition = MOMENTS, momentsStorage, momentsR
   momentsPlayerFault?: boolean
 } = {}) {
   const { today } = useNow()
-  const [theme, setTheme] = useState<Theme>(() =>
-    document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light',
-  )
 
   // `/` is Fixtures; Table and Moments use `?tab=`. The header and tab row persist
   // across all three, so each view is always one tap from the others. Tab switches push a
@@ -54,79 +51,15 @@ export default function App({ momentsEdition = MOMENTS, momentsStorage, momentsR
   const [lens, setLens] = useUrlState<Lens>('lens', DEFAULT_LENS, encodeLens, parseLens, 'replace')
 
   useCanonicalSearch(today)
-
-  const prevLens = useRef<Lens | null>(null)
-  const fadeTimer = useRef<number | undefined>(undefined)
-  // Explicit choices remain authoritative in this session even if storage is blocked.
-  const sessionThemes = useRef<Partial<Record<ReturnType<typeof themeStorageKey>, Theme>>>({})
-
-  // The single lens → DOM sync point. Covers switcher clicks and Back/Forward alike
-  // (useUrlState's popstate handler re-renders us). Re-resolving the theme here is what
-  // makes Broadcast dark-by-default on entry and restores the prior choice on exit.
-  useEffect(() => {
-    const root = document.documentElement
-    root.dataset.lens = lens
-    const next = sessionThemes.current[themeStorageKey(lens)] ?? resolveThemeFromEnvironment(lens)
-    root.dataset.theme = next
-    setTheme(next)
-    if (
-      prevLens.current !== null &&
-      prevLens.current !== lens &&
-      !window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    ) {
-      // Transient cross-fade: token-driven colours transition for 220ms, then the
-      // class comes off so no global transitions are left permanently enabled.
-      root.classList.add('lens-switching')
-      window.clearTimeout(fadeTimer.current)
-      fadeTimer.current = window.setTimeout(() => root.classList.remove('lens-switching'), 240)
-    }
-    prevLens.current = lens
-    return () => {
-      // Drop the class too — a cleared timer must not strand `.lens-switching` (and its
-      // document-wide transitions) on <html>.
-      window.clearTimeout(fadeTimer.current)
-      root.classList.remove('lens-switching')
-    }
-  }, [lens])
-
-  useEffect(() => {
-    const media = window.matchMedia('(prefers-color-scheme: dark)')
-    const key = themeStorageKey(lens)
-    const onChange = () => {
-      if (sessionThemes.current[key] || readStoredTheme(key)) return
-      const next = resolveThemeFromEnvironment(lens)
-      document.documentElement.dataset.theme = next
-      setTheme(next)
-    }
-    media.addEventListener('change', onChange)
-    return () => media.removeEventListener('change', onChange)
-  }, [lens])
-
-  const toggleTheme = () => {
-    const next = theme === 'dark' ? 'light' : 'dark'
-    document.documentElement.dataset.theme = next
-    sessionThemes.current[themeStorageKey(lens)] = next
-    writeStoredTheme(themeStorageKey(lens), next)
-    setTheme(next)
-  }
+  const { theme, toggle } = useThemeController(lens)
 
   return (
     <div className="mx-auto max-w-[780px] px-5 pt-7 pb-16">
-      <header data-moments-background="header" className="mb-4 flex items-start justify-between pb-1">
-        <div className="leading-none">
-          <span className="font-display block text-[34px] font-bold tracking-wide uppercase">Kickoff</span>
-          <span className="label-caps block text-[13px] text-pitch">Brooklyn · ET</span>
-          <span className="label-caps mt-1 block text-[10px] text-floodlight-strong">
-            v{__APP_VERSION__} · {META.total} fixtures · synced {SYNC_STAMP}
-          </span>
-        </div>
-        <button
-          onClick={toggleTheme}
-          className="label-caps cursor-pointer rounded border-[1.5px] border-ink bg-ink px-3.5 py-2.5 text-[11px] text-bg"
-        >
-          {theme === 'dark' ? 'Light mode' : 'Dark mode'}
-        </button>
-      </header>
+      <AppHeader
+        version={__APP_VERSION__}
+        onToggleTheme={toggle}
+        themeLabel={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+      />
 
       <TabNav tab={tab} onSelect={setTab}>
         <LensSwitcher lens={lens} onSelect={setLens} />
