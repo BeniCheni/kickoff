@@ -11,12 +11,26 @@ Dev server, on port 5174 so Step 0 can keep Vite on 5173:
 npm --prefix web run dev -- --port 5174
 ```
 
-From this directory: `npm ci --no-audit --no-fund`, `npm run typecheck`,
+Run this package from `web/`. `npm --prefix web` does that. `next start web`
+from the repo root does not: it cannot load `next.config.ts`.
+
+From `web/`: `npm ci --no-audit --no-fund`, `npm run typecheck`,
 `npm test`, `npm run build`. `npm run build` writes `generated/theme-boot.txt`
 and `generated/shell.css` before `next build`. Those files are gitignored.
 For a production-mode look: `npm run start -- --port 5174`.
 Next commands disable telemetry in the package scripts. Builds use the default
 Next output; Cache Components is disabled.
+
+The build needs the root install. The theme script is compiled with the root's
+`tsx` and Vite. At runtime, from `web/`, the app reads:
+
+- `generated/theme-boot.txt` and `generated/shell.css`, written by the build and gitignored
+- `../src/data/*.json`, per request
+- the four favicons, which are symbolic links to `../../public`
+
+N6's brief must settle `outputFileTracingIncludes` for those reads, Vercel's
+setting to include files outside the root, and the symbolic links. N2 changes
+none of it.
 
 `next-env.d.ts` is ignored: Next owns and regenerates it. Typecheck runs
 `next typegen` first so a clean checkout needs no build-generated file committed.
@@ -84,7 +98,7 @@ The head script is `scripts/write-theme-head.ts`, which compiles `src/themeBoot.
 with the Vite bootstrap builder. The layout emits that script before any
 stylesheet. The reader's font tags are then written with `document.write`, the
 same Google stylesheet URL as `index.html`, so Next does not hoist that link
-ahead of the theme script. Favicons are symlinks to `public/`.
+ahead of the theme script. The favicons are the symbolic links named above.
 
 `GET /api/snapshot` returns `Cache-Control: no-store` and exactly
 `{sourceSha, snapshotDigest, lastSyncAt, version}`. The digest is SHA-256 over
