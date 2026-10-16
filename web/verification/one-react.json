@@ -32,6 +32,7 @@
       "test/header-shared.test.tsx": "compiled canary, react/jsx-runtime and react-dom/server",
       "test/scaffold.test.tsx": "compiled canary, react/jsx-runtime and react-dom/server",
       "test/fixtures-table.test.tsx": "compiled canary, react/jsx-runtime and react-dom/server",
+      "test/fixture-edges.test.tsx": "compiled canary, react/jsx-runtime and react-dom/server",
       "test/allowlist.test.ts": "no React",
       "test/isolation.test.ts": "no React",
       "test/snapshot.test.ts": "no React"

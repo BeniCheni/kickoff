@@ -43,6 +43,7 @@ export const SRC_ALLOWLIST = [
   'src/lib/useNow.ts',
   'src/lib/useThemeController.ts',
   'src/lib/useUrlState.ts',
+  'tests/fixtures/edgeFixtures.ts', // synthetic in-play, postponed, suspended, missing-venue and TBC rows shared with the root test
 ]
 
 const EXTENSIONS = ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs']

@@ -4,25 +4,14 @@ import { renderToString } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { FixtureRow } from '../../src/components/FixtureRow'
 import type { Fixture } from '../../src/lib/schema'
+import { edgeFixture } from '../fixtures/edgeFixtures'
 
 /**
  * Statuses and venues the committed snapshot does not contain. The server string is what
  * Next renders; hydration must match it, which is also what the Vite client renders.
  */
 function fixture(patch: Partial<Fixture>): Fixture {
-  return {
-    id: 'synthetic:1',
-    competition: 'laliga',
-    kickoffUtc: '2026-11-22T20:00:00.000Z',
-    venue: 'Ramón Sánchez-Pizjuán',
-    venueTz: 'Europe/Madrid',
-    home: { name: 'Sevilla', sourceId: '1' },
-    away: { name: 'Levante', sourceId: '2' },
-    status: 'scheduled',
-    timeConfidence: 'exact',
-    source: { provider: 'espn', sourceId: '1', fetchedAt: '2026-10-15T22:27:12.832Z' },
-    ...patch,
-  }
+  return edgeFixture(patch)
 }
 
 async function serverAndClient(row: Fixture) {
