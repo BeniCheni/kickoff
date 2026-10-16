@@ -4,7 +4,6 @@ import type { ReactNode } from 'react'
 import { connection } from 'next/server'
 import { clockSnapshotAt } from '../../src/lib/clock'
 import { RequestClock } from '../../src/lib/RequestClock'
-import { ReactProbe } from './react-probe'
 import { ThemeAttributes } from './theme-attributes'
 
 const themeScript = readFileSync(path.join(process.cwd(), 'generated/theme-boot.txt'), 'utf8')
@@ -26,7 +25,6 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       <body>
         <ThemeAttributes />
         <RequestClock snapshot={snapshot}>
-          <ReactProbe />
           {children}
         </RequestClock>
       </body>

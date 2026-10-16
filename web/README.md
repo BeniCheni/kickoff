@@ -57,8 +57,8 @@ The App Router **client** ships Next's vendored React, not web's installed copy.
 `npm run build` ends in `node scripts/check-one-react.mjs`, which reads
 `.next/static`. On this build the only `.version` export is
 `19.3.0-canary-278794d7-20261002` (Next 16.4.1's compiled React). `19.2.8` does
-not appear in the client chunks. The probe's `useRef` binds to that vendored
-module. The server trace's React package is `web/node_modules/react` at 19.2.8,
+not appear in the client chunks. `shell.tsx` holds `LensSwitcher` in that client
+graph. The server trace's React package is `web/node_modules/react` at 19.2.8,
 loaded through Next's `vendored['react-ssr']` entry. Vitest aliases the same
 web copy, and rendering `LensSwitcher` from `../src` fails if a second React is
 the one calling hooks. `node scripts/prove-one-react.mjs` shows a copied React
@@ -68,7 +68,6 @@ web/ may import from `../src` only the modules in `src-allowlist.mjs`:
 
 - `src/components/LensSwitcher.tsx`, `MomentsEmpty.tsx`, `StalenessBanner.tsx`, `TabNav.tsx`, `ViewBoundary.tsx`
 - `src/lib/RequestClock.tsx`, `clock.ts`, `fixtures.ts`, `lens.ts`, `theme.ts`, `time.ts`, `urlCodecs.ts`, `useNow.ts`, `useUrlState.ts`
-- `tests/dom/rig.ts`
 
 It does not include `src/main.tsx`, `src/App.tsx`, a Moments session, player or
 YouTube module, or anything under `studio/`.

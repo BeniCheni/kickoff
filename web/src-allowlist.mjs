@@ -21,7 +21,6 @@ export const SRC_ALLOWLIST = [
   'src/lib/urlCodecs.ts',
   'src/lib/useNow.ts',
   'src/lib/useUrlState.ts',
-  'tests/dom/rig.ts',
 ]
 
 const EXTENSIONS = ['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs']
