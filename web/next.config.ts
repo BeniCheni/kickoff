@@ -8,6 +8,10 @@ const webpackAliases = Object.fromEntries(Object.entries(reactAliases).map(([key
 
 const config: NextConfig = {
   cacheComponents: false,
+  // NextConfig.agentRules, next/dist/server/config-shared.d.ts (Next 16.4.1).
+  // The default writes AGENTS.md beside this config when next dev sees an agent.
+  // The repository root AGENTS.md stays the authority, so this stays off.
+  agentRules: false,
   // The file tracer resolves a bare specifier from the importing file. A module
   // under ../src therefore also records the repo lock's react/package.json, while
   // the running module is the aliased copy in web/node_modules. Drop that one
