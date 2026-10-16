@@ -8,15 +8,35 @@ import { fileURLToPath } from 'node:url'
  *  are absent on purpose. */
 export const SRC_ALLOWLIST = [
   'src/components/AppHeader.tsx',
+  'src/components/CompetitionChip.tsx', // chip ink and competition colour, shared by the filter bar and the table
+  'src/components/FilterBar.tsx', // the Fixtures competition filter
+  'src/components/FixtureRow.tsx', // one fixture, including TBC and unsettled status
+  'src/components/FixturesPage.tsx', // the Fixtures tab
+  'src/components/LedgerWeek.tsx', // Ledger week rows
   'src/components/LensSwitcher.tsx',
+  'src/components/MatchdayLines.tsx', // matchday labels under a competition's rows
   'src/components/MomentsEmpty.tsx',
+  'src/components/MonthView.tsx', // the month grid
+  'src/components/NextUpStrip.tsx', // the next-kickoff strip
+  'src/components/PosterWeek.tsx', // Poster week blocks
   'src/components/StalenessBanner.tsx',
   'src/components/TabNav.tsx',
+  'src/components/TablePage.tsx', // the Table tab
+  'src/components/TickerStrip.tsx', // Broadcast Fixtures ticker; the shell mounts it, not FixturesPage
+  'src/components/TonightSlate.tsx', // today's slate on the Fixtures tab
   'src/components/ViewBoundary.tsx',
+  'src/components/WatchPanel.tsx', // where each competition is shown
+  'src/components/WeekView.tsx', // week dispatch into Ledger or Poster
   'src/lib/RequestClock.tsx',
+  'src/lib/chipInk.ts', // readable text colour on a competition chip
   'src/lib/clock.ts',
+  'src/lib/competitions.ts', // competition names, colours, groups and table leagues
   'src/lib/fixtures.ts',
   'src/lib/lens.ts',
+  'src/lib/lensSelectors.ts', // week, month, slate and ticker selection
+  'src/lib/matchdays.ts', // matchday windows for the row labels
+  'src/lib/schema.ts', // fixture and standings validation
+  'src/lib/standings.ts', // table rows from the committed standings snapshot
   'src/lib/theme.ts',
   'src/lib/time.ts',
   'src/lib/urlCodecs.ts',

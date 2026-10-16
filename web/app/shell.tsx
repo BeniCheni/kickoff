@@ -7,6 +7,9 @@ import { LensSwitcher } from '../../src/components/LensSwitcher'
 import { StalenessBanner } from '../../src/components/StalenessBanner'
 import { ViewBoundary } from '../../src/components/ViewBoundary'
 import { MomentsEmpty } from '../../src/components/MomentsEmpty'
+import { FixturesPage } from '../../src/components/FixturesPage'
+import { TablePage } from '../../src/components/TablePage'
+import { TickerStrip } from '../../src/components/TickerStrip'
 import { DEFAULT_LENS, encodeLens, parseLens } from '../../src/lib/lens'
 import { useThemeController } from '../../src/lib/useThemeController'
 import { useNow } from '../../src/lib/useNow'
@@ -41,8 +44,9 @@ function ShellInner() {
       </TabNav>
       {tab === 'moments' ? <ViewBoundary key={`${tab}:${lens}`}><MomentsEmpty /></ViewBoundary> : (
         <div data-moments-background="route"><ViewBoundary key={`${tab}:${lens}`}>
+          {lens === 'broadcast' && tab === 'fixtures' && <TickerStrip />}
           <StalenessBanner />
-          <p>Not ported yet (N3)</p>
+          {tab === 'table' ? <TablePage /> : <FixturesPage today={today} lens={lens} />}
         </ViewBoundary></div>
       )}
     </div>
