@@ -76,8 +76,10 @@ compile shared modules in `../src`. It is not set any higher. Aliases in
 React. They do not choose the copy the App Router renders. `shell.tsx` holds
 `LensSwitcher` in the client graph. `npm run build` ends in
 `node scripts/check-one-react.mjs`, which reads `.next/static` and requires one
-client `.version`. On the recorded build that string is the canary above, and
-`19.2.8` does not appear in the client chunks. Rendering `LensSwitcher` from
+React runtime version export. On the recorded build that export is the canary
+above. The check uses the pattern in `scripts/react-copies.mjs`,
+`.version="(18|19)…"`. A bare `19.2.8` substring in bundled dependency metadata
+is not a second React. Rendering `LensSwitcher` from
 `../src` under Vitest fails if a second React is the one calling hooks.
 `node scripts/prove-one-react.mjs` shows a copied React package and a second
 client version fail, then the built client passes. The renderer observation is
@@ -133,8 +135,9 @@ also pass. This resolves scaffold tooling only, not N2 hydration or pre-paint wo
 move only in a PR that bumps Next, and that PR must re-prove U01. The check
 stays inside `typecheck`.
 
-Every direct dependency is MIT except TypeScript (Apache-2.0), verified from the
-installed packages. Exact versions are in package.json and package-lock.json.
+Every direct dependency is MIT except TypeScript and puppeteer-core (both
+Apache-2.0), verified from the installed packages. Exact versions are in
+package.json and package-lock.json.
 
 Isolation checks live in the new root `tests/web-isolation.test.ts` and web's
 `test/isolation.test.ts`: literal static/type/dynamic imports and re-exports,

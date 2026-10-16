@@ -126,6 +126,10 @@ async function measure(browser, origin, tab, lens, theme, width, shotName) {
     }))
   }
   measured.focus = focus
+  measured.captureUrl = page.url()
+  const shot = await page.screenshot({ type: 'png' })
+  writeFileSync(path.join(outDir, shotName), shot)
+  measured.sha256 = createHash('sha256').update(shot).digest('hex')
   const other = tab === 'table' ? 'Fixtures' : 'Table'
   await page.evaluate(label => {
     const button = [...document.querySelectorAll('nav[aria-label="Primary"] button')].find(element => element.textContent === label)
@@ -151,9 +155,6 @@ async function measure(browser, origin, tab, lens, theme, width, shotName) {
   }))
   measured.history = { pushed, backed, forwarded }
   measured.logs = logs
-  const shot = await page.screenshot({ type: 'png' })
-  writeFileSync(path.join(outDir, shotName), shot)
-  measured.sha256 = createHash('sha256').update(shot).digest('hex')
   await context.close()
   return measured
 }
@@ -199,7 +200,7 @@ try {
 
 const differing = rows.filter(row => row.diffs.length)
 const summary = {
-  compares: `Vite preview of the merge-base dist at ${baseSha} (${baseOrigin}) against Vite preview of this tip's dist at ${tipSha} (${tipOrigin}). 72 cells: 3 tabs × 3 lenses × 2 themes × 360, 375, 390 and 1000. Date frozen at ${frozen}. Both theme keys stubbed. Viewport set before each navigation. Compared: scrollWidth === innerWidth, 15 computed tokens on html, body color and font, geometry of the header, tab row and route (up to 600 boxes each), header and route text, the theme button's accessible name, a 14-step Tab focus order, and the URL plus active tab after a tab push, Back and Forward.`,
+  compares: `Vite preview of the merge-base dist at ${baseSha} (${baseOrigin}) against Vite preview of this tip's dist at ${tipSha} (${tipOrigin}). 72 cells: 3 tabs × 3 lenses × 2 themes × 360, 375, 390 and 1000. Date frozen at ${frozen}. Both theme keys stubbed. Viewport set before each navigation. Each PNG is captured at the cell's own route, before the history exercise, and the receipt records that capture URL. Compared: scrollWidth === innerWidth, 15 computed tokens on html, body color and font, geometry of the header, tab row and route (up to 600 boxes each), header and route text, the theme button's accessible name, a 14-step Tab focus order, and the URL plus active tab after a tab push, Back and Forward.`,
   base: baseSha,
   tip: tipSha,
   frozenUtc: frozen,
@@ -209,6 +210,7 @@ const summary = {
   pngs: rows.flatMap(row => ['base', 'tip'].map(name => ({
     file: `${name}-${row.id}.png`,
     sha256: row[name].sha256,
+    captureUrl: row[name].captureUrl,
   }))),
 }
 writeFileSync(path.join(outDir, 'summary.json'), JSON.stringify(summary, null, 2))

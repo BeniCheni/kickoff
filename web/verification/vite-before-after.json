@@ -657,6 +657,6 @@
   "rerun": {
     "baseAgainstBase": "The same 11 cells, both sides the base preview on 5181. The three 375 cells matched. The eight Broadcast Fixtures cells differed only in ticker-track x (tenths of a pixel, or about 4px on the marquee), and those elements are marked ticker.",
     "baseAgainstTipAgain": "fixtures-ledger-dark-375, fixtures-poster-light-375 and fixtures-poster-dark-375 matched on a second base-against-tip run.",
-    "remains": "No difference remains outside the Broadcast ticker's x offset. That offset also moves when the base is compared with itself. Header, tokens, focus order, history and the other 64 cells matched on the first pass."
+    "remains": "No difference remains outside the Broadcast ticker's x offset. That offset also moves when the base is compared with itself. Header, tokens, focus order, history and the other 61 cells matched on the first pass."
   }
 }
