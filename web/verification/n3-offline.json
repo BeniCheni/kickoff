@@ -1,5 +1,5 @@
 {
-  "compares": "The offline Fixtures-and-Table file, opened from file://. The file URL defaults to dist-offline/index.html resolved from import.meta.url. 48 cells: 2 tabs × 3 lenses × 2 themes × 360, 375, 390 and 1000, plus ?tab=moments left untouched, a throwing localStorage, the 72-hour stale warning, a month filter, and a league with an unknown key. Date frozen at 2026-10-15T20:00:00.000Z except the stale cell. Ticker animation paused. Viewport set before navigation. No Moments tab is rendered. Each cell records location.search + location.hash.",
+  "compares": "The offline Fixtures-and-Table file, opened from file://. The file URL defaults to dist-offline/index.html resolved from import.meta.url. 48 cells: 2 tabs × 3 lenses × 2 themes × 360, 375, 390 and 1000, plus ?tab=moments left untouched, a throwing localStorage, the 72-hour stale warning, a month filter, and a league with an unknown key. Date frozen at 2026-10-15T20:00:00.000Z except the stale cell. Ticker animation paused. Viewport set before navigation. No Moments tab is rendered. Each cell records location.search + location.hash. The 360 and 390 cells abort every request that is not file: and record the resolved body font stack.",
   "frozenUtc": "2026-10-15T20:00:00.000Z",
   "cells": 53,
   "differing": [],
@@ -7,9 +7,18 @@
     {
       "id": "fixtures-ledger-light-360",
       "problems": [],
-      "sha256": "6a09a7ce9a0112269da58fd8f5f20f2e113828f873f849496c4858d910a615f9",
+      "sha256": "81a9f8359eae2ba61d13a75c630bd1d3bcb35651f5f22b9f8328ab49a3ab24bd",
       "searchHash": "?lens=ledger",
-      "logs": []
+      "logs": [],
+      "networkOff": true,
+      "fontStack": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "loadedFamilies": [],
+      "blockedHosts": [
+        "fonts.googleapis.com"
+      ],
+      "blockedLogs": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ]
     },
     {
       "id": "fixtures-ledger-light-375",
@@ -21,9 +30,18 @@
     {
       "id": "fixtures-ledger-light-390",
       "problems": [],
-      "sha256": "451d037cfc8ad22fd0cc203a2be7a3a745bb9d17f77dea139ebba222924a5b64",
+      "sha256": "e231bf00230cb96d871895d577f5ce342fba8a808ad8284a7ce11f3d4a12981a",
       "searchHash": "?lens=ledger",
-      "logs": []
+      "logs": [],
+      "networkOff": true,
+      "fontStack": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "loadedFamilies": [],
+      "blockedHosts": [
+        "fonts.googleapis.com"
+      ],
+      "blockedLogs": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ]
     },
     {
       "id": "fixtures-ledger-light-1000",
@@ -35,9 +53,18 @@
     {
       "id": "fixtures-ledger-dark-360",
       "problems": [],
-      "sha256": "bace4df894caf6d6104f301d7c3d2c50e6e83f0e861c905b809c21202bb0821f",
+      "sha256": "2806010b85c82de2ad863126007f3c9dd30dd3f5fd7b4f18ff6008617788b591",
       "searchHash": "?lens=ledger",
-      "logs": []
+      "logs": [],
+      "networkOff": true,
+      "fontStack": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "loadedFamilies": [],
+      "blockedHosts": [
+        "fonts.googleapis.com"
+      ],
+      "blockedLogs": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ]
     },
     {
       "id": "fixtures-ledger-dark-375",
@@ -49,9 +76,18 @@
     {
       "id": "fixtures-ledger-dark-390",
       "problems": [],
-      "sha256": "27852d726829d672d7388f59d2970c388dfdeae62b55416e38a45c976bdd6422",
+      "sha256": "0c691adfbf88a7020b695e714deef992402ca3d885edd6cb55e0dc0c6951b841",
       "searchHash": "?lens=ledger",
-      "logs": []
+      "logs": [],
+      "networkOff": true,
+      "fontStack": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "loadedFamilies": [],
+      "blockedHosts": [
+        "fonts.googleapis.com"
+      ],
+      "blockedLogs": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ]
     },
     {
       "id": "fixtures-ledger-dark-1000",
@@ -63,9 +99,18 @@
     {
       "id": "fixtures-poster-light-360",
       "problems": [],
-      "sha256": "9fc5a9cc334b61fe535669807a0ce250110e368f6bfff6805491bbc49f9a76e0",
+      "sha256": "8ff091dbeec40ceb6b4bdb8d93c2b862de3ebeb62a16fa6e58d0da1407b7a533",
       "searchHash": "",
-      "logs": []
+      "logs": [],
+      "networkOff": true,
+      "fontStack": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "loadedFamilies": [],
+      "blockedHosts": [
+        "fonts.googleapis.com"
+      ],
+      "blockedLogs": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ]
     },
     {
       "id": "fixtures-poster-light-375",
@@ -77,9 +122,18 @@
     {
       "id": "fixtures-poster-light-390",
       "problems": [],
-      "sha256": "d994ae02b155e73b8b1e7fdcd16bcd8d2e703b6f7902ceba204238f96f661d46",
+      "sha256": "829ec12af6f943c0ce1b120542a906d208e5d87c372378e470f4209334daf576",
       "searchHash": "",
-      "logs": []
+      "logs": [],
+      "networkOff": true,
+      "fontStack": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "loadedFamilies": [],
+      "blockedHosts": [
+        "fonts.googleapis.com"
+      ],
+      "blockedLogs": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ]
     },
     {
       "id": "fixtures-poster-light-1000",
@@ -91,9 +145,18 @@
     {
       "id": "fixtures-poster-dark-360",
       "problems": [],
-      "sha256": "7b9b5e2d07d71210a0fad7707bd904c1f4b46e5db395cd5c51765925d3a2dff7",
+      "sha256": "830bab92189786c6aaaa534323c07c4a54a76c4aaf299d1431da314c438a692d",
       "searchHash": "",
-      "logs": []
+      "logs": [],
+      "networkOff": true,
+      "fontStack": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "loadedFamilies": [],
+      "blockedHosts": [
+        "fonts.googleapis.com"
+      ],
+      "blockedLogs": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ]
     },
     {
       "id": "fixtures-poster-dark-375",
@@ -105,9 +168,18 @@
     {
       "id": "fixtures-poster-dark-390",
       "problems": [],
-      "sha256": "7f4a06498f6afec527b516fa0e9b23ce3dd3973215004b1f6e0663e6eb4f0bb1",
+      "sha256": "7b8b5b935723c9c7f9b287d894120a1a306f43d0cd7bb4d61f819488c02de1db",
       "searchHash": "",
-      "logs": []
+      "logs": [],
+      "networkOff": true,
+      "fontStack": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "loadedFamilies": [],
+      "blockedHosts": [
+        "fonts.googleapis.com"
+      ],
+      "blockedLogs": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ]
     },
     {
       "id": "fixtures-poster-dark-1000",
@@ -119,9 +191,18 @@
     {
       "id": "fixtures-broadcast-light-360",
       "problems": [],
-      "sha256": "05ca9e82d202e613b1d6ee9d5555977f600bb1a29cc504b0a1af5f8b94a89972",
+      "sha256": "fe14a86bc0a39a68540fbb9bd49eaca4e1f7262947fa8db7827277d41d9d3d38",
       "searchHash": "?lens=broadcast",
-      "logs": []
+      "logs": [],
+      "networkOff": true,
+      "fontStack": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "loadedFamilies": [],
+      "blockedHosts": [
+        "fonts.googleapis.com"
+      ],
+      "blockedLogs": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ]
     },
     {
       "id": "fixtures-broadcast-light-375",
@@ -133,9 +214,18 @@
     {
       "id": "fixtures-broadcast-light-390",
       "problems": [],
-      "sha256": "7aebe82e111df10ff3c771d13c6648d8bae4ef53d47ca8c9b06ebae681218c58",
+      "sha256": "c4e5c9f0dc643b2ad8f3d1e9ef5e9855fe6fe09079be98187880af7f055f0e2d",
       "searchHash": "?lens=broadcast",
-      "logs": []
+      "logs": [],
+      "networkOff": true,
+      "fontStack": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "loadedFamilies": [],
+      "blockedHosts": [
+        "fonts.googleapis.com"
+      ],
+      "blockedLogs": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ]
     },
     {
       "id": "fixtures-broadcast-light-1000",
@@ -147,9 +237,18 @@
     {
       "id": "fixtures-broadcast-dark-360",
       "problems": [],
-      "sha256": "8e26a10e199904fc4ea88b27eacb962eaf1fb36080a6149240df15b9201230e5",
+      "sha256": "a9175639bb84ad28af6fb73b20a37b2632a59f6cdd012f69d3183b92713aa960",
       "searchHash": "?lens=broadcast",
-      "logs": []
+      "logs": [],
+      "networkOff": true,
+      "fontStack": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "loadedFamilies": [],
+      "blockedHosts": [
+        "fonts.googleapis.com"
+      ],
+      "blockedLogs": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ]
     },
     {
       "id": "fixtures-broadcast-dark-375",
@@ -161,9 +260,18 @@
     {
       "id": "fixtures-broadcast-dark-390",
       "problems": [],
-      "sha256": "42a3af749ebf0b484213339452b8c03cd7d546370831ce3318df02869ecaf9d5",
+      "sha256": "53b0bd10a32704af826609012157877aa5363f4a5f2daae21e1b96707146d9be",
       "searchHash": "?lens=broadcast",
-      "logs": []
+      "logs": [],
+      "networkOff": true,
+      "fontStack": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "loadedFamilies": [],
+      "blockedHosts": [
+        "fonts.googleapis.com"
+      ],
+      "blockedLogs": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ]
     },
     {
       "id": "fixtures-broadcast-dark-1000",
@@ -175,9 +283,18 @@
     {
       "id": "table-ledger-light-360",
       "problems": [],
-      "sha256": "1371ad863b835750a943e9b4c929df5713cd5fc043bda6d90507ab8edfb3c58e",
+      "sha256": "d47788a71057181ea8385764e52e443dbeaf18e157c77b20ab7d628de8aac3bb",
       "searchHash": "?tab=table&lens=ledger",
-      "logs": []
+      "logs": [],
+      "networkOff": true,
+      "fontStack": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "loadedFamilies": [],
+      "blockedHosts": [
+        "fonts.googleapis.com"
+      ],
+      "blockedLogs": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ]
     },
     {
       "id": "table-ledger-light-375",
@@ -189,9 +306,18 @@
     {
       "id": "table-ledger-light-390",
       "problems": [],
-      "sha256": "e5df7dde66e30282ef9d1c8708449da1df08b0f38b6cb2b34856ca3297ba0d92",
+      "sha256": "86fdfb27188af0ad72a2f73197cd22e35e6ca964354217b716c274d512faaa27",
       "searchHash": "?tab=table&lens=ledger",
-      "logs": []
+      "logs": [],
+      "networkOff": true,
+      "fontStack": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "loadedFamilies": [],
+      "blockedHosts": [
+        "fonts.googleapis.com"
+      ],
+      "blockedLogs": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ]
     },
     {
       "id": "table-ledger-light-1000",
@@ -203,9 +329,18 @@
     {
       "id": "table-ledger-dark-360",
       "problems": [],
-      "sha256": "d46d6e7055a53e2ec6b90a27bf4bcc1968b855fea471ef4a8d8a59380773743f",
+      "sha256": "8bac83b29ca5134b1085d861be757b51d073dcfa817ec5ccfb6973c6fe764729",
       "searchHash": "?tab=table&lens=ledger",
-      "logs": []
+      "logs": [],
+      "networkOff": true,
+      "fontStack": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "loadedFamilies": [],
+      "blockedHosts": [
+        "fonts.googleapis.com"
+      ],
+      "blockedLogs": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ]
     },
     {
       "id": "table-ledger-dark-375",
@@ -217,9 +352,18 @@
     {
       "id": "table-ledger-dark-390",
       "problems": [],
-      "sha256": "89b4e2d37b969c15f3acd918db6ec4130739d6209d9ccbbf27052c40bfb50317",
+      "sha256": "6044e9ef10bae39ea19408665376447deb5b214d0da511a7054d5ecbaf2c505b",
       "searchHash": "?tab=table&lens=ledger",
-      "logs": []
+      "logs": [],
+      "networkOff": true,
+      "fontStack": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "loadedFamilies": [],
+      "blockedHosts": [
+        "fonts.googleapis.com"
+      ],
+      "blockedLogs": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ]
     },
     {
       "id": "table-ledger-dark-1000",
@@ -231,9 +375,18 @@
     {
       "id": "table-poster-light-360",
       "problems": [],
-      "sha256": "7b5ae2d46cb53d9f20b681f4bdd97c6d1e6d52460aba885b819e3db051870d9c",
+      "sha256": "456f212950e2d0d2d4f8deed697da090193b9938efc596d634525d450ad2a300",
       "searchHash": "?tab=table",
-      "logs": []
+      "logs": [],
+      "networkOff": true,
+      "fontStack": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "loadedFamilies": [],
+      "blockedHosts": [
+        "fonts.googleapis.com"
+      ],
+      "blockedLogs": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ]
     },
     {
       "id": "table-poster-light-375",
@@ -245,9 +398,18 @@
     {
       "id": "table-poster-light-390",
       "problems": [],
-      "sha256": "2e46a63563e465dd0ffae964baf1a4e4d9fdff29529b5b5a303d70ad9c38511e",
+      "sha256": "7a0d67864542de547b85330bc800e6d61707e16707fe3fb5ead82967f2e2dd0e",
       "searchHash": "?tab=table",
-      "logs": []
+      "logs": [],
+      "networkOff": true,
+      "fontStack": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "loadedFamilies": [],
+      "blockedHosts": [
+        "fonts.googleapis.com"
+      ],
+      "blockedLogs": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ]
     },
     {
       "id": "table-poster-light-1000",
@@ -259,9 +421,18 @@
     {
       "id": "table-poster-dark-360",
       "problems": [],
-      "sha256": "9871bc34d62162388aabe427607eeb17eeaad9e72aa3a611e50e9433d405f75f",
+      "sha256": "93a995869b151fa7dc4897df8f06d5ebf64a48784a5e1ec38b043b9cb740bca2",
       "searchHash": "?tab=table",
-      "logs": []
+      "logs": [],
+      "networkOff": true,
+      "fontStack": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "loadedFamilies": [],
+      "blockedHosts": [
+        "fonts.googleapis.com"
+      ],
+      "blockedLogs": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ]
     },
     {
       "id": "table-poster-dark-375",
@@ -273,9 +444,18 @@
     {
       "id": "table-poster-dark-390",
       "problems": [],
-      "sha256": "641d772f236fb20a8ce8afb1cc103f20506b17dbcd18b09612729329ba3112a9",
+      "sha256": "3c3141d7920808dbfd3b5aa0610d57ab6e5dfbd88d44605e22d7bf427817357a",
       "searchHash": "?tab=table",
-      "logs": []
+      "logs": [],
+      "networkOff": true,
+      "fontStack": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "loadedFamilies": [],
+      "blockedHosts": [
+        "fonts.googleapis.com"
+      ],
+      "blockedLogs": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ]
     },
     {
       "id": "table-poster-dark-1000",
@@ -287,9 +467,18 @@
     {
       "id": "table-broadcast-light-360",
       "problems": [],
-      "sha256": "043b2d2fc39eedcec79eb8e2765df8040d19ac53be35c7785feb41a609b4a6c7",
+      "sha256": "0d698bb0cc401331c0ea246834798d75e483717d3e82de6a5cde30ac148fb225",
       "searchHash": "?tab=table&lens=broadcast",
-      "logs": []
+      "logs": [],
+      "networkOff": true,
+      "fontStack": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "loadedFamilies": [],
+      "blockedHosts": [
+        "fonts.googleapis.com"
+      ],
+      "blockedLogs": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ]
     },
     {
       "id": "table-broadcast-light-375",
@@ -301,9 +490,18 @@
     {
       "id": "table-broadcast-light-390",
       "problems": [],
-      "sha256": "85f4417dcf8e668d019845e722f189c0ceed2b5ab29d730e0dfc1d7cde0bdf22",
+      "sha256": "fba9d21ffd59a6cb8faff63a103853389772e80de003a28e001287e179bacf50",
       "searchHash": "?tab=table&lens=broadcast",
-      "logs": []
+      "logs": [],
+      "networkOff": true,
+      "fontStack": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "loadedFamilies": [],
+      "blockedHosts": [
+        "fonts.googleapis.com"
+      ],
+      "blockedLogs": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ]
     },
     {
       "id": "table-broadcast-light-1000",
@@ -315,9 +513,18 @@
     {
       "id": "table-broadcast-dark-360",
       "problems": [],
-      "sha256": "014a8ffe89541ae8c4be9578719a8b7980b8b63ebdd32bfbf2f2e92f8e2c100a",
+      "sha256": "b10bf099d10d7895ec75904929e7b24ddea3bf920f8a1e0947132f60d53b540a",
       "searchHash": "?tab=table&lens=broadcast",
-      "logs": []
+      "logs": [],
+      "networkOff": true,
+      "fontStack": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "loadedFamilies": [],
+      "blockedHosts": [
+        "fonts.googleapis.com"
+      ],
+      "blockedLogs": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ]
     },
     {
       "id": "table-broadcast-dark-375",
@@ -329,9 +536,18 @@
     {
       "id": "table-broadcast-dark-390",
       "problems": [],
-      "sha256": "46581a46f78f26b4cbcf0f15411a5d4156a4224444f2914dce05888d4dc5e58e",
+      "sha256": "a64a04a62ba09fab740bbc10748b9368fdb915b8640b6edea8bd38129c1aaff2",
       "searchHash": "?tab=table&lens=broadcast",
-      "logs": []
+      "logs": [],
+      "networkOff": true,
+      "fontStack": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "loadedFamilies": [],
+      "blockedHosts": [
+        "fonts.googleapis.com"
+      ],
+      "blockedLogs": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ]
     },
     {
       "id": "table-broadcast-dark-1000",
@@ -344,30 +560,69 @@
       "id": "moments-url",
       "problems": [],
       "searchHash": "?tab=moments&watch=clip",
-      "logs": []
+      "logs": [],
+      "networkOff": true,
+      "fontStack": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "loadedFamilies": [],
+      "blockedHosts": [
+        "fonts.googleapis.com"
+      ],
+      "blockedLogs": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ]
     },
     {
       "id": "blocked-storage",
       "problems": [],
       "searchHash": "",
-      "logs": []
+      "logs": [],
+      "networkOff": true,
+      "fontStack": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "loadedFamilies": [],
+      "blockedHosts": [
+        "fonts.googleapis.com"
+      ],
+      "blockedLogs": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ]
     },
     {
       "id": "stale",
       "problems": [],
       "searchHash": "",
-      "frozen": "2026-10-19T00:00:00.000Z"
+      "logs": [],
+      "frozen": "2026-10-19T00:00:00.000Z",
+      "networkOff": true,
+      "fontStack": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "loadedFamilies": [],
+      "blockedHosts": [
+        "fonts.googleapis.com"
+      ],
+      "blockedLogs": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ]
     },
     {
       "id": "month-filter",
       "problems": [],
-      "searchHash": "?view=month&only=pl&date=2026-09-20"
+      "searchHash": "?view=month&only=pl&date=2026-09-20",
+      "logs": [],
+      "networkOff": true,
+      "fontStack": "Inter, ui-sans-serif, system-ui, sans-serif",
+      "loadedFamilies": [],
+      "blockedHosts": [
+        "fonts.googleapis.com"
+      ],
+      "blockedLogs": [
+        "Failed to load resource: net::ERR_BLOCKED_BY_CLIENT.Inspector"
+      ]
     },
     {
       "id": "league-unknown-key",
       "problems": [],
-      "searchHash": "?tab=table&league=bundesliga&kept=1"
+      "searchHash": "?tab=table&league=bundesliga&kept=1",
+      "logs": []
     }
   ],
-  "note": "Regenerated Fri 16 Oct 2026. Each cell records location.search + location.hash. The file URL is resolved from import.meta.url and is not stored."
+  "note": "Regenerated Fri 16 Oct 2026 with the network off on every 360 and 390 cell, including the behavior cells at those widths. Each cell records location.search + location.hash. Non-file requests abort. The resolved body font stack is Inter, ui-sans-serif, system-ui, sans-serif, loadedFamilies is empty, and the only blocked host is fonts.googleapis.com."
 }
