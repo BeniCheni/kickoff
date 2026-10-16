@@ -18,6 +18,31 @@ function readCSS(dir) {
 const reader = readCSS(path.join(root, 'dist/assets'))
 const shellCss = path.join(root, 'web/generated/shell.css')
 const web = readFileSync(shellCss, 'utf8')
+const globals = readFileSync(path.join(root, 'web/app/globals.css'), 'utf8')
+const sources = [...globals.matchAll(/@source\s+"([^"]+)"/g)].map(match => match[1])
+assert.deepEqual(sources, [
+  './',
+  '../../src/components/AppHeader.tsx',
+  '../../src/components/TabNav.tsx',
+  '../../src/components/LensSwitcher.tsx',
+  '../../src/components/StalenessBanner.tsx',
+  '../../src/components/ViewBoundary.tsx',
+  '../../src/components/MomentsEmpty.tsx',
+  '../../src/components/FixturesPage.tsx',
+  '../../src/components/TablePage.tsx',
+  '../../src/components/TickerStrip.tsx',
+  '../../src/components/WeekView.tsx',
+  '../../src/components/MonthView.tsx',
+  '../../src/components/LedgerWeek.tsx',
+  '../../src/components/PosterWeek.tsx',
+  '../../src/components/FixtureRow.tsx',
+  '../../src/components/MatchdayLines.tsx',
+  '../../src/components/NextUpStrip.tsx',
+  '../../src/components/TonightSlate.tsx',
+  '../../src/components/FilterBar.tsx',
+  '../../src/components/CompetitionChip.tsx',
+  '../../src/components/WatchPanel.tsx',
+], 'web Tailwind sources must be web/app plus the named shared files')
 assert.ok(web.includes('bada71'), 'web probe missing: scan check would be vacuous')
 assert.ok(!reader.includes('bada71'), 'web probe reached reader CSS')
 assert.ok(!reader.includes('fa11e0'), 'Studio probe reached reader CSS')

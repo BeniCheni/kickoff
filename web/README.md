@@ -137,6 +137,34 @@ node web/scripts/theme-filmstrip.mjs /tmp/kickoff-n2-filmstrip
 `puppeteer-core` 24.23.0 (Apache-2.0) drives the installed Chrome. It does not
 download a browser. PNGs stay outside the repo; the receipts list their SHA-256s.
 
+N3 adds Fixtures and Table through the allowlist above, and `npm run build:offline`
+at the repo root. That command writes `dist-offline/index.html`, a second
+single-file build. `npm run build:single` still writes the whole app to
+`dist-single/`. The offline file renders Fixtures and Table only. `?tab=moments`
+renders Fixtures and leaves the URL as it was. The words "Offline snapshot" sit
+in a paragraph after `AppHeader`, so the shared header's DOM in the Vite app and
+in this app does not gain that line. `node scripts/scan-offline-bundle.ts` (from
+the repo root, via `tsx`) fails if that file contains `next/`, Drizzle, a
+database URL, `studio/`, the Studio env names, or the Moments player, session, or
+YouTube markers.
+
+N3 receipts, with PNGs outside the repo:
+
+- `verification/n3-vite-before-after.json` — Vite at the merge base against Vite at this tip
+- `verification/n3-next-vite.json` — this app against that Vite preview
+- `verification/n3-offline.json` — the offline file from `file://`
+
+```sh
+npm run build && npm run build:offline
+npm --prefix web run build && npm --prefix web run start -- --port 5174
+npx vite preview --host 127.0.0.1 --port 5181 --strictPort   # merge-base dist
+npx vite preview --host 127.0.0.1 --port 5182 --strictPort   # this tip's dist
+KICKOFF_BASE_SHA=<base> KICKOFF_TIP_SHA=<tip> node web/scripts/vite-before-after.mjs /tmp/kickoff-n3-vite-before-after
+node web/scripts/n3-next-vite.mjs /tmp/kickoff-n3-next-vite
+node web/scripts/n3-offline.mjs /tmp/kickoff-n3-offline
+node web/scripts/n3-edges.mjs
+```
+
 U01: Next 16.4.1 builds with TypeScript 7.0.2 through its CLI checker, but TypeScript
 7 lacks the JavaScript compiler API used by Next's language-service plugin.
 The newest TypeScript 6 patch, 6.0.3, is pinned here only. The root stays on 7.

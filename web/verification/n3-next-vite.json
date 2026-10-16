@@ -1,0 +1,1161 @@
+{
+  "compares": "Next production at http://127.0.0.1:5174 against Vite preview at http://127.0.0.1:5182. 72 cells (3 tabs × 3 lenses × 2 themes × 360, 375, 390, 1000) plus month, one competition filter, a pinned date, an empty competition set, a TBC week, an abandoned week, every league table, and the Broadcast ticker. Date frozen at 2026-10-15T20:00:00.000Z. Both theme keys stubbed. Viewport set before navigation. Ticker animation paused. PNGs captured at the cell route. Moments compares the shell only; its body stays the N2 empty state on Next. Compared: scrollWidth === innerWidth, computed tokens, header nav and theme-button geometry rounded to the pixel, theme accessible name, route text, and console or hydration warnings.",
+  "frozenUtc": "2026-10-15T20:00:00.000Z",
+  "cells": 85,
+  "differing": [],
+  "rows": [
+    {
+      "id": "fixtures-ledger-light-360",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "c721a0ed7ac72cd36faf375f9169292fd733361ea57a61d289b987156c5d2141",
+        "captureUrl": "http://127.0.0.1:5182/?lens=ledger"
+      },
+      "next": {
+        "sha256": "ea46f53a306a8980414a30de13320119be44f17ed109807e2b0966c15756a923",
+        "captureUrl": "http://127.0.0.1:5174/?lens=ledger"
+      }
+    },
+    {
+      "id": "fixtures-ledger-light-375",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "759f41db761602f061c93ba54859b8f02c6cca24f087682ba04cd18893130435",
+        "captureUrl": "http://127.0.0.1:5182/?lens=ledger"
+      },
+      "next": {
+        "sha256": "62a4ad8855ea75dfb3afc3384a6163acee52419c4b8e52a1adee1ffdde818615",
+        "captureUrl": "http://127.0.0.1:5174/?lens=ledger"
+      }
+    },
+    {
+      "id": "fixtures-ledger-light-390",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "93cb21b59e6aca8c75f77c0467344bcf976018e3ca12bb4c7a65c8ae11e8fea5",
+        "captureUrl": "http://127.0.0.1:5182/?lens=ledger"
+      },
+      "next": {
+        "sha256": "93cb21b59e6aca8c75f77c0467344bcf976018e3ca12bb4c7a65c8ae11e8fea5",
+        "captureUrl": "http://127.0.0.1:5174/?lens=ledger"
+      }
+    },
+    {
+      "id": "fixtures-ledger-light-1000",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "7b19a5f2eb077a21d9158c74748dfb6b2467ead3b6925784705d8823560c941d",
+        "captureUrl": "http://127.0.0.1:5182/?lens=ledger"
+      },
+      "next": {
+        "sha256": "7b19a5f2eb077a21d9158c74748dfb6b2467ead3b6925784705d8823560c941d",
+        "captureUrl": "http://127.0.0.1:5174/?lens=ledger"
+      }
+    },
+    {
+      "id": "fixtures-ledger-dark-360",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "ff93b098aad674f1b1236260949be717f5f9a6052c9d22c4b4f6275d6a112d39",
+        "captureUrl": "http://127.0.0.1:5182/?lens=ledger"
+      },
+      "next": {
+        "sha256": "ff93b098aad674f1b1236260949be717f5f9a6052c9d22c4b4f6275d6a112d39",
+        "captureUrl": "http://127.0.0.1:5174/?lens=ledger"
+      }
+    },
+    {
+      "id": "fixtures-ledger-dark-375",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "c6cf78967a9817bc2a66921448d13d8ed41bfb48e1fb6818f7232413d5869f5c",
+        "captureUrl": "http://127.0.0.1:5182/?lens=ledger"
+      },
+      "next": {
+        "sha256": "c6cf78967a9817bc2a66921448d13d8ed41bfb48e1fb6818f7232413d5869f5c",
+        "captureUrl": "http://127.0.0.1:5174/?lens=ledger"
+      }
+    },
+    {
+      "id": "fixtures-ledger-dark-390",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "c28e9aa472694ff17304e63385829761a13cbd0ca385bc6903143d26e9b444f3",
+        "captureUrl": "http://127.0.0.1:5182/?lens=ledger"
+      },
+      "next": {
+        "sha256": "c28e9aa472694ff17304e63385829761a13cbd0ca385bc6903143d26e9b444f3",
+        "captureUrl": "http://127.0.0.1:5174/?lens=ledger"
+      }
+    },
+    {
+      "id": "fixtures-ledger-dark-1000",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "00cd0fccfac6ed8ae2742f7b6ae02a0c2b95b79391c214b49f2be4bf8dc75ad1",
+        "captureUrl": "http://127.0.0.1:5182/?lens=ledger"
+      },
+      "next": {
+        "sha256": "00cd0fccfac6ed8ae2742f7b6ae02a0c2b95b79391c214b49f2be4bf8dc75ad1",
+        "captureUrl": "http://127.0.0.1:5174/?lens=ledger"
+      }
+    },
+    {
+      "id": "fixtures-poster-light-360",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "5d28dc4a7c7b01303abfd7bf8b304cc04cf865cf53a2866a170eed9cf8e85708",
+        "captureUrl": "http://127.0.0.1:5182/"
+      },
+      "next": {
+        "sha256": "5d28dc4a7c7b01303abfd7bf8b304cc04cf865cf53a2866a170eed9cf8e85708",
+        "captureUrl": "http://127.0.0.1:5174/"
+      }
+    },
+    {
+      "id": "fixtures-poster-light-375",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "7dbc8d10ac826e12e1b7f3d15a6f450d834a543f7442151ef11fe72961666445",
+        "captureUrl": "http://127.0.0.1:5182/"
+      },
+      "next": {
+        "sha256": "7dbc8d10ac826e12e1b7f3d15a6f450d834a543f7442151ef11fe72961666445",
+        "captureUrl": "http://127.0.0.1:5174/"
+      }
+    },
+    {
+      "id": "fixtures-poster-light-390",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "0f70089dd9deed3c71e6835a007444fe0b452ebf1f22696ed9dc07c57bf2e36b",
+        "captureUrl": "http://127.0.0.1:5182/"
+      },
+      "next": {
+        "sha256": "0f70089dd9deed3c71e6835a007444fe0b452ebf1f22696ed9dc07c57bf2e36b",
+        "captureUrl": "http://127.0.0.1:5174/"
+      }
+    },
+    {
+      "id": "fixtures-poster-light-1000",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "27b67899f6dc7c7790b68bf98e9ab8c96e283347a3a654bcc903e54535244881",
+        "captureUrl": "http://127.0.0.1:5182/"
+      },
+      "next": {
+        "sha256": "27b67899f6dc7c7790b68bf98e9ab8c96e283347a3a654bcc903e54535244881",
+        "captureUrl": "http://127.0.0.1:5174/"
+      }
+    },
+    {
+      "id": "fixtures-poster-dark-360",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "a40baeb7dd7ea2bdd6e2e6160afd55a75ce8bc06a4da4bdd274db000c61b130d",
+        "captureUrl": "http://127.0.0.1:5182/"
+      },
+      "next": {
+        "sha256": "a40baeb7dd7ea2bdd6e2e6160afd55a75ce8bc06a4da4bdd274db000c61b130d",
+        "captureUrl": "http://127.0.0.1:5174/"
+      }
+    },
+    {
+      "id": "fixtures-poster-dark-375",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "cd28ce992fd7923288b0ccc7d772e635251d4b31b697ab8dc02d454973b3ae1f",
+        "captureUrl": "http://127.0.0.1:5182/"
+      },
+      "next": {
+        "sha256": "cd28ce992fd7923288b0ccc7d772e635251d4b31b697ab8dc02d454973b3ae1f",
+        "captureUrl": "http://127.0.0.1:5174/"
+      }
+    },
+    {
+      "id": "fixtures-poster-dark-390",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "856403af4fbff4e321a379fa74451bfedee41815b60580d03e53c1fe3b028156",
+        "captureUrl": "http://127.0.0.1:5182/"
+      },
+      "next": {
+        "sha256": "856403af4fbff4e321a379fa74451bfedee41815b60580d03e53c1fe3b028156",
+        "captureUrl": "http://127.0.0.1:5174/"
+      }
+    },
+    {
+      "id": "fixtures-poster-dark-1000",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "9b50175b388b1fdd2aeffc16c8b63314532dad65450969b2c8713fb9dee83042",
+        "captureUrl": "http://127.0.0.1:5182/"
+      },
+      "next": {
+        "sha256": "9b50175b388b1fdd2aeffc16c8b63314532dad65450969b2c8713fb9dee83042",
+        "captureUrl": "http://127.0.0.1:5174/"
+      }
+    },
+    {
+      "id": "fixtures-broadcast-light-360",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "bde4a4ebdf6421be0db906ef38e12bc9322509b373d7676c900e14c48e0a2c2a",
+        "captureUrl": "http://127.0.0.1:5182/?lens=broadcast"
+      },
+      "next": {
+        "sha256": "bde4a4ebdf6421be0db906ef38e12bc9322509b373d7676c900e14c48e0a2c2a",
+        "captureUrl": "http://127.0.0.1:5174/?lens=broadcast"
+      }
+    },
+    {
+      "id": "fixtures-broadcast-light-375",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "5cae51b2749368db5fad3a1787c893b0e4376a70206eec562102df3c136197da",
+        "captureUrl": "http://127.0.0.1:5182/?lens=broadcast"
+      },
+      "next": {
+        "sha256": "5cae51b2749368db5fad3a1787c893b0e4376a70206eec562102df3c136197da",
+        "captureUrl": "http://127.0.0.1:5174/?lens=broadcast"
+      }
+    },
+    {
+      "id": "fixtures-broadcast-light-390",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "33ec9ac09f122148e4742aa3e9b3c87efd140faf836887d728e7801103460958",
+        "captureUrl": "http://127.0.0.1:5182/?lens=broadcast"
+      },
+      "next": {
+        "sha256": "33ec9ac09f122148e4742aa3e9b3c87efd140faf836887d728e7801103460958",
+        "captureUrl": "http://127.0.0.1:5174/?lens=broadcast"
+      }
+    },
+    {
+      "id": "fixtures-broadcast-light-1000",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "d992fbb08339273d10b6aa2491ffed8875d97ec5c17a9ab3543c9af4ed933fcb",
+        "captureUrl": "http://127.0.0.1:5182/?lens=broadcast"
+      },
+      "next": {
+        "sha256": "d992fbb08339273d10b6aa2491ffed8875d97ec5c17a9ab3543c9af4ed933fcb",
+        "captureUrl": "http://127.0.0.1:5174/?lens=broadcast"
+      }
+    },
+    {
+      "id": "fixtures-broadcast-dark-360",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "9c0bdc3aec42e1337f5559e41af1ddbbfd55df3d1b420083c586ee5f79b7d7fb",
+        "captureUrl": "http://127.0.0.1:5182/?lens=broadcast"
+      },
+      "next": {
+        "sha256": "9c0bdc3aec42e1337f5559e41af1ddbbfd55df3d1b420083c586ee5f79b7d7fb",
+        "captureUrl": "http://127.0.0.1:5174/?lens=broadcast"
+      }
+    },
+    {
+      "id": "fixtures-broadcast-dark-375",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "b6786c603c87face6d5a5166e00f3bde95c1e33526720a0f9313dc7664156751",
+        "captureUrl": "http://127.0.0.1:5182/?lens=broadcast"
+      },
+      "next": {
+        "sha256": "b6786c603c87face6d5a5166e00f3bde95c1e33526720a0f9313dc7664156751",
+        "captureUrl": "http://127.0.0.1:5174/?lens=broadcast"
+      }
+    },
+    {
+      "id": "fixtures-broadcast-dark-390",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "651d8d581627a8f8994538efb6351ae8ee9f794a79bdaa1ed9900644276f0cd5",
+        "captureUrl": "http://127.0.0.1:5182/?lens=broadcast"
+      },
+      "next": {
+        "sha256": "651d8d581627a8f8994538efb6351ae8ee9f794a79bdaa1ed9900644276f0cd5",
+        "captureUrl": "http://127.0.0.1:5174/?lens=broadcast"
+      }
+    },
+    {
+      "id": "fixtures-broadcast-dark-1000",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "1a0047e1b85eeb0b18381172d127b85df92d259d182076436f273cb45f66da3f",
+        "captureUrl": "http://127.0.0.1:5182/?lens=broadcast"
+      },
+      "next": {
+        "sha256": "1a0047e1b85eeb0b18381172d127b85df92d259d182076436f273cb45f66da3f",
+        "captureUrl": "http://127.0.0.1:5174/?lens=broadcast"
+      }
+    },
+    {
+      "id": "table-ledger-light-360",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "7e69f13c1c5bb23303efb4e91171965f15dc8af2d5056b7c21dde8270e8bd69a",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=ledger"
+      },
+      "next": {
+        "sha256": "7e69f13c1c5bb23303efb4e91171965f15dc8af2d5056b7c21dde8270e8bd69a",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table&lens=ledger"
+      }
+    },
+    {
+      "id": "table-ledger-light-375",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "c3ddec2dbf241296d864e027dca789ce857c173cb250ef0725cf8ba00c25683a",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=ledger"
+      },
+      "next": {
+        "sha256": "c3ddec2dbf241296d864e027dca789ce857c173cb250ef0725cf8ba00c25683a",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table&lens=ledger"
+      }
+    },
+    {
+      "id": "table-ledger-light-390",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "ba23dd720b9d46f319c9180221f03dc66b3683a4418bc9956e3c881a5b2bdd47",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=ledger"
+      },
+      "next": {
+        "sha256": "ba23dd720b9d46f319c9180221f03dc66b3683a4418bc9956e3c881a5b2bdd47",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table&lens=ledger"
+      }
+    },
+    {
+      "id": "table-ledger-light-1000",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "a84f881a4c6ed428c3aaf5910dff53d98c97146db82ef5410eecd27eeb3df57b",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=ledger"
+      },
+      "next": {
+        "sha256": "a84f881a4c6ed428c3aaf5910dff53d98c97146db82ef5410eecd27eeb3df57b",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table&lens=ledger"
+      }
+    },
+    {
+      "id": "table-ledger-dark-360",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "8ae8a74f2ed3edc66c3162ba1bb1019fa7ea4eb37e45ec3f6bb6e74109413dbd",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=ledger"
+      },
+      "next": {
+        "sha256": "9da2ee9eb5492924dd0d91093e22612e417415ed2ec93eb2b003cd9f58ca07f3",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table&lens=ledger"
+      }
+    },
+    {
+      "id": "table-ledger-dark-375",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "574a366ec9457051eae9dd638ac843ce808466bffe2d3f0153df533fedcfd995",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=ledger"
+      },
+      "next": {
+        "sha256": "032cae35927a99f08df0fa3b37172694ac5df6ab1f65d2c6db8a9db4fe2886cb",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table&lens=ledger"
+      }
+    },
+    {
+      "id": "table-ledger-dark-390",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "e88219a8114c2d1f4c4f63e3dd8df04a1a5c48a2f9d78285c4d0f3f9d0219a88",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=ledger"
+      },
+      "next": {
+        "sha256": "ff927bf8d42dab4d1245230ad287d478d6af7f37b4dd9fa88b8f43d729b464f4",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table&lens=ledger"
+      }
+    },
+    {
+      "id": "table-ledger-dark-1000",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "026a001ed67a62474c32e5a27f94868e05a9681cd3e17a7054590ee927543291",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=ledger"
+      },
+      "next": {
+        "sha256": "026a001ed67a62474c32e5a27f94868e05a9681cd3e17a7054590ee927543291",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table&lens=ledger"
+      }
+    },
+    {
+      "id": "table-poster-light-360",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "88b0b6569d3fca2fef397d225b85a856b5ca85cc9498d5b444c27450e3af298b",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table"
+      },
+      "next": {
+        "sha256": "88b0b6569d3fca2fef397d225b85a856b5ca85cc9498d5b444c27450e3af298b",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table"
+      }
+    },
+    {
+      "id": "table-poster-light-375",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "c7c6631ad7cb22158dfc9c962541fce75da841c828be574338f608718645a742",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table"
+      },
+      "next": {
+        "sha256": "c7c6631ad7cb22158dfc9c962541fce75da841c828be574338f608718645a742",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table"
+      }
+    },
+    {
+      "id": "table-poster-light-390",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "f697c1e1885cb7da39588def630c4aa95679af3fc89359288f12d1e42462db4e",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table"
+      },
+      "next": {
+        "sha256": "f697c1e1885cb7da39588def630c4aa95679af3fc89359288f12d1e42462db4e",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table"
+      }
+    },
+    {
+      "id": "table-poster-light-1000",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "dc6d037bfff7c51674c0c0a540321b0f11ffed6f9ad67c8fce3436f2173da071",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table"
+      },
+      "next": {
+        "sha256": "dc6d037bfff7c51674c0c0a540321b0f11ffed6f9ad67c8fce3436f2173da071",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table"
+      }
+    },
+    {
+      "id": "table-poster-dark-360",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "893ae0640be212bec033ff1585765bd3d0406c35104d25a0c11801dd681dfacd",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table"
+      },
+      "next": {
+        "sha256": "306ec91e53e5fa838acd5547bd30aaa2ef8eb7832dd3100d5dc6dcfee9ca2576",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table"
+      }
+    },
+    {
+      "id": "table-poster-dark-375",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "02159d809a72d1d9af781834b75c89fd42a6681e426bde4a8f0532ebb99713fe",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table"
+      },
+      "next": {
+        "sha256": "ed9328e1dec0404c0fae6163132b1107d6aa51b72793e1ef04a7b16ef9e8b920",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table"
+      }
+    },
+    {
+      "id": "table-poster-dark-390",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "9021e30d0785132eae4ef827365b9b34a862e161432df6e5fc78efabd847fdf5",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table"
+      },
+      "next": {
+        "sha256": "32c79fcbf13c0b2823caab875753d8818576dcc8395d5ea0c8d1099021b89575",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table"
+      }
+    },
+    {
+      "id": "table-poster-dark-1000",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "9d6b91e9ffc987646e5c8386fd24cfbbefe9ade4c6dcfa7b4f510b11eec1f8b4",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table"
+      },
+      "next": {
+        "sha256": "9d6b91e9ffc987646e5c8386fd24cfbbefe9ade4c6dcfa7b4f510b11eec1f8b4",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table"
+      }
+    },
+    {
+      "id": "table-broadcast-light-360",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "363425eaa963408ac2b8776a70db7e8b3c9dfe458cb720e414bce936e311b4b0",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=broadcast"
+      },
+      "next": {
+        "sha256": "363425eaa963408ac2b8776a70db7e8b3c9dfe458cb720e414bce936e311b4b0",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table&lens=broadcast"
+      }
+    },
+    {
+      "id": "table-broadcast-light-375",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "5b2df8ca68223d99ab0a371c2d2940ab07aa1c8e724c3a0cbe21e217992569f1",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=broadcast"
+      },
+      "next": {
+        "sha256": "5b2df8ca68223d99ab0a371c2d2940ab07aa1c8e724c3a0cbe21e217992569f1",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table&lens=broadcast"
+      }
+    },
+    {
+      "id": "table-broadcast-light-390",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "adc831fac40f8927da5e2a64ea2dbbded7f38f6c57c78e539107c8b45727a4db",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=broadcast"
+      },
+      "next": {
+        "sha256": "adc831fac40f8927da5e2a64ea2dbbded7f38f6c57c78e539107c8b45727a4db",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table&lens=broadcast"
+      }
+    },
+    {
+      "id": "table-broadcast-light-1000",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "eb6da5054aebdfa0a6786cf7877c5f29a698c8fe0c588a06e054ae14b8540a33",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=broadcast"
+      },
+      "next": {
+        "sha256": "eb6da5054aebdfa0a6786cf7877c5f29a698c8fe0c588a06e054ae14b8540a33",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table&lens=broadcast"
+      }
+    },
+    {
+      "id": "table-broadcast-dark-360",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "ecb90684f3084fd5580852e49110a1dc9216ecb7885c6c3be0103abe91b9e729",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=broadcast"
+      },
+      "next": {
+        "sha256": "c855987ab5fb0be880c4b83aaad35afa7a29ece6b61919106f5120c4969a7d32",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table&lens=broadcast"
+      }
+    },
+    {
+      "id": "table-broadcast-dark-375",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "9cf6d395cffb6af287acd76606b07f8710434258a21303a587cd9a707867317e",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=broadcast"
+      },
+      "next": {
+        "sha256": "a8732947d21b0a77964d65a2e16e98c55c557c3f49ed3a26fcef87978bef398f",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table&lens=broadcast"
+      }
+    },
+    {
+      "id": "table-broadcast-dark-390",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "9323b2ea04fd6f48ed476b970bf945198273e134bb146f2c6969e47415181d34",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=broadcast"
+      },
+      "next": {
+        "sha256": "e3ac8ffe23492467e2807d0342a2768fae76a0f52df9f14e494a7d2f418ea60e",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table&lens=broadcast"
+      }
+    },
+    {
+      "id": "table-broadcast-dark-1000",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "61b97dfdd05dec6e59b8f8b622786209fc0b4cf0a8bcb3c32356bda5f92f90f0",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=broadcast"
+      },
+      "next": {
+        "sha256": "61b97dfdd05dec6e59b8f8b622786209fc0b4cf0a8bcb3c32356bda5f92f90f0",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table&lens=broadcast"
+      }
+    },
+    {
+      "id": "moments-ledger-light-360",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "0e3f48b3c48f6b5272f5140e615e469100ee04f7e64768adb3c95fb2baf257a7",
+        "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=ledger"
+      },
+      "next": {
+        "sha256": "0e3f48b3c48f6b5272f5140e615e469100ee04f7e64768adb3c95fb2baf257a7",
+        "captureUrl": "http://127.0.0.1:5174/?tab=moments&lens=ledger"
+      }
+    },
+    {
+      "id": "moments-ledger-light-375",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "7f25c16ed7e40a7ed5c688258e93b9451f62f988ab278f771d64ebf778ff7555",
+        "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=ledger"
+      },
+      "next": {
+        "sha256": "7f25c16ed7e40a7ed5c688258e93b9451f62f988ab278f771d64ebf778ff7555",
+        "captureUrl": "http://127.0.0.1:5174/?tab=moments&lens=ledger"
+      }
+    },
+    {
+      "id": "moments-ledger-light-390",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "4bb19d8ced305bad56a8debf111c0170579a1ead84c804fed76b50fabd0e32b3",
+        "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=ledger"
+      },
+      "next": {
+        "sha256": "4bb19d8ced305bad56a8debf111c0170579a1ead84c804fed76b50fabd0e32b3",
+        "captureUrl": "http://127.0.0.1:5174/?tab=moments&lens=ledger"
+      }
+    },
+    {
+      "id": "moments-ledger-light-1000",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "95a96e22df459508bf9ac8f96fc35721b2f63f3d36f2c72858c9f914a089fef2",
+        "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=ledger"
+      },
+      "next": {
+        "sha256": "95a96e22df459508bf9ac8f96fc35721b2f63f3d36f2c72858c9f914a089fef2",
+        "captureUrl": "http://127.0.0.1:5174/?tab=moments&lens=ledger"
+      }
+    },
+    {
+      "id": "moments-ledger-dark-360",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "38e81623f650c4a1cc43d9a7e36a72179cb748a9865e2533d72823a56ce58873",
+        "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=ledger"
+      },
+      "next": {
+        "sha256": "38e81623f650c4a1cc43d9a7e36a72179cb748a9865e2533d72823a56ce58873",
+        "captureUrl": "http://127.0.0.1:5174/?tab=moments&lens=ledger"
+      }
+    },
+    {
+      "id": "moments-ledger-dark-375",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "e46c3ecd9ccbc95a62b77e3341cc68ced32ca192efece3abcc359d29ddbd3873",
+        "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=ledger"
+      },
+      "next": {
+        "sha256": "e46c3ecd9ccbc95a62b77e3341cc68ced32ca192efece3abcc359d29ddbd3873",
+        "captureUrl": "http://127.0.0.1:5174/?tab=moments&lens=ledger"
+      }
+    },
+    {
+      "id": "moments-ledger-dark-390",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "796be84be8bff3c5180545ae8f1f72e46f4ddc2f3ecc828247906d9950619bb5",
+        "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=ledger"
+      },
+      "next": {
+        "sha256": "796be84be8bff3c5180545ae8f1f72e46f4ddc2f3ecc828247906d9950619bb5",
+        "captureUrl": "http://127.0.0.1:5174/?tab=moments&lens=ledger"
+      }
+    },
+    {
+      "id": "moments-ledger-dark-1000",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "12ae47b950b67c289bc54aa1affb55b9e413da23c2bb15502e92049872994d77",
+        "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=ledger"
+      },
+      "next": {
+        "sha256": "12ae47b950b67c289bc54aa1affb55b9e413da23c2bb15502e92049872994d77",
+        "captureUrl": "http://127.0.0.1:5174/?tab=moments&lens=ledger"
+      }
+    },
+    {
+      "id": "moments-poster-light-360",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "6fa3b2642e1aa62f32ff5bde2b8912fa6dc24463ee041d2ad8613e0ab37d0e43",
+        "captureUrl": "http://127.0.0.1:5182/?tab=moments"
+      },
+      "next": {
+        "sha256": "6fa3b2642e1aa62f32ff5bde2b8912fa6dc24463ee041d2ad8613e0ab37d0e43",
+        "captureUrl": "http://127.0.0.1:5174/?tab=moments"
+      }
+    },
+    {
+      "id": "moments-poster-light-375",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "8a0de2dccfb6919ba15bc98249a69d91cd64a90d445f8c94fa02ce9b1fc7f952",
+        "captureUrl": "http://127.0.0.1:5182/?tab=moments"
+      },
+      "next": {
+        "sha256": "8a0de2dccfb6919ba15bc98249a69d91cd64a90d445f8c94fa02ce9b1fc7f952",
+        "captureUrl": "http://127.0.0.1:5174/?tab=moments"
+      }
+    },
+    {
+      "id": "moments-poster-light-390",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "08e40e64b7d695944a06328bf59cd399a6f5a15032654751e160e85fcb9d161a",
+        "captureUrl": "http://127.0.0.1:5182/?tab=moments"
+      },
+      "next": {
+        "sha256": "08e40e64b7d695944a06328bf59cd399a6f5a15032654751e160e85fcb9d161a",
+        "captureUrl": "http://127.0.0.1:5174/?tab=moments"
+      }
+    },
+    {
+      "id": "moments-poster-light-1000",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "efdac9ebbb20101802fab495233510652be753eed4db1cab9fd4fc499eeb4c20",
+        "captureUrl": "http://127.0.0.1:5182/?tab=moments"
+      },
+      "next": {
+        "sha256": "efdac9ebbb20101802fab495233510652be753eed4db1cab9fd4fc499eeb4c20",
+        "captureUrl": "http://127.0.0.1:5174/?tab=moments"
+      }
+    },
+    {
+      "id": "moments-poster-dark-360",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "b29aeb3885bfe09995abb8a885a44fde7f769e4273f865734b96f9a8e2d78759",
+        "captureUrl": "http://127.0.0.1:5182/?tab=moments"
+      },
+      "next": {
+        "sha256": "b29aeb3885bfe09995abb8a885a44fde7f769e4273f865734b96f9a8e2d78759",
+        "captureUrl": "http://127.0.0.1:5174/?tab=moments"
+      }
+    },
+    {
+      "id": "moments-poster-dark-375",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "54a39616370bc6d3fc44ff59e5ac69d8d6dc8df159c176a5538cf27c46cb7d81",
+        "captureUrl": "http://127.0.0.1:5182/?tab=moments"
+      },
+      "next": {
+        "sha256": "54a39616370bc6d3fc44ff59e5ac69d8d6dc8df159c176a5538cf27c46cb7d81",
+        "captureUrl": "http://127.0.0.1:5174/?tab=moments"
+      }
+    },
+    {
+      "id": "moments-poster-dark-390",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "a4ee6af7f5c89122f11889d9e8efbb3db31771fdf579a6ec8114b04a00625849",
+        "captureUrl": "http://127.0.0.1:5182/?tab=moments"
+      },
+      "next": {
+        "sha256": "a4ee6af7f5c89122f11889d9e8efbb3db31771fdf579a6ec8114b04a00625849",
+        "captureUrl": "http://127.0.0.1:5174/?tab=moments"
+      }
+    },
+    {
+      "id": "moments-poster-dark-1000",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "8afd2db096ecc48418effb4a095d42506d1493973ea5cba468bdc8fbc65d4ef0",
+        "captureUrl": "http://127.0.0.1:5182/?tab=moments"
+      },
+      "next": {
+        "sha256": "7cca0bc2e02cbd3c525e99457f6abcb180625e4fbf685467b920ce9f71477d03",
+        "captureUrl": "http://127.0.0.1:5174/?tab=moments"
+      }
+    },
+    {
+      "id": "moments-broadcast-light-360",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "3a2bc8cf35aa98a1477ee9bc9af3e6b06a6286ed02defab6b7b7d62ba9341a4b",
+        "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=broadcast"
+      },
+      "next": {
+        "sha256": "3a2bc8cf35aa98a1477ee9bc9af3e6b06a6286ed02defab6b7b7d62ba9341a4b",
+        "captureUrl": "http://127.0.0.1:5174/?tab=moments&lens=broadcast"
+      }
+    },
+    {
+      "id": "moments-broadcast-light-375",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "1e79ca4a9bbad5c1d0f82bc062f8ced3812dfb2d59cc6203e211da559828cbd0",
+        "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=broadcast"
+      },
+      "next": {
+        "sha256": "1e79ca4a9bbad5c1d0f82bc062f8ced3812dfb2d59cc6203e211da559828cbd0",
+        "captureUrl": "http://127.0.0.1:5174/?tab=moments&lens=broadcast"
+      }
+    },
+    {
+      "id": "moments-broadcast-light-390",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "bba28a79db76b4985354a4900509a5ed6b7d2e5fb2925ad82462c16133ee25a8",
+        "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=broadcast"
+      },
+      "next": {
+        "sha256": "bba28a79db76b4985354a4900509a5ed6b7d2e5fb2925ad82462c16133ee25a8",
+        "captureUrl": "http://127.0.0.1:5174/?tab=moments&lens=broadcast"
+      }
+    },
+    {
+      "id": "moments-broadcast-light-1000",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "aa22e79c163b1a3972aff0278b91b3e0729c0fcf5478275e2a9541cc18e2b275",
+        "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=broadcast"
+      },
+      "next": {
+        "sha256": "aa22e79c163b1a3972aff0278b91b3e0729c0fcf5478275e2a9541cc18e2b275",
+        "captureUrl": "http://127.0.0.1:5174/?tab=moments&lens=broadcast"
+      }
+    },
+    {
+      "id": "moments-broadcast-dark-360",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "750f212258f901f7c82e7e3b437fa787bdd22b495b7e5aedc13931811326789b",
+        "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=broadcast"
+      },
+      "next": {
+        "sha256": "750f212258f901f7c82e7e3b437fa787bdd22b495b7e5aedc13931811326789b",
+        "captureUrl": "http://127.0.0.1:5174/?tab=moments&lens=broadcast"
+      }
+    },
+    {
+      "id": "moments-broadcast-dark-375",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "80b7fdbc63740650b7eb95b3d0339a1e88269357960c37aa1ea261660f17f47b",
+        "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=broadcast"
+      },
+      "next": {
+        "sha256": "80b7fdbc63740650b7eb95b3d0339a1e88269357960c37aa1ea261660f17f47b",
+        "captureUrl": "http://127.0.0.1:5174/?tab=moments&lens=broadcast"
+      }
+    },
+    {
+      "id": "moments-broadcast-dark-390",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "e9556d465d10bf92e3c23ee1e3b51ddc86ca22e7a88cd4fd0d0412fb394afba8",
+        "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=broadcast"
+      },
+      "next": {
+        "sha256": "e9556d465d10bf92e3c23ee1e3b51ddc86ca22e7a88cd4fd0d0412fb394afba8",
+        "captureUrl": "http://127.0.0.1:5174/?tab=moments&lens=broadcast"
+      }
+    },
+    {
+      "id": "moments-broadcast-dark-1000",
+      "kind": "matrix",
+      "diffs": [],
+      "vite": {
+        "sha256": "cf59167bc2ef8202cd27963a169be231f80c71997e58efad52661ecd92cf2117",
+        "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=broadcast"
+      },
+      "next": {
+        "sha256": "cf59167bc2ef8202cd27963a169be231f80c71997e58efad52661ecd92cf2117",
+        "captureUrl": "http://127.0.0.1:5174/?tab=moments&lens=broadcast"
+      }
+    },
+    {
+      "id": "month",
+      "kind": "extra",
+      "search": "view=month",
+      "diffs": [],
+      "viteHas": [],
+      "nextHas": [],
+      "vite": {
+        "sha256": "03e821c50713ff225e9ad0d39922ace73d745d042b1150da7af9f85dcc0d11a4",
+        "captureUrl": "http://127.0.0.1:5182/?view=month"
+      },
+      "next": {
+        "sha256": "03e821c50713ff225e9ad0d39922ace73d745d042b1150da7af9f85dcc0d11a4",
+        "captureUrl": "http://127.0.0.1:5174/?view=month"
+      }
+    },
+    {
+      "id": "only-pl",
+      "kind": "extra",
+      "search": "only=pl",
+      "diffs": [],
+      "viteHas": [],
+      "nextHas": [],
+      "vite": {
+        "sha256": "92039fe87e9224902391c892bad25407b0addda6cf77ad7ddf04b615631eaeda",
+        "captureUrl": "http://127.0.0.1:5182/?only=pl"
+      },
+      "next": {
+        "sha256": "92039fe87e9224902391c892bad25407b0addda6cf77ad7ddf04b615631eaeda",
+        "captureUrl": "http://127.0.0.1:5174/?only=pl"
+      }
+    },
+    {
+      "id": "pinned-date",
+      "kind": "extra",
+      "search": "date=2026-09-20",
+      "diffs": [],
+      "viteHas": [],
+      "nextHas": [],
+      "vite": {
+        "sha256": "f20266c6c55abe58dd7994b1bbe30b0025b9fa3f7cae665f3a4e96c6ac7a3f33",
+        "captureUrl": "http://127.0.0.1:5182/?date=2026-09-20"
+      },
+      "next": {
+        "sha256": "f20266c6c55abe58dd7994b1bbe30b0025b9fa3f7cae665f3a4e96c6ac7a3f33",
+        "captureUrl": "http://127.0.0.1:5174/?date=2026-09-20"
+      }
+    },
+    {
+      "id": "empty-only",
+      "kind": "extra",
+      "search": "only=",
+      "diffs": [],
+      "viteHas": [],
+      "nextHas": [],
+      "vite": {
+        "sha256": "f0970d762048cf74d37a2c57ce1f01e50a1e6416caab440a8b905901c376fe01",
+        "captureUrl": "http://127.0.0.1:5182/?only="
+      },
+      "next": {
+        "sha256": "f0970d762048cf74d37a2c57ce1f01e50a1e6416caab440a8b905901c376fe01",
+        "captureUrl": "http://127.0.0.1:5174/?only="
+      }
+    },
+    {
+      "id": "tbc-week",
+      "kind": "extra",
+      "search": "date=2026-11-22&only=laliga",
+      "diffs": [],
+      "viteHas": [
+        "not yet set"
+      ],
+      "nextHas": [
+        "not yet set"
+      ],
+      "vite": {
+        "sha256": "ac819df4971fa012f6e06fee81552cb2b8c170b861c86d7a596a8545d4f0bacb",
+        "captureUrl": "http://127.0.0.1:5182/?date=2026-11-22&only=laliga"
+      },
+      "next": {
+        "sha256": "ac819df4971fa012f6e06fee81552cb2b8c170b861c86d7a596a8545d4f0bacb",
+        "captureUrl": "http://127.0.0.1:5174/?date=2026-11-22&only=laliga"
+      }
+    },
+    {
+      "id": "abandoned-week",
+      "kind": "extra",
+      "search": "date=2026-10-10&only=laliga",
+      "diffs": [],
+      "viteHas": [
+        "ABANDONED"
+      ],
+      "nextHas": [
+        "ABANDONED"
+      ],
+      "vite": {
+        "sha256": "779d73b234b3f2224d81e969924b3975907c831cc4c94a71ea8fdad102aa2a24",
+        "captureUrl": "http://127.0.0.1:5182/?date=2026-10-10&only=laliga"
+      },
+      "next": {
+        "sha256": "779d73b234b3f2224d81e969924b3975907c831cc4c94a71ea8fdad102aa2a24",
+        "captureUrl": "http://127.0.0.1:5174/?date=2026-10-10&only=laliga"
+      }
+    },
+    {
+      "id": "league-laliga",
+      "kind": "extra",
+      "search": "tab=table&league=laliga",
+      "diffs": [],
+      "viteHas": [],
+      "nextHas": [],
+      "vite": {
+        "sha256": "f697c1e1885cb7da39588def630c4aa95679af3fc89359288f12d1e42462db4e",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table"
+      },
+      "next": {
+        "sha256": "f697c1e1885cb7da39588def630c4aa95679af3fc89359288f12d1e42462db4e",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table"
+      }
+    },
+    {
+      "id": "league-pl",
+      "kind": "extra",
+      "search": "tab=table&league=pl",
+      "diffs": [],
+      "viteHas": [],
+      "nextHas": [],
+      "vite": {
+        "sha256": "d068d744d02e673291576c94f4fae537984b987c1a6832f2cb260eeb6dd7f5c6",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table&league=pl"
+      },
+      "next": {
+        "sha256": "d068d744d02e673291576c94f4fae537984b987c1a6832f2cb260eeb6dd7f5c6",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table&league=pl"
+      }
+    },
+    {
+      "id": "league-seriea",
+      "kind": "extra",
+      "search": "tab=table&league=seriea",
+      "diffs": [],
+      "viteHas": [],
+      "nextHas": [],
+      "vite": {
+        "sha256": "c624fb731f7257b3e84615f406f19d33837e60e0919107982093bd5b88c62a45",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table&league=seriea"
+      },
+      "next": {
+        "sha256": "c624fb731f7257b3e84615f406f19d33837e60e0919107982093bd5b88c62a45",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table&league=seriea"
+      }
+    },
+    {
+      "id": "league-ligue1",
+      "kind": "extra",
+      "search": "tab=table&league=ligue1",
+      "diffs": [],
+      "viteHas": [],
+      "nextHas": [],
+      "vite": {
+        "sha256": "4c0ab1627273e318e43a8c66a77c3707b38ca3ecd94875a6a7095de55a7fb365",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table&league=ligue1"
+      },
+      "next": {
+        "sha256": "4c0ab1627273e318e43a8c66a77c3707b38ca3ecd94875a6a7095de55a7fb365",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table&league=ligue1"
+      }
+    },
+    {
+      "id": "league-bundesliga",
+      "kind": "extra",
+      "search": "tab=table&league=bundesliga",
+      "diffs": [],
+      "viteHas": [],
+      "nextHas": [],
+      "vite": {
+        "sha256": "d8f56cb05229d2a9326f35facce7b1f48d4326a2d939b29c9fc402681e6f7b26",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table&league=bundesliga"
+      },
+      "next": {
+        "sha256": "d8f56cb05229d2a9326f35facce7b1f48d4326a2d939b29c9fc402681e6f7b26",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table&league=bundesliga"
+      }
+    },
+    {
+      "id": "league-ucl",
+      "kind": "extra",
+      "search": "tab=table&league=ucl",
+      "diffs": [],
+      "viteHas": [],
+      "nextHas": [],
+      "vite": {
+        "sha256": "1b4ae0beb1cab6559d9af4230578b5d37b09582d7919645338aebeaea403b759",
+        "captureUrl": "http://127.0.0.1:5182/?tab=table&league=ucl"
+      },
+      "next": {
+        "sha256": "1b4ae0beb1cab6559d9af4230578b5d37b09582d7919645338aebeaea403b759",
+        "captureUrl": "http://127.0.0.1:5174/?tab=table&league=ucl"
+      }
+    },
+    {
+      "id": "ticker",
+      "kind": "extra",
+      "search": "lens=broadcast",
+      "diffs": [],
+      "viteHas": [],
+      "nextHas": [],
+      "vite": {
+        "sha256": "651d8d581627a8f8994538efb6351ae8ee9f794a79bdaa1ed9900644276f0cd5",
+        "captureUrl": "http://127.0.0.1:5182/?lens=broadcast"
+      },
+      "next": {
+        "sha256": "651d8d581627a8f8994538efb6351ae8ee9f794a79bdaa1ed9900644276f0cd5",
+        "captureUrl": "http://127.0.0.1:5174/?lens=broadcast"
+      }
+    }
+  ],
+  "note": "85 cells, zero diffs. Includes the 72-cell matrix and month, only=pl, a pinned date, an empty competition set, the 22 Nov La Liga week (kickoff time not yet set), the 10 Oct La Liga week (ABANDONED), every league table, and the Broadcast ticker. No console or hydration warning."
+}

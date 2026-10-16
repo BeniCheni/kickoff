@@ -73,6 +73,8 @@ async function measure(browser, origin, tab, lens, theme, width, shotName) {
   await page.setViewport({ width, height: 900, deviceScaleFactor: 1 })
   await page.goto(cellUrl(origin, tab, lens), { waitUntil: 'networkidle0' })
   await page.evaluate(() => document.fonts.ready)
+  // The marquee's x moves on its own. Pause it before geometry so a tick is not a diff.
+  await page.addStyleTag({ content: '.ticker-track{animation:none!important}' })
   await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))))
   const measured = await page.evaluate((tokenNames) => {
     const round = value => Math.round(value * 10) / 10
@@ -200,7 +202,7 @@ try {
 
 const differing = rows.filter(row => row.diffs.length)
 const summary = {
-  compares: `Vite preview of the merge-base dist at ${baseSha} (${baseOrigin}) against Vite preview of this tip's dist at ${tipSha} (${tipOrigin}). 72 cells: 3 tabs × 3 lenses × 2 themes × 360, 375, 390 and 1000. Date frozen at ${frozen}. Both theme keys stubbed. Viewport set before each navigation. Each PNG is captured at the cell's own route, before the history exercise, and the receipt records that capture URL. Compared: scrollWidth === innerWidth, 15 computed tokens on html, body color and font, geometry of the header, tab row and route (up to 600 boxes each), header and route text, the theme button's accessible name, a 14-step Tab focus order, and the URL plus active tab after a tab push, Back and Forward.`,
+  compares: `Vite preview of the merge-base dist at ${baseSha} (${baseOrigin}) against Vite preview of this tip's dist at ${tipSha} (${tipOrigin}). 72 cells: 3 tabs × 3 lenses × 2 themes × 360, 375, 390 and 1000. Date frozen at ${frozen}. Both theme keys stubbed. Viewport set before each navigation. Each PNG is captured at the cell's own route, before the history exercise, and the receipt records that capture URL. The Broadcast ticker animation is paused before measurement. Compared: scrollWidth === innerWidth, 15 computed tokens on html, body color and font, geometry of the header, tab row and route (up to 600 boxes each), header and route text, the theme button's accessible name, a 14-step Tab focus order, and the URL plus active tab after a tab push, Back and Forward.`,
   base: baseSha,
   tip: tipSha,
   frozenUtc: frozen,
