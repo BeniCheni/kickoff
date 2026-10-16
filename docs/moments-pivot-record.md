@@ -1,6 +1,6 @@
 # Moments — the pivot of 12 Oct 2026, Beni's rulings, and what they supersede
 
-Recorded by the PM seat (Claude Code, Opus 5.5) on Tue 13 Oct 2026 (TZ=America/New_York), from Beni's answers given first-hand to the PM seat on Mon 12 and Tue 13 Oct. This is the record later briefs start from. Where it conflicts with [moments-d5-build-plan.md](moments-d5-build-plan.md), the slice-4 spec or the Studio review, this record wins. It changes no code and names no version. Updated on Thu 15 Oct 2026: §2b records the design's later answers, and §4 to §6 are brought up to date. Updated again on Fri 16 Oct 2026: §3b records the slice ruling N2-Q1, §5 brings the migration up to N2, and §6 adds two corrections.
+Recorded by the PM seat (Claude Code, Opus 5.5) on Tue 13 Oct 2026 (TZ=America/New_York), from Beni's answers given first-hand to the PM seat on Mon 12 and Tue 13 Oct. This is the record later briefs start from. Where it conflicts with [moments-d5-build-plan.md](moments-d5-build-plan.md), the slice-4 spec or the Studio review, this record wins. It changes no code and names no version. Updated on Thu 15 Oct 2026: §2b records the design's later answers, and §4 to §6 are brought up to date. Updated again on Fri 16 Oct 2026: §3b records the slice ruling N2-Q1, §5 brings the migration up to N2, and §6 adds two corrections. Updated a third time that evening, after N3 merged: §3b adds N3's two rulings and §5 moves to N4.
 
 ## 1 · The pivot (Mon 12 Oct, evening)
 
@@ -70,6 +70,8 @@ Each slice's brief may carry a question of its own; these are recorded as N<slic
 | # | Question | Answer |
 |---|---|---|
 | N2-Q1 | One React for both apps | **Match**, the PM seat's call in N2's brief on Thu 15 Oct, which Beni left standing: `web/` pins React 19.2.8, the version the root lock resolves. Then **Record**, Beni's ruling on Fri 16 Oct just after midnight, after #203's Pass 1 showed the premise could not hold. Under the App Router, Next's own vendored React renders the server HTML and hydrates the browser, the same copy on both sides. So the 19.2.8 pin binds only `web/`'s tests and types, and the two apps run different React builds until N7. N3 decides whether `web/`'s tests should run Next's compiled React instead |
+| N3-Q1 | Which React `web/`'s tests run | **Compiled**, the PM seat's call in N3's brief on Fri 16 Oct, which Beni left standing: `web/`'s Vitest resolves Next's compiled React (`19.3.0-canary-278794d7-20261002` in Next 16.4.1) for `react`, `react-dom`, `react-dom/client`, `react-dom/server` and `react/jsx-runtime`, so the new app's tests run the React its readers will run. A test fails if a second copy loads, even one with the same version. The 19.2.8 pin now binds only types, and the root's tests still run 19.2.8, so the shared components are tested on both builds |
+| N3-Q2 | The offline file's label | **Keep**, Beni's ruling on Fri 16 Oct after #206's Pass 1: the line "Offline snapshot", in muted capitals between the header and the tabs, as the plan's §4 worded it |
 
 ## 4 · What this supersedes
 
@@ -90,7 +92,8 @@ Each slice's brief may carry a question of its own; these are recorded as N<slic
 | N0, the migration plan | Scored, and answered by Beni (§3). Slices N1 to N8 get their build briefs one at a time |
 | N1, the inert `web/` scaffold | Merged as #198 (`b32e82e`, 15 Oct): a Next.js 16.4.1 app in `web/`, isolated from the reader both ways, with its checks inside the one `verify` job and the contract inventory in [nextjs-migration-n1-inventory.md](nextjs-migration-n1-inventory.md). Built by Codex |
 | N2, the shell | Merged as #203 (`d78f30c`, 16 Oct): the unreleased Next app renders the reader's shell from shared modules, with the same URL, clock and before-paint theme behaviour, and a public `/api/snapshot` receipt. The reader's stylesheet is unchanged; its JavaScript changed only to share those modules, proved by a 72-cell before-and-after matrix. Built by Cursor, with Codex writing the synthesis |
-| Next | N3, Fixtures and Table in the Next app and the one-file offline build (N0-Q2 Keep). Pages stays the whole public app until N7 |
+| N3, Fixtures and Table | Merged as #206 (`ed32ff1`, 16 Oct): the unreleased Next app renders Fixtures, Table and the Broadcast ticker from the reader's own components, and `npm run build:offline` builds the one-file offline Fixtures-and-Table copy that N0-Q2 kept, beside an unchanged `build:single`. The reader's stylesheet is unchanged, and its JavaScript changed only by the tab row's optional list of tabs. Built by Cursor, with Codex writing the synthesis |
+| Next | N4, D9's Moments gallery and watch page in the Next app, reading a stub catalog (N0-Q9). The real database waits for N6. Pages stays the whole public app until N7 |
 
 ## 6 · Corrections the PM seat owes
 
