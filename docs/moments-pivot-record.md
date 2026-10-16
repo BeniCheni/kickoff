@@ -1,6 +1,6 @@
 # Moments — the pivot of 12 Oct 2026, Beni's rulings, and what they supersede
 
-Recorded by the PM seat (Claude Code, Opus 5.5) on Tue 13 Oct 2026 (TZ=America/New_York), from Beni's answers given first-hand to the PM seat on Mon 12 and Tue 13 Oct. This is the record later briefs start from. Where it conflicts with [moments-d5-build-plan.md](moments-d5-build-plan.md), the slice-4 spec or the Studio review, this record wins. It changes no code and names no version. Updated on Thu 15 Oct 2026: §2b records the design's later answers, and §4 to §6 are brought up to date.
+Recorded by the PM seat (Claude Code, Opus 5.5) on Tue 13 Oct 2026 (TZ=America/New_York), from Beni's answers given first-hand to the PM seat on Mon 12 and Tue 13 Oct. This is the record later briefs start from. Where it conflicts with [moments-d5-build-plan.md](moments-d5-build-plan.md), the slice-4 spec or the Studio review, this record wins. It changes no code and names no version. Updated on Thu 15 Oct 2026: §2b records the design's later answers, and §4 to §6 are brought up to date. Updated again on Fri 16 Oct 2026: §3b records the slice ruling N2-Q1, §5 brings the migration up to N2, and §6 adds two corrections.
 
 ## 1 · The pivot (Mon 12 Oct, evening)
 
@@ -63,6 +63,14 @@ Codex wrote the migration plan, [nextjs-migration-plan.md](nextjs-migration-plan
 | N0-Q9 | What previews show in Moments | **Stub**: synthetic test records, no database credential |
 | N0-Q10 | The cutover's release class | **Minor**; the number stays Beni's |
 
+## 3b · The slices' rulings (Thu 15 and Fri 16 Oct)
+
+Each slice's brief may carry a question of its own; these are recorded as N<slice>-Q<n>.
+
+| # | Question | Answer |
+|---|---|---|
+| N2-Q1 | One React for both apps | **Match**, the PM seat's call in N2's brief on Thu 15 Oct, which Beni left standing: `web/` pins React 19.2.8, the version the root lock resolves. Then **Record**, Beni's ruling on Fri 16 Oct just after midnight, after #203's Pass 1 showed the premise could not hold. Under the App Router, Next's own vendored React renders the server HTML and hydrates the browser, the same copy on both sides. So the 19.2.8 pin binds only `web/`'s tests and types, and the two apps run different React builds until N7. N3 decides whether `web/`'s tests should run Next's compiled React instead |
+
 ## 4 · What this supersedes
 
 - **Studio rulings.** 15.1, publication by a PR per edition, is reversed. 15.4 and A-03 (GitHub Releases as the host) are replaced by Supabase Storage. 15.2, 15.3, 15.5–15.14, the caps and recipe v0 stand.
@@ -73,17 +81,22 @@ Codex wrote the migration plan, [nextjs-migration-plan.md](nextjs-migration-plan
 - **The D5 build plan.** [moments-d5-build-plan.md](moments-d5-build-plan.md) is superseded where it conflicts with this record; it carries a dated note saying so.
 - **Briefs that never ran.** The S6a brief and the first ST1 brief. ST1 was rebuilt from its second brief as draft PR #187.
 
-## 5 · Where the work stands (15 Oct)
+## 5 · Where the work stands (16 Oct)
 
 | Track | State |
 |---|---|
 | ST1, the Studio core | Merged as #187 (`ca78a5e`, 13 Oct): the Supabase schema with a public `catalog`, the publication gate in the database, and offline stubs. The real Storage upload and the real fallback pull request are later slices |
-| D6 → D9, the reader's design | Settled at D9 (§2b), accepted by Codex on 13 Oct |
-| N0, the migration plan | Scored, and answered by Beni (§3). ST1 and the design are accepted, so N1, the inert `web/` scaffold, is next. Slices N1 to N8 get their build briefs one at a time |
+| D6 → D9, the reader's design | Settled at D9 (§2b), accepted by Codex on 13 Oct. D6's spec was archived by #201 (`15dc2b2`, 15 Oct), because D9 carries the watch page's provenance rows "as D6 §3" |
+| N0, the migration plan | Scored, and answered by Beni (§3). Slices N1 to N8 get their build briefs one at a time |
+| N1, the inert `web/` scaffold | Merged as #198 (`b32e82e`, 15 Oct): a Next.js 16.4.1 app in `web/`, isolated from the reader both ways, with its checks inside the one `verify` job and the contract inventory in [nextjs-migration-n1-inventory.md](nextjs-migration-n1-inventory.md). Built by Codex |
+| N2, the shell | Merged as #203 (`d78f30c`, 16 Oct): the unreleased Next app renders the reader's shell from shared modules, with the same URL, clock and before-paint theme behaviour, and a public `/api/snapshot` receipt. The reader's stylesheet is unchanged; its JavaScript changed only to share those modules, proved by a 72-cell before-and-after matrix. Built by Cursor, with Codex writing the synthesis |
+| Next | N3, Fixtures and Table in the Next app and the one-file offline build (N0-Q2 Keep). Pages stays the whole public app until N7 |
 
 ## 6 · Corrections the PM seat owes
 
 - **The direct push to main.** In D6's review the PM seat said a direct push from Beni's Mac would "likely be refused". Codex showed that main's ruleset lets the admin role bypass the required `verify`, so it would be *accepted without* `verify`. That is why Q19 is PR.
 - **ST1's views.** The N0 brief said the app's login reads `catalog.videos` only. ST1 correctly built a list view (`catalog.videos`) and a detail view (`catalog.video`), as its own brief asked. The plan's proposed single-view migration follows from the brief's error; it is withdrawn, and the app's login reads both public views and nothing in the `studio` schema.
 - **The double-click build.** The N0 brief said CLAUDE.md and the README describe the single-file build. They do not; CONTRIBUTING.md and vite.config.ts do. Codex caught it.
+- **N1's synthesis seat.** The PM seat recommended Codex for #198's synthesis, although Codex had built N1. The migration plan's §7 forbids a builder from synthesizing its own build. The outcome stood, because Pass 1 and Pass 2 were independent seats and the PM seat verified each step. From N2, the builder answers Pass 2 and another vendor writes the synthesis.
+- **N2-Q1's premise.** N2's brief set Match on the assumption that the new app could run the reader's React. Next's App Router ships its own React, so Match could govern only `web/`'s tests and types; Beni's Record (§3b) says so.
 - **ST1's storage keys.** The D8 brief described ST1's object keys as they were at `0831550`, without extensions. #187's Pass 2 added `.mp4` and `.jpg` the same afternoon, so D8 drew the old shape; D9 corrected it.
