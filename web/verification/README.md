@@ -9,6 +9,10 @@ N2 receipts in this directory are `one-react.json`, `shell-matrix.json`,
 before-and-after pass. PNGs stay outside the repo. Their SHA-256s are inside
 the receipts.
 
+N3 receipts are `n3-vite-before-after.json`, `n3-next-vite.json`,
+`n3-offline.json`, and `n3-edges.json`. The rerun commands are in
+`web/README.md`.
+
 ## Reader identity (step 5)
 
 Before edits: `npm ci --no-audit --no-fund`, `npm run typecheck`, `npm test`,

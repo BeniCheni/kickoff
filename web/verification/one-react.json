@@ -5,21 +5,38 @@
   "client": {
     "copy": "next-vendored",
     "version": "19.3.0-canary-278794d7-20261002",
-    "installedVersionInClientChunks": false
+    "runtimeVersionExports": ["19.3.0-canary-278794d7-20261002"]
   },
   "server": {
     "renderer": "next-vendored",
     "version": "19.3.0-canary-278794d7-20261002",
     "hydratesClient": true,
-    "pinBinds": "vitest-and-types",
-    "apps": "Vite stays on the root lock's 19.2.8 until N7. The Next app runs the vendored canary.",
+    "pinBinds": "types",
+    "apps": "Vite stays on the root lock's 19.2.8 until N7. The Next app runs the vendored canary. Vitest runs that compiled canary.",
     "evidence": "manual",
     "recorded": "2026-10-16",
     "rerun": [
       "Render a temporary import { version } from 'react' as data-react-version on the shell, then next build and next start. The SSR HTML of / and /?tab=moments carries 19.3.0-canary-278794d7-20261002. Revert the probe.",
       "Trace Module._load under next start. web/node_modules/react 19.2.8 loads only from Next's server/app-render/dynamic-rendering.js and server/lib/dedupe-fetch.js. The app-page runtime bundle carries the vendored copy. __NEXT_PRIVATE_PREBUNDLED_REACT is unset.",
-      "Search .next/server for .version=. It is absent. .next/static carries the canary and does not carry 19.2.8."
+      "From web/, node --input-type=module -e \"import { clientReactVersions, readClientBundles } from './scripts/react-copies.mjs'; console.log('client', clientReactVersions(readClientBundles('.next/static'))); console.log('server', clientReactVersions(readClientBundles('.next/server')));\" prints three client React runtime version exports, all 19.3.0-canary-278794d7-20261002, and no server match. The pattern is .version=\"(18|19)…\". It does not search for a bare 19.2.8 substring or for every .version= assignment."
     ]
+  },
+  "vitest": {
+    "ruling": "N3-Q1 Compiled",
+    "recorded": "2026-10-16",
+    "copy": "next/dist/compiled/react and next/dist/compiled/react-dom",
+    "version": "19.3.0-canary-278794d7-20261002",
+    "entries": ["react", "react-dom", "react-dom/client", "react-dom/server", "react/jsx-runtime"],
+    "files": {
+      "test/one-react.test.tsx": "compiled canary, all five entries",
+      "test/header-shared.test.tsx": "compiled canary, react/jsx-runtime and react-dom/server",
+      "test/scaffold.test.tsx": "compiled canary, react/jsx-runtime and react-dom/server",
+      "test/fixtures-table.test.tsx": "compiled canary, react/jsx-runtime and react-dom/server",
+      "test/fixture-edges.test.tsx": "compiled canary, react/jsx-runtime and react-dom/server",
+      "test/allowlist.test.ts": "no React",
+      "test/isolation.test.ts": "no React",
+      "test/snapshot.test.ts": "no React"
+    }
   },
   "turbopackRoot": "repo",
   "proof": {

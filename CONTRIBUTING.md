@@ -16,6 +16,7 @@ npm test                 # vitest, two projects: node (tests/**/*.test.ts, minus
 npm run typecheck        # tsc -b --noEmit
 npm run build            # static bundle in dist/
 npm run build:single     # one self-contained dist-single/index.html — opens by double-click
+npm run build:offline    # one self-contained dist-offline/index.html — Fixtures and Table only
 npm run sync -- --check  # fetch and diff against the committed snapshot; write nothing
 npm run sync             # refresh src/data/*.json; exits 1 when an urgent change is reported
 ```

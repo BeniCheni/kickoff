@@ -39,15 +39,24 @@ export const reactAliases = {
   'react-dom/static': path.join(reactDomDir, 'static.js'),
 }
 
+/** Next's compiled copy, the React the App Router renders. Vitest aliases the
+ *  entries web's tests import so a test and a shared component share that copy.
+ *  The Next build aliases above stay on the installed 19.2.8 packages: they only
+ *  keep `../src` off the repo lock, and they do not choose the App Router renderer. */
+const compiledReact = path.join(webRoot, 'node_modules/next/dist/compiled/react')
+const compiledReactDom = path.join(webRoot, 'node_modules/next/dist/compiled/react-dom')
+
+export const compiledReactVersion = '19.3.0-canary-278794d7-20261002'
+
 /** Vitest resolves in the client condition. Regexes are exact so `react` does
  *  not prefix-match `react-dom`. */
 export const vitestReactAliases = [
-  { find: /^react$/, replacement: path.join(reactDir, 'index.js') },
-  { find: /^react\/jsx-runtime$/, replacement: path.join(reactDir, 'jsx-runtime.js') },
-  { find: /^react\/jsx-dev-runtime$/, replacement: path.join(reactDir, 'jsx-dev-runtime.js') },
-  { find: /^react-dom$/, replacement: path.join(reactDomDir, 'index.js') },
-  { find: /^react-dom\/client$/, replacement: path.join(reactDomDir, 'client.js') },
-  { find: /^react-dom\/server$/, replacement: path.join(reactDomDir, 'server.js') },
-  { find: /^react-dom\/server\.browser$/, replacement: path.join(reactDomDir, 'server.browser.js') },
-  { find: /^react-dom\/static$/, replacement: path.join(reactDomDir, 'static.js') },
+  { find: /^react$/, replacement: path.join(compiledReact, 'index.js') },
+  { find: /^react\/jsx-runtime$/, replacement: path.join(compiledReact, 'jsx-runtime.js') },
+  { find: /^react\/jsx-dev-runtime$/, replacement: path.join(compiledReact, 'jsx-dev-runtime.js') },
+  { find: /^react-dom$/, replacement: path.join(compiledReactDom, 'index.js') },
+  { find: /^react-dom\/client$/, replacement: path.join(compiledReactDom, 'client.js') },
+  { find: /^react-dom\/server$/, replacement: path.join(compiledReactDom, 'server.js') },
+  { find: /^react-dom\/server\.browser$/, replacement: path.join(compiledReactDom, 'server.browser.js') },
+  { find: /^react-dom\/static$/, replacement: path.join(compiledReactDom, 'static.node.js') },
 ]

@@ -1,0 +1,755 @@
+{
+  "compares": "Vite preview of the merge-base dist at 374f196ef0a600e4c6a9c1035ccdf54ad9aed4a6 (http://127.0.0.1:5181) against Vite preview of this tip's dist at ac4965fb127ed50c4da0e0b684fdad0b6148a092 (http://127.0.0.1:5182). 72 cells: 3 tabs × 3 lenses × 2 themes × 360, 375, 390 and 1000. Date frozen at 2026-10-15T20:00:00.000Z. Both theme keys stubbed. Viewport set before each navigation. Each PNG is captured at the cell's own route, before the history exercise, and the receipt records that capture URL. The Broadcast ticker animation is paused before measurement. Compared: scrollWidth === innerWidth, 15 computed tokens on html, body color and font, geometry of the header, tab row and route (up to 600 boxes each), header and route text, the theme button's accessible name, a 14-step Tab focus order, and the URL plus active tab after a tab push, Back and Forward.",
+  "base": "374f196ef0a600e4c6a9c1035ccdf54ad9aed4a6",
+  "tip": "ac4965fb127ed50c4da0e0b684fdad0b6148a092",
+  "frozenUtc": "2026-10-15T20:00:00.000Z",
+  "cells": 72,
+  "differing": [
+    {
+      "id": "fixtures-ledger-light-375",
+      "diffs": [
+        "navBoxes",
+        "mainBoxes"
+      ]
+    },
+    {
+      "id": "table-broadcast-light-390",
+      "diffs": [
+        "navBoxes",
+        "mainBoxes"
+      ]
+    }
+  ],
+  "pngDirectory": "/tmp/kickoff-n3-vite-before-after",
+  "pngs": [
+    {
+      "file": "base-fixtures-ledger-light-360.png",
+      "sha256": "453d0c21dc307a3c13c1b18d6105c17469a781057218c870ca370d53e9e847a2",
+      "captureUrl": "http://127.0.0.1:5181/?lens=ledger"
+    },
+    {
+      "file": "tip-fixtures-ledger-light-360.png",
+      "sha256": "453d0c21dc307a3c13c1b18d6105c17469a781057218c870ca370d53e9e847a2",
+      "captureUrl": "http://127.0.0.1:5182/?lens=ledger"
+    },
+    {
+      "file": "base-fixtures-ledger-light-375.png",
+      "sha256": "88c208dd1c698f513c5e3b25fe04221d3d2941e1f23912a79f6064318d9f11c2",
+      "captureUrl": "http://127.0.0.1:5181/?lens=ledger"
+    },
+    {
+      "file": "tip-fixtures-ledger-light-375.png",
+      "sha256": "c0edb6014ae98d89a5839f1931fa2ba4c0023f56704e5d023fbf50c0077be473",
+      "captureUrl": "http://127.0.0.1:5182/?lens=ledger"
+    },
+    {
+      "file": "base-fixtures-ledger-light-390.png",
+      "sha256": "57c7b6d78e1c61f69238010ac16075f4417e35c5718221d1d2b3dbf52b0bc3a9",
+      "captureUrl": "http://127.0.0.1:5181/?lens=ledger"
+    },
+    {
+      "file": "tip-fixtures-ledger-light-390.png",
+      "sha256": "57c7b6d78e1c61f69238010ac16075f4417e35c5718221d1d2b3dbf52b0bc3a9",
+      "captureUrl": "http://127.0.0.1:5182/?lens=ledger"
+    },
+    {
+      "file": "base-fixtures-ledger-light-1000.png",
+      "sha256": "68d82d765dace58fc3718e5ba95c2e007975d1f8bd7aafa7aad0bd29303a6933",
+      "captureUrl": "http://127.0.0.1:5181/?lens=ledger"
+    },
+    {
+      "file": "tip-fixtures-ledger-light-1000.png",
+      "sha256": "68d82d765dace58fc3718e5ba95c2e007975d1f8bd7aafa7aad0bd29303a6933",
+      "captureUrl": "http://127.0.0.1:5182/?lens=ledger"
+    },
+    {
+      "file": "base-fixtures-ledger-dark-360.png",
+      "sha256": "bd45b581cebe68707093e33742f622e46ea5056c18d4592c5be0aff7e862f8ff",
+      "captureUrl": "http://127.0.0.1:5181/?lens=ledger"
+    },
+    {
+      "file": "tip-fixtures-ledger-dark-360.png",
+      "sha256": "bd45b581cebe68707093e33742f622e46ea5056c18d4592c5be0aff7e862f8ff",
+      "captureUrl": "http://127.0.0.1:5182/?lens=ledger"
+    },
+    {
+      "file": "base-fixtures-ledger-dark-375.png",
+      "sha256": "1e54e210dbde90942742f977fb2ae168bf86c6e23df9186ace7f3b336276f804",
+      "captureUrl": "http://127.0.0.1:5181/?lens=ledger"
+    },
+    {
+      "file": "tip-fixtures-ledger-dark-375.png",
+      "sha256": "1e54e210dbde90942742f977fb2ae168bf86c6e23df9186ace7f3b336276f804",
+      "captureUrl": "http://127.0.0.1:5182/?lens=ledger"
+    },
+    {
+      "file": "base-fixtures-ledger-dark-390.png",
+      "sha256": "583629c3a09123305a4b7ff320e396c6d65db9f5b650bbfc3765f081fcdb5f9c",
+      "captureUrl": "http://127.0.0.1:5181/?lens=ledger"
+    },
+    {
+      "file": "tip-fixtures-ledger-dark-390.png",
+      "sha256": "583629c3a09123305a4b7ff320e396c6d65db9f5b650bbfc3765f081fcdb5f9c",
+      "captureUrl": "http://127.0.0.1:5182/?lens=ledger"
+    },
+    {
+      "file": "base-fixtures-ledger-dark-1000.png",
+      "sha256": "271a816e16917e87c517ad7bd3fcede8606788c61c192b626bebc5cc6712f53c",
+      "captureUrl": "http://127.0.0.1:5181/?lens=ledger"
+    },
+    {
+      "file": "tip-fixtures-ledger-dark-1000.png",
+      "sha256": "271a816e16917e87c517ad7bd3fcede8606788c61c192b626bebc5cc6712f53c",
+      "captureUrl": "http://127.0.0.1:5182/?lens=ledger"
+    },
+    {
+      "file": "base-fixtures-poster-light-360.png",
+      "sha256": "46ac9d9c01c7727211ef9e08d9aab59c100d5fdc39a0e0332618a9cb143a4219",
+      "captureUrl": "http://127.0.0.1:5181/"
+    },
+    {
+      "file": "tip-fixtures-poster-light-360.png",
+      "sha256": "46ac9d9c01c7727211ef9e08d9aab59c100d5fdc39a0e0332618a9cb143a4219",
+      "captureUrl": "http://127.0.0.1:5182/"
+    },
+    {
+      "file": "base-fixtures-poster-light-375.png",
+      "sha256": "888616b54793e51db688abeeffeb0a866f74a701ef9be00607c795901f8ca189",
+      "captureUrl": "http://127.0.0.1:5181/"
+    },
+    {
+      "file": "tip-fixtures-poster-light-375.png",
+      "sha256": "888616b54793e51db688abeeffeb0a866f74a701ef9be00607c795901f8ca189",
+      "captureUrl": "http://127.0.0.1:5182/"
+    },
+    {
+      "file": "base-fixtures-poster-light-390.png",
+      "sha256": "11136d4743e8c095b72d5f6ac2342b3a056089554111a50fc50c0b0c63320300",
+      "captureUrl": "http://127.0.0.1:5181/"
+    },
+    {
+      "file": "tip-fixtures-poster-light-390.png",
+      "sha256": "11136d4743e8c095b72d5f6ac2342b3a056089554111a50fc50c0b0c63320300",
+      "captureUrl": "http://127.0.0.1:5182/"
+    },
+    {
+      "file": "base-fixtures-poster-light-1000.png",
+      "sha256": "da13de431e71ee5aaf93ea9a78ffcd01ebdda2fd9e63d6f876c64982296c9cd8",
+      "captureUrl": "http://127.0.0.1:5181/"
+    },
+    {
+      "file": "tip-fixtures-poster-light-1000.png",
+      "sha256": "da13de431e71ee5aaf93ea9a78ffcd01ebdda2fd9e63d6f876c64982296c9cd8",
+      "captureUrl": "http://127.0.0.1:5182/"
+    },
+    {
+      "file": "base-fixtures-poster-dark-360.png",
+      "sha256": "6ca1bd53a44cbf0d8a2a66078b8c61c3fd77ab266999b0dd46ff391dcd7f6887",
+      "captureUrl": "http://127.0.0.1:5181/"
+    },
+    {
+      "file": "tip-fixtures-poster-dark-360.png",
+      "sha256": "6ca1bd53a44cbf0d8a2a66078b8c61c3fd77ab266999b0dd46ff391dcd7f6887",
+      "captureUrl": "http://127.0.0.1:5182/"
+    },
+    {
+      "file": "base-fixtures-poster-dark-375.png",
+      "sha256": "ec8d41981155adace3585e371436714e90d55534e4c05bab52edc1fc509a1010",
+      "captureUrl": "http://127.0.0.1:5181/"
+    },
+    {
+      "file": "tip-fixtures-poster-dark-375.png",
+      "sha256": "ec8d41981155adace3585e371436714e90d55534e4c05bab52edc1fc509a1010",
+      "captureUrl": "http://127.0.0.1:5182/"
+    },
+    {
+      "file": "base-fixtures-poster-dark-390.png",
+      "sha256": "a7e357f624930d58b4fabe697d2f02009308ebb6c40f2530b8606fff50c305d1",
+      "captureUrl": "http://127.0.0.1:5181/"
+    },
+    {
+      "file": "tip-fixtures-poster-dark-390.png",
+      "sha256": "a7e357f624930d58b4fabe697d2f02009308ebb6c40f2530b8606fff50c305d1",
+      "captureUrl": "http://127.0.0.1:5182/"
+    },
+    {
+      "file": "base-fixtures-poster-dark-1000.png",
+      "sha256": "8e3f3219e0de5d6f7fb9098c808de5b4b9e59dea457edff093a33f87389f4fce",
+      "captureUrl": "http://127.0.0.1:5181/"
+    },
+    {
+      "file": "tip-fixtures-poster-dark-1000.png",
+      "sha256": "8e3f3219e0de5d6f7fb9098c808de5b4b9e59dea457edff093a33f87389f4fce",
+      "captureUrl": "http://127.0.0.1:5182/"
+    },
+    {
+      "file": "base-fixtures-broadcast-light-360.png",
+      "sha256": "d477c8b470214a96f95bc2930cdc7e7188926ffedda05af79b9fa24e6e6d8e68",
+      "captureUrl": "http://127.0.0.1:5181/?lens=broadcast"
+    },
+    {
+      "file": "tip-fixtures-broadcast-light-360.png",
+      "sha256": "d477c8b470214a96f95bc2930cdc7e7188926ffedda05af79b9fa24e6e6d8e68",
+      "captureUrl": "http://127.0.0.1:5182/?lens=broadcast"
+    },
+    {
+      "file": "base-fixtures-broadcast-light-375.png",
+      "sha256": "fdc93880a5db96e3f830700ee2cc565ce50352173807d95b2808b526a51ac8d7",
+      "captureUrl": "http://127.0.0.1:5181/?lens=broadcast"
+    },
+    {
+      "file": "tip-fixtures-broadcast-light-375.png",
+      "sha256": "fdc93880a5db96e3f830700ee2cc565ce50352173807d95b2808b526a51ac8d7",
+      "captureUrl": "http://127.0.0.1:5182/?lens=broadcast"
+    },
+    {
+      "file": "base-fixtures-broadcast-light-390.png",
+      "sha256": "d552863b35b32234c4b0d005ee92cca14999f2dec85340ac1c3b599f9138689f",
+      "captureUrl": "http://127.0.0.1:5181/?lens=broadcast"
+    },
+    {
+      "file": "tip-fixtures-broadcast-light-390.png",
+      "sha256": "d552863b35b32234c4b0d005ee92cca14999f2dec85340ac1c3b599f9138689f",
+      "captureUrl": "http://127.0.0.1:5182/?lens=broadcast"
+    },
+    {
+      "file": "base-fixtures-broadcast-light-1000.png",
+      "sha256": "5cff0122086d7ea4effb8ca819eb40d3c2832fe606d22ed5d445f67cfc16a327",
+      "captureUrl": "http://127.0.0.1:5181/?lens=broadcast"
+    },
+    {
+      "file": "tip-fixtures-broadcast-light-1000.png",
+      "sha256": "5cff0122086d7ea4effb8ca819eb40d3c2832fe606d22ed5d445f67cfc16a327",
+      "captureUrl": "http://127.0.0.1:5182/?lens=broadcast"
+    },
+    {
+      "file": "base-fixtures-broadcast-dark-360.png",
+      "sha256": "a07c0768f7e863d53c544194dd8065f2ee2f58e6b9be0ff250f49dec84e06ec5",
+      "captureUrl": "http://127.0.0.1:5181/?lens=broadcast"
+    },
+    {
+      "file": "tip-fixtures-broadcast-dark-360.png",
+      "sha256": "a07c0768f7e863d53c544194dd8065f2ee2f58e6b9be0ff250f49dec84e06ec5",
+      "captureUrl": "http://127.0.0.1:5182/?lens=broadcast"
+    },
+    {
+      "file": "base-fixtures-broadcast-dark-375.png",
+      "sha256": "f0486d53af806118ad8d5ff85d87e7ec6c7637b2b332f9171852ec25eff755ca",
+      "captureUrl": "http://127.0.0.1:5181/?lens=broadcast"
+    },
+    {
+      "file": "tip-fixtures-broadcast-dark-375.png",
+      "sha256": "fedac1dfb44ef4143efb2e2c2e43a92cee7a3f4df7ec1112268d2eee3d210ea2",
+      "captureUrl": "http://127.0.0.1:5182/?lens=broadcast"
+    },
+    {
+      "file": "base-fixtures-broadcast-dark-390.png",
+      "sha256": "70ca99865b4946a423342062a3821a1d57c38a09f08ee097d5c914c47178ec94",
+      "captureUrl": "http://127.0.0.1:5181/?lens=broadcast"
+    },
+    {
+      "file": "tip-fixtures-broadcast-dark-390.png",
+      "sha256": "70ca99865b4946a423342062a3821a1d57c38a09f08ee097d5c914c47178ec94",
+      "captureUrl": "http://127.0.0.1:5182/?lens=broadcast"
+    },
+    {
+      "file": "base-fixtures-broadcast-dark-1000.png",
+      "sha256": "0217b08961774f2e4e7ab077afe54b46822cf391d0917d5b541344c5ae74636d",
+      "captureUrl": "http://127.0.0.1:5181/?lens=broadcast"
+    },
+    {
+      "file": "tip-fixtures-broadcast-dark-1000.png",
+      "sha256": "0217b08961774f2e4e7ab077afe54b46822cf391d0917d5b541344c5ae74636d",
+      "captureUrl": "http://127.0.0.1:5182/?lens=broadcast"
+    },
+    {
+      "file": "base-table-ledger-light-360.png",
+      "sha256": "a48612f525ebeeb979d6a048860cd283a51b4704cb585bc7b2219a811c44249c",
+      "captureUrl": "http://127.0.0.1:5181/?tab=table&lens=ledger"
+    },
+    {
+      "file": "tip-table-ledger-light-360.png",
+      "sha256": "a48612f525ebeeb979d6a048860cd283a51b4704cb585bc7b2219a811c44249c",
+      "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=ledger"
+    },
+    {
+      "file": "base-table-ledger-light-375.png",
+      "sha256": "aad55e0b9829f0d3c2a3ae0db9bf81c0004e53de5ac7a7c8e98c40f62135a6a4",
+      "captureUrl": "http://127.0.0.1:5181/?tab=table&lens=ledger"
+    },
+    {
+      "file": "tip-table-ledger-light-375.png",
+      "sha256": "aad55e0b9829f0d3c2a3ae0db9bf81c0004e53de5ac7a7c8e98c40f62135a6a4",
+      "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=ledger"
+    },
+    {
+      "file": "base-table-ledger-light-390.png",
+      "sha256": "992f96efc0e97c6f5ee0cabe00f58dcce2791a9bb1ed6f20e186e340e36de04f",
+      "captureUrl": "http://127.0.0.1:5181/?tab=table&lens=ledger"
+    },
+    {
+      "file": "tip-table-ledger-light-390.png",
+      "sha256": "59ccad92b77b4d89295a06c89c520d241c217f07c7b5ca1c891cb241adb3d3e4",
+      "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=ledger"
+    },
+    {
+      "file": "base-table-ledger-light-1000.png",
+      "sha256": "09d3ec015dc6963cd235bb2710680cf0bfd0d2e267366bfe732cddddaa35bb1b",
+      "captureUrl": "http://127.0.0.1:5181/?tab=table&lens=ledger"
+    },
+    {
+      "file": "tip-table-ledger-light-1000.png",
+      "sha256": "09d3ec015dc6963cd235bb2710680cf0bfd0d2e267366bfe732cddddaa35bb1b",
+      "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=ledger"
+    },
+    {
+      "file": "base-table-ledger-dark-360.png",
+      "sha256": "0628d580c22a1df98504265e67675f7742436504c68f62d56c82b9d2608a0348",
+      "captureUrl": "http://127.0.0.1:5181/?tab=table&lens=ledger"
+    },
+    {
+      "file": "tip-table-ledger-dark-360.png",
+      "sha256": "fde6cafde9fd6cfe52e4ccd9bd347aa7251af030118e7572c83ad1cd27421162",
+      "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=ledger"
+    },
+    {
+      "file": "base-table-ledger-dark-375.png",
+      "sha256": "977857632b9f6eae670ee6d688742461f915db6bd482fabd2bb73744482652d1",
+      "captureUrl": "http://127.0.0.1:5181/?tab=table&lens=ledger"
+    },
+    {
+      "file": "tip-table-ledger-dark-375.png",
+      "sha256": "fb6a102c961675b68a9295793ab62624ad79721ca43926ef72546745fcc53619",
+      "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=ledger"
+    },
+    {
+      "file": "base-table-ledger-dark-390.png",
+      "sha256": "df0d152ba7e40666d3d615693b20caee12080b11540a934f3d669fcb96978d08",
+      "captureUrl": "http://127.0.0.1:5181/?tab=table&lens=ledger"
+    },
+    {
+      "file": "tip-table-ledger-dark-390.png",
+      "sha256": "df0d152ba7e40666d3d615693b20caee12080b11540a934f3d669fcb96978d08",
+      "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=ledger"
+    },
+    {
+      "file": "base-table-ledger-dark-1000.png",
+      "sha256": "ecf7d4466943bd644b78351150a47b7c01e370fc7116f437994fcd23cd5edcdc",
+      "captureUrl": "http://127.0.0.1:5181/?tab=table&lens=ledger"
+    },
+    {
+      "file": "tip-table-ledger-dark-1000.png",
+      "sha256": "ecf7d4466943bd644b78351150a47b7c01e370fc7116f437994fcd23cd5edcdc",
+      "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=ledger"
+    },
+    {
+      "file": "base-table-poster-light-360.png",
+      "sha256": "ebdad9cfdecf071830ee741dc225cfbfcd85e6f6ec61bd44055c2a1aa04508d9",
+      "captureUrl": "http://127.0.0.1:5181/?tab=table"
+    },
+    {
+      "file": "tip-table-poster-light-360.png",
+      "sha256": "ebdad9cfdecf071830ee741dc225cfbfcd85e6f6ec61bd44055c2a1aa04508d9",
+      "captureUrl": "http://127.0.0.1:5182/?tab=table"
+    },
+    {
+      "file": "base-table-poster-light-375.png",
+      "sha256": "191bbf1842da84381fe7fe51c48143ba4eb2f8b8448cd58994abfd5cff4cd9eb",
+      "captureUrl": "http://127.0.0.1:5181/?tab=table"
+    },
+    {
+      "file": "tip-table-poster-light-375.png",
+      "sha256": "191bbf1842da84381fe7fe51c48143ba4eb2f8b8448cd58994abfd5cff4cd9eb",
+      "captureUrl": "http://127.0.0.1:5182/?tab=table"
+    },
+    {
+      "file": "base-table-poster-light-390.png",
+      "sha256": "69072997675f73165212ed03ddb5885f9a714d90a2a9762f3a7e4d9995327764",
+      "captureUrl": "http://127.0.0.1:5181/?tab=table"
+    },
+    {
+      "file": "tip-table-poster-light-390.png",
+      "sha256": "69072997675f73165212ed03ddb5885f9a714d90a2a9762f3a7e4d9995327764",
+      "captureUrl": "http://127.0.0.1:5182/?tab=table"
+    },
+    {
+      "file": "base-table-poster-light-1000.png",
+      "sha256": "1359b2c0491edafba87b2d2147894e27e2e6b4d8acecc7151a9e089c93164fd2",
+      "captureUrl": "http://127.0.0.1:5181/?tab=table"
+    },
+    {
+      "file": "tip-table-poster-light-1000.png",
+      "sha256": "1359b2c0491edafba87b2d2147894e27e2e6b4d8acecc7151a9e089c93164fd2",
+      "captureUrl": "http://127.0.0.1:5182/?tab=table"
+    },
+    {
+      "file": "base-table-poster-dark-360.png",
+      "sha256": "6a8bc7bed1cf2f68fced83634234578eae2760d732b451270c90829d40339eff",
+      "captureUrl": "http://127.0.0.1:5181/?tab=table"
+    },
+    {
+      "file": "tip-table-poster-dark-360.png",
+      "sha256": "6a8bc7bed1cf2f68fced83634234578eae2760d732b451270c90829d40339eff",
+      "captureUrl": "http://127.0.0.1:5182/?tab=table"
+    },
+    {
+      "file": "base-table-poster-dark-375.png",
+      "sha256": "f2c856e835692b0728bb25dce9a105ccaae3b1cdd9bba9821a246d4731ee00a0",
+      "captureUrl": "http://127.0.0.1:5181/?tab=table"
+    },
+    {
+      "file": "tip-table-poster-dark-375.png",
+      "sha256": "f2c856e835692b0728bb25dce9a105ccaae3b1cdd9bba9821a246d4731ee00a0",
+      "captureUrl": "http://127.0.0.1:5182/?tab=table"
+    },
+    {
+      "file": "base-table-poster-dark-390.png",
+      "sha256": "df7c72d26f88bf6f352a84146bec8ea04e793dcd6e9d21bacc383476c7b9570a",
+      "captureUrl": "http://127.0.0.1:5181/?tab=table"
+    },
+    {
+      "file": "tip-table-poster-dark-390.png",
+      "sha256": "4701150a30850be0a01839072f0d6f4960300dd209892cfde539c41fdb0846e6",
+      "captureUrl": "http://127.0.0.1:5182/?tab=table"
+    },
+    {
+      "file": "base-table-poster-dark-1000.png",
+      "sha256": "4b601139cae1a9261f1cfddf02fffec7ad26528e76c74e779e9dc963238d9d90",
+      "captureUrl": "http://127.0.0.1:5181/?tab=table"
+    },
+    {
+      "file": "tip-table-poster-dark-1000.png",
+      "sha256": "4b601139cae1a9261f1cfddf02fffec7ad26528e76c74e779e9dc963238d9d90",
+      "captureUrl": "http://127.0.0.1:5182/?tab=table"
+    },
+    {
+      "file": "base-table-broadcast-light-360.png",
+      "sha256": "18d62ab57b6215ae4acc04d7a06cf2d7a596d202444f8b7e11bd8a3c4c0cc159",
+      "captureUrl": "http://127.0.0.1:5181/?tab=table&lens=broadcast"
+    },
+    {
+      "file": "tip-table-broadcast-light-360.png",
+      "sha256": "18d62ab57b6215ae4acc04d7a06cf2d7a596d202444f8b7e11bd8a3c4c0cc159",
+      "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=broadcast"
+    },
+    {
+      "file": "base-table-broadcast-light-375.png",
+      "sha256": "9354819fbe4282343d557e1cc60baed84ae1de3c30a0c856228d362910346dc9",
+      "captureUrl": "http://127.0.0.1:5181/?tab=table&lens=broadcast"
+    },
+    {
+      "file": "tip-table-broadcast-light-375.png",
+      "sha256": "9354819fbe4282343d557e1cc60baed84ae1de3c30a0c856228d362910346dc9",
+      "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=broadcast"
+    },
+    {
+      "file": "base-table-broadcast-light-390.png",
+      "sha256": "f98027f0ab4d83d6d4c633d9fe0e83bc90f0e80ba8bb370bfde779413ecb6a36",
+      "captureUrl": "http://127.0.0.1:5181/?tab=table&lens=broadcast"
+    },
+    {
+      "file": "tip-table-broadcast-light-390.png",
+      "sha256": "ab765250666d38eb683a3b0bae39b5f393069cde72023cb84903b60fef3636eb",
+      "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=broadcast"
+    },
+    {
+      "file": "base-table-broadcast-light-1000.png",
+      "sha256": "6490219bca236a41bea1921fbb769effb04954d99b9b5f0023a1fab84980df87",
+      "captureUrl": "http://127.0.0.1:5181/?tab=table&lens=broadcast"
+    },
+    {
+      "file": "tip-table-broadcast-light-1000.png",
+      "sha256": "eb17b093341b00114a8384d25ec39827c5071333c25a8717e847caae4f8277b1",
+      "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=broadcast"
+    },
+    {
+      "file": "base-table-broadcast-dark-360.png",
+      "sha256": "7ea0de403865494220c05bbc54f5d4e08e5c82ae96d3582afee6b1e769df0b8a",
+      "captureUrl": "http://127.0.0.1:5181/?tab=table&lens=broadcast"
+    },
+    {
+      "file": "tip-table-broadcast-dark-360.png",
+      "sha256": "7ea0de403865494220c05bbc54f5d4e08e5c82ae96d3582afee6b1e769df0b8a",
+      "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=broadcast"
+    },
+    {
+      "file": "base-table-broadcast-dark-375.png",
+      "sha256": "06c8bf63bcff526f815ca416ffe7cd085c279784355de3eaa177a8acba0a53e9",
+      "captureUrl": "http://127.0.0.1:5181/?tab=table&lens=broadcast"
+    },
+    {
+      "file": "tip-table-broadcast-dark-375.png",
+      "sha256": "06c8bf63bcff526f815ca416ffe7cd085c279784355de3eaa177a8acba0a53e9",
+      "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=broadcast"
+    },
+    {
+      "file": "base-table-broadcast-dark-390.png",
+      "sha256": "92c37c4e30342fb4d89e630651f5a4326338f973094a7035b081aa3f60490a2b",
+      "captureUrl": "http://127.0.0.1:5181/?tab=table&lens=broadcast"
+    },
+    {
+      "file": "tip-table-broadcast-dark-390.png",
+      "sha256": "92c37c4e30342fb4d89e630651f5a4326338f973094a7035b081aa3f60490a2b",
+      "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=broadcast"
+    },
+    {
+      "file": "base-table-broadcast-dark-1000.png",
+      "sha256": "0f3b071adbf74be6b5759b7519db228307dd9230a109b38ff7a101277a7dc18f",
+      "captureUrl": "http://127.0.0.1:5181/?tab=table&lens=broadcast"
+    },
+    {
+      "file": "tip-table-broadcast-dark-1000.png",
+      "sha256": "0f3b071adbf74be6b5759b7519db228307dd9230a109b38ff7a101277a7dc18f",
+      "captureUrl": "http://127.0.0.1:5182/?tab=table&lens=broadcast"
+    },
+    {
+      "file": "base-moments-ledger-light-360.png",
+      "sha256": "a7d0b852ae5613cbd2503e8d570a6b281f2136fa4999592b8e4925638e703d1c",
+      "captureUrl": "http://127.0.0.1:5181/?tab=moments&lens=ledger"
+    },
+    {
+      "file": "tip-moments-ledger-light-360.png",
+      "sha256": "a7d0b852ae5613cbd2503e8d570a6b281f2136fa4999592b8e4925638e703d1c",
+      "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=ledger"
+    },
+    {
+      "file": "base-moments-ledger-light-375.png",
+      "sha256": "742a0a03012daa482fdebfc1b3375e9b90831bb29ca796cd79c55fe9bd9ccaaa",
+      "captureUrl": "http://127.0.0.1:5181/?tab=moments&lens=ledger"
+    },
+    {
+      "file": "tip-moments-ledger-light-375.png",
+      "sha256": "a57a7a5805a12345b06ca1e5acd772d184bb0862a4bd39f3049e5829ef08623a",
+      "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=ledger"
+    },
+    {
+      "file": "base-moments-ledger-light-390.png",
+      "sha256": "572682276ce6849a4d3a27cf867be1160a5f1585e3efe02947c71ae3c625b7f6",
+      "captureUrl": "http://127.0.0.1:5181/?tab=moments&lens=ledger"
+    },
+    {
+      "file": "tip-moments-ledger-light-390.png",
+      "sha256": "572682276ce6849a4d3a27cf867be1160a5f1585e3efe02947c71ae3c625b7f6",
+      "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=ledger"
+    },
+    {
+      "file": "base-moments-ledger-light-1000.png",
+      "sha256": "9e22326609069355e2d29d80cb1a925f45b919efcdbbb55496971e696353be7e",
+      "captureUrl": "http://127.0.0.1:5181/?tab=moments&lens=ledger"
+    },
+    {
+      "file": "tip-moments-ledger-light-1000.png",
+      "sha256": "9e22326609069355e2d29d80cb1a925f45b919efcdbbb55496971e696353be7e",
+      "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=ledger"
+    },
+    {
+      "file": "base-moments-ledger-dark-360.png",
+      "sha256": "9f7833a0f9d136ee983afe271972655998af81340ced130743a0c8895f67436e",
+      "captureUrl": "http://127.0.0.1:5181/?tab=moments&lens=ledger"
+    },
+    {
+      "file": "tip-moments-ledger-dark-360.png",
+      "sha256": "1fe14d2e5b0774483d0e01eaa9ff70a9cfbbd4e7edbe11c506df9bd09262088e",
+      "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=ledger"
+    },
+    {
+      "file": "base-moments-ledger-dark-375.png",
+      "sha256": "4735573f7ee9428dff71a71f6b54e832f282548d5da6167f9fb75951f342aae0",
+      "captureUrl": "http://127.0.0.1:5181/?tab=moments&lens=ledger"
+    },
+    {
+      "file": "tip-moments-ledger-dark-375.png",
+      "sha256": "64fedfdfb9506acce3aa5cfb6ae45894eac1f1b8f68b503210311fdb1704eb99",
+      "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=ledger"
+    },
+    {
+      "file": "base-moments-ledger-dark-390.png",
+      "sha256": "d543235d020a4335c308f4017f48f9cfd02734e54c38b7576e142bd60b5b93c6",
+      "captureUrl": "http://127.0.0.1:5181/?tab=moments&lens=ledger"
+    },
+    {
+      "file": "tip-moments-ledger-dark-390.png",
+      "sha256": "eed8fad17ad6c0c7cb42dd5316eda067e1fa2921626b97abd77b3b178a250533",
+      "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=ledger"
+    },
+    {
+      "file": "base-moments-ledger-dark-1000.png",
+      "sha256": "eb499065a5d4bd9a3193876c98001cc87ff4728cf0fb09be28cd566ef11891de",
+      "captureUrl": "http://127.0.0.1:5181/?tab=moments&lens=ledger"
+    },
+    {
+      "file": "tip-moments-ledger-dark-1000.png",
+      "sha256": "eb499065a5d4bd9a3193876c98001cc87ff4728cf0fb09be28cd566ef11891de",
+      "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=ledger"
+    },
+    {
+      "file": "base-moments-poster-light-360.png",
+      "sha256": "54962fb7f80d6caf7551f2f791e879c49c0345e4c00e3a3d955f2b74431d29d2",
+      "captureUrl": "http://127.0.0.1:5181/?tab=moments"
+    },
+    {
+      "file": "tip-moments-poster-light-360.png",
+      "sha256": "54962fb7f80d6caf7551f2f791e879c49c0345e4c00e3a3d955f2b74431d29d2",
+      "captureUrl": "http://127.0.0.1:5182/?tab=moments"
+    },
+    {
+      "file": "base-moments-poster-light-375.png",
+      "sha256": "867abb7e416f702313e9828d9f5ccaa5e026f0e6e8e460ffc218cd8b535302ea",
+      "captureUrl": "http://127.0.0.1:5181/?tab=moments"
+    },
+    {
+      "file": "tip-moments-poster-light-375.png",
+      "sha256": "28b0265c107b6df9691ea05ac3eec771f4512c91d146cc1709bc790febd2793a",
+      "captureUrl": "http://127.0.0.1:5182/?tab=moments"
+    },
+    {
+      "file": "base-moments-poster-light-390.png",
+      "sha256": "8132ffa32f2f41def978dc48a2bae0154288d40b6b0fed5f0251135971850de0",
+      "captureUrl": "http://127.0.0.1:5181/?tab=moments"
+    },
+    {
+      "file": "tip-moments-poster-light-390.png",
+      "sha256": "a38d8edb2f757973389ecbd8c0002ffeffddea150e4ae4b7701965baf3ca437f",
+      "captureUrl": "http://127.0.0.1:5182/?tab=moments"
+    },
+    {
+      "file": "base-moments-poster-light-1000.png",
+      "sha256": "512a21532722d1a1a1e8d16e418f74ebbb5341237d12324f78778a589e4a17eb",
+      "captureUrl": "http://127.0.0.1:5181/?tab=moments"
+    },
+    {
+      "file": "tip-moments-poster-light-1000.png",
+      "sha256": "512a21532722d1a1a1e8d16e418f74ebbb5341237d12324f78778a589e4a17eb",
+      "captureUrl": "http://127.0.0.1:5182/?tab=moments"
+    },
+    {
+      "file": "base-moments-poster-dark-360.png",
+      "sha256": "bc8e5e598836c6a78fd7dbe56f7972a5f3c4bef3fdababe77ad8e3f4b61387f0",
+      "captureUrl": "http://127.0.0.1:5181/?tab=moments"
+    },
+    {
+      "file": "tip-moments-poster-dark-360.png",
+      "sha256": "23f91a37f83b065c0a2c90f56d2037261537380ee5337595e141e2c9d936aac4",
+      "captureUrl": "http://127.0.0.1:5182/?tab=moments"
+    },
+    {
+      "file": "base-moments-poster-dark-375.png",
+      "sha256": "25b9d83196ae43c61a3d4985662983744d6f6a25caa8ac3b7b7d81319d778754",
+      "captureUrl": "http://127.0.0.1:5181/?tab=moments"
+    },
+    {
+      "file": "tip-moments-poster-dark-375.png",
+      "sha256": "e04e780a4b7ab0fea529851a87f68d7b2ccfe627e6fdec65c033452a870e5fab",
+      "captureUrl": "http://127.0.0.1:5182/?tab=moments"
+    },
+    {
+      "file": "base-moments-poster-dark-390.png",
+      "sha256": "e4dd4afbb85e3ebda04f9fe3b91f53376ce902b65c537060d56b29bef148e335",
+      "captureUrl": "http://127.0.0.1:5181/?tab=moments"
+    },
+    {
+      "file": "tip-moments-poster-dark-390.png",
+      "sha256": "308395ae8426b0d574398a1e0fb94b422b60f53995b35e84128aee462697810d",
+      "captureUrl": "http://127.0.0.1:5182/?tab=moments"
+    },
+    {
+      "file": "base-moments-poster-dark-1000.png",
+      "sha256": "b88bff80744387bc6cfe53d97be7d5fe4fa91d8f56fca7e329f8ca0aa2604f77",
+      "captureUrl": "http://127.0.0.1:5181/?tab=moments"
+    },
+    {
+      "file": "tip-moments-poster-dark-1000.png",
+      "sha256": "b88bff80744387bc6cfe53d97be7d5fe4fa91d8f56fca7e329f8ca0aa2604f77",
+      "captureUrl": "http://127.0.0.1:5182/?tab=moments"
+    },
+    {
+      "file": "base-moments-broadcast-light-360.png",
+      "sha256": "9085bddea13264fc74c19ded4cac64e29f5cc691553dd68bb3c665661efdd782",
+      "captureUrl": "http://127.0.0.1:5181/?tab=moments&lens=broadcast"
+    },
+    {
+      "file": "tip-moments-broadcast-light-360.png",
+      "sha256": "cc2efe3e5622eedd5ba58d78159584329d65f049fc9551c85bdc97c3f91ca936",
+      "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=broadcast"
+    },
+    {
+      "file": "base-moments-broadcast-light-375.png",
+      "sha256": "b906733829ba0deba35aaa460971b9f4bd8027debe9862ff5582eb84b096b679",
+      "captureUrl": "http://127.0.0.1:5181/?tab=moments&lens=broadcast"
+    },
+    {
+      "file": "tip-moments-broadcast-light-375.png",
+      "sha256": "d0120ba98476c06836b45e8d6348e582269f7c02fb1dc23f8ad1158b423cfd61",
+      "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=broadcast"
+    },
+    {
+      "file": "base-moments-broadcast-light-390.png",
+      "sha256": "9b0d8b9b26ebecd00aef2bc3470b3b6fc2c115e4eef92f8d7e219202589a93e4",
+      "captureUrl": "http://127.0.0.1:5181/?tab=moments&lens=broadcast"
+    },
+    {
+      "file": "tip-moments-broadcast-light-390.png",
+      "sha256": "3d3b2bfe362a1f0e9cdaf88bd5a8f1babb6e8adc27684e553cc7ac293bfcf8ef",
+      "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=broadcast"
+    },
+    {
+      "file": "base-moments-broadcast-light-1000.png",
+      "sha256": "ee23944bb2ef5de965d22f94fda04a24cd555b14220202ce3cf8ea171ec45165",
+      "captureUrl": "http://127.0.0.1:5181/?tab=moments&lens=broadcast"
+    },
+    {
+      "file": "tip-moments-broadcast-light-1000.png",
+      "sha256": "ff824cc078a2e48cc687fcaea199e471dc3534f514047bac042e5b09a86c3a7f",
+      "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=broadcast"
+    },
+    {
+      "file": "base-moments-broadcast-dark-360.png",
+      "sha256": "4ec1b934681a05a108af750e9a47ece07e03bfbcb151e3b6eb71a9c5d603930e",
+      "captureUrl": "http://127.0.0.1:5181/?tab=moments&lens=broadcast"
+    },
+    {
+      "file": "tip-moments-broadcast-dark-360.png",
+      "sha256": "4279dd9163cecd155c5070f9d06dce21a647456a1798d40725806d14bee975f1",
+      "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=broadcast"
+    },
+    {
+      "file": "base-moments-broadcast-dark-375.png",
+      "sha256": "c9671e91a411b0a074952a4d158bd46b952940e3e630520af77d8926c8702366",
+      "captureUrl": "http://127.0.0.1:5181/?tab=moments&lens=broadcast"
+    },
+    {
+      "file": "tip-moments-broadcast-dark-375.png",
+      "sha256": "9f625f511c7084da888362e928a0ca2ac6534a800947f62b0006fd28c957a2a0",
+      "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=broadcast"
+    },
+    {
+      "file": "base-moments-broadcast-dark-390.png",
+      "sha256": "fe25f820bdc2d5eff07e2bffd1eb45ca48df333e93a7f4a319d357cfba6f93f8",
+      "captureUrl": "http://127.0.0.1:5181/?tab=moments&lens=broadcast"
+    },
+    {
+      "file": "tip-moments-broadcast-dark-390.png",
+      "sha256": "5dcc3eed2073b2acb06151cdd3adfa7568a49a7d9ec44c71debc5c136aa989eb",
+      "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=broadcast"
+    },
+    {
+      "file": "base-moments-broadcast-dark-1000.png",
+      "sha256": "7f7fc1a5ba4a2d66b069df6c791493d44bd311f81903cf0a0b8e84815d298596",
+      "captureUrl": "http://127.0.0.1:5181/?tab=moments&lens=broadcast"
+    },
+    {
+      "file": "tip-moments-broadcast-dark-1000.png",
+      "sha256": "f1cd3126e322dcc2c1d9ff0063af520d63b1cf2c2e5f2341026983df26423635",
+      "captureUrl": "http://127.0.0.1:5182/?tab=moments&lens=broadcast"
+    }
+  ],
+  "note": "First pass: 70 of 72 cells matched. fixtures-ledger-light-375 and table-broadcast-light-390 differed only by 0.1px on box edges (same elements; text, tokens, focus, history and scroll were not in the diff). A second pass of those two matched. The Broadcast ticker was paused before measurement. The receipt measured ac4965f's dist/, and later commits changed no app input; the tip's dist/ is byte-identical to it.",
+  "rerun": {
+    "cells": [
+      "fixtures-ledger-light-375",
+      "table-broadcast-light-390"
+    ],
+    "differing": [],
+    "directory": "/tmp/kickoff-n3-vite-rerun"
+  }
+}

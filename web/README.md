@@ -45,6 +45,10 @@ exactly `web/app/` plus these shared files, named in `app/globals.css`:
 - `src/components/StalenessBanner.tsx`
 - `src/components/ViewBoundary.tsx`
 - `src/components/MomentsEmpty.tsx`
+- `src/components/FixturesPage.tsx`, `TablePage.tsx`, `TickerStrip.tsx`
+- `src/components/WeekView.tsx`, `MonthView.tsx`, `LedgerWeek.tsx`, `PosterWeek.tsx`
+- `src/components/FixtureRow.tsx`, `MatchdayLines.tsx`, `NextUpStrip.tsx`, `TonightSlate.tsx`
+- `src/components/FilterBar.tsx`, `CompetitionChip.tsx`, `WatchPanel.tsx`
 
 `app/globals.css` also imports `src/shell.css`, the token and base rules the
 reader imports too. It does not scan docs/, studio/, tests, or the rest of src/.
@@ -55,20 +59,29 @@ of web. Shell utilities are shared on purpose. The reader keeps `@source not '..
 
 Versions checked 2026-10-15: Next 16.4.1 is the registry's stable release on the
 [16.x Active LTS line](https://nextjs.org/support-policy). React and React DOM are
-pinned to **19.2.8**, the version the root lock resolves. That pin binds Vitest
-and types. The root lock does not change in N2, so the live app's React does not
-change. Tailwind/PostCSS integration is 4.3.3; Vitest 4.1.11 matches the reader's
-runner. Node engines mirror the root; local checks use Node 24.15.0.
+pinned to **19.2.8**, the version the root lock resolves. That pin stays
+installed. TypeScript resolves types from it. The root lock does not change, so
+the live app's React does not change. Tailwind/PostCSS integration is 4.3.3;
+Vitest 4.1.11 matches the reader's runner. Node engines mirror the root; local
+checks use Node 24.15.0.
 
 One React, recorded 2026-10-16 (N2-Q1 Record). Next's vendored React,
 `19.3.0-canary-278794d7-20261002` in Next 16.4.1, renders the server HTML and
-hydrates the client. That is one copy, with no skew between them. `19.2.8` binds
-Vitest and types. The Vite app keeps the root lock's 19.2.8, so the two apps run
-different React builds until N7.
+hydrates the client. That is one copy, with no skew between them. The Vite app
+keeps the root lock's 19.2.8, so the two apps run different React builds until N7.
 
-web/'s tests run React 19.2.8 while the app runs Next's vendored canary. N3
-decides whether web's Vitest should resolve Next's compiled React instead. N2
-decides nothing about it.
+N3-Q1 **Compiled** (16 Oct 2026). Vitest resolves Next's compiled React for every
+entry these tests import: `react`, `react-dom`, `react-dom/client`,
+`react-dom/server` and `react/jsx-runtime`. The aliases are `vitestReactAliases`
+in `react-resolution.mjs`. They are not the aliases Next's build uses. A test
+fails when its `react` is a different copy from `next/dist/compiled/react`,
+including a second copy that prints the same version. Which file runs which:
+
+- `test/one-react.test.tsx` — the compiled canary, all five entries
+- `test/header-shared.test.tsx` — the compiled canary, `react/jsx-runtime` and `react-dom/server`
+- `test/scaffold.test.tsx` — the compiled canary, `react/jsx-runtime` and `react-dom/server`
+- `test/fixtures-table.test.tsx` — the compiled canary, `react/jsx-runtime` and `react-dom/server`
+- `test/allowlist.test.ts`, `test/isolation.test.ts`, `test/snapshot.test.ts` — no React
 
 Turbopack's root is the repo root, widened from N1's `web/` only far enough to
 compile shared modules in `../src`. It is not set any higher. Aliases in
@@ -76,8 +89,10 @@ compile shared modules in `../src`. It is not set any higher. Aliases in
 React. They do not choose the copy the App Router renders. `shell.tsx` holds
 `LensSwitcher` in the client graph. `npm run build` ends in
 `node scripts/check-one-react.mjs`, which reads `.next/static` and requires one
-client `.version`. On the recorded build that string is the canary above, and
-`19.2.8` does not appear in the client chunks. Rendering `LensSwitcher` from
+React runtime version export. On the recorded build that export is the canary
+above. The check uses the pattern in `scripts/react-copies.mjs`,
+`.version="(18|19)…"`. A bare `19.2.8` substring in bundled dependency metadata
+is not a second React. Rendering `LensSwitcher` from
 `../src` under Vitest fails if a second React is the one calling hooks.
 `node scripts/prove-one-react.mjs` shows a copied React package and a second
 client version fail, then the built client passes. The renderer observation is
@@ -86,8 +101,8 @@ reproduce it. The file-tracer check is gone: it did not observe the renderer.
 
 web/ may import from `../src` only the modules in `src-allowlist.mjs`:
 
-- `src/components/AppHeader.tsx`, `LensSwitcher.tsx`, `MomentsEmpty.tsx`, `StalenessBanner.tsx`, `TabNav.tsx`, `ViewBoundary.tsx`
-- `src/lib/RequestClock.tsx`, `clock.ts`, `fixtures.ts`, `lens.ts`, `theme.ts`, `time.ts`, `urlCodecs.ts`, `useNow.ts`, `useThemeController.ts`, `useUrlState.ts`
+- `src/components/AppHeader.tsx`, `CompetitionChip.tsx`, `FilterBar.tsx`, `FixtureRow.tsx`, `FixturesPage.tsx`, `LedgerWeek.tsx`, `LensSwitcher.tsx`, `MatchdayLines.tsx`, `MomentsEmpty.tsx`, `MonthView.tsx`, `NextUpStrip.tsx`, `PosterWeek.tsx`, `StalenessBanner.tsx`, `TabNav.tsx`, `TablePage.tsx`, `TickerStrip.tsx`, `TonightSlate.tsx`, `ViewBoundary.tsx`, `WatchPanel.tsx`, `WeekView.tsx`
+- `src/lib/RequestClock.tsx`, `chipInk.ts`, `clock.ts`, `competitions.ts`, `fixtures.ts`, `lens.ts`, `lensSelectors.ts`, `matchdays.ts`, `schema.ts`, `standings.ts`, `theme.ts`, `time.ts`, `urlCodecs.ts`, `useNow.ts`, `useThemeController.ts`, `useUrlState.ts`
 
 It does not include `src/main.tsx`, `src/App.tsx`, a Moments session, player or
 YouTube module, or anything under `studio/`.
@@ -122,6 +137,34 @@ node web/scripts/theme-filmstrip.mjs /tmp/kickoff-n2-filmstrip
 `puppeteer-core` 24.23.0 (Apache-2.0) drives the installed Chrome. It does not
 download a browser. PNGs stay outside the repo; the receipts list their SHA-256s.
 
+N3 adds Fixtures and Table through the allowlist above, and `npm run build:offline`
+at the repo root. That command writes `dist-offline/index.html`, a second
+single-file build. `npm run build:single` still writes the whole app to
+`dist-single/`. The offline file renders Fixtures and Table only. `?tab=moments`
+renders Fixtures and leaves the URL as it was. The words "Offline snapshot" sit
+in a paragraph after `AppHeader`, so the shared header's DOM in the Vite app and
+in this app does not gain that line. `node scripts/scan-offline-bundle.ts` (from
+the repo root, via `tsx`) fails if that file contains `next/`, Drizzle, a
+database URL, `studio/`, the Studio env names, or the Moments player, session, or
+YouTube markers.
+
+N3 receipts, with PNGs outside the repo:
+
+- `verification/n3-vite-before-after.json` — Vite at the merge base against Vite at this tip
+- `verification/n3-next-vite.json` — this app against that Vite preview
+- `verification/n3-offline.json` — the offline file from `file://`
+
+```sh
+npm run build && npm run build:offline
+npm --prefix web run build && npm --prefix web run start -- --port 5174
+npx vite preview --host 127.0.0.1 --port 5181 --strictPort   # merge-base dist
+npx vite preview --host 127.0.0.1 --port 5182 --strictPort   # this tip's dist
+KICKOFF_BASE_SHA=<base> KICKOFF_TIP_SHA=<tip> node web/scripts/vite-before-after.mjs /tmp/kickoff-n3-vite-before-after
+node web/scripts/n3-next-vite.mjs /tmp/kickoff-n3-next-vite
+node web/scripts/n3-offline.mjs /tmp/kickoff-n3-offline
+node web/scripts/n3-edges.mjs
+```
+
 U01: Next 16.4.1 builds with TypeScript 7.0.2 through its CLI checker, but TypeScript
 7 lacks the JavaScript compiler API used by Next's language-service plugin.
 The newest TypeScript 6 patch, 6.0.3, is pinned here only. The root stays on 7.
@@ -133,8 +176,9 @@ also pass. This resolves scaffold tooling only, not N2 hydration or pre-paint wo
 move only in a PR that bumps Next, and that PR must re-prove U01. The check
 stays inside `typecheck`.
 
-Every direct dependency is MIT except TypeScript (Apache-2.0), verified from the
-installed packages. Exact versions are in package.json and package-lock.json.
+Every direct dependency is MIT except TypeScript and puppeteer-core (both
+Apache-2.0), verified from the installed packages. Exact versions are in
+package.json and package-lock.json.
 
 Isolation checks live in the new root `tests/web-isolation.test.ts` and web's
 `test/isolation.test.ts`: literal static/type/dynamic imports and re-exports,

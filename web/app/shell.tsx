@@ -7,11 +7,19 @@ import { LensSwitcher } from '../../src/components/LensSwitcher'
 import { StalenessBanner } from '../../src/components/StalenessBanner'
 import { ViewBoundary } from '../../src/components/ViewBoundary'
 import { MomentsEmpty } from '../../src/components/MomentsEmpty'
+import { FixturesPage } from '../../src/components/FixturesPage'
+import { TablePage } from '../../src/components/TablePage'
+import { TickerStrip } from '../../src/components/TickerStrip'
 import { DEFAULT_LENS, encodeLens, parseLens } from '../../src/lib/lens'
 import { useThemeController } from '../../src/lib/useThemeController'
 import { useNow } from '../../src/lib/useNow'
 import { SearchProvider, useCanonicalSearch, useUrlState } from '../../src/lib/useUrlState'
 import { encodeTab, parseTab } from '../../src/lib/urlCodecs'
+
+/** Empty until N5 mounts the Privacy & terms link. Renders no element. */
+export function PrivacyFoot() {
+  return null
+}
 
 export function Shell({ search }: { search: string }) {
   return <SearchProvider search={search}><ShellInner /></SearchProvider>
@@ -41,10 +49,12 @@ function ShellInner() {
       </TabNav>
       {tab === 'moments' ? <ViewBoundary key={`${tab}:${lens}`}><MomentsEmpty /></ViewBoundary> : (
         <div data-moments-background="route"><ViewBoundary key={`${tab}:${lens}`}>
+          {lens === 'broadcast' && tab === 'fixtures' && <TickerStrip />}
           <StalenessBanner />
-          <p>Not ported yet (N3)</p>
+          {tab === 'table' ? <TablePage /> : <FixturesPage today={today} lens={lens} />}
         </ViewBoundary></div>
       )}
+      <PrivacyFoot />
     </div>
   )
 }

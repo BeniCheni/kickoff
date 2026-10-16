@@ -1,0 +1,41 @@
+{
+  "compares": "Vite preview at http://127.0.0.1:5182 and Next at http://127.0.0.1:5174. Freshness uses the committed lastSyncAt 2026-10-15T22:27:12.832Z. The midnight pin freezes Brooklyn at 00:30 on Monday 19 Oct 2026 with ?date=2026-10-18, the previous week.",
+  "rows": [
+    {
+      "id": "fresh-24-vite",
+      "problems": [],
+      "includes": "Data may have moved",
+      "url": "http://127.0.0.1:5182/"
+    },
+    {
+      "id": "fresh-24-next",
+      "problems": [],
+      "includes": "Data may have moved",
+      "url": "http://127.0.0.1:5174/"
+    },
+    {
+      "id": "fresh-72-vite",
+      "problems": [],
+      "includes": "Data is stale",
+      "url": "http://127.0.0.1:5182/"
+    },
+    {
+      "id": "fresh-72-next",
+      "problems": [],
+      "includes": "Data is stale",
+      "url": "http://127.0.0.1:5174/"
+    },
+    {
+      "id": "midnight-pin-vite",
+      "problems": [],
+      "includes": "Oct 12",
+      "url": "http://127.0.0.1:5182/?date=2026-10-18"
+    },
+    {
+      "id": "midnight-pin-next",
+      "problems": [],
+      "includes": "Oct 12",
+      "url": "http://127.0.0.1:5174/?date=2026-10-18"
+    }
+  ]
+}

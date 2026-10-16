@@ -7,15 +7,33 @@ import { viteSingleFile } from 'vite-plugin-singlefile'
 import pkg from './package.json' with { type: 'json' }
 import { themeBootstrap } from './scripts/themeBootstrap.ts'
 
-// `--mode single` inlines every asset into one self-contained dist/index.html that opens
+// `--mode single` inlines every asset into one self-contained dist-single/index.html that opens
 // straight from the filesystem by double-click, the way the original prototype did.
+// `--mode offline` is the separate Fixtures-and-Table file (N0-Q2 Keep). It does not replace single.
 // The default build emits a normal static bundle for hosting.
 export default defineConfig(({ mode }) => ({
   base: './',
   // The header's version string comes from package.json — one source of truth.
   define: { __APP_VERSION__: JSON.stringify(pkg.version) },
-  plugins: [themeBootstrap(), react(), tailwindcss(), ...(mode === 'single' ? [viteSingleFile()] : [])],
-  build: { outDir: mode === 'single' ? 'dist-single' : 'dist' },
+  plugins: [
+    themeBootstrap(),
+    react(),
+    tailwindcss(),
+    ...(mode === 'single' || mode === 'offline' ? [viteSingleFile()] : []),
+    ...(mode === 'offline' ? [{
+      name: 'kickoff-offline-index',
+      apply: 'build' as const,
+      enforce: 'post' as const,
+      generateBundle(_options: unknown, bundle: Record<string, { type: string, fileName: string }>) {
+        const html = bundle['offline.html']
+        if (html?.type === 'asset') html.fileName = 'index.html'
+      },
+    }] : []),
+  ],
+  build: {
+    outDir: mode === 'offline' ? 'dist-offline' : mode === 'single' ? 'dist-single' : 'dist',
+    ...(mode === 'offline' ? { rollupOptions: { input: 'offline.html' } } : {}),
+  },
   // Two vitest projects under one `npm test` (v0.2.4). `node` is the pure layer — `lib/`,
   // `scripts/`, the diff engine — exactly what ran before. `dom` is the component wiring
   // under jsdom + Testing Library: the clock store's React glue, `useUrlState`'s popstate,
