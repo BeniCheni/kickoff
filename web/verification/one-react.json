@@ -8,8 +8,18 @@
     "installedVersionInClientChunks": false
   },
   "server": {
-    "package": "web/node_modules/react",
-    "version": "19.2.8"
+    "renderer": "next-vendored",
+    "version": "19.3.0-canary-278794d7-20261002",
+    "hydratesClient": true,
+    "pinBinds": "vitest-and-types",
+    "apps": "Vite stays on the root lock's 19.2.8 until N7. The Next app runs the vendored canary.",
+    "evidence": "manual",
+    "recorded": "2026-10-16",
+    "rerun": [
+      "Render a temporary import { version } from 'react' as data-react-version on the shell, then next build and next start. The SSR HTML of / and /?tab=moments carries 19.3.0-canary-278794d7-20261002. Revert the probe.",
+      "Trace Module._load under next start. web/node_modules/react 19.2.8 loads only from Next's server/app-render/dynamic-rendering.js and server/lib/dedupe-fetch.js. The app-page runtime bundle carries the vendored copy. __NEXT_PRIVATE_PREBUNDLED_REACT is unset.",
+      "Search .next/server for .version=. It is absent. .next/static carries the canary and does not carry 19.2.8."
+    ]
   },
   "turbopackRoot": "repo",
   "proof": {
