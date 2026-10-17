@@ -41,7 +41,10 @@ fal, or `server-only`. Its only dependency is zod `4.4.3`.
 `studio/` depends on it by `file:../packages/kickoff-catalog`. There is no npm
 workspace. `web/` takes the same kind of dependency only when one of its tests
 or the reader imports this package. The root Vite app does not depend on it.
-The one-file offline build must not carry it.
+The offline scan fails when the built file still contains the string
+`@kickoff/catalog`. That only proves the string is absent: a bundler can inline
+this package and drop the name. The guard is the source fence that stops `src/`
+from importing this package.
 
 Studio checks the schemas with `npm run test:contract` from `studio/`. That
 script also applies migration 0002 on local PGlite and checks the reader role.

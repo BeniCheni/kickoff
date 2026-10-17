@@ -37,6 +37,7 @@ try {
   copyTree(path.join(root, 'studio'), path.join(scratch, 'studio'))
   copyTree(path.join(root, 'packages/kickoff-catalog'), path.join(scratch, 'packages/kickoff-catalog'))
   copyTree(path.join(root, 'web'), path.join(scratch, 'web'))
+  copyTree(path.join(root, 'src'), path.join(scratch, 'src'))
   fs.mkdirSync(path.join(scratch, 'tests'), { recursive: true })
   fs.copyFileSync(path.join(root, 'tests/web-isolation.test.ts'), path.join(scratch, 'tests/web-isolation.test.ts'))
   fs.writeFileSync(path.join(scratch, 'vitest.web.config.ts'), [
@@ -72,6 +73,19 @@ try {
   run('web-imports-catalog-green', scratch, [...webRunner, 'web never'], false)
   fs.unlinkSync(catalogProbe)
   run('web-after-catalog-green', scratch, [...webRunner, 'web never'], false)
+
+  const srcFilter = [...webRunner, 'src never imports the catalog']
+  run('src-catalog-clean-green', scratch, srcFilter, false)
+  const offline = path.join(scratch, 'src/offline.tsx')
+  const original = fs.readFileSync(offline, 'utf8')
+  fs.writeFileSync(offline, `${importWord} { catalogListRowSchema, SUBJECT_LABELS } from '../packages/kickoff-catalog/src/index.ts'\n` + original)
+  run('src-imports-package-source-red', scratch, srcFilter, true)
+  fs.writeFileSync(offline, original)
+  run('src-imports-package-source-green', scratch, srcFilter, false)
+  fs.writeFileSync(offline, `${importWord} { catalogListRowSchema } from '@kickoff/catalog'\n` + original)
+  run('src-imports-package-name-red', scratch, srcFilter, true)
+  fs.writeFileSync(offline, original)
+  run('src-imports-package-name-green', scratch, srcFilter, false)
 } finally {
   fs.rmSync(scratch, { recursive: true, force: true })
 }

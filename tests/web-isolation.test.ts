@@ -35,6 +35,14 @@ function run(module: string, args: string[]) {
 test('src never imports web', () => expect(crossImports('src', 'web')).toEqual([]))
 test('web never imports studio', () => expect(crossImports('web', 'studio')).toEqual([]))
 
+test('src never imports the catalog package', () => {
+  expect(crossImports('src', 'packages')).toEqual([])
+  const bare = filesUnder(path.join(root, 'src')).flatMap(file =>
+    imports(readFileSync(file, 'utf8')).filter(specifier =>
+      specifier === '@kickoff/catalog' || specifier.startsWith('@kickoff/catalog/')))
+  expect(bare).toEqual([])
+})
+
 test('the catalog package name is not a studio import', () => {
   const source = "export { catalogListRowSchema } from '@kickoff/catalog'\n"
   const specifiers = imports(source)
