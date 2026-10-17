@@ -37,7 +37,9 @@ and Moments shows the unavailable state. This build has no database client, so
 that path stays unavailable. `npm run check:client` scans `.next/static` and
 `.next/server` for the Studio and database markers, and for the stub sentinel
 unless `KICKOFF_CATALOG=stub`. Regenerate the synthetic media with
-`node web/scripts/generate-stub-media.mjs`.
+`node web/scripts/generate-stub-media.mjs`. Moments styles live in
+`web/app/moments/gallery.css`, scoped under `.moments-gallery`. `npm run check:css`
+keeps that sheet out of the shared shell CSS and out of the Vite reader's build.
 
 The build needs the root install. The theme script is compiled with the root's
 `tsx` and Vite. At runtime, from `web/`, the app reads:

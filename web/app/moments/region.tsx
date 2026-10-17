@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react'
 import type { CatalogMode, MomentsPayload } from '../../lib/catalog/types'
 import { previewAllowed } from '../../lib/catalog/request'
 import { Gallery } from './gallery'
+import './gallery.css'
 import { WatchMissing, WatchPage, WatchUnavailable } from './watch'
 
 const UNAVAILABLE_HEADING = 'The gallery is unavailable.'

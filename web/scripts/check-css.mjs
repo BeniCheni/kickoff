@@ -47,8 +47,24 @@ assert.ok(web.includes('bada71'), 'web probe missing: scan check would be vacuou
 assert.ok(!reader.includes('bada71'), 'web probe reached reader CSS')
 assert.ok(!reader.includes('fa11e0'), 'Studio probe reached reader CSS')
 assert.ok(!web.includes('fa11e0'), 'Studio probe reached web CSS')
-// Shell utilities are shared on purpose. Docs-only and Moments-gallery selectors stay out.
-for (const marker of ['underline-offset-\\[3px\\]', 'mt-6', 'moments-gallery']) {
-  assert.ok(!web.includes(`.${marker}`), `reader/docs selector reached web CSS: ${marker}`)
+// Shell utilities are shared on purpose. The Moments sheet is a separate file,
+// scoped under .moments-gallery, and it must not enter the reader build or the
+// shared shell sheet.
+for (const marker of ['underline-offset-\\[3px\\]', 'mt-6', 'moments-gallery', 'moments-preview', 'moments-trust', 'moments-live']) {
+  assert.ok(!web.includes(`.${marker}`), `reader/docs selector reached web shell CSS: ${marker}`)
+}
+const momentsCss = readFileSync(path.join(root, 'web/app/moments/gallery.css'), 'utf8')
+assert.ok(momentsCss.includes('.moments-gallery'), 'Moments sheet is missing its root scope')
+assert.ok(!momentsCss.includes('@keyframes') && !momentsCss.includes('animation:'), 'Moments sheet added motion')
+for (const marker of ['moments-preview', 'moments-trust', 'moments-live', 'moments-theater']) {
+  assert.ok(!reader.includes(marker), `Next Moments class reached reader CSS: ${marker}`)
+}
+const selectors = momentsCss
+  .replace(/\/\*[\s\S]*?\*\//g, '')
+  .split('}')
+  .map(block => block.split('{')[0]?.trim())
+  .filter(selector => selector && !selector.startsWith('@'))
+for (const selector of selectors) {
+  assert.ok(selector.includes('.moments-gallery'), `Moments selector is not scoped: ${selector}`)
 }
 console.log('CSS isolation passed: web probe present; studio and docs markers absent; shell utilities shared')
