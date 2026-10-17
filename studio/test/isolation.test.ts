@@ -32,9 +32,29 @@ function specifiers(source: string): string[] {
   return found
 }
 
-function mentionsStudio(specifier: string): boolean {
+function names(specifier: string, rootName: string): boolean {
   const parts = specifier.split(/[/\\]/)
-  return parts.includes('studio') || specifier.startsWith('studio/')
+  return parts.includes(rootName) || specifier.startsWith(`${rootName}/`)
+}
+
+function enters(fromFile: string, specifier: string, forbiddenDir: string): boolean {
+  if (!specifier.startsWith('.')) return false
+  const resolved = path.resolve(path.dirname(fromFile), specifier)
+  const relative = path.relative(forbiddenDir, resolved)
+  return relative === '' || (!relative.startsWith('..') && !path.isAbsolute(relative))
+}
+
+function offendersUnder(dir: string, forbidden: readonly string[]) {
+  const found: { file: string; specifier: string }[] = []
+  for (const file of filesUnder(dir)) {
+    if (!/\.(ts|tsx|js|jsx|mjs|cjs)$/.test(file)) continue
+    const source = readFileSync(file, 'utf8')
+    for (const specifier of specifiers(source)) {
+      const hit = forbidden.some((name) => names(specifier, name) || enters(file, specifier, path.join(repoRoot, name)))
+      if (hit) found.push({ file: path.relative(repoRoot, file), specifier })
+    }
+  }
+  return found
 }
 
 describe('reader isolation', () => {
@@ -44,9 +64,17 @@ describe('reader isolation', () => {
       if (!/\.(ts|tsx|js|jsx|mjs|cjs|css)$/.test(file)) continue
       const source = readFileSync(file, 'utf8')
       for (const specifier of specifiers(source)) {
-        if (mentionsStudio(specifier)) offenders.push({ file: path.relative(repoRoot, file), specifier })
+        if (names(specifier, 'studio')) offenders.push({ file: path.relative(repoRoot, file), specifier })
       }
     }
     expect(offenders).toEqual([])
+  })
+
+  it('forbids studio/ from importing src/ or web/', () => {
+    expect(offendersUnder(path.join(repoRoot, 'studio'), ['src', 'web'])).toEqual([])
+  })
+
+  it('forbids the catalog package from importing studio, src, or web', () => {
+    expect(offendersUnder(path.join(repoRoot, 'packages/kickoff-catalog'), ['studio', 'src', 'web'])).toEqual([])
   })
 })

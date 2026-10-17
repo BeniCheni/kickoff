@@ -35,6 +35,13 @@ function run(module: string, args: string[]) {
 test('src never imports web', () => expect(crossImports('src', 'web')).toEqual([]))
 test('web never imports studio', () => expect(crossImports('web', 'studio')).toEqual([]))
 
+test('the catalog package name is not a studio import', () => {
+  const source = "export { catalogListRowSchema } from '@kickoff/catalog'\n"
+  const specifiers = imports(source)
+  expect(specifiers).toEqual(['@kickoff/catalog'])
+  expect(specifiers.some(specifier => specifier.split(/[/\\@]/).includes('studio'))).toBe(false)
+})
+
 test('the actual root Vitest discovery contains only root tests', () => {
   const listed = JSON.parse(run('vitest/vitest.mjs', ['list', '--filesOnly', '--json'])) as { file: string }[]
   expect(listed.length).toBeGreaterThan(0)

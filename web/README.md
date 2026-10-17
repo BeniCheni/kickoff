@@ -145,8 +145,8 @@ renders Fixtures and leaves the URL as it was. The words "Offline snapshot" sit
 in a paragraph after `AppHeader`, so the shared header's DOM in the Vite app and
 in this app does not gain that line. `node scripts/scan-offline-bundle.ts` (from
 the repo root, via `tsx`) fails if that file contains `next/`, Drizzle, a
-database URL, `studio/`, the Studio env names, or the Moments player, session, or
-YouTube markers.
+database URL, `studio/`, `@kickoff/catalog`, the Studio env names, or the Moments
+player, session, or YouTube markers.
 
 N3 receipts, with PNGs outside the repo:
 

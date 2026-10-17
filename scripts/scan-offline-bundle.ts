@@ -7,6 +7,7 @@ const MARKERS = [
   'drizzle',
   'postgres' + '://',
   'studio' + '/',
+  '@kickoff/catalog',
   'DATABASE_URL',
   'FAL_KEY',
   'STUDIO_ENV_FILE',
