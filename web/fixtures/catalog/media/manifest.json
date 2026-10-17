@@ -1,0 +1,27 @@
+{
+  "sentinel": "KICKOFF-STUB-CATALOG",
+  "recorder": "video/mp4;codecs=avc1.42E01E,mp4a.40.2",
+  "files": [
+    {
+      "name": "thumb-16x10.jpg",
+      "bytes": 1482,
+      "width": 160,
+      "height": 100,
+      "sha256": "b401b9439f7d482600a2bdade2def701dbf0a5e1d78d23497f10aa66ab455e87"
+    },
+    {
+      "name": "thumb-16x9.jpg",
+      "bytes": 1467,
+      "width": 160,
+      "height": 90,
+      "sha256": "5180c00de3240cc342f3d8bb1c481cb0e155d5a476a0f4f93cbfd2fb822a6e66"
+    },
+    {
+      "name": "clip.mp4",
+      "bytes": 1139,
+      "width": 64,
+      "height": 36,
+      "sha256": "c5c43794ed6aa3ff7b3b12c6b25c1c2a2dd8f8a4630c0c7b6ff64241e67a2aa9"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "sentinel": "KICKOFF-STUB-CATALOG",
+  "media": {
+    "moments/stub-only-one/thumbnail-a1b2c3d4.jpg": "thumb-16x10.jpg",
+    "moments/stub-only-one/video-b1b2c3d4.mp4": "clip.mp4",
+    "site:stub-only-one": "thumb-16x10.jpg"
+  },
+  "videos": [
+    {
+      "id": "stub-only-one",
+      "title": "Stub Fenway one",
+      "editorial_note": "Synthetic note for the stub.",
+      "position": 1,
+      "published_at": "2026-10-02T18:30:00.000Z",
+      "endpoint": "synthetic.example/image-to-video",
+      "pinned_on": "2026-09-15",
+      "prompt": "A synthetic prompt submitted for the stub catalog.",
+      "prompt_expansion": null,
+      "seed": "4102",
+      "parent": null,
+      "generated_at": "2026-10-01T16:00:00.000Z",
+      "attestation_summary": "Stub attestation. Not parsed.",
+      "video_bucket": "moments",
+      "video_object_path": "stub-only-one/video-b1b2c3d4.mp4",
+      "sha256": "c5c43794ed6aa3ff7b3b12c6b25c1c2a2dd8f8a4630c0c7b6ff64241e67a2aa9",
+      "mime": "video/mp4",
+      "bytes": 1139,
+      "width": 768,
+      "height": 480,
+      "duration_s": "12.400",
+      "thumbnail_bucket": "moments",
+      "thumbnail_object_path": "stub-only-one/thumbnail-a1b2c3d4.jpg",
+      "subjects": [
+        "Fenway"
+      ],
+      "kept_at": "2026-10-02T18:00:00.000Z",
+      "thumbnail_mime": "image/jpeg",
+      "thumbnail_is_keyframe": true
+    }
+  ]
+}

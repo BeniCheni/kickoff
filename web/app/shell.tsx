@@ -6,7 +6,8 @@ import { TabNav } from '../../src/components/TabNav'
 import { LensSwitcher } from '../../src/components/LensSwitcher'
 import { StalenessBanner } from '../../src/components/StalenessBanner'
 import { ViewBoundary } from '../../src/components/ViewBoundary'
-import { MomentsEmpty } from '../../src/components/MomentsEmpty'
+import { MomentsRegion } from './moments/region'
+import type { CatalogMode, MomentsPayload } from '../lib/catalog/types'
 import { FixturesPage } from '../../src/components/FixturesPage'
 import { TablePage } from '../../src/components/TablePage'
 import { TickerStrip } from '../../src/components/TickerStrip'
@@ -21,11 +22,19 @@ export function PrivacyFoot() {
   return null
 }
 
-export function Shell({ search }: { search: string }) {
-  return <SearchProvider search={search}><ShellInner /></SearchProvider>
+export function Shell({
+  search,
+  moments = { state: 'skipped' },
+  catalogMode = 'closed',
+}: {
+  search: string
+  moments?: MomentsPayload
+  catalogMode?: CatalogMode
+}) {
+  return <SearchProvider search={search}><ShellInner moments={moments} catalogMode={catalogMode} /></SearchProvider>
 }
 
-function ShellInner() {
+function ShellInner({ moments, catalogMode }: { moments: MomentsPayload; catalogMode: CatalogMode }) {
   const { today } = useNow()
   const [tab, setTab] = useUrlState('tab', 'fixtures', encodeTab, parseTab, 'push')
   const [lens, setLens] = useUrlState('lens', DEFAULT_LENS, encodeLens, parseLens, 'replace')
@@ -47,7 +56,7 @@ function ShellInner() {
       <TabNav tab={tab} onSelect={setTab}>
         <LensSwitcher lens={lens} onSelect={setLens} />
       </TabNav>
-      {tab === 'moments' ? <ViewBoundary key={`${tab}:${lens}`}><MomentsEmpty /></ViewBoundary> : (
+      {tab === 'moments' ? <ViewBoundary key={`${tab}:${lens}`}><MomentsRegion moments={moments} catalogMode={catalogMode} /></ViewBoundary> : (
         <div data-moments-background="route"><ViewBoundary key={`${tab}:${lens}`}>
           {lens === 'broadcast' && tab === 'fixtures' && <TickerStrip />}
           <StalenessBanner />
