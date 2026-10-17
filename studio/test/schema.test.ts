@@ -2,9 +2,22 @@ import { readFileSync, readdirSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { eq } from 'drizzle-orm'
+import { migrate } from 'drizzle-orm/pglite/migrator'
 import { describe, expect, it } from 'vitest'
 import { article50NonblankSql, BLANK_CODE_POINTS } from '../answer.ts'
-import { article50Answer, job, ledger, videos } from '../db/schema.ts'
+import {
+  article50Answer,
+  asset,
+  event,
+  generation,
+  generationInput,
+  generationSubject,
+  job,
+  ledger,
+  policyCheck,
+  subject,
+  videos,
+} from '../db/schema.ts'
 import { publishedDetailColumns, publishedListColumns } from '../db/public-columns.ts'
 import { markKept, seedClip } from './fixture.ts'
 import { freshDatabase, throwsMatching } from './harness.ts'
@@ -14,6 +27,93 @@ const migrationsDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)),
 async function rows<T>(client: { query: (sql: string) => Promise<{ rows: T[] }> }, sql: string) {
   const result = await client.query(sql)
   return result.rows
+}
+
+type Database = Awaited<ReturnType<typeof freshDatabase>>['db']
+type Clip = Awaited<ReturnType<typeof seedClip>>
+
+function iso(value: unknown): string | null {
+  if (value === null || value === undefined) return null
+  const date = value instanceof Date ? value : new Date(String(value))
+  if (Number.isNaN(date.getTime())) throw new Error(`not an instant: ${String(value)}`)
+  return date.toISOString()
+}
+
+async function liveClip(db: Database, clip: Clip, spec: {
+  publicId: string
+  title: string
+  position: number
+  prompt: string
+  subjectIds?: string[]
+  keptAt?: Date[]
+  attestedAt?: Date
+  thumbnailSha: string
+  linkFirst: boolean
+}) {
+  const [gen] = await db.insert(generation).values({
+    kind: 'video',
+    modelId: clip.modelId,
+    prompt: spec.prompt,
+    promptSha256: `prompt-${spec.publicId}`,
+    params: { duration: 15, resolution: '480P' },
+    cacheKey: spec.publicId,
+    status: 'downloaded',
+  }).returning()
+  if (!gen) throw new Error('generation insert returned nothing')
+  const [row] = await db.insert(job).values({
+    generationId: gen.id,
+    sessionId: clip.sessionId,
+    attempt: 1,
+    idempotencyKey: spec.publicId,
+    estimateUsd: '0.225000',
+    status: 'downloaded',
+    finishedAt: clip.when,
+  }).returning()
+  if (!row) throw new Error('job insert returned nothing')
+  const [thumb] = await db.insert(asset).values({
+    role: 'thumbnail',
+    sha256: spec.thumbnailSha,
+    mime: 'image/jpeg',
+    bytes: 10,
+    localPath: `/outside/${spec.publicId}.jpg`,
+  }).returning()
+  if (!thumb) throw new Error('thumbnail insert returned nothing')
+  if (spec.linkFirst) {
+    await db.insert(generationInput).values({ generationId: gen.id, assetId: clip.k0Id, role: 'first' })
+  }
+  for (const subjectId of spec.subjectIds ?? []) {
+    await db.insert(generationSubject).values({ generationId: gen.id, subjectId })
+  }
+  for (const at of spec.keptAt ?? []) {
+    await db.insert(event).values({ jobId: row.id, at, type: 'kept' })
+  }
+  if (spec.attestedAt) {
+    await db.insert(policyCheck).values({
+      generationId: gen.id,
+      policyVersion: 'v1',
+      fictionalOnly: true,
+      noRealMarks: true,
+      attestedAt: spec.attestedAt,
+      attestedBy: 'operator',
+    })
+  }
+  await db.insert(videos).values({
+    publicId: spec.publicId,
+    title: spec.title,
+    position: spec.position,
+    publishedAt: clip.when,
+    jobId: row.id,
+    generationId: gen.id,
+    videoAssetId: clip.videoAssetId,
+    thumbnailAssetId: thumb.id,
+    endpoint: 'minimax/h3-max-turbo/image-to-video',
+    pinnedOn: '2026-10-05',
+    prompt: spec.prompt,
+    generatedAt: clip.when,
+    attestationSummary: 'policy v1 · 5 of 5 clear',
+    fallbackStatus: 'merged',
+  })
+  return row.id
 }
 
 describe('migrations on a fresh database', () => {
@@ -44,6 +144,19 @@ describe('migrations on a fresh database', () => {
       'subject',
       'videos',
     ])
+  })
+
+  it('applies 0002 once and a second migrate is a no-op', async () => {
+    const { client, db } = await freshDatabase()
+    const before = await rows<{ count: number }>(client, `
+      SELECT count(*)::int AS count FROM drizzle.__drizzle_migrations
+    `)
+    expect(before[0]?.count).toBe(3)
+    await migrate(db, { migrationsFolder: migrationsDir })
+    const after = await rows<{ count: number }>(client, `
+      SELECT count(*)::int AS count FROM drizzle.__drizzle_migrations
+    `)
+    expect(after).toEqual(before)
   })
 
   it('carries no connection string and no password', () => {
@@ -177,6 +290,282 @@ describe('read-only catalog role', () => {
     await expect(client.query(`INSERT INTO studio.subject (name) VALUES ('nope')`)).rejects.toThrow(/permission denied/i)
     await expect(client.query(`UPDATE catalog.videos SET title = 'changed'`)).rejects.toThrow(/permission denied|cannot update/i)
     await expect(client.query(`DELETE FROM catalog.video WHERE id = 'fenway-strike'`)).rejects.toThrow(/permission denied|cannot delete/i)
+    await client.exec('RESET ROLE')
+  })
+
+  it('projects only the 0002 columns and grants the reader nothing else', async () => {
+    const { client, db } = await freshDatabase()
+    const clip = await seedClip(db)
+    await db.insert(article50Answer).values({
+      answer: 'recorded for the test',
+      disclosure: 'the test disclosure',
+      recordedOn: clip.when,
+      recordedBy: 'the test',
+      source: 'schema test',
+    })
+    const [fenway] = await db.insert(subject).values({
+      name: 'Fenway',
+      description: 'secret-description-not-public',
+      triggerWord: 'private-fenway-token',
+    }).returning()
+    const [frankenstein] = await db.insert(subject).values({
+      name: 'Frankenstein',
+      triggerWord: 'private-frankenstein-token',
+    }).returning()
+    const [other] = await db.insert(subject).values({
+      name: 'Other',
+      triggerWord: 'private-other-token',
+    }).returning()
+    if (!fenway || !frankenstein || !other) throw new Error('subject insert returned nothing')
+
+    const keptOnce = new Date('2020-05-05T05:05:05.000Z')
+    const attestedOnly = new Date('1999-01-01T00:00:00.000Z')
+    const keptTwiceA = new Date('2019-01-01T00:00:00.000Z')
+    const keptTwiceB = new Date('2019-06-01T00:00:00.000Z')
+
+    await liveClip(db, clip, {
+      publicId: 'linked-fenway',
+      title: 'A linked cat',
+      position: 1,
+      prompt: 'prompt-linked-fenway',
+      subjectIds: [fenway.id],
+      keptAt: [keptOnce],
+      attestedAt: clip.when,
+      thumbnailSha: 'k0-hash',
+      linkFirst: true,
+    })
+    await liveClip(db, clip, {
+      publicId: 'linked-other',
+      title: 'Some other subject',
+      position: 2,
+      prompt: 'prompt-linked-other',
+      subjectIds: [other.id],
+      attestedAt: attestedOnly,
+      thumbnailSha: 'not-the-keyframe',
+      linkFirst: true,
+    })
+    await liveClip(db, clip, {
+      publicId: 'title-only',
+      title: 'Fenway',
+      position: 3,
+      prompt: 'prompt-title-only',
+      keptAt: [keptTwiceA, keptTwiceB],
+      thumbnailSha: 'k0-hash',
+      linkFirst: false,
+    })
+    await liveClip(db, clip, {
+      publicId: 'both-cats',
+      title: 'Both',
+      position: 4,
+      prompt: 'prompt-both-cats',
+      subjectIds: [frankenstein.id, fenway.id],
+      thumbnailSha: 'k0-hash',
+      linkFirst: true,
+    })
+    const [withdrawnGen] = await db.insert(generation).values({
+      kind: 'video',
+      modelId: clip.modelId,
+      prompt: 'withdrawn-generation-prompt',
+      promptSha256: 'prompt-withdrawn',
+      params: { duration: 15, resolution: '480P' },
+      cacheKey: 'withdrawn-row',
+      status: 'withdrawn',
+    }).returning()
+    if (!withdrawnGen) throw new Error('withdrawn generation insert returned nothing')
+    const [withdrawnJob] = await db.insert(job).values({
+      generationId: withdrawnGen.id,
+      sessionId: clip.sessionId,
+      attempt: 1,
+      idempotencyKey: 'withdrawn-row',
+      estimateUsd: '0.225000',
+      status: 'withdrawn',
+      finishedAt: clip.when,
+    }).returning()
+    if (!withdrawnJob) throw new Error('withdrawn job insert returned nothing')
+    await db.insert(videos).values({
+      publicId: 'withdrawn-secret-id',
+      title: 'Withdrawn',
+      position: 5,
+      publishedAt: null,
+      unpublishedAt: clip.when,
+      jobId: withdrawnJob.id,
+      generationId: withdrawnGen.id,
+      videoAssetId: clip.videoAssetId,
+      thumbnailAssetId: clip.thumbnailId,
+      endpoint: 'minimax/h3-max-turbo/image-to-video',
+      pinnedOn: '2026-10-05',
+      prompt: 'withdrawn-prompt-secret',
+      generatedAt: clip.when,
+      attestationSummary: 'policy v1 · 5 of 5 clear',
+      fallbackStatus: 'merged',
+    })
+
+    const types = await rows<{ relname: string; attname: string; typ: string }>(client, `
+      SELECT c.relname, a.attname, format_type(a.atttypid, a.atttypmod) AS typ
+      FROM pg_attribute a
+      JOIN pg_class c ON c.oid = a.attrelid
+      JOIN pg_namespace n ON n.oid = c.relnamespace
+      WHERE n.nspname = 'catalog' AND c.relkind = 'v' AND a.attnum > 0 AND NOT a.attisdropped
+      ORDER BY c.relname, a.attnum
+    `)
+    const typed = (relname: string) => types.filter((row) => row.relname === relname).map((row) => `${row.attname} ${row.typ}`)
+    expect(typed('videos')).toEqual([
+      'id text',
+      'title text',
+      'position integer',
+      'published_at timestamp with time zone',
+      'thumbnail_bucket text',
+      'thumbnail_object_path text',
+      'mime text',
+      'width integer',
+      'height integer',
+      'duration_s numeric(12,3)',
+      'generated_at timestamp with time zone',
+      'editorial_note text',
+      'subjects text[]',
+    ])
+    expect(typed('video')).toEqual([
+      'id text',
+      'title text',
+      'editorial_note text',
+      'position integer',
+      'published_at timestamp with time zone',
+      'endpoint text',
+      'pinned_on text',
+      'prompt text',
+      'prompt_expansion text',
+      'seed text',
+      'parent text',
+      'generated_at timestamp with time zone',
+      'attestation_summary text',
+      'video_bucket text',
+      'video_object_path text',
+      'sha256 text',
+      'mime text',
+      'bytes integer',
+      'width integer',
+      'height integer',
+      'duration_s numeric(12,3)',
+      'thumbnail_bucket text',
+      'thumbnail_object_path text',
+      'subjects text[]',
+      'kept_at timestamp with time zone',
+      'thumbnail_mime text',
+      'thumbnail_is_keyframe boolean',
+    ])
+
+    await client.exec('SET ROLE studio_reader')
+    const grants = await rows<{ table_schema: string; table_name: string; privilege_type: string }>(client, `
+      SELECT table_schema, table_name, privilege_type
+      FROM information_schema.role_table_grants
+      WHERE grantee = 'studio_reader'
+      ORDER BY table_name, privilege_type
+    `)
+    expect(grants).toEqual([
+      { table_schema: 'catalog', table_name: 'video', privilege_type: 'SELECT' },
+      { table_schema: 'catalog', table_name: 'videos', privilege_type: 'SELECT' },
+    ])
+    const schemaPrivileges = await rows<{
+      studio_usage: boolean
+      studio_create: boolean
+      catalog_usage: boolean
+      catalog_create: boolean
+    }>(client, `
+      SELECT
+        has_schema_privilege('studio_reader', 'studio', 'USAGE') AS studio_usage,
+        has_schema_privilege('studio_reader', 'studio', 'CREATE') AS studio_create,
+        has_schema_privilege('studio_reader', 'catalog', 'USAGE') AS catalog_usage,
+        has_schema_privilege('studio_reader', 'catalog', 'CREATE') AS catalog_create
+    `)
+    expect(schemaPrivileges).toEqual([{
+      studio_usage: false,
+      studio_create: false,
+      catalog_usage: true,
+      catalog_create: false,
+    }])
+    const options = await rows<{ relname: string; reloptions: string[] | null }>(client, `
+      SELECT c.relname, c.reloptions
+      FROM pg_class c
+      JOIN pg_namespace n ON n.oid = c.relnamespace
+      WHERE n.nspname = 'catalog' AND c.relkind = 'v'
+      ORDER BY 1
+    `)
+    expect(options.map((row) => row.relname)).toEqual(['video', 'videos'])
+    for (const row of options) {
+      expect(row.reloptions).toEqual(['security_invoker=false'])
+      expect(row.reloptions?.join(' ')).not.toMatch(/security_invoker=true/i)
+    }
+
+    const listed = await rows<Record<string, unknown>>(client, 'SELECT * FROM catalog.videos ORDER BY id')
+    const detail = await rows<Record<string, unknown>>(client, 'SELECT * FROM catalog.video ORDER BY id')
+    expect(listed.map((row) => row.id)).toEqual(['both-cats', 'linked-fenway', 'linked-other', 'title-only'])
+    expect(detail.map((row) => row.id)).toEqual(listed.map((row) => row.id))
+    for (const row of listed) expect(Object.keys(row)).toEqual([...publishedListColumns])
+    for (const row of detail) expect(Object.keys(row)).toEqual([...publishedDetailColumns])
+
+    const detailById = new Map(detail.map((row) => [row.id, row]))
+    const fenwayRow = detailById.get('linked-fenway')
+    const otherRow = detailById.get('linked-other')
+    const titleRow = detailById.get('title-only')
+    const bothRow = detailById.get('both-cats')
+    expect(fenwayRow?.subjects).toEqual(['Fenway'])
+    expect(otherRow?.subjects).toEqual([])
+    expect(titleRow?.subjects).toEqual([])
+    expect(titleRow?.title).toBe('Fenway')
+    expect(bothRow?.subjects).toEqual(['Fenway', 'Frankenstein'])
+    expect(iso(fenwayRow?.kept_at)).toBe(keptOnce.toISOString())
+    expect(iso(otherRow?.kept_at)).toBeNull()
+    expect(iso(titleRow?.kept_at)).toBeNull()
+    expect(fenwayRow?.thumbnail_is_keyframe).toBe(true)
+    expect(otherRow?.thumbnail_is_keyframe).toBe(false)
+    expect(titleRow?.thumbnail_is_keyframe).toBeNull()
+
+    const published = JSON.stringify(listed) + JSON.stringify(detail)
+    for (const secret of [
+      'private-fenway-token',
+      'private-frankenstein-token',
+      'private-other-token',
+      'secret-description-not-public',
+      'withdrawn-secret-id',
+      'withdrawn-prompt-secret',
+      withdrawnJob.id,
+      '1999-01-01',
+    ]) {
+      expect(published, secret).not.toContain(secret)
+    }
+
+    for (const sql of [
+      'SELECT id FROM studio.videos',
+      'SELECT sha256 FROM studio.asset',
+      'SELECT prompt FROM studio.generation',
+      'SELECT name FROM studio.subject',
+      'SELECT subject_id FROM studio.generation_subject',
+      'SELECT type FROM studio.event',
+      'SELECT status FROM studio.job',
+      'SELECT amount_usd FROM studio.ledger',
+      `INSERT INTO catalog.videos (id) VALUES ('nope')`,
+      `INSERT INTO catalog.video (id) VALUES ('nope')`,
+      `UPDATE catalog.videos SET title = 'changed'`,
+      `UPDATE catalog.video SET title = 'changed'`,
+      `DELETE FROM catalog.videos WHERE id = 'linked-fenway'`,
+      `DELETE FROM catalog.video WHERE id = 'linked-fenway'`,
+      'CREATE TABLE studio.reader_denied (id int)',
+      'CREATE TABLE catalog.reader_denied (id int)',
+      'ALTER TABLE studio.videos ADD COLUMN reader_denied int',
+      'ALTER TABLE catalog.videos ADD COLUMN reader_denied int',
+      'DROP TABLE studio.videos',
+      'DROP VIEW catalog.videos',
+      'TRUNCATE studio.videos',
+      'TRUNCATE catalog.videos',
+    ]) {
+      try {
+        await client.query(sql)
+        throw new Error(`studio_reader was allowed to run: ${sql}`)
+      } catch (error) {
+        const text = error instanceof Error ? error.message : String(error)
+        expect(text, sql).toMatch(/permission denied|must be owner|cannot insert|cannot update|cannot delete|cannot truncate|is not a table/i)
+      }
+    }
     await client.exec('RESET ROLE')
   })
 })

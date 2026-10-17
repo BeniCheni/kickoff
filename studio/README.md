@@ -2,7 +2,7 @@
 
 Local, offline core for Kickoff's own generated videos. The reader in `src/` does not import this folder. A green test run is not generation: every command uses the fal stub and the storage stub unless `--live` is present together with `STUDIO_LIVE=1` and the secret that command needs. This package does not call fal or Supabase in tests, and this slice never uploads a file or opens a pull request.
 
-`studio/db/` is the schema module. It imports nothing from the rest of `studio/`. The move into a package that both the Studio and the Next.js app import is planned; it is not done in this slice. The tables live in the Postgres schema `studio`, which Supabase's Data API does not expose. The public app's names are the views `catalog.videos` and `catalog.video` (`videos` where `published_at` is not null, ordered by `position` — the view does not apply the order; the app does).
+`studio/db/` is the schema module. It imports nothing from the rest of `studio/`. The public row contract lives in `@kickoff/catalog` (`packages/kickoff-catalog`), installed as a copy (`studio/.npmrc`, `install-links=true`). After editing the package, run `npm ci` in `studio/` to refresh the installed copy before `npm test` sees the edit. CI installs fresh. Drizzle stays in this package. The tables live in the Postgres schema `studio`, which Supabase's Data API does not expose. The public app's names are the views `catalog.videos` and `catalog.video` (`videos` where `published_at` is not null, ordered by `position` — the view does not apply the order; the app does).
 
 This package is not a release of Kickoff. v0.5.2 stays.
 
@@ -14,6 +14,7 @@ From `studio/`, after `npm ci`:
 npm run cli -- help
 npm run typecheck
 npm test
+npm run test:contract
 ```
 
 Set two directories **outside this worktree**, and keep the env file outside it too. `STUDIO_DATA_DIR` is the offline database (PGlite, the stub of record until you pass `--live`). `STUDIO_MEDIA_DIR` is where stripped photographs, the cache, and downloaded clips are written. The Studio refuses either path when it sits inside the repo.
@@ -27,6 +28,8 @@ export STUDIO_MEDIA_DIR=$HOME/studio-media
 The env file is `KEY=value` lines. It is read only when `STUDIO_ENV_FILE` is set, and only when that path is outside the worktree. Nothing in it is committed.
 
 `npm run migrate` applies `studio/db/migrations` with the `postgres` driver, `prepare: false`, and a pool of one. You run it. The connection string is `DATABASE_URL` from that env file. Use the Supabase **session pooler**, port **5432**, host containing `pooler.supabase.com`. On the Free plan a direct connection is IPv6-only; the session pooler works over IPv4, and it is the right mode for this long-lived local process. `prepare: false` is what transaction mode (port 6543) requires, and it is safe on the session pooler, so the same client covers both. A Free project pauses after a week idle. The database password stays yours.
+
+Migration `0002_catalog_reader.sql` is hand-written. It replaces both views, keeps every column they already had, and appends the reader columns. The list gains `generated_at`, `editorial_note`, and `subjects`. The detail gains `subjects`, `kept_at`, `thumbnail_mime`, and `thumbnail_is_keyframe`. `npm run test:contract` applies that migration on local PGlite and runs the view, permission, package, and isolation tests. It is not the whole Studio suite.
 
 The role `studio_reader` is created `NOLOGIN` with `SELECT` on `catalog.videos` and `catalog.video` and nothing else. You turn it into a login, choose its password, and put that credential in Vercel's environment when the Next.js app exists. It is never committed and never put in a test. A `studio_reader` login through the shared pooler connects as `studio_reader.[PROJECT-REF]`. Direct connections and the dedicated pooler use the role name alone. Read 13 Oct 2026 from [Connect to your database](https://supabase.com/docs/guides/database/connecting-to-postgres): a custom role through the shared pooler uses `[ROLE].[PROJECT-REF]`.
 
