@@ -332,6 +332,15 @@ try {
       'GRANT TRUNCATE ON studio.videos TO studio_reader;',
     ])
   }, /studio_reader was allowed to run: TRUNCATE studio\.videos/)
+  permissionCase('grant-insert-on-videos', () => {
+    appendSql(['GRANT INSERT ON catalog.videos TO studio_reader;'])
+  }, /INSERT/)
+  permissionCase('grant-writes-and-all-on-video', () => {
+    appendSql([
+      'GRANT INSERT, UPDATE, DELETE ON catalog.videos TO studio_reader;',
+      'GRANT ALL ON catalog.video TO studio_reader;',
+    ])
+  }, /UPDATE/)
   permissionCase('truncate-view-is-denied', () => {
     replaceCounted(
       schemaTest,

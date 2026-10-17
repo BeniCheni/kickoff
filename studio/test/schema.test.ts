@@ -455,6 +455,34 @@ describe('read-only catalog role', () => {
     ])
 
     await client.exec('SET ROLE studio_reader')
+    const grants = await rows<{ table_schema: string; table_name: string; privilege_type: string }>(client, `
+      SELECT table_schema, table_name, privilege_type
+      FROM information_schema.role_table_grants
+      WHERE grantee = 'studio_reader'
+      ORDER BY table_name, privilege_type
+    `)
+    expect(grants).toEqual([
+      { table_schema: 'catalog', table_name: 'video', privilege_type: 'SELECT' },
+      { table_schema: 'catalog', table_name: 'videos', privilege_type: 'SELECT' },
+    ])
+    const schemaPrivileges = await rows<{
+      studio_usage: boolean
+      studio_create: boolean
+      catalog_usage: boolean
+      catalog_create: boolean
+    }>(client, `
+      SELECT
+        has_schema_privilege('studio_reader', 'studio', 'USAGE') AS studio_usage,
+        has_schema_privilege('studio_reader', 'studio', 'CREATE') AS studio_create,
+        has_schema_privilege('studio_reader', 'catalog', 'USAGE') AS catalog_usage,
+        has_schema_privilege('studio_reader', 'catalog', 'CREATE') AS catalog_create
+    `)
+    expect(schemaPrivileges).toEqual([{
+      studio_usage: false,
+      studio_create: false,
+      catalog_usage: true,
+      catalog_create: false,
+    }])
     const options = await rows<{ relname: string; reloptions: string[] | null }>(client, `
       SELECT c.relname, c.reloptions
       FROM pg_class c
