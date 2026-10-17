@@ -31,10 +31,10 @@ export function Shell({
   moments?: MomentsPayload
   catalogMode?: CatalogMode
 }) {
-  return <SearchProvider search={search}><ShellInner moments={moments} catalogMode={catalogMode} /></SearchProvider>
+  return <SearchProvider search={search}><ShellInner moments={moments} catalogMode={catalogMode} search={search} /></SearchProvider>
 }
 
-function ShellInner({ moments, catalogMode }: { moments: MomentsPayload; catalogMode: CatalogMode }) {
+function ShellInner({ moments, catalogMode, search }: { moments: MomentsPayload; catalogMode: CatalogMode; search: string }) {
   const { today } = useNow()
   const [tab, setTab] = useUrlState('tab', 'fixtures', encodeTab, parseTab, 'push')
   const [lens, setLens] = useUrlState('lens', DEFAULT_LENS, encodeLens, parseLens, 'replace')
@@ -56,7 +56,7 @@ function ShellInner({ moments, catalogMode }: { moments: MomentsPayload; catalog
       <TabNav tab={tab} onSelect={setTab}>
         <LensSwitcher lens={lens} onSelect={setLens} />
       </TabNav>
-      {tab === 'moments' ? <ViewBoundary key={`${tab}:${lens}`}><MomentsRegion moments={moments} catalogMode={catalogMode} /></ViewBoundary> : (
+      {tab === 'moments' ? <ViewBoundary key={`${tab}:${lens}`}><MomentsRegion moments={moments} catalogMode={catalogMode} search={search} /></ViewBoundary> : (
         <div data-moments-background="route"><ViewBoundary key={`${tab}:${lens}`}>
           {lens === 'broadcast' && tab === 'fixtures' && <TickerStrip />}
           <StalenessBanner />
