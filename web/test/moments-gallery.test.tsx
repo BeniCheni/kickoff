@@ -5,6 +5,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { expect, test } from 'vitest'
 import { readCatalog } from '../lib/catalog/read'
 import { Gallery } from '../app/moments/gallery'
+import { Thumb } from '../app/moments/card'
 import { beniOrder, matchingRows, newestOrder, shuffleIds } from '../app/moments/order'
 import { durationClock, generatedDate } from '../app/moments/format'
 
@@ -113,6 +114,24 @@ test('a refused save shows the visit-only notice', () => {
   expect(markup).toContain('Saved for this visit only. Browser storage refused the update.')
   expect(article(markup, 'stub-fenway-one')).toContain('Saved reference · visit only')
   expect(article(markup, 'stub-both-cats')).toContain('Not saved · visit only')
+})
+
+test('a missing storage address starts at the site copy, and the cover is the last step', () => {
+  const missing = readCatalog({
+    catalog: 'stub',
+    stubFile: path.join(fileURLToPath(new URL('../fixtures/catalog/', import.meta.url)), 'missing-thumbnail.json'),
+    databaseUrl: undefined,
+    vercelEnv: undefined,
+  }, (file: string) => readFileSync(file, 'utf8')).list[0]
+  if (!missing) throw new Error('missing fixture')
+  const site = renderToStaticMarkup(<Gallery list={[missing]} search="?tab=moments" storageOrigin="http://127.0.0.1:5174/stub-storage" />)
+  expect(site).toContain('/moments/thumbnails/stub-missing-thumb.jpg')
+  expect(site).not.toContain('/stub-storage/')
+  expect(site).toContain('Thumbnail from the site\u2019s copy \u00b7 Supabase did not answer.')
+  const cover = renderToStaticMarkup(<Thumb row={missing} storageOrigin={null} forcedStep="cover" />)
+  expect(cover).toContain('STUDIO')
+  expect(cover).toContain('Original typographic art')
+  expect(cover).toContain('No thumbnail: Supabase and the site\u2019s copy both failed.')
 })
 
 test('shuffle permutes and can be recognised', () => {

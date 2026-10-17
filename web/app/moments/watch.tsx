@@ -3,7 +3,7 @@
 import { storageAddress, type CatalogDetailRow, type CatalogListRow } from '@kickoff/catalog'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import { cardPicture } from './card'
+import { Thumb } from './card'
 import { durationClock, generatedDate } from './format'
 import { readAutoplay, writeAutoplay } from './autoplay'
 import {
@@ -77,7 +77,6 @@ export function WatchPage({
   const { earlier, next } = upNextSplit(list, detail.id)
   const nextRow = next[0] ?? null
   const address = playableAddress(detail, storageOrigin)
-  const picture = cardPicture(detail, storageOrigin)
 
   function clearTimer() {
     if (timer.current !== null) window.clearInterval(timer.current)
@@ -276,7 +275,7 @@ export function WatchPage({
       {detail.editorial_note ? <p className="moments-note">{detail.editorial_note}</p> : null}
       <p className="moments-facts">{metaLine(detail)}</p>
       <div className="moments-stage-anchor">
-        {picture ? <img alt="" src={picture} /> : null}
+        <Thumb row={detail} storageOrigin={storageOrigin} />
         <video
           ref={videoRef}
           controls
