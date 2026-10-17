@@ -43,6 +43,10 @@ workspace. `web/` takes the same kind of dependency only when one of its tests
 or the reader imports this package. The root Vite app does not depend on it.
 The one-file offline build must not carry it.
 
+Studio checks the schemas with `npm run test:contract` from `studio/`. That
+script also applies migration 0002 on local PGlite and checks the reader role.
+This package has no test runner and no lockfile of its own.
+
 Node resolves `zod` from this directory, not from the symlink under
 `studio/node_modules`. Studio's install links `packages/kickoff-catalog/node_modules/zod`
 at the copy it already installed. That link is not committed.
