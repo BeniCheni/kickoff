@@ -10,10 +10,12 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "postinstall": "node scripts/link-catalog-zod.mjs",
     "migrate": "tsx db/migrate.ts",
     "cli": "tsx cli.ts"
   },
   "dependencies": {
+    "@kickoff/catalog": "file:../packages/kickoff-catalog",
     "drizzle-orm": "0.45.4",
     "postgres": "3.4.9",
     "zod": "4.4.3"
