@@ -15,6 +15,13 @@
       "when": 1791858878392,
       "tag": "0001_catalog_gate",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792244596805,
+      "tag": "0002_catalog_reader",
+      "breakpoints": true
     }
   ]
 }

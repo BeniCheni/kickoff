@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 import { execFileSync } from 'node:child_process'
 import { createRequire } from 'node:module'
 import { existsSync, readFileSync, realpathSync } from 'node:fs'
@@ -5,6 +6,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import {
+  SUBJECT_LABELS,
   catalogDetailRowSchema,
   catalogListRowSchema,
   publishedDetailColumns,
@@ -13,6 +15,7 @@ import {
   storageAddress,
 } from '@kickoff/catalog'
 import * as catalog from '@kickoff/catalog'
+import { publishedDetailColumns as studioDetailColumns, publishedListColumns as studioListColumns } from '../db/public-columns.ts'
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const packageRoot = path.join(repoRoot, 'packages/kickoff-catalog')
@@ -140,6 +143,29 @@ describe('site copy', () => {
     expect(siteCopyPath('a b')).toBeNull()
     expect(siteCopyPath('.fenway')).toBeNull()
     expect(siteCopyPath('a'.repeat(65))).toBeNull()
+  })
+})
+
+describe('migration 0002 and the studio column lists', () => {
+  const migrationsDir = path.join(repoRoot, 'studio/db/migrations')
+
+  it('matches studio/db/public-columns.ts', () => {
+    expect([...publishedListColumns]).toEqual([...studioListColumns])
+    expect([...publishedDetailColumns]).toEqual([...studioDetailColumns])
+  })
+
+  it('leaves 0000 and 0001 byte-for-byte at the N4a baseline', () => {
+    const sha256 = (name: string) => createHash('sha256').update(readFileSync(path.join(migrationsDir, name))).digest('hex')
+    expect(sha256('0000_studio_tables.sql')).toBe('03294571434223a68d81bd6c5607cb409052336c3e98a930bb41201f3104d7d0')
+    expect(sha256('0001_catalog_gate.sql')).toBe('e8599a274d4507c84ccea3de3ac88d797404ac48f785208e4dd4867c1ad72052')
+    const sql = readFileSync(path.join(migrationsDir, '0002_catalog_reader.sql'), 'utf8')
+    expect(sql).toContain('CREATE OR REPLACE VIEW catalog.videos')
+    expect(sql).toContain('CREATE OR REPLACE VIEW catalog.video')
+    expect(sql).toContain('security_invoker = false')
+    expect(sql).toContain('GRANT SELECT ON catalog.videos TO studio_reader')
+    expect(sql).toContain('GRANT SELECT ON catalog.video TO studio_reader')
+    expect(sql.toLowerCase()).not.toContain('drop view')
+    for (const label of SUBJECT_LABELS) expect(sql).toContain(`'${label}'`)
   })
 })
 

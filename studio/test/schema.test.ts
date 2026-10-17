@@ -2,6 +2,7 @@ import { readFileSync, readdirSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { eq } from 'drizzle-orm'
+import { migrate } from 'drizzle-orm/pglite/migrator'
 import { describe, expect, it } from 'vitest'
 import { article50NonblankSql, BLANK_CODE_POINTS } from '../answer.ts'
 import { article50Answer, job, ledger, videos } from '../db/schema.ts'
@@ -44,6 +45,19 @@ describe('migrations on a fresh database', () => {
       'subject',
       'videos',
     ])
+  })
+
+  it('applies 0002 once and a second migrate is a no-op', async () => {
+    const { client, db } = await freshDatabase()
+    const before = await rows<{ count: number }>(client, `
+      SELECT count(*)::int AS count FROM drizzle.__drizzle_migrations
+    `)
+    expect(before[0]?.count).toBe(3)
+    await migrate(db, { migrationsFolder: migrationsDir })
+    const after = await rows<{ count: number }>(client, `
+      SELECT count(*)::int AS count FROM drizzle.__drizzle_migrations
+    `)
+    expect(after).toEqual(before)
   })
 
   it('carries no connection string and no password', () => {
