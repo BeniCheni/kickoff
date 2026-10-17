@@ -1,7 +1,13 @@
 # Kickoff web scaffold
 
 Unreleased sibling Next.js app. The root Vite app remains the whole public app on
-GitHub Pages. This package has no catalog, credentials, database or deploy.
+GitHub Pages. This package installs `@kickoff/catalog` as a copy
+(`file:../packages/kickoff-catalog`, `web/.npmrc` with `install-links=true`).
+After editing that package, `npm ci` in `web/` refreshes the copy; a plain
+`npm install` does not. The catalog's zod `4.4.3` is nested at
+`web/node_modules/@kickoff/catalog/node_modules/zod`, because this install
+already hoists zod 3 for another package. Nothing is written back into
+`packages/`. There is no database client, credential, or deploy.
 Its private tooling version is never displayed. The header shows the root
 package version. Reverting this PR leaves the N1 scaffold buildable.
 
@@ -20,6 +26,18 @@ and `generated/shell.css` before `next build`. Those files are gitignored.
 For a production-mode look: `npm run start -- --port 5174`.
 Next commands disable telemetry in the package scripts. Builds use the default
 Next output; Cache Components is disabled.
+
+Stub catalog, off unless both are set: `KICKOFF_CATALOG=stub` and
+`KICKOFF_STUB_CATALOG_FILE` (an absolute path to one file under
+`web/fixtures/catalog/`). There is no default path. `KICKOFF_STUB_STORAGE_ORIGIN`
+optionally names the stub storage origin; otherwise the request host plus
+`/stub-storage` is used. `VERCEL_ENV=production` refuses the stub flag.
+With the flag unset, or set to `production`, a missing database address throws
+and Moments shows the unavailable state. This build has no database client, so
+that path stays unavailable. `npm run check:client` scans `.next/static` and
+`.next/server` for the Studio and database markers, and for the stub sentinel
+unless `KICKOFF_CATALOG=stub`. Regenerate the synthetic media with
+`node web/scripts/generate-stub-media.mjs`.
 
 The build needs the root install. The theme script is compiled with the root's
 `tsx` and Vite. At runtime, from `web/`, the app reads:

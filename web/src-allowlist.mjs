@@ -35,6 +35,8 @@ export const SRC_ALLOWLIST = [
   'src/lib/lens.ts',
   'src/lib/lensSelectors.ts', // week, month, slate and ticker selection
   'src/lib/matchdays.ts', // matchday windows for the row labels
+  'src/lib/momentsReferences.ts', // a saved id is a non-empty untrimmed string; the gallery must not spell that check again
+  'src/lib/momentsSaved.ts', // kickoff-moments-saved-v1, the visit-only refusal included
   'src/lib/schema.ts', // fixture and standings validation
   'src/lib/standings.ts', // table rows from the committed standings snapshot
   'src/lib/theme.ts',
