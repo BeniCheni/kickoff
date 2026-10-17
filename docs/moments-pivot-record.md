@@ -1,6 +1,6 @@
 # Moments — the pivot of 12 Oct 2026, Beni's rulings, and what they supersede
 
-Recorded by the PM seat (Claude Code, Opus 5.5) on Tue 13 Oct 2026 (TZ=America/New_York), from Beni's answers given first-hand to the PM seat on Mon 12 and Tue 13 Oct. This is the record later briefs start from. Where it conflicts with [moments-d5-build-plan.md](moments-d5-build-plan.md), the slice-4 spec or the Studio review, this record wins. It changes no code and names no version. Updated on Thu 15 Oct 2026: §2b records the design's later answers, and §4 to §6 are brought up to date. Updated again on Fri 16 Oct 2026: §3b records the slice ruling N2-Q1, §5 brings the migration up to N2, and §6 adds two corrections. Updated a third time that evening, after N3 merged: §3b adds N3's two rulings and §5 moves to N4.
+Recorded by the PM seat (Claude Code, Opus 5.5) on Tue 13 Oct 2026 (TZ=America/New_York), from Beni's answers given first-hand to the PM seat on Mon 12 and Tue 13 Oct. This is the record later briefs start from. Where it conflicts with [moments-d5-build-plan.md](moments-d5-build-plan.md), the slice-4 spec or the Studio review, this record wins. It changes no code and names no version. Updated on Thu 15 Oct 2026: §2b records the design's later answers, and §4 to §6 are brought up to date. Updated again on Fri 16 Oct 2026: §3b records the slice ruling N2-Q1, §5 brings the migration up to N2, and §6 adds two corrections. Updated a third time that evening, after N3 merged: §3b adds N3's two rulings and §5 moves to N4. Updated a fourth time that night: §3b records the N4 plan's nine answers, and §5 names N4a.
 
 ## 1 · The pivot (Mon 12 Oct, evening)
 
@@ -73,6 +73,20 @@ Each slice's brief may carry a question of its own; these are recorded as N<slic
 | N3-Q1 | Which React `web/`'s tests run | **Compiled**, the PM seat's call in N3's brief on Fri 16 Oct, which Beni left standing: `web/`'s Vitest resolves Next's compiled React (`19.3.0-canary-278794d7-20261002` in Next 16.4.1) for `react`, `react-dom`, `react-dom/client`, `react-dom/server` and `react/jsx-runtime`, so the new app's tests run the React its readers will run. A test fails if a second copy loads, even one with the same version. The 19.2.8 pin now binds only types, and the root's tests still run 19.2.8, so the shared components are tested on both builds |
 | N3-Q2 | The offline file's label | **Keep**, Beni's ruling on Fri 16 Oct after #206's Pass 1: the line "Offline snapshot", in muted capitals between the header and the tabs, as the plan's §4 worded it |
 
+N4 was planned before it was built. Cursor wrote [nextjs-migration-n4-plan.md](nextjs-migration-n4-plan.md), the PM seat scored it in [nextjs-migration-n4-plan-review.md](nextjs-migration-n4-plan-review.md), and Beni answered on Fri 16 Oct, all as recommended:
+
+| # | Question | Answer |
+|---|---|---|
+| N4-Q1 | How N4 lands | **Two** PRs: N4a, the shared public package, migration 0002 and its permission tests; then N4b, the D9 gallery and watch page on the stub catalog |
+| N4-Q2 | A fact the Studio did not record | **Omit** it from the page: no "not recorded" line, and no invented value |
+| N4-Q3 | What a publish must carry | **Card**: before N6, the Studio refuses a publish without a positive width, height and duration, one approved subject, a safe public id and a finish time |
+| N4-Q4 | Both cats on one video | **After** N4b, as a Studio slice; the stub already tests the filter with a both-cats record |
+| N4-Q5 | Where the public data shape lives | **Package**: `packages/kickoff-catalog/`, zod only, used by `studio/` and `web/` through a `file:` path |
+| N4-Q6 | The stub's media | **Synthetic** files written by a script in N4b |
+| N4-Q7 | Whether N4b waits for Studio slices | **No** |
+| N4-Q8 | What "Shuffle remaining" shuffles | **Filtered**: the current filtered list, in memory; Up next keeps Beni's order |
+| N4-Q9 | What `verify` runs from the Studio | **Contract**, the PM seat's adjustment: the Studio typecheck and the catalog-contract tests, with studio.yml's path filter gaining `packages/**` for the full suite |
+
 ## 4 · What this supersedes
 
 - **Studio rulings.** 15.1, publication by a PR per edition, is reversed. 15.4 and A-03 (GitHub Releases as the host) are replaced by Supabase Storage. 15.2, 15.3, 15.5–15.14, the caps and recipe v0 stand.
@@ -93,7 +107,8 @@ Each slice's brief may carry a question of its own; these are recorded as N<slic
 | N1, the inert `web/` scaffold | Merged as #198 (`b32e82e`, 15 Oct): a Next.js 16.4.1 app in `web/`, isolated from the reader both ways, with its checks inside the one `verify` job and the contract inventory in [nextjs-migration-n1-inventory.md](nextjs-migration-n1-inventory.md). Built by Codex |
 | N2, the shell | Merged as #203 (`d78f30c`, 16 Oct): the unreleased Next app renders the reader's shell from shared modules, with the same URL, clock and before-paint theme behaviour, and a public `/api/snapshot` receipt. The reader's stylesheet is unchanged; its JavaScript changed only to share those modules, proved by a 72-cell before-and-after matrix. Built by Cursor, with Codex writing the synthesis |
 | N3, Fixtures and Table | Merged as #206 (`ed32ff1`, 16 Oct): the unreleased Next app renders Fixtures, Table and the Broadcast ticker from the reader's own components, and `npm run build:offline` builds the one-file offline Fixtures-and-Table copy that N0-Q2 kept, beside an unchanged `build:single`. The reader's stylesheet is unchanged, and its JavaScript changed only by the tab row's optional list of tabs. Built by Cursor, with Codex writing the synthesis |
-| Next | N4, D9's Moments gallery and watch page in the Next app, reading a stub catalog (N0-Q9). The real database waits for N6. Pages stays the whole public app until N7 |
+| N4's plan | Written by Cursor, scored as passing, and answered by Beni on 16 Oct (§3b) |
+| Next | N4a, the shared public package, migration 0002 on both views, and the permission tests. Then N4b, D9's gallery and watch page on a stub catalog (N0-Q9). The real database waits for N6. Pages stays the whole public app until N7 |
 
 ## 6 · Corrections the PM seat owes
 
