@@ -127,7 +127,7 @@ test('moments calls the loader once and keeps prompts off the list', () => {
 
 test('a failed moments read is unavailable and does not substitute the stub', () => {
   const failed = momentsFor('?tab=moments', () => { throw new CatalogReadError('catalog database address is not set', false) }, null)
-  expect(failed).toEqual({ state: 'unavailable', preview: false })
+  expect(failed).toEqual({ state: 'unavailable', preview: false, watchId: null })
 })
 
 test('preview outside stub mode is refused', () => {

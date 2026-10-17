@@ -77,7 +77,7 @@ test('preview outside stub mode renders unavailable instead of the records', () 
 
 test('a stub failure still shows Preview catalog', () => {
   const html = renderToStaticMarkup(
-    <MomentsRegion moments={{ state: 'unavailable', preview: true }} catalogMode="stub" />,
+    <MomentsRegion moments={{ state: 'unavailable', preview: true, watchId: null }} catalogMode="stub" />,
   )
   expect(html).toContain('Preview catalog')
   expect(html).toContain(unavailable)

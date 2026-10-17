@@ -90,7 +90,7 @@ export function Gallery({
       <header className="moments-edition-head">
         <div>
           <p className="moments-eyebrow">Kickoff Studio · generated video</p>
-          <h1 tabIndex={-1}>Fenway and Frankenstein.</h1>
+          <h1 id="moments-gallery-heading" tabIndex={-1}>Fenway and Frankenstein.</h1>
         </div>
         <p className="moments-count">{shown.length} of {list.length} videos</p>
         <p className="moments-edition-note">Generated in the Studio · never a match still</p>

@@ -31,8 +31,9 @@ export function momentsFor(
       storageOrigin,
     }
   } catch (error) {
+    const watchId = watchIdFrom(search)
     const preview = error instanceof CatalogReadError ? error.preview : false
-    return { state: 'unavailable', preview }
+    return { state: 'unavailable', preview, watchId }
   }
 }
 

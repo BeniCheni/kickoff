@@ -3,7 +3,7 @@ import type { CatalogDetailRow, CatalogListRow } from '@kickoff/catalog'
 /** What the Moments region may render. A skipped read means this request is not Moments. */
 export type MomentsPayload =
   | { state: 'skipped' }
-  | { state: 'unavailable'; preview: boolean }
+  | { state: 'unavailable'; preview: boolean; watchId: string | null }
   | {
       state: 'ready'
       preview: true

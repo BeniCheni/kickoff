@@ -15,7 +15,9 @@ import { DEFAULT_LENS, encodeLens, parseLens } from '../../src/lib/lens'
 import { useThemeController } from '../../src/lib/useThemeController'
 import { useNow } from '../../src/lib/useNow'
 import { SearchProvider, useCanonicalSearch, useUrlState } from '../../src/lib/useUrlState'
-import { encodeTab, parseTab } from '../../src/lib/urlCodecs'
+import { useRouter } from 'next/navigation'
+import { mergeWatch } from './moments/watch-url'
+import { encodeTab, parseTab, type Tab } from '../../src/lib/urlCodecs'
 
 /** Empty until N5 mounts the Privacy & terms link. Renders no element. */
 export function PrivacyFoot() {
@@ -38,8 +40,20 @@ function ShellInner({ moments, catalogMode, search }: { moments: MomentsPayload;
   const { today } = useNow()
   const [tab, setTab] = useUrlState('tab', 'fixtures', encodeTab, parseTab, 'push')
   const [lens, setLens] = useUrlState('lens', DEFAULT_LENS, encodeLens, parseLens, 'replace')
+  const router = useRouter()
   useCanonicalSearch(today)
   const { toggle } = useThemeController(lens)
+  function onSelect(next: Tab) {
+    const currentWatch = new URLSearchParams(window.location.search).get('watch')
+    const leavingWithWatch = tab === 'moments' && next !== 'moments' && currentWatch !== null
+    const enteringMoments = next === 'moments' && tab !== 'moments'
+    if (leavingWithWatch || enteringMoments) {
+      const href = mergeWatch(window.location.search, window.location.hash, next, next === 'moments' ? currentWatch : null)
+      router.push(`${window.location.pathname}${href}`)
+      return
+    }
+    setTab(next)
+  }
 
   return (
     <div className="mx-auto max-w-[780px] px-5 pt-7 pb-16">
@@ -53,7 +67,7 @@ function ShellInner({ moments, catalogMode, search }: { moments: MomentsPayload;
           </>
         )}
       />
-      <TabNav tab={tab} onSelect={setTab}>
+      <TabNav tab={tab} onSelect={onSelect}>
         <LensSwitcher lens={lens} onSelect={setLens} />
       </TabNav>
       {tab === 'moments' ? <ViewBoundary key={`${tab}:${lens}`}><MomentsRegion moments={moments} catalogMode={catalogMode} search={search} /></ViewBoundary> : (
