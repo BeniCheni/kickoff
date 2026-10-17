@@ -291,16 +291,17 @@ try {
     replaceCounted(sqlFile, keyframe, `  COALESCE(${keyframe.trim().replace(/ AS thumbnail_is_keyframe$/, '')}, false) AS thumbnail_is_keyframe`, 1)
   }, /expected false to be null/)
 
-  for (const [table, sql] of readDenials) {
+  for (const [table] of readDenials) {
+    const name = table.split('.')[1]
     permissionCase(`read-${table.replace('.', '-')}`, () => {
       appendSql([
         'GRANT USAGE ON SCHEMA studio TO studio_reader;',
         `GRANT SELECT ON ${table} TO studio_reader;`,
       ])
-    }, new RegExp(`studio_reader was allowed to run: ${sql.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`))
+    }, new RegExp(`"table_name": "${name}"[\\s\\S]{0,80}"table_schema": "studio"`))
   }
 
-  for (const [view, verb, sql] of writeDenials) {
+  for (const [view, verb] of writeDenials) {
     permissionCase(`${verb.toLowerCase()}-${view.replace('.', '-')}`, () => {
       appendSql([
         'CREATE FUNCTION catalog.n4a_allow_write() RETURNS trigger LANGUAGE plpgsql AS $fn$ BEGIN RETURN COALESCE(NEW, OLD); END $fn$;',
@@ -308,30 +309,30 @@ try {
         'GRANT EXECUTE ON FUNCTION catalog.n4a_allow_write() TO studio_reader;',
         `GRANT ${verb} ON ${view} TO studio_reader;`,
       ])
-    }, new RegExp(`studio_reader was allowed to run: ${sql.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`))
+    }, new RegExp(`"privilege_type": "${verb}"`))
   }
 
   permissionCase('create-in-studio', () => {
     appendSql(['GRANT USAGE, CREATE ON SCHEMA studio TO studio_reader;'])
-  }, /studio_reader was allowed to run: CREATE TABLE studio\.reader_denied/)
+  }, /"studio_create": true/)
   permissionCase('create-in-catalog', () => {
     appendSql(['GRANT USAGE, CREATE ON SCHEMA catalog TO studio_reader;'])
-  }, /studio_reader was allowed to run: CREATE TABLE catalog\.reader_denied/)
+  }, /"catalog_create": true/)
   permissionCase('view-owner-loses-the-base-read', () => {
     appendSql(['ALTER VIEW catalog.videos OWNER TO studio_reader;'])
-  }, /permission denied for table videos/)
+  }, /"privilege_type": "REFERENCES"/)
   permissionCase('owning-studio-videos-can-read-it', () => {
     appendSql([
       'GRANT USAGE ON SCHEMA studio TO studio_reader;',
       'ALTER TABLE studio.videos OWNER TO studio_reader;',
     ])
-  }, /studio_reader was allowed to run: SELECT id FROM studio\.videos/)
+  }, /"privilege_type": "REFERENCES"[\s\S]{0,80}"table_schema": "studio"/)
   permissionCase('truncate-studio-table', () => {
     appendSql([
       'GRANT USAGE ON SCHEMA studio TO studio_reader;',
       'GRANT TRUNCATE ON studio.videos TO studio_reader;',
     ])
-  }, /studio_reader was allowed to run: TRUNCATE studio\.videos/)
+  }, /"privilege_type": "TRUNCATE"/)
   permissionCase('grant-insert-on-videos', () => {
     appendSql(['GRANT INSERT ON catalog.videos TO studio_reader;'])
   }, /INSERT/)
