@@ -50,9 +50,10 @@ Studio checks the schemas with `npm run test:contract` from `studio/`. That
 script also applies migration 0002 on local PGlite and checks the reader role.
 This package has no test runner and no lockfile of its own.
 
-Studio installs this package as a copy (`install-links=true`), with zod inside
-that copy. Nothing is written back into `packages/`. After editing this
-directory, run `npm install` in `studio/` before `npm test` sees the edit.
-CI installs fresh, so it always tests the current source.
+Studio installs this package as a copy (`install-links=true`). zod is resolved
+from the Studio install, hoisted to `studio/node_modules/zod`, not nested inside
+the copy. Nothing is written back into `packages/`. After editing the package,
+run `npm ci` in `studio/` to refresh the installed copy before `npm test` sees
+the edit. CI installs fresh.
 
 A Vercel build rooted at `web/` cannot reach `../packages` (Root Directory: the app cannot access files outside that directory, and `..` does not move up a level), so N6 must either include files outside the root or move the root, beside the `outputFileTracingIncludes` item already recorded in `web/README.md`; N4a changes nothing about it.
