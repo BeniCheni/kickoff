@@ -10,6 +10,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:contract": "vitest run test/schema.test.ts test/catalog-contract.test.ts test/catalog-publish.test.ts test/isolation.test.ts test/schema-boundary.test.ts",
     "postinstall": "node scripts/link-catalog-zod.mjs",
     "migrate": "tsx db/migrate.ts",
     "cli": "tsx cli.ts"
