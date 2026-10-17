@@ -206,15 +206,33 @@ Isolation checks live in the new root `tests/web-isolation.test.ts` and web's
 `test/isolation.test.ts`: literal static/type/dynamic imports and re-exports,
 actual Vitest discovery in each package, and files selected by every project in
 the root TypeScript reference graph. `npm run check:client` requires a completed
-Next build and scans all `.next/static/**/*.js` for Studio/database markers.
-`check:client` reads only the client JavaScript under `.next/static`. A value
-that a server component renders reaches readers through the prerendered HTML
-and RSC payloads under `.next/server`, which no N1 check reads. N4 owns that
-gap, through the plan's server-only data access and client sentinel (plan §2
-and §6). `node scripts/prove-isolation.mjs <evidence-directory>` demonstrates
-failing and passing assertions in disposable source/bundle copies, without
-editing the reader. The scanner does not claim to detect arbitrary
+Next build. It scans `.next/static/**/*.js` and the prerendered HTML, RSC
+payloads, and server chunks under `.next/server` for the Studio and database
+markers. Unless `KICKOFF_CATALOG=stub`, it also fails if `KICKOFF-STUB-CATALOG`
+appears in that output. `node scripts/prove-isolation.mjs <evidence-directory>`
+demonstrates failing and passing assertions in disposable source/bundle copies,
+without editing the reader. The scanner does not claim to detect arbitrary
 obfuscated/computed module paths.
+
+N4b receipts, PNGs outside the repo:
+
+- `verification/n4b-next-vite.json` — Fixtures and Table against the Vite preview. Moments is recorded and not treated as a Vite mismatch.
+- `verification/n4b-moments.json` — gallery, watch, media, and history on the stub catalog.
+
+```sh
+npm run build && npm run build:single && npm run build:offline
+npm --prefix web run build
+npm --prefix web run start -- --hostname 127.0.0.1 --port 5174
+npx vite preview --host 127.0.0.1 --port 5182 --strictPort
+KICKOFF_VITE_ORIGIN=http://127.0.0.1:5182 KICKOFF_NEXT_ORIGIN=http://127.0.0.1:5174 node web/scripts/n3-next-vite.mjs /tmp/kickoff-n4b-next-vite
+KICKOFF_CATALOG=stub KICKOFF_STUB_CATALOG_FILE=$PWD/web/fixtures/catalog/several.json npm --prefix web run start -- --hostname 127.0.0.1 --port 5175
+KICKOFF_NEXT_ORIGIN=http://127.0.0.1:5175 node web/scripts/n4b-moments.mjs /tmp/kickoff-n4b-moments
+```
+
+The several, empty, and unavailable catalogs are separate processes because the
+loader reads one file from `KICKOFF_STUB_CATALOG_FILE`. Point that variable at
+`empty.json` or `unavailable.json` and repeat the moments script. Regenerate
+the synthetic JPEG and MP4 with `node web/scripts/generate-stub-media.mjs`.
 
 From the repo root, `node web/scripts/probe-server-imports.mjs` imports eleven
 reader modules in fresh Node processes using the existing root tsx loader. One
