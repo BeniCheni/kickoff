@@ -183,8 +183,8 @@ describe('package boundary', () => {
     expect(pkg.version).toBe('0.0.0')
     expect(pkg.dependencies).toEqual({ zod: '4.4.3' })
     expect(pkg.devDependencies).toBeUndefined()
-    const require = createRequire(path.join(packageRoot, 'src', 'index.ts'))
-    const resolved = realpathSync(require.resolve('zod'))
+    const installedEntry = createRequire(import.meta.url).resolve('@kickoff/catalog')
+    const resolved = realpathSync(createRequire(installedEntry).resolve('zod'))
     const installed = realpathSync(path.join(repoRoot, 'studio', 'node_modules', 'zod'))
     expect(resolved.startsWith(installed + path.sep)).toBe(true)
     const source = readFileSync(path.join(packageRoot, 'src/index.ts'), 'utf8')
@@ -197,8 +197,10 @@ describe('package boundary', () => {
     const webTsc = path.join(repoRoot, 'web/node_modules/typescript/bin/tsc')
     if (existsSync(webTsc)) compilers.push(webTsc)
     expect(compilers.length).toBeGreaterThan(0)
+    const installedEntry = createRequire(import.meta.url).resolve('@kickoff/catalog')
+    const installedRoot = path.resolve(path.dirname(installedEntry), '..')
     for (const tsc of compilers) {
-      execFileSync(process.execPath, [tsc, '-p', packageRoot, '--noEmit', '--pretty', 'false'], {
+      execFileSync(process.execPath, [tsc, '-p', installedRoot, '--noEmit', '--pretty', 'false'], {
         cwd: repoRoot,
         encoding: 'utf8',
       })

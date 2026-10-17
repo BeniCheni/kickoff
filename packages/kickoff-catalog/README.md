@@ -47,6 +47,7 @@ Studio checks the schemas with `npm run test:contract` from `studio/`. That
 script also applies migration 0002 on local PGlite and checks the reader role.
 This package has no test runner and no lockfile of its own.
 
-Node resolves `zod` from this directory, not from the symlink under
-`studio/node_modules`. Studio's install links `packages/kickoff-catalog/node_modules/zod`
-at the copy it already installed. That link is not committed.
+Studio installs this package as a copy (`install-links=true`), with zod inside
+that copy. Nothing is written back into `packages/`. After editing this
+directory, run `npm install` in `studio/` before `npm test` sees the edit.
+CI installs fresh, so it always tests the current source.
