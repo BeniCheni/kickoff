@@ -63,7 +63,7 @@ Codex wrote the migration plan, [nextjs-migration-plan.md](nextjs-migration-plan
 | N0-Q9 | What previews show in Moments | **Stub**: synthetic test records, no database credential |
 | N0-Q10 | The cutover's release class | **Minor**; the number stays Beni's |
 
-## 3b · The slices' rulings (Thu 15 and Fri 16 Oct)
+## 3b · The slices' rulings (Thu 15 to Sat 17 Oct)
 
 Each slice's brief may carry a question of its own; these are recorded as N<slice>-Q<n>.
 
@@ -98,7 +98,7 @@ N4 was planned before it was built. Cursor wrote [nextjs-migration-n4-plan.md](n
 - **The D5 build plan.** [moments-d5-build-plan.md](moments-d5-build-plan.md) is superseded where it conflicts with this record; it carries a dated note saying so.
 - **Briefs that never ran.** The S6a brief and the first ST1 brief. ST1 was rebuilt from its second brief as draft PR #187.
 
-## 5 · Where the work stands (16 Oct)
+## 5 · Where the work stands (17 Oct)
 
 | Track | State |
 |---|---|
