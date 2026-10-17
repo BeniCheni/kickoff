@@ -54,3 +54,5 @@ Studio installs this package as a copy (`install-links=true`), with zod inside
 that copy. Nothing is written back into `packages/`. After editing this
 directory, run `npm install` in `studio/` before `npm test` sees the edit.
 CI installs fresh, so it always tests the current source.
+
+A Vercel build rooted at `web/` cannot reach `../packages` (Root Directory: the app cannot access files outside that directory, and `..` does not move up a level), so N6 must either include files outside the root or move the root, beside the `outputFileTracingIncludes` item already recorded in `web/README.md`; N4a changes nothing about it.
