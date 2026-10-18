@@ -11,6 +11,7 @@ import { minimalJpeg } from './jpeg.ts'
 
 const clients: StudioClient[] = []
 const databaseUrl = ['postgres', '://', 'example.invalid/studio'].join('')
+const databaseScheme = ['postgres', '://'].join('')
 const commands = [
   'estimate', 'submit', 'poll', 'resume', 'download', 'import', 'list', 'keep', 'discard', 'cancel',
   'publish', 'unpublish', 'retry-delete', 'retry-removal', 'close-session', 'attach-request',
@@ -57,7 +58,7 @@ describe('--live', () => {
       expect(code, command).toBe(1)
       expect(opened, command).toBe(false)
       expect(captured.err.join('\n'), command).toContain('DATABASE_URL')
-      expect(captured.err.join('\n'), command).not.toContain('postgres://')
+      expect(captured.err.join('\n'), command).not.toContain(databaseScheme)
     }
   })
 
