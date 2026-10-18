@@ -1,0 +1,20 @@
+{
+  "name": "@kickoff/demo",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Synthetic Moments reactions and comments. Schemas and a seeded generator only.",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "types": "./src/index.ts",
+  "engines": {
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+  },
+  "dependencies": {
+    "zod": "4.4.3"
+  }
+}

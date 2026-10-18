@@ -1,9 +1,10 @@
 # Kickoff web scaffold
 
 Unreleased sibling Next.js app. The root Vite app remains the whole public app on
-GitHub Pages. This package installs `@kickoff/catalog` as a copy
-(`file:../packages/kickoff-catalog`, `web/.npmrc` with `install-links=true`).
-After editing that package, `npm ci` in `web/` refreshes the copy; a plain
+GitHub Pages. This package installs `@kickoff/catalog` and `@kickoff/demo` as copies
+(`file:../packages/kickoff-catalog`, `file:../packages/kickoff-demo`,
+`web/.npmrc` with `install-links=true`).
+After editing either package, `npm ci` in `web/` refreshes the copy; a plain
 `npm install` does not. The catalog's zod `4.4.3` is nested at
 `web/node_modules/@kickoff/catalog/node_modules/zod`, because this install
 already hoists zod 3 for another package. Nothing is written back into
