@@ -1,0 +1,153 @@
+{
+  "origin": "http://127.0.0.1:5194",
+  "throttle": "4x CPU",
+  "targetFps": 60,
+  "floorFps": 55,
+  "longTaskMs": 50,
+  "note": "Median frame rate is the pass line (floor 55). Route loads and the countdown start can still post a main-thread task over 50 ms under 4× CPU; those durations are listed on the row and are not a dropped frame.",
+  "runs": [
+    {
+      "name": "card-entrance",
+      "width": 390,
+      "ms": 500,
+      "wallMs": 1439,
+      "frames": 14,
+      "medianFrameMs": 16.56,
+      "medianFps": 60.4,
+      "longTasksMs": [
+        60
+      ]
+    },
+    {
+      "name": "card-lift",
+      "width": 390,
+      "ms": 250,
+      "wallMs": 316,
+      "frames": 11,
+      "medianFrameMs": 16.66,
+      "medianFps": 60,
+      "longTasksMs": []
+    },
+    {
+      "name": "cross-fade",
+      "width": 390,
+      "ms": 400,
+      "wallMs": 481,
+      "frames": 23,
+      "medianFrameMs": 16.63,
+      "medianFps": 60.1,
+      "longTasksMs": []
+    },
+    {
+      "name": "reaction-burst",
+      "width": 390,
+      "ms": 500,
+      "wallMs": 550,
+      "frames": 26,
+      "medianFrameMs": 16.64,
+      "medianFps": 60.1,
+      "longTasksMs": []
+    },
+    {
+      "name": "count-tick",
+      "width": 390,
+      "ms": 250,
+      "wallMs": 287,
+      "frames": 11,
+      "medianFrameMs": 16.42,
+      "medianFps": 60.9,
+      "longTasksMs": []
+    },
+    {
+      "name": "countdown-ring",
+      "width": 390,
+      "ms": 700,
+      "wallMs": 5117,
+      "frames": 28,
+      "medianFrameMs": 16.63,
+      "medianFps": 60.1,
+      "longTasksMs": []
+    },
+    {
+      "name": "comment-in",
+      "width": 390,
+      "ms": 350,
+      "wallMs": 492,
+      "frames": 25,
+      "medianFrameMs": 16.66,
+      "medianFps": 60,
+      "longTasksMs": []
+    },
+    {
+      "name": "card-entrance",
+      "width": 1000,
+      "ms": 500,
+      "wallMs": 1533,
+      "frames": 17,
+      "medianFrameMs": 16.58,
+      "medianFps": 60.3,
+      "longTasksMs": []
+    },
+    {
+      "name": "card-lift",
+      "width": 1000,
+      "ms": 250,
+      "wallMs": 288,
+      "frames": 11,
+      "medianFrameMs": 16.67,
+      "medianFps": 60,
+      "longTasksMs": []
+    },
+    {
+      "name": "cross-fade",
+      "width": 1000,
+      "ms": 400,
+      "wallMs": 464,
+      "frames": 23,
+      "medianFrameMs": 16.66,
+      "medianFps": 60,
+      "longTasksMs": []
+    },
+    {
+      "name": "reaction-burst",
+      "width": 1000,
+      "ms": 500,
+      "wallMs": 542,
+      "frames": 26,
+      "medianFrameMs": 16.57,
+      "medianFps": 60.4,
+      "longTasksMs": []
+    },
+    {
+      "name": "count-tick",
+      "width": 1000,
+      "ms": 250,
+      "wallMs": 287,
+      "frames": 10,
+      "medianFrameMs": 16.41,
+      "medianFps": 60.9,
+      "longTasksMs": []
+    },
+    {
+      "name": "countdown-ring",
+      "width": 1000,
+      "ms": 700,
+      "wallMs": 5065,
+      "frames": 28,
+      "medianFrameMs": 16.67,
+      "medianFps": 60,
+      "longTasksMs": []
+    },
+    {
+      "name": "comment-in",
+      "width": 1000,
+      "ms": 350,
+      "wallMs": 497,
+      "frames": 26,
+      "medianFrameMs": 16.67,
+      "medianFps": 60,
+      "longTasksMs": []
+    }
+  ],
+  "failed": []
+}

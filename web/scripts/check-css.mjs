@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { readdirSync, readFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { assertMomentsScope } from './moments-css.mjs'
+import { assertMomentsMotion, assertMomentsScope } from './moments-css.mjs'
 
 const root = fileURLToPath(new URL('../../', import.meta.url))
 function cssUnder(dir) {
@@ -56,9 +56,9 @@ for (const marker of ['underline-offset-\\[3px\\]', 'mt-6', 'moments-gallery', '
 }
 const momentsCss = readFileSync(path.join(root, 'web/app/moments/gallery.css'), 'utf8')
 assert.ok(momentsCss.includes('.moments-gallery'), 'Moments sheet is missing its root scope')
-assert.ok(!momentsCss.includes('@keyframes') && !momentsCss.includes('animation:'), 'Moments sheet added motion')
+assertMomentsScope(momentsCss)
+assertMomentsMotion(momentsCss)
 for (const marker of ['moments-preview', 'moments-trust', 'moments-live', 'moments-theater']) {
   assert.ok(!reader.includes(marker), `Next Moments class reached reader CSS: ${marker}`)
 }
-assertMomentsScope(momentsCss)
 console.log('CSS isolation passed: web probe present; studio and docs markers absent; shell utilities shared')

@@ -109,6 +109,7 @@ export function VideoCard({
   onToggleSave,
   social,
   videoSrc = null,
+  enterIndex = -1,
 }: {
   row: CatalogListRow
   search: string
@@ -118,6 +119,7 @@ export function VideoCard({
   onToggleSave: (id: string) => void
   social?: MomentSocial
   videoSrc?: string | null
+  enterIndex?: number
 }) {
   const navigate = useWatchNavigation()
   const duration = durationClock(row.duration_s)
@@ -146,6 +148,8 @@ export function VideoCard({
       data-kind="generated"
       data-moment={row.id}
       className="moments-card"
+      data-enter={enterIndex >= 0 ? '' : undefined}
+      style={enterIndex >= 0 ? { ['--enter' as string]: String(enterIndex) } : undefined}
       onMouseEnter={arm}
       onMouseLeave={disarm}
       onFocus={arm}

@@ -65,6 +65,26 @@ builds reject the stub sentinel too. Response HTML and flight files reject the
 demo sentinel unless that build set `KICKOFF_DEMO=on`. Regenerate the synthetic
 media with `node web/scripts/generate-stub-media.mjs`. The sample social file
 is regenerated with `node node_modules/tsx/dist/cli.mjs web/scripts/generate-demo-social.mjs`.
+
+## Moments motion
+
+Only `web/app/moments/gallery.css` adds motion, and only the rows below.
+`npm run check:css` allows these keyframes and no others. Each one uses
+`transform`, `opacity`, or, for the ring, `stroke-dashoffset`. The card shadow
+is already painted; the hover fades that layer's opacity. `prefers-reduced-motion: reduce` sets animation and transition to `none`. The 400 ms row is the one duration outside 150 / 180 / 220 ms, named `moments-reaction-burst`.
+
+| Motion | Duration | Properties |
+| --- | --- | --- |
+| Card hover and focus lift | 150 ms ease | `transform: translateY(-2px)`, shadow opacity |
+| Card entrance, first eight, once per gallery mount, 30 ms stagger | 180 ms `cubic-bezier(.2,.7,.2,1)` | opacity, `translateY(8px)` |
+| Gallery and watch cross-fade | 180 ms, same curve, View Transitions API where the browser has it | opacity |
+| Reaction burst, `moments-reaction-burst`, six particles | 400 ms ease | scale 1 → 1.3 → 1, particle opacity and transform |
+| Countdown ring, paused with the existing timer | 5 s linear | `stroke-dashoffset` |
+| New comment | 220 ms ease | opacity, `translateY(8px)` |
+| Count tick | 150 ms ease | opacity, `translateY(2px)` |
+
+Rerun the throttled trace with `node web/scripts/n4c-motion.mjs /tmp/kickoff-n4c-motion`. The receipt is `web/verification/n4c-motion.json`.
+
 Moments styles live in
 `web/app/moments/gallery.css`, scoped under `.moments-gallery`. `npm run check:css`
 keeps that sheet out of the shared shell CSS and out of the Vite reader's build.

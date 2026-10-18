@@ -41,6 +41,10 @@ export function Gallery({
   const [permutation, setPermutation] = useState<string[] | null>(null)
   const [previous, setPrevious] = useState<string[] | null>(null)
   const [saved, setSaved] = useState(initialSaved)
+  const [entranceIds] = useState(() => {
+    const ids = savedIdSet(initialSaved)
+    return applyOrder(matchingRows(list, initialSubject, initialSavedOnly, ids), initialOrder, null).slice(0, 8).map(row => row.id)
+  })
   useEffect(() => {
     if (!freezeSaved) setSaved(readSavedReferences())
   }, [freezeSaved])
@@ -153,6 +157,7 @@ export function Gallery({
               onToggleSave={toggleSave}
               social={social?.[row.id]}
               videoSrc={videos?.[row.id] ?? null}
+              enterIndex={entranceIds.indexOf(row.id)}
             />
           ))}
         </div>

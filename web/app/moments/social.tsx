@@ -39,6 +39,10 @@ export function orderedTopLevel(comments: readonly MomentComment[], sort: 'top' 
 const SAVED = 'Your reactions stay on this page and aren\u2019t saved.'
 const LIKES = 'Likes you add stay on this page and aren\u2019t saved.'
 const LOCAL = 'Only on this page; not saved'
+const PARTICLE = [0, 1, 2, 3, 4, 5].map(index => {
+  const angle = (index / 6) * Math.PI * 2
+  return { x: `${Math.round(Math.cos(angle) * 16)}px`, y: `${Math.round(Math.sin(angle) * 16)}px` }
+})
 
 export function CardSocialLine({ social, publishedAt, now }: { social: MomentSocial; publishedAt: string; now: number }) {
   const { top, total } = topReactions(social.reactions)
@@ -63,6 +67,7 @@ export function WatchSocial({ social }: { social: MomentSocial }) {
   const nowIso = useNow().nowUtcIso
   const now = Date.parse(nowIso)
   const [mine, setMine] = useState<Partial<Record<MomentReactionKey, boolean>>>({})
+  const [burst, setBurst] = useState<MomentReactionKey | null>(null)
   const [liked, setLiked] = useState<Record<string, boolean>>({})
   const [sort, setSort] = useState<'top' | 'newest'>('top')
   const [open, setOpen] = useState<Record<string, boolean>>({})
@@ -98,9 +103,19 @@ export function WatchSocial({ social }: { social: MomentSocial }) {
               type="button"
               aria-pressed={pressed}
               aria-label={`${REACTION_NAME[key]}, ${groupedCount(count)}`}
-              onClick={() => setMine(current => ({ ...current, [key]: !current[key] }))}
+              onClick={() => {
+                setMine(current => ({ ...current, [key]: !current[key] }))
+                if (!pressed) {
+                  setBurst(key)
+                  window.setTimeout(() => setBurst(current => current === key ? null : current), 400)
+                }
+              }}
             >
-              <span aria-hidden="true">{REACTION_EMOJI[key]} {groupedCount(count)}</span>
+              <span className="moments-reaction-emoji" data-burst={burst === key ? '' : undefined} aria-hidden="true">{REACTION_EMOJI[key]}</span>
+              <span key={count} className="moments-count-tick" aria-hidden="true"> {groupedCount(count)}</span>
+              {burst === key ? PARTICLE.map((spot, index) => (
+                <span key={index} className="moments-particle" style={{ ['--x' as string]: spot.x, ['--y' as string]: spot.y }} />
+              )) : null}
             </button>
           )
         })}
@@ -153,7 +168,7 @@ export function WatchSocial({ social }: { social: MomentSocial }) {
 function CommentItem({ comment, now, liked, onLike }: { comment: MomentComment; now: number; liked: boolean; onLike(): void }) {
   const local = comment.id.startsWith('local-')
   return (
-    <article>
+    <article className={local ? 'moments-comment-local' : undefined}>
       <p>
         <span className="moments-avatar" data-palette={comment.palette} aria-hidden="true">{comment.emoji}</span>
         <span>{comment.handle}</span>

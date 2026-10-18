@@ -81,6 +81,8 @@ export function WatchPage({
   const [playing, setPlaying] = useState(false)
   const [requested, setRequested] = useState(false)
   const [soundOn, setSoundOn] = useState(false)
+  const [ringPaused, setRingPaused] = useState(false)
+  const [ringRun, setRingRun] = useState(0)
   const galleryHref = useWatchHref(search, null)
   const { earlier, next } = upNextSplit(list, detail.id)
   const nextRow = next[0] ?? null
@@ -118,7 +120,9 @@ export function WatchPage({
 
   function startCountdown(title: string) {
     countRef.current = 5
+    setRingRun(value => value + 1)
     setCount(5)
+    setRingPaused(document.hidden)
     setAnnouncement(countdownAnnouncement(title))
     arm(title)
   }
@@ -188,8 +192,10 @@ export function WatchPage({
     function onVisibility() {
       if (document.hidden) {
         clearTimer()
+        setRingPaused(true)
         return
       }
+      setRingPaused(false)
       if (endedHidden.current && nextRow && autoplay && readerPlayed.current) {
         endedHidden.current = false
         setStatus(RETURNED)
@@ -368,6 +374,9 @@ export function WatchPage({
       {count !== null && nextRow ? (
         <>
           <p aria-hidden="true">{countdownVisible(count, nextRow.title)}</p>
+          <svg className="moments-ring" viewBox="0 0 36 36" aria-hidden="true" key={ringRun}>
+            <circle className={ringPaused ? 'is-paused' : undefined} cx="18" cy="18" r="15" />
+          </svg>
           <button type="button" onClick={() => stopCountdown(true)}>Cancel</button>
         </>
       ) : null}
