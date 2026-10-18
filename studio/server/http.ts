@@ -11,6 +11,7 @@ import { estimateJobs, readCompose, submitJobs } from './compose.ts'
 import { downloadJob, jobIdFrom, pollInFlight, readJobs, regenerateJob } from './jobs.ts'
 import { serveFile as serveRecorded } from './media.ts'
 import { findPhoto, photoPath, storePhoto } from './photos.ts'
+import { publishJob, publishJobId, readPublish, recordPublishGate, retryDeleteJob, retryRemovalJob, unpublishJob } from './publish.ts'
 import { assetIdFrom, discardJob, keepJob, readReview, recordedAssetFile, reviewJobId } from './review.ts'
 import { openAdmin, type OpenedAdmin } from './open.ts'
 import { publicError } from './public-error.ts'
@@ -219,6 +220,35 @@ async function handle(
     }
     if (cookieHeader['set-cookie']) response.setHeader('set-cookie', cookieHeader['set-cookie'])
     serveRecorded(request, response, recorded.file, recorded.mime)
+    return
+  }
+  if (url.pathname === '/api/gate' && method === 'POST') {
+    sendJson(response, 200, await recordPublishGate(opened, await readJson(request)), cookieHeader)
+    return
+  }
+  const publishRead = method === 'GET' ? publishJobId(url.pathname, '') : null
+  if (publishRead) {
+    sendJson(response, 200, await readPublish(opened, publishRead, url.searchParams.get('publicId') ?? ''), cookieHeader)
+    return
+  }
+  const publishGo = method === 'POST' ? publishJobId(url.pathname, 'go') : null
+  if (publishGo) {
+    sendJson(response, 200, await publishJob(opened, publishGo, await readJson(request)), cookieHeader)
+    return
+  }
+  const publishUnpublish = method === 'POST' ? publishJobId(url.pathname, 'unpublish') : null
+  if (publishUnpublish) {
+    sendJson(response, 200, await unpublishJob(opened, publishUnpublish, await readJson(request)), cookieHeader)
+    return
+  }
+  const publishRetryDelete = method === 'POST' ? publishJobId(url.pathname, 'retry-delete') : null
+  if (publishRetryDelete) {
+    sendJson(response, 200, await retryDeleteJob(opened, publishRetryDelete), cookieHeader)
+    return
+  }
+  const publishRetryRemoval = method === 'POST' ? publishJobId(url.pathname, 'retry-removal') : null
+  if (publishRetryRemoval) {
+    sendJson(response, 200, await retryRemovalJob(opened, publishRetryRemoval), cookieHeader)
     return
   }
   if (url.pathname === '/api/boom' && method === 'GET' && options.boom !== undefined) {

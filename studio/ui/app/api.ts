@@ -124,6 +124,43 @@ export async function discardReview(id: string): Promise<void> {
   await postJson(`/api/review/${id}/discard`, {})
 }
 
+export type PublishView = {
+  outcome: 'publish' | 'missing'
+  status?: string
+  assetId?: string | null
+  gateRecorded?: boolean
+  gateReason?: string | null
+  refusals: string[]
+  keys?: { video: string; thumbnail: string } | null
+}
+
+export async function getPublish(id: string, publicId: string): Promise<PublishView> {
+  const response = await fetch(`/api/publish/${id}?publicId=${encodeURIComponent(publicId)}`, { headers: { accept: 'application/json' } })
+  if (!response.ok) throw new Error('refused')
+  return await response.json() as PublishView
+}
+
+export async function recordGate(body: { answer: string; disclosure: string; recordedBy: string; source: string }): Promise<void> {
+  await postJson('/api/gate', body)
+}
+
+export async function publishClip(id: string, body: { publicId: string; title: string; position: number; confirm: true }): Promise<unknown> {
+  const response = await postJson(`/api/publish/${id}/go`, body)
+  return await response.json() as unknown
+}
+
+export async function unpublishClip(id: string, deleteFiles: boolean): Promise<void> {
+  await postJson(`/api/publish/${id}/unpublish`, { deleteFiles })
+}
+
+export async function retryDelete(id: string): Promise<void> {
+  await postJson(`/api/publish/${id}/retry-delete`, {})
+}
+
+export async function retryRemoval(id: string): Promise<void> {
+  await postJson(`/api/publish/${id}/retry-removal`, {})
+}
+
 export async function uploadPhoto(bytes: ArrayBuffer): Promise<{ id: string; sha256: string }> {
   const response = await fetch('/api/photos', {
     method: 'POST',
