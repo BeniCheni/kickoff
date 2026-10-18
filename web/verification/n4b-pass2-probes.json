@@ -1,0 +1,41 @@
+{
+  "questions": {"L3":{"search":"?watch=stub-fenway-one&tab=table","tab":"Table"},"L6":[{"headers":{"x-forwarded-host":"attacker.example"},"status":200,"attackerAddress":false,"loopbackAddress":true},{"headers":{"host":"attacker.example"},"status":200,"attackerAddress":false,"loopbackAddress":true}],"L9":{"before":4,"after":5,"search":"?tab=moments&watch=stub-fenway-one"},"L10":{"before":{"label":"Theater","pressed":"false"},"after":{"label":"Exit theater","pressed":"true"}}},
+  "shadow": {"build":"npm --prefix web run build completed with the disposable public copy present","copied":"5180c00de3240cc342f3d8bb1c481cb0e155d5a476a0f4f93cbfd2fb822a6e66","mapped":"b401b9439f7d482600a2bdade2def701dbf0a5e1d78d23497f10aa66ab455e87","responses":[{"port":5191,"status":200,"bytes":1467,"sha256":"5180c00de3240cc342f3d8bb1c481cb0e155d5a476a0f4f93cbfd2fb822a6e66","publicCopyWins":true,"differsFromMapped":true},{"port":5192,"status":200,"bytes":1467,"sha256":"5180c00de3240cc342f3d8bb1c481cb0e155d5a476a0f4f93cbfd2fb822a6e66","publicCopyWins":true,"differsFromMapped":true}]},
+  "cssFalseNegatives": [
+    {"case":"list","probe":".moments-gallery h1,\n.x h2 {}","originalExit":0,"output":"CSS isolation passed: web probe present; studio and docs markers absent; shell utilities shared\n"},
+    {"case":"media","probe":"@media (min-width: 888px) { .x {} }","originalExit":0,"output":"CSS isolation passed: web probe present; studio and docs markers absent; shell utilities shared\n"}
+  ],
+  "focusGuard": {"command":"KICKOFF_SKIP_GRID=1 KICKOFF_NEXT_ORIGIN=http://127.0.0.1:5190 node web/scripts/n4b-moments.mjs <output>","disposableHarnessMutation":"HTMLVideoElement.prototype.focus = () => {} in prepare/evaluateOnNewDocument","outcome":true,"logSha256":"fd700cf80daa1288eb3cf156b032a2941711b4e842849aade44d008fb670e090","explanation":"The original waitForFunction fails before the constant true reporting line, proving the focus guard was effective."},
+  "isolation": [
+    {"label":"src-to-web-red","exit":1},
+    {"label":"src-to-web-green","exit":0},
+    {"label":"web-to-studio-red","exit":1},
+    {"label":"web-to-studio-green","exit":0},
+    {"label":"root-vitest-red","exit":1},
+    {"label":"root-vitest-green","exit":0},
+    {"label":"root-tsc-red","exit":1},
+    {"label":"root-tsc-green","exit":0},
+    {"label":"web-vitest-red","exit":1},
+    {"label":"web-vitest-green","exit":0},
+    {"label":"client-1-red","exit":1},
+    {"label":"client-2-red","exit":1},
+    {"label":"client-3-red","exit":1},
+    {"label":"client-4-red","exit":1},
+    {"label":"client-5-red","exit":1},
+    {"label":"client-6-red","exit":1},
+    {"label":"client-7-red","exit":1},
+    {"label":"client-8-red","exit":1},
+    {"label":"client-9-red","exit":1},
+    {"label":"client-10-red","exit":1},
+    {"label":"client-11-red","exit":1},
+    {"label":"client-12-red","exit":1},
+    {"label":"client-13-red","exit":1},
+    {"label":"client-green","exit":0}
+  ],
+  "abortedResponseDiagnostic": {"file":"head-interactions-aborted-diagnostic.json","sha256":"27f4b050a2515adf3bf2976bc48db627e15e62db483cbb569e60f4b850a612c3","reason":"Chrome reports net::ERR_ABORTED, fromCache false, and discards the flight CDP body. This failed run was retained outside Git; capture now reads an actual browser response clone before Next consumes it."},
+  "trustLineSourceTokenContrast": [
+    {"theme":"light","fg":"#8a5f00","bg":"#f7f5ee","contrast":5.178266448791685},
+    {"theme":"dark","fg":"#f7c948","bg":"#0e1c15","contrast":11.210301253501719}
+  ],
+  "servers": {"ownedWorktree":"~/kickoff-n4b-codex","closed":{"port":5174,"cwd":"web"},"stub":{"port":5175,"cwd":"web"},"vite":{"port":5182,"cwd":"."},"proof":"lsof listener PIDs and their cwd matched this worktree; port 5173 was not used"}
+}

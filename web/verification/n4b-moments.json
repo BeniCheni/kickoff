@@ -1,0 +1,891 @@
+{
+  "origin": "http://127.0.0.1:5175",
+  "shots": 100,
+  "failed": [],
+  "scrollFailures": [],
+  "assertions": [
+    {
+      "name": "scroll gallery ledger light 360",
+      "ok": true
+    },
+    {
+      "name": "scroll gallery ledger light 375",
+      "ok": true
+    },
+    {
+      "name": "scroll gallery ledger light 390",
+      "ok": true
+    },
+    {
+      "name": "preview catalog",
+      "ok": true
+    },
+    {
+      "name": "several count",
+      "ok": true
+    },
+    {
+      "name": "no hydration",
+      "ok": true
+    },
+    {
+      "name": "gallery has no video element",
+      "ok": true
+    },
+    {
+      "name": "no media request on the gallery",
+      "ok": true
+    },
+    {
+      "name": "scroll gallery ledger light 1000",
+      "ok": true
+    },
+    {
+      "name": "scroll gallery ledger dark 360",
+      "ok": true
+    },
+    {
+      "name": "scroll gallery ledger dark 375",
+      "ok": true
+    },
+    {
+      "name": "scroll gallery ledger dark 390",
+      "ok": true
+    },
+    {
+      "name": "scroll gallery ledger dark 1000",
+      "ok": true
+    },
+    {
+      "name": "scroll gallery poster light 360",
+      "ok": true
+    },
+    {
+      "name": "scroll gallery poster light 375",
+      "ok": true
+    },
+    {
+      "name": "scroll gallery poster light 390",
+      "ok": true
+    },
+    {
+      "name": "scroll gallery poster light 1000",
+      "ok": true
+    },
+    {
+      "name": "scroll gallery poster dark 360",
+      "ok": true
+    },
+    {
+      "name": "scroll gallery poster dark 375",
+      "ok": true
+    },
+    {
+      "name": "scroll gallery poster dark 390",
+      "ok": true
+    },
+    {
+      "name": "scroll gallery poster dark 1000",
+      "ok": true
+    },
+    {
+      "name": "scroll gallery broadcast light 360",
+      "ok": true
+    },
+    {
+      "name": "scroll gallery broadcast light 375",
+      "ok": true
+    },
+    {
+      "name": "scroll gallery broadcast light 390",
+      "ok": true
+    },
+    {
+      "name": "scroll gallery broadcast light 1000",
+      "ok": true
+    },
+    {
+      "name": "scroll gallery broadcast dark 360",
+      "ok": true
+    },
+    {
+      "name": "scroll gallery broadcast dark 375",
+      "ok": true
+    },
+    {
+      "name": "scroll gallery broadcast dark 390",
+      "ok": true
+    },
+    {
+      "name": "scroll gallery broadcast dark 1000",
+      "ok": true
+    },
+    {
+      "name": "watch keeps the competition filter and an unknown key",
+      "ok": true
+    },
+    {
+      "name": "fragment survives",
+      "ok": true
+    },
+    {
+      "name": "canonicalSearch did not run again",
+      "ok": true
+    },
+    {
+      "name": "watch focuses the h1",
+      "ok": true
+    },
+    {
+      "name": "one video on the watch page",
+      "ok": true
+    },
+    {
+      "name": "src absent until Play",
+      "ok": true
+    },
+    {
+      "name": "preload none and no autoplay attribute",
+      "ok": true
+    },
+    {
+      "name": "Play focuses the video",
+      "ok": true
+    },
+    {
+      "name": "Play issues a media request",
+      "ok": true
+    },
+    {
+      "name": "Back returns to the gallery",
+      "ok": true
+    },
+    {
+      "name": "gallery return focuses its h1",
+      "ok": true
+    },
+    {
+      "name": "Forward returns to the watch page",
+      "ok": true
+    },
+    {
+      "name": "withdrawn id stays and is not found",
+      "ok": true
+    },
+    {
+      "name": "theater presses",
+      "ok": true
+    },
+    {
+      "name": "Escape leaves theater",
+      "ok": true
+    },
+    {
+      "name": "saved only with nothing saved is no-results",
+      "ok": true
+    },
+    {
+      "name": "scroll empty ledger light 360",
+      "ok": true
+    },
+    {
+      "name": "scroll empty ledger light 375",
+      "ok": true
+    },
+    {
+      "name": "scroll empty ledger light 390",
+      "ok": true
+    },
+    {
+      "name": "scroll empty ledger light 1000",
+      "ok": true
+    },
+    {
+      "name": "scroll empty ledger dark 360",
+      "ok": true
+    },
+    {
+      "name": "scroll empty ledger dark 375",
+      "ok": true
+    },
+    {
+      "name": "scroll empty ledger dark 390",
+      "ok": true
+    },
+    {
+      "name": "scroll empty ledger dark 1000",
+      "ok": true
+    },
+    {
+      "name": "scroll empty poster light 360",
+      "ok": true
+    },
+    {
+      "name": "scroll empty poster light 375",
+      "ok": true
+    },
+    {
+      "name": "scroll empty poster light 390",
+      "ok": true
+    },
+    {
+      "name": "scroll empty poster light 1000",
+      "ok": true
+    },
+    {
+      "name": "scroll empty poster dark 360",
+      "ok": true
+    },
+    {
+      "name": "scroll empty poster dark 375",
+      "ok": true
+    },
+    {
+      "name": "scroll empty poster dark 390",
+      "ok": true
+    },
+    {
+      "name": "scroll empty poster dark 1000",
+      "ok": true
+    },
+    {
+      "name": "scroll empty broadcast light 360",
+      "ok": true
+    },
+    {
+      "name": "scroll empty broadcast light 375",
+      "ok": true
+    },
+    {
+      "name": "scroll empty broadcast light 390",
+      "ok": true
+    },
+    {
+      "name": "scroll empty broadcast light 1000",
+      "ok": true
+    },
+    {
+      "name": "scroll empty broadcast dark 360",
+      "ok": true
+    },
+    {
+      "name": "scroll empty broadcast dark 375",
+      "ok": true
+    },
+    {
+      "name": "scroll empty broadcast dark 390",
+      "ok": true
+    },
+    {
+      "name": "scroll empty broadcast dark 1000",
+      "ok": true
+    },
+    {
+      "name": "empty catalog is 0 of 0",
+      "ok": true
+    },
+    {
+      "name": "scroll unavailable ledger light 360",
+      "ok": true
+    },
+    {
+      "name": "scroll unavailable ledger light 375",
+      "ok": true
+    },
+    {
+      "name": "scroll unavailable ledger light 390",
+      "ok": true
+    },
+    {
+      "name": "scroll unavailable ledger light 1000",
+      "ok": true
+    },
+    {
+      "name": "scroll unavailable ledger dark 360",
+      "ok": true
+    },
+    {
+      "name": "scroll unavailable ledger dark 375",
+      "ok": true
+    },
+    {
+      "name": "scroll unavailable ledger dark 390",
+      "ok": true
+    },
+    {
+      "name": "scroll unavailable ledger dark 1000",
+      "ok": true
+    },
+    {
+      "name": "scroll unavailable poster light 360",
+      "ok": true
+    },
+    {
+      "name": "scroll unavailable poster light 375",
+      "ok": true
+    },
+    {
+      "name": "scroll unavailable poster light 390",
+      "ok": true
+    },
+    {
+      "name": "scroll unavailable poster light 1000",
+      "ok": true
+    },
+    {
+      "name": "scroll unavailable poster dark 360",
+      "ok": true
+    },
+    {
+      "name": "scroll unavailable poster dark 375",
+      "ok": true
+    },
+    {
+      "name": "scroll unavailable poster dark 390",
+      "ok": true
+    },
+    {
+      "name": "scroll unavailable poster dark 1000",
+      "ok": true
+    },
+    {
+      "name": "scroll unavailable broadcast light 360",
+      "ok": true
+    },
+    {
+      "name": "scroll unavailable broadcast light 375",
+      "ok": true
+    },
+    {
+      "name": "scroll unavailable broadcast light 390",
+      "ok": true
+    },
+    {
+      "name": "scroll unavailable broadcast light 1000",
+      "ok": true
+    },
+    {
+      "name": "scroll unavailable broadcast dark 360",
+      "ok": true
+    },
+    {
+      "name": "scroll unavailable broadcast dark 375",
+      "ok": true
+    },
+    {
+      "name": "scroll unavailable broadcast dark 390",
+      "ok": true
+    },
+    {
+      "name": "scroll unavailable broadcast dark 1000",
+      "ok": true
+    },
+    {
+      "name": "unavailable copy",
+      "ok": true
+    },
+    {
+      "name": "scroll cover ledger light 360",
+      "ok": true
+    },
+    {
+      "name": "scroll cover ledger light 375",
+      "ok": true
+    },
+    {
+      "name": "scroll cover ledger light 390",
+      "ok": true
+    },
+    {
+      "name": "scroll cover ledger light 1000",
+      "ok": true
+    },
+    {
+      "name": "scroll cover ledger dark 360",
+      "ok": true
+    },
+    {
+      "name": "scroll cover ledger dark 375",
+      "ok": true
+    },
+    {
+      "name": "scroll cover ledger dark 390",
+      "ok": true
+    },
+    {
+      "name": "scroll cover ledger dark 1000",
+      "ok": true
+    },
+    {
+      "name": "scroll cover poster light 360",
+      "ok": true
+    },
+    {
+      "name": "scroll cover poster light 375",
+      "ok": true
+    },
+    {
+      "name": "scroll cover poster light 390",
+      "ok": true
+    },
+    {
+      "name": "scroll cover poster light 1000",
+      "ok": true
+    },
+    {
+      "name": "scroll cover poster dark 360",
+      "ok": true
+    },
+    {
+      "name": "scroll cover poster dark 375",
+      "ok": true
+    },
+    {
+      "name": "scroll cover poster dark 390",
+      "ok": true
+    },
+    {
+      "name": "scroll cover poster dark 1000",
+      "ok": true
+    },
+    {
+      "name": "scroll cover broadcast light 360",
+      "ok": true
+    },
+    {
+      "name": "scroll cover broadcast light 375",
+      "ok": true
+    },
+    {
+      "name": "scroll cover broadcast light 390",
+      "ok": true
+    },
+    {
+      "name": "scroll cover broadcast light 1000",
+      "ok": true
+    },
+    {
+      "name": "scroll cover broadcast dark 360",
+      "ok": true
+    },
+    {
+      "name": "scroll cover broadcast dark 375",
+      "ok": true
+    },
+    {
+      "name": "scroll cover broadcast dark 390",
+      "ok": true
+    },
+    {
+      "name": "scroll cover broadcast dark 1000",
+      "ok": true
+    },
+    {
+      "name": "typographic cover",
+      "ok": true
+    }
+  ],
+  "sha256": [
+    {
+      "name": "gallery-ledger-light-360",
+      "sha256": "f964234bd2c1e59b62eb07e87507d2d79d626a3f79827fc515bd61121d9abe86"
+    },
+    {
+      "name": "gallery-ledger-light-375",
+      "sha256": "f6bf311ad5145d2970857fb295feccaa80152acf4db14c1ee260976894287317"
+    },
+    {
+      "name": "gallery-ledger-light-390",
+      "sha256": "2f42e593514fe0ba6f07ca20aa708a01931453b806509064dcd0ec4d5dc85728"
+    },
+    {
+      "name": "gallery-ledger-light-1000",
+      "sha256": "d586f4e83d69a838d39562153336b2e8fcee0a9a5d3698ae8257ce7175df6308"
+    },
+    {
+      "name": "gallery-ledger-dark-360",
+      "sha256": "f964234bd2c1e59b62eb07e87507d2d79d626a3f79827fc515bd61121d9abe86"
+    },
+    {
+      "name": "gallery-ledger-dark-375",
+      "sha256": "f6bf311ad5145d2970857fb295feccaa80152acf4db14c1ee260976894287317"
+    },
+    {
+      "name": "gallery-ledger-dark-390",
+      "sha256": "2f42e593514fe0ba6f07ca20aa708a01931453b806509064dcd0ec4d5dc85728"
+    },
+    {
+      "name": "gallery-ledger-dark-1000",
+      "sha256": "d586f4e83d69a838d39562153336b2e8fcee0a9a5d3698ae8257ce7175df6308"
+    },
+    {
+      "name": "gallery-poster-light-360",
+      "sha256": "7c2e5e8223adc65d748b6c6b545040e2dafe38378836131420d7c709015e6ce4"
+    },
+    {
+      "name": "gallery-poster-light-375",
+      "sha256": "2fac09f4a75a5bb99d6b34fe328d2000394e861523ed0575817e236f8c2838b2"
+    },
+    {
+      "name": "gallery-poster-light-390",
+      "sha256": "f0dbadb291ae818a5ef04864b75fe567da3d2b742f7afa6df85b7d7d4d41f30a"
+    },
+    {
+      "name": "gallery-poster-light-1000",
+      "sha256": "615c3ffe4cb021b1c94fe5c08daf675502ba4101b03fbce2c6fedbc66bea4949"
+    },
+    {
+      "name": "gallery-poster-dark-360",
+      "sha256": "7c2e5e8223adc65d748b6c6b545040e2dafe38378836131420d7c709015e6ce4"
+    },
+    {
+      "name": "gallery-poster-dark-375",
+      "sha256": "2fac09f4a75a5bb99d6b34fe328d2000394e861523ed0575817e236f8c2838b2"
+    },
+    {
+      "name": "gallery-poster-dark-390",
+      "sha256": "f0dbadb291ae818a5ef04864b75fe567da3d2b742f7afa6df85b7d7d4d41f30a"
+    },
+    {
+      "name": "gallery-poster-dark-1000",
+      "sha256": "5594fa4e36ddc4b6f4b82e0b42ecefc55a24050e63127b93c73938567b0575ba"
+    },
+    {
+      "name": "gallery-broadcast-light-360",
+      "sha256": "d0b91b99f33561d3d01a6047fc0d2d551325fef15eb8619bec958f1869b726fa"
+    },
+    {
+      "name": "gallery-broadcast-light-375",
+      "sha256": "a69d20607b0961e87e9652b959ee21aeff3d0adccb61e5af07780cd3af94ab22"
+    },
+    {
+      "name": "gallery-broadcast-light-390",
+      "sha256": "cd5b599cb31ffaae98c547ce6cf7be713582ac7ec9ae3f9b70e090a8e0190f8f"
+    },
+    {
+      "name": "gallery-broadcast-light-1000",
+      "sha256": "558c508a1e54ac7f71f348af7bf59480359688b43d655ff4fd343a77b1942320"
+    },
+    {
+      "name": "gallery-broadcast-dark-360",
+      "sha256": "d0b91b99f33561d3d01a6047fc0d2d551325fef15eb8619bec958f1869b726fa"
+    },
+    {
+      "name": "gallery-broadcast-dark-375",
+      "sha256": "a69d20607b0961e87e9652b959ee21aeff3d0adccb61e5af07780cd3af94ab22"
+    },
+    {
+      "name": "gallery-broadcast-dark-390",
+      "sha256": "42c66799d4852aaa859e9fab43d51fe2f5e43630fe7a44b2c146c9de03df963d"
+    },
+    {
+      "name": "gallery-broadcast-dark-1000",
+      "sha256": "3628e6b2ae3438153933101359502a5a315e8575b0b2df43a912ebe6df28080c"
+    },
+    {
+      "name": "watch-playing-390",
+      "sha256": "8655bb5750f530b21c0168999c772ac6d53fdaf760095eb3637b15834a6f03fc"
+    },
+    {
+      "name": "watch-not-found-390",
+      "sha256": "8aea3e439bc70c76c9b16c330379d86f8ba512451ddf475bbc40450113b785a3"
+    },
+    {
+      "name": "watch-theater-390",
+      "sha256": "9e084d94b7c2a9117a3a91714221e2647b8df858d8e6c7441ffedca750030503"
+    },
+    {
+      "name": "gallery-no-results-390",
+      "sha256": "926e9878f49f47a9a3d3dd28d3637b0c9ca79022ba8c9381cf686476280dcafb"
+    },
+    {
+      "name": "empty-ledger-light-360",
+      "sha256": "ae63f7d902997d5a8d70674d09cfcaf267be6888c4378ba772b95c88ade21ccf"
+    },
+    {
+      "name": "empty-ledger-light-375",
+      "sha256": "37ca28212c0a777a7c7c5601f17a0db83cc40f98161b18f5c77542c1ffecb30e"
+    },
+    {
+      "name": "empty-ledger-light-390",
+      "sha256": "edf2780fc86ba8c8c2d1c76ff9ea26b12a23fbf49eadfc9fc73978b79815caa3"
+    },
+    {
+      "name": "empty-ledger-light-1000",
+      "sha256": "5a002019ddbd0d9d0e97e67edb38f4e10848298763d4daa8037bb27371f45dda"
+    },
+    {
+      "name": "empty-ledger-dark-360",
+      "sha256": "ae63f7d902997d5a8d70674d09cfcaf267be6888c4378ba772b95c88ade21ccf"
+    },
+    {
+      "name": "empty-ledger-dark-375",
+      "sha256": "37ca28212c0a777a7c7c5601f17a0db83cc40f98161b18f5c77542c1ffecb30e"
+    },
+    {
+      "name": "empty-ledger-dark-390",
+      "sha256": "edf2780fc86ba8c8c2d1c76ff9ea26b12a23fbf49eadfc9fc73978b79815caa3"
+    },
+    {
+      "name": "empty-ledger-dark-1000",
+      "sha256": "5a002019ddbd0d9d0e97e67edb38f4e10848298763d4daa8037bb27371f45dda"
+    },
+    {
+      "name": "empty-poster-light-360",
+      "sha256": "e922b6c8eeb4f95bc700f7eceeb9ebfd5997ac30da96a9d1b9adb2c7c25cb3ca"
+    },
+    {
+      "name": "empty-poster-light-375",
+      "sha256": "bbaa03d25862fd4105bb707343b346e39e377760c91c351f67dacbb00f3ef12b"
+    },
+    {
+      "name": "empty-poster-light-390",
+      "sha256": "be7e8a96511bfca8c12fba3d98c39fc503a78aa0b2f519eb295bdb8ec7422f95"
+    },
+    {
+      "name": "empty-poster-light-1000",
+      "sha256": "267b63fd96b9c359755f27b661eedf0bbba21597f1b85c99d82d4c2b8d99c9df"
+    },
+    {
+      "name": "empty-poster-dark-360",
+      "sha256": "e922b6c8eeb4f95bc700f7eceeb9ebfd5997ac30da96a9d1b9adb2c7c25cb3ca"
+    },
+    {
+      "name": "empty-poster-dark-375",
+      "sha256": "bbaa03d25862fd4105bb707343b346e39e377760c91c351f67dacbb00f3ef12b"
+    },
+    {
+      "name": "empty-poster-dark-390",
+      "sha256": "be7e8a96511bfca8c12fba3d98c39fc503a78aa0b2f519eb295bdb8ec7422f95"
+    },
+    {
+      "name": "empty-poster-dark-1000",
+      "sha256": "267b63fd96b9c359755f27b661eedf0bbba21597f1b85c99d82d4c2b8d99c9df"
+    },
+    {
+      "name": "empty-broadcast-light-360",
+      "sha256": "2cee1253558832ad5407723aedce2abe8abb329614df95212b7325321b916d3d"
+    },
+    {
+      "name": "empty-broadcast-light-375",
+      "sha256": "158e017e63452012db0e9e3a776e3d271d240993809fa9cd0d001799d220cfef"
+    },
+    {
+      "name": "empty-broadcast-light-390",
+      "sha256": "df629687db87d7ca970caa4bf00389bcbf41de9c3710c9b56ae5871768ed69e7"
+    },
+    {
+      "name": "empty-broadcast-light-1000",
+      "sha256": "118fb9bb1ae96240ede2eafb7c6495e6838857c6ceda95f417166234d5cb7b42"
+    },
+    {
+      "name": "empty-broadcast-dark-360",
+      "sha256": "2cee1253558832ad5407723aedce2abe8abb329614df95212b7325321b916d3d"
+    },
+    {
+      "name": "empty-broadcast-dark-375",
+      "sha256": "158e017e63452012db0e9e3a776e3d271d240993809fa9cd0d001799d220cfef"
+    },
+    {
+      "name": "empty-broadcast-dark-390",
+      "sha256": "df629687db87d7ca970caa4bf00389bcbf41de9c3710c9b56ae5871768ed69e7"
+    },
+    {
+      "name": "empty-broadcast-dark-1000",
+      "sha256": "118fb9bb1ae96240ede2eafb7c6495e6838857c6ceda95f417166234d5cb7b42"
+    },
+    {
+      "name": "unavailable-ledger-light-360",
+      "sha256": "bbbe4f53b7f952747ac67de6343fba1d5d423ce60357a9b8bf85bd1ad407549a"
+    },
+    {
+      "name": "unavailable-ledger-light-375",
+      "sha256": "e7deb8d71e6ba859df9520fcd885df3c272073aa273a0ae5c5075affc40ac4bf"
+    },
+    {
+      "name": "unavailable-ledger-light-390",
+      "sha256": "731d32f308473bf3b62ddf4a731328a471da893214a41d3df5942e29b187b9ef"
+    },
+    {
+      "name": "unavailable-ledger-light-1000",
+      "sha256": "a365ab83a2add699358e30f65e44ef074672f834dbfc5e9ec3efc6f3f9b3cedc"
+    },
+    {
+      "name": "unavailable-ledger-dark-360",
+      "sha256": "bbbe4f53b7f952747ac67de6343fba1d5d423ce60357a9b8bf85bd1ad407549a"
+    },
+    {
+      "name": "unavailable-ledger-dark-375",
+      "sha256": "e7deb8d71e6ba859df9520fcd885df3c272073aa273a0ae5c5075affc40ac4bf"
+    },
+    {
+      "name": "unavailable-ledger-dark-390",
+      "sha256": "731d32f308473bf3b62ddf4a731328a471da893214a41d3df5942e29b187b9ef"
+    },
+    {
+      "name": "unavailable-ledger-dark-1000",
+      "sha256": "a365ab83a2add699358e30f65e44ef074672f834dbfc5e9ec3efc6f3f9b3cedc"
+    },
+    {
+      "name": "unavailable-poster-light-360",
+      "sha256": "1a55a5ec1785e52b01ac18bfcee247e7de75633e8d930e71b2ed1f410465487b"
+    },
+    {
+      "name": "unavailable-poster-light-375",
+      "sha256": "6bb09753ee645dd420df75492b449422a50462f8207d4cd055bfbe75319a03c9"
+    },
+    {
+      "name": "unavailable-poster-light-390",
+      "sha256": "d42c7a324aedcb354e89829770a2dcd7c45706f5b54fe97d3a4c4d43f3a4ba20"
+    },
+    {
+      "name": "unavailable-poster-light-1000",
+      "sha256": "fb0808062fa9b7f5b6a1017de607fb39ec53f6bf381617928819cd789158043b"
+    },
+    {
+      "name": "unavailable-poster-dark-360",
+      "sha256": "1a55a5ec1785e52b01ac18bfcee247e7de75633e8d930e71b2ed1f410465487b"
+    },
+    {
+      "name": "unavailable-poster-dark-375",
+      "sha256": "6bb09753ee645dd420df75492b449422a50462f8207d4cd055bfbe75319a03c9"
+    },
+    {
+      "name": "unavailable-poster-dark-390",
+      "sha256": "d42c7a324aedcb354e89829770a2dcd7c45706f5b54fe97d3a4c4d43f3a4ba20"
+    },
+    {
+      "name": "unavailable-poster-dark-1000",
+      "sha256": "fb0808062fa9b7f5b6a1017de607fb39ec53f6bf381617928819cd789158043b"
+    },
+    {
+      "name": "unavailable-broadcast-light-360",
+      "sha256": "003c150f11a6b7c07af78fa5fe967e066f796477eaeebcb2cfffa247aa23da6f"
+    },
+    {
+      "name": "unavailable-broadcast-light-375",
+      "sha256": "fa8f81404d3b679b01f7991490b122b45fa269a404ccfeb1c2b6ffb277b52119"
+    },
+    {
+      "name": "unavailable-broadcast-light-390",
+      "sha256": "cc4da1be0193aee9e479cf5a55d7dd4b53f39c1d4979c058d106ec16ac892c3d"
+    },
+    {
+      "name": "unavailable-broadcast-light-1000",
+      "sha256": "8f4681e2fb9b70c81bab4e8bcf7f163277a605cf3545233bc2304de042b702cc"
+    },
+    {
+      "name": "unavailable-broadcast-dark-360",
+      "sha256": "003c150f11a6b7c07af78fa5fe967e066f796477eaeebcb2cfffa247aa23da6f"
+    },
+    {
+      "name": "unavailable-broadcast-dark-375",
+      "sha256": "fa8f81404d3b679b01f7991490b122b45fa269a404ccfeb1c2b6ffb277b52119"
+    },
+    {
+      "name": "unavailable-broadcast-dark-390",
+      "sha256": "cc4da1be0193aee9e479cf5a55d7dd4b53f39c1d4979c058d106ec16ac892c3d"
+    },
+    {
+      "name": "unavailable-broadcast-dark-1000",
+      "sha256": "8f4681e2fb9b70c81bab4e8bcf7f163277a605cf3545233bc2304de042b702cc"
+    },
+    {
+      "name": "cover-ledger-light-360",
+      "sha256": "5b4b98a5f8bf0656d44f3533c6bf3af47d311b3318c27356760c6eb349d560cf"
+    },
+    {
+      "name": "cover-ledger-light-375",
+      "sha256": "a665e1e7b01baa4472ae8eb877388fe8371a7b4d77bd116cf7b9eccc9fa70357"
+    },
+    {
+      "name": "cover-ledger-light-390",
+      "sha256": "f49403704f7af7aab2db0427317270ef6cab910b3d22032da23eac5805b8cd18"
+    },
+    {
+      "name": "cover-ledger-light-1000",
+      "sha256": "e0a98731c15fad845bd49932fee803e08ada292a641cd0e81a6fa1da51b4600c"
+    },
+    {
+      "name": "cover-ledger-dark-360",
+      "sha256": "5b4b98a5f8bf0656d44f3533c6bf3af47d311b3318c27356760c6eb349d560cf"
+    },
+    {
+      "name": "cover-ledger-dark-375",
+      "sha256": "b6e4b645b3402df8eb7dc5151786630e402ace42413c74d88ea99bcb4e040d9b"
+    },
+    {
+      "name": "cover-ledger-dark-390",
+      "sha256": "df27b4890dfe78f8aed153fb4f18b7e92bb966010f05748b572ff6c3e0564cba"
+    },
+    {
+      "name": "cover-ledger-dark-1000",
+      "sha256": "e0a98731c15fad845bd49932fee803e08ada292a641cd0e81a6fa1da51b4600c"
+    },
+    {
+      "name": "cover-poster-light-360",
+      "sha256": "3d184aceb581e687aa45c7ab83228a49ca034c49aca97ec27bfd73ffbd42687c"
+    },
+    {
+      "name": "cover-poster-light-375",
+      "sha256": "b30ae1e21bae86dd8358ee3db8819eac62e67be58bdccb6eecde6800b6e9602d"
+    },
+    {
+      "name": "cover-poster-light-390",
+      "sha256": "30c7e77edc2fd0fad61b508303c106cc0bf69297854b970c9db055993ed9f85c"
+    },
+    {
+      "name": "cover-poster-light-1000",
+      "sha256": "ba46123fa2309e8a878a8ee5e9fc75965d2174af408bbec5ec80cbfe839ec43b"
+    },
+    {
+      "name": "cover-poster-dark-360",
+      "sha256": "3d184aceb581e687aa45c7ab83228a49ca034c49aca97ec27bfd73ffbd42687c"
+    },
+    {
+      "name": "cover-poster-dark-375",
+      "sha256": "b30ae1e21bae86dd8358ee3db8819eac62e67be58bdccb6eecde6800b6e9602d"
+    },
+    {
+      "name": "cover-poster-dark-390",
+      "sha256": "701dafedaf3ee27d21f1eab4cce59f64a025ea01f8067af11b58b284844a654e"
+    },
+    {
+      "name": "cover-poster-dark-1000",
+      "sha256": "ba46123fa2309e8a878a8ee5e9fc75965d2174af408bbec5ec80cbfe839ec43b"
+    },
+    {
+      "name": "cover-broadcast-light-360",
+      "sha256": "94e0e16619e0761959028f71add608dd8b525f35a272b58e55925f3a6832ee24"
+    },
+    {
+      "name": "cover-broadcast-light-375",
+      "sha256": "e76478092a47adb80f16e4fb8bc38a2f9243bfa46da8f8f593de96f13bfa6451"
+    },
+    {
+      "name": "cover-broadcast-light-390",
+      "sha256": "7c2cb8f619bc0be42bef13e1c6604529f2b995e05646470b435a9e8105d89e83"
+    },
+    {
+      "name": "cover-broadcast-light-1000",
+      "sha256": "c729df1a5a71b1bf5d1d96712845cc804317dea4e059a6ad6dc284cabefff5f3"
+    },
+    {
+      "name": "cover-broadcast-dark-360",
+      "sha256": "94e0e16619e0761959028f71add608dd8b525f35a272b58e55925f3a6832ee24"
+    },
+    {
+      "name": "cover-broadcast-dark-375",
+      "sha256": "c3194c43db80d83d47f01490c0cc90a20d7ad5b002c39a29d5e4e08920679fb2"
+    },
+    {
+      "name": "cover-broadcast-dark-390",
+      "sha256": "2d492572cb6270f5b5589bcc941c351b5e269488a54131f97b44b7ad27f25e5c"
+    },
+    {
+      "name": "cover-broadcast-dark-1000",
+      "sha256": "94077c253d97eec790ee10015a60142b2b2409cd4d0eb2ea1b7a17c4c2eaf22b"
+    }
+  ],
+  "pngs": "/tmp/kickoff-n4b-moments"
+}

@@ -1,0 +1,116 @@
+{
+  "cells": 85,
+  "momentsCells": [
+    {
+      "id": "moments-ledger-light-360",
+      "diffs": []
+    },
+    {
+      "id": "moments-ledger-light-375",
+      "diffs": []
+    },
+    {
+      "id": "moments-ledger-light-390",
+      "diffs": []
+    },
+    {
+      "id": "moments-ledger-light-1000",
+      "diffs": []
+    },
+    {
+      "id": "moments-ledger-dark-360",
+      "diffs": []
+    },
+    {
+      "id": "moments-ledger-dark-375",
+      "diffs": []
+    },
+    {
+      "id": "moments-ledger-dark-390",
+      "diffs": []
+    },
+    {
+      "id": "moments-ledger-dark-1000",
+      "diffs": []
+    },
+    {
+      "id": "moments-poster-light-360",
+      "diffs": []
+    },
+    {
+      "id": "moments-poster-light-375",
+      "diffs": []
+    },
+    {
+      "id": "moments-poster-light-390",
+      "diffs": []
+    },
+    {
+      "id": "moments-poster-light-1000",
+      "diffs": []
+    },
+    {
+      "id": "moments-poster-dark-360",
+      "diffs": []
+    },
+    {
+      "id": "moments-poster-dark-375",
+      "diffs": []
+    },
+    {
+      "id": "moments-poster-dark-390",
+      "diffs": []
+    },
+    {
+      "id": "moments-poster-dark-1000",
+      "diffs": []
+    },
+    {
+      "id": "moments-broadcast-light-360",
+      "diffs": []
+    },
+    {
+      "id": "moments-broadcast-light-375",
+      "diffs": []
+    },
+    {
+      "id": "moments-broadcast-light-390",
+      "diffs": []
+    },
+    {
+      "id": "moments-broadcast-light-1000",
+      "diffs": []
+    },
+    {
+      "id": "moments-broadcast-dark-360",
+      "diffs": []
+    },
+    {
+      "id": "moments-broadcast-dark-375",
+      "diffs": []
+    },
+    {
+      "id": "moments-broadcast-dark-390",
+      "diffs": []
+    },
+    {
+      "id": "moments-broadcast-dark-1000",
+      "diffs": []
+    }
+  ],
+  "quietRunDiffering": [
+    "fixtures-ledger-light-375",
+    "fixtures-poster-light-360",
+    "fixtures-poster-dark-390",
+    "fixtures-broadcast-light-390",
+    "fixtures-broadcast-dark-360",
+    "table-ledger-light-360",
+    "table-ledger-light-1000",
+    "table-poster-light-375",
+    "table-broadcast-light-360",
+    "table-broadcast-light-375",
+    "table-broadcast-dark-360",
+    "league-pl"
+  ],
+  "note": "The quiet run listed box diffs on Fixtures and Table. Isolated re-runs of those cells, and a direct box compare of table-ledger-light-360, matched. No moments cell remained different. PNGs are under /tmp/kickoff-n4b-next-vite-quiet."
+}

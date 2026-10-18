@@ -1,7 +1,13 @@
 # Kickoff web scaffold
 
 Unreleased sibling Next.js app. The root Vite app remains the whole public app on
-GitHub Pages. This package has no catalog, credentials, database or deploy.
+GitHub Pages. This package installs `@kickoff/catalog` as a copy
+(`file:../packages/kickoff-catalog`, `web/.npmrc` with `install-links=true`).
+After editing that package, `npm ci` in `web/` refreshes the copy; a plain
+`npm install` does not. The catalog's zod `4.4.3` is nested at
+`web/node_modules/@kickoff/catalog/node_modules/zod`, because this install
+already hoists zod 3 for another package. Nothing is written back into
+`packages/`. There is no database client, credential, or deploy.
 Its private tooling version is never displayed. The header shows the root
 package version. Reverting this PR leaves the N1 scaffold buildable.
 
@@ -20,6 +26,24 @@ and `generated/shell.css` before `next build`. Those files are gitignored.
 For a production-mode look: `npm run start -- --port 5174`.
 Next commands disable telemetry in the package scripts. Builds use the default
 Next output; Cache Components is disabled.
+
+Stub catalog, off unless both are set: `KICKOFF_CATALOG=stub` and
+`KICKOFF_STUB_CATALOG_FILE` (an absolute path to one file under
+`web/fixtures/catalog/`). There is no default path. `KICKOFF_STUB_STORAGE_ORIGIN`
+names the stub storage origin for a remote preview, including `/stub-storage`.
+Without it only a loopback `Host` (`127.0.0.1`, `localhost`, or `[::1]`, with an
+optional port) is accepted. Forwarded host/protocol headers are ignored. `VERCEL_ENV=production` refuses the stub flag.
+With the flag unset, or set to `production`, a missing database address throws
+and Moments shows the unavailable state. This build has no database client, so
+that path stays unavailable. Stub states carry `Stub catalog · synthetic records`,
+a 12 px line in ordinary ink, first inside `main.moments-gallery`; non-stub states
+do not. This is Beni's Reword ruling (18 Oct 2026).
+`npm run check:client` scans client JavaScript for every Studio/database marker
+and the stub sentinel. The server list permits database code but rejects `studio/`,
+`FAL_KEY`, and any `STUDIO_*` name; non-stub server builds reject the sentinel too. Regenerate the synthetic media with
+`node web/scripts/generate-stub-media.mjs`. Moments styles live in
+`web/app/moments/gallery.css`, scoped under `.moments-gallery`. `npm run check:css`
+keeps that sheet out of the shared shell CSS and out of the Vite reader's build.
 
 The build needs the root install. The theme script is compiled with the root's
 `tsx` and Vite. At runtime, from `web/`, the app reads:
@@ -54,8 +78,8 @@ exactly `web/app/` plus these shared files, named in `app/globals.css`:
 reader imports too. It does not scan docs/, studio/, tests, or the rest of src/.
 `npm run check:css` reads `generated/shell.css` after `node scripts/write-shell-css.mjs`:
 the web probe must be present there and absent from the reader; the Studio probe
-reaches neither; archived-doc selectors, including `.moments-gallery`, stay out
-of web. Shell utilities are shared on purpose. The reader keeps `@source not '../web'`.
+reaches neither; archived-doc selectors stay out of the shared shell sheet.
+The new `.moments-gallery` rules belong only to `app/moments/gallery.css`. Shell utilities are shared on purpose. The reader keeps `@source not '../web'`.
 
 Versions checked 2026-10-15: Next 16.4.1 is the registry's stable release on the
 [16.x Active LTS line](https://nextjs.org/support-policy). React and React DOM are
@@ -186,18 +210,86 @@ Isolation checks live in the new root `tests/web-isolation.test.ts` and web's
 `test/isolation.test.ts`: literal static/type/dynamic imports and re-exports,
 actual Vitest discovery in each package, and files selected by every project in
 the root TypeScript reference graph. `npm run check:client` requires a completed
-Next build and scans all `.next/static/**/*.js` for Studio/database markers.
-`check:client` reads only the client JavaScript under `.next/static`. A value
-that a server component renders reaches readers through the prerendered HTML
-and RSC payloads under `.next/server`, which no N1 check reads. N4 owns that
-gap, through the plan's server-only data access and client sentinel (plan §2
-and §6). `node scripts/prove-isolation.mjs <evidence-directory>` demonstrates
-failing and passing assertions in disposable source/bundle copies, without
-editing the reader. The scanner does not claim to detect arbitrary
+Next build. It scans client JavaScript and emitted server files with the two
+marker lists described above. Dynamic `/` HTML and flight payloads are outside
+the static build: `n4b-moments.mjs` scans their responses during real requests
+and client navigations. Its server sentinel exception applies only to stub builds.
+For flight capture the isolated test browser reads a response clone before
+returning the original response to Next. This buffers the flight response for
+the leak measurement: Next can otherwise cancel a stream after consuming its
+usable prefix, leaving no CDP body to inspect. It is not a streaming-latency proof. `node scripts/prove-isolation.mjs <evidence-directory>`
+demonstrates failing and passing assertions in disposable source/bundle copies,
+without editing the reader. The scanner does not claim to detect arbitrary
 obfuscated/computed module paths.
+
+N4b receipts, PNGs outside the repo:
+
+- `verification/n4b-next-vite.json` — Fixtures and Table against the Vite preview. Moments is recorded and not treated as a Vite mismatch.
+- `verification/n4b-moments.json` — gallery, watch, media, and history on the stub catalog.
+
+```sh
+npm run build && npm run build:single && npm run build:offline
+npm --prefix web run build
+npm --prefix web run start -- --hostname 127.0.0.1 --port 5174
+npx vite preview --host 127.0.0.1 --port 5182 --strictPort
+KICKOFF_VITE_ORIGIN=http://127.0.0.1:5182 KICKOFF_NEXT_ORIGIN=http://127.0.0.1:5174 node web/scripts/n3-next-vite.mjs /tmp/kickoff-n4b-next-vite
+KICKOFF_CATALOG=stub KICKOFF_STUB_CATALOG_FILE=$PWD/web/fixtures/catalog/several.json npm --prefix web run start -- --hostname 127.0.0.1 --port 5175
+KICKOFF_NEXT_ORIGIN=http://127.0.0.1:5175 node web/scripts/n4b-moments.mjs /tmp/kickoff-n4b-moments
+```
+
+The Moments receipt starts its own temporary loopback servers for the empty,
+unavailable and closed states, and for twelve fail-closed environment cases. It
+stops those processes afterward. It captures fourteen states across all three
+lenses, both themes, and 360, 375, 390 and 1000 px, plus the seven indicator states.
+`KICKOFF_SKIP_GRID=1` runs only the environment and interaction checks.
+Regenerate the synthetic JPEG and MP4 with
+`node web/scripts/generate-stub-media.mjs`. It has no output argument and always
+replaces `web/fixtures/catalog/media/`; use a disposable checkout for a scratch run.
 
 From the repo root, `node web/scripts/probe-server-imports.mjs` imports eleven
 reader modules in fresh Node processes using the existing root tsx loader. One
 mode removes browser globals; another traces reads with inert stubs, including
 dependency source lines. The checked-in `verification/server-imports.json` is
 the N1 observation, not a claim that calling exported hooks is server-safe.
+
+
+## N4b Pass 2 implementation record
+
+The handoff's `web/` fence keeps this record here; the archived D9 and N4 plan
+are unchanged. D9 supplies copy; D6 section 5 supplies the normal two-column
+watch geometry from 888 px. Theater uses one column. The count line hides at
+760 px and below. The video element remains mounted across ids and lens changes;
+an id change retires its source and clears per-video state. Thumbnails resolve
+on the server, and the client imports catalog types only.
+
+Tab rendering follows Next's reactive search params. Moments navigation uses one
+Next push without a fragment, then restores the exact fragment by replacing that
+committed entry while retaining Next's history state. This avoids Next 16.4.1's
+initial route cache storing a hash and later appending the target hash again.
+Back and Forward keep Next's recorded server trees. The fragment repair adds no
+history entry and does not rerun the shared canonicalizer. Native Fixture/Table
+changes retain their existing push behavior.
+
+Open rulings for Beni: whether the next non-Moments navigation must clear a
+hand-written ignored `watch` (recommend the plan; no pre-emptive change); whether
+the stub site-copy route may stay at the production address until N6 (recommend
+keep until N6, with the removal prerequisite below); whether Theater should keep
+both its changing name and `aria-pressed` (recommend keep the explicit D9 contract
+for this PR). Same-tab duplicate pushes are noted, as requested, and unchanged.
+
+Pass 2 receipts are `verification/n4b-pass2-moments.json`,
+`verification/n4b-pass2-regression-red.json`, `verification/n4b-pass2-artifacts.json`,
+`verification/n4b-pass2-next-vite.json`, `verification/n4b-pass2-head-interactions.json`,
+and `verification/n4b-pass2-probes.json`. Their PNGs stay outside Git. The artifact
+recount can be repeated with:
+
+```sh
+node web/scripts/n4b-artifacts.mjs <built-df2f288-checkout> <built-aa3840a-checkout> /tmp/n4b-artifacts.json
+```
+
+Verification lessons: an SSR image can fail before its React handler exists;
+check completed broken images at hydration too. Navigate through real tab clicks
+and history traversals, not only direct loads. Retain one live region and record
+its writes. Use a real first pointer click when focus can move surrounding content.
+Static scans cannot prove dynamic HTML/flight safety. PostCSS walks each rule and
+each selector-list member so nested at-rules cannot evade the scope check.

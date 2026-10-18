@@ -1,0 +1,198 @@
+/* Moments in the Next app. Scoped under .moments-gallery so Fixtures and Table
+   do not inherit it. No animation and no transition are added here. */
+
+.moments-gallery {
+  width: min(calc(100vw - 40px), 1120px);
+  margin-inline: calc((100% - min(calc(100vw - 40px), 1120px)) / 2);
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  color: var(--text);
+}
+.moments-gallery h1,
+.moments-gallery h2 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.12;
+}
+.moments-gallery h1 { font-size: 38px; }
+.moments-gallery h2 { font-size: 22px; }
+.moments-gallery .moments-preview { color: var(--text); font-size: 12px; margin: 0 0 12px; }
+.moments-gallery .moments-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  margin: 0 0 6px;
+}
+.moments-gallery .moments-edition-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 16px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+.moments-gallery .moments-count,
+.moments-gallery .moments-edition-note,
+.moments-gallery .moments-facts,
+.moments-gallery .moments-small,
+.moments-gallery .moments-save-state { color: var(--text-secondary); }
+.moments-gallery .moments-edition-note { margin: 8px 0 0; }
+.moments-gallery .moments-filters {
+  margin-block: 16px;
+  border-block: 1px solid var(--border);
+  padding-block: 10px;
+}
+.moments-gallery summary { cursor: pointer; min-height: 36px; font-weight: 600; }
+.moments-gallery .moments-filter-fields { display: flex; flex-wrap: wrap; gap: 12px; padding-block: 12px; }
+.moments-gallery .moments-filter-fields label { display: grid; gap: 5px; font-size: 12px; min-width: 160px; }
+.moments-gallery select,
+.moments-gallery .moments-button,
+.moments-gallery button {
+  min-height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--text);
+  padding: 10px 12px;
+  font-size: 12px;
+}
+.moments-gallery button:disabled { opacity: .55; }
+.moments-gallery .moments-check { display: flex; align-items: center; gap: 8px; min-height: 44px; }
+.moments-gallery .moments-order-controls { display: flex; flex-wrap: wrap; gap: 8px; margin-block: 12px; }
+.moments-gallery .moments-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  align-items: start;
+  gap: 16px;
+}
+.moments-gallery .moments-card {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+  min-width: 0;
+}
+.moments-gallery .moments-cover {
+  position: relative;
+  overflow: hidden;
+  background: var(--media);
+  min-height: 120px;
+}
+.moments-gallery .moments-cover img,
+.moments-gallery .moments-stage-anchor video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.moments-gallery .moments-card-body { display: flex; flex-direction: column; gap: 9px; padding: 16px; }
+.moments-gallery .moments-badge {
+  display: inline-block;
+  background: var(--text);
+  color: var(--bg);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  padding: 2px 6px;
+  border-radius: 999px;
+}
+.moments-gallery .moments-note { color: var(--text-secondary); margin: 0; }
+.moments-gallery .moments-trust { color: var(--floodlight-strong); font-size: 11px; margin: 8px 16px; }
+.moments-gallery .moments-cover-word {
+  margin: 0;
+  min-height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 42px;
+  font-weight: 600;
+}
+.moments-gallery .moments-art-label {
+  margin: 0;
+  padding: 8px;
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+.moments-gallery .moments-empty {
+  padding: 16px;
+  background: var(--surface-alt);
+  margin-block: 14px;
+}
+.moments-gallery .moments-stage-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.moments-gallery .moments-stage-anchor {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  position: relative;
+  width: 100%;
+  background: var(--media);
+}
+.moments-gallery .moments-stage-anchor .moments-cover,
+.moments-gallery .moments-stage-anchor video {
+  grid-area: 1 / 1;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 16 / 9;
+  min-height: 200px;
+}
+.moments-gallery .moments-stage-anchor > .moments-trust { grid-area: 2 / 1; margin: 8px 0; background: var(--bg); }
+.moments-gallery .moments-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.moments-gallery .moments-provenance { margin-top: 16px; border-top: 1px solid var(--border); }
+.moments-gallery .moments-watch-player { min-width: 0; }
+.moments-gallery .moments-keyboard { min-height: 1.5em; }
+.moments-gallery aside small { display: block; }
+.moments-gallery .moments-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.moments-gallery a { color: inherit; }
+[data-lens="poster"] .moments-gallery .moments-edition-head {
+  border-bottom: 3px solid var(--lens-accent);
+  padding-bottom: 16px;
+}
+[data-lens="poster"] .moments-gallery h1 { font-size: 48px; }
+[data-lens="broadcast"] .moments-gallery .moments-edition-head {
+  border-top: 3px solid var(--accent-lead-strong);
+  border-bottom: 0;
+  padding: 16px;
+  background: var(--surface-alt);
+}
+[data-lens="broadcast"] .moments-gallery h1 { font-size: 60px; }
+@media (max-width: 760px) {
+  .moments-gallery { font-size: 13px; }
+  .moments-gallery h1 { font-size: 32px; }
+  .moments-gallery .moments-count,
+  .moments-gallery .moments-edition-note { display: none; }
+  .moments-gallery .moments-cards { grid-template-columns: minmax(0, 1fr); }
+  [data-lens="poster"] .moments-gallery h1,
+  [data-lens="broadcast"] .moments-gallery h1 { font-size: 39px; }
+}
+@media (min-width: 888px) {
+  .moments-gallery .moments-watch-layout {
+    display: grid;
+    grid-template-columns: minmax(480px, 1fr) 300px;
+    gap: 28px;
+  }
+}
+.moments-gallery .moments-theater,
+.moments-gallery .moments-theater .moments-watch-layout {
+  display: flex;
+  flex-direction: column;
+}

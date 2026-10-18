@@ -6,7 +6,8 @@ import { TabNav } from '../../src/components/TabNav'
 import { LensSwitcher } from '../../src/components/LensSwitcher'
 import { StalenessBanner } from '../../src/components/StalenessBanner'
 import { ViewBoundary } from '../../src/components/ViewBoundary'
-import { MomentsEmpty } from '../../src/components/MomentsEmpty'
+import { MomentsRegion } from './moments/region'
+import type { CatalogMode, MomentsPayload } from '../lib/catalog/types'
 import { FixturesPage } from '../../src/components/FixturesPage'
 import { TablePage } from '../../src/components/TablePage'
 import { TickerStrip } from '../../src/components/TickerStrip'
@@ -14,23 +15,47 @@ import { DEFAULT_LENS, encodeLens, parseLens } from '../../src/lib/lens'
 import { useThemeController } from '../../src/lib/useThemeController'
 import { useNow } from '../../src/lib/useNow'
 import { SearchProvider, useCanonicalSearch, useUrlState } from '../../src/lib/useUrlState'
-import { encodeTab, parseTab } from '../../src/lib/urlCodecs'
+import { useSearchParams } from 'next/navigation'
+import { useWatchNavigation, WatchNavigationProvider } from './moments/watch-url'
+import { encodeTab, parseTab, type Tab } from '../../src/lib/urlCodecs'
 
 /** Empty until N5 mounts the Privacy & terms link. Renders no element. */
 export function PrivacyFoot() {
   return null
 }
 
-export function Shell({ search }: { search: string }) {
-  return <SearchProvider search={search}><ShellInner /></SearchProvider>
+export function Shell({
+  search,
+  moments = { state: 'skipped' },
+  catalogMode = 'closed',
+}: {
+  search: string
+  moments?: MomentsPayload
+  catalogMode?: CatalogMode
+}) {
+  return <SearchProvider search={search}><WatchNavigationProvider><ShellInner moments={moments} catalogMode={catalogMode} /></WatchNavigationProvider></SearchProvider>
 }
 
-function ShellInner() {
+function ShellInner({ moments, catalogMode }: { moments: MomentsPayload; catalogMode: CatalogMode }) {
   const { today } = useNow()
-  const [tab, setTab] = useUrlState('tab', 'fixtures', encodeTab, parseTab, 'push')
+  const [, setTab] = useUrlState('tab', 'fixtures', encodeTab, parseTab, 'push')
+  const params = useSearchParams()
+  const tab = parseTab(params.get('tab') ?? '')
+  const liveSearch = params.size ? `?${params}` : ''
   const [lens, setLens] = useUrlState('lens', DEFAULT_LENS, encodeLens, parseLens, 'replace')
+  const navigate = useWatchNavigation()
   useCanonicalSearch(today)
   const { toggle } = useThemeController(lens)
+  function onSelect(next: Tab) {
+    const currentWatch = new URLSearchParams(window.location.search).get('watch')
+    const leavingWithWatch = tab === 'moments' && next !== 'moments' && currentWatch !== null
+    const enteringMoments = next === 'moments' && tab !== 'moments'
+    if (leavingWithWatch || enteringMoments) {
+      navigate(next, next === 'moments' ? currentWatch : null)
+      return
+    }
+    setTab(next)
+  }
 
   return (
     <div className="mx-auto max-w-[780px] px-5 pt-7 pb-16">
@@ -44,10 +69,10 @@ function ShellInner() {
           </>
         )}
       />
-      <TabNav tab={tab} onSelect={setTab}>
+      <TabNav tab={tab} onSelect={onSelect}>
         <LensSwitcher lens={lens} onSelect={setLens} />
       </TabNav>
-      {tab === 'moments' ? <ViewBoundary key={`${tab}:${lens}`}><MomentsEmpty /></ViewBoundary> : (
+      {tab === 'moments' ? <ViewBoundary key={tab}><MomentsRegion moments={moments} catalogMode={catalogMode} search={liveSearch} /></ViewBoundary> : (
         <div data-moments-background="route"><ViewBoundary key={`${tab}:${lens}`}>
           {lens === 'broadcast' && tab === 'fixtures' && <TickerStrip />}
           <StalenessBanner />

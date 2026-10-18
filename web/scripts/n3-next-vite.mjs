@@ -2,6 +2,7 @@
 import { createHash } from 'node:crypto'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import puppeteer from 'puppeteer-core'
 
 const chrome = process.env.CHROME_PATH ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
@@ -155,7 +156,19 @@ function same(left, right) {
   return JSON.stringify(left) === JSON.stringify(right)
 }
 
-function widthOnly(left, right) {
+/** Integer tenths. `Math.abs(61.4 - 61.5) > 0.1` is true in IEEE-754, so a
+ *  one-tenth gap was reported as a failure. A difference of 1 tenth is the
+ *  allowed boundary. Height and every other key stay exact. */
+function widthTenths(n) {
+  return Math.round(n * 10)
+}
+
+/**
+ * @param {unknown} left
+ * @param {unknown} right
+ * @returns {boolean}
+ */
+export function widthOnly(left, right) {
   if (!Array.isArray(left) || !Array.isArray(right) || left.length !== right.length) return false
   let differed = false
   for (let index = 0; index < left.length; index += 1) {
@@ -164,7 +177,7 @@ function widthOnly(left, right) {
     const keys = new Set([...Object.keys(a), ...Object.keys(b)])
     for (const key of keys) {
       if (a[key] === b[key]) continue
-      if (key !== 'w' || typeof a.w !== 'number' || typeof b.w !== 'number' || Math.abs(a.w - b.w) > 0.1) return false
+      if (key !== 'w' || typeof a.w !== 'number' || typeof b.w !== 'number' || Math.abs(widthTenths(a.w) - widthTenths(b.w)) > 1) return false
       differed = true
     }
   }
@@ -203,7 +216,7 @@ function countsOf(measured) {
 
 const rerunCells = []
 
-async function rerunSubpixel(id, search, theme, width, shotPrefix, moments, vite, next, diffs) {
+async function rerunSubpixel(browser, id, search, theme, width, shotPrefix, moments, vite, next, diffs) {
   if (!subpixelWidthOnly(vite, next, diffs)) return { vite, next, diffs, rerun: null }
   const first = diffs.slice()
   const vite2 = await measure(browser, viteOrigin, search, theme, width, `${shotPrefix}-rerun-vite-${id}.png`)
@@ -216,6 +229,7 @@ async function rerunSubpixel(id, search, theme, width, shotPrefix, moments, vite
   return { vite: again.length ? vite2 : vite, next: again.length ? next2 : next, diffs: again.length ? again : [], rerun: record }
 }
 
+async function main() {
 const browser = await puppeteer.launch({ executablePath: chrome, headless: true, args: ['--disable-gpu'] })
 const rows = []
 try {
@@ -230,7 +244,7 @@ try {
     let next = await measure(browser, nextOrigin, search, theme, width, `next-${id}.png`)
     let diffs = diffMeasured(vite, next, tab === 'moments')
     if (vite.logs.length || next.logs.length || vite.hydration || next.hydration) diffs.push('console')
-    const settled = await rerunSubpixel(id, search, theme, width, 'matrix', tab === 'moments', vite, next, diffs)
+    const settled = await rerunSubpixel(browser, id, search, theme, width, 'matrix', tab === 'moments', vite, next, diffs)
     vite = settled.vite
     next = settled.next
     diffs = settled.diffs
@@ -266,7 +280,7 @@ try {
     let next = await measure(browser, nextOrigin, search, theme, width, `next-extra-${id}.png`)
     let diffs = diffMeasured(vite, next, false)
     if (vite.logs.length || next.logs.length || vite.hydration || next.hydration) diffs.push('console')
-    const settled = await rerunSubpixel(id, search, theme, width, 'extra', false, vite, next, diffs)
+    const settled = await rerunSubpixel(browser, id, search, theme, width, 'extra', false, vite, next, diffs)
     vite = settled.vite
     next = settled.next
     diffs = settled.diffs
@@ -292,7 +306,7 @@ try {
 }
 
 const summary = {
-  compares: `Next production at ${nextOrigin} against Vite preview at ${viteOrigin}. 72 cells (3 tabs × 3 lenses × 2 themes × 360, 375, 390, 1000) plus month, one competition filter, a pinned date, an empty competition set, a TBC week, an abandoned week, every league table, and the Broadcast ticker. Date frozen at ${frozen}. Both theme keys stubbed. Viewport set before navigation. Ticker animation paused. PNGs captured at the cell route. Moments compares the shell only; its body stays the N2 empty state on Next. Compared: the inner boxes, up to 600 per region at 0.1 px, with color, background and font; the full route text; and the element counts. The two Next theme-label spans (dark:hidden and hidden dark:inline) are left out of the header count; Vite renders one label string. Also scrollWidth === innerWidth, computed tokens, the theme button's accessible name, history, and console or hydration warnings. A cell whose only difference is a sub-pixel box width is re-run and that re-run is recorded.`,
+  compares: `Next production at ${nextOrigin} against Vite preview at ${viteOrigin}. 72 cells (3 tabs × 3 lenses × 2 themes × 360, 375, 390, 1000) plus month, one competition filter, a pinned date, an empty competition set, a TBC week, an abandoned week, every league table, and the Broadcast ticker. Date frozen at ${frozen}. Both theme keys stubbed. Viewport set before navigation. Ticker animation paused. PNGs captured at the cell route. Moments compares the shell only. Its body is the Next gallery and is not compared to Vite. Compared: the inner boxes, up to 600 per region, with color, background and font; the full route text; and the element counts. Width may differ by one integer tenth of a pixel (Math.round(n * 10)); height and every other field stay exact. The two Next theme-label spans (dark:hidden and hidden dark:inline) are left out of the header count; Vite renders one label string. Also scrollWidth === innerWidth, computed tokens, the theme button's accessible name, history, and console or hydration warnings. A cell whose only difference is that width boundary is re-run and that re-run is recorded.`,
   frozenUtc: frozen,
   cells: rows.length,
   differing: rows.filter(row => row.diffs.length).map(row => ({ id: row.id, diffs: row.diffs, viteLogs: row.viteLogs, nextLogs: row.nextLogs })),
@@ -301,3 +315,7 @@ const summary = {
 }
 writeFileSync(path.join(outDir, 'summary.json'), JSON.stringify(summary, null, 2))
 console.log(JSON.stringify({ cells: rows.length, differing: summary.differing.map(row => row.id) }, null, 2))
+}
+
+const isCli = process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])
+if (isCli) await main()
