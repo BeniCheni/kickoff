@@ -419,6 +419,10 @@ export async function runCli(argv: readonly string[], env: NodeJS.ProcessEnv, io
           position: Number(required(flags, 'position')),
           editorialNote: flags.note,
         })
+        if (result.outcome === 'card-refused') {
+          io.stdout(`card-refused: missing ${result.missing.join('; missing ')}`)
+          return
+        }
         io.stdout(line(result.outcome, {
           live: 'live' in result ? result.live : undefined,
           retryable: 'retryable' in result ? result.retryable : undefined,

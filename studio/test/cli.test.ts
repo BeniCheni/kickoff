@@ -1,3 +1,4 @@
+import { PGlite } from '@electric-sql/pglite'
 import { mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
@@ -121,6 +122,22 @@ describe('command line', () => {
     expect(await runCli([
       'record-gate', '--answer', 'recorded', '--disclosure', 'pending', '--by', 'unspecified', '--source', 'A-06',
     ], env, gate)).toBe(0)
+    const refusedCard = capture()
+    expect(await runCli([
+      'publish', '--job', job, '--public-id', 'fenway', '--title', 'Fenway', '--position', '1',
+    ], env, refusedCard)).toBe(0)
+    expect(refusedCard.out[0]).toBe(
+      'card-refused: missing a positive width; missing a positive height; missing a positive duration; missing an approved subject',
+    )
+    const pg = new PGlite(path.join(data, 'pglite'))
+    await pg.exec(`
+      UPDATE studio.asset SET width = 768, height = 480, duration_s = 15.084 WHERE role = 'video';
+      INSERT INTO studio.subject (name) VALUES ('Fenway');
+      INSERT INTO studio.generation_subject (generation_id, subject_id)
+      SELECT generation_id, (SELECT id FROM studio.subject WHERE name = 'Fenway' LIMIT 1)
+      FROM studio.job;
+    `)
+    await pg.close()
     const published = capture()
     expect(await runCli([
       'publish', '--job', job, '--public-id', 'fenway', '--title', 'Fenway', '--position', '1',

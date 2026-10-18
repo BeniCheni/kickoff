@@ -146,12 +146,17 @@ describe('migrations on a fresh database', () => {
     ])
   })
 
-  it('applies 0002 once and a second migrate is a no-op', async () => {
+  it('applies 0000 through 0003 and a second migrate is a no-op', async () => {
     const { client, db } = await freshDatabase()
     const before = await rows<{ count: number }>(client, `
       SELECT count(*)::int AS count FROM drizzle.__drizzle_migrations
     `)
-    expect(before[0]?.count).toBe(3)
+    expect(before[0]?.count).toBe(4)
+    const gate = readFileSync(path.join(migrationsDir, '0003_card_gate.sql'), 'utf8')
+    expect(gate).toContain('videos_id_token')
+    expect(gate).not.toMatch(/create\s+(or\s+replace\s+)?view/i)
+    expect(gate).not.toMatch(/drop\s+view/i)
+    expect(gate).not.toMatch(/alter\s+view/i)
     await migrate(db, { migrationsFolder: migrationsDir })
     const after = await rows<{ count: number }>(client, `
       SELECT count(*)::int AS count FROM drizzle.__drizzle_migrations

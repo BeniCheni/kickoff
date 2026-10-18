@@ -16,6 +16,7 @@ import {
   generationParent,
   generationSubject,
   job,
+  subject,
   ledger,
   model,
   policyAnswer,
@@ -24,6 +25,7 @@ import {
   videos,
   studioTables,
 } from './db/schema.ts'
+import { SUBJECT_LABELS } from '@kickoff/catalog'
 import { hasVisibleAnswer } from './answer.ts'
 import { decideBudget, PER_JOB_CAP_USD, PREPAID_CEILING_USD, REQUEST_START_TIMEOUT_SECONDS, SESSION_CAP_USD, TIMEOUT_CEILING_LABEL, TIMEOUT_CEILING_MS } from './caps.ts'
 import { falHeaders } from './fal/headers.ts'
@@ -39,6 +41,28 @@ import { siteCopyStatus, type SiteCopyOutcome, type StoragePort, type StoredObje
 import type { PgliteDatabase } from 'drizzle-orm/pglite'
 
 export type StudioDatabase = PgliteDatabase<typeof studioTables>
+
+const SAFE_PUBLIC_ID = /^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/
+const APPROVED_SUBJECTS = new Set<string>(SUBJECT_LABELS)
+
+export function cardGaps(input: {
+  publicId: string
+  width: number | null
+  height: number | null
+  duration: string | number | null
+  approvedSubjects: number
+  finishedAt: Date | null
+}): string[] {
+  const missing: string[] = []
+  if (input.width === null || input.width <= 0) missing.push('a positive width')
+  if (input.height === null || input.height <= 0) missing.push('a positive height')
+  const duration = input.duration === null ? Number.NaN : Number(input.duration)
+  if (!Number.isFinite(duration) || duration <= 0) missing.push('a positive duration')
+  if (input.approvedSubjects < 1) missing.push('an approved subject')
+  if (!SAFE_PUBLIC_ID.test(input.publicId)) missing.push('a safe public id')
+  if (input.finishedAt === null) missing.push('a finish time')
+  return missing
+}
 
 const IN_FLIGHT = new Set<JobState>(['submitted', 'queued', 'in-progress', 'completed'])
 const CANCELLABLE = new Set<JobState>(['submitted', 'queued', 'in-progress'])
@@ -184,6 +208,16 @@ export function createStudio(options: EngineOptions) {
     return created
   }
 
+  async function approvedSubjectCount(generationId: string): Promise<number> {
+    const links = await db.select().from(generationSubject).where(eq(generationSubject.generationId, generationId))
+    let count = 0
+    for (const link of links) {
+      const [row] = await db.select().from(subject).where(eq(subject.id, link.subjectId))
+      if (row && APPROVED_SUBJECTS.has(row.name)) count += 1
+    }
+    return count
+  }
+
   async function recordEvent(jobId: string, type: string, detail?: unknown, writer: StudioDatabase = db) {
     await writer.insert(event).values({ jobId, at: clock(), type, detail: detail ?? null })
   }
@@ -229,6 +263,9 @@ export function createStudio(options: EngineOptions) {
     const message = error instanceof Error
       ? `${error.message} ${error.cause instanceof Error ? error.cause.message : ''}`
       : String(error)
+    if (message.includes('videos_id_token')) {
+      return { outcome: 'card-refused' as const, missing: ['a safe public id'], live: false as const }
+    }
     if (message.includes('Article 50')) return { outcome: 'gate-closed' as const, live: false as const }
     if (message.includes('videos_live_position')) {
       return { outcome: 'record-failed' as const, live: false as const, listedAgain: true as const, reason: 'position-taken' as const }
@@ -970,6 +1007,18 @@ export function createStudio(options: EngineOptions) {
       if (!k0?.localPath) return { outcome: 'not-ready' as const }
       const [pinned] = await db.select().from(model).where(eq(model.id, gen.modelId))
       if (!pinned) return { outcome: 'not-ready' as const }
+
+      const missing = cardGaps({
+        publicId: input.publicId,
+        width: videoAsset.width,
+        height: videoAsset.height,
+        duration: videoAsset.durationS,
+        approvedSubjects: await approvedSubjectCount(gen.id),
+        finishedAt: current.finishedAt,
+      })
+      if (missing.length > 0) {
+        return { outcome: 'card-refused' as const, missing, live: false as const }
+      }
 
       let [thumbnail] = await db.select().from(asset).where(and(
         eq(asset.sourceGenerationId, gen.id),
