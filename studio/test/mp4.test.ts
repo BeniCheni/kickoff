@@ -37,8 +37,8 @@ describe('mp4 facts', () => {
   })
 
   it('refuses a non-mp4, a file with no video track, and a zero duration', () => {
-    expect(readClipFacts(new Uint8Array([0x1a, 0x45, 0xdf, 0xa3, 0, 0, 0, 0]))).toEqual({ ok: false, reason: 'not-mp4' })
-    expect(readClipFacts(syntheticMp4({ brand: 'qt  ', compatible: ['qt  '] }))).toEqual({ ok: false, reason: 'not-mp4' })
+    expect(readClipFacts(new Uint8Array([0x1a, 0x45, 0xdf, 0xa3, 0, 0, 0, 0]))).toEqual({ ok: false, reason: 'truncated' })
+    expect(readClipFacts(syntheticMp4({ brand: 'qt  ', compatible: ['qt  '] }))).toEqual({ ok: false, reason: 'not-mp4', brand: 'qt' })
     expect(readClipFacts(syntheticMp4({ video: false, audio: true }))).toEqual({ ok: false, reason: 'no-video' })
     expect(readClipFacts(syntheticMp4({ durationS: 0 }))).toEqual({ ok: false, reason: 'zero-duration' })
   })
@@ -92,5 +92,19 @@ describe('mp4 facts', () => {
     expect(created(MAC_EPOCH_SECONDS)?.toString() ?? null).toBeNull()
     expect(created(at('2023-12-31T00:00:00.000Z'))).toBeNull()
     expect(created(at('2024-01-01T00:00:00.000Z'))?.toISOString()).toBe('2024-01-01T00:00:00.000Z')
+  })
+
+  it('refuses a top-level box that runs past the end of the file', () => {
+    const fast = syntheticMp4({ chunks: true })
+    const mdatAt = Buffer.from(fast).lastIndexOf('mdat')
+    expect(mdatAt).toBeGreaterThan(8)
+    expect(readClipFacts(fast.slice(0, mdatAt + 8))).toEqual({ ok: false, reason: 'truncated' })
+    const late = syntheticMp4({ chunks: true, mdatFirst: true })
+    const moovAt = Buffer.from(late).lastIndexOf('moov')
+    expect(moovAt).toBeGreaterThan(8)
+    expect(Buffer.from(late).indexOf('mdat')).toBeLessThan(moovAt)
+    expect(readClipFacts(late.slice(0, moovAt + 8))).toEqual({ ok: false, reason: 'truncated' })
+    expect(isFastStart(fast)).toBe(true)
+    expect(isFastStart(late)).toBe(false)
   })
 })

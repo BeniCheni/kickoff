@@ -426,8 +426,12 @@ export async function runCli(
           }))
           return
         }
+        if (result.outcome === 'clip-refused' && result.reason === 'truncated') {
+          io.stdout(placed('refused: truncated'))
+          return
+        }
         if (result.outcome === 'clip-refused' && result.reason === 'not-mp4') {
-          io.stdout(placed('refused: not an mp4'))
+          io.stdout(placed(result.brand ? `refused: not an mp4; brand=${result.brand}` : 'refused: not an mp4'))
           return
         }
         if (result.outcome === 'clip-refused' && result.reason === 'no-video') {

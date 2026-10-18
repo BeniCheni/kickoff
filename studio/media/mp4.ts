@@ -32,11 +32,11 @@ export type ClipFacts = {
   createdAt: Date | null
 }
 
-export type ClipRefusal = 'not-mp4' | 'no-video' | 'zero-duration'
+export type ClipRefusal = 'not-mp4' | 'no-video' | 'zero-duration' | 'truncated'
 
 export type ClipRead =
   | { ok: true; facts: ClipFacts }
-  | { ok: false; reason: ClipRefusal }
+  | { ok: false; reason: ClipRefusal; brand?: string }
 
 type Box = { type: string; start: number; payloadStart: number; payloadLength: number }
 
@@ -56,7 +56,7 @@ function u64(view: DataView, offset: number): number {
   return view.getUint32(offset) * 2 ** 32 + view.getUint32(offset + 4)
 }
 
-function boxes(bytes: Uint8Array, start: number, length: number): Box[] {
+function boxWalk(bytes: Uint8Array, start: number, length: number): { boxes: Box[]; consumed: boolean } {
   const view = viewOf(bytes)
   const end = start + length
   const found: Box[] = []
@@ -66,17 +66,21 @@ function boxes(bytes: Uint8Array, start: number, length: number): Box[] {
     const type = fourcc(bytes, offset + 4)
     let header = 8
     if (size === 1) {
-      if (offset + 16 > end) break
+      if (offset + 16 > end) return { boxes: found, consumed: false }
       size = u64(view, offset + 8)
       header = 16
     } else if (size === 0) {
       size = end - offset
     }
-    if (size < header || offset + size > end) break
+    if (size < header || offset + size > end) return { boxes: found, consumed: false }
     found.push({ type, start: offset, payloadStart: offset + header, payloadLength: size - header })
     offset += size
   }
-  return found
+  return { boxes: found, consumed: offset === end }
+}
+
+function boxes(bytes: Uint8Array, start: number, length: number): Box[] {
+  return boxWalk(bytes, start, length).boxes
 }
 
 function child(bytes: Uint8Array, box: Box, type: string): Box | undefined {
@@ -186,12 +190,14 @@ function brandsOf(bytes: Uint8Array, ftyp: Box): { major: string; compatible: st
 }
 
 export function readClipFacts(bytes: Uint8Array): ClipRead {
-  const top = boxes(bytes, 0, bytes.byteLength)
+  const walked = boxWalk(bytes, 0, bytes.byteLength)
+  if (!walked.consumed) return { ok: false, reason: 'truncated' }
+  const top = walked.boxes
   const ftyp = top[0]
   if (!ftyp || ftyp.type !== 'ftyp') return { ok: false, reason: 'not-mp4' }
   const brands = brandsOf(bytes, ftyp)
   const accepted = isMp4Brand(brands.major) || brands.compatible.some((brand) => isMp4Brand(brand))
-  if (!accepted) return { ok: false, reason: 'not-mp4' }
+  if (!accepted) return { ok: false, reason: 'not-mp4', brand: brands.major }
   const moov = top.find((box) => box.type === 'moov')
   if (!moov) return { ok: false, reason: 'no-video' }
   const mvhd = child(bytes, moov, 'mvhd')

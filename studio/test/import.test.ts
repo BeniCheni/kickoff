@@ -466,4 +466,50 @@ describe('import', () => {
     expect(readme).toContain('reason=public-id-taken')
     expect(readme).toContain('npm run cli -- list --live')
   })
+
+  it('names a truncated clip and a brand outside the set', async () => {
+    const data = mkdtempSync(path.join(tmpdir(), 'kickoff-import-cut-'))
+    const media = mkdtempSync(path.join(tmpdir(), 'kickoff-import-cut-media-'))
+    const env = {
+      STUDIO_DATA_DIR: data,
+      STUDIO_MEDIA_DIR: media,
+      STUDIO_NOW: '2026-10-18T16:00:00.000Z',
+    }
+    const still = path.join(media, 'k0.jpg')
+    const prompt = path.join(media, 'prompt.txt')
+    writeFileSync(still, minimalJpeg)
+    writeFileSync(prompt, 'A cat scores\n')
+    const say = () => {
+      const out: string[] = []
+      return { out, stdout: (line: string) => out.push(line), stderr: () => undefined }
+    }
+    const fast = syntheticMp4({ chunks: true, creationTime: creationTime('2026-10-18T15:00:00.000Z') })
+    const fastPath = path.join(media, 'fast.mp4')
+    writeFileSync(fastPath, fast.slice(0, Buffer.from(fast).lastIndexOf('mdat') + 8))
+    const cut = say()
+    expect(await runCli([
+      'import', '--file', fastPath, '--keyframe', still, '--source', 'grok-imagine',
+      '--prompt-file', prompt, '--subjects', 'Fenway', '--title', 'Cut',
+    ], env, cut)).toBe(0)
+    expect(cut.out[0]).toBe('refused: truncated database=pglite')
+
+    const late = syntheticMp4({ chunks: true, mdatFirst: true, creationTime: creationTime('2026-10-18T15:00:00.000Z') })
+    const latePath = path.join(media, 'late.mp4')
+    writeFileSync(latePath, late.slice(0, Buffer.from(late).lastIndexOf('moov') + 8))
+    const cutMoov = say()
+    expect(await runCli([
+      'import', '--file', latePath, '--keyframe', still, '--source', 'grok-imagine',
+      '--prompt-file', prompt, '--subjects', 'Fenway', '--title', 'Late',
+    ], env, cutMoov)).toBe(0)
+    expect(cutMoov.out[0]).toBe('refused: truncated database=pglite')
+
+    const qtPath = path.join(media, 'qt.mp4')
+    writeFileSync(qtPath, syntheticMp4({ brand: 'qt  ', compatible: ['qt  '] }))
+    const brand = say()
+    expect(await runCli([
+      'import', '--file', qtPath, '--keyframe', still, '--source', 'grok-imagine',
+      '--prompt-file', prompt, '--subjects', 'Fenway', '--title', 'QuickTime',
+    ], env, brand)).toBe(0)
+    expect(brand.out[0]).toBe('refused: not an mp4; brand=qt database=pglite')
+  })
 })

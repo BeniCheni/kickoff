@@ -1027,7 +1027,7 @@ export function createStudio(options: EngineOptions) {
       }
       const stripped = stripClip(input.video)
       const read = readClipFacts(stripped.bytes)
-      if (!read.ok) return { outcome: 'clip-refused' as const, reason: read.reason }
+      if (!read.ok) return { outcome: 'clip-refused' as const, reason: read.reason, brand: read.brand }
       let still: { bytes: Uint8Array; sha256: string }
       try {
         still = preparePhotograph(input.keyframe)
