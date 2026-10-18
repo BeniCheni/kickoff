@@ -113,12 +113,12 @@ npm run cli -- publish --live --job <job-id> --public-id fenway-wednesday --titl
 
 In the Cloudflare dashboard, the bucket named by `R2_BUCKET` has two keys: `moments/fenway-wednesday/video-<first 8 of the sha256>.mp4` and `moments/fenway-wednesday/thumbnail-<first 8 of the stripped keyframe>.jpg`. The video's eight characters match the import line. The thumbnail's eight characters are the stripped JPEG, not the file before the strip. After the custom domain is attached, the public address is `STUDIO_STORAGE_ORIGIN/moments/fenway-wednesday/video-<those 8>.mp4`.
 
-In the Supabase SQL editor, the detail view returns the row. `endpoint` is `xai/grok-imagine (grok.com, made by hand)`. `prompt_expansion` and `seed` are null. `video_bucket` is `moments`. The object paths match the keys above without the leading `moments/`.
+In the Supabase SQL editor, the detail view returns the row. The public id's column is `id`. `endpoint` is `xai/grok-imagine (grok.com, made by hand)`. `prompt_expansion` and `seed` are null. `video_bucket` is `moments`. The object paths match the keys above without the leading `moments/`.
 
 ```sql
-select public_id, endpoint, pinned_on, prompt, prompt_expansion, seed, subjects, video_bucket, video_object_path, thumbnail_object_path
+select id, endpoint, pinned_on, prompt, prompt_expansion, seed, subjects, video_bucket, video_object_path, thumbnail_object_path
 from catalog.video
-where public_id = 'fenway-wednesday';
+where id = 'fenway-wednesday';
 ```
 
 To take the row out of the catalog and leave the files in R2, withdraw it. This prints `withdrawn removal=merged filesReadable=false database=postgres storage=stub`. The files are still in the bucket. `filesReadable=false` here means a delete was not asked for. `removal=merged` is the stub for the site's copy. No pull request is opened. A second unpublish prints `already-withdrawn database=postgres storage=stub` and does not delete.

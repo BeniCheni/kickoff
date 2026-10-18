@@ -245,6 +245,22 @@ describe('import', () => {
     expect(parsed.generated_at).toBe('2026-10-18T15:00:00.000Z')
     expect(JSON.stringify(parsed)).not.toContain(imported.jobId)
     expect(await opened.db.select().from(ledger)).toHaveLength(0)
+
+    const readme = readFileSync(path.join(repoRoot, 'studio/README.md'), 'utf8')
+    const sql = /```sql\n([\s\S]*?)```/.exec(readme)?.[1]?.trim()
+    expect(sql).toBeTruthy()
+    expect(sql).not.toContain('public_id')
+    expect(sql).toContain('where id =')
+    expect(readme).toContain("The public id's column is `id`.")
+    const queried = await opened.client.query<Record<string, unknown>>(
+      (sql ?? '').replaceAll("'fenway-wednesday'", "'both-cats'"),
+    )
+    expect(queried.rows).toHaveLength(1)
+    expect(queried.rows[0]?.id).toBe('both-cats')
+    expect(queried.rows[0]?.endpoint).toBe('xai/grok-imagine (grok.com, made by hand)')
+    expect(queried.rows[0]?.prompt_expansion).toBeNull()
+    expect(queried.rows[0]?.seed).toBeNull()
+    expect(queried.rows[0]?.video_bucket).toBe('moments')
   })
 
   it('imports from the command line and refuses the same file', async () => {
