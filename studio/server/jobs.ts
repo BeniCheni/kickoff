@@ -89,7 +89,9 @@ export function jobIdFrom(pathname: string, action: 'download' | 'regenerate'): 
 }
 
 export async function pollInFlight(opened: OpenedAdmin, ids: readonly string[]): Promise<JobView[]> {
-  if (opened.database === 'unavailable') return readJobs(opened.db, opened.studio, opened.clock())
+  if (opened.database === 'unavailable' || process.env.STUDIO_ADMIN_FREEZE === '1') {
+    return readJobs(opened.db, opened.studio, opened.clock())
+  }
   const current = await readJobs(opened.db, opened.studio, opened.clock())
   const wanted = new Set(ids)
   for (const row of current) {

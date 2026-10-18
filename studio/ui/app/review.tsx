@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
+import { regenerateLabel } from '../../shared/jobs.ts'
 import { CHECKLIST, CHECKLIST_RULE, PLAYER_HELP, keepReason } from '../../shared/review.ts'
-import { getJobs, getReview, keepReview, discardReview, type ReviewView } from './api.ts'
+import { discardReview, getJobs, getReview, keepReview, regenerateReview, type ReviewView } from './api.ts'
 import type { JobView } from '../../shared/jobs.ts'
 
 const ANSWERS = ['clear', 'present', 'unsure'] as const
@@ -52,7 +53,7 @@ export function ReviewPage() {
 
   useEffect(() => {
     void getJobs().then((rows) => {
-      const ready = rows.filter((row) => row.status === 'downloaded' || row.status === 'kept')
+      const ready = rows.filter((row) => row.status === 'downloaded' || row.status === 'kept' || row.status === 'discarded')
       setJobs(ready)
       const first = ready[0]
       if (first) setSelected(first.id)
@@ -76,6 +77,12 @@ export function ReviewPage() {
   return (
     <div className="studio-grid">
       <div>
+        <label htmlFor="r-clip">Clip</label>
+        <select id="r-clip" aria-label="Clip" value={selected} onChange={(event) => setSelected(event.target.value)}>
+          {jobs.map((job) => (
+            <option key={job.id} value={job.id}>{job.status} · {job.id}</option>
+          ))}
+        </select>
         <h1>{review.jobId}</h1>
         {review.assetId ? (
           <video controls playsInline preload="none" src={`/media/assets/${review.assetId}`} aria-label="Generated clip" />
@@ -95,6 +102,11 @@ export function ReviewPage() {
         <section className="studio-section">
           <span className="label-caps">Lineage</span>
           <p className="studio-help">{(review.parents ?? []).length === 0 ? 'First generation; no parent.' : `Regeneration of ${(review.parents ?? []).join(', ')}.`}</p>
+          {review.regenerateEstimateUsd ? (
+            <button type="button" className="studio-button" onClick={() => void regenerateReview(selected, review.regenerateEstimateUsd ?? '').then(() => getJobs())}>
+              {regenerateLabel(review.regenerateEstimateUsd)}
+            </button>
+          ) : null}
         </section>
       </div>
       <div>

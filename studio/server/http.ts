@@ -12,7 +12,7 @@ import { downloadJob, jobIdFrom, pollInFlight, readJobs, regenerateJob } from '.
 import { serveFile as serveRecorded } from './media.ts'
 import { findPhoto, photoPath, storePhoto } from './photos.ts'
 import { publishJob, publishJobId, readPublish, recordPublishGate, retryDeleteJob, retryRemovalJob, unpublishJob } from './publish.ts'
-import { assetIdFrom, discardJob, keepJob, readReview, recordedAssetFile, reviewJobId } from './review.ts'
+import { assetIdFrom, discardJob, keepJob, readReview, recordedAssetFile, regenerateReview, reviewJobId } from './review.ts'
 import { openAdmin, type OpenedAdmin } from './open.ts'
 import { publicError } from './public-error.ts'
 import { readShell } from './shell.ts'
@@ -209,6 +209,11 @@ async function handle(
   const reviewDiscard = method === 'POST' ? reviewJobId(url.pathname, 'discard') : null
   if (reviewDiscard) {
     sendJson(response, 200, await discardJob(opened, reviewDiscard), cookieHeader)
+    return
+  }
+  const reviewRegenerate = method === 'POST' ? reviewJobId(url.pathname, 'regenerate') : null
+  if (reviewRegenerate) {
+    sendJson(response, 200, await regenerateReview(opened, reviewRegenerate, await readJson(request)), cookieHeader)
     return
   }
   const assetMedia = method === 'GET' || method === 'HEAD' ? assetIdFrom(url.pathname) : null

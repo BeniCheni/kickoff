@@ -88,11 +88,14 @@ export function jobNote(status: AdminJobState, substate: JobView['substate']): s
   return null
 }
 
-export function jobAction(status: AdminJobState, substate: JobView['substate']): 'retry-download' | 'regenerate' | null {
+export function jobAction(status: AdminJobState, substate: JobView['substate']): 'download' | 'retry-download' | 'regenerate' | null {
   if (status === 'completed' && substate === 'download-failed') return 'retry-download'
   if (status === 'completed' && substate === 'result-expired') return 'regenerate'
+  if (status === 'completed') return 'download'
   return null
 }
+
+export const DOWNLOAD_LABEL = 'Download'
 
 export const RETRY_DOWNLOAD_LABEL = 'Retry download · no new charge'
 

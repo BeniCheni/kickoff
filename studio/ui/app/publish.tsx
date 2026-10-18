@@ -128,6 +128,13 @@ export function PublishPage() {
   const [gateBy, setGateBy] = useState('')
   const [gateSource, setGateSource] = useState('')
 
+  function reloadClip(id: string, nextPublicId: string) {
+    void getJobs().then((rows) => {
+      setJobs(rows.filter((row) => row.status === 'kept' || row.status === 'published' || row.status === 'withdrawn'))
+    }).catch(() => undefined)
+    void getPublish(id, nextPublicId).then(setView)
+  }
+
   useEffect(() => {
     void getJobs().then((rows) => {
       const ready = rows.filter((row) => row.status === 'kept' || row.status === 'published' || row.status === 'withdrawn')
@@ -145,6 +152,13 @@ export function PublishPage() {
   if (!jobs) return <p className="studio-help">Reading publication.</p>
   if (!selected || !view || view.outcome !== 'publish') return <p className="studio-help">No kept clip is recorded.</p>
   return (
+    <>
+    <label htmlFor="p-clip">Clip</label>
+    <select id="p-clip" aria-label="Clip" value={selected} onChange={(event) => setSelected(event.target.value)}>
+      {jobs.map((job) => (
+        <option key={job.id} value={job.id}>{job.status} · {job.id}</option>
+      ))}
+    </select>
     <PublishCard
       view={view}
       publicId={publicId}
@@ -172,10 +186,11 @@ export function PublishPage() {
         title,
         position: Number(position),
         confirm: true,
-      }).then(() => getPublish(selected, publicId).then(setView))}
-      onUnpublish={() => void unpublishClip(selected, false).then(() => getPublish(selected, publicId).then(setView))}
+      }).then(() => reloadClip(selected, publicId))}
+      onUnpublish={() => void unpublishClip(selected, false).then(() => reloadClip(selected, publicId))}
       onRetryDelete={() => void retryDelete(selected)}
       onRetryRemoval={() => void retryRemoval(selected)}
     />
+    </>
   )
 }

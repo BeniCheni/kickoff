@@ -107,6 +107,7 @@ export type ReviewView = {
   } | null
   parents?: string[]
   answers?: { line: string; answer: string }[]
+  regenerateEstimateUsd?: string | null
   attestation?: { by: string | null; at: string } | null
 }
 
@@ -122,6 +123,10 @@ export async function keepReview(id: string, answers: { line: string; answer: st
 
 export async function discardReview(id: string): Promise<void> {
   await postJson(`/api/review/${id}/discard`, {})
+}
+
+export async function regenerateReview(id: string, confirmEstimate: string): Promise<void> {
+  await postJson(`/api/review/${id}/regenerate`, { confirmEstimate })
 }
 
 export type PublishView = {

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { displayUsd } from '../../shared/display.ts'
 import {
   formatElapsed,
+  DOWNLOAD_LABEL,
   jobAction,
   jobLabel,
   jobNote,
@@ -72,6 +73,9 @@ export function JobsTable({
               <td>
                 <span className="spill" data-voice={jobVoice(row.status)}>{jobLabel(row.status, row.substate)}</span>
                 {note ? <small>{note}</small> : null}
+                {action === 'download' ? (
+                  <button type="button" className="studio-button" onClick={() => onDownload(row.id)}>{DOWNLOAD_LABEL}</button>
+                ) : null}
                 {action === 'retry-download' ? (
                   <button type="button" className="studio-button" onClick={() => onDownload(row.id)}>{RETRY_DOWNLOAD_LABEL}</button>
                 ) : null}

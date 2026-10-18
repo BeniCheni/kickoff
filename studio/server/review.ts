@@ -16,7 +16,7 @@ import type { OpenedAdmin } from './open.ts'
 
 const UUID = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
-export function reviewJobId(pathname: string, action: '' | 'keep' | 'discard'): string | null {
+export function reviewJobId(pathname: string, action: '' | 'keep' | 'discard' | 'regenerate'): string | null {
   const suffix = action ? `/${action}` : ''
   const match = new RegExp(`^/api/review/(${UUID})${suffix}$`, 'i').exec(pathname)
   return match?.[1] ?? null
@@ -82,6 +82,7 @@ export async function readReview(opened: OpenedAdmin, jobId: string) {
     } : null,
     parents: parents.map((parent) => parent.parentId),
     answers: answers.map((answer) => ({ line: answer.line, answer: answer.answer })),
+    regenerateEstimateUsd: await reviewEstimate(opened, pinned?.endpoint, gen?.params, current.status),
     attestation: latest?.attestedAt ? {
       by: latest.attestedBy,
       at: latest.attestedAt.toISOString(),
@@ -106,4 +107,36 @@ export async function keepJob(opened: OpenedAdmin, jobId: string, body: unknown)
 
 export async function discardJob(opened: OpenedAdmin, jobId: string) {
   return opened.studio.discard(jobId)
+}
+
+async function reviewEstimate(opened: OpenedAdmin, endpoint: string | undefined, params: unknown, status: string): Promise<string | null> {
+  if (!endpoint || (status !== 'downloaded' && status !== 'kept' && status !== 'discarded')) return null
+  const record = params && typeof params === 'object' ? params as Record<string, unknown> : {}
+  const estimate = await opened.studio.estimate({ endpoint, params: record })
+  return estimate.outcome === 'estimate' ? estimate.usd : null
+}
+
+export async function regenerateReview(opened: OpenedAdmin, jobId: string, body: unknown) {
+  const confirm = body && typeof body === 'object' ? (body as { confirmEstimate?: unknown }).confirmEstimate : undefined
+  if (typeof confirm !== 'string') return { outcome: 'refused' as const }
+  const [current] = await opened.db.select().from(job).where(eq(job.id, jobId))
+  if (!current || (current.status !== 'downloaded' && current.status !== 'kept' && current.status !== 'discarded')) {
+    return { outcome: 'not-ready' as const }
+  }
+  const [gen] = await opened.db.select().from(generation).where(eq(generation.id, current.generationId))
+  const [pinned] = gen ? await opened.db.select().from(model).where(eq(model.id, gen.modelId)) : []
+  if (!gen || !pinned) return { outcome: 'not-ready' as const }
+  const params = gen.params && typeof gen.params === 'object' ? gen.params as Record<string, unknown> : {}
+  const estimate = await opened.studio.estimate({ endpoint: pinned.endpoint, params })
+  if (estimate.outcome !== 'estimate') return estimate
+  if (confirm !== estimate.usd) return { outcome: 'estimate-changed' as const, usd: estimate.usd }
+  const result = await opened.studio.submit({
+    endpoint: pinned.endpoint,
+    params,
+    prompt: gen.prompt,
+    seed: gen.seed,
+    parentGenerationId: gen.id,
+  })
+  if (result.outcome === 'out-of-credit') opened.outOfCredit.current = true
+  return result
 }
