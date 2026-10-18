@@ -12,20 +12,29 @@
     "test": "vitest run",
     "test:contract": "vitest run test/schema.test.ts test/catalog-contract.test.ts test/catalog-publish.test.ts test/isolation.test.ts test/schema-boundary.test.ts test/secrets.test.ts",
     "migrate": "tsx db/migrate.ts",
-    "cli": "tsx cli.ts"
+    "cli": "tsx cli.ts",
+    "studio": "vite build --config ui/vite.config.ts && tsx server/main.ts"
   },
   "dependencies": {
     "@kickoff/catalog": "file:../packages/kickoff-catalog",
     "drizzle-orm": "0.45.4",
     "postgres": "3.4.9",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
     "zod": "4.4.3"
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.5.9",
+    "@tailwindcss/vite": "4.3.3",
     "@types/node": "26.2.0",
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2",
+    "@vitejs/plugin-react": "6.1.1",
     "drizzle-kit": "0.31.11",
+    "tailwindcss": "4.3.3",
     "tsx": "4.23.12",
     "typescript": "7.0.2",
+    "vite": "8.2.2",
     "vitest": "4.1.11"
   }
 }

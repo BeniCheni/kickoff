@@ -1,0 +1,200 @@
+import { createReadStream, existsSync, statSync } from 'node:fs'
+import { randomBytes } from 'node:crypto'
+import type { IncomingMessage, ServerResponse } from 'node:http'
+import { createServer, type Server } from 'node:http'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { LOOPBACK_HOST, assertLoopbackBind, isLoopbackHost } from './bind.ts'
+import { SESSION_COOKIE, cookieValue, guardRequest, oneTimeUrl, sessionCookie } from './guard.ts'
+import { openAdmin, type OpenedAdmin } from './open.ts'
+import { publicError } from './public-error.ts'
+import { readShell } from './shell.ts'
+
+const here = path.dirname(fileURLToPath(import.meta.url))
+const uiDist = path.resolve(here, '../ui/dist')
+
+const TYPES: Record<string, string> = {
+  '.html': 'text/html; charset=utf-8',
+  '.js': 'text/javascript; charset=utf-8',
+  '.css': 'text/css; charset=utf-8',
+  '.svg': 'image/svg+xml',
+  '.png': 'image/png',
+  '.woff2': 'font/woff2',
+  '.map': 'application/json; charset=utf-8',
+}
+
+export type AdminServer = {
+  port: number
+  token: string
+  origin: string
+  url: string
+  transport: 'stub' | 'live'
+  close: () => Promise<void>
+}
+
+export type StartAdminOptions = {
+  env?: NodeJS.ProcessEnv
+  live?: boolean
+  host?: string
+  port?: number
+  token?: string
+  /** Test seam. A thrown message on GET /api/boom, so error paths can be proved. */
+  boom?: string
+}
+
+function sendJson(response: ServerResponse, status: number, body: unknown, extra: Record<string, string> = {}): void {
+  const payload = JSON.stringify(body)
+  response.writeHead(status, {
+    'content-type': 'application/json; charset=utf-8',
+    'content-length': Buffer.byteLength(payload),
+    'cache-control': 'no-store',
+    'x-content-type-options': 'nosniff',
+    ...extra,
+  })
+  response.end(payload)
+}
+
+function refuse(response: ServerResponse): void {
+  sendJson(response, 403, { error: 'refused' })
+}
+
+function fileInside(root: string, urlPath: string): string | null {
+  let decoded = urlPath
+  try {
+    decoded = decodeURIComponent(urlPath)
+  } catch {
+    return null
+  }
+  if (decoded.includes('\0')) return null
+  const relative = decoded.replace(/^\/+/, '')
+  if (!relative || relative.endsWith('/')) return path.join(root, 'index.html')
+  const full = path.resolve(root, relative)
+  const fromRoot = path.relative(root, full)
+  if (fromRoot.startsWith('..') || path.isAbsolute(fromRoot)) return null
+  return full
+}
+
+function serveFile(response: ServerResponse, file: string): void {
+  if (!existsSync(file) || !statSync(file).isFile()) {
+    sendJson(response, 404, { error: 'not-found' })
+    return
+  }
+  const type = TYPES[path.extname(file)] ?? 'application/octet-stream'
+  response.writeHead(200, {
+    'content-type': type,
+    'cache-control': 'no-store',
+    'x-content-type-options': 'nosniff',
+  })
+  createReadStream(file).pipe(response)
+}
+
+async function handle(
+  request: IncomingMessage,
+  response: ServerResponse,
+  opened: OpenedAdmin,
+  options: { token: string; origin: string; port: number; boom?: string },
+): Promise<void> {
+  const url = new URL(request.url ?? '/', options.origin)
+  const method = request.method ?? 'GET'
+  const decision = guardRequest({
+    method,
+    host: request.headers.host,
+    origin: request.headers.origin,
+    cookieToken: cookieValue(request.headers.cookie, SESSION_COOKIE),
+    ticket: url.searchParams.get('ticket') ?? undefined,
+    token: options.token,
+    expectedOrigin: options.origin,
+    port: options.port,
+    loopbackHost: isLoopbackHost(request.headers.host, options.port),
+  })
+  if (!decision.ok) {
+    refuse(response)
+    return
+  }
+  const cookieHeader: Record<string, string> = decision.setCookie
+    ? { 'set-cookie': sessionCookie(options.token) }
+    : {}
+  if (decision.setCookie && method === 'GET' && (url.pathname === '/' || url.pathname === '/index.html')) {
+    response.writeHead(302, { location: '/', 'cache-control': 'no-store', ...cookieHeader })
+    response.end()
+    return
+  }
+  if (url.pathname === '/api/shell' && method === 'GET') {
+    sendJson(response, 200, await readShell(opened, options.port), cookieHeader)
+    return
+  }
+  if (url.pathname === '/api/shell' && method === 'POST') {
+    sendJson(response, 405, { error: 'refused' }, cookieHeader)
+    return
+  }
+  if (url.pathname === '/api/boom' && method === 'GET' && options.boom !== undefined) {
+    throw new Error(options.boom)
+  }
+  if (url.pathname.startsWith('/api/')) {
+    sendJson(response, 404, { error: 'not-found' }, cookieHeader)
+    return
+  }
+  if (method !== 'GET' && method !== 'HEAD') {
+    sendJson(response, 405, { error: 'refused' }, cookieHeader)
+    return
+  }
+  const file = fileInside(uiDist, url.pathname)
+  if (!file) {
+    refuse(response)
+    return
+  }
+  if (Object.keys(cookieHeader).length > 0) {
+    response.setHeader('set-cookie', cookieHeader['set-cookie'] ?? '')
+  }
+  if (method === 'HEAD') {
+    response.writeHead(existsSync(file) ? 200 : 404, { 'cache-control': 'no-store' })
+    response.end()
+    return
+  }
+  serveFile(response, file)
+}
+
+export async function startAdmin(options: StartAdminOptions = {}): Promise<AdminServer> {
+  const host = options.host ?? LOOPBACK_HOST
+  assertLoopbackBind(host)
+  const live = options.live ?? false
+  const opened = await openAdmin(options.env ?? process.env, live)
+  const token = options.token ?? randomBytes(32).toString('base64url')
+  const server: Server = createServer((request, response) => {
+    const address = server.address()
+    const port = address && typeof address !== 'string' ? address.port : 0
+    const origin = `http://${LOOPBACK_HOST}:${port}`
+    handle(request, response, opened, { token, origin, port, boom: options.boom }).catch((error: unknown) => {
+      if (response.headersSent) {
+        response.end()
+        return
+      }
+      sendJson(response, 500, { error: publicError(error) })
+    })
+  })
+
+  await new Promise<void>((resolve, reject) => {
+    server.once('error', reject)
+    server.listen({ host, port: options.port ?? 5176 }, () => resolve())
+  })
+  const address = server.address()
+  if (!address || typeof address === 'string' || address.address !== LOOPBACK_HOST) {
+    server.close()
+    await opened.close()
+    throw new Error('The Studio admin binds to 127.0.0.1 only')
+  }
+  const origin = `http://${LOOPBACK_HOST}:${address.port}`
+  return {
+    port: address.port,
+    token,
+    origin,
+    url: oneTimeUrl(origin, token),
+    transport: opened.transport,
+    async close() {
+      await new Promise<void>((resolve, reject) => {
+        server.close((error) => (error ? reject(error) : resolve()))
+      })
+      await opened.close()
+    },
+  }
+}
