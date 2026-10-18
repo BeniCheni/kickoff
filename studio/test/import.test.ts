@@ -512,4 +512,73 @@ describe('import', () => {
     ], env, brand)).toBe(0)
     expect(brand.out[0]).toBe('refused: not an mp4; brand=qt database=pglite')
   })
+
+  it('names a clip or a keyframe inside the worktree, and publish reuses the import title', async () => {
+    const data = mkdtempSync(path.join(tmpdir(), 'kickoff-import-kind-'))
+    const media = mkdtempSync(path.join(tmpdir(), 'kickoff-import-kind-media-'))
+    const env = {
+      STUDIO_DATA_DIR: data,
+      STUDIO_MEDIA_DIR: media,
+      STUDIO_NOW: '2026-10-18T16:00:00.000Z',
+    }
+    const say = () => {
+      const out: string[] = []
+      const err: string[] = []
+      return {
+        out,
+        err,
+        stdout: (line: string) => out.push(line),
+        stderr: (line: string) => err.push(line),
+      }
+    }
+    const inside = path.join(repoRoot, 'studio/README.md')
+    const clip = say()
+    expect(await runCli([
+      'import', '--file', inside, '--keyframe', path.join(media, 'missing.jpg'), '--source', 'grok-imagine',
+      '--prompt-file', path.join(media, 'missing.txt'), '--subjects', 'Fenway', '--title', 'Fenway',
+    ], env, clip)).toBe(1)
+    expect(clip.err.join('\n')).toContain('Refusing to read a clip inside the worktree')
+    expect(clip.err.join('\n')).not.toContain('env file')
+
+    const videoPath = path.join(media, 'clip.mp4')
+    const promptPath = path.join(media, 'prompt.txt')
+    writeFileSync(videoPath, syntheticMp4({ creationTime: creationTime('2026-10-18T15:00:00.000Z') }))
+    writeFileSync(promptPath, 'A cat scores\n')
+    const still = say()
+    expect(await runCli([
+      'import', '--file', videoPath, '--keyframe', inside, '--source', 'grok-imagine',
+      '--prompt-file', promptPath, '--subjects', 'Fenway', '--title', 'Fenway',
+    ], env, still)).toBe(1)
+    expect(still.err.join('\n')).toContain('Refusing to read a keyframe inside the worktree')
+    expect(still.err.join('\n')).not.toContain('env file')
+
+    const stillPath = path.join(media, 'k0.jpg')
+    writeFileSync(stillPath, minimalJpeg)
+    const imported = say()
+    const importedCode = await runCli([
+      'import', '--file', videoPath, '--keyframe', stillPath, '--source', 'grok-imagine',
+      '--prompt-file', promptPath, '--subjects', 'Fenway', '--title', 'From the import',
+    ], env, imported)
+    expect(imported.err).toEqual([])
+    expect(importedCode).toBe(0)
+    const job = /job=([0-9a-f-]{36})/.exec(imported.out[0] ?? '')?.[1] ?? ''
+    const kept = say()
+    expect(await runCli(['keep', '--job', job, '--answers', CHECKLIST_LINES.map(() => 'clear').join(',')], env, kept)).toBe(0)
+    expect(kept.out).toEqual(['kept database=pglite'])
+    expect(await runCli(['record-gate', '--answer', 'recorded', '--disclosure', 'pending', '--by', 'unspecified', '--source', 'A-06'], env, say())).toBe(0)
+    const published = say()
+    expect(await runCli(['publish', '--job', job, '--public-id', 'import-title', '--position', '1'], env, published)).toBe(0)
+    expect(published.out[0]).toContain('published')
+    const { PGlite } = await import('@electric-sql/pglite')
+    const pg = new PGlite(path.join(data, 'pglite'))
+    const row = await pg.query<{ title: string }>('SELECT title FROM catalog.video')
+    expect(row.rows[0]?.title).toBe('From the import')
+    await pg.close()
+
+    const readme = readFileSync(path.join(repoRoot, 'studio/README.md'), 'utf8')
+    expect(readme).toContain('This prints `kept database=postgres`.')
+    expect(readme).not.toContain('kept job=')
+    expect(readme).toContain('sips -s format jpeg <still.png> --out <still.jpg>')
+    expect(readme).toContain("publish uses the import's `--title`")
+  })
 })

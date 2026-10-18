@@ -91,7 +91,8 @@ describe('mp4 facts', () => {
     }
     expect(created(MAC_EPOCH_SECONDS)?.toString() ?? null).toBeNull()
     expect(created(at('2023-12-31T00:00:00.000Z'))).toBeNull()
-    expect(created(at('2024-01-01T00:00:00.000Z'))?.toISOString()).toBe('2024-01-01T00:00:00.000Z')
+    const floor = created(at('2024-01-01T00:00:00.000Z'))
+    expect(floor instanceof Date ? floor.toISOString() : floor).toBe('2024-01-01T00:00:00.000Z')
   })
 
   it('refuses a top-level box that runs past the end of the file', () => {

@@ -73,13 +73,13 @@ The request is SigV4, region `auto`, with the file's SHA-256 in `x-amz-content-s
 
 ## Wednesday 21 Oct 2026
 
-`--live` is what points a command at Supabase. Every command below carries it. Without `STUDIO_LIVE` set to `1` and `DATABASE_URL`, the command refuses and names the missing piece. It does not open the local database.
+`--live` is what points a command at Supabase. Every command below carries it. Without `STUDIO_LIVE` set to `1` and `DATABASE_URL`, the command refuses and names the missing piece. It does not open the local database. With nothing set, `import`, `keep`, `record-gate`, `list`, `migrate` and a plain `unpublish` print `refused: --live needs STUDIO_LIVE and DATABASE_URL`. `publish`, `unpublish --delete` and `retry-delete` also name `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` and `R2_BUCKET`. Without `--live` the same commands print `database=pglite`, and a storage command prints `storage=stub`. `migrate` is the exception: it always uses Postgres, so without `DATABASE_URL` it refuses as well.
 
 Beni does every account step himself. Nothing in this repo creates the bucket, the domain, the token, or the database password.
 
 In Cloudflare he creates one R2 bucket, attaches his custom domain to that bucket, and creates an API token that can read and write only that bucket. In the env file outside the worktree he sets `STUDIO_LIVE` to `1`, and he sets `DATABASE_URL`, `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, and `STUDIO_STORAGE_ORIGIN`. The origin is the custom domain, with no path on the end, for the Next app at N6. The Studio does not read the origin when it uploads. `STUDIO_DATA_DIR` and `STUDIO_MEDIA_DIR` stay outside the worktree, as above. He does not commit the env file.
 
-In grok.com/imagine, in his own browser, he makes the clip at 16:9 and 1080p and downloads the mp4. The still he gave Grok is the keyframe, saved as a JPEG. The prompt he typed goes in a text file. No one else opens that site.
+In grok.com/imagine, in his own browser, he makes the clip at 16:9 and 1080p and downloads the mp4. The still he gave Grok is the keyframe, saved as a JPEG. A PNG is refused (`refused: keyframe is not a jpeg`). Convert one with `sips -s format jpeg <still.png> --out <still.jpg>`. The prompt he typed goes in a text file. No one else opens that site.
 
 From `studio/`, apply the migrations to his Supabase database. This prints `migrated database=postgres`.
 
@@ -93,7 +93,7 @@ Import the clip. The subjects are `Fenway`, `Frankenstein`, or both, separated b
 npm run cli -- import --file "$HOME/clips/fenway.mp4" --keyframe "$HOME/clips/fenway.jpg" --source grok-imagine --prompt-file "$HOME/clips/fenway.txt" --subjects Fenway --title "Fenway" --made-on 2026-10-21 --live
 ```
 
-Keep the clip. The five answers, in order, are extra players, text on boards, logo-like marks, subject identity, and soundtrack. Each must be `clear`. This prints `kept job=<the job id>`.
+Keep the clip. The five answers, in order, are extra players, text on boards, logo-like marks, subject identity, and soundtrack. Each must be `clear`. This prints `kept database=postgres`.
 
 ```bash
 npm run cli -- keep --job <job-id> --answers clear,clear,clear,clear,clear --live
@@ -111,7 +111,7 @@ Publish. `--public-id` is letters, digits, `_` and `-`, at most 64 characters, s
 npm run cli -- list --live
 ```
 
-Publish prints `published live=true database=postgres storage=r2`. That means the row is in the catalog view. The line names where it wrote. It does not by itself prove the file landed in R2. A missing Card fact prints `card-refused: missing ...` and names the fact. A failed upload prints `upload-failed live=false object=video status=<status> code=<code> database=postgres storage=r2`, or the same line with `object=thumbnail`. A failed delete adds `status=` and `code=` to its line. `code` is the S3 `<Code>` only, passed through the log redaction, or `network` when the request threw. The body is not printed. The same publish command again sends only the object that has no address yet. There is no ledger line and the caps do not move. `pinned_on` is the Brooklyn date of the import. The finish time is midnight in Brooklyn on `--made-on`.
+Publish prints `published live=true database=postgres storage=r2`. When `--title` is omitted, publish uses the import's `--title`. That means the row is in the catalog view. The line names where it wrote. It does not by itself prove the file landed in R2. A missing Card fact prints `card-refused: missing ...` and names the fact. A failed upload prints `upload-failed live=false object=video status=<status> code=<code> database=postgres storage=r2`, or the same line with `object=thumbnail`. A failed delete adds `status=` and `code=` to its line. `code` is the S3 `<Code>` only, passed through the log redaction, or `network` when the request threw. The body is not printed. The same publish command again sends only the object that has no address yet. There is no ledger line and the caps do not move. `pinned_on` is the Brooklyn date of the import. The finish time is midnight in Brooklyn on `--made-on`.
 
 ```bash
 npm run cli -- publish --live --job <job-id> --public-id fenway-wednesday --title "Fenway" --position 1

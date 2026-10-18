@@ -58,6 +58,12 @@ function importedNote(detail: unknown): string | null {
   return typeof note === 'string' && note.length > 0 ? note : null
 }
 
+function importedTitle(detail: unknown): string | null {
+  if (!detail || typeof detail !== 'object') return null
+  const title = (detail as { title?: unknown }).title
+  return typeof title === 'string' && title.trim().length > 0 ? title.trim() : null
+}
+
 export function cardGaps(input: {
   publicId: string
   width: number | null
@@ -1179,7 +1185,7 @@ export function createStudio(options: EngineOptions) {
       }
     },
 
-    async publish(input: { jobId: string; publicId: string; title: string; position: number; editorialNote?: string }) {
+    async publish(input: { jobId: string; publicId: string; title?: string; position: number; editorialNote?: string }) {
       const [current] = await db.select().from(job).where(eq(job.id, input.jobId))
       if (!current) return { outcome: 'missing' as const }
       if (current.status === 'withdrawn') return { outcome: 'not-relisted' as const }
@@ -1193,6 +1199,9 @@ export function createStudio(options: EngineOptions) {
         return { outcome: 'already-published' as const }
       }
       if (current.status !== 'kept') return { outcome: 'not-kept' as const }
+      const importedEvent = (await db.select().from(event).where(eq(event.jobId, current.id))).find((item) => item.type === 'imported')
+      const title = input.title?.trim() || importedTitle(importedEvent?.detail) || ''
+      if (!title) return { outcome: 'title-empty' as const }
       const [gate] = await db.select().from(article50Answer).limit(1)
       if (!gate) return { outcome: 'gate-closed' as const, live: false as const }
 
@@ -1284,13 +1293,12 @@ export function createStudio(options: EngineOptions) {
 
       const [policy] = await db.select().from(policyCheck).where(eq(policyCheck.generationId, gen.id)).orderBy(desc(policyCheck.createdAt)).limit(1)
       const attestedAt = policy?.attestedAt?.toISOString() ?? 'unattested'
-      const imported = (await db.select().from(event).where(eq(event.jobId, current.id))).find((item) => item.type === 'imported')
-      const editorialNote = input.editorialNote ?? importedNote(imported?.detail)
+      const editorialNote = input.editorialNote ?? importedNote(importedEvent?.detail)
       try {
         await db.transaction(async (tx) => {
           await tx.insert(videos).values({
             publicId: input.publicId,
-            title: input.title,
+            title,
             editorialNote,
             position: input.position,
             publishedAt: clock(),

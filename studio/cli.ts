@@ -19,6 +19,7 @@ import { createR2Storage, missingR2 } from './storage/r2.ts'
 import { createStorageStub } from './storage/stub.ts'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
+const repoRoot = path.resolve(here, '..')
 const migrationsFolder = path.join(here, 'db', 'migrations')
 
 const SCRIPTS: readonly ScriptName[] = [
@@ -235,7 +236,7 @@ async function openStudio(
     fal,
     storage: storage.port,
     mediaDir,
-    repoRoot: path.resolve(here, '..'),
+    repoRoot,
     clock: clockFrom(env),
   })
   return {
@@ -352,10 +353,10 @@ export async function runCli(
       if (command === 'submit') {
         const endpoint = required(flags, 'endpoint')
         const prompt = required(flags, 'prompt')
-        const photograph = flags.photo ? new Uint8Array(readFileSync(resolveEnvFile(flags.photo))) : undefined
+        const photograph = flags.photo ? new Uint8Array(readFileSync(resolveEnvFile(flags.photo, repoRoot, 'photograph'))) : undefined
         const keyframe = flags.keyframe
           ? (() => {
-              const localPath = resolveEnvFile(flags.keyframe ?? '')
+              const localPath = resolveEnvFile(flags.keyframe ?? '', repoRoot, 'keyframe')
               const bytes = readFileSync(localPath)
               return { localPath, sha256: sha256(bytes), bytes: bytes.byteLength }
             })()
@@ -396,9 +397,9 @@ export async function runCli(
         return
       }
       if (command === 'import') {
-        const video = new Uint8Array(readFileSync(resolveEnvFile(required(flags, 'file'))))
-        const keyframe = new Uint8Array(readFileSync(resolveEnvFile(required(flags, 'keyframe'))))
-        const prompt = readFileSync(resolveEnvFile(required(flags, 'prompt-file')), 'utf8')
+        const video = new Uint8Array(readFileSync(resolveEnvFile(required(flags, 'file'), repoRoot, 'clip')))
+        const keyframe = new Uint8Array(readFileSync(resolveEnvFile(required(flags, 'keyframe'), repoRoot, 'keyframe')))
+        const prompt = readFileSync(resolveEnvFile(required(flags, 'prompt-file'), repoRoot, 'prompt file'), 'utf8')
         const result = await studio.importClip({
           video,
           keyframe,
@@ -563,12 +564,16 @@ export async function runCli(
         const result = await studio.publish({
           jobId: required(flags, 'job'),
           publicId: required(flags, 'public-id'),
-          title: required(flags, 'title'),
+          title: flags.title,
           position: Number(required(flags, 'position')),
           editorialNote: flags.note,
         })
         if (result.outcome === 'card-refused') {
           io.stdout(placed(`card-refused: missing ${result.missing.join('; missing ')}`))
+          return
+        }
+        if (result.outcome === 'title-empty') {
+          io.stdout(placed('refused: the title is empty'))
           return
         }
         io.stdout(placed(result.outcome, {
