@@ -130,21 +130,27 @@
   margin-bottom: 16px;
 }
 .moments-gallery .moments-stage-anchor {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
-  min-height: 200px;
   background: var(--media);
 }
 .moments-gallery .moments-stage-anchor .moments-cover,
 .moments-gallery .moments-stage-anchor video {
-  position: absolute;
-  inset: 0;
+  grid-area: 1 / 1;
+  position: relative;
   width: 100%;
   height: 100%;
+  aspect-ratio: 16 / 9;
+  min-height: 200px;
 }
+.moments-gallery .moments-stage-anchor > .moments-trust { grid-area: 2 / 1; margin: 8px 0; background: var(--bg); }
 .moments-gallery .moments-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
 .moments-gallery .moments-provenance { margin-top: 16px; border-top: 1px solid var(--border); }
+.moments-gallery .moments-watch-player { min-width: 0; }
+.moments-gallery .moments-keyboard { min-height: 1.5em; }
+.moments-gallery aside small { display: block; }
 .moments-gallery .moments-live {
   position: absolute;
   width: 1px;
@@ -172,6 +178,7 @@
 @media (max-width: 760px) {
   .moments-gallery { font-size: 13px; }
   .moments-gallery h1 { font-size: 32px; }
+  .moments-gallery .moments-count,
   .moments-gallery .moments-edition-note { display: none; }
   .moments-gallery .moments-cards { grid-template-columns: minmax(0, 1fr); }
   [data-lens="poster"] .moments-gallery h1,
@@ -180,7 +187,7 @@
 @media (min-width: 888px) {
   .moments-gallery .moments-watch-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 300px;
+    grid-template-columns: minmax(480px, 1fr) 300px;
     gap: 28px;
   }
 }

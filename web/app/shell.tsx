@@ -15,8 +15,8 @@ import { DEFAULT_LENS, encodeLens, parseLens } from '../../src/lib/lens'
 import { useThemeController } from '../../src/lib/useThemeController'
 import { useNow } from '../../src/lib/useNow'
 import { SearchProvider, useCanonicalSearch, useUrlState } from '../../src/lib/useUrlState'
-import { useRouter } from 'next/navigation'
-import { mergeWatch } from './moments/watch-url'
+import { useSearchParams } from 'next/navigation'
+import { useWatchNavigation, WatchNavigationProvider } from './moments/watch-url'
 import { encodeTab, parseTab, type Tab } from '../../src/lib/urlCodecs'
 
 /** Empty until N5 mounts the Privacy & terms link. Renders no element. */
@@ -33,14 +33,17 @@ export function Shell({
   moments?: MomentsPayload
   catalogMode?: CatalogMode
 }) {
-  return <SearchProvider search={search}><ShellInner moments={moments} catalogMode={catalogMode} search={search} /></SearchProvider>
+  return <SearchProvider search={search}><WatchNavigationProvider><ShellInner moments={moments} catalogMode={catalogMode} /></WatchNavigationProvider></SearchProvider>
 }
 
-function ShellInner({ moments, catalogMode, search }: { moments: MomentsPayload; catalogMode: CatalogMode; search: string }) {
+function ShellInner({ moments, catalogMode }: { moments: MomentsPayload; catalogMode: CatalogMode }) {
   const { today } = useNow()
-  const [tab, setTab] = useUrlState('tab', 'fixtures', encodeTab, parseTab, 'push')
+  const [, setTab] = useUrlState('tab', 'fixtures', encodeTab, parseTab, 'push')
+  const params = useSearchParams()
+  const tab = parseTab(params.get('tab') ?? '')
+  const liveSearch = params.size ? `?${params}` : ''
   const [lens, setLens] = useUrlState('lens', DEFAULT_LENS, encodeLens, parseLens, 'replace')
-  const router = useRouter()
+  const navigate = useWatchNavigation()
   useCanonicalSearch(today)
   const { toggle } = useThemeController(lens)
   function onSelect(next: Tab) {
@@ -48,8 +51,7 @@ function ShellInner({ moments, catalogMode, search }: { moments: MomentsPayload;
     const leavingWithWatch = tab === 'moments' && next !== 'moments' && currentWatch !== null
     const enteringMoments = next === 'moments' && tab !== 'moments'
     if (leavingWithWatch || enteringMoments) {
-      const href = mergeWatch(window.location.search, window.location.hash, next, next === 'moments' ? currentWatch : null)
-      router.push(`${window.location.pathname}${href}`)
+      navigate(next, next === 'moments' ? currentWatch : null)
       return
     }
     setTab(next)
@@ -70,7 +72,7 @@ function ShellInner({ moments, catalogMode, search }: { moments: MomentsPayload;
       <TabNav tab={tab} onSelect={onSelect}>
         <LensSwitcher lens={lens} onSelect={setLens} />
       </TabNav>
-      {tab === 'moments' ? <ViewBoundary key={`${tab}:${lens}`}><MomentsRegion moments={moments} catalogMode={catalogMode} search={search} /></ViewBoundary> : (
+      {tab === 'moments' ? <ViewBoundary key={tab}><MomentsRegion moments={moments} catalogMode={catalogMode} search={liveSearch} /></ViewBoundary> : (
         <div data-moments-background="route"><ViewBoundary key={`${tab}:${lens}`}>
           {lens === 'broadcast' && tab === 'fixtures' && <TickerStrip />}
           <StalenessBanner />

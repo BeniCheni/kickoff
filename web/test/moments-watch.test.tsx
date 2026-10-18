@@ -80,7 +80,7 @@ test('recovery uses D5 sentences and code 4 has no retry wording of its own', ()
 
 test('the watch page has one video, no src, and no autoplay attribute', () => {
   const markup = renderToStaticMarkup(
-    <WatchPage detail={detail('stub-fenway-one')} list={several.list} search="?tab=moments" storageOrigin="http://127.0.0.1:5174/stub-storage" />,
+    <WatchPage detail={detail('stub-fenway-one')} list={several.list} search="?tab=moments" address="http://127.0.0.1:5174/stub-storage/moments/stub-fenway-one/video-b1b2c3d4.mp4" />,
   )
   const videos = markup.match(/<video\b[^>]*>/g) ?? []
   expect(videos).toHaveLength(1)
@@ -101,7 +101,7 @@ test('the watch page has one video, no src, and no autoplay attribute', () => {
 
 test('the last video says nothing follows it in Beni’s order', () => {
   const markup = renderToStaticMarkup(
-    <WatchPage detail={detail('stub-title-fenway')} list={several.list} search="?tab=moments" storageOrigin={null} />,
+    <WatchPage detail={detail('stub-title-fenway')} list={several.list} search="?tab=moments" address={null} />,
   )
   expect(markup).toContain('Nothing after this one in Beni\u2019s order.')
   expect(markup).toContain('Earlier')
@@ -112,11 +112,11 @@ test('a missing id stays a not-found page and a failed watch read uses the watch
     <MomentsRegion
       catalogMode="stub"
       search="?tab=moments&watch=withdrawn-clip"
-      moments={{ state: 'ready', preview: true, list: several.list, detail: null, watchId: 'withdrawn-clip', storageOrigin: null }}
+      moments={{ state: 'ready', preview: true, list: several.list, detail: null, watchId: 'withdrawn-clip', thumbnails: {}, videoAddress: null }}
     />,
   )
   expect(missing).toContain('No published video has this address.')
-  expect(missing).toContain('Preview catalog')
+  expect(missing).toContain('Stub catalog · synthetic records')
   expect(missing).toContain('href="?tab=moments"')
   expect(missing).not.toContain('<video')
   const failed = renderToStaticMarkup(

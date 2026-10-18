@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
-import { siteCopyPath, storageAddress, type CatalogListRow } from '@kickoff/catalog'
-import { useRouter } from 'next/navigation'
+import { useEffect, useRef, useState } from 'react'
+import type { CatalogListRow } from '@kickoff/catalog'
+import type { ThumbnailSources } from '../../lib/catalog/types'
 import { isMomentReference } from '../../../src/lib/momentsReferences'
 import type { SavedReferences } from '../../../src/lib/momentsSaved'
 import { durationClock, generatedDate } from './format'
-import { mergeWatch } from './watch-url'
+import { useWatchNavigation, useWatchHref } from './watch-url'
 
 export function cardFrame(row: CatalogListRow): string | null {
   if (row.width === null || row.height === null || row.width <= 0 || row.height <= 0) return null
@@ -14,13 +14,6 @@ export function cardFrame(row: CatalogListRow): string | null {
 }
 
 export type ThumbStep = 'storage' | 'site' | 'cover'
-
-export function thumbSources(row: CatalogListRow, storageOrigin: string | null): { storage: string | null; site: string | null } {
-  const storage = row.thumbnail_bucket && row.thumbnail_object_path && storageOrigin
-    ? storageAddress(row.thumbnail_bucket, row.thumbnail_object_path, storageOrigin)
-    : null
-  return { storage, site: siteCopyPath(row.id) }
-}
 
 export function nextThumbStep(step: ThumbStep, site: string | null): ThumbStep {
   if (step === 'storage' && site) return 'site'
@@ -32,36 +25,49 @@ const COVER_LINE = 'No thumbnail: Supabase and the site\u2019s copy both failed.
 
 export function Thumb({
   row,
-  storageOrigin,
+  sources,
   forcedStep,
   href,
+  stage = false,
 }: {
   row: CatalogListRow
-  storageOrigin: string | null
+  sources?: ThumbnailSources
   forcedStep?: ThumbStep
   href?: string
+  stage?: boolean
 }) {
-  const { storage, site } = thumbSources(row, storageOrigin)
+  const navigate = useWatchNavigation()
+  const { storage, site } = sources ?? { storage: null, site: null }
   const initial: ThumbStep = forcedStep ?? (storage ? 'storage' : site ? 'site' : 'cover')
   const [step, setStep] = useState<ThumbStep>(initial)
   const [loaded, setLoaded] = useState(false)
+  const image = useRef<HTMLImageElement>(null)
   const frame = cardFrame(row)
   const src = step === 'storage' ? storage : step === 'site' ? site : null
+  function failed() {
+    setLoaded(false)
+    // A pre-hydration error and React's handler may both observe this source.
+    setStep(current => current === step ? nextThumbStep(current, site) : current)
+  }
+  useEffect(() => {
+    const img = image.current
+    if (!img?.complete) return
+    if (img.naturalWidth === 0) failed()
+    else setLoaded(true)
+  }, [src])
   const picture = (
-    <div className="moments-cover" style={frame ? { aspectRatio: frame } : undefined}>
+    <div className="moments-cover" style={stage ? { aspectRatio: '16 / 9' } : frame ? { aspectRatio: frame } : undefined}>
       {src ? (
         <>
           {loaded ? null : <p className="moments-small">Thumbnail loading</p>}
           <img
+            ref={image}
             alt=""
             decoding="async"
             loading="lazy"
             src={src}
             onLoad={() => setLoaded(true)}
-            onError={() => {
-              setLoaded(false)
-              setStep(current => nextThumbStep(current, site))
-            }}
+            onError={failed}
           />
         </>
       ) : (
@@ -74,7 +80,11 @@ export function Thumb({
   )
   return (
     <>
-      {href ? <a href={href} aria-hidden="true" tabIndex={-1}>{picture}</a> : picture}
+      {href ? <a href={href} aria-hidden="true" tabIndex={-1} onClick={event => {
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+        event.preventDefault()
+        navigate('moments', row.id)
+      }}>{picture}</a> : picture}
       {step === 'site' ? <p className="moments-trust">{SITE_LINE}</p> : null}
       {step === 'cover' ? <p className="moments-trust">{COVER_LINE}</p> : null}
     </>
@@ -84,24 +94,24 @@ export function Thumb({
 export function VideoCard({
   row,
   search,
-  storageOrigin,
+  thumbnail,
   saved,
   visitOnly,
   onToggleSave,
 }: {
   row: CatalogListRow
   search: string
-  storageOrigin: string | null
+  thumbnail?: ThumbnailSources
   saved: boolean
   visitOnly: boolean
   onToggleSave: (id: string) => void
 }) {
-  const router = useRouter()
+  const navigate = useWatchNavigation()
   const duration = durationClock(row.duration_s)
-  const href = mergeWatch(search, '', 'moments', row.id)
+  const href = useWatchHref(search, row.id)
   return (
     <article data-kind="generated" data-moment={row.id} className="moments-card">
-      <Thumb row={row} storageOrigin={storageOrigin} href={href} />
+      <Thumb row={row} sources={thumbnail} href={href} />
       <div className="moments-card-body">
         <p className="moments-facts">
           <span className="moments-badge">Generated</span>
@@ -112,11 +122,9 @@ export function VideoCard({
           <a
             href={href}
             onClick={event => {
+              if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
               event.preventDefault()
-              const live = typeof window === 'undefined'
-                ? href
-                : mergeWatch(window.location.search, window.location.hash, 'moments', row.id)
-              router.push(`${window.location.pathname}${live}`)
+              navigate('moments', row.id)
             }}
           >{row.title}</a>
         </h2>

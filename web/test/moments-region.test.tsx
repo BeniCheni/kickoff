@@ -21,22 +21,22 @@ test('moments without a catalog shows the unavailable state and no cards', () =>
   expect(html).toContain(cause)
   expect(html).toContain(body)
   expect(html).toContain('Try again')
-  expect(html).not.toContain('Preview catalog')
+  expect(html).not.toContain('Stub catalog · synthetic records')
   expect(html).not.toContain('No moments curated yet')
   expect(html).not.toMatch(/<video|<img/)
 })
 
-test('a stub read shows Preview catalog and the count, including the empty catalog', () => {
+test('a stub read shows Stub catalog · synthetic records and the count, including the empty catalog', () => {
   const ready: MomentsPayload = {
     state: 'ready',
     preview: true,
     list: [],
     detail: null,
     watchId: null,
-    storageOrigin: null,
+    thumbnails: {}, videoAddress: null,
   }
   const html = renderToStaticMarkup(<MomentsRegion moments={ready} catalogMode="stub" />)
-  expect(html).toContain('Preview catalog')
+  expect(html).toContain('Stub catalog · synthetic records')
   expect(html).toContain('data-catalog="stub"')
   expect(html).toContain('Fenway and Frankenstein.')
   expect(html).toContain('0 of 0 videos')
@@ -65,21 +65,21 @@ test('preview outside stub mode renders unavailable instead of the records', () 
     }],
     detail: null,
     watchId: null,
-    storageOrigin: null,
+    thumbnails: {}, videoAddress: null,
   }
   const html = renderToStaticMarkup(<MomentsRegion moments={ready} catalogMode="closed" />)
   expect(html).toContain(unavailable)
-  expect(html).not.toContain('Preview catalog')
+  expect(html).not.toContain('Stub catalog · synthetic records')
   expect(html).not.toContain('Stub Fenway one')
   expect(html).not.toContain('0 of 0 videos')
   expect(html).not.toContain('1 of 1 videos')
 })
 
-test('a stub failure still shows Preview catalog', () => {
+test('a stub failure still shows Stub catalog · synthetic records', () => {
   const html = renderToStaticMarkup(
     <MomentsRegion moments={{ state: 'unavailable', preview: true, watchId: null }} catalogMode="stub" />,
   )
-  expect(html).toContain('Preview catalog')
+  expect(html).toContain('Stub catalog · synthetic records')
   expect(html).toContain(unavailable)
   expect(html).not.toMatch(/<video|<img/)
 })

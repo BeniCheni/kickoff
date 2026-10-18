@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import type { CatalogListRow } from '@kickoff/catalog'
+import type { ThumbnailSources } from '../../lib/catalog/types'
 import { readSavedReferences, writeSavedReferences, type SavedReferences } from '../../../src/lib/momentsSaved'
 import { VideoCard, savedIdSet } from './card'
 import { applyOrder, matchingRows, shuffleIds, type BrowseOrder, type SubjectFilter } from './order'
@@ -11,7 +12,7 @@ const emptySaved: SavedReferences = { ids: [], persistence: 'local', reason: nul
 export function Gallery({
   list,
   search,
-  storageOrigin,
+  thumbnails,
   initialSaved = emptySaved,
   freezeSaved = false,
   random = Math.random,
@@ -21,7 +22,7 @@ export function Gallery({
 }: {
   list: readonly CatalogListRow[]
   search: string
-  storageOrigin: string | null
+  thumbnails: Record<string, ThumbnailSources>
   initialSaved?: SavedReferences
   freezeSaved?: boolean
   random?: () => number
@@ -141,7 +142,7 @@ export function Gallery({
               key={row.id}
               row={row}
               search={search}
-              storageOrigin={storageOrigin}
+              thumbnail={thumbnails[row.id]}
               saved={savedIds.has(row.id)}
               visitOnly={visitOnly}
               onToggleSave={toggleSave}

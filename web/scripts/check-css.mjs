@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { readdirSync, readFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { assertMomentsScope } from './moments-css.mjs'
 
 const root = fileURLToPath(new URL('../../', import.meta.url))
 function cssUnder(dir) {
@@ -59,12 +60,5 @@ assert.ok(!momentsCss.includes('@keyframes') && !momentsCss.includes('animation:
 for (const marker of ['moments-preview', 'moments-trust', 'moments-live', 'moments-theater']) {
   assert.ok(!reader.includes(marker), `Next Moments class reached reader CSS: ${marker}`)
 }
-const selectors = momentsCss
-  .replace(/\/\*[\s\S]*?\*\//g, '')
-  .split('}')
-  .map(block => block.split('{')[0]?.trim())
-  .filter(selector => selector && !selector.startsWith('@'))
-for (const selector of selectors) {
-  assert.ok(selector.includes('.moments-gallery'), `Moments selector is not scoped: ${selector}`)
-}
+assertMomentsScope(momentsCss)
 console.log('CSS isolation passed: web probe present; studio and docs markers absent; shell utilities shared')

@@ -1,8 +1,8 @@
 'use client'
 
-import { storageAddress, type CatalogDetailRow, type CatalogListRow } from '@kickoff/catalog'
-import { useRouter } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
+import type { CatalogDetailRow, CatalogListRow } from '@kickoff/catalog'
+import type { ThumbnailSources } from '../../lib/catalog/types'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Thumb } from './card'
 import { durationClock, generatedDate } from './format'
 import { readAutoplay, writeAutoplay } from './autoplay'
@@ -16,7 +16,7 @@ import {
   refusedStatus,
   upNextSplit,
 } from './provenance'
-import { mergeWatch } from './watch-url'
+import { useWatchNavigation, useWatchHref } from './watch-url'
 
 const READY = 'The video is not requested until Play. The thumbnail above was already loaded, as on its card.'
 const SOUND = 'Sound on \u00b7 the soundtrack is generated. Mute in the player.'
@@ -28,11 +28,6 @@ const CANCELLED = 'Autoplay cancelled. Up next waits for a click.'
 const KEYBOARD = 'Keyboard: the player\u2019s own shortcuts apply while it has focus.'
 const AUTOPLAY_HELP = 'When a video ends, the next one in Up next starts after a five-second countdown with Cancel. Nothing starts on arrival; the first Play is always yours. While this tab is hidden the countdown waits.'
 const NOTHING_AFTER = 'Nothing after this one in Beni\u2019s order.'
-
-export function playableAddress(detail: CatalogDetailRow, origin: string | null): string | null {
-  if (!origin || !detail.video_bucket || !detail.video_object_path) return null
-  return storageAddress(detail.video_bucket, detail.video_object_path, origin)
-}
 
 function clock(seconds: number): string | null {
   if (!Number.isFinite(seconds)) return null
@@ -51,20 +46,23 @@ export function WatchPage({
   detail,
   list,
   search,
-  storageOrigin,
+  address,
+  thumbnail,
 }: {
   detail: CatalogDetailRow
   list: readonly CatalogListRow[]
   search: string
-  storageOrigin: string | null
+  address: string | null
+  thumbnail?: ThumbnailSources
 }) {
-  const router = useRouter()
+  const navigate = useWatchNavigation()
   const videoRef = useRef<HTMLVideoElement>(null)
   const readerPlayed = useRef(false)
   const pendingAuto = useRef<string | null>(null)
   const countRef = useRef<number | null>(null)
   const timer = useRef<number | null>(null)
   const endedHidden = useRef(false)
+  const activeId = useRef(detail.id)
   const [theater, setTheater] = useState(false)
   const [autoplay, setAutoplay] = useState(true)
   const [status, setStatus] = useState(READY)
@@ -74,9 +72,10 @@ export function WatchPage({
   const [copyStatus, setCopyStatus] = useState('')
   const [focused, setFocused] = useState(false)
   const [playing, setPlaying] = useState(false)
+  const [requested, setRequested] = useState(false)
+  const galleryHref = useWatchHref(search, null)
   const { earlier, next } = upNextSplit(list, detail.id)
   const nextRow = next[0] ?? null
-  const address = playableAddress(detail, storageOrigin)
 
   function clearTimer() {
     if (timer.current !== null) window.clearInterval(timer.current)
@@ -84,8 +83,7 @@ export function WatchPage({
   }
 
   function go(id: string | null) {
-    const href = mergeWatch(window.location.search, window.location.hash, 'moments', id)
-    router.push(`${window.location.pathname}${href}`)
+    navigate('moments', id)
   }
 
   function arm(title: string) {
@@ -122,9 +120,28 @@ export function WatchPage({
     countRef.current = null
     setCount(null)
     if (announce) setAnnouncement(CANCELLED)
+    else setAnnouncement('')
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    activeId.current = detail.id
+    const video = videoRef.current
+    // Keep the element, retire the previous file and every per-video state.
+    video?.pause()
+    video?.removeAttribute('src')
+    video?.load()
+    clearTimer()
+    countRef.current = null
+    endedHidden.current = false
+    readerPlayed.current = pendingAuto.current === detail.id
+    if (!readerPlayed.current) pendingAuto.current = null
+    setCount(null)
+    setAnnouncement('')
+    setCopyStatus('')
+    setRecovery(null)
+    setPlaying(false)
+    setRequested(false)
+    setStatus(READY)
     document.getElementById('moments-watch-heading')?.focus()
   }, [detail.id])
 
@@ -132,14 +149,18 @@ export function WatchPage({
 
   useEffect(() => {
     const video = videoRef.current
-    if (!video || pendingAuto.current !== detail.id || !address) return
+    if (!video || pendingAuto.current !== detail.id) return
     pendingAuto.current = null
+    if (!address) { setRecovery(4); return }
+    setRequested(true)
     video.src = address
     video.play().then(() => {
+      if (activeId.current !== detail.id) return
       setPlaying(true)
       setRecovery(null)
       setStatus(nowPlayingStatus(detail.title))
     }).catch(() => {
+      if (activeId.current !== detail.id) return
       setPlaying(false)
       setStatus(refusedStatus(detail.title))
     })
@@ -188,12 +209,15 @@ export function WatchPage({
       setRecovery(4)
       return
     }
+    setRequested(true)
     if (!video.getAttribute('src')) video.src = address
     video.play().then(() => {
+      if (activeId.current !== detail.id) return
       setPlaying(true)
       setRecovery(null)
       video.focus()
     }).catch(() => {
+      if (activeId.current !== detail.id) return
       setPlaying(false)
       setStatus(refusedStatus(detail.title))
     })
@@ -213,7 +237,7 @@ export function WatchPage({
 
   function onPause() {
     const video = videoRef.current
-    if (!video || video.ended) return
+    if (!video || !video.getAttribute('src') || video.ended) return
     setPlaying(false)
     stopCountdown(false)
     const at = clock(video.currentTime)
@@ -234,6 +258,7 @@ export function WatchPage({
   }
 
   function onError() {
+    if (!videoRef.current?.getAttribute('src')) return
     const code = videoRef.current?.error?.code
     stopCountdown(false)
     setPlaying(false)
@@ -256,8 +281,10 @@ export function WatchPage({
   async function copyLink() {
     try {
       await navigator.clipboard.writeText(window.location.href)
+      if (activeId.current !== detail.id) return
       setCopyStatus('Link copied.')
     } catch {
+      if (activeId.current !== detail.id) return
       setCopyStatus('Copy failed. The address is in the address bar.')
     }
   }
@@ -267,17 +294,20 @@ export function WatchPage({
   return (
     <div className={theater ? 'moments-theater' : undefined}>
       <div className="moments-stage-top">
-        <a href={mergeWatch(search, '', 'moments', null)} onClick={event => { event.preventDefault(); go(null) }}>← Gallery</a>
+        <a href={galleryHref} onClick={event => { if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return; event.preventDefault(); go(null) }}>← Gallery</a>
         <span>Watch</span>
         <button type="button" aria-pressed={theater} onClick={() => setTheater(value => !value)}>{theater ? 'Exit theater' : 'Theater'}</button>
       </div>
       <h1 id="moments-watch-heading" tabIndex={-1}>{detail.title}</h1>
       {detail.editorial_note ? <p className="moments-note">{detail.editorial_note}</p> : null}
       <p className="moments-facts">{metaLine(detail)}</p>
+      <div className="moments-watch-layout">
+      <div className="moments-watch-player">
       <div className="moments-stage-anchor">
-        <Thumb row={detail} storageOrigin={storageOrigin} />
+        <Thumb key={detail.id} row={detail} sources={thumbnail} stage />
         <video
           ref={videoRef}
+          style={{ visibility: requested ? 'visible' : 'hidden' }}
           controls
           playsInline
           preload="none"
@@ -296,10 +326,10 @@ export function WatchPage({
         />
       </div>
       <p role="status">{status}</p>
-      {focused ? <p>{KEYBOARD}</p> : null}
+      <p className="moments-keyboard" style={{ visibility: focused ? 'visible' : 'hidden' }}>{KEYBOARD}</p>
+      <p className={announcement === CANCELLED ? undefined : 'moments-live'} data-countdown-announcement="" role="status" aria-atomic="true">{announcement}</p>
       {count !== null && nextRow ? (
         <>
-          <p className="moments-live" role="status" aria-atomic="true">{announcement}</p>
           <p aria-hidden="true">{countdownVisible(count, nextRow.title)}</p>
           <button type="button" onClick={() => stopCountdown(true)}>Cancel</button>
         </>
@@ -326,6 +356,7 @@ export function WatchPage({
         <p className="moments-eyebrow">Prompt, as submitted</p>
         <p>{'\u201c'}{detail.prompt}{'\u201d'}</p>
       </details>
+      </div>
       <aside>
         <h2>Up next</h2>
         <button
@@ -333,7 +364,10 @@ export function WatchPage({
           role="switch"
           aria-checked={autoplay}
           aria-label="Autoplay next"
-          onClick={() => setAutoplay(writeAutoplay(!autoplay))}
+          onClick={() => {
+            if (autoplay) { stopCountdown(false); endedHidden.current = false }
+            setAutoplay(writeAutoplay(!autoplay))
+          }}
         >
           <span aria-hidden="true">{autoplay ? 'On' : 'Off'}</span>
         </button>
@@ -341,12 +375,7 @@ export function WatchPage({
         {next.length === 0 ? <p>{NOTHING_AFTER}</p> : (
           <ol>
             {next.map(row => (
-              <li key={row.id}>
-                <a href={mergeWatch(search, '', 'moments', row.id)} aria-labelledby={`up-${row.id}`} onClick={event => { event.preventDefault(); go(row.id) }}>
-                  <span id={`up-${row.id}`}>{row.title}</span>
-                </a>
-                <small>{smallLine(row)}</small>
-              </li>
+              <WatchRow key={row.id} row={row} search={search} prefix="up" onSelect={go} />
             ))}
           </ol>
         )}
@@ -355,47 +384,59 @@ export function WatchPage({
             <h2>Earlier</h2>
             <ol>
               {earlier.map(row => (
-                <li key={row.id}>
-                  <a href={mergeWatch(search, '', 'moments', row.id)} aria-labelledby={`earlier-${row.id}`} onClick={event => { event.preventDefault(); go(row.id) }}>
-                    <span id={`earlier-${row.id}`}>{row.title}</span>
-                  </a>
-                  <small>{smallLine(row)}</small>
-                </li>
+                <WatchRow key={row.id} row={row} search={search} prefix="earlier" onSelect={go} />
               ))}
             </ol>
           </>
         ) : null}
       </aside>
+      </div>
     </div>
   )
 }
 
+function WatchRow({ row, search, prefix, onSelect }: { row: CatalogListRow; search: string; prefix: string; onSelect(id: string): void }) {
+  const href = useWatchHref(search, row.id)
+  return <li>
+    <a href={href} aria-labelledby={`${prefix}-${row.id}`} onClick={event => {
+      if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+      event.preventDefault()
+      onSelect(row.id)
+    }}><span id={`${prefix}-${row.id}`}>{row.title}</span></a>
+    <small>{smallLine(row)}</small>
+  </li>
+}
+
 export function WatchMissing({ search }: { search: string }) {
-  const router = useRouter()
+  const navigate = useWatchNavigation()
+  const href = useWatchHref(search, null)
   useEffect(() => { document.getElementById('moments-missing-heading')?.focus() }, [])
   return (
     <>
       <h1 id="moments-missing-heading" tabIndex={-1}>No published video has this address.</h1>
       <p>The id in the address is not published, or never was. Nothing more is known from here.</p>
-      <a href={mergeWatch(search, '', 'moments', null)} onClick={event => {
+      <a href={href} onClick={event => {
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
         event.preventDefault()
-        router.push(`${window.location.pathname}${mergeWatch(window.location.search, window.location.hash, 'moments', null)}`)
+        navigate('moments', null)
       }}>← Gallery</a>
     </>
   )
 }
 
 export function WatchUnavailable({ search }: { search: string }) {
-  const router = useRouter()
+  const navigate = useWatchNavigation()
+  const href = useWatchHref(search, null)
   useEffect(() => { document.getElementById('moments-watch-unavailable')?.focus() }, [])
   return (
     <>
       <h1 id="moments-watch-unavailable" tabIndex={-1}>The watch page is unavailable.</h1>
       <p>The server could not read this video{'\u2019'}s record. The cause is unknown from here.</p>
       <button type="button" onClick={() => window.location.reload()}>Try again</button>
-      <a href={mergeWatch(search, '', 'moments', null)} onClick={event => {
+      <a href={href} onClick={event => {
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
         event.preventDefault()
-        router.push(`${window.location.pathname}${mergeWatch(window.location.search, window.location.hash, 'moments', null)}`)
+        navigate('moments', null)
       }}>← Gallery</a>
     </>
   )

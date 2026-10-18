@@ -1,3 +1,6 @@
+import { useContext } from 'react'
+import { SearchContext } from '../../src/lib/useUrlState'
+
 export function useRouter() {
   return {
     push(url: string) {
@@ -6,4 +9,7 @@ export function useRouter() {
     },
     refresh() {},
   }
+}
+export function useSearchParams() {
+  return new URLSearchParams(useContext(SearchContext) ?? '')
 }

@@ -1,5 +1,7 @@
 import { CatalogReadError, type MomentsPayload } from './types'
 import type { CatalogSuccess } from './read'
+import { thumbnailFor, videoFor } from './addresses'
+export { previewAllowed } from './types'
 
 export function tabIsMoments(search: string): boolean {
   const query = search.startsWith('?') ? search.slice(1) : search
@@ -28,7 +30,8 @@ export function momentsFor(
       list: read.list,
       detail,
       watchId,
-      storageOrigin,
+      thumbnails: Object.fromEntries(read.list.map(row => [row.id, thumbnailFor(row, storageOrigin)])),
+      videoAddress: videoFor(detail, storageOrigin),
     }
   } catch (error) {
     const watchId = watchIdFrom(search)
@@ -47,15 +50,9 @@ export function storageOriginFrom(
     if (!/^https?:\/\/[^/?#\s@]+(\/[^?#\s]*)?$/.test(configured)) return null
     return configured.endsWith('/') ? configured.slice(0, -1) : configured
   }
-  const host = header.get('x-forwarded-host') ?? header.get('host')
-  if (!host || /[\s/]/.test(host)) return null
-  const proto = header.get('x-forwarded-proto') ?? 'http'
-  if (proto !== 'http' && proto !== 'https') return null
-  return `${proto}://${host}/stub-storage`
-}
-
-/** A preview payload is shown only while the process is actually in stub mode. */
-export function previewAllowed(preview: boolean, mode: 'stub' | 'closed'): boolean {
-  if (preview && mode !== 'stub') return false
-  return true
+  // Local-only convenience. Forwarded headers cannot redirect media requests.
+  // Remote previews must supply an explicit origin, including /stub-storage.
+  const host = header.get('host')
+  if (!host || !/^(?:127\.0\.0\.1|localhost|\[::1\])(?::\d{1,5})?$/.test(host)) return null
+  return `http://${host}/stub-storage`
 }

@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { expect, test } from 'vitest'
 import { readCatalog } from '../lib/catalog/read'
+import { thumbnailFor } from '../lib/catalog/addresses'
 import { Gallery } from '../app/moments/gallery'
 import { Thumb } from '../app/moments/card'
 import { beniOrder, matchingRows, newestOrder, shuffleIds } from '../app/moments/order'
@@ -16,7 +17,7 @@ const list = readCatalog({
 }, readText).list
 
 function html(props: Partial<Parameters<typeof Gallery>[0]> = {}) {
-  return renderToStaticMarkup(<Gallery list={list} search="?tab=moments&only=epl&extra=1" storageOrigin="http://127.0.0.1:5174/stub-storage" {...props} />)
+  return renderToStaticMarkup(<Gallery list={list} search="?tab=moments&only=epl&extra=1" thumbnails={Object.fromEntries(list.map(row => [row.id, thumbnailFor(row, "http://127.0.0.1:5174/stub-storage")]))} {...props} />)
 }
 
 function article(markup: string, id: string) {
@@ -85,7 +86,7 @@ test('the gallery renders D9’s head, filters, and cards without counts on a ca
 })
 
 test('an empty catalog is 0 of 0 videos and not the no-results copy', () => {
-  const markup = renderToStaticMarkup(<Gallery list={[]} search="" storageOrigin={null} />)
+  const markup = renderToStaticMarkup(<Gallery list={[]} search="" thumbnails={{}} />)
   expect(markup).toContain('0 of 0 videos')
   expect(markup).toContain('0 / 0')
   expect(markup).not.toContain('No videos match.')
@@ -124,11 +125,11 @@ test('a missing storage address starts at the site copy, and the cover is the la
     vercelEnv: undefined,
   }, (file: string) => readFileSync(file, 'utf8')).list[0]
   if (!missing) throw new Error('missing fixture')
-  const site = renderToStaticMarkup(<Gallery list={[missing]} search="?tab=moments" storageOrigin="http://127.0.0.1:5174/stub-storage" />)
+  const site = renderToStaticMarkup(<Gallery list={[missing]} search="?tab=moments" thumbnails={{ [missing.id]: thumbnailFor(missing, null) }} />)
   expect(site).toContain('/moments/thumbnails/stub-missing-thumb.jpg')
   expect(site).not.toContain('/stub-storage/')
   expect(site).toContain('Thumbnail from the site\u2019s copy \u00b7 Supabase did not answer.')
-  const cover = renderToStaticMarkup(<Thumb row={missing} storageOrigin={null} forcedStep="cover" />)
+  const cover = renderToStaticMarkup(<Thumb row={missing} sources={thumbnailFor(missing, null)} forcedStep="cover" />)
   expect(cover).toContain('STUDIO')
   expect(cover).toContain('Original typographic art')
   expect(cover).toContain('No thumbnail: Supabase and the site\u2019s copy both failed.')

@@ -2,7 +2,7 @@ import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { expect, test } from 'vitest'
-import { STUB_SENTINEL, leakHits, scanBuild } from '../scripts/check-client.mjs'
+import { STUB_SENTINEL, textLeakHits, leakHits, scanBuild } from '../scripts/check-client.mjs'
 
 function tree() {
   const root = mkdtempSync(path.join(tmpdir(), 'kickoff-leak-'))
@@ -29,8 +29,20 @@ test('a stub sentinel in a server chunk fails the non-stub scan', () => {
   expect(scanBuild(staticDir, serverDir, { stubBuild: true }).server).toBeGreaterThan(0)
 })
 
-test('a database marker in prerendered HTML fails the scan', () => {
+test('database names are legitimate server code but never client or live-response data', () => {
   const { staticDir, serverDir } = tree()
-  writeFileSync(path.join(serverDir, 'page.html'), 'postgres connection DATABASE_URL')
+  writeFileSync(path.join(serverDir, 'chunk.js'), 'drizzle postgres:// KICKOFF_DATABASE_URL')
+  expect(() => scanBuild(staticDir, serverDir)).not.toThrow()
+  writeFileSync(path.join(staticDir, 'app.js'), 'drizzle postgres:// KICKOFF_DATABASE_URL')
   expect(() => scanBuild(staticDir, serverDir)).toThrow(/marker/)
+  expect(textLeakHits('<main>KICKOFF_DATABASE_URL</main>')).toContain('DATABASE_URL')
+})
+
+test('stub client sentinels and future private Studio names still fail', () => {
+  const { staticDir, serverDir } = tree()
+  writeFileSync(path.join(staticDir, 'app.js'), STUB_SENTINEL)
+  expect(() => scanBuild(staticDir, serverDir, { stubBuild: true })).toThrow(/marker/)
+  writeFileSync(path.join(staticDir, 'app.js'), 'clean')
+  writeFileSync(path.join(serverDir, 'chunk.js'), 'STUDIO_FUTURE_SECRET')
+  expect(() => scanBuild(staticDir, serverDir, { stubBuild: true })).toThrow(/marker/)
 })

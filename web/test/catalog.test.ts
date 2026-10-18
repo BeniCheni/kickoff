@@ -5,7 +5,7 @@ import { catalogDetailRowSchema, publishedListColumns } from '@kickoff/catalog'
 import { expect, test } from 'vitest'
 import { CatalogReadError } from '../lib/catalog/types'
 import { readCatalog } from '../lib/catalog/read'
-import { momentsFor, previewAllowed, tabIsMoments } from '../lib/catalog/request'
+import { momentsFor, previewAllowed, storageOriginFrom, tabIsMoments } from '../lib/catalog/request'
 
 const fixtureDir = fileURLToPath(new URL('../fixtures/catalog/', import.meta.url))
 const read = (name: string) => readFileSync(path.join(fixtureDir, name), 'utf8')
@@ -123,6 +123,22 @@ test('moments calls the loader once and keeps prompts off the list', () => {
   if (found.state !== 'ready') throw new Error('expected ready')
   expect(found.detail?.id).toBe('stub-fenway-one')
   expect(found.detail?.prompt).toContain('synthetic')
+  expect(gallery.videoAddress).toBeNull()
+  expect(gallery.thumbnails['stub-fenway-one']).toEqual({
+    storage: 'http://127.0.0.1/stub-storage/moments/stub-fenway-one/thumbnail-a1b2c3d4.jpg',
+    site: '/moments/thumbnails/stub-fenway-one.jpg',
+  })
+})
+
+test('stub storage ignores forwarded hosts and accepts only a local Host or an explicit origin', () => {
+  const env = { KICKOFF_CATALOG: 'stub' }
+  const header = new Headers({ host: '127.0.0.1:5175', 'x-forwarded-host': 'attacker.example', 'x-forwarded-proto': 'https' })
+  expect(storageOriginFrom(header, env)).toBe('http://127.0.0.1:5175/stub-storage')
+  header.set('host', 'attacker.example')
+  expect(storageOriginFrom(header, env)).toBeNull()
+  expect(storageOriginFrom(header, { ...env, KICKOFF_STUB_STORAGE_ORIGIN: 'https://preview.example/stub-storage/' })).toBe('https://preview.example/stub-storage')
+  expect(storageOriginFrom(header, { ...env, KICKOFF_STUB_STORAGE_ORIGIN: 'https://user@attacker.example/' })).toBeNull()
+  expect(storageOriginFrom(header, { ...env, VERCEL_ENV: 'production', KICKOFF_STUB_STORAGE_ORIGIN: 'https://preview.example/stub-storage' })).toBeNull()
 })
 
 test('a failed moments read is unavailable and does not substitute the stub', () => {
@@ -140,7 +156,7 @@ test('the loader source is server-only and has no baked-in fixture path', () => 
   const load = readFileSync(fileURLToPath(new URL('../lib/catalog/load.ts', import.meta.url)), 'utf8')
   const reader = readFileSync(fileURLToPath(new URL('../lib/catalog/read.ts', import.meta.url)), 'utf8')
   expect(load).toContain("import 'server-only'")
-  expect(load).not.toContain('DATABASE_URL')
+  expect(load).toContain('process.env.KICKOFF_DATABASE_URL')
   expect(load + reader).not.toContain('KICKOFF-STUB-CATALOG')
   expect(load + reader).not.toContain('fixtures/catalog')
 })

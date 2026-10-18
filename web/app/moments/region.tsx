@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import type { CatalogMode, MomentsPayload } from '../../lib/catalog/types'
-import { previewAllowed } from '../../lib/catalog/request'
+import { previewAllowed } from '../../lib/catalog/types'
 import { Gallery } from './gallery'
 import './gallery.css'
 import { WatchMissing, WatchPage, WatchUnavailable } from './watch'
@@ -51,15 +51,15 @@ export function MomentsRegion({
       </div>
     )
   } else if (moments.state === 'ready' && moments.watchId && moments.detail) {
-    body = <WatchPage detail={moments.detail} list={moments.list} search={search} storageOrigin={moments.storageOrigin} />
+    body = <WatchPage detail={moments.detail} list={moments.list} search={search} thumbnail={moments.thumbnails[moments.detail.id]} address={moments.videoAddress} />
   } else if (moments.state === 'ready' && moments.watchId) {
     body = <WatchMissing search={search} />
   } else if (moments.state === 'ready') {
-    body = <Gallery list={moments.list} search={search} storageOrigin={moments.storageOrigin} />
+    body = <Gallery list={moments.list} search={search} thumbnails={moments.thumbnails} />
   }
   return (
     <main className="moments-gallery" aria-label="Moments" data-catalog={preview ? 'stub' : undefined}>
-      {preview ? <p className="moments-preview">Preview catalog</p> : null}
+      {preview ? <p className="moments-preview">Stub catalog · synthetic records</p> : null}
       {body}
     </main>
   )
