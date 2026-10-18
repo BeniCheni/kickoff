@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { decideBudget, PER_JOB_CAP_USD, PREPAID_CEILING_USD, SESSION_CAP_USD, TIMEOUT_CEILING_LABEL, TIMEOUT_CEILING_MS } from '../caps.ts'
 import { aboveManualCeiling, jobExposure, reconcileAmount, sessionExposure } from '../ledger.ts'
 import { addUsd, cmpUsd } from '../money.ts'
-import { estimateUsd, registry, selectRegistry, unknownParam } from '../registry.ts'
+import { brooklynStart, estimateUsd, GROK_IMAGINE, registry, selectRegistry, unknownParam } from '../registry.ts'
 
 const video = 'minimax/h3-max-turbo/image-to-video'
 const edit = 'openai/gpt-image-2/edit'
@@ -37,6 +37,17 @@ describe('recipe v0 registry', () => {
   it('pins the two recipe endpoints and both H3 dates', () => {
     expect(registry.map((row) => row.endpoint)).toEqual([edit, video, video])
     expect(registry.map((row) => row.pinnedOn)).toEqual(['2026-10-05', '2026-10-05', '2026-10-05'])
+  })
+
+  it('keeps Grok Imagine out of the priced registry', () => {
+    const now = new Date('2026-10-18T16:00:00.000Z')
+    expect(GROK_IMAGINE.endpoint).toBe('xai/grok-imagine (grok.com, made by hand)')
+    expect(selectRegistry(GROK_IMAGINE.endpoint, {}, now)).toBeNull()
+    expect(registry.some((row) => row.id === GROK_IMAGINE.id)).toBe(false)
+    expect(brooklynStart('2026-10-18')?.toISOString()).toBe('2026-10-18T04:00:00.000Z')
+    expect(brooklynStart('2026-01-15')?.toISOString()).toBe('2026-01-15T05:00:00.000Z')
+    expect(brooklynStart('2026-02-31')).toBeNull()
+    expect(brooklynStart('18-10-2026')).toBeNull()
   })
 })
 

@@ -35,8 +35,9 @@ import { isQueueOrigin, queueAddresses } from './fal/urls.ts'
 import { cacheKey as makeCacheKey, sha256 } from './hash.ts'
 import { aboveManualCeiling, jobExposure, reconcileAmount, sessionExposure, type LedgerView } from './ledger.ts'
 import { addUsd, formatUsd, parseUsd } from './money.ts'
+import { readClipFacts } from './media/mp4.ts'
 import { preparePhotograph } from './photos/strip.ts'
-import { estimateUsd, selectRegistry, unknownParam, type RegistryRow } from './registry.ts'
+import { brooklynDate, brooklynStart, estimateUsd, GROK_IMAGINE, selectRegistry, unknownParam, type RegistryRow } from './registry.ts'
 import { siteCopyStatus, type SiteCopyOutcome, type StoragePort, type StoredObject } from './storage/port.ts'
 import type { PgliteDatabase } from 'drizzle-orm/pglite'
 
@@ -44,6 +45,18 @@ export type StudioDatabase = PgliteDatabase<typeof studioTables>
 
 const SAFE_PUBLIC_ID = /^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/
 const APPROVED_SUBJECTS = new Set<string>(SUBJECT_LABELS)
+
+function pinnedOnOf(params: unknown, fallback: string): string {
+  if (!params || typeof params !== 'object') return fallback
+  const value = (params as { pinned_on?: unknown }).pinned_on
+  return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : fallback
+}
+
+function importedNote(detail: unknown): string | null {
+  if (!detail || typeof detail !== 'object') return null
+  const note = (detail as { note?: unknown }).note
+  return typeof note === 'string' && note.length > 0 ? note : null
+}
 
 export function cardGaps(input: {
   publicId: string
@@ -978,6 +991,175 @@ export function createStudio(options: EngineOptions) {
       return { outcome: 'gate-recorded' as const, recordedOn: recordedOn.toISOString() }
     },
 
+    async importClip(input: {
+      video: Uint8Array
+      keyframe: Uint8Array
+      source: string
+      prompt: string
+      subjects: readonly string[]
+      title: string
+      note?: string
+      madeOn?: string
+    }) {
+      if (input.source !== 'grok-imagine') return { outcome: 'source-refused' as const }
+      const prompt = input.prompt.replace(/\r?\n$/, '')
+      if (prompt.trim().length === 0) return { outcome: 'prompt-empty' as const }
+      if (input.title.trim().length === 0) return { outcome: 'title-empty' as const }
+      const names = [...new Set(input.subjects.map((name) => name.trim()).filter((name) => name.length > 0))]
+      if (names.length === 0 || names.some((name) => !APPROVED_SUBJECTS.has(name))) {
+        return { outcome: 'subject-refused' as const }
+      }
+      const read = readClipFacts(input.video)
+      if (!read.ok) return { outcome: 'clip-refused' as const, reason: read.reason }
+      let still: { bytes: Uint8Array; sha256: string }
+      try {
+        still = preparePhotograph(input.keyframe)
+      } catch (error) {
+        if (error instanceof Error && (error.message === 'not a jpeg' || error.message === 'bad jpeg')) {
+          return { outcome: 'not-a-jpeg' as const }
+        }
+        throw error
+      }
+      const facts = read.facts
+      let finishedAt: Date
+      if (input.madeOn) {
+        const parsed = brooklynStart(input.madeOn)
+        if (!parsed) return { outcome: 'made-on-invalid' as const }
+        finishedAt = parsed
+      } else if (facts.createdAt) {
+        finishedAt = facts.createdAt
+      } else {
+        return { outcome: 'needs-made-on' as const }
+      }
+      const digest = sha256(input.video)
+      const duplicate = await db.select().from(asset).where(and(eq(asset.role, 'video'), eq(asset.sha256, digest)))
+      if (duplicate.length > 0) return { outcome: 'already-imported' as const, sha256: digest }
+
+      const importedOn = brooklynDate(clock())
+      const durationS = facts.durationS.toFixed(3)
+      const frameRate = facts.frameRate !== null && Number.isFinite(facts.frameRate) && facts.frameRate > 0
+        ? Math.round(facts.frameRate * 1000) / 1000
+        : null
+      const params = {
+        source: 'grok-imagine',
+        container: facts.container,
+        videoCodec: facts.videoCodec,
+        frameRate,
+        audio: facts.audio,
+        pinned_on: importedOn,
+      }
+      const key = makeCacheKey({
+        registryId: GROK_IMAGINE.id,
+        params,
+        inputHashes: [digest, still.sha256],
+        seed: null,
+      })
+      mkdirSync(options.mediaDir, { recursive: true })
+      const videoPath = path.join(options.mediaDir, `${digest}.mp4`)
+      const stillPath = path.join(options.mediaDir, `${still.sha256}.jpg`)
+      writeFileSync(videoPath, input.video)
+      writeFileSync(stillPath, still.bytes)
+      const note = input.note?.trim() ? input.note : null
+
+      try {
+        const created = await db.transaction(async (tx) => {
+          const writer = tx as unknown as StudioDatabase
+          const again = await writer.select().from(asset).where(and(eq(asset.role, 'video'), eq(asset.sha256, digest)))
+          if (again.length > 0) return null
+          const [existingModel] = await writer.select().from(model).where(eq(model.registryId, GROK_IMAGINE.id))
+          const pinned = existingModel ?? (await writer.insert(model).values({
+            registryId: GROK_IMAGINE.id,
+            endpoint: GROK_IMAGINE.endpoint,
+            task: GROK_IMAGINE.task,
+            allowedParams: [],
+            priceRule: { kind: 'handmade' },
+            priceCheckedOn: importedOn,
+            priceValidUntil: null,
+            pinnedOn: importedOn,
+          }).returning())[0]
+          if (!pinned) throw new Error('model insert returned nothing')
+          const [gen] = await writer.insert(generation).values({
+            kind: 'video',
+            modelId: pinned.id,
+            prompt,
+            promptSha256: sha256(prompt),
+            promptExpansion: null,
+            params,
+            seed: null,
+            cacheKey: key,
+            status: 'downloaded',
+          }).returning()
+          if (!gen) throw new Error('generation insert returned nothing')
+          const [videoAsset] = await writer.insert(asset).values({
+            role: 'video',
+            sha256: digest,
+            mime: 'video/mp4',
+            bytes: input.video.byteLength,
+            width: facts.width,
+            height: facts.height,
+            durationS,
+            localPath: videoPath,
+            sourceGenerationId: gen.id,
+          }).returning()
+          const [k0] = await writer.insert(asset).values({
+            role: 'keyframe',
+            sha256: still.sha256,
+            mime: 'image/jpeg',
+            bytes: still.bytes.byteLength,
+            localPath: stillPath,
+          }).returning()
+          if (!videoAsset || !k0) throw new Error('asset insert returned nothing')
+          await writer.update(generation).set({ outputAssetId: videoAsset.id }).where(eq(generation.id, gen.id))
+          await writer.insert(generationInput).values({ generationId: gen.id, assetId: k0.id, role: 'first' })
+          for (const name of names) {
+            const [existingSubject] = await writer.select().from(subject).where(eq(subject.name, name))
+            const row = existingSubject ?? (await writer.insert(subject).values({ name }).returning())[0]
+            if (!row) throw new Error('subject insert returned nothing')
+            await writer.insert(generationSubject).values({ generationId: gen.id, subjectId: row.id })
+          }
+          const [createdJob] = await writer.insert(job).values({
+            generationId: gen.id,
+            sessionId: null,
+            attempt: 1,
+            providerRequestId: null,
+            idempotencyKey: `import:${digest}`,
+            estimateUsd: '0.000000',
+            status: 'downloaded',
+            finishedAt,
+          }).returning()
+          if (!createdJob) throw new Error('job insert returned nothing')
+          await writer.insert(event).values({
+            jobId: createdJob.id,
+            at: clock(),
+            type: 'imported',
+            detail: { title: input.title, note, source: 'grok-imagine' },
+          })
+          return createdJob
+        })
+        if (!created) return { outcome: 'already-imported' as const, sha256: digest }
+        return {
+          outcome: 'imported' as const,
+          jobId: created.id,
+          sha256: digest,
+          width: facts.width,
+          height: facts.height,
+          durationS,
+          container: facts.container,
+          videoCodec: facts.videoCodec,
+          audio: facts.audio,
+          frameRate,
+        }
+      } catch (error) {
+        const message = error instanceof Error
+          ? `${error.message} ${error.cause instanceof Error ? error.cause.message : ''}`
+          : String(error)
+        if (message.includes('job_idempotency_key')) {
+          return { outcome: 'already-imported' as const, sha256: digest }
+        }
+        throw error
+      }
+    },
+
     async publish(input: { jobId: string; publicId: string; title: string; position: number; editorialNote?: string }) {
       const [current] = await db.select().from(job).where(eq(job.id, input.jobId))
       if (!current) return { outcome: 'missing' as const }
@@ -1079,12 +1261,14 @@ export function createStudio(options: EngineOptions) {
 
       const [policy] = await db.select().from(policyCheck).where(eq(policyCheck.generationId, gen.id)).orderBy(desc(policyCheck.createdAt)).limit(1)
       const attestedAt = policy?.attestedAt?.toISOString() ?? 'unattested'
+      const imported = (await db.select().from(event).where(eq(event.jobId, current.id))).find((item) => item.type === 'imported')
+      const editorialNote = input.editorialNote ?? importedNote(imported?.detail)
       try {
         await db.transaction(async (tx) => {
           await tx.insert(videos).values({
             publicId: input.publicId,
             title: input.title,
-            editorialNote: input.editorialNote ?? null,
+            editorialNote,
             position: input.position,
             publishedAt: clock(),
             jobId: current.id,
@@ -1092,7 +1276,7 @@ export function createStudio(options: EngineOptions) {
             videoAssetId: videoAsset.id,
             thumbnailAssetId: thumbnail.id,
             endpoint: pinned.endpoint,
-            pinnedOn: pinned.pinnedOn,
+            pinnedOn: pinnedOnOf(gen.params, pinned.pinnedOn),
             prompt: gen.prompt,
             promptExpansion: gen.promptExpansion,
             seed: gen.seed,

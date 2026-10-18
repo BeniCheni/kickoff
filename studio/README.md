@@ -35,7 +35,9 @@ The role `studio_reader` is created `NOLOGIN` with `SELECT` on `catalog.videos` 
 
 ## Commands
 
-`estimate`, `submit`, `poll`, `resume`, `download`, `list`, `keep`, `discard`, `cancel`, `publish`, `unpublish`, `retry-delete`, `retry-removal`, `close-session`, `attach-request`, `settle-unconfirmed`, `record-gate`, `record-balance`, and `migrate`.
+`estimate`, `submit`, `poll`, `resume`, `download`, `import`, `list`, `keep`, `discard`, `cancel`, `publish`, `unpublish`, `retry-delete`, `retry-removal`, `close-session`, `attach-request`, `settle-unconfirmed`, `record-gate`, `record-balance`, and `migrate`.
+
+`import` takes a clip made somewhere else (E5, 18 Oct 2026). The source is `grok-imagine`. The Studio reads the MP4's own boxes for the container, codec, width, height, duration, frame rate and audio, copies the clip and a stripped JPEG keyframe into `STUDIO_MEDIA_DIR`, and lands the job in `downloaded`. The seed, the prompt expansion and the request id stay null. There is no fal request and no ledger line. The finish time is `--made-on`, or the creation time in the MP4 header; if neither is there, import refuses and asks for `--made-on`. Importing the same file twice is refused by hash. `keep` and `record-gate` then work as they do for a fal clip.
 
 `keep` takes five answers, checklist order: extra players, text on boards, logo-like marks, subject identity, soundtrack. Each is `clear`, `present`, or `unsure`. Keep needs five `clear` answers. `record-gate` records the Article 50 answer (who answers is not named). An empty or blank answer is refused, in this process and by the database check. Blank means every character is in one shared set: the characters JavaScript's `\s` matches, plus U+200B, U+200C, U+200D and U+2060. The check is a PostgreSQL `~` test of a standard-SQL `U&` escape string. A second answer is refused with the date already recorded. This slice has no command to amend that answer. Publish refuses until that row exists, in the database as well as in this process.
 

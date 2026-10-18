@@ -36,6 +36,7 @@ const USAGE = [
   'poll --job <id>',
   'resume --job <id>',
   'download --job <id>',
+  'import --file <clip.mp4> --keyframe <still.jpg> --source grok-imagine --prompt-file <prompt.txt> --subjects Fenway,Frankenstein --title <title> [--note <text>] [--made-on YYYY-MM-DD]',
   'list',
   'keep --job <id> --answers <clear|present|unsure>,... (five, checklist order)',
   'discard --job <id>',
@@ -327,6 +328,81 @@ export async function runCli(argv: readonly string[], env: NodeJS.ProcessEnv, io
         io.stdout(line(result.outcome, { transport }))
         explain(io, result.outcome)
         return
+      }
+      if (command === 'import') {
+        const video = new Uint8Array(readFileSync(resolveEnvFile(required(flags, 'file'))))
+        const keyframe = new Uint8Array(readFileSync(resolveEnvFile(required(flags, 'keyframe'))))
+        const prompt = readFileSync(resolveEnvFile(required(flags, 'prompt-file')), 'utf8')
+        const result = await studio.importClip({
+          video,
+          keyframe,
+          source: required(flags, 'source'),
+          prompt,
+          subjects: required(flags, 'subjects').split(','),
+          title: required(flags, 'title'),
+          note: flags.note,
+          madeOn: flags['made-on'],
+        })
+        if (result.outcome === 'imported') {
+          io.stdout(line('imported', {
+            job: result.jobId,
+            sha256: result.sha256,
+            width: result.width,
+            height: result.height,
+            duration: result.durationS,
+            container: result.container,
+            codec: result.videoCodec,
+            audio: result.audio,
+            fps: result.frameRate,
+            transport,
+          }))
+          return
+        }
+        if (result.outcome === 'clip-refused' && result.reason === 'not-mp4') {
+          io.stdout('refused: not an mp4')
+          return
+        }
+        if (result.outcome === 'clip-refused' && result.reason === 'no-video') {
+          io.stdout('refused: missing a video track')
+          return
+        }
+        if (result.outcome === 'clip-refused') {
+          io.stdout('refused: duration is zero')
+          return
+        }
+        if (result.outcome === 'not-a-jpeg') {
+          io.stdout('refused: keyframe is not a jpeg')
+          return
+        }
+        if (result.outcome === 'already-imported') {
+          io.stdout('refused: this file was already imported')
+          return
+        }
+        if (result.outcome === 'needs-made-on') {
+          io.stdout('refused: pass --made-on YYYY-MM-DD; the clip has no creation time')
+          return
+        }
+        if (result.outcome === 'made-on-invalid') {
+          io.stdout('refused: --made-on must be YYYY-MM-DD')
+          return
+        }
+        if (result.outcome === 'source-refused') {
+          io.stdout('refused: source must be grok-imagine')
+          return
+        }
+        if (result.outcome === 'subject-refused') {
+          io.stdout('refused: subjects must be Fenway or Frankenstein')
+          return
+        }
+        if (result.outcome === 'prompt-empty') {
+          io.stdout('refused: the prompt file is empty')
+          return
+        }
+        if (result.outcome === 'title-empty') {
+          io.stdout('refused: the title is empty')
+          return
+        }
+        throw new Error('unexpected import result')
       }
       if (command === 'list') {
         const rows = await studio.list()

@@ -84,6 +84,46 @@ export function brooklynDate(now: Date): string {
   }).format(now)
 }
 
+/**
+ * Midnight at the start of a Brooklyn calendar day. Null when `day` is not
+ * that day in America/New_York.
+ */
+export function brooklynStart(day: string): Date | null {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(day)
+  if (!match) return null
+  const year = Number(match[1])
+  const month = Number(match[2])
+  const date = Number(match[3])
+  if (month < 1 || month > 12 || date < 1 || date > 31) return null
+  const noon = new Date(Date.UTC(year, month - 1, date, 12))
+  const zone = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York',
+    timeZoneName: 'shortOffset',
+    hour: '2-digit',
+    hourCycle: 'h23',
+  }).formatToParts(noon).find((part) => part.type === 'timeZoneName')?.value ?? ''
+  const offset = /^GMT([+-]\d{1,2})(?::(\d{2}))?$/.exec(zone)
+  if (!offset || offset[1] === undefined) return null
+  const hours = Number(offset[1])
+  const minutes = Number(offset[2] ?? '0')
+  const total = hours * 60 + Math.sign(hours || 1) * minutes
+  const instant = new Date(Date.UTC(year, month - 1, date) - total * 60_000)
+  if (brooklynDate(instant) !== day) return null
+  return instant
+}
+
+/**
+ * A clip made by hand in Grok Imagine. Not a fal endpoint and not a price:
+ * `selectRegistry` does not return it, and import writes no ledger line.
+ * `pinnedOn` here is the day this entry was added; each import records its own date.
+ */
+export const GROK_IMAGINE = {
+  id: 'grok-imagine',
+  endpoint: 'xai/grok-imagine (grok.com, made by hand)',
+  task: 'video' as const,
+  pinnedOn: '2026-10-18',
+}
+
 export function selectRegistry(endpoint: string, params: Record<string, unknown>, now: Date): RegistryRow | null {
   const day = brooklynDate(now)
   const resolution = typeof params.resolution === 'string' ? params.resolution : undefined
