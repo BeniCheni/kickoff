@@ -1,7 +1,16 @@
 import { readFileSync } from 'node:fs'
+import { redact } from '../log/redact.ts'
 import { createStorageStub } from './stub.ts'
 import { sha256Hex, signAwsV4, uriEncode } from './sigv4.ts'
-import type { StoragePort, StoredObject } from './port.ts'
+import { ObjectStoreError, type StoragePort, type StoredObject } from './port.ts'
+
+/** The S3 `<Code>` element only. Anything else in the body is dropped, then the code is redacted. */
+export function s3ErrorCode(body: string): string {
+  const match = /<Code>([^<]*)<\/Code>/.exec(body)
+  const raw = (match?.[1] ?? '').trim()
+  if (raw === '' || raw.length > 128) return 'unknown'
+  return redact(raw)
+}
 
 /** Catalog bucket. The public address is origin/moments/<object path>. */
 export const CATALOG_BUCKET = 'moments'
@@ -102,11 +111,11 @@ export function createR2Storage(options: {
         body,
       })
     } catch {
-      throw new Error(`${kind} upload failed`)
+      throw new ObjectStoreError(`${kind} upload failed`, null, 'network')
     }
     if (!response.ok) {
-      await response.arrayBuffer().catch(() => undefined)
-      throw new Error(`${kind} upload failed (${response.status})`)
+      const xml = await response.text().catch(() => '')
+      throw new ObjectStoreError(`${kind} upload failed (${response.status})`, response.status, s3ErrorCode(xml))
     }
     return object
   }
@@ -144,7 +153,7 @@ export function createR2Storage(options: {
           },
         })
       } catch {
-        throw new Error(`${label} remove failed`)
+        throw new ObjectStoreError(`${label} remove failed`, null, 'network')
       }
       // AWS DeleteObject documents success when the key is already absent (HTTP 204).
       // 204 and 404 are both treated as removed. That was not verified against a live bucket.
@@ -152,8 +161,8 @@ export function createR2Storage(options: {
         await response.arrayBuffer().catch(() => undefined)
         return
       }
-      await response.arrayBuffer().catch(() => undefined)
-      throw new Error(`${label} remove failed (${response.status})`)
+      const xml = await response.text().catch(() => '')
+      throw new ObjectStoreError(`${label} remove failed (${response.status})`, response.status, s3ErrorCode(xml))
     },
     deliverFallback: site.port.deliverFallback,
     removeSiteCopy: site.port.removeSiteCopy,

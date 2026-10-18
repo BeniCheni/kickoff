@@ -1,5 +1,17 @@
 export type StoredObject = { bucket: string; objectPath: string }
 
+/** An object-store call that returned an error, or never returned. The body is not kept. */
+export class ObjectStoreError extends Error {
+  readonly status: number | null
+  readonly code: string
+  constructor(message: string, status: number | null, code: string) {
+    super(message)
+    this.name = 'ObjectStoreError'
+    this.status = status
+    this.code = code
+  }
+}
+
 /** Addendum outcomes for the site's thumbnail copy and for its removal. */
 export const SITE_COPY_OUTCOMES = ['pr-opened', 'checks-running', 'merged', 'checks-failed'] as const
 

@@ -203,6 +203,7 @@ async function openStudio(
   live: boolean,
   objectStore: boolean,
   open: DatabaseFactory,
+  fetchImpl?: typeof fetch,
 ) {
   const dataDir = resolveEnvFile(requiredEnv(env, 'STUDIO_DATA_DIR'))
   const mediaDir = resolveEnvFile(requiredEnv(env, 'STUDIO_MEDIA_DIR'))
@@ -212,7 +213,7 @@ async function openStudio(
   const fails = new Set((env.STUDIO_STORAGE_FAIL ?? '').split(',').map((item) => item.trim()).filter(Boolean))
   const useR2 = live && objectStore
   const storage = useR2
-    ? { port: createR2Storage({ env }) }
+    ? { port: createR2Storage({ env, fetchImpl }) }
     : createStorageStub({
       failVideo: fails.has('video'),
       failThumbnail: fails.has('thumbnail'),
@@ -276,9 +277,10 @@ async function withStudio(
   live: boolean,
   objectStore: boolean,
   open: DatabaseFactory,
+  fetchImpl: typeof fetch | undefined,
   run: (studio: Studio) => Promise<void>,
 ): Promise<void> {
-  const opened = await openStudio(env, live, objectStore, open)
+  const opened = await openStudio(env, live, objectStore, open, fetchImpl)
   try {
     await run(opened.studio)
   } finally {
@@ -290,7 +292,7 @@ export async function runCli(
   argv: readonly string[],
   env: NodeJS.ProcessEnv,
   io: CliIo,
-  options: { openDatabase?: DatabaseFactory } = {},
+  options: { openDatabase?: DatabaseFactory; fetchImpl?: typeof fetch } = {},
 ): Promise<number> {
   try {
     const [command, ...rest] = argv
@@ -346,7 +348,7 @@ export async function runCli(
     }
 
     const open = options.openDatabase ?? ((input) => openDatabase(input.env, input.live, input.dataDir))
-    await withStudio(loaded, live, objectStore, open, async (studio) => {
+    await withStudio(loaded, live, objectStore, open, options.fetchImpl, async (studio) => {
       if (command === 'submit') {
         const endpoint = required(flags, 'endpoint')
         const prompt = required(flags, 'prompt')
@@ -567,6 +569,8 @@ export async function runCli(
           live: 'live' in result ? result.live : undefined,
           retryable: 'retryable' in result ? result.retryable : undefined,
           object: 'object' in result ? result.object : undefined,
+          status: 'status' in result ? result.status : undefined,
+          code: 'code' in result ? result.code : undefined,
         }))
         explain(io, result.outcome)
         return
@@ -577,6 +581,8 @@ export async function runCli(
           removal: 'removal' in result ? result.removal : undefined,
           filesReadable: 'filesReadable' in result ? result.filesReadable : undefined,
           live: 'live' in result ? result.live : undefined,
+          status: 'status' in result ? result.status : undefined,
+          code: 'code' in result ? result.code : undefined,
         }))
         return
       }
@@ -585,6 +591,8 @@ export async function runCli(
         io.stdout(placed(result.outcome, {
           filesReadable: 'filesReadable' in result ? result.filesReadable : undefined,
           idempotent: 'idempotent' in result ? result.idempotent : undefined,
+          status: 'status' in result ? result.status : undefined,
+          code: 'code' in result ? result.code : undefined,
         }))
         return
       }

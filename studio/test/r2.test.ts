@@ -10,7 +10,9 @@ import { createFalStub } from '../fal/stub.ts'
 import { sha256 } from '../hash.ts'
 import { redact } from '../log/redact.ts'
 import { syntheticMp4 } from '../media/mp4.ts'
-import { createR2Storage, missingR2 } from '../storage/r2.ts'
+import { createR2Storage, missingR2, s3ErrorCode } from '../storage/r2.ts'
+import { ObjectStoreError } from '../storage/port.ts'
+import type { DatabaseFactory } from '../cli.ts'
 import { sha256Hex } from '../storage/sigv4.ts'
 import { runCli } from '../cli.ts'
 import { freshDatabase, type StudioClient } from './harness.ts'
@@ -117,6 +119,51 @@ describe('R2 storage', () => {
     }).catch((error: unknown) => error instanceof Error ? error.message : ''))).not.toContain(SECRET)
   })
 
+  it('records status and the S3 code, and never the body', async () => {
+    const dir = mkdtempSync(path.join(tmpdir(), 'kickoff-r2-code-'))
+    const file = path.join(dir, 'clip.mp4')
+    writeFileSync(file, Buffer.from('clip'))
+    const digest = sha256(Buffer.from('clip'))
+    const input = { localPath: file, sha256: digest, publicId: 'fenway', mime: 'video/mp4' }
+    const object = { bucket: 'moments', objectPath: 'fenway/video-aaaaaaaa.mp4' }
+    const xml = (code: string) => `<?xml version="1.0"?><Error><Code>${code}</Code><Message>body-must-not-leak</Message></Error>`
+    const take = async (response: Response | Error) => {
+      const port = createR2Storage({
+        env: r2Env(),
+        fetchImpl: async () => {
+          if (response instanceof Error) throw response
+          return response
+        },
+      })
+      return port.putVideo(input).then(() => {
+        throw new Error('expected a failure')
+      }, (error: unknown) => error)
+    }
+
+    const forbidden = await take(new Response(xml('SignatureDoesNotMatch'), { status: 403 }))
+    expect(forbidden).toBeInstanceOf(ObjectStoreError)
+    expect(forbidden).toMatchObject({ status: 403, code: 'SignatureDoesNotMatch' })
+    expect(String((forbidden as Error).message)).not.toContain('body-must-not-leak')
+
+    const missing = await take(new Response(xml('NoSuchBucket'), { status: 404 }))
+    expect(missing).toMatchObject({ status: 404, code: 'NoSuchBucket' })
+    expect(String((missing as Error).message)).not.toContain('<Message>')
+
+    const offline = await take(new Error('connect ECONNREFUSED secret-host'))
+    expect(offline).toMatchObject({ status: null, code: 'network' })
+    expect(String((offline as Error).message)).not.toContain('secret-host')
+
+    const removed = createR2Storage({
+      env: r2Env(),
+      fetchImpl: async () => new Response(xml('SignatureDoesNotMatch'), { status: 403 }),
+    })
+    await expect(removed.remove(object)).rejects.toMatchObject({ status: 403, code: 'SignatureDoesNotMatch' })
+
+    const planted = ['R2_SECRET', '_ACCESS_KEY'].join('')
+    expect(s3ErrorCode(xml(`${planted}=${SECRET}`))).not.toContain(SECRET)
+    expect(s3ErrorCode(xml(`${planted}=${SECRET}`))).toContain('[redacted]')
+  })
+
   it('honours each STUDIO_STORAGE_FAIL token without a request', async () => {
     const dir = mkdtempSync(path.join(tmpdir(), 'kickoff-r2-fail-'))
     const file = path.join(dir, 'clip.mp4')
@@ -190,10 +237,10 @@ describe('R2 storage', () => {
       source: 'A-06',
     })).outcome).toBe('gate-recorded')
     const failed = await studio.publish({ jobId: imported.jobId, publicId: 'fenway', title: 'Fenway', position: 1 })
-    expect(failed).toMatchObject({ outcome: 'upload-failed', object: 'thumbnail', live: false })
+    expect(failed).toMatchObject({ outcome: 'upload-failed', object: 'thumbnail', live: false, status: 500, code: 'unknown' })
     expect(await db.select().from(videos)).toHaveLength(0)
     const failedEvents = await db.select().from(event).where(eq(event.jobId, imported.jobId))
-    expect(failedEvents.filter((row) => row.type === 'upload-failed').map((row) => row.detail)).toEqual([{ object: 'thumbnail' }])
+    expect(failedEvents.filter((row) => row.type === 'upload-failed').map((row) => row.detail)).toEqual([{ object: 'thumbnail', status: 500, code: 'unknown' }])
     expect(seen.filter((item) => item.method === 'PUT' && item.url.includes('/video-'))).toHaveLength(1)
     expect(seen.filter((item) => item.method === 'PUT' && item.url.includes('/thumbnail-'))).toHaveLength(1)
 
@@ -243,5 +290,74 @@ describe('R2 storage', () => {
     })).toBe(1)
     expect(listed).toEqual(['refused: --live needs DATABASE_URL'])
     expect(listed.join('\n')).not.toContain('R2_')
+  })
+
+  it('prints status and code for a failed upload and a failed delete', async () => {
+    const { client, db } = await freshDatabase()
+    clients.push(client)
+    const factory: DatabaseFactory = async ({ live }) => {
+      if (!live) throw new Error('pglite')
+      return { db, kind: 'postgres', close: async () => undefined }
+    }
+    const media = mkdtempSync(path.join(tmpdir(), 'kickoff-r2-print-'))
+    const data = mkdtempSync(path.join(tmpdir(), 'kickoff-r2-print-data-'))
+    const video = path.join(media, 'clip.mp4')
+    const still = path.join(media, 'k0.jpg')
+    const prompt = path.join(media, 'prompt.txt')
+    const created = Math.floor(Date.parse('2026-10-18T15:00:00.000Z') / 1000) + MAC_EPOCH_SECONDS
+    writeFileSync(video, syntheticMp4({ width: 1920, height: 1080, durationS: 5, frameRate: 24, audio: true, creationTime: created }))
+    writeFileSync(still, minimalJpeg)
+    writeFileSync(prompt, 'A cat scores\n')
+    const databaseUrl = ['postgres', '://', 'example.invalid/studio'].join('')
+    const env = {
+      ...r2Env(),
+      STUDIO_LIVE: '1',
+      DATABASE_URL: databaseUrl,
+      STUDIO_DATA_DIR: data,
+      STUDIO_MEDIA_DIR: media,
+      STUDIO_NOW: '2026-10-21T16:00:00.000Z',
+    }
+    const xml = (code: string) => `<?xml version="1.0"?><Error><Code>${code}</Code><Message>body-must-not-leak</Message></Error>`
+    let puts = 0
+    const { fetchImpl } = capturing((item) => {
+      if (item.method === 'PUT' && puts++ === 0) return new Response(xml('SignatureDoesNotMatch'), { status: 403 })
+      if (item.method === 'DELETE') return new Response(xml('NoSuchBucket'), { status: 500 })
+      return new Response(null, { status: 200 })
+    })
+    const options = { openDatabase: factory, fetchImpl }
+    const say = () => {
+      const out: string[] = []
+      const err: string[] = []
+      return { out, err, stdout: (line: string) => out.push(line), stderr: (line: string) => err.push(line) }
+    }
+    const imported = say()
+    expect(await runCli([
+      'import', '--live', '--file', video, '--keyframe', still, '--source', 'grok-imagine',
+      '--prompt-file', prompt, '--subjects', 'Fenway', '--title', 'Fenway', '--made-on', '2026-10-21',
+    ], env, imported, options)).toBe(0)
+    const job = /job=([0-9a-f-]{36})/.exec(imported.out[0] ?? '')?.[1] ?? ''
+    expect(await runCli(['keep', '--live', '--job', job, '--answers', CHECKLIST_LINES.map(() => 'clear').join(',')], env, say(), options)).toBe(0)
+    expect(await runCli(['record-gate', '--live', '--answer', 'recorded', '--disclosure', 'pending', '--by', 'unspecified', '--source', 'A-06'], env, say(), options)).toBe(0)
+
+    const failed = say()
+    expect(await runCli(['publish', '--live', '--job', job, '--public-id', 'fenway', '--title', 'Fenway', '--position', '1'], env, failed, options)).toBe(0)
+    expect(failed.out[0]).toBe('upload-failed live=false object=video status=403 code=SignatureDoesNotMatch database=postgres storage=r2')
+    expect(failed.out.join('\n')).not.toContain('body-must-not-leak')
+    const failedEvents = await db.select().from(event).where(eq(event.jobId, job))
+    expect(failedEvents.filter((row) => row.type === 'upload-failed').map((row) => row.detail)).toEqual([
+      { object: 'video', status: 403, code: 'SignatureDoesNotMatch' },
+    ])
+
+    expect(await runCli(['publish', '--live', '--job', job, '--public-id', 'fenway', '--title', 'Fenway', '--position', '1'], env, say(), options)).toBe(0)
+    const withdrawn = say()
+    expect(await runCli(['unpublish', '--live', '--delete', '--job', job], env, withdrawn, options)).toBe(0)
+    expect(withdrawn.out[0]).toContain('status=500')
+    expect(withdrawn.out[0]).toContain('code=NoSuchBucket')
+    expect(withdrawn.out.join('\n')).not.toContain('body-must-not-leak')
+    const deleted = await db.select().from(event).where(eq(event.jobId, job))
+    expect(deleted.filter((row) => row.type === 'delete-failed').map((row) => row.detail)).toEqual([
+      { object: 'video', status: 500, code: 'NoSuchBucket' },
+      { object: 'thumbnail', status: 500, code: 'NoSuchBucket' },
+    ])
   })
 })

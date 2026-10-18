@@ -38,7 +38,7 @@ import { addUsd, formatUsd, parseUsd } from './money.ts'
 import { readClipFacts } from './media/mp4.ts'
 import { preparePhotograph } from './photos/strip.ts'
 import { brooklynDate, brooklynStart, estimateUsd, GROK_IMAGINE, selectRegistry, unknownParam, type RegistryRow } from './registry.ts'
-import { siteCopyStatus, type SiteCopyOutcome, type StoragePort, type StoredObject } from './storage/port.ts'
+import { ObjectStoreError, siteCopyStatus, type SiteCopyOutcome, type StoragePort, type StoredObject } from './storage/port.ts'
 import type { PgliteDatabase } from 'drizzle-orm/pglite'
 
 export type StudioDatabase = PgliteDatabase<typeof studioTables>
@@ -235,6 +235,14 @@ export function createStudio(options: EngineOptions) {
     await writer.insert(event).values({ jobId, at: clock(), type, detail: detail ?? null })
   }
 
+  function storeFailure(error: unknown): { status?: number; code?: string } {
+    if (!(error instanceof ObjectStoreError)) return {}
+    return {
+      ...(typeof error.status === 'number' ? { status: error.status } : {}),
+      code: error.code,
+    }
+  }
+
   async function setJob(jobId: string, generationId: string, status: JobState, extra: {
     substate?: 'download-failed' | 'result-expired' | null
     refusalReason?: string | null
@@ -314,6 +322,12 @@ export function createStudio(options: EngineOptions) {
     let videoRemoved = row.videoRemovedAt !== null
     let thumbnailRemoved = row.thumbnailRemovedAt !== null
     let attempted = 0
+    let failure: { status?: number; code?: string } = {}
+    const note = async (object: 'video' | 'thumbnail', error: unknown) => {
+      const fields = storeFailure(error)
+      if (failure.code === undefined) failure = fields
+      await recordEvent(row.jobId, 'delete-failed', { object, ...fields })
+    }
     if (!videoRemoved) {
       const [videoAsset] = await db.select().from(asset).where(eq(asset.id, row.videoAssetId))
       if (!videoAsset?.bucket || !videoAsset.objectPath) videoRemoved = true
@@ -323,8 +337,9 @@ export function createStudio(options: EngineOptions) {
           await storage.remove({ bucket: videoAsset.bucket, objectPath: videoAsset.objectPath })
           await db.update(videos).set({ videoRemovedAt: clock() }).where(eq(videos.id, row.id))
           videoRemoved = true
-        } catch {
+        } catch (error) {
           videoRemoved = false
+          await note('video', error)
         }
       }
     }
@@ -337,12 +352,13 @@ export function createStudio(options: EngineOptions) {
           await storage.remove({ bucket: thumbnail.bucket, objectPath: thumbnail.objectPath })
           await db.update(videos).set({ thumbnailRemovedAt: clock() }).where(eq(videos.id, row.id))
           thumbnailRemoved = true
-        } catch {
+        } catch (error) {
           thumbnailRemoved = false
+          await note('thumbnail', error)
         }
       }
     }
-    return { videoRemoved, thumbnailRemoved, attempted }
+    return { videoRemoved, thumbnailRemoved, attempted, ...failure }
   }
 
   async function runRemoval(videoId: string, publicId: string): Promise<{ outcome: SiteCopyOutcome }> {
@@ -1236,9 +1252,10 @@ export function createStudio(options: EngineOptions) {
           videoAsset.bucket = object.bucket
           videoAsset.objectPath = object.objectPath
         }
-      } catch {
-        await recordEvent(current.id, 'upload-failed', { object: 'video' })
-        return { outcome: 'upload-failed' as const, live: false as const, listedAgain: true as const, object: 'video' as const }
+      } catch (error) {
+        const fields = storeFailure(error)
+        await recordEvent(current.id, 'upload-failed', { object: 'video', ...fields })
+        return { outcome: 'upload-failed' as const, live: false as const, listedAgain: true as const, object: 'video' as const, ...fields }
       }
       try {
         if (!thumbnail.bucket || !thumbnail.objectPath) {
@@ -1252,9 +1269,10 @@ export function createStudio(options: EngineOptions) {
           thumbnail.bucket = object.bucket
           thumbnail.objectPath = object.objectPath
         }
-      } catch {
-        await recordEvent(current.id, 'upload-failed', { object: 'thumbnail' })
-        return { outcome: 'upload-failed' as const, live: false as const, listedAgain: true as const, object: 'thumbnail' as const }
+      } catch (error) {
+        const fields = storeFailure(error)
+        await recordEvent(current.id, 'upload-failed', { object: 'thumbnail', ...fields })
+        return { outcome: 'upload-failed' as const, live: false as const, listedAgain: true as const, object: 'thumbnail' as const, ...fields }
       }
 
       if (flags.breakRecordWrite) {
@@ -1319,7 +1337,7 @@ export function createStudio(options: EngineOptions) {
 
       const deleted = options?.deleteFiles
         ? await deleteRemaining(row.id)
-        : { videoRemoved: false, thumbnailRemoved: false, videoFailed: false, thumbnailFailed: false }
+        : { videoRemoved: false, thumbnailRemoved: false, status: undefined, code: undefined }
       const removal = await runRemoval(row.id, row.publicId)
       return {
         outcome: 'withdrawn' as const,
@@ -1329,6 +1347,8 @@ export function createStudio(options: EngineOptions) {
         thumbnailRemoved: deleted.thumbnailRemoved,
         filesReadable: Boolean(options?.deleteFiles) && (!deleted.videoRemoved || !deleted.thumbnailRemoved),
         removal: removal.outcome,
+        status: deleted.status,
+        code: deleted.code,
       }
     },
 
@@ -1344,6 +1364,8 @@ export function createStudio(options: EngineOptions) {
         thumbnailRemoved: deleted.thumbnailRemoved,
         filesReadable: !deleted.videoRemoved || !deleted.thumbnailRemoved,
         idempotent: deleted.attempted === 0,
+        status: deleted.status,
+        code: deleted.code,
       }
     },
 
