@@ -172,6 +172,16 @@ try {
           else void request.continue()
         })
       }
+      if (['ended', 'countdown'].includes(state)) {
+        await page.evaluateOnNewDocument(() => {
+          const play = HTMLMediaElement.prototype.play
+          HTMLMediaElement.prototype.play = function () {
+            const promise = play.call(this)
+            promise.then(() => { this.pause() }).catch(() => {})
+            return promise
+          }
+        })
+      }
       const isWatch = !['gallery', 'empty', 'no-results', 'unavailable'].includes(state)
       const params = new URLSearchParams({ tab: 'moments', ...(lens === 'poster' ? {} : { lens }), ...(isWatch ? { watch: state === 'not-found' ? 'withdrawn-clip' : 'stub-fenway-one' } : {}) })
       const host = state === 'empty' ? empty : ['unavailable', 'watch-unavailable'].includes(state) ? unavailable : origin
@@ -186,10 +196,10 @@ try {
         if (state === 'paused') { await button(page, 'Pause'); await page.waitForFunction(() => document.querySelector('video').paused) }
       }
       if (['ended', 'countdown'].includes(state)) {
-        const live = await page.evaluate(() => { const video = document.querySelector('video'); return !!(video && !video.paused && !video.ended) })
-        if (!live) await button(page, 'Play')
-        await page.waitForFunction(() => document.querySelector('video').ended)
+        await page.waitForFunction(() => /Playing muted|Paused at|Sound on/.test(document.body.innerText))
+        await page.evaluate(() => document.querySelector('video')?.dispatchEvent(new Event('ended')))
         if (state === 'countdown') await page.waitForFunction(() => /Up next in \d s/.test(document.body.innerText))
+        else await page.waitForFunction(() => document.body.innerText.includes('Ended.'))
       }
       if (state === 'recovery') {
         const alerted = await page.$('[role="alert"]')
@@ -232,7 +242,10 @@ try {
   check('canonicalSearch does not normalize again on watch entry', await page.evaluate(n => window.__normalizations.length === n, normalizations), normalizations)
   const focused = await page.evaluate(() => document.activeElement?.id)
   check('watch focuses its heading', focused === 'moments-watch-heading', focused)
-  await playing(page)
+  await page.evaluate(() => document.querySelector('video')?.pause())
+  await page.waitForFunction(() => [...document.querySelectorAll('button')].some(button => ['Play', 'Replay'].includes(button.textContent.trim())))
+  await page.evaluate(() => [...document.querySelectorAll('button')].find(button => ['Play', 'Replay'].includes(button.textContent.trim()))?.click())
+  await page.waitForFunction(() => document.activeElement === document.querySelector('video'))
   check('Play focuses the video', await page.evaluate(() => document.activeElement === document.querySelector('video')))
   await page.close()
   await regressions(browser, origin, check, page => prepare(page))

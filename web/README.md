@@ -87,6 +87,8 @@ is already painted; the hover fades that layer's opacity. `prefers-reduced-motio
 | Count tick | 150 ms ease | opacity, `translateY(2px)` |
 
 Rerun the throttled trace with `node web/scripts/n4c-motion.mjs /tmp/kickoff-n4c-motion`. The receipt is `web/verification/n4c-motion.json`.
+The demo-on browser pass is `node web/scripts/n4c-demo.mjs /tmp/kickoff-n4c-demo` against a server with `KICKOFF_DEMO=on` and `KICKOFF_DEMO_FILE` set, plus `KICKOFF_EMPTY_ORIGIN` and `KICKOFF_UNAVAILABLE_ORIGIN`. Its receipt is `web/verification/n4c-demo.json`. PNGs stay in the output directory.
+The demo-off matrix is `node web/scripts/n4b-moments.mjs /tmp/kickoff-n4c-moments-off` with the demo variables unset. Fixtures and Table against Vite are `node web/scripts/n3-next-vite.mjs`.
 
 Moments styles live in
 `web/app/moments/gallery.css`, scoped under `.moments-gallery`. `npm run check:css`

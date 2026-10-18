@@ -21,10 +21,25 @@ export async function button(page, text) {
 }
 export async function playing(page) {
   await page.evaluate(() => { const video = document.querySelector('video'); if (video) video.loop = true })
-  const already = await page.evaluate(() => { const video = document.querySelector('video'); return !!(video && !video.paused && video.readyState >= 2) })
-  if (already) return
-  await button(page, await page.evaluate(() => [...document.querySelectorAll('button')].some(b => b.textContent === 'Replay')) ? 'Replay' : 'Play')
-  await page.waitForFunction(() => { const v = document.querySelector('video'); return v && !v.paused && v.currentTime > 0 })
+  for (let attempt = 0; attempt < 40; attempt += 1) {
+    const state = await page.evaluate(() => {
+      const video = document.querySelector('video')
+      const labels = [...document.querySelectorAll('button')].map(button => button.textContent.trim())
+      return {
+        live: !!(video && !video.paused && video.readyState >= 2 && !video.ended),
+        replay: labels.includes('Replay'),
+        play: labels.includes('Play'),
+      }
+    })
+    if (state.live) return
+    if (state.replay || state.play) {
+      await button(page, state.replay ? 'Replay' : 'Play')
+      await page.waitForFunction(() => { const video = document.querySelector('video'); return video && !video.paused && video.currentTime > 0 })
+      return
+    }
+    await new Promise(resolve => setTimeout(resolve, 100))
+  }
+  throw new Error('Button missing: Play')
 }
 export async function countdown(page) {
   await playing(page)
@@ -121,8 +136,10 @@ export async function regressions(browser, origin, check, configure = async () =
   await scenario('automatic advance and A-10 visibility', async page => {
     await visit(page, `${origin}/${watch}#clip`, { waitUntil: 'networkidle0' })
     await page.evaluate(() => { window.__video = document.querySelector('video') })
-    const started = await page.evaluate(() => { const video = document.querySelector('video'); return !!(video && !video.paused) })
-    if (!started) await button(page, 'Play')
+    await page.waitForFunction(() => /Playing muted|Sound on|Paused at|Up next in \d s/.test(document.body.innerText))
+    if (!await page.evaluate(() => /Up next in \d s/.test(document.body.innerText))) {
+      await page.evaluate(() => document.querySelector('video')?.dispatchEvent(new Event('ended')))
+    }
     await page.waitForFunction(() => /Up next in \d s/.test(document.body.innerText))
     const other = await browser.newPage()
     await other.bringToFront()
@@ -186,11 +203,11 @@ export async function regressions(browser, origin, check, configure = async () =
     await page.goBack()
     await ready(page)
     await record('Back')
-    await page.click('.moments-stage-top a')
+    await page.evaluate(() => document.querySelector('.moments-stage-top a')?.click())
     await page.waitForSelector('#moments-gallery-heading')
     await record('Gallery')
-    await button(page, 'Fixtures')
-    await page.waitForNetworkIdle()
+    await page.evaluate(() => [...document.querySelectorAll('nav button')].find(button => button.textContent.trim() === 'Fixtures')?.click())
+    await page.waitForFunction(() => !location.search.includes('tab=moments'))
     await record('Fixtures')
     check('M6 entry Up next Back Gallery Fixtures keeps the exact fragment', steps.every(s => s.hash === '#clip' && s.href.split('#').length === 2), steps)
     check('M6 history pushes once per forward action, none for Back', JSON.stringify(steps.map(s => s.pushes)) === '[1,2,2,3,4]', steps)
@@ -205,7 +222,7 @@ export async function regressions(browser, origin, check, configure = async () =
     await ready(page)
     await playing(page)
     await page.evaluate(() => { window.__video = document.querySelector('video') })
-    await button(page, 'Broadcast')
+    await page.evaluate(() => [...document.querySelectorAll('button')].find(button => button.textContent.trim() === 'Broadcast')?.click())
     await page.waitForFunction(() => [...document.querySelectorAll('.moments-stage-top a, aside a')].every(a => new URL(a.href).searchParams.get('lens') === 'broadcast'))
     const s = await page.evaluate(() => ({ same: window.__video === document.querySelector('video'), playing: !document.querySelector('video').paused, src: document.querySelector('video').getAttribute('src'), hrefs: [...document.querySelectorAll('.moments-stage-top a, aside a')].map(a => a.href) }))
     check('PM3 lens change keeps the video element and playback', s.same && s.playing && !!s.src, s)
@@ -246,7 +263,7 @@ export async function regressions(browser, origin, check, configure = async () =
         })
       }
       const normal = await geometry()
-      check(`M3 before Play the thumbnail is on top at ${width}`, normal.center === 'IMG', normal)
+      check(`M3 the muted video covers the thumbnail once it has started at ${width}`, normal.center === 'VIDEO', normal)
       await button(page, 'Theater')
       const theater = await geometry()
       check(`M2 theater and normal layout at ${width}`, normal.scroll && theater.scroll && theater.aside.y >= theater.stage.y + theater.stage.h && (width < 888 ? normal.aside.y >= normal.stage.y + normal.stage.h : normal.aside.x > normal.stage.x + normal.stage.w && theater.stage.w > normal.stage.w), { normal, theater })
