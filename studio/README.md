@@ -58,3 +58,30 @@ A response that carries a request id but no usable queue URLs stores that id in 
 `STUDIO_STUB` selects the script: `queued-then-completed` (the default), `error-payload`, `safety-refusal`, `timeout`, `expired-result`, `duplicate-delivery`, `out-of-credit`. `STUDIO_STORAGE_FAIL` is a comma list of `video`, `thumbnail`, `fallback`, `remove`.
 
 The photograph strip takes JPEG only. HEIC and PNG are refused, so convert first. It removes every metadata block, including APP2 (ICC) and APP14, so a Display P3 photo loses its colour profile. The hash stored is the hash of the bytes that would be sent. Those bytes are a `data:image/jpeg;base64,...` URI, the form fal's file-input docs describe. The Studio does not upload the photograph to fal storage. `--live` with `STUDIO_LIVE` or `FAL_KEY` missing refuses and names the missing piece. It never prints a value. Every command that talks to fal prints `transport=stub` or `transport=live`.
+
+## The web admin
+
+The admin is a local page on this Mac. It binds to `127.0.0.1:5176` and nothing else. It does not deploy, and it has no sign-in. Set the same directories as the CLI, outside the repo.
+
+```bash
+export STUDIO_ENV_FILE=$HOME/studio.env
+export STUDIO_DATA_DIR=$HOME/studio-data
+export STUDIO_MEDIA_DIR=$HOME/studio-media
+npm run studio
+```
+
+The process prints one URL. Open that URL. It sets an HttpOnly, SameSite=Strict cookie and does not print the token again. A request without that cookie is refused. A write from another origin is refused. A Host header that is not loopback is refused.
+
+```bash
+npm run studio
+```
+
+That start is stub mode. The shell shows `transport=stub`. Paid submits use the fal stub. `STUDIO_STUB` selects the script, the same names as the CLI.
+
+```bash
+STUDIO_LIVE=1 npm run studio -- --live
+```
+
+`--live` turns the process live only when `STUDIO_LIVE=1` and the env file holds `FAL_KEY` and `DATABASE_URL`. If either is missing, the process refuses and names the missing piece. It does not print the value. The browser cannot switch the transport. The shell shows `transport=live` only when the process was started that way.
+
+Import of a Grok clip is not on this page yet. The `import` command is not on `main`. The walk-through — choose the MP4 and the JPEG, read the clip's facts, keep, then publish — waits until that command has merged.
