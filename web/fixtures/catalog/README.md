@@ -22,3 +22,14 @@ is not-found. The same page is an id that never existed.
 
 Media names in `media` are basenames. The route does not join an object path
 onto disk. A mapped name of `..` is rejected.
+
+Stub pages label these records `Stub catalog · synthetic records`, the first
+12 px line inside `main.moments-gallery`, including unavailable and not-found.
+
+N6 must delete or move `app/moments/thumbnails/[file]/route.ts` before the first
+real site copy lands: a file in `public/moments/thumbnails/` takes precedence
+over this stub route, including outside stub mode. Whether the route may remain
+until N6 is a pending ruling for Beni.
+
+The media generator has no output argument and always replaces this directory's
+`media/`; run it in a disposable checkout when testing regeneration.

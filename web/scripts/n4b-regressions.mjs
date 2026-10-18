@@ -36,6 +36,9 @@ export async function countdown(page) {
 const watch = '?tab=moments&watch=stub-fenway-one'
 async function ready(page, id = 'stub-fenway-one') {
   await page.waitForFunction(id => document.querySelector('#moments-watch-heading')?.textContent === (id === 'stub-fenway-one' ? 'Stub Fenway one' : 'Stub Frankenstein one'), {}, id)
+  // A heading can commit before the flight stream finishes. Drain the request
+  // before the next history traversal so the response scanner can read it.
+  await page.waitForNetworkIdle({ idleTime: 100 })
 }
 async function state(page) {
   return page.evaluate(() => ({

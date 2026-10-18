@@ -45,6 +45,12 @@ async function extraServer(fixture, mode = 'stub', overrides = {}) {
 async function prepare(page, theme = 'light', autoplay = 'on') {
   const logs = []
   allLogs.push({ page, logs })
+  // Next may cancel a flight stream after committing its usable prefix. Chrome
+  // then discards its CDP body. Read a clone inside this isolated browser before
+  // returning the same response to Next; no payload is replaced or fabricated.
+  await page.exposeFunction('__kickoffFlightReceipt', ({ url, body }) => {
+    responses.push({ url, type: 'text/x-component', observedBy: 'browser fetch clone before Next consumes', bytes: Buffer.byteLength(body), sha256: hash(body), hits: textLeakHits(body) })
+  })
   page.on('console', message => {
     if (!['warning', 'error'].includes(message.type())) return
     // Recovery and cover deliberately fail local media requests. Retain those
@@ -54,14 +60,23 @@ async function prepare(page, theme = 'light', autoplay = 'on') {
   page.on('pageerror', error => logs.push({ browserResource: false, text: String(error) }))
   page.on('response', response => {
     const type = response.headers()['content-type'] ?? ''
-    if (!/text\/(?:html|x-component)/.test(type)) return
+    if (!type.includes('text/html')) return
     const read = response.text().then(body => {
       responses.push({ url: response.url(), type, bytes: Buffer.byteLength(body), sha256: hash(body), hits: textLeakHits(body) })
-    }).catch(error => { responses.push({ url: response.url(), type, error: String(error), hits: ['unreadable response'] }) })
+    }).catch(error => { responses.push({ url: response.url(), type, error: String(error), fromCache: response.fromCache(), failure: response.request().failure(), hits: ['unreadable response'] }) })
     responseReads.add(read)
     void read.finally(() => responseReads.delete(read))
   })
   await page.evaluateOnNewDocument((theme, autoplay) => {
+    const fetchResponse = window.fetch.bind(window)
+    window.fetch = async (...args) => {
+      const response = await fetchResponse(...args)
+      if (response.headers.get('content-type')?.includes('text/x-component')) {
+        const body = await response.clone().text()
+        await window.__kickoffFlightReceipt({ url: response.url, body })
+      }
+      return response
+    }
     const memory = new Map([['kickoff-theme', theme], ['kickoff-theme-broadcast', theme], ['kickoff-moments-autoplay-v1', autoplay]])
     Object.defineProperty(window, 'localStorage', { configurable: true, value: {
       getItem: key => memory.get(key) ?? null, setItem: (key, value) => memory.set(key, String(value)), removeItem: key => memory.delete(key), clear: () => memory.clear(), key: () => null, length: 0,
