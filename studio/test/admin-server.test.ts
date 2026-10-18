@@ -162,7 +162,7 @@ describe('admin server', () => {
 
   it('keeps a secret out of an error response', async () => {
     const secret = ['postgres', '://user:secret@localhost/db'].join('')
-    const key = ['FAL_KEY=', 'present'].join('')
+    const key = ['FAL', '_KEY=', 'present'].join('')
     const shaped = ['sk-', 'abcdefgh'].join('')
     const admin = await boot({}, `${secret} ${key} ${shaped}`)
     const ticket = await ask(admin, { path: `/?ticket=${encodeURIComponent(admin.token)}` })

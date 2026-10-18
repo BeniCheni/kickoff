@@ -48,7 +48,7 @@ describe('admin guard', () => {
 
   it('drops a secret from an error path', () => {
     const url = ['postgres', '://user:secret@localhost/db'].join('')
-    const key = ['FAL_KEY=', 'present'].join('')
+    const key = ['FAL', '_KEY=', 'present'].join('')
     const body = publicError(new Error(`${url} ${key}`))
     expect(body).toBe('refused')
     expect(findSecrets(body)).toEqual([])
