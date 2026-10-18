@@ -65,13 +65,15 @@ The photograph strip takes JPEG only. HEIC and PNG are refused, so convert first
 
 ## Cloudflare R2
 
-Videos and thumbnails for a live publish go to Cloudflare R2 (E4, 18 Oct 2026). The catalog row stays in Supabase Postgres. The storage stub is still what every test uses, and what every command uses unless the command is `publish`, `unpublish --delete`, or `retry-delete`, and both `--live` and `STUDIO_LIVE=1` are set. A missing variable is refused by name. The value is never printed.
+Videos and thumbnails for a live publish go to Cloudflare R2 (E4, 18 Oct 2026). The catalog row stays in Supabase Postgres. The storage stub is still what every test uses, and what every command uses unless the command is `publish`, `unpublish --delete`, or `retry-delete` and `--live` is set. `--live` is the switch to Supabase. It refuses, and names the missing piece, unless `STUDIO_LIVE` is `1` and `DATABASE_URL` is set, and it never opens the local database instead. A missing variable is refused by name. The value is never printed.
 
 Beni creates the bucket, the custom domain, and an API token scoped to that one bucket, and writes the four names into the env file outside the worktree: `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`. The record always stores bucket `moments` and an object path `<public id>/video-<sha8>.mp4` or `<public id>/thumbnail-<sha8>.jpg`. The R2 object key is `moments/` plus that object path, so the public address `STUDIO_STORAGE_ORIGIN/moments/<object path>` is the bucket's custom domain plus the key. `STUDIO_STORAGE_ORIGIN` is the address the Next app will use at N6. Upload does not read it.
 
-The request is SigV4, region `auto`, with the file's SHA-256 in `x-amz-content-sha256` and the MIME type as Content-Type. A failed upload leaves the clip unpublished and records which object failed (`video` or `thumbnail`). The next `publish` retries only the object that has no address yet. `unpublish --delete` and `retry-delete` delete through the same adapter. Deleting a key that is already absent is treated as success, because AWS documents DeleteObject that way (HTTP 204). That was not verified against a live bucket. The site's thumbnail copy stays on the stub. Those three commands also refuse, by name, when `DATABASE_URL` is missing, so a live upload cannot write the catalog only into the local database.
+The request is SigV4, region `auto`, with the file's SHA-256 in `x-amz-content-sha256` and the MIME type as Content-Type. A failed upload leaves the clip unpublished and records which object failed (`video` or `thumbnail`). The next `publish` retries only the object that has no address yet. `unpublish --delete` and `retry-delete` delete through the same adapter. Deleting a key that is already absent is treated as success, because AWS documents DeleteObject that way (HTTP 204). That was not verified against a live bucket. The site's thumbnail copy stays on the stub. Every `--live` command refuses, by name, when `STUDIO_LIVE` is not `1` or `DATABASE_URL` is missing, so a live upload cannot write the catalog only into the local database.
 
 ## Wednesday 21 Oct 2026
+
+`--live` is what points a command at Supabase. Every command below carries it. Without `STUDIO_LIVE` set to `1` and `DATABASE_URL`, the command refuses and names the missing piece. It does not open the local database.
 
 Beni does every account step himself. Nothing in this repo creates the bucket, the domain, the token, or the database password.
 
@@ -79,31 +81,31 @@ In Cloudflare he creates one R2 bucket, attaches his custom domain to that bucke
 
 In grok.com/imagine, in his own browser, he makes the clip at 16:9 and 1080p and downloads the mp4. The still he gave Grok is the keyframe, saved as a JPEG. The prompt he typed goes in a text file. No one else opens that site.
 
-From `studio/`, apply the migrations to his Supabase database. This prints `migrated`.
+From `studio/`, apply the migrations to his Supabase database. This prints `migrated database=postgres`.
 
 ```bash
-npm run migrate
+npm run cli -- migrate --live
 ```
 
-Import the clip. The subjects are `Fenway`, `Frankenstein`, or both, separated by a comma, in that spelling. `--made-on` is the day he made the clip. This prints one line: `imported`, then `job`, `sha256`, `width`, `height`, `duration`, `container`, `codec`, `audio`, `fps`, and `transport=stub`. Import does not call fal, so the transport stays the stub. A 1080p 16:9 clip reads as width 1920 and height 1080. If he omits `--made-on` and the file has no creation time, the line is `refused: pass --made-on YYYY-MM-DD; the clip has no creation time`. The same file a second time is `refused: this file was already imported`.
+Import the clip. The subjects are `Fenway`, `Frankenstein`, or both, separated by a comma, in that spelling. `--made-on` is the day he made the clip. This prints one line: `imported`, then `job`, `sha256`, `width`, `height`, `duration`, `container`, `codec`, `audio`, `fps`, `transport=stub`, and `database=postgres`. Import does not call fal, so the transport stays the stub. A 1080p 16:9 clip reads as width 1920 and height 1080. If he omits `--made-on` and the file has no creation time, the line is `refused: pass --made-on YYYY-MM-DD; the clip has no creation time database=postgres`. The same file a second time is `refused: this file was already imported database=postgres`.
 
 ```bash
-npm run cli -- import --file "$HOME/clips/fenway.mp4" --keyframe "$HOME/clips/fenway.jpg" --source grok-imagine --prompt-file "$HOME/clips/fenway.txt" --subjects Fenway --title "Fenway" --made-on 2026-10-21
+npm run cli -- import --file "$HOME/clips/fenway.mp4" --keyframe "$HOME/clips/fenway.jpg" --source grok-imagine --prompt-file "$HOME/clips/fenway.txt" --subjects Fenway --title "Fenway" --made-on 2026-10-21 --live
 ```
 
 Keep the clip. The five answers, in order, are extra players, text on boards, logo-like marks, subject identity, and soundtrack. Each must be `clear`. This prints `kept job=<the job id>`.
 
 ```bash
-npm run cli -- keep --job <job-id> --answers clear,clear,clear,clear,clear
+npm run cli -- keep --job <job-id> --answers clear,clear,clear,clear,clear --live
 ```
 
-Record the Article 50 answer. He writes the answer, the disclosure, and the name. This prints `gate-recorded recordedOn=<the time>`. A second recording prints `gate-already-recorded recordedOn=<the time already stored>`.
+Record the Article 50 answer. He writes the answer, the disclosure, and the name. This prints `gate-recorded recordedOn=<the time> database=postgres`. A second recording prints `gate-already-recorded recordedOn=<the time already stored> database=postgres`.
 
 ```bash
-npm run cli -- record-gate --answer "<answer>" --disclosure "<disclosure>" --by "<name>" --source A-06
+npm run cli -- record-gate --answer "<answer>" --disclosure "<disclosure>" --by "<name>" --source A-06 --live
 ```
 
-Publish. `--public-id` is letters, digits, `_` and `-`, at most 64 characters, starting with a letter or a digit. `--position` is the next free position. This prints `published live=true`. That means the row is in the catalog view. It does not by itself prove the file landed in R2. A missing Card fact prints `card-refused: missing ...` and names the fact. A failed upload prints `upload-failed live=false object=video` or `object=thumbnail`. The same publish command again sends only the object that has no address yet. There is no ledger line and the caps do not move. `pinned_on` is the Brooklyn date of the import. The finish time is midnight in Brooklyn on `--made-on`.
+Publish. `--public-id` is letters, digits, `_` and `-`, at most 64 characters, starting with a letter or a digit. `--position` is the next free position. This prints `published live=true database=postgres storage=r2`. That means the row is in the catalog view. The line names where it wrote. It does not by itself prove the file landed in R2. A missing Card fact prints `card-refused: missing ...` and names the fact. A failed upload prints `upload-failed live=false object=video` or `object=thumbnail`. The same publish command again sends only the object that has no address yet. There is no ledger line and the caps do not move. `pinned_on` is the Brooklyn date of the import. The finish time is midnight in Brooklyn on `--made-on`.
 
 ```bash
 npm run cli -- publish --live --job <job-id> --public-id fenway-wednesday --title "Fenway" --position 1
@@ -119,19 +121,19 @@ from catalog.video
 where public_id = 'fenway-wednesday';
 ```
 
-To take the row out of the catalog and leave the files in R2, withdraw it. This prints `withdrawn removal=merged filesReadable=false`. The files are still in the bucket. `filesReadable=false` here means a delete was not asked for. `removal=merged` is the stub for the site's copy. No pull request is opened. A second unpublish prints `already-withdrawn` and does not delete.
+To take the row out of the catalog and leave the files in R2, withdraw it. This prints `withdrawn removal=merged filesReadable=false database=postgres storage=stub`. The files are still in the bucket. `filesReadable=false` here means a delete was not asked for. `removal=merged` is the stub for the site's copy. No pull request is opened. A second unpublish prints `already-withdrawn database=postgres storage=stub` and does not delete.
 
 ```bash
 npm run cli -- unpublish --live --job <job-id>
 ```
 
-To withdraw and delete in one step, pass `--delete` while the clip is still published. When both deletes succeed this prints `withdrawn removal=merged filesReadable=false`, and the keys are gone from the bucket. If one delete fails, the same line has `filesReadable=true`.
+To withdraw and delete in one step, pass `--delete` while the clip is still published. When both deletes succeed this prints `withdrawn removal=merged filesReadable=false database=postgres storage=r2`, and the keys are gone from the bucket. If one delete fails, the same line has `filesReadable=true`.
 
 ```bash
 npm run cli -- unpublish --live --job <job-id> --delete
 ```
 
-After a withdraw, or after a delete that left one object, retry the delete. It sends only the object that is still recorded. When both are already gone it prints `delete-retried filesReadable=false idempotent=true`. A delete of a key that is already absent is treated as success. That was not verified against a live bucket.
+After a withdraw, or after a delete that left one object, retry the delete. It sends only the object that is still recorded. When both are already gone it prints `delete-retried filesReadable=false idempotent=true database=postgres storage=r2`. A delete of a key that is already absent is treated as success. That was not verified against a live bucket.
 
 ```bash
 npm run cli -- retry-delete --live --job <job-id>

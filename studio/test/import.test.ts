@@ -288,6 +288,6 @@ describe('import', () => {
       stdout: (line) => second.push(line),
       stderr: () => undefined,
     })).toBe(0)
-    expect(second).toEqual(['refused: this file was already imported'])
+    expect(second).toEqual(['refused: this file was already imported database=pglite'])
   })
 })

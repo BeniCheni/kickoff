@@ -236,14 +236,12 @@ describe('R2 storage', () => {
     expect(falErr.join('\n')).toContain('FAL_KEY')
     expect(falErr.join('\n')).not.toContain('R2_')
 
-    const data = mkdtempSync(path.join(tmpdir(), 'kickoff-r2-data-'))
-    const media = mkdtempSync(path.join(tmpdir(), 'kickoff-r2-list-'))
-    const out: string[] = []
-    expect(await runCli(['list', '--live'], {
-      STUDIO_DATA_DIR: data,
-      STUDIO_MEDIA_DIR: media,
-      STUDIO_LIVE: '1',
-    }, { stdout: (line) => out.push(line), stderr: () => undefined })).toBe(0)
-    expect(out).toEqual(['none'])
+    const listed: string[] = []
+    expect(await runCli(['list', '--live'], { STUDIO_LIVE: '1' }, {
+      stdout: (line) => listed.push(line),
+      stderr: (line) => listed.push(line),
+    })).toBe(1)
+    expect(listed).toEqual(['refused: --live needs DATABASE_URL'])
+    expect(listed.join('\n')).not.toContain('R2_')
   })
 })

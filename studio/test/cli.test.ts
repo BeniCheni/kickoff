@@ -39,7 +39,7 @@ describe('command line', () => {
     const io = capture()
     const env = { STUDIO_NOW: '2026-10-12T16:00:00.000Z' }
     const code = await runCli([
-      'estimate', '--endpoint', VIDEO, '--duration', '15', '--resolution', '480P', '--live',
+      'estimate', '--endpoint', VIDEO, '--duration', '15', '--resolution', '480P',
     ], env, io)
     expect(code).toBe(0)
     expect(io.out[0]).toContain('0.225000')
@@ -109,7 +109,7 @@ describe('command line', () => {
     expect(await runCli([
       'keep', '--job', job, '--answers', 'clear,clear,clear,clear,clear',
     ], env, kept)).toBe(0)
-    expect(kept.out).toEqual(['kept'])
+    expect(kept.out).toEqual(['kept database=pglite'])
 
     const closed = capture()
     expect(await runCli([
@@ -127,7 +127,7 @@ describe('command line', () => {
       'publish', '--job', job, '--public-id', 'fenway', '--title', 'Fenway', '--position', '1',
     ], env, refusedCard)).toBe(0)
     expect(refusedCard.out[0]).toBe(
-      'card-refused: missing a positive width; missing a positive height; missing a positive duration; missing an approved subject',
+      'card-refused: missing a positive width; missing a positive height; missing a positive duration; missing an approved subject database=pglite storage=stub',
     )
     const pg = new PGlite(path.join(data, 'pglite'))
     await pg.exec(`
