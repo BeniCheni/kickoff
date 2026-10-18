@@ -306,4 +306,51 @@ describe('import', () => {
     })).toBe(0)
     expect(second).toEqual(['refused: this file was already imported database=pglite'])
   })
+
+  it('prints why a position or a public id was taken', async () => {
+    const data = mkdtempSync(path.join(tmpdir(), 'kickoff-import-taken-'))
+    const media = mkdtempSync(path.join(tmpdir(), 'kickoff-import-taken-media-'))
+    const env = {
+      STUDIO_DATA_DIR: data,
+      STUDIO_MEDIA_DIR: media,
+      STUDIO_NOW: '2026-10-18T16:00:00.000Z',
+    }
+    const say = () => {
+      const out: string[] = []
+      return { out, stdout: (line: string) => out.push(line), stderr: () => undefined }
+    }
+    const bring = async (name: string, durationS: number) => {
+      const videoPath = path.join(media, `${name}.mp4`)
+      const stillPath = path.join(media, `${name}.jpg`)
+      const promptPath = path.join(media, `${name}.txt`)
+      writeFileSync(videoPath, clip({ creation: '2026-10-18T15:00:00.000Z', durationS }))
+      writeFileSync(stillPath, minimalJpeg)
+      writeFileSync(promptPath, 'A cat scores\n')
+      const imported = say()
+      expect(await runCli([
+        'import', '--file', videoPath, '--keyframe', stillPath, '--source', 'grok-imagine',
+        '--prompt-file', promptPath, '--subjects', 'Fenway', '--title', name,
+      ], env, imported)).toBe(0)
+      const job = /job=([0-9a-f-]{36})/.exec(imported.out[0] ?? '')?.[1] ?? ''
+      expect(await runCli(['keep', '--job', job, '--answers', CHECKLIST_LINES.map(() => 'clear').join(',')], env, say())).toBe(0)
+      return job
+    }
+    const first = await bring('one', 5)
+    const secondJob = await bring('two', 6)
+    expect(await runCli(['record-gate', '--answer', 'recorded', '--disclosure', 'pending', '--by', 'unspecified', '--source', 'A-06'], env, say())).toBe(0)
+    expect(await runCli(['publish', '--job', first, '--public-id', 'fenway-one', '--title', 'One', '--position', '1'], env, say())).toBe(0)
+    const taken = say()
+    expect(await runCli(['publish', '--job', secondJob, '--public-id', 'fenway-two', '--title', 'Two', '--position', '1'], env, taken)).toBe(0)
+    expect(taken.out[0]).toBe('record-failed live=false reason=position-taken database=pglite storage=stub')
+    const sameId = say()
+    expect(await runCli(['publish', '--job', secondJob, '--public-id', 'fenway-one', '--title', 'Two', '--position', '2'], env, sameId)).toBe(0)
+    expect(sameId.out[0]).toBe('record-failed live=false reason=public-id-taken database=pglite storage=stub')
+    const listed = say()
+    expect(await runCli(['list'], env, listed)).toBe(0)
+    expect(listed.out.some((line) => line.includes(first) && line.includes('database=pglite'))).toBe(true)
+    const readme = readFileSync(path.join(repoRoot, 'studio/README.md'), 'utf8')
+    expect(readme).toContain('record-failed live=false reason=position-taken database=postgres storage=r2')
+    expect(readme).toContain('reason=public-id-taken')
+    expect(readme).toContain('npm run cli -- list --live')
+  })
 })

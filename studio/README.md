@@ -105,7 +105,13 @@ Record the Article 50 answer. He writes the answer, the disclosure, and the name
 npm run cli -- record-gate --answer "<answer>" --disclosure "<disclosure>" --by "<name>" --source A-06 --live
 ```
 
-Publish. `--public-id` is letters, digits, `_` and `-`, at most 64 characters, starting with a letter or a digit. `--position` is the next free position. This prints `published live=true database=postgres storage=r2`. That means the row is in the catalog view. The line names where it wrote. It does not by itself prove the file landed in R2. A missing Card fact prints `card-refused: missing ...` and names the fact. A failed upload prints `upload-failed live=false object=video status=<status> code=<code> database=postgres storage=r2`, or the same line with `object=thumbnail`. A failed delete adds `status=` and `code=` to its line. `code` is the S3 `<Code>` only, passed through the log redaction, or `network` when the request threw. The body is not printed. The same publish command again sends only the object that has no address yet. There is no ledger line and the caps do not move. `pinned_on` is the Brooklyn date of the import. The finish time is midnight in Brooklyn on `--made-on`.
+Publish. `--public-id` is letters, digits, `_` and `-`, at most 64 characters, starting with a letter or a digit. `--position` is the next free position. A taken position prints `record-failed live=false reason=position-taken database=postgres storage=r2`. A taken public id prints `reason=public-id-taken`. `list` prints each stored job, or `none database=postgres` when there are none. Pick a position that is not already in the catalog.
+
+```bash
+npm run cli -- list --live
+```
+
+Publish prints `published live=true database=postgres storage=r2`. That means the row is in the catalog view. The line names where it wrote. It does not by itself prove the file landed in R2. A missing Card fact prints `card-refused: missing ...` and names the fact. A failed upload prints `upload-failed live=false object=video status=<status> code=<code> database=postgres storage=r2`, or the same line with `object=thumbnail`. A failed delete adds `status=` and `code=` to its line. `code` is the S3 `<Code>` only, passed through the log redaction, or `network` when the request threw. The body is not printed. The same publish command again sends only the object that has no address yet. There is no ledger line and the caps do not move. `pinned_on` is the Brooklyn date of the import. The finish time is midnight in Brooklyn on `--made-on`.
 
 ```bash
 npm run cli -- publish --live --job <job-id> --public-id fenway-wednesday --title "Fenway" --position 1

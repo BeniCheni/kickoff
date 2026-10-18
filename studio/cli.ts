@@ -568,6 +568,7 @@ export async function runCli(
         io.stdout(placed(result.outcome, {
           live: 'live' in result ? result.live : undefined,
           retryable: 'retryable' in result ? result.retryable : undefined,
+          reason: 'reason' in result ? result.reason : undefined,
           object: 'object' in result ? result.object : undefined,
           status: 'status' in result ? result.status : undefined,
           code: 'code' in result ? result.code : undefined,
