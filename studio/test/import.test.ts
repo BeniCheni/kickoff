@@ -370,6 +370,32 @@ describe('import', () => {
     expect(sha256(uploaded[0] ?? Buffer.alloc(0))).toBe(imported.sha256)
   })
 
+  it('asks for --made-on when the header time is before 2024-01-01', async () => {
+    const opened = await open()
+    const at = (iso: string) => Math.floor(Date.parse(iso) / 1000) + MAC_EPOCH_SECONDS
+    const attempt = (creationTime: number, durationS: number) => opened.studio.importClip({
+      video: syntheticMp4({
+        width: 1920,
+        height: 1080,
+        durationS,
+        frameRate: 24,
+        audio: true,
+        creationTime,
+      }),
+      keyframe: minimalJpeg,
+      source: 'grok-imagine',
+      prompt: 'A cat scores',
+      subjects: ['Fenway'],
+      title: 'Fenway',
+    })
+    expect((await attempt(MAC_EPOCH_SECONDS, 5)).outcome).toBe('needs-made-on')
+    expect((await attempt(at('2023-12-31T00:00:00.000Z'), 6)).outcome).toBe('needs-made-on')
+    const imported = await attempt(at('2024-01-01T00:00:00.000Z'), 7)
+    expect(imported.outcome).toBe('imported')
+    const [row] = await opened.db.select().from(job)
+    expect(row?.finishedAt?.toISOString()).toBe('2024-01-01T00:00:00.000Z')
+  })
+
   it('prints why a position or a public id was taken', async () => {
     const data = mkdtempSync(path.join(tmpdir(), 'kickoff-import-taken-'))
     const media = mkdtempSync(path.join(tmpdir(), 'kickoff-import-taken-media-'))

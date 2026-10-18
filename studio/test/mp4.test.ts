@@ -82,4 +82,15 @@ describe('mp4 facts', () => {
     expect(isFastStart(stripClip(late).bytes)).toBe(false)
     expect(stripClip(syntheticMp4()).stripped).toBe('none')
   })
+
+  it('treats a header creation time before 2024-01-01 as absent', () => {
+    const at = (iso: string) => Math.floor(Date.parse(iso) / 1000) + MAC_EPOCH_SECONDS
+    const created = (creationTime: number) => {
+      const read = readClipFacts(syntheticMp4({ creationTime }))
+      return read.ok ? read.facts.createdAt : 'refused'
+    }
+    expect(created(MAC_EPOCH_SECONDS)?.toString() ?? null).toBeNull()
+    expect(created(at('2023-12-31T00:00:00.000Z'))).toBeNull()
+    expect(created(at('2024-01-01T00:00:00.000Z'))?.toISOString()).toBe('2024-01-01T00:00:00.000Z')
+  })
 })

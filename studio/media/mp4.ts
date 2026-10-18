@@ -87,11 +87,16 @@ function children(bytes: Uint8Array, box: Box): Box[] {
   return boxes(bytes, box.payloadStart, box.payloadLength)
 }
 
+/** A header time before this is a sentinel, not a finish time. Beni's floor, 18 Oct 2026. */
+const CREATION_FLOOR_MS = Date.parse('2024-01-01T00:00:00.000Z')
+
 function creationDate(seconds: number): Date | null {
   if (!Number.isFinite(seconds) || seconds <= 0) return null
   const unix = seconds - MAC_EPOCH_SECONDS
   if (unix < 0 || unix > 4_102_444_800) return null
-  return new Date(unix * 1000)
+  const date = new Date(unix * 1000)
+  if (date.getTime() < CREATION_FLOOR_MS) return null
+  return date
 }
 
 function readMvhd(bytes: Uint8Array, box: Box): { durationS: number; createdAt: Date | null } | null {
