@@ -52,7 +52,7 @@ const USAGE = [
   'record-gate --answer <text> --disclosure <text> --by <name> --source <source>',
   'record-balance --amount <usd>',
   'migrate',
-  'Offline unless --live is set together with STUDIO_LIVE=1 and FAL_KEY. --live refuses, and names the missing piece, when either is absent.',
+  'Offline unless --live is set together with STUDIO_LIVE=1 and the secret that command needs. Fal commands need FAL_KEY. publish, unpublish --delete and retry-delete also need the R2 names and DATABASE_URL. --live refuses, and names the missing piece.',
 ].join('\n')
 
 export type CliIo = {
@@ -293,7 +293,8 @@ export async function runCli(argv: readonly string[], env: NodeJS.ProcessEnv, io
 
     const objectStore = needsObjectStore(command, flags)
     if (live && loaded.STUDIO_LIVE === '1' && objectStore) {
-      const missing = missingR2(loaded)
+      const missing = [...missingR2(loaded)]
+      if (!loaded.DATABASE_URL?.trim()) missing.push('DATABASE_URL')
       if (missing.length > 0) {
         io.stderr(`refused: --live needs ${missing.join(' and ')}`)
         return 1

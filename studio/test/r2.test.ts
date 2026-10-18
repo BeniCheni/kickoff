@@ -217,7 +217,15 @@ describe('R2 storage', () => {
     expect(err.join('\n')).toContain('R2_ACCESS_KEY_ID')
     expect(err.join('\n')).toContain('R2_SECRET_ACCESS_KEY')
     expect(err.join('\n')).toContain('R2_BUCKET')
+    expect(err.join('\n')).toContain('DATABASE_URL')
     expect(err.join('\n')).not.toContain(planted)
+    const databaseOnly: string[] = []
+    expect(await runCli(['publish', '--live', '--job', 'x', '--public-id', 'fenway', '--title', 'Fenway', '--position', '1'], {
+      ...r2Env(),
+      STUDIO_LIVE: '1',
+    }, { stdout: () => undefined, stderr: (line) => databaseOnly.push(line) })).toBe(1)
+    expect(databaseOnly).toEqual(['refused: --live needs DATABASE_URL'])
+    expect(databaseOnly.join('\n')).not.toContain(SECRET)
     expect(missingR2({})).toEqual(['R2_ACCOUNT_ID', 'R2_ACCESS_KEY_ID', 'R2_SECRET_ACCESS_KEY', 'R2_BUCKET'])
 
     const falErr: string[] = []

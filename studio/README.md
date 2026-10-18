@@ -61,12 +61,78 @@ A response that carries a request id but no usable queue URLs stores that id in 
 
 `STUDIO_STUB` selects the script: `queued-then-completed` (the default), `error-payload`, `safety-refusal`, `timeout`, `expired-result`, `duplicate-delivery`, `out-of-credit`. `STUDIO_STORAGE_FAIL` is a comma list of `video`, `thumbnail`, `fallback`, `removal`, `remove`, `video-remove`, `thumbnail-remove`.
 
+The photograph strip takes JPEG only. HEIC and PNG are refused, so convert first. It removes every metadata block, including APP2 (ICC) and APP14, so a Display P3 photo loses its colour profile. The hash stored is the hash of the bytes that would be sent. Those bytes are a `data:image/jpeg;base64,...` URI, the form fal's file-input docs describe. The Studio does not upload the photograph to fal storage. `--live` with `STUDIO_LIVE` or `FAL_KEY` missing refuses and names the missing piece. It never prints a value. Every command that talks to fal prints `transport=stub` or `transport=live`.
+
 ## Cloudflare R2
 
 Videos and thumbnails for a live publish go to Cloudflare R2 (E4, 18 Oct 2026). The catalog row stays in Supabase Postgres. The storage stub is still what every test uses, and what every command uses unless the command is `publish`, `unpublish --delete`, or `retry-delete`, and both `--live` and `STUDIO_LIVE=1` are set. A missing variable is refused by name. The value is never printed.
 
 Beni creates the bucket, the custom domain, and an API token scoped to that one bucket, and writes the four names into the env file outside the worktree: `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`. The record always stores bucket `moments` and an object path `<public id>/video-<sha8>.mp4` or `<public id>/thumbnail-<sha8>.jpg`. The R2 object key is `moments/` plus that object path, so the public address `STUDIO_STORAGE_ORIGIN/moments/<object path>` is the bucket's custom domain plus the key. `STUDIO_STORAGE_ORIGIN` is the address the Next app will use at N6. Upload does not read it.
 
-The request is SigV4, region `auto`, with the file's SHA-256 in `x-amz-content-sha256` and the MIME type as Content-Type. A failed upload leaves the clip unpublished and records which object failed (`video` or `thumbnail`). The next `publish` retries only the object that has no address yet. `unpublish --delete` and `retry-delete` delete through the same adapter. Deleting a key that is already absent is treated as success, because AWS documents DeleteObject that way (HTTP 204). That was not verified against a live bucket. The site's thumbnail copy stays on the stub.
+The request is SigV4, region `auto`, with the file's SHA-256 in `x-amz-content-sha256` and the MIME type as Content-Type. A failed upload leaves the clip unpublished and records which object failed (`video` or `thumbnail`). The next `publish` retries only the object that has no address yet. `unpublish --delete` and `retry-delete` delete through the same adapter. Deleting a key that is already absent is treated as success, because AWS documents DeleteObject that way (HTTP 204). That was not verified against a live bucket. The site's thumbnail copy stays on the stub. Those three commands also refuse, by name, when `DATABASE_URL` is missing, so a live upload cannot write the catalog only into the local database.
 
-The photograph strip takes JPEG only. HEIC and PNG are refused, so convert first. It removes every metadata block, including APP2 (ICC) and APP14, so a Display P3 photo loses its colour profile. The hash stored is the hash of the bytes that would be sent. Those bytes are a `data:image/jpeg;base64,...` URI, the form fal's file-input docs describe. The Studio does not upload the photograph to fal storage. `--live` with `STUDIO_LIVE` or `FAL_KEY` missing refuses and names the missing piece. It never prints a value. Every command that talks to fal prints `transport=stub` or `transport=live`.
+## Wednesday 21 Oct 2026
+
+Beni does every account step himself. Nothing in this repo creates the bucket, the domain, the token, or the database password.
+
+In Cloudflare he creates one R2 bucket, attaches his custom domain to that bucket, and creates an API token that can read and write only that bucket. In the env file outside the worktree he sets `STUDIO_LIVE` to `1`, and he sets `DATABASE_URL`, `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, and `STUDIO_STORAGE_ORIGIN`. The origin is the custom domain, with no path on the end, for the Next app at N6. The Studio does not read the origin when it uploads. `STUDIO_DATA_DIR` and `STUDIO_MEDIA_DIR` stay outside the worktree, as above. He does not commit the env file.
+
+In grok.com/imagine, in his own browser, he makes the clip at 16:9 and 1080p and downloads the mp4. The still he gave Grok is the keyframe, saved as a JPEG. The prompt he typed goes in a text file. No one else opens that site.
+
+From `studio/`, apply the migrations to his Supabase database. This prints `migrated`.
+
+```bash
+npm run migrate
+```
+
+Import the clip. The subjects are `Fenway`, `Frankenstein`, or both, separated by a comma, in that spelling. `--made-on` is the day he made the clip. This prints one line: `imported`, then `job`, `sha256`, `width`, `height`, `duration`, `container`, `codec`, `audio`, `fps`, and `transport=stub`. Import does not call fal, so the transport stays the stub. A 1080p 16:9 clip reads as width 1920 and height 1080. If he omits `--made-on` and the file has no creation time, the line is `refused: pass --made-on YYYY-MM-DD; the clip has no creation time`. The same file a second time is `refused: this file was already imported`.
+
+```bash
+npm run cli -- import --file "$HOME/clips/fenway.mp4" --keyframe "$HOME/clips/fenway.jpg" --source grok-imagine --prompt-file "$HOME/clips/fenway.txt" --subjects Fenway --title "Fenway" --made-on 2026-10-21
+```
+
+Keep the clip. The five answers, in order, are extra players, text on boards, logo-like marks, subject identity, and soundtrack. Each must be `clear`. This prints `kept job=<the job id>`.
+
+```bash
+npm run cli -- keep --job <job-id> --answers clear,clear,clear,clear,clear
+```
+
+Record the Article 50 answer. He writes the answer, the disclosure, and the name. This prints `gate-recorded recordedOn=<the time>`. A second recording prints `gate-already-recorded recordedOn=<the time already stored>`.
+
+```bash
+npm run cli -- record-gate --answer "<answer>" --disclosure "<disclosure>" --by "<name>" --source A-06
+```
+
+Publish. `--public-id` is letters, digits, `_` and `-`, at most 64 characters, starting with a letter or a digit. `--position` is the next free position. This prints `published live=true`. That means the row is in the catalog view. It does not by itself prove the file landed in R2. A missing Card fact prints `card-refused: missing ...` and names the fact. A failed upload prints `upload-failed live=false object=video` or `object=thumbnail`. The same publish command again sends only the object that has no address yet. There is no ledger line and the caps do not move. `pinned_on` is the Brooklyn date of the import. The finish time is midnight in Brooklyn on `--made-on`.
+
+```bash
+npm run cli -- publish --live --job <job-id> --public-id fenway-wednesday --title "Fenway" --position 1
+```
+
+In the Cloudflare dashboard, the bucket named by `R2_BUCKET` has two keys: `moments/fenway-wednesday/video-<first 8 of the sha256>.mp4` and `moments/fenway-wednesday/thumbnail-<first 8 of the stripped keyframe>.jpg`. The video's eight characters match the import line. The thumbnail's eight characters are the stripped JPEG, not the file before the strip. After the custom domain is attached, the public address is `STUDIO_STORAGE_ORIGIN/moments/fenway-wednesday/video-<those 8>.mp4`.
+
+In the Supabase SQL editor, the detail view returns the row. `endpoint` is `xai/grok-imagine (grok.com, made by hand)`. `prompt_expansion` and `seed` are null. `video_bucket` is `moments`. The object paths match the keys above without the leading `moments/`.
+
+```sql
+select public_id, endpoint, pinned_on, prompt, prompt_expansion, seed, subjects, video_bucket, video_object_path, thumbnail_object_path
+from catalog.video
+where public_id = 'fenway-wednesday';
+```
+
+To take the row out of the catalog and leave the files in R2, withdraw it. This prints `withdrawn removal=merged filesReadable=false`. The files are still in the bucket. `filesReadable=false` here means a delete was not asked for. `removal=merged` is the stub for the site's copy. No pull request is opened. A second unpublish prints `already-withdrawn` and does not delete.
+
+```bash
+npm run cli -- unpublish --live --job <job-id>
+```
+
+To withdraw and delete in one step, pass `--delete` while the clip is still published. When both deletes succeed this prints `withdrawn removal=merged filesReadable=false`, and the keys are gone from the bucket. If one delete fails, the same line has `filesReadable=true`.
+
+```bash
+npm run cli -- unpublish --live --job <job-id> --delete
+```
+
+After a withdraw, or after a delete that left one object, retry the delete. It sends only the object that is still recorded. When both are already gone it prints `delete-retried filesReadable=false idempotent=true`. A delete of a key that is already absent is treated as success. That was not verified against a live bucket.
+
+```bash
+npm run cli -- retry-delete --live --job <job-id>
+```
