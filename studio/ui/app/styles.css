@@ -408,6 +408,31 @@ textarea.studio-field {
   cursor: pointer;
   width: 100%;
 }
+.check {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.check li {
+  display: grid;
+  gap: 8px;
+  padding: 10px 0;
+  border-top: 1px solid var(--border);
+}
+.review-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+}
+.review-actions .studio-primary,
+.review-actions .studio-button {
+  flex: 1;
+}
+video {
+  width: 100%;
+  max-width: 100%;
+  background: var(--media);
+}
 .studio-primary:disabled {
   opacity: 0.55;
   cursor: default;

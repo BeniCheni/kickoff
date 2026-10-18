@@ -91,6 +91,39 @@ export async function submitJobs(body: {
   return await response.json() as unknown
 }
 
+export type ReviewView = {
+  outcome: 'review' | 'missing'
+  jobId?: string
+  status?: string
+  prompt?: string | null
+  assetId?: string | null
+  file?: {
+    mime: string
+    bytes: number
+    sha256: string
+    width: number | null
+    height: number | null
+    durationS: string | null
+  } | null
+  parents?: string[]
+  answers?: { line: string; answer: string }[]
+  attestation?: { by: string | null; at: string } | null
+}
+
+export async function getReview(id: string): Promise<ReviewView> {
+  const response = await fetch(`/api/review/${id}`, { headers: { accept: 'application/json' } })
+  if (!response.ok) throw new Error('refused')
+  return await response.json() as ReviewView
+}
+
+export async function keepReview(id: string, answers: { line: string; answer: string }[]): Promise<void> {
+  await postJson(`/api/review/${id}/keep`, { answers })
+}
+
+export async function discardReview(id: string): Promise<void> {
+  await postJson(`/api/review/${id}/discard`, {})
+}
+
 export async function uploadPhoto(bytes: ArrayBuffer): Promise<{ id: string; sha256: string }> {
   const response = await fetch('/api/photos', {
     method: 'POST',

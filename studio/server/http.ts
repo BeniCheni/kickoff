@@ -11,6 +11,7 @@ import { estimateJobs, readCompose, submitJobs } from './compose.ts'
 import { downloadJob, jobIdFrom, pollInFlight, readJobs, regenerateJob } from './jobs.ts'
 import { serveFile as serveRecorded } from './media.ts'
 import { findPhoto, photoPath, storePhoto } from './photos.ts'
+import { assetIdFrom, discardJob, keepJob, readReview, recordedAssetFile, reviewJobId } from './review.ts'
 import { openAdmin, type OpenedAdmin } from './open.ts'
 import { publicError } from './public-error.ts'
 import { readShell } from './shell.ts'
@@ -192,6 +193,32 @@ async function handle(
   }
   if (url.pathname === '/api/shell' && method === 'POST') {
     sendJson(response, 405, { error: 'refused' }, cookieHeader)
+    return
+  }
+  const reviewRead = method === 'GET' ? reviewJobId(url.pathname, '') : null
+  if (reviewRead) {
+    sendJson(response, 200, await readReview(opened, reviewRead), cookieHeader)
+    return
+  }
+  const reviewKeep = method === 'POST' ? reviewJobId(url.pathname, 'keep') : null
+  if (reviewKeep) {
+    sendJson(response, 200, await keepJob(opened, reviewKeep, await readJson(request)), cookieHeader)
+    return
+  }
+  const reviewDiscard = method === 'POST' ? reviewJobId(url.pathname, 'discard') : null
+  if (reviewDiscard) {
+    sendJson(response, 200, await discardJob(opened, reviewDiscard), cookieHeader)
+    return
+  }
+  const assetMedia = method === 'GET' || method === 'HEAD' ? assetIdFrom(url.pathname) : null
+  if (assetMedia) {
+    const recorded = await recordedAssetFile(opened, assetMedia)
+    if (!recorded) {
+      sendJson(response, 404, { error: 'not-found' }, cookieHeader)
+      return
+    }
+    if (cookieHeader['set-cookie']) response.setHeader('set-cookie', cookieHeader['set-cookie'])
+    serveRecorded(request, response, recorded.file, recorded.mime)
     return
   }
   if (url.pathname === '/api/boom' && method === 'GET' && options.boom !== undefined) {

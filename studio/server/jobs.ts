@@ -81,10 +81,10 @@ export async function readJobs(db: StudioDatabase, studio: Studio, now: Date): P
   return views
 }
 
-const JOB_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const JOB_ID = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
 export function jobIdFrom(pathname: string, action: 'download' | 'regenerate'): string | null {
-  const match = new RegExp(`^/api/jobs/(${JOB_ID.source})/${action}$`).exec(pathname)
+  const match = new RegExp(`^/api/jobs/(${JOB_ID})/${action}$`, 'i').exec(pathname)
   return match?.[1] ?? null
 }
 
