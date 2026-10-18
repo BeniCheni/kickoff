@@ -396,6 +396,30 @@ describe('import', () => {
     expect(row?.finishedAt?.toISOString()).toBe('2024-01-01T00:00:00.000Z')
   })
 
+  it('takes --made-on as Brooklyn midnight on both daylight-saving days', async () => {
+    const opened = await open()
+    const days = [
+      ['2026-03-08', '2026-03-08T05:00:00.000Z'],
+      ['2026-11-01', '2026-11-01T04:00:00.000Z'],
+      ['2026-10-21', '2026-10-21T04:00:00.000Z'],
+    ] as const
+    for (const [index, [day, midnight]] of days.entries()) {
+      const imported = await opened.studio.importClip({
+        video: syntheticMp4({ width: 1920, height: 1080, durationS: 5 + index, frameRate: 24, creationTime: 0 }),
+        keyframe: minimalJpeg,
+        source: 'grok-imagine',
+        prompt: `A cat scores ${day}`,
+        subjects: ['Fenway'],
+        title: day,
+        madeOn: day,
+      })
+      expect(imported.outcome).toBe('imported')
+      if (imported.outcome !== 'imported') return
+      const [row] = await opened.db.select().from(job).where(eq(job.id, imported.jobId))
+      expect(row?.finishedAt?.toISOString()).toBe(midnight)
+    }
+  })
+
   it('prints why a position or a public id was taken', async () => {
     const data = mkdtempSync(path.join(tmpdir(), 'kickoff-import-taken-'))
     const media = mkdtempSync(path.join(tmpdir(), 'kickoff-import-taken-media-'))

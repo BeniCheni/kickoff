@@ -45,7 +45,21 @@ describe('recipe v0 registry', () => {
     expect(selectRegistry(GROK_IMAGINE.endpoint, {}, now)).toBeNull()
     expect(registry.some((row) => row.id === GROK_IMAGINE.id)).toBe(false)
     expect(brooklynStart('2026-10-18')?.toISOString()).toBe('2026-10-18T04:00:00.000Z')
+    expect(brooklynStart('2026-10-21')?.toISOString()).toBe('2026-10-21T04:00:00.000Z')
+    expect(brooklynStart('2026-03-08')?.toISOString()).toBe('2026-03-08T05:00:00.000Z')
+    expect(brooklynStart('2026-11-01')?.toISOString()).toBe('2026-11-01T04:00:00.000Z')
     expect(brooklynStart('2026-01-15')?.toISOString()).toBe('2026-01-15T05:00:00.000Z')
+    for (const day of ['2026-03-08', '2026-11-01', '2026-10-21']) {
+      const instant = brooklynStart(day)
+      const parts = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/New_York',
+        hour: '2-digit',
+        minute: '2-digit',
+        hourCycle: 'h23',
+      }).formatToParts(instant ?? new Date(0))
+      const clock = `${parts.find((part) => part.type === 'hour')?.value}:${parts.find((part) => part.type === 'minute')?.value}`
+      expect(clock).toBe('00:00')
+    }
     expect(brooklynStart('2026-02-31')).toBeNull()
     expect(brooklynStart('18-10-2026')).toBeNull()
   })

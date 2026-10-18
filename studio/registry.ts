@@ -88,6 +88,20 @@ export function brooklynDate(now: Date): string {
  * Midnight at the start of a Brooklyn calendar day. Null when `day` is not
  * that day in America/New_York.
  */
+function offsetMinutes(instant: Date): number | null {
+  const zone = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York',
+    timeZoneName: 'shortOffset',
+    hour: '2-digit',
+    hourCycle: 'h23',
+  }).formatToParts(instant).find((part) => part.type === 'timeZoneName')?.value ?? ''
+  const offset = /^GMT([+-]\d{1,2})(?::(\d{2}))?$/.exec(zone)
+  if (!offset || offset[1] === undefined) return null
+  const hours = Number(offset[1])
+  const minutes = Number(offset[2] ?? '0')
+  return hours * 60 + Math.sign(hours || 1) * minutes
+}
+
 export function brooklynStart(day: string): Date | null {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(day)
   if (!match) return null
@@ -95,19 +109,19 @@ export function brooklynStart(day: string): Date | null {
   const month = Number(match[2])
   const date = Number(match[3])
   if (month < 1 || month > 12 || date < 1 || date > 31) return null
-  const noon = new Date(Date.UTC(year, month - 1, date, 12))
-  const zone = new Intl.DateTimeFormat('en-US', {
-    timeZone: 'America/New_York',
-    timeZoneName: 'shortOffset',
-    hour: '2-digit',
-    hourCycle: 'h23',
-  }).formatToParts(noon).find((part) => part.type === 'timeZoneName')?.value ?? ''
-  const offset = /^GMT([+-]\d{1,2})(?::(\d{2}))?$/.exec(zone)
-  if (!offset || offset[1] === undefined) return null
-  const hours = Number(offset[1])
-  const minutes = Number(offset[2] ?? '0')
-  const total = hours * 60 + Math.sign(hours || 1) * minutes
-  const instant = new Date(Date.UTC(year, month - 1, date) - total * 60_000)
+  const civil = new Date(Date.UTC(year, month - 1, date))
+  if (civil.getUTCFullYear() !== year || civil.getUTCMonth() !== month - 1 || civil.getUTCDate() !== date) return null
+  // The offset at noon is the wrong side of a transition day. Read it again at the candidate midnight.
+  let total = offsetMinutes(new Date(Date.UTC(year, month - 1, date, 12)))
+  if (total === null) return null
+  let instant = civil
+  for (let step = 0; step < 2; step += 1) {
+    instant = new Date(Date.UTC(year, month - 1, date) - total * 60_000)
+    const next = offsetMinutes(instant)
+    if (next === null) return null
+    if (next === total) break
+    total = next
+  }
   if (brooklynDate(instant) !== day) return null
   return instant
 }
