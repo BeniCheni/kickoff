@@ -9,8 +9,10 @@ import { durationClock, generatedDate } from './format'
 import { useWatchNavigation, useWatchHref } from './watch-url'
 import dynamic from 'next/dynamic'
 import type { MomentSocial } from '../../lib/catalog/types'
+import { PREVIEW_DELAY_MS, previewAllowed, previewGate } from './preview-gate'
 
 const CardSocial = dynamic(() => import('./social').then(mod => mod.CardSocial))
+const CardPreview = dynamic(() => import('./preview').then(mod => mod.CardPreview))
 
 export function cardFrame(row: CatalogListRow): string | null {
   if (row.width === null || row.height === null || row.width <= 0 || row.height <= 0) return null
@@ -33,12 +35,14 @@ export function Thumb({
   forcedStep,
   href,
   stage = false,
+  previewSrc = null,
 }: {
   row: CatalogListRow
   sources?: ThumbnailSources
   forcedStep?: ThumbStep
   href?: string
   stage?: boolean
+  previewSrc?: string | null
 }) {
   const navigate = useWatchNavigation()
   const { storage, site } = sources ?? { storage: null, site: null }
@@ -80,6 +84,7 @@ export function Thumb({
           <p className="moments-art-label">Original typographic art {'\u00b7'} no thumbnail could be loaded</p>
         </div>
       )}
+      {previewSrc ? <CardPreview src={previewSrc} /> : null}
     </div>
   )
   return (
@@ -103,6 +108,7 @@ export function VideoCard({
   visitOnly,
   onToggleSave,
   social,
+  videoSrc = null,
 }: {
   row: CatalogListRow
   search: string
@@ -111,13 +117,41 @@ export function VideoCard({
   visitOnly: boolean
   onToggleSave: (id: string) => void
   social?: MomentSocial
+  videoSrc?: string | null
 }) {
   const navigate = useWatchNavigation()
   const duration = durationClock(row.duration_s)
   const href = useWatchHref(search, row.id)
+  const [previewSrc, setPreviewSrc] = useState<string | null>(null)
+  const timer = useRef<number | null>(null)
+  function clearArm() {
+    if (timer.current !== null) window.clearTimeout(timer.current)
+    timer.current = null
+  }
+  function arm() {
+    clearArm()
+    if (!videoSrc || !previewAllowed(previewGate())) return
+    timer.current = window.setTimeout(() => {
+      if (!videoSrc || !previewAllowed(previewGate())) return
+      setPreviewSrc(videoSrc)
+    }, PREVIEW_DELAY_MS)
+  }
+  function disarm() {
+    clearArm()
+    setPreviewSrc(null)
+  }
+  useEffect(() => clearArm, [])
   return (
-    <article data-kind="generated" data-moment={row.id} className="moments-card">
-      <Thumb row={row} sources={thumbnail} href={href} />
+    <article
+      data-kind="generated"
+      data-moment={row.id}
+      className="moments-card"
+      onMouseEnter={arm}
+      onMouseLeave={disarm}
+      onFocus={arm}
+      onBlur={disarm}
+    >
+      <Thumb row={row} sources={thumbnail} href={href} previewSrc={previewSrc} />
       <div className="moments-card-body">
         <p className="moments-facts">
           <span className="moments-badge">Generated</span>

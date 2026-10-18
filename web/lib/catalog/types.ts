@@ -36,6 +36,7 @@ export type MomentsPayload =
       watchId: string | null
       thumbnails: Record<string, ThumbnailSources>
       videoAddress: string | null
+      videos?: Record<string, string | null>
       social?: Record<string, MomentSocial>
     }
 

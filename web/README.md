@@ -47,6 +47,14 @@ has no sample line and no reaction or comment payload. With it on, the line
 beside the stub indicator reads `Sample reactions and comments · made-up viewers, not real ones`.
 The counts, reaction bar and comments render only from that file, and only on the Moments tab.
 An id with no stats row shows no social layer.
+The watch page sets the video `src` and calls `play()` muted on arrival.
+If that call is refused, Play and the refusal line are unchanged.
+Unmute sits beside the player. The choice is `kickoff-moments-sound-v1`
+(`on` or `off`; absent means off) and the next video keeps it.
+Gallery cards wait 400 ms, then play a muted looping preview only for a fine
+pointer that can hover, and never when reduced motion or Save-Data is set.
+Leaving the card pauses the preview, removes `src` and calls `load()`.
+Touch devices make no gallery video request.
 `npm run check:client` fails if `KICKOFF-DEMO-SOCIAL` appears in client JavaScript
 or, unless the build itself set `KICKOFF_DEMO=on`, in server HTML or flight data.
 The schema constant may remain in server JavaScript.

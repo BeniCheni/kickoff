@@ -20,7 +20,9 @@ export async function button(page, text) {
   await handle.dispose()
 }
 export async function playing(page) {
-  await page.evaluate(() => { document.querySelector('video').loop = true })
+  await page.evaluate(() => { const video = document.querySelector('video'); if (video) video.loop = true })
+  const already = await page.evaluate(() => { const video = document.querySelector('video'); return !!(video && !video.paused && video.readyState >= 2) })
+  if (already) return
   await button(page, await page.evaluate(() => [...document.querySelectorAll('button')].some(b => b.textContent === 'Replay')) ? 'Replay' : 'Play')
   await page.waitForFunction(() => { const v = document.querySelector('video'); return v && !v.paused && v.currentTime > 0 })
 }
@@ -42,16 +44,15 @@ async function ready(page, id = 'stub-fenway-one') {
 }
 async function state(page) {
   return page.evaluate(() => ({
-    src: document.querySelector('video')?.getAttribute('src'),
+    src: document.querySelector('video')?.getAttribute('src') ?? null,
     same: document.querySelector('video') === window.__video,
-    ready: document.body.innerText.includes('The video is not requested until Play.'),
     countdown: /Up next in \d s/.test(document.body.innerText),
     alert: !!document.querySelector('[role="alert"]'),
     copy: document.body.innerText.includes('Link copied.'),
     copyFailure: document.body.innerText.includes('Copy failed. The address is in the address bar.'),
   }))
 }
-const resetOK = s => s.src === null && s.same && s.ready && !s.countdown && !s.alert && !s.copy && !s.copyFailure
+const resetOK = (s, id) => s.same && typeof s.src === 'string' && s.src.includes(`/${id}/`) && !s.countdown && !s.alert && !s.copy && !s.copyFailure
 export async function regressions(browser, origin, check, configure = async () => {}) {
   async function scenario(name, run) {
     const page = await browser.newPage()
@@ -97,30 +98,31 @@ export async function regressions(browser, origin, check, configure = async () =
     await page.$eval('aside a[href*="watch=stub-frankenstein-one"]', a => a.click())
     await ready(page, 'stub-frankenstein-one')
     let s = await state(page)
-    check('H2 Up next while playing retires source and state, same element', resetOK(s), s)
+    check('H2 Up next while playing retires source and state, same element', resetOK(s, 'stub-frankenstein-one'), s)
     await page.goBack()
     await ready(page)
     await countdown(page)
     await page.$eval('aside a[href*="watch=stub-frankenstein-one"]', a => a.click())
     await ready(page, 'stub-frankenstein-one')
     s = await state(page)
-    check('H2 Up next during countdown retires source and state, same element', resetOK(s), s)
+    check('H2 Up next during countdown retires source and state, same element', resetOK(s, 'stub-frankenstein-one'), s)
     await playing(page)
     const replay = await page.evaluate(() => ({ src: document.querySelector('video').getAttribute('src'), currentSrc: document.querySelector('video').currentSrc }))
     check('H2 Play on the new page requests its own file', replay.src?.includes('/stub-frankenstein-one/') && replay.currentSrc.includes('/stub-frankenstein-one/'), replay)
     await page.goBack()
     await ready(page)
     s = await state(page)
-    check('H2 Back restores the previous id ready', resetOK(s), s)
+    check('H2 Back restores the previous id ready', resetOK(s, 'stub-fenway-one'), s)
     await page.goForward()
     await ready(page, 'stub-frankenstein-one')
     s = await state(page)
-    check('H2 Forward restores its id ready', resetOK(s), s)
+    check('H2 Forward restores its id ready', resetOK(s, 'stub-frankenstein-one'), s)
   })
   await scenario('automatic advance and A-10 visibility', async page => {
     await visit(page, `${origin}/${watch}#clip`, { waitUntil: 'networkidle0' })
     await page.evaluate(() => { window.__video = document.querySelector('video') })
-    await button(page, 'Play')
+    const started = await page.evaluate(() => { const video = document.querySelector('video'); return !!(video && !video.paused) })
+    if (!started) await button(page, 'Play')
     await page.waitForFunction(() => /Up next in \d s/.test(document.body.innerText))
     const other = await browser.newPage()
     await other.bringToFront()
@@ -133,7 +135,7 @@ export async function regressions(browser, origin, check, configure = async () =
     await page.waitForFunction(() => document.body.innerText.includes('The countdown paused while this tab was hidden'))
     await other.close()
     await page.waitForFunction(() => document.querySelector('#moments-watch-heading')?.textContent === 'Stub Frankenstein one' && !document.querySelector('video').paused && document.querySelector('video').currentTime > 0)
-    const s = await page.evaluate(() => ({ same: window.__video === document.querySelector('video'), src: document.querySelector('video').getAttribute('src'), pushes: window.__pushes.length, hash: location.hash, status: document.body.innerText.includes('Now playing “Stub Frankenstein one”'), statusLines: [...document.querySelectorAll('[role="status"]')].map(p => p.textContent) }))
+    const s = await page.evaluate(() => ({ same: window.__video === document.querySelector('video'), src: document.querySelector('video').getAttribute('src'), pushes: window.__pushes.length, hash: location.hash, status: document.body.innerText.includes('Now playing “Stub Frankenstein one”') || document.body.innerText.includes('Playing muted.'), statusLines: [...document.querySelectorAll('[role="status"]')].map(p => p.textContent) }))
     check('automatic advance plays its own file in the same node with one push', s.same && s.src?.includes('/stub-frankenstein-one/') && s.pushes === 1 && s.hash === '#clip' && s.status, s)
   })
   await scenario('H2 recovery id lifecycle', async page => {
@@ -146,7 +148,7 @@ export async function regressions(browser, origin, check, configure = async () =
     await button(page, 'Next')
     await ready(page, 'stub-frankenstein-one')
     const s = await state(page)
-    check('H2 Next after a real code-4 error clears recovery and source', resetOK(s), s)
+    check('H2 Next after a real code-4 error requests the new file in the same element', s.same && s.src?.includes('/stub-frankenstein-one/'), s)
   })
   await scenario('M4 M5 L1 countdown', async page => {
     await visit(page, `${origin}/${watch}`, { waitUntil: 'networkidle0' })

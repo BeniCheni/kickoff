@@ -21,6 +21,7 @@ export function Gallery({
   initialOrder = 'beni',
   initialSavedOnly = false,
   social,
+  videos,
 }: {
   list: readonly CatalogListRow[]
   search: string
@@ -32,6 +33,7 @@ export function Gallery({
   initialOrder?: BrowseOrder
   initialSavedOnly?: boolean
   social?: Record<string, MomentSocial>
+  videos?: Record<string, string | null>
 }) {
   const [subject, setSubject] = useState<SubjectFilter>(initialSubject)
   const [order, setOrder] = useState<BrowseOrder>(initialOrder)
@@ -150,6 +152,7 @@ export function Gallery({
               visitOnly={visitOnly}
               onToggleSave={toggleSave}
               social={social?.[row.id]}
+              videoSrc={videos?.[row.id] ?? null}
             />
           ))}
         </div>

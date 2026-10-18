@@ -35,6 +35,7 @@ export function momentsFor(
       watchId,
       thumbnails: Object.fromEntries(read.list.map(row => [row.id, thumbnailFor(row, storageOrigin)])),
       videoAddress: videoFor(detail, storageOrigin),
+      videos: Object.fromEntries(read.details.map(row => [row.id, videoFor(row, storageOrigin)])),
       ...(demo ? { social: socialByVideo(demo, read.list.map(row => row.id)) } : {}),
     }
   } catch (error) {

@@ -186,16 +186,21 @@ try {
         if (state === 'paused') { await button(page, 'Pause'); await page.waitForFunction(() => document.querySelector('video').paused) }
       }
       if (['ended', 'countdown'].includes(state)) {
-        await button(page, 'Play')
+        const live = await page.evaluate(() => { const video = document.querySelector('video'); return !!(video && !video.paused && !video.ended) })
+        if (!live) await button(page, 'Play')
         await page.waitForFunction(() => document.querySelector('video').ended)
         if (state === 'countdown') await page.waitForFunction(() => /Up next in \d s/.test(document.body.innerText))
       }
-      if (state === 'recovery') { await button(page, 'Play'); await page.waitForSelector('[role="alert"]') }
+      if (state === 'recovery') {
+        const alerted = await page.$('[role="alert"]')
+        if (!alerted) await button(page, 'Play')
+        await page.waitForSelector('[role="alert"]')
+      }
       const name = `${state}-${lens}-${theme}-${width}`
       const shot = await shoot(page, name, logs)
       check(`theme ${name}`, shot.theme === theme, shot.theme)
       if (state === 'gallery') check(`no gallery media ${name}`, media.length === 0 && await page.$('video') === null, media)
-      if (state === 'watch-ready') check(`no source before Play ${name}`, media.length === 0 && await page.$eval('video', v => !v.hasAttribute('src') && !v.hasAttribute('autoplay') && v.preload === 'none'), media)
+      if (state === 'watch-ready') check(`muted request on arrival ${name}`, media.some(url => url.includes('.mp4')) && await page.$eval('video', v => v.muted && v.hasAttribute('src') && !v.hasAttribute('autoplay') && v.preload === 'none'), media)
       await page.waitForNetworkIdle()
       await page.close()
       }

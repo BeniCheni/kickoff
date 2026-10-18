@@ -59,7 +59,7 @@ export function MomentsRegion({
   } else if (moments.state === 'ready' && moments.watchId) {
     body = <WatchMissing search={search} />
   } else if (moments.state === 'ready') {
-    body = <Gallery list={moments.list} search={search} thumbnails={moments.thumbnails} social={moments.social} />
+    body = <Gallery list={moments.list} search={search} thumbnails={moments.thumbnails} social={moments.social} videos={moments.videos} />
   }
   return (
     <main className="moments-gallery" aria-label="Moments" data-catalog={preview ? 'stub' : undefined}>
