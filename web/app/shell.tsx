@@ -16,7 +16,7 @@ import { useThemeController } from '../../src/lib/useThemeController'
 import { useNow } from '../../src/lib/useNow'
 import { SearchProvider, useCanonicalSearch, useUrlState } from '../../src/lib/useUrlState'
 import { useSearchParams } from 'next/navigation'
-import { useWatchNavigation, WatchNavigationProvider } from './moments/watch-url'
+import { useWatchNavigation, WatchNavigationProvider, useIgnoredWatchScrub } from './moments/watch-url'
 import { encodeTab, parseTab, type Tab } from '../../src/lib/urlCodecs'
 
 /** Empty until N5 mounts the Privacy & terms link. Renders no element. */
@@ -47,12 +47,14 @@ function ShellInner({ moments, catalogMode, demo }: { moments: MomentsPayload; c
   const [lens, setLens] = useUrlState('lens', DEFAULT_LENS, encodeLens, parseLens, 'replace')
   const navigate = useWatchNavigation()
   useCanonicalSearch(today)
+  useIgnoredWatchScrub()
   const { toggle } = useThemeController(lens)
   function onSelect(next: Tab) {
     const currentWatch = new URLSearchParams(window.location.search).get('watch')
-    const leavingWithWatch = tab === 'moments' && next !== 'moments' && currentWatch !== null
     const enteringMoments = next === 'moments' && tab !== 'moments'
-    if (leavingWithWatch || enteringMoments) {
+    const leavingWithWatch = tab === 'moments' && next !== 'moments' && currentWatch !== null
+    const ignoredWatch = tab !== 'moments' && currentWatch !== null && next !== 'moments'
+    if (enteringMoments || leavingWithWatch || ignoredWatch) {
       navigate(next, next === 'moments' ? currentWatch : null)
       return
     }

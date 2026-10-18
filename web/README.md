@@ -55,6 +55,9 @@ Gallery cards wait 400 ms, then play a muted looping preview only for a fine
 pointer that can hover, and never when reduced motion or Save-Data is set.
 Leaving the card pauses the preview, removes `src` and calls `load()`.
 Touch devices make no gallery video request.
+An ignored `watch` on Fixtures or Table is removed by the same merge
+the next time the reader navigates somewhere that is not Moments.
+Unknown keys and the fragment stay. Opening Moments keeps that `watch` and opens it.
 `npm run check:client` fails if `KICKOFF-DEMO-SOCIAL` appears in client JavaScript
 or, unless the build itself set `KICKOFF_DEMO=on`, in server HTML or flight data.
 The schema constant may remain in server JavaScript.

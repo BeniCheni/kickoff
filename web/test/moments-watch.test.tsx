@@ -9,7 +9,7 @@ import { WatchPage } from '../app/moments/watch'
 import { readAutoplay, writeAutoplay } from '../app/moments/autoplay'
 import { readSound, writeSound } from '../app/moments/sound'
 import { PREVIEW_DELAY_MS, previewAllowed } from '../app/moments/preview-gate'
-import { mergeWatch } from '../app/moments/watch-url'
+import { mergeWatch, scrubIgnoredWatch } from '../app/moments/watch-url'
 import { provenanceLines, recoveryCopy } from '../app/moments/provenance'
 import type { CatalogDetailRow } from '@kickoff/catalog'
 
@@ -32,6 +32,17 @@ test('mergeWatch keeps unknown keys and the fragment, and drops watch off Moment
     .toBe('?lens=broadcast#x')
   expect(mergeWatch('?tab=moments&watch=withdrawn-clip', '', 'table', null))
     .toBe('?tab=table')
+})
+
+test('an ignored watch is cleared on the next non-Moments URL and kept when opening Moments', () => {
+  expect(scrubIgnoredWatch('?tab=table&watch=stub-fenway-one&extra=1#clip', 'http://127.0.0.1/?tab=fixtures&watch=stub-fenway-one#clip'))
+    .toBe('/?tab=table&extra=1#clip')
+  expect(scrubIgnoredWatch('?lens=broadcast&watch=stub-fenway-one&kept=1#clip', 'http://127.0.0.1/?watch=stub-fenway-one#clip'))
+    .toBe('/?lens=broadcast&kept=1#clip')
+  expect(scrubIgnoredWatch('?tab=moments&watch=stub-fenway-one&extra=1#clip', 'http://127.0.0.1/'))
+    .toBe('?tab=moments&watch=stub-fenway-one&extra=1#clip')
+  expect(scrubIgnoredWatch('?tab=table&extra=1#clip', 'http://127.0.0.1/'))
+    .toBe('?tab=table&extra=1#clip')
 })
 
 test('sound is off unless the stored word is on', () => {
