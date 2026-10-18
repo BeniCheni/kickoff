@@ -38,7 +38,7 @@ export type ClipRead =
   | { ok: true; facts: ClipFacts }
   | { ok: false; reason: ClipRefusal }
 
-type Box = { type: string; payloadStart: number; payloadLength: number }
+type Box = { type: string; start: number; payloadStart: number; payloadLength: number }
 
 function viewOf(bytes: Uint8Array): DataView {
   return new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength)
@@ -73,7 +73,7 @@ function boxes(bytes: Uint8Array, start: number, length: number): Box[] {
       size = end - offset
     }
     if (size < header || offset + size > end) break
-    found.push({ type, payloadStart: offset + header, payloadLength: size - header })
+    found.push({ type, start: offset, payloadStart: offset + header, payloadLength: size - header })
     offset += size
   }
   return found
@@ -246,6 +246,67 @@ function isMp4Brand(brand: string): boolean {
   return MP4_BRANDS.has(brand)
 }
 
+const CONTAINERS = new Set(['moov', 'trak', 'mdia', 'minf', 'stbl'])
+
+function visitBoxes(bytes: Uint8Array, start: number, length: number, visit: (box: Box) => void) {
+  for (const box of boxes(bytes, start, length)) {
+    visit(box)
+    if (CONTAINERS.has(box.type)) visitBoxes(bytes, box.payloadStart, box.payloadLength, visit)
+  }
+}
+
+/** Chunk offsets from every `stco` and `co64`. They are absolute file positions. */
+export function chunkOffsets(bytes: Uint8Array): { stco: number[]; co64: number[] } {
+  const view = viewOf(bytes)
+  const stco: number[] = []
+  const co64: number[] = []
+  visitBoxes(bytes, 0, bytes.byteLength, (box) => {
+    if (box.type === 'stco') {
+      const count = u32(view, box.payloadStart + 4)
+      for (let index = 0; index < count; index += 1) stco.push(u32(view, box.payloadStart + 8 + index * 4))
+    }
+    if (box.type === 'co64') {
+      const count = u32(view, box.payloadStart + 4)
+      for (let index = 0; index < count; index += 1) co64.push(u64(view, box.payloadStart + 8 + index * 8))
+    }
+  })
+  return { stco, co64 }
+}
+
+/**
+ * Rename every top-level, `moov`, and `trak` `udta` or `meta` box to `free` and zero its payload.
+ * The box size stays, so `stco` and `co64` offsets still point at the same samples.
+ */
+export function stripClip(bytes: Uint8Array): { bytes: Uint8Array; stripped: string } {
+  const copy = new Uint8Array(bytes)
+  const found = new Set<string>()
+  const rewrite = (start: number, length: number, depth: 0 | 1 | 2) => {
+    for (const box of boxes(copy, start, length)) {
+      if ((box.type === 'udta' || box.type === 'meta') && depth <= 2) {
+        copy.set(text('free'), box.start + 4)
+        copy.fill(0, box.payloadStart, box.payloadStart + box.payloadLength)
+        found.add(box.type)
+        continue
+      }
+      if (box.type === 'moov' && depth === 0) rewrite(box.payloadStart, box.payloadLength, 1)
+      if (box.type === 'trak' && depth === 1) rewrite(box.payloadStart, box.payloadLength, 2)
+    }
+  }
+  rewrite(0, copy.byteLength, 0)
+  const names = ['udta', 'meta'].filter((name) => found.has(name))
+  return { bytes: copy, stripped: names.length > 0 ? names.join(',') : 'none' }
+}
+
+/** True when `moov` comes before `mdat`, which is what phones need for a fast first frame. */
+export function isFastStart(bytes: Uint8Array): boolean {
+  const top = boxes(bytes, 0, bytes.byteLength)
+  const moov = top.findIndex((box) => box.type === 'moov')
+  const mdat = top.findIndex((box) => box.type === 'mdat')
+  if (moov < 0) return false
+  if (mdat < 0) return true
+  return moov < mdat
+}
+
 function concat(parts: Uint8Array[]): Uint8Array {
   const size = parts.reduce((sum, part) => sum + part.length, 0)
   const out = new Uint8Array(size)
@@ -296,6 +357,12 @@ export function syntheticMp4(input: {
   brand?: string
   compatible?: string[]
   video?: boolean
+  /** Adds a location `udta` and an encoder `meta`, at the top, in `moov`, and in the video `trak`. */
+  userData?: boolean
+  /** Adds an `mdat` plus one `stco` entry and one `co64` entry. */
+  chunks?: boolean
+  /** Puts `mdat` before `moov`. */
+  mdatFirst?: boolean
 } = {}): Uint8Array {
   const width = input.width ?? 1920
   const height = input.height ?? 1080
@@ -381,10 +448,13 @@ export function syntheticMp4(input: {
     ])
     const stsd = wrap('stsd', concat([be32(0), be32(1), entry]))
     const stts = wrap('stts', concat([be32(0), be32(1), be32(samples), be32(sampleDelta)]))
-    const stbl = wrap('stbl', concat([stsd, stts]))
+    const stco = input.chunks ? wrap('stco', concat([be32(0), be32(1), be32(0)])) : new Uint8Array()
+    const co64 = input.chunks ? wrap('co64', concat([be32(0), be32(1), be32(0), be32(0)])) : new Uint8Array()
+    const stbl = wrap('stbl', concat([stsd, stts, stco, co64]))
     const minf = wrap('minf', stbl)
     const mdia = wrap('mdia', concat([mdhd, hdlr, minf]))
-    traks.push(wrap('trak', concat([tkhd, mdia])))
+    const trakUdta = input.userData ? wrap('udta', text('©xyz+40.7128-074.0060/')) : new Uint8Array()
+    traks.push(wrap('trak', concat([tkhd, mdia, trakUdta])))
   }
   if (input.audio) {
     const tkhd = wrap('tkhd', concat([
@@ -427,5 +497,28 @@ export function syntheticMp4(input: {
     be32(0),
     ...compatible.map((item) => text(item.padEnd(4, ' ').slice(0, 4))),
   ]))
-  return concat([ftyp, wrap('moov', concat([mvhd, ...traks]))])
+  const meta = input.userData
+    ? wrap('meta', concat([be32(0), wrap('ilst', text('©tooLavf58.76.100'))]))
+    : new Uint8Array()
+  const topUdta = input.userData ? wrap('udta', text('©xyz+40.7128-074.0060/')) : new Uint8Array()
+  const sampleA = text('SAMPLE-ONE-STCO')
+  const sampleB = text('SAMPLE-TWO-CO64')
+  const mdat = input.chunks ? wrap('mdat', concat([sampleA, sampleB])) : new Uint8Array()
+  const moov = wrap('moov', concat([mvhd, ...traks, meta]))
+  const parts = input.mdatFirst ? [ftyp, mdat, topUdta, moov] : [ftyp, topUdta, moov, mdat]
+  const file = concat(parts)
+  if (input.chunks) {
+    const mdatAt = parts.slice(0, parts.indexOf(mdat)).reduce((sum, part) => sum + part.length, 0)
+    const first = mdatAt + 8
+    const second = first + sampleA.length
+    const view = viewOf(file)
+    visitBoxes(file, 0, file.byteLength, (box) => {
+      if (box.type === 'stco') view.setUint32(box.payloadStart + 8, first)
+      if (box.type === 'co64') {
+        view.setUint32(box.payloadStart + 8, 0)
+        view.setUint32(box.payloadStart + 12, second)
+      }
+    })
+  }
+  return file
 }

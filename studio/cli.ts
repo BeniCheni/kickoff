@@ -420,6 +420,8 @@ export async function runCli(
             codec: result.videoCodec,
             audio: result.audio,
             fps: result.frameRate,
+            stripped: result.stripped,
+            faststart: result.fastStart,
             transport,
           }))
           return

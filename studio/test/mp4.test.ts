@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { readClipFacts, syntheticMp4 } from '../media/mp4.ts'
+import { chunkOffsets, isFastStart, readClipFacts, stripClip, syntheticMp4 } from '../media/mp4.ts'
 
 const MAC_EPOCH_SECONDS = 2_082_844_800
 
@@ -41,5 +41,45 @@ describe('mp4 facts', () => {
     expect(readClipFacts(syntheticMp4({ brand: 'qt  ', compatible: ['qt  '] }))).toEqual({ ok: false, reason: 'not-mp4' })
     expect(readClipFacts(syntheticMp4({ video: false, audio: true }))).toEqual({ ok: false, reason: 'no-video' })
     expect(readClipFacts(syntheticMp4({ durationS: 0 }))).toEqual({ ok: false, reason: 'zero-duration' })
+  })
+
+  it('turns udta and meta into free without moving the samples', () => {
+    const created = new Date('2026-10-18T15:00:00.000Z')
+    const raw = syntheticMp4({
+      width: 1280,
+      height: 720,
+      durationS: 5,
+      frameRate: 24,
+      audio: true,
+      creationTime: Math.floor(created.getTime() / 1000) + MAC_EPOCH_SECONDS,
+      userData: true,
+      chunks: true,
+    })
+    const before = readClipFacts(raw)
+    expect(Buffer.from(raw).includes('©xyz')).toBe(true)
+    expect(Buffer.from(raw).includes('©too')).toBe(true)
+    const stripped = stripClip(raw)
+    expect(stripped.stripped).toBe('udta,meta')
+    expect(Buffer.from(stripped.bytes).includes('©xyz')).toBe(false)
+    expect(Buffer.from(stripped.bytes).includes('©too')).toBe(false)
+    expect(stripped.bytes.byteLength).toBe(raw.byteLength)
+    const offsets = chunkOffsets(raw)
+    expect(offsets.stco.length).toBe(1)
+    expect(offsets.co64.length).toBe(1)
+    expect(chunkOffsets(stripped.bytes)).toEqual(offsets)
+    const sample = (bytes: Uint8Array, offset: number, marker: string) =>
+      Buffer.from(bytes.slice(offset, offset + Buffer.byteLength(marker))).toString()
+    expect(sample(raw, offsets.stco[0] ?? 0, 'SAMPLE-ONE-STCO')).toBe('SAMPLE-ONE-STCO')
+    expect(sample(stripped.bytes, offsets.stco[0] ?? 0, 'SAMPLE-ONE-STCO')).toBe('SAMPLE-ONE-STCO')
+    expect(sample(raw, offsets.co64[0] ?? 0, 'SAMPLE-TWO-CO64')).toBe('SAMPLE-TWO-CO64')
+    expect(sample(stripped.bytes, offsets.co64[0] ?? 0, 'SAMPLE-TWO-CO64')).toBe('SAMPLE-TWO-CO64')
+    const after = readClipFacts(stripped.bytes)
+    expect(after).toEqual(before)
+    expect(isFastStart(raw)).toBe(true)
+    expect(isFastStart(stripped.bytes)).toBe(true)
+    const late = syntheticMp4({ chunks: true, mdatFirst: true, userData: true })
+    expect(isFastStart(late)).toBe(false)
+    expect(isFastStart(stripClip(late).bytes)).toBe(false)
+    expect(stripClip(syntheticMp4()).stripped).toBe('none')
   })
 })

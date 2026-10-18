@@ -35,7 +35,7 @@ import { isQueueOrigin, queueAddresses } from './fal/urls.ts'
 import { cacheKey as makeCacheKey, sha256 } from './hash.ts'
 import { aboveManualCeiling, jobExposure, reconcileAmount, sessionExposure, type LedgerView } from './ledger.ts'
 import { addUsd, formatUsd, parseUsd } from './money.ts'
-import { readClipFacts } from './media/mp4.ts'
+import { isFastStart, readClipFacts, stripClip } from './media/mp4.ts'
 import { preparePhotograph } from './photos/strip.ts'
 import { brooklynDate, brooklynStart, estimateUsd, GROK_IMAGINE, selectRegistry, unknownParam, type RegistryRow } from './registry.ts'
 import { ObjectStoreError, siteCopyStatus, type SiteCopyOutcome, type StoragePort, type StoredObject } from './storage/port.ts'
@@ -1025,7 +1025,8 @@ export function createStudio(options: EngineOptions) {
       if (names.length === 0 || names.some((name) => !APPROVED_SUBJECTS.has(name))) {
         return { outcome: 'subject-refused' as const }
       }
-      const read = readClipFacts(input.video)
+      const stripped = stripClip(input.video)
+      const read = readClipFacts(stripped.bytes)
       if (!read.ok) return { outcome: 'clip-refused' as const, reason: read.reason }
       let still: { bytes: Uint8Array; sha256: string }
       try {
@@ -1047,7 +1048,7 @@ export function createStudio(options: EngineOptions) {
       } else {
         return { outcome: 'needs-made-on' as const }
       }
-      const digest = sha256(input.video)
+      const digest = sha256(stripped.bytes)
       const duplicate = await db.select().from(asset).where(and(eq(asset.role, 'video'), eq(asset.sha256, digest)))
       if (duplicate.length > 0) return { outcome: 'already-imported' as const, sha256: digest }
 
@@ -1073,7 +1074,7 @@ export function createStudio(options: EngineOptions) {
       mkdirSync(options.mediaDir, { recursive: true })
       const videoPath = path.join(options.mediaDir, `${digest}.mp4`)
       const stillPath = path.join(options.mediaDir, `${still.sha256}.jpg`)
-      writeFileSync(videoPath, input.video)
+      writeFileSync(videoPath, stripped.bytes)
       writeFileSync(stillPath, still.bytes)
       const note = input.note?.trim() ? input.note : null
 
@@ -1110,7 +1111,7 @@ export function createStudio(options: EngineOptions) {
             role: 'video',
             sha256: digest,
             mime: 'video/mp4',
-            bytes: input.video.byteLength,
+            bytes: stripped.bytes.byteLength,
             width: facts.width,
             height: facts.height,
             durationS,
@@ -1157,6 +1158,8 @@ export function createStudio(options: EngineOptions) {
           outcome: 'imported' as const,
           jobId: created.id,
           sha256: digest,
+          stripped: stripped.stripped,
+          fastStart: isFastStart(stripped.bytes),
           width: facts.width,
           height: facts.height,
           durationS,

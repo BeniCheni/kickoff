@@ -9,7 +9,7 @@ import { CHECKLIST_LINES, asset, generation, job, ledger, session } from '../db/
 import { createStudio } from '../engine.ts'
 import { createFalStub } from '../fal/stub.ts'
 import { sha256 } from '../hash.ts'
-import { syntheticMp4 } from '../media/mp4.ts'
+import { stripClip, syntheticMp4 } from '../media/mp4.ts'
 import { createStorageStub } from '../storage/stub.ts'
 import { runCli } from '../cli.ts'
 import { freshDatabase, type StudioClient } from './harness.ts'
@@ -305,6 +305,69 @@ describe('import', () => {
       stderr: () => undefined,
     })).toBe(0)
     expect(second).toEqual(['refused: this file was already imported database=pglite'])
+    expect(out[0]).toContain('stripped=none')
+    expect(out[0]).toContain('faststart=true')
+  })
+
+  it('stores and uploads the stripped file, and hashes those bytes', async () => {
+    const opened = await open()
+    const uploaded: Buffer[] = []
+    const putVideo = opened.storage.port.putVideo.bind(opened.storage.port)
+    opened.storage.port.putVideo = async (input) => {
+      uploaded.push(readFileSync(input.localPath))
+      return putVideo(input)
+    }
+    const raw = syntheticMp4({
+      width: 1920,
+      height: 1080,
+      durationS: 5,
+      frameRate: 24,
+      audio: true,
+      creationTime: creationTime('2026-10-18T15:00:00.000Z'),
+      userData: true,
+      chunks: true,
+    })
+    const stripped = stripClip(raw)
+    const imported = await opened.studio.importClip({
+      video: raw,
+      keyframe: minimalJpeg,
+      source: 'grok-imagine',
+      prompt: 'A cat scores',
+      subjects: ['Fenway'],
+      title: 'Fenway',
+    })
+    expect(imported.outcome).toBe('imported')
+    if (imported.outcome !== 'imported') return
+    expect(imported.stripped).toBe('udta,meta')
+    expect(imported.fastStart).toBe(true)
+    expect(imported.sha256).toBe(sha256(stripped.bytes))
+    expect(imported.sha256).not.toBe(sha256(raw))
+    expect(imported.width).toBe(1920)
+    expect(imported.height).toBe(1080)
+    expect(imported.durationS).toBe('5.000')
+    expect(imported.frameRate).toBe(24)
+    const stored = readFileSync(path.join(opened.mediaDir, `${imported.sha256}.mp4`))
+    expect(stored.includes('©xyz')).toBe(false)
+    expect(stored.includes('©too')).toBe(false)
+    expect(stored.includes('SAMPLE-ONE-STCO')).toBe(true)
+    expect((await opened.studio.keep(imported.jobId, clears())).outcome).toBe('kept')
+    expect((await opened.studio.recordGate({
+      answer: 'recorded',
+      disclosure: 'pending a named answer',
+      recordedBy: 'unspecified',
+      source: 'A-06',
+    })).outcome).toBe('gate-recorded')
+    expect((await opened.studio.publish({
+      jobId: imported.jobId,
+      publicId: 'stripped-clip',
+      title: 'Fenway',
+      position: 1,
+    })).outcome).toBe('published')
+    expect(uploaded).toHaveLength(1)
+    expect(uploaded[0]?.includes('©xyz')).toBe(false)
+    expect(uploaded[0]?.includes('©too')).toBe(false)
+    expect(uploaded[0]?.includes('SAMPLE-ONE-STCO')).toBe(true)
+    expect(sha256(uploaded[0] ?? Buffer.alloc(0))).toBe(imported.sha256)
   })
 
   it('prints why a position or a public id was taken', async () => {
