@@ -15,6 +15,7 @@ import { createFalStub, type ScriptName, type StubCursor } from './fal/stub.ts'
 import { sha256 } from './hash.ts'
 import { redact } from './log/redact.ts'
 import { estimateUsd, selectRegistry, unknownParam } from './registry.ts'
+import { createR2Storage, missingR2 } from './storage/r2.ts'
 import { createStorageStub } from './storage/stub.ts'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
@@ -139,22 +140,29 @@ function loadCursor(file: string): StubCursor {
   }
 }
 
-async function openStudio(env: NodeJS.ProcessEnv, live: boolean) {
+function needsObjectStore(command: string, flags: Record<string, string>): boolean {
+  return command === 'publish' || command === 'retry-delete' || (command === 'unpublish' && flags.delete === '1')
+}
+
+async function openStudio(env: NodeJS.ProcessEnv, live: boolean, objectStore: boolean) {
   const dataDir = resolveEnvFile(requiredEnv(env, 'STUDIO_DATA_DIR'))
   const mediaDir = resolveEnvFile(requiredEnv(env, 'STUDIO_MEDIA_DIR'))
   mkdirSync(dataDir, { recursive: true })
   mkdirSync(mediaDir, { recursive: true })
   const cursor = loadCursor(cursorFile(dataDir))
   const fails = new Set((env.STUDIO_STORAGE_FAIL ?? '').split(',').map((item) => item.trim()).filter(Boolean))
-  const storage = createStorageStub({
-    failVideo: fails.has('video'),
-    failThumbnail: fails.has('thumbnail'),
-    failFallback: fails.has('fallback'),
-    failRemoval: fails.has('removal'),
-    failRemove: fails.has('remove'),
-    failRemoveVideo: fails.has('video-remove'),
-    failRemoveThumbnail: fails.has('thumbnail-remove'),
-  })
+  const useR2 = live && env.STUDIO_LIVE === '1' && objectStore
+  const storage = useR2
+    ? { port: createR2Storage({ env }) }
+    : createStorageStub({
+      failVideo: fails.has('video'),
+      failThumbnail: fails.has('thumbnail'),
+      failFallback: fails.has('fallback'),
+      failRemoval: fails.has('removal'),
+      failRemove: fails.has('remove'),
+      failRemoveVideo: fails.has('video-remove'),
+      failRemoveThumbnail: fails.has('thumbnail-remove'),
+    })
   const stub = createFalStub(scriptFrom(env), cursor)
   const fal = selectFalTransport({
     argv: live ? ['--live'] : [],
@@ -227,9 +235,10 @@ function explain(io: CliIo, outcome: string) {
 async function withStudio(
   env: NodeJS.ProcessEnv,
   live: boolean,
+  objectStore: boolean,
   run: (studio: Studio) => Promise<void>,
 ): Promise<void> {
-  const opened = await openStudio(env, live)
+  const opened = await openStudio(env, live, objectStore)
   try {
     await run(opened.studio)
   } finally {
@@ -282,7 +291,16 @@ export async function runCli(argv: readonly string[], env: NodeJS.ProcessEnv, io
       return 0
     }
 
-    await withStudio(loaded, live, async (studio) => {
+    const objectStore = needsObjectStore(command, flags)
+    if (live && loaded.STUDIO_LIVE === '1' && objectStore) {
+      const missing = missingR2(loaded)
+      if (missing.length > 0) {
+        io.stderr(`refused: --live needs ${missing.join(' and ')}`)
+        return 1
+      }
+    }
+
+    await withStudio(loaded, live, objectStore, async (studio) => {
       if (command === 'submit') {
         const endpoint = required(flags, 'endpoint')
         const prompt = required(flags, 'prompt')
@@ -502,6 +520,7 @@ export async function runCli(argv: readonly string[], env: NodeJS.ProcessEnv, io
         io.stdout(line(result.outcome, {
           live: 'live' in result ? result.live : undefined,
           retryable: 'retryable' in result ? result.retryable : undefined,
+          object: 'object' in result ? result.object : undefined,
         }))
         explain(io, result.outcome)
         return

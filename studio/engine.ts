@@ -1237,7 +1237,8 @@ export function createStudio(options: EngineOptions) {
           videoAsset.objectPath = object.objectPath
         }
       } catch {
-        return { outcome: 'upload-failed' as const, live: false as const, listedAgain: true as const }
+        await recordEvent(current.id, 'upload-failed', { object: 'video' })
+        return { outcome: 'upload-failed' as const, live: false as const, listedAgain: true as const, object: 'video' as const }
       }
       try {
         if (!thumbnail.bucket || !thumbnail.objectPath) {
@@ -1252,7 +1253,8 @@ export function createStudio(options: EngineOptions) {
           thumbnail.objectPath = object.objectPath
         }
       } catch {
-        return { outcome: 'upload-failed' as const, live: false as const, listedAgain: true as const }
+        await recordEvent(current.id, 'upload-failed', { object: 'thumbnail' })
+        return { outcome: 'upload-failed' as const, live: false as const, listedAgain: true as const, object: 'thumbnail' as const }
       }
 
       if (flags.breakRecordWrite) {
