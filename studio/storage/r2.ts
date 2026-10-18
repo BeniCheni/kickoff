@@ -155,9 +155,10 @@ export function createR2Storage(options: {
       } catch {
         throw new ObjectStoreError(`${label} remove failed`, null, 'network')
       }
-      // AWS DeleteObject documents success when the key is already absent (HTTP 204).
-      // 204 and 404 are both treated as removed. That was not verified against a live bucket.
-      if (response.status === 200 || response.status === 204 || response.status === 404) {
+      // Only 200 and 204 count as deleted. S3 answers 204 when the key is already absent.
+      // A 404 at this URL is a missing bucket or a wrong path, so it fails with its status and code.
+      // That was not verified against a live bucket.
+      if (response.status === 200 || response.status === 204) {
         await response.arrayBuffer().catch(() => undefined)
         return
       }

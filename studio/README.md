@@ -69,7 +69,7 @@ Videos and thumbnails for a live publish go to Cloudflare R2 (E4, 18 Oct 2026). 
 
 Beni creates the bucket, the custom domain, and an API token scoped to that one bucket, and writes the four names into the env file outside the worktree: `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`. The record always stores bucket `moments` and an object path `<public id>/video-<sha8>.mp4` or `<public id>/thumbnail-<sha8>.jpg`. The R2 object key is `moments/` plus that object path, so the public address `STUDIO_STORAGE_ORIGIN/moments/<object path>` is the bucket's custom domain plus the key. `STUDIO_STORAGE_ORIGIN` is the address the Next app will use at N6. Upload does not read it.
 
-The request is SigV4, region `auto`, with the file's SHA-256 in `x-amz-content-sha256` and the MIME type as Content-Type. A failed upload leaves the clip unpublished and records which object failed (`video` or `thumbnail`). The next `publish` retries only the object that has no address yet. `unpublish --delete` and `retry-delete` delete through the same adapter. Deleting a key that is already absent is treated as success, because AWS documents DeleteObject that way (HTTP 204). That was not verified against a live bucket. The site's thumbnail copy stays on the stub. Every `--live` command refuses, by name, when `STUDIO_LIVE` is not `1` or `DATABASE_URL` is missing, so a live upload cannot write the catalog only into the local database.
+The request is SigV4, region `auto`, with the file's SHA-256 in `x-amz-content-sha256` and the MIME type as Content-Type. A failed upload leaves the clip unpublished and records which object failed (`video` or `thumbnail`). The next `publish` retries only the object that has no address yet. `unpublish --delete` and `retry-delete` delete through the same adapter. Only 200 and 204 count as deleted. S3 answers 204 when the key is already absent. A 404 fails with its status and its S3 code. That was not verified against a live bucket. The site's thumbnail copy stays on the stub. Every `--live` command refuses, by name, when `STUDIO_LIVE` is not `1` or `DATABASE_URL` is missing, so a live upload cannot write the catalog only into the local database.
 
 ## Wednesday 21 Oct 2026
 
@@ -133,7 +133,7 @@ To withdraw and delete in one step, pass `--delete` while the clip is still publ
 npm run cli -- unpublish --live --job <job-id> --delete
 ```
 
-After a withdraw, or after a delete that left one object, retry the delete. It sends only the object that is still recorded. When both are already gone it prints `delete-retried filesReadable=false idempotent=true database=postgres storage=r2`. A delete of a key that is already absent is treated as success. That was not verified against a live bucket.
+After a withdraw, or after a delete that left one object, retry the delete. It sends only the object that is still recorded. When both are already gone it prints `delete-retried filesReadable=false idempotent=true database=postgres storage=r2`. Only 200 and 204 count as deleted. A 404 prints its `status=` and `code=` and leaves `filesReadable=true`. That was not verified against a live bucket.
 
 ```bash
 npm run cli -- retry-delete --live --job <job-id>

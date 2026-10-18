@@ -96,12 +96,20 @@ describe('R2 storage', () => {
     expect(redact(`${SECRET_NAME}=${SECRET}`)).not.toContain(SECRET)
 
     seen.length = 0
-    const gone = capturing((item) => new Response(null, { status: item.method === 'DELETE' ? 404 : 200 }))
+    const gone = capturing((item) => new Response(null, { status: item.method === 'DELETE' ? 204 : 200 }))
     const deleting = createR2Storage({ env: r2Env(), fetchImpl: gone.fetchImpl, now: () => new Date('2026-10-18T16:00:00.000Z') })
     await deleting.remove(stored)
     expect(gone.seen[0]?.method).toBe('DELETE')
     expect(gone.seen[0]?.url).toBe(put?.url)
     expect(logOf(gone.seen)).not.toContain(SECRET)
+    const missingBucket = capturing(() => new Response(
+      '<?xml version="1.0"?><Error><Code>NoSuchBucket</Code><Message>body-must-not-leak</Message></Error>',
+      { status: 404 },
+    ))
+    await expect(createR2Storage({ env: r2Env(), fetchImpl: missingBucket.fetchImpl }).remove(stored)).rejects.toMatchObject({
+      status: 404,
+      code: 'NoSuchBucket',
+    })
 
     const missing = capturing(() => new Response('no', { status: 500 }))
     const failing = createR2Storage({ env: r2Env(), fetchImpl: missing.fetchImpl })
@@ -207,7 +215,12 @@ describe('R2 storage', () => {
     let thumbnails = 0
     const { fetchImpl, seen } = capturing((item) => {
       if (item.method === 'PUT' && item.url.includes('/thumbnail-') && thumbnails++ === 0) return new Response('no', { status: 500 })
-      if (item.method === 'DELETE') return new Response(null, { status: 404 })
+      if (item.method === 'DELETE') {
+        return new Response(
+          '<?xml version="1.0"?><Error><Code>NoSuchBucket</Code><Message>body-must-not-leak</Message></Error>',
+          { status: 404 },
+        )
+      }
       return new Response(null, { status: 200 })
     })
     const studio = createStudio({
@@ -249,7 +262,15 @@ describe('R2 storage', () => {
     expect(seen.filter((item) => item.method === 'PUT' && item.url.includes('/video-'))).toHaveLength(1)
     expect(seen.filter((item) => item.method === 'PUT' && item.url.includes('/thumbnail-'))).toHaveLength(2)
     const withdrawn = await studio.unpublish(imported.jobId, { deleteFiles: true })
-    expect(withdrawn).toMatchObject({ outcome: 'withdrawn', videoRemoved: true, thumbnailRemoved: true, filesReadable: false })
+    expect(withdrawn).toMatchObject({
+      outcome: 'withdrawn',
+      videoRemoved: false,
+      thumbnailRemoved: false,
+      filesReadable: true,
+      status: 404,
+      code: 'NoSuchBucket',
+    })
+    expect(JSON.stringify(withdrawn)).not.toContain('body-must-not-leak')
     expect(seen.filter((item) => item.method === 'DELETE')).toHaveLength(2)
     expect(logOf(seen)).not.toContain(SECRET)
     expect(redact(logOf(seen))).not.toContain(SECRET)
