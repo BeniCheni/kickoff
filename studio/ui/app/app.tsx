@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getShell } from './api.ts'
+import { ComposePage } from './compose.tsx'
 import { JobsPage } from './jobs.tsx'
 import { StudioShell } from './shell.tsx'
 import { readStoredTheme, resolveTheme, type ThemeName } from '../../shared/theme.ts'
@@ -60,7 +61,7 @@ export function App() {
       }}
       onTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
     >
-      {tab === 'jobs' ? <JobsPage /> : <h1>{TAB_LABELS[tab]}</h1>}
+      {tab === 'jobs' ? <JobsPage /> : tab === 'compose' ? <ComposePage shell={shell} /> : <h1>{TAB_LABELS[tab]}</h1>}
     </StudioShell>
   )
 }

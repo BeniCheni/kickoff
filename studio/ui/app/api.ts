@@ -38,3 +38,65 @@ export async function downloadJob(id: string): Promise<void> {
 export async function regenerateJob(id: string, confirmEstimate: string): Promise<void> {
   await postJson(`/api/jobs/${id}/regenerate`, { confirmEstimate })
 }
+
+export type ComposeCatalog = {
+  subjects: { id: string; name: string }[]
+  photos: { id: string; sha256: string }[]
+  keyframeModels: { id: string; endpoint: string; pinnedOn: string }[]
+  clipModels: { id: string; endpoint: string; pinnedOn: string }[]
+  sessionSpendUsd: string
+  perJobCapUsd: string
+  sessionCapUsd: string
+  database: 'reachable' | 'unavailable'
+}
+
+export type EstimateLine =
+  | { outcome: 'estimate'; usd: string; registryId: string; tag: string }
+  | { outcome: 'not-in-registry' }
+  | { outcome: 'param-not-allowed'; param: string }
+
+export async function getCompose(): Promise<ComposeCatalog> {
+  const response = await fetch('/api/compose', { headers: { accept: 'application/json' } })
+  if (!response.ok) throw new Error('refused')
+  return await response.json() as ComposeCatalog
+}
+
+export async function estimateJobs(jobs: { endpoint: string; params: Record<string, unknown> }[]): Promise<{
+  lines: EstimateLine[]
+  totalUsd: string
+  overBudget: boolean
+  unpriced: boolean
+}> {
+  const response = await postJson('/api/estimate', { jobs })
+  return await response.json() as {
+    lines: EstimateLine[]
+    totalUsd: string
+    overBudget: boolean
+    unpriced: boolean
+  }
+}
+
+export async function submitJobs(body: {
+  confirmTotalUsd: string
+  jobs: {
+    endpoint: string
+    params: Record<string, unknown>
+    prompt: string
+    seed: string | null
+    photoId: string | null
+    subjectId: string | null
+  }[]
+}): Promise<unknown> {
+  const response = await postJson('/api/submit', body)
+  return await response.json() as unknown
+}
+
+export async function uploadPhoto(bytes: ArrayBuffer): Promise<{ id: string; sha256: string }> {
+  const response = await fetch('/api/photos', {
+    method: 'POST',
+    headers: { accept: 'application/json', 'content-type': 'image/jpeg' },
+    body: bytes,
+  })
+  if (!response.ok) throw new Error('refused')
+  return await response.json() as { id: string; sha256: string }
+}

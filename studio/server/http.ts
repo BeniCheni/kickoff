@@ -6,8 +6,11 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { LOOPBACK_HOST, assertLoopbackBind, isLoopbackHost } from './bind.ts'
 import { SESSION_COOKIE, cookieValue, guardRequest, oneTimeUrl, sessionCookie } from './guard.ts'
-import { readJson } from './body.ts'
+import { readBytes, readJson } from './body.ts'
+import { estimateJobs, readCompose, submitJobs } from './compose.ts'
 import { downloadJob, jobIdFrom, pollInFlight, readJobs, regenerateJob } from './jobs.ts'
+import { serveFile as serveRecorded } from './media.ts'
+import { findPhoto, photoPath, storePhoto } from './photos.ts'
 import { openAdmin, type OpenedAdmin } from './open.ts'
 import { publicError } from './public-error.ts'
 import { readShell } from './shell.ts'
@@ -67,7 +70,7 @@ function fileInside(root: string, urlPath: string): string | null {
   } catch {
     return null
   }
-  if (decoded.includes('\0')) return null
+  if (decoded.includes('\0') || decoded.split('/').includes('..')) return null
   const relative = decoded.replace(/^\/+/, '')
   if (!relative || relative.endsWith('/')) return path.join(root, 'index.html')
   const full = path.resolve(root, relative)
@@ -140,6 +143,40 @@ async function handle(
   const downloadId = method === 'POST' ? jobIdFrom(url.pathname, 'download') : null
   if (downloadId) {
     sendJson(response, 200, await downloadJob(opened, downloadId), cookieHeader)
+    return
+  }
+  if (url.pathname === '/api/compose' && method === 'GET') {
+    sendJson(response, 200, await readCompose(opened), cookieHeader)
+    return
+  }
+  if (url.pathname === '/api/estimate' && method === 'POST') {
+    sendJson(response, 200, await estimateJobs(opened, await readJson(request)), cookieHeader)
+    return
+  }
+  if (url.pathname === '/api/submit' && method === 'POST') {
+    sendJson(response, 200, await submitJobs(opened, await readJson(request)), cookieHeader)
+    return
+  }
+  if (url.pathname === '/api/photos' && method === 'POST') {
+    const type = request.headers['content-type'] ?? ''
+    if (!type.startsWith('image/jpeg')) {
+      sendJson(response, 415, { outcome: 'not-a-jpeg' }, cookieHeader)
+      return
+    }
+    const stored = storePhoto(opened.mediaDir, new Uint8Array(await readBytes(request)))
+    sendJson(response, 'outcome' in stored ? 400 : 200, stored, cookieHeader)
+    return
+  }
+  const photoMatch = method === 'GET' || method === 'HEAD' ? /^\/media\/photos\/([a-f0-9]{32})$/.exec(url.pathname) : null
+  if (photoMatch?.[1]) {
+    const photo = findPhoto(opened.mediaDir, photoMatch[1])
+    const file = photo ? photoPath(opened.mediaDir, photo) : null
+    if (!photo || !file) {
+      sendJson(response, 404, { error: 'not-found' }, cookieHeader)
+      return
+    }
+    if (cookieHeader['set-cookie']) response.setHeader('set-cookie', cookieHeader['set-cookie'])
+    serveRecorded(request, response, file, 'image/jpeg')
     return
   }
   const regenerateId = method === 'POST' ? jobIdFrom(url.pathname, 'regenerate') : null
