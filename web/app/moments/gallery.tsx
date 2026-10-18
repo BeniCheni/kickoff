@@ -6,6 +6,7 @@ import type { ThumbnailSources } from '../../lib/catalog/types'
 import { readSavedReferences, writeSavedReferences, type SavedReferences } from '../../../src/lib/momentsSaved'
 import { VideoCard, savedIdSet } from './card'
 import { applyOrder, matchingRows, shuffleIds, type BrowseOrder, type SubjectFilter } from './order'
+import type { MomentSocial } from '../../lib/catalog/types'
 
 const emptySaved: SavedReferences = { ids: [], persistence: 'local', reason: null }
 
@@ -19,6 +20,7 @@ export function Gallery({
   initialSubject = 'all',
   initialOrder = 'beni',
   initialSavedOnly = false,
+  social,
 }: {
   list: readonly CatalogListRow[]
   search: string
@@ -29,6 +31,7 @@ export function Gallery({
   initialSubject?: SubjectFilter
   initialOrder?: BrowseOrder
   initialSavedOnly?: boolean
+  social?: Record<string, MomentSocial>
 }) {
   const [subject, setSubject] = useState<SubjectFilter>(initialSubject)
   const [order, setOrder] = useState<BrowseOrder>(initialOrder)
@@ -146,6 +149,7 @@ export function Gallery({
               saved={savedIds.has(row.id)}
               visitOnly={visitOnly}
               onToggleSave={toggleSave}
+              social={social?.[row.id]}
             />
           ))}
         </div>

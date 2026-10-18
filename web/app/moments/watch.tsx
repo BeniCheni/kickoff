@@ -17,6 +17,10 @@ import {
   upNextSplit,
 } from './provenance'
 import { useWatchNavigation, useWatchHref } from './watch-url'
+import type { MomentSocial } from '../../lib/catalog/types'
+import dynamic from 'next/dynamic'
+
+const WatchSocial = dynamic(() => import('./social').then(mod => mod.WatchSocial))
 
 const READY = 'The video is not requested until Play. The thumbnail above was already loaded, as on its card.'
 const SOUND = 'Sound on \u00b7 the soundtrack is generated. Mute in the player.'
@@ -48,12 +52,14 @@ export function WatchPage({
   search,
   address,
   thumbnail,
+  social,
 }: {
   detail: CatalogDetailRow
   list: readonly CatalogListRow[]
   search: string
   address: string | null
   thumbnail?: ThumbnailSources
+  social?: MomentSocial
 }) {
   const navigate = useWatchNavigation()
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -325,6 +331,7 @@ export function WatchPage({
           onBlur={() => setFocused(false)}
         />
       </div>
+      {social ? <WatchSocial key={detail.id} social={social} /> : null}
       <p role="status">{status}</p>
       <p className="moments-keyboard" style={{ visibility: focused ? 'visible' : 'hidden' }}>{KEYBOARD}</p>
       <p className={announcement === CANCELLED ? undefined : 'moments-live'} data-countdown-announcement="" role="status" aria-atomic="true">{announcement}</p>

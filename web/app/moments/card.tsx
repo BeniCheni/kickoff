@@ -7,6 +7,10 @@ import { isMomentReference } from '../../../src/lib/momentsReferences'
 import type { SavedReferences } from '../../../src/lib/momentsSaved'
 import { durationClock, generatedDate } from './format'
 import { useWatchNavigation, useWatchHref } from './watch-url'
+import dynamic from 'next/dynamic'
+import type { MomentSocial } from '../../lib/catalog/types'
+
+const CardSocial = dynamic(() => import('./social').then(mod => mod.CardSocial))
 
 export function cardFrame(row: CatalogListRow): string | null {
   if (row.width === null || row.height === null || row.width <= 0 || row.height <= 0) return null
@@ -98,6 +102,7 @@ export function VideoCard({
   saved,
   visitOnly,
   onToggleSave,
+  social,
 }: {
   row: CatalogListRow
   search: string
@@ -105,6 +110,7 @@ export function VideoCard({
   saved: boolean
   visitOnly: boolean
   onToggleSave: (id: string) => void
+  social?: MomentSocial
 }) {
   const navigate = useWatchNavigation()
   const duration = durationClock(row.duration_s)
@@ -128,6 +134,7 @@ export function VideoCard({
             }}
           >{row.title}</a>
         </h2>
+        {social ? <CardSocial social={social} publishedAt={row.published_at} /> : null}
         {row.editorial_note ? <p className="moments-note">{row.editorial_note}</p> : null}
         <button
           type="button"

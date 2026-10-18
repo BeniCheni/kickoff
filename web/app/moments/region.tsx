@@ -55,11 +55,11 @@ export function MomentsRegion({
       </div>
     )
   } else if (moments.state === 'ready' && moments.watchId && moments.detail) {
-    body = <WatchPage detail={moments.detail} list={moments.list} search={search} thumbnail={moments.thumbnails[moments.detail.id]} address={moments.videoAddress} />
+    body = <WatchPage detail={moments.detail} list={moments.list} search={search} thumbnail={moments.thumbnails[moments.detail.id]} address={moments.videoAddress} social={moments.social?.[moments.detail.id]} />
   } else if (moments.state === 'ready' && moments.watchId) {
     body = <WatchMissing search={search} />
   } else if (moments.state === 'ready') {
-    body = <Gallery list={moments.list} search={search} thumbnails={moments.thumbnails} />
+    body = <Gallery list={moments.list} search={search} thumbnails={moments.thumbnails} social={moments.social} />
   }
   return (
     <main className="moments-gallery" aria-label="Moments" data-catalog={preview ? 'stub' : undefined}>
