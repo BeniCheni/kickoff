@@ -11,7 +11,9 @@ export const LEAK_MARKERS = [
 
 /** Present in stub fixture JSON. A non-stub build must not contain it. */
 export const STUB_SENTINEL = ['KICKOFF', 'STUB', 'CATALOG'].join('-')
-export const CLIENT_MARKERS = [...LEAK_MARKERS, /STUDIO_[A-Z0-9_]+/, STUB_SENTINEL]
+/** Present in the demo social schema and fixture. Client output and response text must not contain it unless a demo build is explicit. */
+export const DEMO_SENTINEL = 'KICKOFF-DEMO-SOCIAL'
+export const CLIENT_MARKERS = [...LEAK_MARKERS, /STUDIO_[A-Z0-9_]+/, STUB_SENTINEL, DEMO_SENTINEL]
 export const SERVER_MARKERS = ['studio/', 'FAL_KEY', /STUDIO_[A-Z0-9_]+/]
 
 export function textLeakHits(source, markers = CLIENT_MARKERS) {
@@ -19,6 +21,7 @@ export function textLeakHits(source, markers = CLIENT_MARKERS) {
 }
 
 const SERVER_EXT = /\.(?:html|js|rsc|json|map|meta|body|txt)$/
+const RESPONSE_EXT = /\.(?:html|rsc|json|body|txt)$/
 
 export function filesUnder(dir, accept) {
   return readdirSync(dir, { withFileTypes: true }).flatMap(entry => {
@@ -35,14 +38,20 @@ export function leakHits(files, markers) {
   })
 }
 
-export function scanBuild(staticDir, serverDir, { stubBuild = false } = {}) {
+export function scanBuild(staticDir, serverDir, { stubBuild = false, demoBuild = false } = {}) {
   const client = filesUnder(staticDir, file => file.endsWith('.js'))
   assert.ok(client.length, 'No built client JavaScript; run the web build first')
   const server = filesUnder(serverDir, file => SERVER_EXT.test(file))
   assert.ok(server.length, 'No built server output; run the web build first')
   const serverMarkers = stubBuild ? SERVER_MARKERS : [...SERVER_MARKERS, STUB_SENTINEL]
-  const leaks = [...leakHits(client, CLIENT_MARKERS), ...leakHits(server, serverMarkers)]
-  assert.deepEqual(leaks, [], 'Studio, database, or stub-catalog marker in the Next build')
+  const responseMarkers = demoBuild ? [] : [DEMO_SENTINEL]
+  const responses = server.filter(file => RESPONSE_EXT.test(file))
+  const leaks = [
+    ...leakHits(client, CLIENT_MARKERS),
+    ...leakHits(server, serverMarkers),
+    ...leakHits(responses, responseMarkers),
+  ]
+  assert.deepEqual(leaks, [], 'Studio, database, stub-catalog, or demo-social marker in the Next build')
   return { client: client.length, server: server.length, markers: CLIENT_MARKERS.length, serverMarkers: serverMarkers.length }
 }
 
@@ -52,7 +61,7 @@ if (isCli) {
   const result = scanBuild(
     process.argv[2] ?? path.join(webRoot, '.next/static'),
     process.argv[3] ?? path.join(webRoot, '.next/server'),
-    { stubBuild: process.env.KICKOFF_CATALOG === 'stub' },
+    { stubBuild: process.env.KICKOFF_CATALOG === 'stub', demoBuild: process.env.KICKOFF_DEMO === 'on' },
   )
   console.log(`Leak scan passed: ${result.client} client JavaScript files, ${result.server} server files, ${result.markers} markers`)
 }

@@ -10,7 +10,7 @@ const config: NextConfig = {
   cacheComponents: false,
   // The catalog package ships TypeScript and this repo is not an npm workspace,
   // so Turbopack does not transpile it unless it is named here.
-  transpilePackages: ['@kickoff/catalog'],
+  transpilePackages: ['@kickoff/catalog', '@kickoff/demo'],
   // NextConfig.agentRules, next/dist/server/config-shared.d.ts (Next 16.4.1).
   // The default writes AGENTS.md beside this config when next dev sees an agent.
   // The repository root AGENTS.md stays the authority, so this stays off.

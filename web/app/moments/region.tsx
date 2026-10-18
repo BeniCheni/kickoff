@@ -11,14 +11,18 @@ const UNAVAILABLE_HEADING = 'The gallery is unavailable.'
 const UNAVAILABLE_CAUSE = 'The server could not read the list of published videos. The cause is unknown from here.'
 const UNAVAILABLE_BODY = 'Nothing is shown from memory. The site\u2019s fallback thumbnails are keyed to that list, and a video withdrawn since the last deploy must not reappear, so no card is drawn without its record.'
 
+const DEMO_LABEL = 'Sample reactions and comments \u00b7 made-up viewers, not real ones'
+
 export function MomentsRegion({
   moments,
   catalogMode,
   search = '',
+  demo = false,
 }: {
   moments: MomentsPayload
   catalogMode: CatalogMode
   search?: string
+  demo?: boolean
 }) {
   const blocked = moments.state === 'ready' && !previewAllowed(moments.preview, catalogMode)
   const failed = blocked || moments.state !== 'ready'
@@ -60,6 +64,7 @@ export function MomentsRegion({
   return (
     <main className="moments-gallery" aria-label="Moments" data-catalog={preview ? 'stub' : undefined}>
       {preview ? <p className="moments-preview">Stub catalog · synthetic records</p> : null}
+      {demo ? <p className="moments-preview">{DEMO_LABEL}</p> : null}
       {body}
     </main>
   )

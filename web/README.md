@@ -39,10 +39,23 @@ and Moments shows the unavailable state. This build has no database client, so
 that path stays unavailable. Stub states carry `Stub catalog · synthetic records`,
 a 12 px line in ordinary ink, first inside `main.moments-gallery`; non-stub states
 do not. This is Beni's Reword ruling (18 Oct 2026).
-`npm run check:client` scans client JavaScript for every Studio/database marker
-and the stub sentinel. The server list permits database code but rejects `studio/`,
-`FAL_KEY`, and any `STUDIO_*` name; non-stub server builds reject the sentinel too. Regenerate the synthetic media with
-`node web/scripts/generate-stub-media.mjs`. Moments styles live in
+Sample reactions are a second flag, also off unless both are set: `KICKOFF_DEMO=on`
+and `KICKOFF_DEMO_FILE` (an absolute path, no default). `VERCEL_ENV=production`
+refuses that flag before the file is opened. A file that is not `synthetic: true`,
+or that fails the demo schema, supplies no counts. With the flag off, Moments
+has no sample line and no reaction or comment payload. With it on, the line
+beside the stub indicator reads `Sample reactions and comments · made-up viewers, not real ones`.
+`npm run check:client` fails if `KICKOFF-DEMO-SOCIAL` appears in client JavaScript
+or, unless the build itself set `KICKOFF_DEMO=on`, in server HTML or flight data.
+The schema constant may remain in server JavaScript.
+`npm run check:client` scans client JavaScript for every Studio/database marker,
+the stub sentinel and `KICKOFF-DEMO-SOCIAL`. The server list permits database
+code but rejects `studio/`, `FAL_KEY`, and any `STUDIO_*` name; non-stub server
+builds reject the stub sentinel too. Response HTML and flight files reject the
+demo sentinel unless that build set `KICKOFF_DEMO=on`. Regenerate the synthetic
+media with `node web/scripts/generate-stub-media.mjs`. The sample social file
+is regenerated with `node node_modules/tsx/dist/cli.mjs web/scripts/generate-demo-social.mjs`.
+Moments styles live in
 `web/app/moments/gallery.css`, scoped under `.moments-gallery`. `npm run check:css`
 keeps that sheet out of the shared shell CSS and out of the Vite reader's build.
 
