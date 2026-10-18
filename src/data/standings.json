@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-10-18T20:56:30.687Z",
+  "fetchedAt": "2026-10-18T21:36:00.328Z",
   "provider": "espn",
   "season": 2026,
   "leagues": {
@@ -577,11 +577,26 @@
         "pts": 22
       },
       {
+        "teamId": "86",
+        "name": "Real Madrid",
+        "shortName": "Real Madrid",
+        "abbrev": "RMA",
+        "rank": 3,
+        "rankChange": 0,
+        "played": 9,
+        "w": 7,
+        "d": 0,
+        "l": 2,
+        "gf": 23,
+        "ga": 9,
+        "pts": 21
+      },
+      {
         "teamId": "244",
         "name": "Real Betis",
         "shortName": "Betis",
         "abbrev": "BET",
-        "rank": 3,
+        "rank": 4,
         "rankChange": 0,
         "played": 9,
         "w": 6,
@@ -590,21 +605,6 @@
         "gf": 16,
         "ga": 14,
         "pts": 19
-      },
-      {
-        "teamId": "86",
-        "name": "Real Madrid",
-        "shortName": "Real Madrid",
-        "abbrev": "RMA",
-        "rank": 4,
-        "rankChange": 0,
-        "played": 8,
-        "w": 6,
-        "d": 0,
-        "l": 2,
-        "gf": 19,
-        "ga": 8,
-        "pts": 18
       },
       {
         "teamId": "89",
@@ -628,12 +628,12 @@
         "abbrev": "SEV",
         "rank": 6,
         "rankChange": 0,
-        "played": 8,
+        "played": 9,
         "w": 4,
         "d": 2,
-        "l": 2,
-        "gf": 13,
-        "ga": 12,
+        "l": 3,
+        "gf": 14,
+        "ga": 16,
         "pts": 14
       },
       {
