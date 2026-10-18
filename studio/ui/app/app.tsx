@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { getShell } from './api.ts'
+import { JobsPage } from './jobs.tsx'
 import { StudioShell } from './shell.tsx'
 import { readStoredTheme, resolveTheme, type ThemeName } from '../../shared/theme.ts'
 import { TAB_LABELS, type ShellView, type StudioTab } from '../../shared/types.ts'
@@ -59,7 +60,7 @@ export function App() {
       }}
       onTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
     >
-      <h1>{TAB_LABELS[tab]}</h1>
+      {tab === 'jobs' ? <JobsPage /> : <h1>{TAB_LABELS[tab]}</h1>}
     </StudioShell>
   )
 }

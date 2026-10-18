@@ -6,6 +6,8 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { LOOPBACK_HOST, assertLoopbackBind, isLoopbackHost } from './bind.ts'
 import { SESSION_COOKIE, cookieValue, guardRequest, oneTimeUrl, sessionCookie } from './guard.ts'
+import { readJson } from './body.ts'
+import { downloadJob, jobIdFrom, pollInFlight, readJobs, regenerateJob } from './jobs.ts'
 import { openAdmin, type OpenedAdmin } from './open.ts'
 import { publicError } from './public-error.ts'
 import { readShell } from './shell.ts'
@@ -121,6 +123,34 @@ async function handle(
   }
   if (url.pathname === '/api/shell' && method === 'GET') {
     sendJson(response, 200, await readShell(opened, options.port), cookieHeader)
+    return
+  }
+  if (url.pathname === '/api/jobs' && method === 'GET') {
+    sendJson(response, 200, await readJobs(opened.db, opened.studio, opened.clock()), cookieHeader)
+    return
+  }
+  if (url.pathname === '/api/jobs/poll' && method === 'POST') {
+    const body = await readJson(request)
+    const ids = body && typeof body === 'object' && Array.isArray((body as { ids?: unknown }).ids)
+      ? (body as { ids: unknown[] }).ids.filter((id): id is string => typeof id === 'string')
+      : []
+    sendJson(response, 200, await pollInFlight(opened, ids), cookieHeader)
+    return
+  }
+  const downloadId = method === 'POST' ? jobIdFrom(url.pathname, 'download') : null
+  if (downloadId) {
+    sendJson(response, 200, await downloadJob(opened, downloadId), cookieHeader)
+    return
+  }
+  const regenerateId = method === 'POST' ? jobIdFrom(url.pathname, 'regenerate') : null
+  if (regenerateId) {
+    const body = await readJson(request)
+    const confirm = body && typeof body === 'object' ? (body as { confirmEstimate?: unknown }).confirmEstimate : undefined
+    if (typeof confirm !== 'string') {
+      sendJson(response, 400, { error: 'refused' }, cookieHeader)
+      return
+    }
+    sendJson(response, 200, await regenerateJob(opened, regenerateId, confirm), cookieHeader)
     return
   }
   if (url.pathname === '/api/shell' && method === 'POST') {
