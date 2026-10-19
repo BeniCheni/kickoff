@@ -195,7 +195,12 @@ export function ImportPage() {
       note,
       madeOn,
     })
-    setNotice(result && typeof result === 'object' && (result as { outcome?: unknown }).outcome === 'imported' ? DRAFT.importImported : result)
+    const imported = Boolean(result && typeof result === 'object' && (result as { outcome?: unknown }).outcome === 'imported')
+    setNotice(imported ? DRAFT.importImported : result)
+    if (imported) {
+      setPreview(null)
+      setIds(null)
+    }
   }
 
   return (

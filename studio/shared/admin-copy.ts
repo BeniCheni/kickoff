@@ -37,6 +37,7 @@ export const DRAFT = {
   importNotJpeg: 'Unavailable: the keyframe is not a JPEG.',
   importWorktree: 'Unavailable: that path is inside the worktree.',
   importTooLarge: 'Unavailable: that file is over 100 MB.',
+  importMissing: 'Unavailable: that file is no longer waiting. Choose it again.',
   importEmpty: 'Unavailable: the file is empty.',
   importPromptEmpty: 'Unavailable: the prompt is empty.',
   importTitleEmpty: 'Unavailable: the title is empty.',

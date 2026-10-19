@@ -100,6 +100,13 @@ describe('import screen', () => {
     expect(importRefusal({ outcome: 'inside-worktree' })).toBe(DRAFT.importWorktree)
     expect(statusLine({ outcome: 'clip-refused', reason: 'not-mp4', brand: 'qt' })).toBe(`${DRAFT.importNotMp4} The brand is qt.`)
     expect(statusLine({ outcome: 'needs-made-on' })).toBe(DRAFT.importNeedsMadeOn)
+    expect(statusLine({ outcome: 'missing' })).toBe(DRAFT.importMissing)
+    expect(statusLine({ outcome: 'missing' })).not.toBe('Unavailable: missing.')
+    const after = renderToStaticMarkup(
+      <ImportForm {...idle} clipName="fenway.mp4" stillName="still.jpg" prompt="a fictional cat" subjects={['Fenway']} title="Fenway" notice={DRAFT.importImported} />,
+    )
+    expect(after).toContain('class="studio-primary" disabled=""')
+    expect(after).toContain(DRAFT.importImported)
     const empty = renderToStaticMarkup(<ImportForm {...idle} />)
     expect(empty).toContain('Import')
     expect(empty).toContain(DRAFT.importChoose)
@@ -190,6 +197,22 @@ describe('import screen', () => {
       }),
     })).body) as { outcome: string; jobId: string }
     expect(imported.outcome).toBe('imported')
+    const again = JSON.parse((await ask(admin, {
+      path: '/api/import/confirm',
+      method: 'POST',
+      headers: { ...headers, 'content-type': 'application/json' },
+      body: JSON.stringify({
+        clipId: storedClip.id,
+        stillId: storedStill.id,
+        prompt: 'a fictional cat, as typed',
+        subjects: ['Fenway'],
+        title: 'Fenway',
+        note: 'Wednesday',
+        madeOn: '',
+      }),
+    })).body) as { outcome: string }
+    expect(again.outcome).toBe('missing')
+    expect(statusLine(again)).toBe('Unavailable: that file is no longer waiting. Choose it again.')
     const jobs = JSON.parse((await ask(admin, { path: '/api/jobs', headers: { cookie } })).body) as { id: string; status: string }[]
     expect(jobs.find((row) => row.id === imported.jobId)?.status).toBe('downloaded')
     const review = JSON.parse((await ask(admin, { path: `/api/review/${imported.jobId}`, headers: { cookie } })).body) as { prompt: string }
