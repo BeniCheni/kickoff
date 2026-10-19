@@ -22,6 +22,13 @@
       "when": 1792244596805,
       "tag": "0002_catalog_reader",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1792348000000,
+      "tag": "0003_card_gate",
+      "breakpoints": true
     }
   ]
 }

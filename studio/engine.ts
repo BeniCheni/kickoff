@@ -16,6 +16,7 @@ import {
   generationParent,
   generationSubject,
   job,
+  subject,
   ledger,
   model,
   policyAnswer,
@@ -24,6 +25,7 @@ import {
   videos,
   studioTables,
 } from './db/schema.ts'
+import { SUBJECT_LABELS } from '@kickoff/catalog'
 import { hasVisibleAnswer } from './answer.ts'
 import { decideBudget, PER_JOB_CAP_USD, PREPAID_CEILING_USD, REQUEST_START_TIMEOUT_SECONDS, SESSION_CAP_USD, TIMEOUT_CEILING_LABEL, TIMEOUT_CEILING_MS } from './caps.ts'
 import { falHeaders } from './fal/headers.ts'
@@ -33,12 +35,53 @@ import { isQueueOrigin, queueAddresses } from './fal/urls.ts'
 import { cacheKey as makeCacheKey, sha256 } from './hash.ts'
 import { aboveManualCeiling, jobExposure, reconcileAmount, sessionExposure, type LedgerView } from './ledger.ts'
 import { addUsd, formatUsd, parseUsd } from './money.ts'
+import { isFastStart, readClipFacts, stripClip } from './media/mp4.ts'
 import { preparePhotograph } from './photos/strip.ts'
-import { estimateUsd, selectRegistry, unknownParam, type RegistryRow } from './registry.ts'
-import { siteCopyStatus, type SiteCopyOutcome, type StoragePort, type StoredObject } from './storage/port.ts'
+import { brooklynDate, brooklynStart, estimateUsd, GROK_IMAGINE, selectRegistry, unknownParam, type RegistryRow } from './registry.ts'
+import { ObjectStoreError, siteCopyStatus, type SiteCopyOutcome, type StoragePort, type StoredObject } from './storage/port.ts'
 import type { PgliteDatabase } from 'drizzle-orm/pglite'
 
 export type StudioDatabase = PgliteDatabase<typeof studioTables>
+
+const SAFE_PUBLIC_ID = /^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/
+const APPROVED_SUBJECTS = new Set<string>(SUBJECT_LABELS)
+
+function pinnedOnOf(params: unknown, fallback: string): string {
+  if (!params || typeof params !== 'object') return fallback
+  const value = (params as { pinned_on?: unknown }).pinned_on
+  return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) ? value : fallback
+}
+
+function importedNote(detail: unknown): string | null {
+  if (!detail || typeof detail !== 'object') return null
+  const note = (detail as { note?: unknown }).note
+  return typeof note === 'string' && note.length > 0 ? note : null
+}
+
+function importedTitle(detail: unknown): string | null {
+  if (!detail || typeof detail !== 'object') return null
+  const title = (detail as { title?: unknown }).title
+  return typeof title === 'string' && title.trim().length > 0 ? title.trim() : null
+}
+
+export function cardGaps(input: {
+  publicId: string
+  width: number | null
+  height: number | null
+  duration: string | number | null
+  approvedSubjects: number
+  finishedAt: Date | null
+}): string[] {
+  const missing: string[] = []
+  if (input.width === null || input.width <= 0) missing.push('a positive width')
+  if (input.height === null || input.height <= 0) missing.push('a positive height')
+  const duration = input.duration === null ? Number.NaN : Number(input.duration)
+  if (!Number.isFinite(duration) || duration <= 0) missing.push('a positive duration')
+  if (input.approvedSubjects < 1) missing.push('an approved subject')
+  if (!SAFE_PUBLIC_ID.test(input.publicId)) missing.push('a safe public id')
+  if (input.finishedAt === null) missing.push('a finish time')
+  return missing
+}
 
 const IN_FLIGHT = new Set<JobState>(['submitted', 'queued', 'in-progress', 'completed'])
 const CANCELLABLE = new Set<JobState>(['submitted', 'queued', 'in-progress'])
@@ -184,8 +227,26 @@ export function createStudio(options: EngineOptions) {
     return created
   }
 
+  async function approvedSubjectCount(generationId: string): Promise<number> {
+    const links = await db.select().from(generationSubject).where(eq(generationSubject.generationId, generationId))
+    let count = 0
+    for (const link of links) {
+      const [row] = await db.select().from(subject).where(eq(subject.id, link.subjectId))
+      if (row && APPROVED_SUBJECTS.has(row.name)) count += 1
+    }
+    return count
+  }
+
   async function recordEvent(jobId: string, type: string, detail?: unknown, writer: StudioDatabase = db) {
     await writer.insert(event).values({ jobId, at: clock(), type, detail: detail ?? null })
+  }
+
+  function storeFailure(error: unknown): { status?: number | 'none'; code?: string } {
+    if (!(error instanceof ObjectStoreError)) return {}
+    return {
+      status: typeof error.status === 'number' ? error.status : 'none',
+      code: error.code,
+    }
   }
 
   async function setJob(jobId: string, generationId: string, status: JobState, extra: {
@@ -229,6 +290,9 @@ export function createStudio(options: EngineOptions) {
     const message = error instanceof Error
       ? `${error.message} ${error.cause instanceof Error ? error.cause.message : ''}`
       : String(error)
+    if (message.includes('videos_id_token')) {
+      return { outcome: 'card-refused' as const, missing: ['a safe public id'], live: false as const }
+    }
     if (message.includes('Article 50')) return { outcome: 'gate-closed' as const, live: false as const }
     if (message.includes('videos_live_position')) {
       return { outcome: 'record-failed' as const, live: false as const, listedAgain: true as const, reason: 'position-taken' as const }
@@ -264,6 +328,12 @@ export function createStudio(options: EngineOptions) {
     let videoRemoved = row.videoRemovedAt !== null
     let thumbnailRemoved = row.thumbnailRemovedAt !== null
     let attempted = 0
+    let failure: { status?: number | 'none'; code?: string } = {}
+    const note = async (object: 'video' | 'thumbnail', error: unknown) => {
+      const fields = storeFailure(error)
+      if (failure.code === undefined) failure = fields
+      await recordEvent(row.jobId, 'delete-failed', { object, ...fields })
+    }
     if (!videoRemoved) {
       const [videoAsset] = await db.select().from(asset).where(eq(asset.id, row.videoAssetId))
       if (!videoAsset?.bucket || !videoAsset.objectPath) videoRemoved = true
@@ -273,8 +343,9 @@ export function createStudio(options: EngineOptions) {
           await storage.remove({ bucket: videoAsset.bucket, objectPath: videoAsset.objectPath })
           await db.update(videos).set({ videoRemovedAt: clock() }).where(eq(videos.id, row.id))
           videoRemoved = true
-        } catch {
+        } catch (error) {
           videoRemoved = false
+          await note('video', error)
         }
       }
     }
@@ -287,12 +358,13 @@ export function createStudio(options: EngineOptions) {
           await storage.remove({ bucket: thumbnail.bucket, objectPath: thumbnail.objectPath })
           await db.update(videos).set({ thumbnailRemovedAt: clock() }).where(eq(videos.id, row.id))
           thumbnailRemoved = true
-        } catch {
+        } catch (error) {
           thumbnailRemoved = false
+          await note('thumbnail', error)
         }
       }
     }
-    return { videoRemoved, thumbnailRemoved, attempted }
+    return { videoRemoved, thumbnailRemoved, attempted, ...failure }
   }
 
   async function runRemoval(videoId: string, publicId: string): Promise<{ outcome: SiteCopyOutcome }> {
@@ -941,7 +1013,179 @@ export function createStudio(options: EngineOptions) {
       return { outcome: 'gate-recorded' as const, recordedOn: recordedOn.toISOString() }
     },
 
-    async publish(input: { jobId: string; publicId: string; title: string; position: number; editorialNote?: string }) {
+    async importClip(input: {
+      video: Uint8Array
+      keyframe: Uint8Array
+      source: string
+      prompt: string
+      subjects: readonly string[]
+      title: string
+      note?: string
+      madeOn?: string
+    }) {
+      if (input.source !== 'grok-imagine') return { outcome: 'source-refused' as const }
+      const prompt = input.prompt.replace(/\r?\n$/, '')
+      if (prompt.trim().length === 0) return { outcome: 'prompt-empty' as const }
+      if (input.title.trim().length === 0) return { outcome: 'title-empty' as const }
+      const names = [...new Set(input.subjects.map((name) => name.trim()).filter((name) => name.length > 0))]
+      if (names.length === 0 || names.some((name) => !APPROVED_SUBJECTS.has(name))) {
+        return { outcome: 'subject-refused' as const }
+      }
+      const stripped = stripClip(input.video)
+      const read = readClipFacts(stripped.bytes)
+      if (!read.ok) return { outcome: 'clip-refused' as const, reason: read.reason, brand: read.brand }
+      let still: { bytes: Uint8Array; sha256: string }
+      try {
+        still = preparePhotograph(input.keyframe)
+      } catch (error) {
+        if (error instanceof Error && (error.message === 'not a jpeg' || error.message === 'bad jpeg')) {
+          return { outcome: 'not-a-jpeg' as const }
+        }
+        throw error
+      }
+      const facts = read.facts
+      let finishedAt: Date
+      if (input.madeOn) {
+        const parsed = brooklynStart(input.madeOn)
+        if (!parsed) return { outcome: 'made-on-invalid' as const }
+        finishedAt = parsed
+      } else if (facts.createdAt) {
+        finishedAt = facts.createdAt
+      } else {
+        return { outcome: 'needs-made-on' as const }
+      }
+      const digest = sha256(stripped.bytes)
+      const duplicate = await db.select().from(asset).where(and(eq(asset.role, 'video'), eq(asset.sha256, digest)))
+      if (duplicate.length > 0) return { outcome: 'already-imported' as const, sha256: digest }
+
+      const importedOn = brooklynDate(clock())
+      const durationS = facts.durationS.toFixed(3)
+      const frameRate = facts.frameRate !== null && Number.isFinite(facts.frameRate) && facts.frameRate > 0
+        ? Math.round(facts.frameRate * 1000) / 1000
+        : null
+      const params = {
+        source: 'grok-imagine',
+        container: facts.container,
+        videoCodec: facts.videoCodec,
+        frameRate,
+        audio: facts.audio,
+        pinned_on: importedOn,
+      }
+      const key = makeCacheKey({
+        registryId: GROK_IMAGINE.id,
+        params,
+        inputHashes: [digest, still.sha256],
+        seed: null,
+      })
+      mkdirSync(options.mediaDir, { recursive: true })
+      const videoPath = path.join(options.mediaDir, `${digest}.mp4`)
+      const stillPath = path.join(options.mediaDir, `${still.sha256}.jpg`)
+      writeFileSync(videoPath, stripped.bytes)
+      writeFileSync(stillPath, still.bytes)
+      const note = input.note?.trim() ? input.note : null
+
+      try {
+        const created = await db.transaction(async (tx) => {
+          const writer = tx as unknown as StudioDatabase
+          const again = await writer.select().from(asset).where(and(eq(asset.role, 'video'), eq(asset.sha256, digest)))
+          if (again.length > 0) return null
+          const [existingModel] = await writer.select().from(model).where(eq(model.registryId, GROK_IMAGINE.id))
+          const pinned = existingModel ?? (await writer.insert(model).values({
+            registryId: GROK_IMAGINE.id,
+            endpoint: GROK_IMAGINE.endpoint,
+            task: GROK_IMAGINE.task,
+            allowedParams: [],
+            priceRule: { kind: 'handmade' },
+            priceCheckedOn: importedOn,
+            priceValidUntil: null,
+            pinnedOn: importedOn,
+          }).returning())[0]
+          if (!pinned) throw new Error('model insert returned nothing')
+          const [gen] = await writer.insert(generation).values({
+            kind: 'video',
+            modelId: pinned.id,
+            prompt,
+            promptSha256: sha256(prompt),
+            promptExpansion: null,
+            params,
+            seed: null,
+            cacheKey: key,
+            status: 'downloaded',
+          }).returning()
+          if (!gen) throw new Error('generation insert returned nothing')
+          const [videoAsset] = await writer.insert(asset).values({
+            role: 'video',
+            sha256: digest,
+            mime: 'video/mp4',
+            bytes: stripped.bytes.byteLength,
+            width: facts.width,
+            height: facts.height,
+            durationS,
+            localPath: videoPath,
+            sourceGenerationId: gen.id,
+          }).returning()
+          const [k0] = await writer.insert(asset).values({
+            role: 'keyframe',
+            sha256: still.sha256,
+            mime: 'image/jpeg',
+            bytes: still.bytes.byteLength,
+            localPath: stillPath,
+          }).returning()
+          if (!videoAsset || !k0) throw new Error('asset insert returned nothing')
+          await writer.update(generation).set({ outputAssetId: videoAsset.id }).where(eq(generation.id, gen.id))
+          await writer.insert(generationInput).values({ generationId: gen.id, assetId: k0.id, role: 'first' })
+          for (const name of names) {
+            const [existingSubject] = await writer.select().from(subject).where(eq(subject.name, name))
+            const row = existingSubject ?? (await writer.insert(subject).values({ name }).returning())[0]
+            if (!row) throw new Error('subject insert returned nothing')
+            await writer.insert(generationSubject).values({ generationId: gen.id, subjectId: row.id })
+          }
+          const [createdJob] = await writer.insert(job).values({
+            generationId: gen.id,
+            sessionId: null,
+            attempt: 1,
+            providerRequestId: null,
+            idempotencyKey: `import:${digest}`,
+            estimateUsd: '0.000000',
+            status: 'downloaded',
+            finishedAt,
+          }).returning()
+          if (!createdJob) throw new Error('job insert returned nothing')
+          await writer.insert(event).values({
+            jobId: createdJob.id,
+            at: clock(),
+            type: 'imported',
+            detail: { title: input.title, note, source: 'grok-imagine' },
+          })
+          return createdJob
+        })
+        if (!created) return { outcome: 'already-imported' as const, sha256: digest }
+        return {
+          outcome: 'imported' as const,
+          jobId: created.id,
+          sha256: digest,
+          stripped: stripped.stripped,
+          fastStart: isFastStart(stripped.bytes),
+          width: facts.width,
+          height: facts.height,
+          durationS,
+          container: facts.container,
+          videoCodec: facts.videoCodec,
+          audio: facts.audio,
+          frameRate,
+        }
+      } catch (error) {
+        const message = error instanceof Error
+          ? `${error.message} ${error.cause instanceof Error ? error.cause.message : ''}`
+          : String(error)
+        if (message.includes('job_idempotency_key')) {
+          return { outcome: 'already-imported' as const, sha256: digest }
+        }
+        throw error
+      }
+    },
+
+    async publish(input: { jobId: string; publicId: string; title?: string; position: number; editorialNote?: string }) {
       const [current] = await db.select().from(job).where(eq(job.id, input.jobId))
       if (!current) return { outcome: 'missing' as const }
       if (current.status === 'withdrawn') return { outcome: 'not-relisted' as const }
@@ -955,6 +1199,9 @@ export function createStudio(options: EngineOptions) {
         return { outcome: 'already-published' as const }
       }
       if (current.status !== 'kept') return { outcome: 'not-kept' as const }
+      const importedEvent = (await db.select().from(event).where(eq(event.jobId, current.id))).find((item) => item.type === 'imported')
+      const title = input.title?.trim() || importedTitle(importedEvent?.detail) || ''
+      if (!title) return { outcome: 'title-empty' as const }
       const [gate] = await db.select().from(article50Answer).limit(1)
       if (!gate) return { outcome: 'gate-closed' as const, live: false as const }
 
@@ -970,6 +1217,18 @@ export function createStudio(options: EngineOptions) {
       if (!k0?.localPath) return { outcome: 'not-ready' as const }
       const [pinned] = await db.select().from(model).where(eq(model.id, gen.modelId))
       if (!pinned) return { outcome: 'not-ready' as const }
+
+      const missing = cardGaps({
+        publicId: input.publicId,
+        width: videoAsset.width,
+        height: videoAsset.height,
+        duration: videoAsset.durationS,
+        approvedSubjects: await approvedSubjectCount(gen.id),
+        finishedAt: current.finishedAt,
+      })
+      if (missing.length > 0) {
+        return { outcome: 'card-refused' as const, missing, live: false as const }
+      }
 
       let [thumbnail] = await db.select().from(asset).where(and(
         eq(asset.sourceGenerationId, gen.id),
@@ -1005,8 +1264,10 @@ export function createStudio(options: EngineOptions) {
           videoAsset.bucket = object.bucket
           videoAsset.objectPath = object.objectPath
         }
-      } catch {
-        return { outcome: 'upload-failed' as const, live: false as const, listedAgain: true as const }
+      } catch (error) {
+        const fields = storeFailure(error)
+        await recordEvent(current.id, 'upload-failed', { object: 'video', ...fields })
+        return { outcome: 'upload-failed' as const, live: false as const, listedAgain: true as const, object: 'video' as const, ...fields }
       }
       try {
         if (!thumbnail.bucket || !thumbnail.objectPath) {
@@ -1020,8 +1281,10 @@ export function createStudio(options: EngineOptions) {
           thumbnail.bucket = object.bucket
           thumbnail.objectPath = object.objectPath
         }
-      } catch {
-        return { outcome: 'upload-failed' as const, live: false as const, listedAgain: true as const }
+      } catch (error) {
+        const fields = storeFailure(error)
+        await recordEvent(current.id, 'upload-failed', { object: 'thumbnail', ...fields })
+        return { outcome: 'upload-failed' as const, live: false as const, listedAgain: true as const, object: 'thumbnail' as const, ...fields }
       }
 
       if (flags.breakRecordWrite) {
@@ -1030,12 +1293,13 @@ export function createStudio(options: EngineOptions) {
 
       const [policy] = await db.select().from(policyCheck).where(eq(policyCheck.generationId, gen.id)).orderBy(desc(policyCheck.createdAt)).limit(1)
       const attestedAt = policy?.attestedAt?.toISOString() ?? 'unattested'
+      const editorialNote = input.editorialNote ?? importedNote(importedEvent?.detail)
       try {
         await db.transaction(async (tx) => {
           await tx.insert(videos).values({
             publicId: input.publicId,
-            title: input.title,
-            editorialNote: input.editorialNote ?? null,
+            title,
+            editorialNote,
             position: input.position,
             publishedAt: clock(),
             jobId: current.id,
@@ -1043,7 +1307,7 @@ export function createStudio(options: EngineOptions) {
             videoAssetId: videoAsset.id,
             thumbnailAssetId: thumbnail.id,
             endpoint: pinned.endpoint,
-            pinnedOn: pinned.pinnedOn,
+            pinnedOn: pinnedOnOf(gen.params, pinned.pinnedOn),
             prompt: gen.prompt,
             promptExpansion: gen.promptExpansion,
             seed: gen.seed,
@@ -1084,7 +1348,7 @@ export function createStudio(options: EngineOptions) {
 
       const deleted = options?.deleteFiles
         ? await deleteRemaining(row.id)
-        : { videoRemoved: false, thumbnailRemoved: false, videoFailed: false, thumbnailFailed: false }
+        : { videoRemoved: false, thumbnailRemoved: false, status: undefined, code: undefined }
       const removal = await runRemoval(row.id, row.publicId)
       return {
         outcome: 'withdrawn' as const,
@@ -1094,6 +1358,8 @@ export function createStudio(options: EngineOptions) {
         thumbnailRemoved: deleted.thumbnailRemoved,
         filesReadable: Boolean(options?.deleteFiles) && (!deleted.videoRemoved || !deleted.thumbnailRemoved),
         removal: removal.outcome,
+        status: deleted.status,
+        code: deleted.code,
       }
     },
 
@@ -1109,6 +1375,8 @@ export function createStudio(options: EngineOptions) {
         thumbnailRemoved: deleted.thumbnailRemoved,
         filesReadable: !deleted.videoRemoved || !deleted.thumbnailRemoved,
         idempotent: deleted.attempted === 0,
+        status: deleted.status,
+        code: deleted.code,
       }
     },
 
@@ -1124,10 +1392,14 @@ export function createStudio(options: EngineOptions) {
 
     async list() {
       const rows = await db.select().from(job).orderBy(desc(job.createdAt))
+      const catalog = await db.select().from(videos)
+      const held = new Map(catalog.map((row) => [row.jobId, row]))
       const output = []
       for (const row of rows) {
         const lines = await db.select().from(ledger).where(eq(ledger.jobId, row.id))
         const reconciled = lines.some((line) => line.settlement === 'reconciled')
+        const video = held.get(row.id)
+        const live = video !== undefined && video.publishedAt !== null && video.unpublishedAt === null
         output.push({
           id: row.id,
           status: row.status,
@@ -1135,6 +1407,8 @@ export function createStudio(options: EngineOptions) {
           estimateUsd: row.estimateUsd,
           billed: reconciled ? 'reconciled' as const : lines.length > 0 ? 'pending' as const : 'none' as const,
           publishable: row.status === 'kept',
+          publicId: video?.publicId,
+          position: live && video ? video.position : undefined,
         })
       }
       return output

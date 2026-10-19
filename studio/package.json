@@ -8,7 +8,7 @@
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.ui.json",
     "test": "vitest run",
     "test:contract": "vitest run test/schema.test.ts test/catalog-contract.test.ts test/catalog-publish.test.ts test/isolation.test.ts test/schema-boundary.test.ts test/secrets.test.ts",
     "migrate": "tsx db/migrate.ts",
