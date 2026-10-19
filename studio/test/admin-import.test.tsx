@@ -5,7 +5,8 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { afterEach, describe, expect, it } from 'vitest'
-import { CHECKLIST_LINES } from '../db/schema.ts'
+import { eq, sql } from 'drizzle-orm'
+import { CHECKLIST_LINES, event, job, ledger, videos } from '../db/schema.ts'
 import { syntheticMp4 } from '../media/mp4.ts'
 import { CLIP_LIMIT, PHOTO_LIMIT } from '../server/body.ts'
 import { pathInsideWorktree } from '../server/import.ts'
@@ -101,8 +102,9 @@ describe('import screen', () => {
     expect(importRefusal({ outcome: 'inside-worktree' })).toBe(DRAFT.importWorktree)
     expect(statusLine({ outcome: 'clip-refused', reason: 'not-mp4', brand: 'qt' })).toBe(`${DRAFT.importNotMp4} The brand is qt.`)
     expect(statusLine({ outcome: 'needs-made-on' })).toBe(DRAFT.importNeedsMadeOn)
-    expect(statusLine({ outcome: 'missing' })).toBe(DRAFT.importMissing)
-    expect(statusLine({ outcome: 'missing' })).not.toBe('Unavailable: missing.')
+    expect(statusLine({ outcome: 'upload-missing' })).toBe(DRAFT.importMissing)
+    expect(statusLine({ outcome: 'missing' })).toBe(DRAFT.clipUnrecorded)
+    expect(statusLine({ outcome: 'missing' })).not.toBe(DRAFT.importMissing)
     const after = renderToStaticMarkup(
       <ImportForm {...idle} clipName="fenway.mp4" stillName="still.jpg" prompt="a fictional cat" subjects={['Fenway']} title="Fenway" notice={DRAFT.importImported} />,
     )
@@ -214,7 +216,7 @@ describe('import screen', () => {
         madeOn: '',
       }),
     })).body) as { outcome: string }
-    expect(again.outcome).toBe('missing')
+    expect(again.outcome).toBe('upload-missing')
     expect(statusLine(again)).toBe('Unavailable: that file is no longer waiting. Choose it again.')
     const jobs = JSON.parse((await ask(admin, { path: '/api/jobs', headers: { cookie } })).body) as { id: string; status: string }[]
     expect(jobs.find((row) => row.id === imported.jobId)?.status).toBe('downloaded')
@@ -253,6 +255,21 @@ describe('import screen', () => {
       body: JSON.stringify({ deleteFiles: false }),
     })).body) as { outcome: string }
     expect(withdrawn.outcome).toBe('withdrawn')
+    await admin.opened.db.execute(sql`alter table studio.event disable trigger user`)
+    await admin.opened.db.execute(sql`alter table studio.ledger disable trigger user`)
+    await admin.opened.db.delete(videos).where(eq(videos.jobId, imported.jobId))
+    await admin.opened.db.delete(ledger).where(eq(ledger.jobId, imported.jobId))
+    await admin.opened.db.delete(event).where(eq(event.jobId, imported.jobId))
+    await admin.opened.db.delete(job).where(eq(job.id, imported.jobId))
+    const gone = JSON.parse((await ask(admin, {
+      path: `/api/publish/${imported.jobId}/go`,
+      method: 'POST',
+      headers: { ...headers, 'content-type': 'application/json' },
+      body: JSON.stringify({ publicId: 'fenway-import', title: 'Fenway', position: 1, confirm: true }),
+    })).body) as { outcome: string }
+    expect(gone.outcome).toBe('missing')
+    expect(statusLine(gone)).toBe(DRAFT.clipUnrecorded)
+    expect(statusLine(gone)).not.toBe(DRAFT.importMissing)
   })
 
   it('refuses the upload by type, size, truncation, brand, a duplicate, a missing date and a non-JPEG', async () => {

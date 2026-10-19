@@ -39,6 +39,7 @@ export const DRAFT = {
   importClipTooLarge: 'Unavailable: that clip is over 100 MB.',
   importStillTooLarge: 'Unavailable: that still is over 20 MB.',
   importMissing: 'Unavailable: that file is no longer waiting. Choose it again.',
+  clipUnrecorded: 'Unavailable: that clip is no longer recorded. Reload this page.',
   importEmpty: 'Unavailable: the file is empty.',
   importPromptEmpty: 'Unavailable: the prompt is empty.',
   importTitleEmpty: 'Unavailable: the title is empty.',

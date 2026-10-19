@@ -69,10 +69,10 @@ export function storeImport(mediaDir: string, kind: 'clip' | 'still', bytes: Uin
 
 export async function previewImport(opened: OpenedAdmin, body: unknown) {
   const record = body && typeof body === 'object' ? body as { clipId?: unknown; stillId?: unknown } : {}
-  if (typeof record.clipId !== 'string' || typeof record.stillId !== 'string') return { outcome: 'missing' as const }
+  if (typeof record.clipId !== 'string' || typeof record.stillId !== 'string') return { outcome: 'upload-missing' as const }
   const clipPath = incoming(opened.mediaDir, record.clipId, 'mp4')
   const stillPath = incoming(opened.mediaDir, record.stillId, 'jpg')
-  if (!clipPath || !stillPath) return { outcome: 'missing' as const }
+  if (!clipPath || !stillPath) return { outcome: 'upload-missing' as const }
   if (pathInsideWorktree(clipPath) || pathInsideWorktree(stillPath)) {
     discardUploads(opened.mediaDir, record.clipId, record.stillId)
     return { outcome: 'inside-worktree' as const }
@@ -124,14 +124,14 @@ export async function confirmImport(opened: OpenedAdmin, body: unknown) {
     note?: unknown
     madeOn?: unknown
   } : {}
-  if (typeof record.clipId !== 'string' || typeof record.stillId !== 'string') return { outcome: 'missing' as const }
+  if (typeof record.clipId !== 'string' || typeof record.stillId !== 'string') return { outcome: 'upload-missing' as const }
   if (typeof record.prompt !== 'string' || typeof record.title !== 'string' || !Array.isArray(record.subjects)) {
     return { outcome: 'refused' as const }
   }
   const subjects = record.subjects.filter((name): name is string => typeof name === 'string')
   const clipPath = incoming(opened.mediaDir, record.clipId, 'mp4')
   const stillPath = incoming(opened.mediaDir, record.stillId, 'jpg')
-  if (!clipPath || !stillPath) return { outcome: 'missing' as const }
+  if (!clipPath || !stillPath) return { outcome: 'upload-missing' as const }
   if (pathInsideWorktree(clipPath) || pathInsideWorktree(stillPath)) {
     discardUploads(opened.mediaDir, record.clipId, record.stillId)
     return { outcome: 'inside-worktree' as const }

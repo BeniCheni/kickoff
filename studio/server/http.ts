@@ -42,6 +42,7 @@ export type AdminServer = {
   storage: 'stub' | 'r2' | 'refused'
   storageFetch: 'injected' | null
   fal: 'stub' | 'live' | 'refused'
+  opened: OpenedAdmin
   close: () => Promise<void>
 }
 
@@ -409,6 +410,7 @@ export async function startAdmin(options: StartAdminOptions = {}): Promise<Admin
     storage: opened.storage,
     storageFetch: opened.storageFetch,
     fal: opened.fal,
+    opened,
     async close() {
       await new Promise<void>((resolve, reject) => {
         server.close((error) => (error ? reject(error) : resolve()))

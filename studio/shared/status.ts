@@ -41,6 +41,7 @@ const SENTENCE: Record<string, string> = {
   'budget-refused': DRAFT.submitBudget,
   'out-of-credit': COPY.outOfCredit,
   'photo-missing': 'Unavailable: that photograph is not on this Mac.',
+  missing: DRAFT.clipUnrecorded,
   'fal-key-missing': DRAFT.falKey,
   'storage-refused': STORAGE_REFUSAL,
   refused: 'Unavailable: the request was refused.',
@@ -75,7 +76,7 @@ export function importRefusal(body: { outcome?: string; reason?: string; brand?:
   if (body.outcome === 'png') return DRAFT.importPng
   if (body.outcome === 'clip-too-large') return DRAFT.importClipTooLarge
   if (body.outcome === 'still-too-large') return DRAFT.importStillTooLarge
-  if (body.outcome === 'missing') return DRAFT.importMissing
+  if (body.outcome === 'upload-missing') return DRAFT.importMissing
   if (body.outcome === 'empty') return DRAFT.importEmpty
   if (body.outcome === 'prompt-empty') return DRAFT.importPromptEmpty
   if (body.outcome === 'title-empty') return DRAFT.importTitleEmpty
