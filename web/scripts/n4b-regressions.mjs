@@ -152,7 +152,7 @@ export async function regressions(browser, origin, check, configure = async () =
     await page.waitForFunction(() => document.body.innerText.includes('The countdown paused while this tab was hidden'))
     await other.close()
     await page.waitForFunction(() => document.querySelector('#moments-watch-heading')?.textContent === 'Stub Frankenstein one' && !document.querySelector('video').paused && document.querySelector('video').currentTime > 0)
-    const s = await page.evaluate(() => ({ same: window.__video === document.querySelector('video'), src: document.querySelector('video').getAttribute('src'), pushes: window.__pushes.length, hash: location.hash, status: document.body.innerText.includes('Now playing “Stub Frankenstein one”') || document.body.innerText.includes('Playing muted.'), statusLines: [...document.querySelectorAll('[role="status"]')].map(p => p.textContent) }))
+    const s = await page.evaluate(() => ({ same: window.__video === document.querySelector('video'), src: document.querySelector('video').getAttribute('src'), pushes: window.__pushes.length, hash: location.hash, status: document.body.innerText.includes('Playing muted. Unmute beside the player.'), statusLines: [...document.querySelectorAll('[role="status"]')].map(p => p.textContent) }))
     check('automatic advance plays its own file in the same node with one push', s.same && s.src?.includes('/stub-frankenstein-one/') && s.pushes === 1 && s.hash === '#clip' && s.status, s)
   })
   await scenario('H2 recovery id lifecycle', async page => {
@@ -165,7 +165,8 @@ export async function regressions(browser, origin, check, configure = async () =
     await button(page, 'Next')
     await ready(page, 'stub-frankenstein-one')
     const s = await state(page)
-    check('H2 Next after a real code-4 error requests the new file in the same element', s.same && s.src?.includes('/stub-frankenstein-one/'), s)
+    const alert = await page.evaluate(() => document.querySelector('[role="alert"]')?.innerText ?? '')
+    check('H2 Next after a real code-4 error requests the new file in the same element', s.same && s.src?.includes('/stub-frankenstein-one/') && !s.countdown && !s.copy && !s.copyFailure && !alert.includes('Stub Frankenstein one'), { ...s, alert })
   })
   await scenario('M4 M5 L1 countdown', async page => {
     await visit(page, `${origin}/${watch}`, { waitUntil: 'networkidle0' })
