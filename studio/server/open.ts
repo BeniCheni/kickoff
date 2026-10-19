@@ -12,7 +12,8 @@ import { createStudio, type Studio, type StudioDatabase } from '../engine.ts'
 import { selectFalTransport } from '../fal/live.ts'
 import { createFalStub, type ScriptName, type StubCursor } from '../fal/stub.ts'
 import { createStorageStub } from '../storage/stub.ts'
-import type { DatabaseEngine, DatabaseName, StorageName, TransportName } from '../shared/types.ts'
+import type { DatabaseEngine, DatabaseName, FalMode, StorageName, TransportName } from '../shared/types.ts'
+import { createRefusingFal } from './fal-refused.ts'
 import { probeDatabase } from './probe.ts'
 import { createRefusingStorage } from './storage-refused.ts'
 
@@ -40,6 +41,7 @@ export type OpenedAdmin = {
   databaseHold: boolean
   databaseEngine: DatabaseEngine
   storage: StorageName
+  fal: FalMode
   falConfigured: boolean
   script: ScriptName
   outOfCredit: { current: boolean }
@@ -129,7 +131,10 @@ export async function openAdmin(env: NodeJS.ProcessEnv, live: boolean): Promise<
     }).port
   const script = scriptFrom(loaded)
   const stub = createFalStub(script, cursor)
-  const fal = selectFalTransport({ argv: live ? ['--live'] : [], env: loaded, stub })
+  const falMode: FalMode = !live ? 'stub' : loaded.FAL_KEY ? 'live' : 'refused'
+  const fal = falMode === 'refused'
+    ? createRefusingFal()
+    : selectFalTransport({ argv: live ? ['--live'] : [], env: loaded, stub })
   const transport: TransportName = live ? 'live' : 'stub'
   const databaseHold = loaded.STUDIO_ADMIN_DATABASE === 'unavailable'
   const clock = () => (loaded.STUDIO_NOW ? new Date(loaded.STUDIO_NOW) : new Date())
@@ -162,7 +167,8 @@ export async function openAdmin(env: NodeJS.ProcessEnv, live: boolean): Promise<
     databaseHold,
     databaseEngine: backends.databaseEngine,
     storage: backends.storage,
-    falConfigured: !live || Boolean(loaded.FAL_KEY),
+    fal: falMode,
+    falConfigured: falMode !== 'refused',
     script,
     outOfCredit: { current: script === 'out-of-credit' },
     clock,

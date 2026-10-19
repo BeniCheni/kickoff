@@ -106,12 +106,13 @@ export async function readJobs(db: StudioDatabase, studio: Studio, now: Date): P
 
 const JOB_ID = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
 
-export function jobIdFrom(pathname: string, action: 'download' | 'regenerate'): string | null {
+export function jobIdFrom(pathname: string, action: 'download' | 'regenerate' | 'cancel' | 'attach'): string | null {
   const match = new RegExp(`^/api/jobs/(${JOB_ID})/${action}$`, 'i').exec(pathname)
   return match?.[1] ?? null
 }
 
 export async function pollInFlight(opened: OpenedAdmin, ids: readonly string[]): Promise<JobView[]> {
+  if (!opened.falConfigured) return readJobs(opened.db, opened.studio, opened.clock())
   if (!opened.databaseHold) {
     opened.database = (await probeDatabase(opened.db)) ? 'reachable' : 'unavailable'
     if (opened.database === 'unavailable') return []
@@ -129,7 +130,20 @@ export async function pollInFlight(opened: OpenedAdmin, ids: readonly string[]):
 }
 
 export async function downloadJob(opened: OpenedAdmin, jobId: string) {
+  if (!opened.falConfigured) return { outcome: 'fal-key-missing' as const }
   return opened.studio.download(jobId)
+}
+
+export async function cancelJob(opened: OpenedAdmin, jobId: string) {
+  if (!opened.falConfigured) return { outcome: 'fal-key-missing' as const }
+  return opened.studio.cancel(jobId)
+}
+
+export async function attachJob(opened: OpenedAdmin, jobId: string, body: unknown) {
+  if (!opened.falConfigured) return { outcome: 'fal-key-missing' as const }
+  const requestId = body && typeof body === 'object' ? (body as { requestId?: unknown }).requestId : undefined
+  if (typeof requestId !== 'string' || requestId.length === 0) return { outcome: 'refused' as const }
+  return opened.studio.attachRequest({ jobId, requestId })
 }
 
 export async function regenerateJob(opened: OpenedAdmin, jobId: string, confirmEstimate: string) {

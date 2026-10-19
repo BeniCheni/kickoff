@@ -661,8 +661,8 @@ async function main(): Promise<void> {
     const pausedLive = await startServer(flowData, flowMedia, { STUDIO_LIVE: '1', DATABASE_URL: dummyUrl }, ['--live'])
     servers.push(pausedLive)
     const pausedTicket = await httpCall(pausedLive.port, 'GET', `/?ticket=${encodeURIComponent(pausedLive.token)}`, {})
-    const pausedShell = JSON.parse((await httpCall(pausedLive.port, 'GET', '/api/shell', { cookie: pausedTicket.setCookie })).body) as { database: string; storage: string; transport: string; falConfigured: boolean }
-    if (pausedShell.database !== 'unavailable' || pausedShell.storage !== 'refused' || pausedShell.transport !== 'live' || pausedShell.falConfigured !== false) {
+    const pausedShell = JSON.parse((await httpCall(pausedLive.port, 'GET', '/api/shell', { cookie: pausedTicket.setCookie })).body) as { database: string; storage: string; transport: string; fal: string; falConfigured: boolean }
+    if (pausedShell.database !== 'unavailable' || pausedShell.storage !== 'refused' || pausedShell.transport !== 'live' || pausedShell.fal !== 'refused' || pausedShell.falConfigured !== false) {
       throw new Error(`paused live shell ${JSON.stringify(pausedShell)}`)
     }
     const pausedBody = JSON.stringify(pausedShell)

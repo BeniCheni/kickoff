@@ -6,6 +6,8 @@ export type DatabaseEngine = 'pglite' | 'postgres'
 
 export type StorageName = 'stub' | 'r2' | 'refused'
 
+export type FalMode = 'stub' | 'live' | 'refused'
+
 export type BalanceView = {
   amountUsd: string
   aboveCeiling: boolean
@@ -29,6 +31,7 @@ export type ShellView = {
   transport: TransportName
   databaseEngine: DatabaseEngine
   storage: StorageName
+  fal: FalMode
   falConfigured: boolean
   host: '127.0.0.1'
   port: number

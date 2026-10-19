@@ -8,7 +8,7 @@ import { LOOPBACK_HOST, assertLoopbackBind, isLoopbackHost } from './bind.ts'
 import { SESSION_COOKIE, cookieValue, guardRequest, oneTimeUrl, sessionCookie } from './guard.ts'
 import { BodyError, readBytes, readJson } from './body.ts'
 import { estimateJobs, readCompose, submitJobs } from './compose.ts'
-import { downloadJob, jobIdFrom, pollInFlight, readJobs, regenerateJob } from './jobs.ts'
+import { attachJob, cancelJob, downloadJob, jobIdFrom, pollInFlight, readJobs, regenerateJob } from './jobs.ts'
 import { serveFile as serveRecorded } from './media.ts'
 import { findPhoto, photoPath, storePhoto } from './photos.ts'
 import { publishJob, publishJobId, readPublish, recordPublishGate, retryDeleteJob, retryRemovalJob, unpublishJob } from './publish.ts'
@@ -39,6 +39,7 @@ export type AdminServer = {
   transport: 'stub' | 'live'
   databaseEngine: 'pglite' | 'postgres'
   storage: 'stub' | 'r2' | 'refused'
+  fal: 'stub' | 'live' | 'refused'
   close: () => Promise<void>
 }
 
@@ -143,6 +144,10 @@ async function handle(
     return
   }
   if (url.pathname === '/api/jobs/poll' && method === 'POST') {
+    if (!opened.falConfigured) {
+      sendJson(response, 200, { outcome: 'fal-key-missing' }, cookieHeader)
+      return
+    }
     const body = await readJson(request)
     const ids = body && typeof body === 'object' && Array.isArray((body as { ids?: unknown }).ids)
       ? (body as { ids: unknown[] }).ids.filter((id): id is string => typeof id === 'string')
@@ -153,6 +158,16 @@ async function handle(
   const downloadId = method === 'POST' ? jobIdFrom(url.pathname, 'download') : null
   if (downloadId) {
     sendJson(response, 200, await downloadJob(opened, downloadId), cookieHeader)
+    return
+  }
+  const cancelId = method === 'POST' ? jobIdFrom(url.pathname, 'cancel') : null
+  if (cancelId) {
+    sendJson(response, 200, await cancelJob(opened, cancelId), cookieHeader)
+    return
+  }
+  const attachId = method === 'POST' ? jobIdFrom(url.pathname, 'attach') : null
+  if (attachId) {
+    sendJson(response, 200, await attachJob(opened, attachId, await readJson(request)), cookieHeader)
     return
   }
   if (url.pathname === '/api/compose' && method === 'GET') {
@@ -331,6 +346,7 @@ export async function startAdmin(options: StartAdminOptions = {}): Promise<Admin
     transport: opened.transport,
     databaseEngine: opened.databaseEngine,
     storage: opened.storage,
+    fal: opened.fal,
     async close() {
       await new Promise<void>((resolve, reject) => {
         server.close((error) => (error ? reject(error) : resolve()))

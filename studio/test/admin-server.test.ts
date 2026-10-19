@@ -106,6 +106,7 @@ describe('admin server', () => {
     expect(JSON.parse(shell.body).databaseEngine).toBe('pglite')
     expect(JSON.parse(shell.body).storage).toBe('stub')
     expect(JSON.parse(shell.body).falConfigured).toBe(true)
+    expect(JSON.parse(shell.body).fal).toBe('stub')
     expect(body.host).toBe('127.0.0.1')
     expect(body.balance).toBeNull()
     expect(body.session).toBeNull()

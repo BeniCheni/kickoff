@@ -88,13 +88,13 @@ The process prints one URL. Open that URL. It sets an HttpOnly, SameSite=Strict 
 npm run studio
 ```
 
-That start is stub mode. The shell shows `transport=stub · database=pglite · storage=stub`. Paid submits use the fal stub. `STUDIO_STUB` selects the script, the same names as the CLI.
+That start is stub mode. The shell shows `transport=stub · fal=stub · database=pglite · storage=stub`. Paid submits use the fal stub. `STUDIO_STUB` selects the script, the same names as the CLI.
 
 ```bash
 STUDIO_LIVE=1 npm run studio -- --live
 ```
 
-`--live` starts only when `STUDIO_LIVE=1` and `DATABASE_URL` are set. It names a missing piece and does not print a value. `FAL_KEY` is not required to start. Without it, Submit and Regenerate stay disabled and say so. Storage stays `refused` until a later change wires the bucket: a publish does not write a catalog row, and unpublish with a file delete, retry-delete, and retry-removal are refused. The browser cannot switch the transport. The shell shows `transport=live · database=postgres · storage=refused` only when the process was started that way.
+`--live` starts only when `STUDIO_LIVE=1` and `DATABASE_URL` are set. It names a missing piece and does not print a value. `FAL_KEY` is not required to start. Without it, Submit and Regenerate stay disabled and say so. Storage stays `refused` until a later change wires the bucket: a publish does not write a catalog row, and unpublish with a file delete, retry-delete, and retry-removal are refused. The browser cannot switch the transport. Without `FAL_KEY`, poll, download, cancel, and attach refuse, and Jobs does not poll. The shell shows `transport=live · fal=refused · database=postgres · storage=refused` until the key is set, and `fal=live` when it is.
 
 Import of a Grok clip is not on this page yet. The `import` command is on main. Wiring this screen to it is ST3b.
 

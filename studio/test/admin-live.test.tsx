@@ -96,6 +96,7 @@ describe('live storage refusal', () => {
     expect(shell.databaseEngine).toBe('pglite')
     expect(shell.storage).toBe('refused')
     expect(shell.falConfigured).toBe(false)
+    expect(shell.fal).toBe('refused')
     const refused = JSON.parse((await ask(admin, {
       path: '/api/submit',
       method: 'POST',
@@ -144,7 +145,7 @@ describe('live storage refusal', () => {
 
   it('refuses a live publish and the delete routes, and leaves videos empty', async () => {
     const env = folders()
-    const opened = await openAdmin(env, true)
+    const opened = await openAdmin(env, false)
     const [who] = await opened.db.insert(subject).values({ name: 'Fenway' }).returning()
     if (!who) throw new Error('no subject')
     const submitted = await opened.studio.submit({
@@ -225,6 +226,7 @@ describe('live storage refusal', () => {
       transport: 'live',
       databaseEngine: 'postgres',
       storage: 'refused',
+      fal: 'live',
       falConfigured: true,
       host: '127.0.0.1',
       port: 5176,

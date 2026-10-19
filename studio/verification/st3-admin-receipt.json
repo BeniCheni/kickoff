@@ -4,7 +4,7 @@
     {
       "name": "compose-budget-refused",
       "file": "png/compose-budget-refused-light-1000.png",
-      "sha256": "990bec8e4cad41be460f189ecca17c5fcc7026dd823d00c2a2be736c710f88eb",
+      "sha256": "20d9678b0742ca23467e1af1947240128a8e1739cbdcf118593ac58e04f71960",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -111,7 +111,7 @@
     {
       "name": "compose-budget-refused",
       "file": "png/compose-budget-refused-light-1280.png",
-      "sha256": "23055581549f4b91fb5443db4e53fdc9efb0d8f2f424a77897987b1016948b3b",
+      "sha256": "5d05c9c51010cc0bcc8847f4cdc162febad2fd168bae87bd62cd857d19882372",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -218,7 +218,7 @@
     {
       "name": "compose-budget-refused",
       "file": "png/compose-budget-refused-light-1440.png",
-      "sha256": "d0b14d973d185e790028cdc0d32d6b558d31a85bd77f1ca1eb84709785b79f50",
+      "sha256": "427830e3d6a9446f98f8d75b33dadfb949d22c7cbd227421d28e904d954eef56",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -325,7 +325,7 @@
     {
       "name": "compose-budget-refused",
       "file": "png/compose-budget-refused-dark-1000.png",
-      "sha256": "c39edb6643b94036a299bbe91fe89a5c5c384f13ae65167d2b9d76b41b1bdcef",
+      "sha256": "0ba28548fe4c0da9a881bd1b2c5514f157c40dbd251f97a4855bccb683e7446c",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -432,7 +432,7 @@
     {
       "name": "compose-budget-refused",
       "file": "png/compose-budget-refused-dark-1280.png",
-      "sha256": "e42c6b1b9a82ca155e57695c87abea32c9e0260363c7fa4d601536de03e46634",
+      "sha256": "5ed0fb53e9ba5d001e907c63ce2ca27bb42d2fc439eed4cf8a840f1769691d66",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -539,7 +539,7 @@
     {
       "name": "compose-budget-refused",
       "file": "png/compose-budget-refused-dark-1440.png",
-      "sha256": "e42472f0bb8a9894cbfeb33cb94ad2d3e9b9e74bff5786a8f8ebd983c26414b9",
+      "sha256": "9193906800b01b7ab42a9c1824394793c44d7a854e11174f6d2997b0bbcb120c",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -646,7 +646,7 @@
     {
       "name": "jobs-all-states",
       "file": "png/jobs-all-states-light-1000.png",
-      "sha256": "48beaf56e8d48bb0ec59e4afd26723453c39ba6141050b044399c3cbf1927813",
+      "sha256": "b96f6396f611a7a3c85c0d640f0ca462bc1ca799a298cb8d855c9a980f55a966",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -735,7 +735,7 @@
     {
       "name": "jobs-all-states",
       "file": "png/jobs-all-states-light-1280.png",
-      "sha256": "d5198d579c2a8279ea19591df3887aa59649713febd31741d4da20b0cf86a89f",
+      "sha256": "01c43aeeaee5f88cd2d3ac6836da30c633f2a47cb8e9043f6930d58a60f01270",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -824,7 +824,7 @@
     {
       "name": "jobs-all-states",
       "file": "png/jobs-all-states-light-1440.png",
-      "sha256": "1ea3e535450642bd507880ca4077a7aa26684036e88a7f85ed6b51a6e8251944",
+      "sha256": "58a1b8c7cd00b4832ca545ed1325ca12eea910d67bac9476452b54e1ceb5ec4c",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -913,7 +913,7 @@
     {
       "name": "jobs-all-states",
       "file": "png/jobs-all-states-dark-1000.png",
-      "sha256": "c3d6b0084bc3ad623af0e89639161011f15517b8ea525fbab99592c6283ee732",
+      "sha256": "c4926b1e4be6e2b388300631f29837afd68fb6a2cdc3416a74f5790352c8a3ad",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -1002,7 +1002,7 @@
     {
       "name": "jobs-all-states",
       "file": "png/jobs-all-states-dark-1280.png",
-      "sha256": "666b13d6a71c1d7610b0726d3e35e36b15db2d2c2a480ef8fe50f595140d778a",
+      "sha256": "39362d92c11b5c31989d7a5dc4e775bb23ff4765c8d5cd370a1c3c70c55c51a9",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -1091,7 +1091,7 @@
     {
       "name": "jobs-all-states",
       "file": "png/jobs-all-states-dark-1440.png",
-      "sha256": "ecd584fbb5d847df3dc21ca26efcbe4627d8564e958008f5c5f89fa77b4bccb1",
+      "sha256": "d5f5bd0c93b1d852dde98673e8fd5e5b63ba4c0c714ff5fef446d090973c8dd9",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -1180,7 +1180,7 @@
     {
       "name": "review-unanswered",
       "file": "png/review-unanswered-light-1000.png",
-      "sha256": "a338d3185b710bedde9141c86fb74def6a38e651bfaabc0f0648bbcad08f37e4",
+      "sha256": "ebf22c2916fbf027546276b272ec37b99564ef0fd2125bde36aaa545a0cbd123",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -1285,7 +1285,7 @@
     {
       "name": "review-unanswered",
       "file": "png/review-unanswered-light-1280.png",
-      "sha256": "ebc978cc50f83f19849598ba978b8a7a5dbb162d2c156b7a9b41034b64dcc12e",
+      "sha256": "abd7db603039360a5b583dbc50168ecc4d2e653989c0f75fd5dc4052f0bcc14e",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -1390,7 +1390,7 @@
     {
       "name": "review-unanswered",
       "file": "png/review-unanswered-light-1440.png",
-      "sha256": "cc656817b8e123602f9613642885dbe5fed4836082f13277d25e16de10828dc7",
+      "sha256": "f949ca07182f4547888c9c490c7ad88dc4bded0bc41f344351815fcb6fee803b",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -1495,7 +1495,7 @@
     {
       "name": "review-unanswered",
       "file": "png/review-unanswered-dark-1000.png",
-      "sha256": "cf3a7c6f53513e5f4917e94142fdc5212372a3b0928351be746eadf310fead06",
+      "sha256": "1ca2463993a10a448ca7d0ba2a4959645eaf76519cd5c93560fc517d1d881188",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -1600,7 +1600,7 @@
     {
       "name": "review-unanswered",
       "file": "png/review-unanswered-dark-1280.png",
-      "sha256": "59c1355e711f94485ee6e2c5c81eb3e24277f4d6b0e8644d325d78bae5b0df23",
+      "sha256": "4281317d94246ab2b2e9d3e77c005835283f5d7b2080fd6cf55d7ae2c4f32c61",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -1705,7 +1705,7 @@
     {
       "name": "review-unanswered",
       "file": "png/review-unanswered-dark-1440.png",
-      "sha256": "06a0ff9d022b6006af6a7cdca91541423ba84af752a13d6b01f2b893f515c43c",
+      "sha256": "205062657990d5cf8dae7fc2b017c369e0003ba0cc8ca6a59b81de7b49b9f898",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -1810,7 +1810,7 @@
     {
       "name": "review-partly",
       "file": "png/review-partly-light-1000.png",
-      "sha256": "f228d8ab11eb36affdd02b7b54ceef58192b4ecab055dcbad3fd7e24d825572f",
+      "sha256": "747a9ade66ecb3d499ce52836302f3f838176c2a20f7b4719820658487c876e3",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -1915,7 +1915,7 @@
     {
       "name": "review-partly",
       "file": "png/review-partly-light-1280.png",
-      "sha256": "2416bf81969e6a0b877276f30244b918f81ce39535914340236d02be7efa33a8",
+      "sha256": "6120519e3ba6fbde2650dba3522612f86d51d0d09aee823c60fe1f3ac57063fe",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -2020,7 +2020,7 @@
     {
       "name": "review-partly",
       "file": "png/review-partly-light-1440.png",
-      "sha256": "1c7f84a928336d2753a106812c3bd96e3311575ee4be0c513c97e0d4ceb49692",
+      "sha256": "83d8cc5b4c444b98efb7183a822adaa93635b99e9036455d7d88ce8a3b2ca1ba",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -2125,7 +2125,7 @@
     {
       "name": "review-partly",
       "file": "png/review-partly-dark-1000.png",
-      "sha256": "3da3566345c149e5da431ca0e7e7ff38eba57c8a2bd69a6c7b792d3ba226ae38",
+      "sha256": "f0f9e627bcd8bc585e381f6a57685816d635d6f44baf848d5e1183348e033160",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -2230,7 +2230,7 @@
     {
       "name": "review-partly",
       "file": "png/review-partly-dark-1280.png",
-      "sha256": "025aaee476b9075ed326ed5eaccf3a8b2830ec370202e9f98838ce37c606c25a",
+      "sha256": "d85819e9b7bb7b1986b325b8c409be0b0464971163b53479c5f665accf3a3019",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -2335,7 +2335,7 @@
     {
       "name": "review-partly",
       "file": "png/review-partly-dark-1440.png",
-      "sha256": "92eb49501e5c8f52bf5c3de44e8cb1f9c30fc1ba8a2acd7c0d0859ee6ec14d26",
+      "sha256": "eb62ca423fae0213ca6d5e0e1a318a6369ec3066c446230d93771995bb21c653",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -2440,7 +2440,7 @@
     {
       "name": "review-all-clear",
       "file": "png/review-all-clear-light-1000.png",
-      "sha256": "466d590eddff564392c3adfbf6167c1ad0c28ffef2f60a7442ca62af054bbb3e",
+      "sha256": "43be481e1b8de773d6c105c93d2297ad6105e4f66387329fcada60c6dc21088c",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -2546,7 +2546,7 @@
     {
       "name": "review-all-clear",
       "file": "png/review-all-clear-light-1280.png",
-      "sha256": "d52db030c9f8a9d11d7c442ee30f9183c1a47dd98c5cc22a7cba791a574196f8",
+      "sha256": "38d16489f940139a8021b020ed3df87a706d12e40890aac2637be6d9e6165709",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -2652,7 +2652,7 @@
     {
       "name": "review-all-clear",
       "file": "png/review-all-clear-light-1440.png",
-      "sha256": "ebb91aa57b104596fec1b349d86d27e632c1955fb362f74ca1a7d9f6a625b412",
+      "sha256": "0357f61188b9328fb268fb0ea04463c13e6e4e9f2fc84d58215d4f7cf0d7c3ae",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -2758,7 +2758,7 @@
     {
       "name": "review-all-clear",
       "file": "png/review-all-clear-dark-1000.png",
-      "sha256": "fbad6fcd46b058d64eee87120b973d2dea2e541f4a768a112f50aa17eccf3bb8",
+      "sha256": "eb91aab58ff547c07a9a275e7614eddd2b4371bd1f17af3d9bd8670521c50071",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -2864,7 +2864,7 @@
     {
       "name": "review-all-clear",
       "file": "png/review-all-clear-dark-1280.png",
-      "sha256": "cbb64bcb281a1849ce6dd06b75c5691cf1982242d43b1384466b83202079eddf",
+      "sha256": "79a812ee473fa35f3d0bb487ef69a67875009cd1a5e1b4afdf55435cdabe8606",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -2970,7 +2970,7 @@
     {
       "name": "review-all-clear",
       "file": "png/review-all-clear-dark-1440.png",
-      "sha256": "b31965e63737da28d5441d08702bbe36d99e3279d575c07dfbbe1153c5d10c2b",
+      "sha256": "c8273de9f7779e5508c0c902634ae0004b5f87032b80566e7506562ee2bff080",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -3076,7 +3076,7 @@
     {
       "name": "review-kept",
       "file": "png/review-kept-light-1000.png",
-      "sha256": "34835b48671fb4683e2a6ce3c10b01c8c92896603c4bbb755ca7cdb2664872c8",
+      "sha256": "ace0267089476fe0d5f3baccf176ccc6b4098e99dd02636c1b800d1b8fe48020",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -3182,7 +3182,7 @@
     {
       "name": "review-kept",
       "file": "png/review-kept-light-1280.png",
-      "sha256": "27ccbb4e3f050a95cc16309c62372340930c09056e2a42b72164eea571175c08",
+      "sha256": "5f9666d273949bab95490bd78186bc835a78f6a570b3748aff0e5a823b9a3d5e",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -3288,7 +3288,7 @@
     {
       "name": "review-kept",
       "file": "png/review-kept-light-1440.png",
-      "sha256": "801af6916b05b27e9b16b117319f023a73e3a8fadb4f5b4ac21277381bddadbd",
+      "sha256": "dfbb297a158f13bc28b5eee89487db91d3432b8481d9be87bf646400bafbad0e",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -3394,7 +3394,7 @@
     {
       "name": "review-kept",
       "file": "png/review-kept-dark-1000.png",
-      "sha256": "4e29b803f606a90ce31c7f5d1f6f91ebba8a19257d97787635303e29fdda8f6b",
+      "sha256": "300bea428f6e12eb5460c1e3016145648fc34717bbe8b2a748066ead4ae67c16",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -3500,7 +3500,7 @@
     {
       "name": "review-kept",
       "file": "png/review-kept-dark-1280.png",
-      "sha256": "bb1928f7404dbb8ed07bd6acf67d3c88d52d52860ab75176cb870576959b0e76",
+      "sha256": "5231b16ae05da8a41e24ef3d2dc0d4a0cac985c97bc9197af0e74d6847cb3ddb",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -3606,7 +3606,7 @@
     {
       "name": "review-kept",
       "file": "png/review-kept-dark-1440.png",
-      "sha256": "cfa6e90ba50d1d5741c60e412b20717be966bfb5dbe2e29587a63c0802ebf22e",
+      "sha256": "5e87cc116acf70ebe0ccf7158ec70fd8c8e9a6c72ccdcc902651a4208a5b15dc",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -3712,7 +3712,7 @@
     {
       "name": "review-discarded",
       "file": "png/review-discarded-light-1000.png",
-      "sha256": "728321802f34ed3c310896c59708981f5eb04dc3deea41731b904f06573b84d4",
+      "sha256": "274186822cae8c11789aec29fb116094c154099be83f50dd32f5008cb09db7fb",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -3817,7 +3817,7 @@
     {
       "name": "review-discarded",
       "file": "png/review-discarded-light-1280.png",
-      "sha256": "cdac83e57e8f907cbf5c9a09f5eecac7bd119ac6da7d63b7be53f1e5aa029af4",
+      "sha256": "ee30200733482ec017efd22bf62e91e30d3fb5e012f887cf12fcb9b0eef5f2ae",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -3922,7 +3922,7 @@
     {
       "name": "review-discarded",
       "file": "png/review-discarded-light-1440.png",
-      "sha256": "a089541cfc12376acd2f12b566fd0d8bfc7fbe560d6609d0de867c19d2103af9",
+      "sha256": "f771779af8fc6a9a54bec4b8210de41cf44d41111a74cf4cf9fddda451c49147",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -4027,7 +4027,7 @@
     {
       "name": "review-discarded",
       "file": "png/review-discarded-dark-1000.png",
-      "sha256": "c84b8178083c831deec22297e6c390a86e0251cf66584cd28a06ea88e21375fc",
+      "sha256": "65ca984bfb10e1d552f61992ed9ae3861c5561527aebc5e12c3f8529c1377f42",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -4132,7 +4132,7 @@
     {
       "name": "review-discarded",
       "file": "png/review-discarded-dark-1280.png",
-      "sha256": "437e07454b54f017cff767708310212162f648a3ed4f0c02f40f27c89a328e0c",
+      "sha256": "9408bb4c5812d39dd31425a9bd7f1927fad2aadb993eb1e74ca7660d75a11664",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -4237,7 +4237,7 @@
     {
       "name": "review-discarded",
       "file": "png/review-discarded-dark-1440.png",
-      "sha256": "6ecfbc27cc35a0e2686f752dc830a3efdea43f51667f8096096db55e5509f6db",
+      "sha256": "1d84afad80bcb81b185c68e0d05df2ea7c9362bd24dfaf241ee91489891089e8",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -4342,7 +4342,7 @@
     {
       "name": "publish-gate-recorded-card-refused",
       "file": "png/publish-gate-recorded-card-refused-light-1000.png",
-      "sha256": "9e84cc8f566040195b8faedbb47cbd0e271e1d841915a937058222cf9815b6ce",
+      "sha256": "0d614e01355808a827811fcea88ca26a6298a884caac3cbdc2b67d4550879318",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -4435,7 +4435,7 @@
     {
       "name": "publish-gate-recorded-card-refused",
       "file": "png/publish-gate-recorded-card-refused-light-1280.png",
-      "sha256": "87d6674e60b62d9dd1dd84494ea2a96e354ea89418a8e0ed33af739ab61a8d00",
+      "sha256": "8b7d88ba43349a529a8bf158c42871f9e3bee5472a65f6e9eefe6c2207033164",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -4528,7 +4528,7 @@
     {
       "name": "publish-gate-recorded-card-refused",
       "file": "png/publish-gate-recorded-card-refused-light-1440.png",
-      "sha256": "803535078156376fecae6984552e5c4bacd37b357da0b11e1a5013396cc884b4",
+      "sha256": "4b24c5fb9c5357fc6894a811baaf51de889aee4b3528931b7ff21d78d43c9a60",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -4621,7 +4621,7 @@
     {
       "name": "publish-gate-recorded-card-refused",
       "file": "png/publish-gate-recorded-card-refused-dark-1000.png",
-      "sha256": "5d3807207465e548056a83f5556034a6ec2639b94e3bb83898724ff52364a581",
+      "sha256": "47122be3e4e23004aa82cf83058332c492712f5b82c311ae56197cd5a95b4e10",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -4714,7 +4714,7 @@
     {
       "name": "publish-gate-recorded-card-refused",
       "file": "png/publish-gate-recorded-card-refused-dark-1280.png",
-      "sha256": "afcfd4e34f4bea148cae821342d513638c702835421b10b1a1c4ed0268a41838",
+      "sha256": "397673c4b7844f4e1f3d60c25919a83f4e897c0dfb08c6d24e6c6286ad1a8662",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -4807,7 +4807,7 @@
     {
       "name": "publish-gate-recorded-card-refused",
       "file": "png/publish-gate-recorded-card-refused-dark-1440.png",
-      "sha256": "8e07b051c60680a33d0374ab34c918d0a9433fe63a1b22e7d22a645acd709fb9",
+      "sha256": "55faf0f462806a74c7772914fddd2f80814763e0f6a6fd9f37dfbf3a065f7785",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -4900,7 +4900,7 @@
     {
       "name": "compose-database-paused",
       "file": "png/compose-database-paused-light-1000.png",
-      "sha256": "2f8b0e764be33d6c72f77a4007ec02e168408ac38d85ab87a98ad733d600140d",
+      "sha256": "c94706134da38bca894ae0c5f16078a4fd3659ae0067637b976d4d7eb3641937",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -5007,7 +5007,7 @@
     {
       "name": "compose-database-paused",
       "file": "png/compose-database-paused-light-1280.png",
-      "sha256": "29a0482a3f5b515a16e9ff823ee7cdf9cc4a41110727b78f4ac6b5677224e273",
+      "sha256": "7d5fc64894b5525bc5a12de6d966b6537f62d936a9f7c226db8e8d329d4fe3f6",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -5114,7 +5114,7 @@
     {
       "name": "compose-database-paused",
       "file": "png/compose-database-paused-light-1440.png",
-      "sha256": "f505f6beecd5b629286d0ac014da615955c61aa09c8f98907783bd695a8fce7c",
+      "sha256": "0a7757acb8622537802403248cda62db093da830df8a65657cb31604ab850e31",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -5221,7 +5221,7 @@
     {
       "name": "compose-database-paused",
       "file": "png/compose-database-paused-dark-1000.png",
-      "sha256": "99efe5e57c5b24eb6d5e3fe801a0850f2bec6aad070538478069ee75f49f70c6",
+      "sha256": "0cdde554e97b56c2a2f5a8718d37c396083624624d9b086564ed8d85883fb025",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -5328,7 +5328,7 @@
     {
       "name": "compose-database-paused",
       "file": "png/compose-database-paused-dark-1280.png",
-      "sha256": "d71b23cbb28ed8f031e2807570c01c6c2ccd500d99be21e0b75ecabfce6dfc38",
+      "sha256": "6370bc2b5f1e27192ddaa78b2a7cc21112462d4cebf80647ceec4ee1428a9600",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -5435,7 +5435,7 @@
     {
       "name": "compose-database-paused",
       "file": "png/compose-database-paused-dark-1440.png",
-      "sha256": "4341e0ff622facdda133d7b1f6284d07e14f8f04cf6631aa92f3feb8a8678c21",
+      "sha256": "58d67e4b955886f7abe0fed9761cfcf02d04a3c48901efbe3d15a25c892a61b6",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -5542,7 +5542,7 @@
     {
       "name": "jobs-database-banner",
       "file": "png/jobs-database-banner-light-1000.png",
-      "sha256": "81f5980d61d4b9f2e76fb23a093e10e841a6e9b5a4861933d2c2f4c1549d18d7",
+      "sha256": "7bb550622014685b6f447fb2b350c1738d1f2b77b813a1a077ddde25fb446873",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -5631,7 +5631,7 @@
     {
       "name": "jobs-database-banner",
       "file": "png/jobs-database-banner-light-1280.png",
-      "sha256": "800f8a1244d6b6663f37083fc43d2d204f2dd040f3a1b3afbffb9df3b0daaa46",
+      "sha256": "5211dae6152567056bdca7e96e4b516e8bda532bf05d819ecaef599ba983939e",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -5720,7 +5720,7 @@
     {
       "name": "jobs-database-banner",
       "file": "png/jobs-database-banner-light-1440.png",
-      "sha256": "f093a965db43a954808c8eb96d7ee45a64bf2b153de1c10dc9bede48b5c15a2f",
+      "sha256": "d328dfd0487ee838b5f69d4b40a0f8be66e8de31d345c7d662c66397992a118e",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -5809,7 +5809,7 @@
     {
       "name": "jobs-database-banner",
       "file": "png/jobs-database-banner-dark-1000.png",
-      "sha256": "cb171f8f118d6db1c9cb54b004b891963db38e548616d950aa8765460e4a1f87",
+      "sha256": "bd89cbf116d99e719daa277502b8a4c9571c0737c6d3bb99a3e426c45e6c864b",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -5898,7 +5898,7 @@
     {
       "name": "jobs-database-banner",
       "file": "png/jobs-database-banner-dark-1280.png",
-      "sha256": "985c2be63fd876ce736eaa01641d06900595e6f1e23188483408484a4c6144ed",
+      "sha256": "7b9673d387449cbc26c02d78c830aa1255b14ca93dfc7d3178169c6e20520b27",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -5987,7 +5987,7 @@
     {
       "name": "jobs-database-banner",
       "file": "png/jobs-database-banner-dark-1440.png",
-      "sha256": "d0f3d1c2c59ff58151cd77c1899ce095992e08859735f56a773fccac7a9004ca",
+      "sha256": "7b1ea8728359decbdcdc99cb0a746393fd99f8260096de36c1f2097f09b29bf8",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -6076,7 +6076,7 @@
     {
       "name": "jobs-credit-banner",
       "file": "png/jobs-credit-banner-light-1000.png",
-      "sha256": "b9e9825e47431420e59db30447ecdf9995f639801324c01c2e30d230371980a3",
+      "sha256": "e4bcb024b26eb351a7f4bfe72e612bbd06858df6bafda2cb04f0ad7f8b716e0d",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -6165,7 +6165,7 @@
     {
       "name": "jobs-credit-banner",
       "file": "png/jobs-credit-banner-light-1280.png",
-      "sha256": "8a6ca7207301d18b545e2e8dda8ea4641fdb5eec969cee9c575d26dabe527e74",
+      "sha256": "e1ad8ab104c43b3d57fbc9c46cafae06bd52f2ef089391e7693b5d6e601885fa",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -6254,7 +6254,7 @@
     {
       "name": "jobs-credit-banner",
       "file": "png/jobs-credit-banner-light-1440.png",
-      "sha256": "8e9c22df69ebd8a62fce5f49dd0c30d42ab6be32599c49ea9e838c6033c74fd1",
+      "sha256": "1100e573a4c04084d8358341247d3d36f06886cc7af6bd1fecdbd95d1267d44a",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -6343,7 +6343,7 @@
     {
       "name": "jobs-credit-banner",
       "file": "png/jobs-credit-banner-dark-1000.png",
-      "sha256": "b9493920ba4f3447245da6745c0b9ea73f735108a2f1ee5d49589feb0d6e15a8",
+      "sha256": "2d48999b96c10acc40eb07d2676c94cdc490f38fc2c53a9f7761cdee525ddb21",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -6432,7 +6432,7 @@
     {
       "name": "jobs-credit-banner",
       "file": "png/jobs-credit-banner-dark-1280.png",
-      "sha256": "d0e06fb5da7f95c6eac648e8ba51c0969ca6d63d2f45e4065c34d1e7ad326bc3",
+      "sha256": "bc19a7f7713c133a5c08a6bacc52ecad2997e0e8f43bb45325192afe3be02a2a",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -6521,7 +6521,7 @@
     {
       "name": "jobs-credit-banner",
       "file": "png/jobs-credit-banner-dark-1440.png",
-      "sha256": "ded67977d0ce50d8995482acb2f153eb98537c29e316a02827179b14acb21666",
+      "sha256": "bb25366a2224a36992d3aa0bef308dc1e8b7d42c4084032d874d17d2b9d45753",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -6610,7 +6610,7 @@
     {
       "name": "publish-gate-not-recorded",
       "file": "png/publish-gate-not-recorded-light-1000.png",
-      "sha256": "7331531440aca90ff7d499892f0ba35f01239f374d52029d19a3913bfebb7e60",
+      "sha256": "fb4b916fb8cb9c114e3334fe9dffac78d70ee4165f16a2007e6fdec6fffb85db",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -6706,7 +6706,7 @@
     {
       "name": "publish-gate-not-recorded",
       "file": "png/publish-gate-not-recorded-light-1280.png",
-      "sha256": "7be4a22ecdeef9c35fde54b1953114613cda30af00efb5db7a276867ed89bf59",
+      "sha256": "fe8c8752a839cbf11c2aca457212b6149e3731da057f3bf7a054b484bf973d32",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -6802,7 +6802,7 @@
     {
       "name": "publish-gate-not-recorded",
       "file": "png/publish-gate-not-recorded-light-1440.png",
-      "sha256": "a566e85648c725717b5fa2566479575c56b39bd06f5d0a9f6c2bbe129a59c82b",
+      "sha256": "c0b90623b32f01c37000599f066e885871c9d5cb6e4110e7c8edbbe11d3c9697",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -6898,7 +6898,7 @@
     {
       "name": "publish-gate-not-recorded",
       "file": "png/publish-gate-not-recorded-dark-1000.png",
-      "sha256": "ea56863b06b71155519581f6010732e82cb83b919399175943e46973f3fe1f1f",
+      "sha256": "a82f190b86050371f412485a7a48ea768db8da9d6aa927b970675526cb0a3991",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -6994,7 +6994,7 @@
     {
       "name": "publish-gate-not-recorded",
       "file": "png/publish-gate-not-recorded-dark-1280.png",
-      "sha256": "b81e7906d42f9a36bdfa4ae9c11c4b3342408fc5df1e62d02704d4c0f2297896",
+      "sha256": "83978f49536b3bda84417e82f84483ca4ebb6c5b55c6b6fdf4cc82f2a812a876",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -7090,7 +7090,7 @@
     {
       "name": "publish-gate-not-recorded",
       "file": "png/publish-gate-not-recorded-dark-1440.png",
-      "sha256": "d79cc913a2e0707570e1b7770db76460bb27ea85a07c0ca36d6eaa5ef9d26f55",
+      "sha256": "2ac70b4ec536803390debaeabf189b28de6af398802b72b392f5cb91a03d25bb",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -7186,7 +7186,7 @@
     {
       "name": "compose-editable",
       "file": "png/compose-editable-light-1000.png",
-      "sha256": "a92e709f6315fab8a4a622959b5ca49c387d1cf810f49506c19714e061678d8f",
+      "sha256": "419a719253b9797fc3d3fc4eb1ddb30ff5844f1535a977e28262b9b8f9405367",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -7293,7 +7293,7 @@
     {
       "name": "compose-editable",
       "file": "png/compose-editable-light-1280.png",
-      "sha256": "c6008faa3c19a01e9e1e8eb13bd49059a29f2694ac25897379bab1a0e660e63d",
+      "sha256": "42af0429eb16eee73d505e893716cd80371737206226449c7bfeb03d94a6417d",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -7400,7 +7400,7 @@
     {
       "name": "compose-editable",
       "file": "png/compose-editable-light-1440.png",
-      "sha256": "7d423755c76f66304436ec401b25b27ffe2d4409dfbb2932294372a389063102",
+      "sha256": "99d373a265c05865b445094e7307e1fad0911be506df94b55737779b971fc3b3",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -7507,7 +7507,7 @@
     {
       "name": "compose-editable",
       "file": "png/compose-editable-dark-1000.png",
-      "sha256": "6ccc4694a28f705b3d1a1746f98d8f62c91daaf00cb86dab921b2922bb9012fb",
+      "sha256": "5ae6b6e467fec397d870e47c3bb92abe07b4ee3cbe7ea4af2d261a27c53b9ac3",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -7614,7 +7614,7 @@
     {
       "name": "compose-editable",
       "file": "png/compose-editable-dark-1280.png",
-      "sha256": "221dffaa81d8e2d2103c29ddb33f7e7a07b1d4174e76fa0bf3e4a0ba8a091c89",
+      "sha256": "1f0741809c8c533265985908c01684ec45afd894c2e6eba2ef774c6994481002",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -7721,7 +7721,7 @@
     {
       "name": "compose-editable",
       "file": "png/compose-editable-dark-1440.png",
-      "sha256": "efb75a9013bcfc205bb7d690846c426a04225e937122eb5554cf9266451339c4",
+      "sha256": "27c97b67e00e20f947b67e61dbcdf00406e4bd80bc33a1a1c9f23e5341f3539b",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -7828,7 +7828,7 @@
     {
       "name": "publish-after-unpublish",
       "file": "png/publish-after-unpublish-light-1000.png",
-      "sha256": "5c1d936661ce5492ed57a12d6deb90422f97dda1fa3563e9971390e4661a92d0",
+      "sha256": "e9df11714c1aee25125c4dffc2262a63b2ae0a741b23a8cab109f84c2b706e5e",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -7921,7 +7921,7 @@
     {
       "name": "publish-after-unpublish",
       "file": "png/publish-after-unpublish-light-1280.png",
-      "sha256": "49b9f40647d426c4f501180770739ea3af9bd15502a9c35121f1fb8c45918486",
+      "sha256": "bb564ea98af02034284c0043d9f8638b61d78f4e94d6c13190c6eb73ba282451",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -8014,7 +8014,7 @@
     {
       "name": "publish-after-unpublish",
       "file": "png/publish-after-unpublish-light-1440.png",
-      "sha256": "27483fec56b842888d8fce82b7e493b1c9278617f9225cb790bbd80ebd19bdab",
+      "sha256": "7aac963853ef49f6ebc0c94d36ff20cc72a456d4fda10d61879f4af32ad84a65",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -8107,7 +8107,7 @@
     {
       "name": "publish-after-unpublish",
       "file": "png/publish-after-unpublish-dark-1000.png",
-      "sha256": "fcaaed50dcc489f62162d337d8e98835df6e41e63d8037dd4f2d6ef3e8bad404",
+      "sha256": "fc44ad270d02dda637418f5655a6230d3735f75af1e1eaa1cb2b6e5c1887eb1c",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -8200,7 +8200,7 @@
     {
       "name": "publish-after-unpublish",
       "file": "png/publish-after-unpublish-dark-1280.png",
-      "sha256": "d98888bbd08e96f57434c87d3983994e4f6cb6f2fe224a92ed8cc892f93b5f15",
+      "sha256": "d7e2005aa33bf713db22307f74b60fb3ef3d6132ca895d812984c7aa109cbca6",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -8293,7 +8293,7 @@
     {
       "name": "publish-after-unpublish",
       "file": "png/publish-after-unpublish-dark-1440.png",
-      "sha256": "d11b404f3b2f30dbf95e9d07d4c3994074f6a8cbc896fb01959215ccff13697c",
+      "sha256": "1ab963746c71f861e4ab6503b4117b87a426dca4dbfd43601a7a3117b154938e",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -8390,11 +8390,11 @@
     "Jobs screenshots use STUDIO_ADMIN_FREEZE=1 so a visible poll does not move seeded in-flight rows. The flow server does not set it, so compose → poll → download runs.",
     "bind off loopback refused: The Studio admin binds to 127.0.0.1 only",
     "budget reason visible",
-    "composed job dd0a1575-5d02-40f3-b8a1-8fffb1ec5251",
-    "unpublished 6127088f-59df-466f-b98b-a34e6df9ac49",
+    "composed job e2558407-fb72-4b91-a79e-86cffa2c39f6",
+    "unpublished 844644ad-4236-42c8-ad36-cd5ae59f72f5",
     "live switch left transport=stub",
     "live database at 127.0.0.1:1 shows the paused banner",
-    "live publish refused for c1753a85-8e33-4522-860a-6533952b6799; the clip stayed kept",
+    "live publish refused for 6cd05e99-a165-41c9-a3cf-510c39af04e3; the clip stayed kept",
     "security failures 0"
   ],
   "requestLog": [
@@ -8440,7 +8440,7 @@
     },
     {
       "method": "POST",
-      "path": "/api/jobs/dd0a1575-5d02-40f3-b8a1-8fffb1ec5251/download",
+      "path": "/api/jobs/e2558407-fb72-4b91-a79e-86cffa2c39f6/download",
       "status": 200
     },
     {
@@ -8455,17 +8455,17 @@
     },
     {
       "method": "GET",
-      "path": "/api/review/dd0a1575-5d02-40f3-b8a1-8fffb1ec5251",
+      "path": "/api/review/e2558407-fb72-4b91-a79e-86cffa2c39f6",
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/review/dd0a1575-5d02-40f3-b8a1-8fffb1ec5251/keep",
+      "path": "/api/review/e2558407-fb72-4b91-a79e-86cffa2c39f6/keep",
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/review/dd0a1575-5d02-40f3-b8a1-8fffb1ec5251",
+      "path": "/api/review/e2558407-fb72-4b91-a79e-86cffa2c39f6",
       "status": 200
     },
     {
@@ -8475,12 +8475,12 @@
     },
     {
       "method": "GET",
-      "path": "/api/publish/dd0a1575-5d02-40f3-b8a1-8fffb1ec5251",
+      "path": "/api/publish/e2558407-fb72-4b91-a79e-86cffa2c39f6",
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/publish/6127088f-59df-466f-b98b-a34e6df9ac49",
+      "path": "/api/publish/844644ad-4236-42c8-ad36-cd5ae59f72f5",
       "status": 200
     },
     {
@@ -8490,17 +8490,17 @@
     },
     {
       "method": "GET",
-      "path": "/api/publish/6127088f-59df-466f-b98b-a34e6df9ac49",
+      "path": "/api/publish/844644ad-4236-42c8-ad36-cd5ae59f72f5",
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/publish/6127088f-59df-466f-b98b-a34e6df9ac49",
+      "path": "/api/publish/844644ad-4236-42c8-ad36-cd5ae59f72f5",
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/publish/6127088f-59df-466f-b98b-a34e6df9ac49/go",
+      "path": "/api/publish/844644ad-4236-42c8-ad36-cd5ae59f72f5/go",
       "status": 200
     },
     {
@@ -8515,12 +8515,12 @@
     },
     {
       "method": "GET",
-      "path": "/api/publish/6127088f-59df-466f-b98b-a34e6df9ac49",
+      "path": "/api/publish/844644ad-4236-42c8-ad36-cd5ae59f72f5",
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/publish/6127088f-59df-466f-b98b-a34e6df9ac49/unpublish",
+      "path": "/api/publish/844644ad-4236-42c8-ad36-cd5ae59f72f5/unpublish",
       "status": 200
     },
     {
@@ -8535,7 +8535,7 @@
     },
     {
       "method": "GET",
-      "path": "/api/publish/6127088f-59df-466f-b98b-a34e6df9ac49",
+      "path": "/api/publish/844644ad-4236-42c8-ad36-cd5ae59f72f5",
       "status": 200
     }
   ],

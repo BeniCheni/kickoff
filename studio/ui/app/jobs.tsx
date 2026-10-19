@@ -42,11 +42,13 @@ export function JobsTable({
   onDownload,
   onRegenerate,
   regenerateBlocked,
+  downloadBlocked,
 }: {
   rows: readonly JobView[]
   onDownload: (id: string) => void
   onRegenerate: (row: JobView) => void
   regenerateBlocked?: boolean
+  downloadBlocked?: boolean
 }) {
   if (rows.length === 0) return <p className="studio-help">No jobs recorded.</p>
   return (
@@ -80,10 +82,10 @@ export function JobsTable({
                 <span className="spill" data-voice={jobVoice(row.status)}>{jobLabel(row.status, row.substate)}</span>
                 {note ? <small>{note}</small> : null}
                 {action === 'download' ? (
-                  <button type="button" className="studio-button" onClick={() => onDownload(row.id)}>{DOWNLOAD_LABEL}</button>
+                  <button type="button" className="studio-button" disabled={downloadBlocked} onClick={() => onDownload(row.id)}>{DOWNLOAD_LABEL}</button>
                 ) : null}
                 {action === 'retry-download' ? (
-                  <button type="button" className="studio-button" onClick={() => onDownload(row.id)}>{RETRY_DOWNLOAD_LABEL}</button>
+                  <button type="button" className="studio-button" disabled={downloadBlocked} onClick={() => onDownload(row.id)}>{RETRY_DOWNLOAD_LABEL}</button>
                 ) : null}
                 {action === 'regenerate' && row.regenerateEstimateUsd ? (
                   <button type="button" className="studio-button" disabled={regenerateBlocked} onClick={() => onRegenerate(row)}>
@@ -129,6 +131,7 @@ export function JobsPage({ shell, onShell }: { shell: ShellView; onShell: () => 
     const start = () => {
       if (timer !== undefined || !shouldPoll(document.visibilityState)) return
       void refresh()
+      if (!shell.falConfigured) return
       timer = window.setInterval(() => {
         if (polling.current || !shouldPoll(document.visibilityState)) {
           if (!shouldPoll(document.visibilityState)) stop()
@@ -158,9 +161,10 @@ export function JobsPage({ shell, onShell }: { shell: ShellView; onShell: () => 
       stop()
       document.removeEventListener('visibilitychange', onVisibility)
     }
-  }, [])
+  }, [shell.falConfigured])
 
   async function onDownload(id: string) {
+    if (!shell.falConfigured) return
     await downloadJob(id)
     setRows(await getJobs())
   }
@@ -179,7 +183,7 @@ export function JobsPage({ shell, onShell }: { shell: ShellView; onShell: () => 
     <>
       {shell.falConfigured ? null : <p className="studio-help" role="status">{DRAFT.falKey}</p>}
       <StatusLine body={notice} />
-      <JobsTable rows={rows} regenerateBlocked={!shell.falConfigured} onDownload={(id) => void onDownload(id)} onRegenerate={(row) => void onRegenerate(row)} />
+      <JobsTable rows={rows} regenerateBlocked={!shell.falConfigured} downloadBlocked={!shell.falConfigured} onDownload={(id) => void onDownload(id)} onRegenerate={(row) => void onRegenerate(row)} />
     </>
   )
 }

@@ -15,6 +15,7 @@ const shell: ShellView = {
   transport: 'stub',
   databaseEngine: 'pglite',
   storage: 'stub',
+  fal: 'stub',
   falConfigured: true,
   host: '127.0.0.1',
   port: 5176,
