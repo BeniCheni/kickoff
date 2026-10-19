@@ -127,6 +127,23 @@ ALTER ROLE studio_reader WITH LOGIN PASSWORD 'choose-one';
 - Redeploy the same Preview with `KICKOFF_DEMO` removed. The gallery stays, and the counts, reactions, and comments are gone.
 - Stop the database, or point the variable at a closed port, and reload Moments. The heading is `The gallery is unavailable.` Fixtures and Table still render.
 
+**If the gallery is unavailable.** The page does not say why. The deployment's function logs do, one line per process per class, `catalog read:` and the class. Open that deployment and read the logs. The line never includes the address, the host, the user, the password, or the query.
+
+| Class | What it most likely means | What to check |
+| --- | --- | --- |
+| `connection refused` | The host rejected the connection, or the port is closed. | The transaction pooler host and port 6543, and that the project is not paused. |
+| `connection timed out` | The handshake did not finish. | The same host and port. |
+| `host not found` | The host name did not resolve. | The URI you copied, especially the host. |
+| `authentication failed` | The user or the password was rejected. | `studio_reader.<project ref>` and the password on the Preview variable. |
+| `permission denied` | The role cannot select. | The five grants in the Studio README. |
+| `database not found` | The database name in the URI is wrong. | It is usually `postgres`. |
+| `relation not found` | The views are not there. | `npm run migrate` in `studio/`, as the owner. |
+| `timed out` | The read exceeded its bound. | Reload once. If it persists, the pooler accepted the connection and did not finish. |
+| `catalog list row failed validation`, `catalog detail row failed validation`, `catalog list repeated an id`, `catalog detail repeated an id`, `catalog list and detail do not match` | The views returned rows the app will not parse. | Do not edit the views. The class names the check that failed. |
+| `catalog database address is not set` | The Preview variable is missing on this deployment. | Set it, then make a new Preview. A redeploy of the import's Production build does not pick it up. |
+| `catalog database address is not usable` | The value is not a postgres URI the app can use. | Copy the URI again. |
+| `read failed` | Anything else. | The line is only the class. It will not contain the address. |
+
 The watch page sets the video `src` and calls `play()` muted on arrival.
 If that call is refused and the stored choice is off, Play and the refusal line are unchanged.
 If the stored choice is on, the page retries once muted, shows

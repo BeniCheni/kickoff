@@ -55,9 +55,12 @@ export function previewAllowed(preview: boolean, mode: CatalogMode): boolean {
 
 export class CatalogReadError extends Error {
   readonly preview: boolean
-  constructor(message: string, preview: boolean) {
+  /** A fixed class. Never an address, a host, or a query. */
+  readonly failure: string
+  constructor(message: string, preview: boolean, failure = message) {
     super(message)
     this.name = 'CatalogReadError'
     this.preview = preview
+    this.failure = failure
   }
 }

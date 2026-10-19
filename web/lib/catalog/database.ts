@@ -5,6 +5,7 @@ import { demoFromRows } from '../demo/rows'
 import { DemoReadError } from '../demo/read'
 import { connectionOptions } from './connection'
 import { asCatalogRows, catalogFromRows } from './hosted'
+import { catalogFailure } from './failure'
 import { CatalogReadError, type CatalogSuccess } from './types'
 
 let client: ReturnType<typeof postgres> | undefined
@@ -102,10 +103,10 @@ export async function loadHostedMoments(includeDemo: boolean): Promise<HostedMom
   } catch (error) {
     if (isReadTimeout(error)) {
       await closeCatalogClient()
-      throw new CatalogReadError('catalog database read timed out', false)
+      throw new CatalogReadError('catalog database read timed out', false, 'timed out')
     }
     if (error instanceof CatalogReadError) throw error
-    throw new CatalogReadError('catalog database read failed', false)
+    throw new CatalogReadError('catalog database read failed', false, catalogFailure(error))
   } finally {
     if (timer) clearTimeout(timer)
   }

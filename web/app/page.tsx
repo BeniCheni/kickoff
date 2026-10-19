@@ -2,6 +2,7 @@ import { headers } from 'next/headers'
 import { searchParamsToQuery } from '../../src/lib/urlCodecs'
 import { requestStorageOrigin } from '../lib/catalog/origin'
 import { momentsFor, tabIsMoments, watchIdFrom } from '../lib/catalog/request'
+import { warnCatalogRead } from '../lib/catalog/failure'
 import { CatalogReadError, type MomentsPayload } from '../lib/catalog/types'
 import { loadMomentsRead } from '../lib/moments-read'
 import { Shell } from './shell'
@@ -30,6 +31,7 @@ async function momentsPayload(search: string, origin: string | null): Promise<Mo
     const read = await loadMomentsRead(search)
     return momentsFor(search, () => read.catalog, origin, read.demo)
   } catch (error) {
+    warnCatalogRead(error)
     const preview = error instanceof CatalogReadError ? error.preview : false
     return { state: 'unavailable', preview, watchId: watchIdFrom(search) }
   }
