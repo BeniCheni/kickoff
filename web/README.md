@@ -41,8 +41,8 @@ connection is one per server process, `prepare: false`, a five-second connect
 timeout, and TLS required except on a loopback host. A missing address, a
 failed read, or a row the strict schema rejects shows the unavailable state.
 There is no fallback to the stub. Fixtures and Table do not open a connection.
-`KICKOFF_STORAGE_ORIGIN` is an https origin with no path. A missing or invalid
-one leaves storage addresses empty: the thumbnail chain falls through, and the
+`KICKOFF_STORAGE_ORIGIN` is an https origin with no path. A loopback `http`
+origin is accepted for the local proof only. A missing or invalid one leaves storage addresses empty: the thumbnail chain falls through, and the
 watch page shows recovery. The stub site-copy route is `/moments/stub-site/`,
 so a real `web/public/moments/thumbnails/<id>.jpg` is served at the Q24 address.
 Nothing writes those files yet.
@@ -321,8 +321,9 @@ move only in a PR that bumps Next, and that PR must re-prove U01. The check
 stays inside `typecheck`.
 
 Every direct dependency is MIT except TypeScript and puppeteer-core (both
-Apache-2.0), `drizzle-orm` 0.45.4 (Apache-2.0), and `postgres` 3.4.9 (Unlicense),
-verified from the installed packages. Exact versions are in
+Apache-2.0), `drizzle-orm` 0.45.4 (Apache-2.0), `postgres` 3.4.9 (Unlicense),
+and the test-only `pglite-server` 0.1.5 (MIT, published 2026-02-07).
+Verified from the installed packages. Exact versions are in
 package.json and package-lock.json.
 
 Isolation checks live in the new root `tests/web-isolation.test.ts` and web's

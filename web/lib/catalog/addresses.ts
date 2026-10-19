@@ -7,9 +7,13 @@ export function stubSiteCopyPath(id: string): string | null {
   return `/moments/stub-site/${id}.jpg`
 }
 
+function loopbackHost(hostname: string): boolean {
+  return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1' || hostname === '[::1]'
+}
+
 /**
  * An https origin with no userinfo, path, query, or fragment.
- * Missing and invalid values are no storage address.
+ * Loopback http is the local proof. Anything else that is not https is no address.
  */
 export function hostedStorageOrigin(value: string | undefined): string | null {
   if (!value) return null
@@ -19,11 +23,12 @@ export function hostedStorageOrigin(value: string | undefined): string | null {
   } catch {
     return null
   }
-  if (url.protocol !== 'https:') return null
   if (url.username || url.password) return null
   if (url.pathname !== '/' && url.pathname !== '') return null
   if (url.search || url.hash) return null
-  return url.origin
+  if (url.protocol === 'https:') return url.origin
+  if (url.protocol === 'http:' && loopbackHost(url.hostname)) return url.origin
+  return null
 }
 
 /** Resolved on the server: the client receives addresses, not the schema runtime. */

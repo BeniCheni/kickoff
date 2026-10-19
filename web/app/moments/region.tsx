@@ -35,7 +35,7 @@ export function MomentsRegion({
   const blocked = moments.state === 'ready' && !previewAllowed(moments.preview, catalogMode)
   const failed = blocked || moments.state !== 'ready'
   const watchId = moments.state === 'skipped' ? null : moments.watchId
-  const preview = !blocked && (moments.state === 'ready' || (moments.state === 'unavailable' && moments.preview))
+  const showStub = (moments.state === 'ready' || moments.state === 'unavailable') && moments.preview && !blocked
   const wasWatch = useRef(false)
   useEffect(() => {
     if (failed) {
@@ -70,8 +70,8 @@ export function MomentsRegion({
     body = <Gallery list={moments.list} search={search} thumbnails={moments.thumbnails} social={moments.social} videos={moments.videos} />
   }
   return (
-    <main className="moments-gallery" aria-label="Moments" data-catalog={preview ? 'stub' : undefined}>
-      {preview ? <p className="moments-preview">Stub catalog · synthetic records</p> : null}
+    <main className="moments-gallery" aria-label="Moments" data-catalog={showStub ? 'stub' : undefined}>
+      {showStub ? <p className="moments-preview">Stub catalog · synthetic records</p> : null}
       {showSampleLabel(moments) ? <p className="moments-preview">{DEMO_LABEL}</p> : null}
       {body}
     </main>

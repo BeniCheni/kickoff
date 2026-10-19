@@ -1,12 +1,21 @@
 import { catalogDetailRowSchema, catalogListRowSchema, type CatalogDetailRow, type CatalogListRow } from '@kickoff/catalog'
 import { CatalogReadError, type CatalogSuccess } from './types'
 
-function normalize(value: unknown): unknown {
+const INSTANT_KEY = /^(?:published_at|generated_at|kept_at)$/
+
+function instant(value: string): string | null {
+  if (!/^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}:\d{2}/.test(value)) return null
+  const date = new Date(value)
+  return Number.isNaN(date.getTime()) ? null : date.toISOString()
+}
+
+function normalize(value: unknown, key = ''): unknown {
   if (value instanceof Date) return value.toISOString()
-  if (Array.isArray(value)) return value.map(normalize)
+  if (typeof value === 'string' && INSTANT_KEY.test(key)) return instant(value) ?? value
+  if (Array.isArray(value)) return value.map(item => normalize(item))
   if (value !== null && typeof value === 'object') {
     const out: Record<string, unknown> = {}
-    for (const [key, item] of Object.entries(value)) out[key] = normalize(item)
+    for (const [child, item] of Object.entries(value)) out[child] = normalize(item, child)
     return out
   }
   return value

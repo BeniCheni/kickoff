@@ -5,7 +5,6 @@ export type CatalogConnection = {
   max: 1
   connect_timeout: 5
   idle_timeout: 20
-  fetch_types: false
   ssl: false | 'require'
   onnotice: () => void
 }
@@ -35,7 +34,6 @@ export function connectionOptions(url: string): CatalogConnection {
     max: 1,
     connect_timeout: 5,
     idle_timeout: 20,
-    fetch_types: false,
     ssl: loopback(parsed.hostname) ? false : 'require',
     onnotice: () => {},
   }

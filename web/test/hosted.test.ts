@@ -37,7 +37,7 @@ test('a hosted read parses strict rows and rejects an extra column', () => {
 
 test('the connection requires TLS except on loopback and does not keep the address', () => {
   const local = connectionOptions(['postgres', '://', 'reader@127.0.0.1:5432/kickoff'].join(''))
-  expect(local).toMatchObject({ prepare: false, max: 1, connect_timeout: 5, ssl: false, fetch_types: false })
+  expect(local).toMatchObject({ prepare: false, max: 1, connect_timeout: 5, ssl: false })
   expect(connectionOptions(['postgresql', '://', 'reader@localhost/kickoff'].join('')).ssl).toBe(false)
   expect(connectionOptions(['postgres', '://', 'reader@[::1]:5432/kickoff'].join('')).ssl).toBe(false)
   const remote = connectionOptions(['postgres', '://', 'reader@db.example:6543/postgres?sslmode=disable'].join(''))
@@ -53,6 +53,7 @@ test('a real storage origin is https only, and a hosted row does not use the stu
   expect(hostedStorageOrigin('https://media.example/')).toBe('https://media.example')
   expect(hostedStorageOrigin('https://media.example/moments')).toBeNull()
   expect(hostedStorageOrigin('http://media.example')).toBeNull()
+  expect(hostedStorageOrigin('http://127.0.0.1:9')).toBe('http://127.0.0.1:9')
   expect(hostedStorageOrigin('https://user:secret@media.example')).toBeNull()
   expect(hostedStorageOrigin('not a url')).toBeNull()
   const stub = several()
