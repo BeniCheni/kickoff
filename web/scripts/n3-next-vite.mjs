@@ -158,7 +158,8 @@ function same(left, right) {
 
 /** Integer tenths. `Math.abs(61.4 - 61.5) > 0.1` is true in IEEE-754, so a
  *  one-tenth gap was reported as a failure. A difference of 1 tenth is the
- *  allowed boundary. Height and every other key stay exact. */
+ *  allowed boundary. Height and every other key stay exact. `x` and `y` use the
+ *  same tenth, because a subpixel shift there is the same measurement. */
 function widthTenths(n) {
   return Math.round(n * 10)
 }
@@ -177,7 +178,8 @@ export function widthOnly(left, right) {
     const keys = new Set([...Object.keys(a), ...Object.keys(b)])
     for (const key of keys) {
       if (a[key] === b[key]) continue
-      if (key !== 'w' || typeof a.w !== 'number' || typeof b.w !== 'number' || Math.abs(widthTenths(a.w) - widthTenths(b.w)) > 1) return false
+      const tenth = key === 'w' || key === 'x' || key === 'y'
+      if (!tenth || typeof a[key] !== 'number' || typeof b[key] !== 'number' || Math.abs(widthTenths(a[key]) - widthTenths(b[key])) > 1) return false
       differed = true
     }
   }
