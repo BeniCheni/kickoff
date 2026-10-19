@@ -37,6 +37,7 @@ export type GuardInput = {
   expectedOrigin: string
   port: number
   loopbackHost: boolean
+  spentTickets: Set<string>
 }
 
 export type GuardResult = { ok: true; setCookie: boolean } | { ok: false }
@@ -48,7 +49,8 @@ export type GuardResult = { ok: true; setCookie: boolean } | { ok: false }
 export function guardRequest(input: GuardInput): GuardResult {
   if (!input.loopbackHost) return { ok: false }
   const cookieOk = input.cookieToken !== undefined && sameToken(input.cookieToken, input.token)
-  const ticketOk = input.ticket !== undefined && sameToken(input.ticket, input.token)
+  const ticketOk = input.ticket !== undefined && sameToken(input.ticket, input.token) && !input.spentTickets.has(input.token)
+  if (ticketOk) input.spentTickets.add(input.token)
   if (!cookieOk && !ticketOk) return { ok: false }
   if (CHANGING.has(input.method.toUpperCase()) && input.origin !== input.expectedOrigin) {
     return { ok: false }

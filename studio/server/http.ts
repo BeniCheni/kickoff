@@ -6,7 +6,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { LOOPBACK_HOST, assertLoopbackBind, isLoopbackHost } from './bind.ts'
 import { SESSION_COOKIE, cookieValue, guardRequest, oneTimeUrl, sessionCookie } from './guard.ts'
-import { readBytes, readJson } from './body.ts'
+import { BodyError, readBytes, readJson } from './body.ts'
 import { estimateJobs, readCompose, submitJobs } from './compose.ts'
 import { downloadJob, jobIdFrom, pollInFlight, readJobs, regenerateJob } from './jobs.ts'
 import { serveFile as serveRecorded } from './media.ts'
@@ -102,7 +102,7 @@ async function handle(
   request: IncomingMessage,
   response: ServerResponse,
   opened: OpenedAdmin,
-  options: { token: string; origin: string; port: number; boom?: string },
+  options: { token: string; origin: string; port: number; boom?: string; spentTickets: Set<string> },
 ): Promise<void> {
   const url = new URL(request.url ?? '/', options.origin)
   const method = request.method ?? 'GET'
@@ -116,6 +116,7 @@ async function handle(
     expectedOrigin: options.origin,
     port: options.port,
     loopbackHost: isLoopbackHost(request.headers.host, options.port),
+    spentTickets: options.spentTickets,
   })
   if (!decision.ok) {
     refuse(response)
@@ -296,16 +297,18 @@ export async function startAdmin(options: StartAdminOptions = {}): Promise<Admin
   const live = options.live ?? false
   const opened = await openAdmin(options.env ?? process.env, live)
   const token = options.token ?? randomBytes(32).toString('base64url')
+  const spentTickets = new Set<string>()
   const server: Server = createServer((request, response) => {
     const address = server.address()
     const port = address && typeof address !== 'string' ? address.port : 0
     const origin = `http://${LOOPBACK_HOST}:${port}`
-    handle(request, response, opened, { token, origin, port, boom: options.boom }).catch((error: unknown) => {
+    handle(request, response, opened, { token, origin, port, boom: options.boom, spentTickets }).catch((error: unknown) => {
       if (response.headersSent) {
         response.end()
         return
       }
-      sendJson(response, 500, { error: publicError(error) })
+      const status = error instanceof BodyError ? error.status : 500
+      sendJson(response, status, { error: publicError(error) })
     })
   })
 

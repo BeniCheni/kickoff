@@ -49,7 +49,7 @@ function httpGet(url: string, method = 'GET'): Promise<string> {
   })
 }
 
-function httpCall(port: number, method: string, urlPath: string, headers: Record<string, string>, body?: string): Promise<{ status: number; body: string }> {
+function httpCall(port: number, method: string, urlPath: string, headers: Record<string, string>, body?: string): Promise<{ status: number; body: string; setCookie: string }> {
   return new Promise((resolve, reject) => {
     const req = httpRequest({
       hostname: '127.0.0.1',
@@ -60,7 +60,14 @@ function httpCall(port: number, method: string, urlPath: string, headers: Record
     }, (response) => {
       const chunks: Buffer[] = []
       response.on('data', (chunk: Buffer) => chunks.push(chunk))
-      response.on('end', () => resolve({ status: response.statusCode ?? 0, body: Buffer.concat(chunks).toString('utf8') }))
+      response.on('end', () => {
+        const setCookie = response.headers['set-cookie']
+        resolve({
+          status: response.statusCode ?? 0,
+          body: Buffer.concat(chunks).toString('utf8'),
+          setCookie: (Array.isArray(setCookie) ? setCookie[0] : setCookie)?.split(';')[0] ?? '',
+        })
+      })
     })
     req.on('error', reject)
     if (body) req.write(body)
@@ -195,8 +202,8 @@ async function launchChrome(port: number, dir: string): Promise<ChildProcess> {
   throw new Error('chrome did not start')
 }
 
-function startServer(dataDir: string, mediaDir: string, extra: Record<string, string> = {}): Promise<{ port: number; origin: string; token: string; stop: () => void }> {
-  const child = spawn('npx', ['tsx', 'server/main.ts'], {
+function startServer(dataDir: string, mediaDir: string, extra: Record<string, string> = {}, args: string[] = []): Promise<{ port: number; origin: string; token: string; stop: () => void }> {
+  const child = spawn('npx', ['tsx', 'server/main.ts', ...args], {
     cwd: studioDir,
     env: {
       PATH: process.env.PATH,
@@ -648,8 +655,69 @@ async function main(): Promise<void> {
     const live = await page.evaluate<{ status: number; body: string; transport: string }>(`fetch('/api/shell', { method: 'POST', headers: { 'content-type': 'application/json', origin: location.origin }, body: JSON.stringify({ transport: 'live' }) }).then(async (response) => ({ status: response.status, body: await response.text(), transport: '' })).then(async (result) => { const shell = await fetch('/api/shell').then((response) => response.json()); return { ...result, transport: shell.transport } })`)
     security.push({ name: 'browser live switch', status: live.status, secrets: findSecrets(live.body + live.transport) })
     notes.push(`live switch left transport=${live.transport}`)
+    flowServer.stop()
+    const dummyUrl = ['postgres', '://127.0.0.1:1/studio'].join('')
+    const pausedLive = await startServer(flowData, flowMedia, { STUDIO_LIVE: '1', DATABASE_URL: dummyUrl }, ['--live'])
+    servers.push(pausedLive)
+    const pausedTicket = await httpCall(pausedLive.port, 'GET', `/?ticket=${encodeURIComponent(pausedLive.token)}`, {})
+    const pausedShell = JSON.parse((await httpCall(pausedLive.port, 'GET', '/api/shell', { cookie: pausedTicket.setCookie })).body) as { database: string; storage: string; transport: string; falConfigured: boolean }
+    if (pausedShell.database !== 'unavailable' || pausedShell.storage !== 'refused' || pausedShell.transport !== 'live' || pausedShell.falConfigured !== false) {
+      throw new Error(`paused live shell ${JSON.stringify(pausedShell)}`)
+    }
+    const pausedBody = JSON.stringify(pausedShell)
+    if (pausedBody.includes('Failed query')) throw new Error('driver text in the paused shell')
+    security.push({ name: 'live database paused', status: 200, secrets: findSecrets(pausedBody) })
+    notes.push('live database at 127.0.0.1:1 shows the paused banner')
+    pausedLive.stop()
+
+    const liveData = path.join(proofDir, 'live-data')
+    const liveMedia = path.join(proofDir, 'live-media')
+    rmSync(liveData, { recursive: true, force: true })
+    rmSync(liveMedia, { recursive: true, force: true })
+    const liveSeed = await seedAdmin(liveData, liveMedia, 'flow')
+    const liveServer = await startServer(liveData, liveMedia, {
+      STUDIO_LIVE: '1',
+      DATABASE_URL: dummyUrl,
+      STUDIO_ADMIN_LIVE_PGLITE: '1',
+      NODE_ENV: 'test',
+    }, ['--live'])
+    servers.push(liveServer)
+    const liveTicket = await httpCall(liveServer.port, 'GET', `/?ticket=${encodeURIComponent(liveServer.token)}`, {})
+    const liveCookie = liveTicket.setCookie
+    const liveHeaders = { cookie: liveCookie, origin: liveServer.origin, 'content-type': 'application/json' }
+    const gate = JSON.parse((await httpCall(liveServer.port, 'POST', '/api/gate', liveHeaders, JSON.stringify({
+      answer: 'Recorded for the live refusal proof.',
+      disclosure: 'The Generated label stays.',
+      recordedBy: 'operator',
+      source: 'prove-admin',
+    }))).body) as { outcome: string }
+    if (gate.outcome !== 'gate-recorded') throw new Error(`live gate ${gate.outcome}`)
+    const ready = liveSeed.jobs.keptReady
+    if (!ready) throw new Error('live seed')
+    const refusedPublish = JSON.parse((await httpCall(liveServer.port, 'POST', `/api/publish/${ready}/go`, liveHeaders, JSON.stringify({
+      publicId: 'live-proof',
+      title: 'Live proof',
+      position: 1,
+      confirm: true,
+    }))).body) as { outcome: string }
+    if (refusedPublish.outcome !== 'upload-failed') throw new Error(`live publish ${refusedPublish.outcome}`)
+    security.push({ name: 'live publish', status: 200, secrets: findSecrets(JSON.stringify(refusedPublish)) })
+    for (const [name, pathName, payload] of [
+      ['live unpublish delete', `/api/publish/${ready}/unpublish`, { deleteFiles: true }],
+      ['live retry delete', `/api/publish/${ready}/retry-delete`, {}],
+      ['live retry removal', `/api/publish/${ready}/retry-removal`, {}],
+    ] as const) {
+      const refused = JSON.parse((await httpCall(liveServer.port, 'POST', pathName, liveHeaders, JSON.stringify(payload))).body) as { outcome: string }
+      if (refused.outcome !== 'storage-refused') throw new Error(`${name} ${refused.outcome}`)
+      security.push({ name, status: 200, secrets: [] })
+    }
+    const stillKept = JSON.parse((await httpCall(liveServer.port, 'GET', '/api/jobs', { cookie: liveCookie })).body) as { id: string; status: string }[]
+    if (stillKept.find((row) => row.id === ready)?.status !== 'kept') throw new Error('live publish changed the clip')
+    notes.push(`live publish refused for ${ready}; the clip stayed kept`)
+    liveServer.stop()
     writeFileSync(path.join(proofDir, 'security.json'), JSON.stringify(security, null, 2))
-    const failedSecurity = security.filter((item) => item.status !== 403 && item.name !== 'browser live switch' || item.secrets.length > 0 || (item.name === 'browser live switch' && live.transport !== 'stub'))
+    const allowed = new Set(['browser live switch', 'live database paused', 'live publish', 'live unpublish delete', 'live retry delete', 'live retry removal'])
+    const failedSecurity = security.filter((item) => item.secrets.length > 0 || (!allowed.has(item.name) && item.status !== 403) || (item.name === 'browser live switch' && live.transport !== 'stub'))
     notes.push(`security failures ${failedSecurity.length}`)
 
     const badScroll = shots.filter((shot) => !shot.scrollEqual)

@@ -33,6 +33,7 @@ function ask(admin: AdminServer, options: {
   path: string
   method?: string
   headers?: IncomingHttpHeaders
+  body?: string | Buffer
 }): Promise<{ status: number; headers: IncomingHttpHeaders; body: string }> {
   return new Promise((resolve, reject) => {
     const req = httpRequest({
@@ -54,6 +55,7 @@ function ask(admin: AdminServer, options: {
       }))
     })
     req.on('error', reject)
+    if (options.body) req.write(options.body)
     req.end()
   })
 }
@@ -200,5 +202,43 @@ describe('admin server', () => {
     }
     expect(creditShell.outOfCredit).toBe(true)
     expect(creditShell.transport).toBe('stub')
+  })
+
+  it('answers a bad body with its status, and spends the one-time URL', async () => {
+    const admin = await boot()
+    const first = await ask(admin, { path: `/?ticket=${encodeURIComponent(admin.token)}` })
+    expect(first.status).toBe(302)
+    const cookie = cookieFrom(first.headers['set-cookie'])
+    const second = await ask(admin, { path: `/?ticket=${encodeURIComponent(admin.token)}` })
+    expect(second.status).toBe(403)
+    const still = await ask(admin, { path: '/api/shell', headers: { cookie } })
+    expect(still.status).toBe(200)
+
+    const headers = { cookie, origin: admin.origin }
+    const malformed = await ask(admin, {
+      path: '/api/estimate',
+      method: 'POST',
+      headers: { ...headers, 'content-type': 'application/json' },
+      body: '{not json',
+    })
+    expect(malformed.status).toBe(400)
+    const plain = await ask(admin, {
+      path: '/api/estimate',
+      method: 'POST',
+      headers: { ...headers, 'content-type': 'text/plain' },
+      body: '{}',
+    })
+    expect(plain.status).toBe(415)
+    const huge = await ask(admin, {
+      path: '/api/estimate',
+      method: 'POST',
+      headers: { ...headers, 'content-type': 'application/json' },
+      body: Buffer.alloc(1_000_001, 0x20),
+    })
+    expect(huge.status).toBe(413)
+    for (const response of [malformed, plain, huge]) {
+      expect(response.body).not.toContain('Failed query')
+      expect(findSecrets(response.body)).toEqual([])
+    }
   })
 })

@@ -17,6 +17,7 @@ function decide(over: Partial<Parameters<typeof guardRequest>[0]> = {}) {
     expectedOrigin: 'http://127.0.0.1:5176',
     port: 5176,
     loopbackHost: true,
+    spentTickets: new Set<string>(),
     ...over,
   })
 }
@@ -37,6 +38,10 @@ describe('admin guard', () => {
     expect(decide({ cookieToken: undefined, ticket: undefined }).ok).toBe(false)
     expect(decide({ cookieToken: 'wrong', ticket: undefined }).ok).toBe(false)
     expect(decide({ cookieToken: undefined, ticket: token })).toEqual({ ok: true, setCookie: true })
+    const spent = new Set<string>()
+    expect(decide({ cookieToken: undefined, ticket: token, spentTickets: spent })).toEqual({ ok: true, setCookie: true })
+    expect(decide({ cookieToken: undefined, ticket: token, spentTickets: spent }).ok).toBe(false)
+    expect(decide({ cookieToken: token, ticket: token, spentTickets: spent })).toEqual({ ok: true, setCookie: false })
     expect(decide({ method: 'POST', origin: 'http://evil.example' }).ok).toBe(false)
     expect(decide({ method: 'POST', origin: undefined }).ok).toBe(false)
     expect(decide({ method: 'POST', origin: 'http://127.0.0.1:5176' })).toEqual({ ok: true, setCookie: false })
