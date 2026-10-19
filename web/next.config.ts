@@ -25,6 +25,16 @@ const config: NextConfig = {
     root: repoRootPath,
     resolveAlias: reactAliases,
   },
+  // The snapshot route reads ../src/data at runtime, and the layout reads
+  // generated files through process.cwd(). Both are outside a static import.
+  // Next's file trace, read 2026-10-19, uses the project directory unless this
+  // root is widened, and includes are globs from that project.
+  // https://nextjs.org/docs/app/api-reference/config/next-config-js/output
+  outputFileTracingRoot: repoRootPath,
+  outputFileTracingIncludes: {
+    '/': ['./generated/theme-boot.txt', './generated/shell.css', '../src/data/fixtures.json', '../src/data/meta.json', '../src/data/standings.json'],
+    '/api/snapshot': ['../src/data/fixtures.json', '../src/data/meta.json', '../src/data/standings.json'],
+  },
   webpack: (webpackConfig) => {
     const resolve = webpackConfig.resolve ?? {}
     const current = resolve.alias

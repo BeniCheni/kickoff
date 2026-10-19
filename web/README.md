@@ -68,6 +68,51 @@ It does not show on an unavailable gallery, an empty list, or a watch id that is
 The counts, reaction bar and comments render only from that read, and only on the Moments tab.
 An id with no stats row shows no social layer.
 The payload carries each published id's comments with its counts.
+
+## The private preview on Vercel
+
+Read 2026-10-19, America/New_York. This is the layout for Beni's project. Nothing here creates the project, sets a variable, or runs a migration against Supabase.
+
+**Root Directory `web/`, with files outside it included.** [Configuring a Build](https://vercel.com/docs/builds/configure-a-build) says a Root Directory cannot see parent files and cannot use `..`. [Monorepos FAQ](https://vercel.com/docs/monorepos/monorepo-faq) says the Root Directory section has **Include source files outside of the Root Directory in the Build Step**, on by default for projects created after 27 Aug 2020 23:50 UTC. Turn that on and confirm the checkbox. The app imports `../src`, installs `@kickoff/catalog` and `@kickoff/demo` from `file:../packages`, and the build runs `../node_modules/tsx` on `../scripts/write-theme-head.ts`. Those paths exist only when the parent checkout is present. The repo-root layout would hide `web/next.config.ts` from Next's project root, so this layout keeps Root Directory at `web/` and includes the parent.
+
+**Install and build.** Override the install command, because the install path is the Root Directory ([Configuring a Build](https://vercel.com/docs/builds/configure-a-build)):
+
+```sh
+npm ci --prefix .. --no-audit --no-fund && npm ci --no-audit --no-fund
+```
+
+Leave the build command as the `build` script. Vercel uses that script for Next.js. It writes the theme files, then runs `next build`. Node.js version **24.x** in Build and Deployment. That is the current default, and `package.json` `engines` allows it ([Node.js versions](https://vercel.com/docs/functions/runtimes/node-js/node-js-versions)). CI uses Node 24.
+
+**Preview variables only.** In Environment Variables, select Preview and not Production ([Environment variables](https://vercel.com/docs/environment-variables)). Do not use a `NEXT_PUBLIC_` name.
+
+- `KICKOFF_DATABASE_URL` — the `studio_reader` login through the shared transaction pooler. Supabase, read 2026-10-19, says a serverless function uses that pooler, port 6543, and a custom role's username is `[ROLE].[PROJECT-REF]` ([Connect to your database](https://supabase.com/docs/guides/database/connecting-to-postgres)). Copy the transaction pooler string from the dashboard's Connect dialog. Set the user to `studio_reader.<project ref>` and the password you choose below. Do not commit the string.
+- `KICKOFF_STORAGE_ORIGIN` — the same https origin as the Studio's `STUDIO_STORAGE_ORIGIN`, with no path.
+- `KICKOFF_DEMO` — `on`.
+
+Production gets none of these yet.
+
+**Deployment Protection stays on.** Standard Protection is available on every plan and protects every deployment except production domains ([Deployment Protection](https://vercel.com/docs/deployment-protection)). Leave Vercel Authentication on. The preview asks a visitor to sign in to Vercel. Password Protection is not on Hobby.
+
+**Database, in this order.** You run these. The app does not.
+
+1. `npm run migrate` in `studio/`, against the session pooler, as the owner. That applies `0000` through `0004`.
+2. In the Supabase SQL editor, as the owner, turn `studio_reader` into a login with a password you choose. Give that password to the Preview variable only:
+
+```sql
+ALTER ROLE studio_reader WITH LOGIN PASSWORD 'choose-one';
+```
+
+3. After Wednesday's publishes, `npm run seed:demo` in `studio/`, again as the owner.
+4. Run `npm run seed:demo` again after each later publish. It replaces the sample rows and does not write the catalog.
+
+**What you should see.** Open the preview while signed in to Vercel.
+
+- The Moments count matches `select count(*) from catalog.videos`.
+- A card image or the watch video requests an address that starts with `KICKOFF_STORAGE_ORIGIN`. Opening that address returns the file.
+- The line `Sample reactions and comments · made-up viewers, not real ones` is on the gallery.
+- Redeploy the same Preview with `KICKOFF_DEMO` removed. The gallery stays, and the counts, reactions, and comments are gone.
+- Stop the database, or point the variable at a closed port, and reload Moments. The heading is `The gallery is unavailable.` Fixtures and Table still render.
+
 The watch page sets the video `src` and calls `play()` muted on arrival.
 If that call is refused and the stored choice is off, Play and the refusal line are unchanged.
 If the stored choice is on, the page retries once muted, shows
