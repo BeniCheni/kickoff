@@ -539,9 +539,10 @@ async function main(): Promise<void> {
     if (!fresh) throw new Error('composed job did not reach completed')
     notes.push(`composed job ${fresh}`)
     await page.goto(`${flowServer.origin}/#jobs`)
-    await waitFor(page, `[...document.querySelectorAll('tr')].some((row) => row.textContent.includes(${JSON.stringify(fresh)}) && row.textContent.includes('Download'))`, 15000)
+    await waitFor(page, `(() => { const cell = document.querySelector(${JSON.stringify(`td.job-id[title="${fresh}"]`)}); const row = cell && cell.closest('tr'); return !!row && row.textContent.includes('Download') })()`, 15000)
     await page.evaluate<void>(`{
-      const row = [...document.querySelectorAll('tr')].find((item) => item.textContent.includes(${JSON.stringify(fresh)}) && item.textContent.includes('Download'))
+      const cell = document.querySelector(${JSON.stringify(`td.job-id[title="${fresh}"]`)})
+      const row = cell && cell.closest('tr')
       if (!row) throw new Error('download row missing')
       row.querySelector('button')?.click()
     }`)
