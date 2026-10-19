@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { SUBJECT_LABELS } from '@kickoff/catalog'
 import { DRAFT } from '../../shared/admin-copy.ts'
-import { confirmImport, previewImport, uploadImportClip, uploadImportStill, type ImportPreview } from './api.ts'
+import { confirmImport, discardImportUpload, previewImport, uploadImportClip, uploadImportStill, type ImportPreview } from './api.ts'
 import { StatusLine } from './status.tsx'
 
 export type ImportFacts = ImportPreview
@@ -170,11 +170,21 @@ export function ImportPage() {
       setNotice(clipBody)
       return
     }
-    const stillBody = await uploadImportStill(await still.arrayBuffer(), still.type || 'image/jpeg')
+    let stillBody: unknown
+    try {
+      stillBody = await uploadImportStill(await still.arrayBuffer(), still.type || 'image/jpeg')
+    } catch {
+      await discardImportUpload(clipId, 'clip').catch(() => undefined)
+      setPreview(null)
+      setIds(null)
+      setNotice({ outcome: 'refused' })
+      return
+    }
     const stillId = stillBody && typeof stillBody === 'object' && typeof (stillBody as { id?: unknown }).id === 'string'
       ? (stillBody as { id: string }).id
       : null
     if (!stillId) {
+      await discardImportUpload(clipId, 'clip').catch(() => undefined)
       setPreview(null)
       setIds(null)
       setNotice(stillBody)

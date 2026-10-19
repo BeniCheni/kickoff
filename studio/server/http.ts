@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url'
 import { LOOPBACK_HOST, assertLoopbackBind, isLoopbackHost } from './bind.ts'
 import { SESSION_COOKIE, cookieValue, guardRequest, oneTimeUrl, sessionCookie } from './guard.ts'
 import { BodyError, CLIP_LIMIT, PHOTO_LIMIT, readBytes, readJson } from './body.ts'
-import { confirmImport, previewImport, storeImport } from './import.ts'
+import { confirmImport, discardIncomingUpload, previewImport, storeImport } from './import.ts'
 import { estimateJobs, readCompose, submitJobs } from './compose.ts'
 import { downloadJob, jobIdFrom, pollInFlight, readJobs, regenerateJob } from './jobs.ts'
 import { serveFile as serveRecorded } from './media.ts'
@@ -228,6 +228,11 @@ async function handle(
     }
     const stored = storeImport(opened.mediaDir, 'still', new Uint8Array(bytes))
     sendJson(response, 'outcome' in stored ? 400 : 200, stored, cookieHeader)
+    return
+  }
+  if (url.pathname === '/api/import/discard' && method === 'POST') {
+    const removed = discardIncomingUpload(opened.mediaDir, await readJson(request))
+    sendJson(response, removed.outcome === 'discarded' ? 200 : 400, removed, cookieHeader)
     return
   }
   if (url.pathname === '/api/import/preview' && method === 'POST') {

@@ -418,6 +418,60 @@ describe('import screen', () => {
     emptyIncoming()
   })
 
+  it('discards the uploaded clip when the still is over 20 MB', async () => {
+    const env = folders()
+    const admin = await startAdmin({ env, port: 0 })
+    servers.push(admin)
+    const cookie = await cookieFor(admin)
+    const headers = { cookie, origin: admin.origin, 'content-type': 'application/json' }
+    const mediaDir = env.STUDIO_MEDIA_DIR
+    if (!mediaDir) throw new Error('media dir')
+    const incomingDir = path.join(mediaDir, 'incoming')
+    const clip = JSON.parse((await ask(admin, {
+      path: '/api/import/clip',
+      method: 'POST',
+      headers: { cookie, origin: admin.origin, 'content-type': 'video/mp4' },
+      body: Buffer.from(syntheticMp4()),
+    })).body) as { id: string }
+    const still = await ask(admin, {
+      path: '/api/import/still',
+      method: 'POST',
+      headers: { cookie, origin: admin.origin, 'content-type': 'image/jpeg' },
+      body: Buffer.alloc(PHOTO_LIMIT + 1),
+    })
+    expect(still.status).toBe(413)
+    expect(readdirSync(incomingDir)).toEqual([`${clip.id}.mp4`])
+    const removed = JSON.parse((await ask(admin, {
+      path: '/api/import/discard',
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ id: clip.id, kind: 'clip' }),
+    })).body) as { outcome: string }
+    expect(removed.outcome).toBe('discarded')
+    expect(readdirSync(incomingDir)).toEqual([])
+    const keeper = JSON.parse((await ask(admin, {
+      path: '/api/import/clip',
+      method: 'POST',
+      headers: { cookie, origin: admin.origin, 'content-type': 'video/mp4' },
+      body: Buffer.from(syntheticMp4()),
+    })).body) as { id: string }
+    for (const body of [
+      { id: '../outside', kind: 'clip' },
+      { id: path.join(incomingDir, `${keeper.id}.mp4`), kind: 'clip' },
+      { id: 'a'.repeat(32), kind: 'clip' },
+    ]) {
+      const refused = await ask(admin, {
+        path: '/api/import/discard',
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body),
+      })
+      expect(refused.status).toBe(400)
+      expect(JSON.parse(refused.body)).toEqual({ outcome: 'refused' })
+    }
+    expect(readdirSync(incomingDir)).toEqual([`${keeper.id}.mp4`])
+  })
+
   it('leaves an outside folder alone when incoming is a symlink to it', async () => {
     const data = mkdtempSync(path.join(tmpdir(), 'kickoff-studio-data-'))
     const media = mkdtempSync(path.join(tmpdir(), 'kickoff-studio-media-'))

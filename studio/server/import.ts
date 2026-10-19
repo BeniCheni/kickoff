@@ -33,6 +33,19 @@ function incoming(mediaDir: string, id: string, extension: 'mp4' | 'jpg'): strin
   return containedPath(mediaDir, path.join(mediaDir, 'incoming', `${id}.${extension}`))
 }
 
+/** Delete one unconfirmed upload by its id. A bad id, a path, or a missing file is refused. */
+export function discardIncomingUpload(mediaDir: string, body: unknown): { outcome: 'discarded' } | { outcome: 'refused' } {
+  const record = body && typeof body === 'object' ? body as { id?: unknown; kind?: unknown } : {}
+  if (record.kind !== 'clip' && record.kind !== 'still') return { outcome: 'refused' }
+  if (typeof record.id !== 'string' || !ID.test(record.id)) return { outcome: 'refused' }
+  const file = incoming(mediaDir, record.id, record.kind === 'clip' ? 'mp4' : 'jpg')
+  if (!file) return { outcome: 'refused' }
+  const checked = containedPath(mediaDir, file)
+  if (checked !== file) return { outcome: 'refused' }
+  rmSync(checked)
+  return { outcome: 'discarded' }
+}
+
 function discardUploads(mediaDir: string, clipId?: string, stillId?: string): void {
   for (const [id, extension] of [[clipId, 'mp4'], [stillId, 'jpg']] as const) {
     if (!id) continue

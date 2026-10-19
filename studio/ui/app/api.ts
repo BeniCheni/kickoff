@@ -207,6 +207,15 @@ export async function uploadImportStill(bytes: ArrayBuffer, type: string): Promi
   return postBytes('/api/import/still', type, bytes)
 }
 
+export async function discardImportUpload(id: string, kind: 'clip' | 'still'): Promise<unknown> {
+  const response = await fetch('/api/import/discard', {
+    method: 'POST',
+    headers: { accept: 'application/json', 'content-type': 'application/json' },
+    body: JSON.stringify({ id, kind }),
+  })
+  return await response.json() as unknown
+}
+
 export async function previewImport(clipId: string, stillId: string): Promise<unknown> {
   const response = await postJson('/api/import/preview', { clipId, stillId })
   return await response.json() as unknown
