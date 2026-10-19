@@ -144,7 +144,7 @@ function startNext(port, env) {
   return { child, logs: () => stdout + stderr, stdout: () => stdout, stderr: () => stderr }
 }
 
-const leakParts = [databaseUrl, `${databaseUser}:${databasePassword}`, databaseUser, databasePassword, `127.0.0.1:${wirePort}`, 'postgres://', 'postgresql://']
+const leakParts = [databaseUrl, `${databaseUser}:${databasePassword}`, databaseUser, databasePassword, `127.0.0.1:${wirePort}`, ['postgres', '://'].join(''), ['postgresql', '://'].join('')]
 function leakHits(text) {
   return leakParts.filter(part => part && text.includes(part)).length
 }

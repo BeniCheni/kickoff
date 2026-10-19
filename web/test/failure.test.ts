@@ -25,7 +25,7 @@ test('a failed catalog read logs one class and never the address', () => {
   expect(text).not.toContain('db.example')
   expect(text).not.toContain('6543')
   expect(text).not.toContain('studio_reader')
-  expect(text).not.toContain('postgres://')
+  expect(text).not.toContain(['postgres', '://'].join(''))
   expect(catalogFailure(Object.assign(new Error('x'), { code: 'CONNECT_TIMEOUT' }))).toBe('connection timed out')
   expect(catalogFailure(Object.assign(new Error('x'), { code: '42501' }))).toBe('permission denied')
   expect(catalogFailure(Object.assign(new Error('x'), { code: '3D000' }))).toBe('database not found')

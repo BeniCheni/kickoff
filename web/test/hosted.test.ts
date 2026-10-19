@@ -57,7 +57,7 @@ test('the connection requires TLS except on loopback and does not keep the addre
   expect(connectionOptions(['postgres', '://', 'reader@db.example:6543/postgres?sslmode=require'].join('')).ssl).toBe('require')
   const loopbackUrl = ['postgres', '://', 'reader@127.0.0.1:5432/kickoff'].join('')
   try {
-    connectionOptions(loopbackUrl, { VERCEL_ENV: 'preview' })
+    connectionOptions(loopbackUrl, { ...process.env, VERCEL_ENV: 'preview' })
     throw new Error('loopback was accepted on a preview')
   } catch (error) {
     expect(error).toBeInstanceOf(CatalogReadError)
