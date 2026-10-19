@@ -171,3 +171,11 @@ After a withdraw, or after a delete that left one object, retry the delete. It s
 ```bash
 npm run cli -- retry-delete --live --job <job-id>
 ```
+
+## The sample audience
+
+Migration `0004_demo_social.sql` adds schema `demo`. It does not edit `0000` through `0003`, and it does not change `catalog.videos` or `catalog.video`. `npm run migrate` applies it with the others.
+
+Three tables hold the sample shapes from `@kickoff/demo`: `users`, `video_stats`, and `comments`. The five reaction counts are integer columns (`heart_eyes_cat`, `joy_cat`, `soccer`, `fire`, `clap`), not a JSON document on the table. `video_id` stores a published public id by value. It is not a foreign key, so withdrawing a clip does not need this schema. Every row has `synthetic boolean not null default true`, and a check rejects any other value. The three tables enable row-level security and create no policies, the same posture as the Studio tables, so they stay off the Data API.
+
+`demo.social_users`, `demo.social_stats`, and `demo.social_comments` are the read-only projections. Each one lists the package's fields and then `synthetic`, so a reader can refuse a row that is not synthetic. `studio_reader` receives `USAGE` on `demo` and `SELECT` on those three views. It receives nothing else in this schema. Turning that role into a login stays Beni's step, as it was for the catalog views.

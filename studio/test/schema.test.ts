@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 import { readFileSync, readdirSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -146,17 +147,37 @@ describe('migrations on a fresh database', () => {
     ])
   })
 
-  it('applies 0000 through 0003 and a second migrate is a no-op', async () => {
+  it('applies 0000 through 0004 and a second migrate is a no-op', async () => {
     const { client, db } = await freshDatabase()
     const before = await rows<{ count: number }>(client, `
       SELECT count(*)::int AS count FROM drizzle.__drizzle_migrations
     `)
-    expect(before[0]?.count).toBe(4)
+    expect(before[0]?.count).toBe(5)
     const gate = readFileSync(path.join(migrationsDir, '0003_card_gate.sql'), 'utf8')
     expect(gate).toContain('videos_id_token')
     expect(gate).not.toMatch(/create\s+(or\s+replace\s+)?view/i)
     expect(gate).not.toMatch(/drop\s+view/i)
     expect(gate).not.toMatch(/alter\s+view/i)
+    const demo = readFileSync(path.join(migrationsDir, '0004_demo_social.sql'), 'utf8')
+    expect(demo).not.toMatch(/studio\.|catalog\./)
+    expect(demo).not.toMatch(/references\s+/i)
+    const sha256 = (name: string) => createHash('sha256').update(readFileSync(path.join(migrationsDir, name))).digest('hex')
+    expect(sha256('0002_catalog_reader.sql')).toBe('82303fb2b746d0515ce024f886d990b35be91cb1bb22f08f5a71184d9f2c5f0a')
+    expect(sha256('0003_card_gate.sql')).toBe('b51600692eba760b1fdf7dad69b0120a6ff718300e3d95fd0325f36a56f81b69')
+    const defs = await rows<{ relname: string; def: string }>(client, `
+      SELECT c.relname, pg_get_viewdef(c.oid, true) AS def
+      FROM pg_class c
+      JOIN pg_namespace n ON n.oid = c.relnamespace
+      WHERE n.nspname = 'catalog' AND c.relkind = 'v'
+      ORDER BY 1
+    `)
+    expect(defs.map((row) => ({
+      relname: row.relname,
+      sha256: createHash('sha256').update(row.def).digest('hex'),
+    }))).toEqual([
+      { relname: 'video', sha256: 'caa6de227f58f755b8e7be7543bdc063cfd89e11ffb0b458585e8416b75ee5f2' },
+      { relname: 'videos', sha256: '24f6a454230b67691615750c19adc794c28f88b33e9474b317460bd41f8621cb' },
+    ])
     await migrate(db, { migrationsFolder: migrationsDir })
     const after = await rows<{ count: number }>(client, `
       SELECT count(*)::int AS count FROM drizzle.__drizzle_migrations
@@ -188,7 +209,7 @@ describe('Data API control', () => {
     `)
     expect(tables.length).toBeGreaterThan(0)
     for (const table of tables) {
-      expect(table.nspname).toBe('studio')
+      expect(['studio', 'demo']).toContain(table.nspname)
       expect(table.relrowsecurity).toBe(true)
     }
     const exposed = await rows<{ count: string }>(client, `
@@ -203,7 +224,7 @@ describe('Data API control', () => {
       FROM pg_policy pol
       JOIN pg_class c ON c.oid = pol.polrelid
       JOIN pg_namespace n ON n.oid = c.relnamespace
-      WHERE n.nspname = 'studio'
+      WHERE n.nspname IN ('studio', 'demo')
     `)
     expect(policies[0]?.count).toBe('0')
   })
@@ -467,6 +488,9 @@ describe('read-only catalog role', () => {
       ORDER BY table_name, privilege_type
     `)
     expect(grants).toEqual([
+      { table_schema: 'demo', table_name: 'social_comments', privilege_type: 'SELECT' },
+      { table_schema: 'demo', table_name: 'social_stats', privilege_type: 'SELECT' },
+      { table_schema: 'demo', table_name: 'social_users', privilege_type: 'SELECT' },
       { table_schema: 'catalog', table_name: 'video', privilege_type: 'SELECT' },
       { table_schema: 'catalog', table_name: 'videos', privilege_type: 'SELECT' },
     ])
@@ -475,18 +499,24 @@ describe('read-only catalog role', () => {
       studio_create: boolean
       catalog_usage: boolean
       catalog_create: boolean
+      demo_usage: boolean
+      demo_create: boolean
     }>(client, `
       SELECT
         has_schema_privilege('studio_reader', 'studio', 'USAGE') AS studio_usage,
         has_schema_privilege('studio_reader', 'studio', 'CREATE') AS studio_create,
         has_schema_privilege('studio_reader', 'catalog', 'USAGE') AS catalog_usage,
-        has_schema_privilege('studio_reader', 'catalog', 'CREATE') AS catalog_create
+        has_schema_privilege('studio_reader', 'catalog', 'CREATE') AS catalog_create,
+        has_schema_privilege('studio_reader', 'demo', 'USAGE') AS demo_usage,
+        has_schema_privilege('studio_reader', 'demo', 'CREATE') AS demo_create
     `)
     expect(schemaPrivileges).toEqual([{
       studio_usage: false,
       studio_create: false,
       catalog_usage: true,
       catalog_create: false,
+      demo_usage: true,
+      demo_create: false,
     }])
     const options = await rows<{ relname: string; reloptions: string[] | null }>(client, `
       SELECT c.relname, c.reloptions
@@ -548,6 +578,12 @@ describe('read-only catalog role', () => {
       'SELECT type FROM studio.event',
       'SELECT status FROM studio.job',
       'SELECT amount_usd FROM studio.ledger',
+      'SELECT id FROM demo.users',
+      'SELECT video_id FROM demo.video_stats',
+      'SELECT id FROM demo.comments',
+      `INSERT INTO demo.users (id, handle, display_name, avatar_emoji, avatar_palette, joined_on) VALUES ('nope', '@nope', 'No', 'x', 0, '2026-01-01')`,
+      `UPDATE demo.video_stats SET views = 0`,
+      `DELETE FROM demo.comments`,
       `INSERT INTO catalog.videos (id) VALUES ('nope')`,
       `INSERT INTO catalog.video (id) VALUES ('nope')`,
       `UPDATE catalog.videos SET title = 'changed'`,
