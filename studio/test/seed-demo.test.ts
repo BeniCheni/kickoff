@@ -136,6 +136,7 @@ describe('demo seed', () => {
       expect(text).not.toContain(banned)
     }
     expect(await snapshot(client)).toBe(before)
+    await expectDates(client)
 
     await client.exec('CALL demo.seed_social()')
     expect(await social(client)).toEqual(first)
@@ -153,4 +154,74 @@ describe('demo seed', () => {
     await expect(client.exec('SET ROLE studio_reader; CALL demo.seed_social()')).rejects.toThrow(/permission denied/i)
     await client.exec('RESET ROLE')
   })
+
+  it('keeps comments after the clip and no later than the seed, including a clip one hour old', async () => {
+    const { client, db } = await freshDatabase()
+    const clip = await seedClip(db)
+    await markKept(db, clip.generationId, clip.jobId)
+    await db.insert(article50Answer).values({
+      answer: 'recorded for the test',
+      disclosure: 'the test disclosure',
+      recordedOn: clip.when,
+      recordedBy: 'the test',
+      source: 'seed test',
+    })
+    await publish(db, clip, 'clip-old', 1)
+    await publish(db, clip, 'clip-hour', 2)
+    await publish(db, clip, 'clip-fresh', 3)
+    await client.exec(`UPDATE studio.videos SET published_at = statement_timestamp() - interval '1 hour' WHERE public_id = 'clip-hour'`)
+    await client.exec(`UPDATE studio.videos SET published_at = statement_timestamp() - interval '1 minute' WHERE public_id = 'clip-fresh'`)
+    await client.exec(seedDemoSql())
+    await expectDates(client)
+
+    const hour = await rows<{ posted_at: Date; published_at: Date }>(client, `
+      SELECT c.posted_at, v.published_at
+      FROM demo.comments c
+      JOIN catalog.videos v ON v.id = c.video_id
+      WHERE c.video_id = 'clip-hour'
+    `)
+    expect(hour.length).toBeGreaterThan(0)
+    for (const row of hour) {
+      const posted = new Date(row.posted_at).getTime()
+      const published = new Date(row.published_at).getTime()
+      expect(posted).toBeGreaterThan(published)
+      expect(posted).toBeLessThanOrEqual(published + 35 * 60 * 1000)
+      expect(posted).toBeLessThanOrEqual(Date.now())
+    }
+
+    const first = await social(client)
+    await client.exec('CALL demo.seed_social()')
+    const second = await social(client)
+    const old = (socialRows: DemoSocial, id: string) => socialRows.comments.filter((comment) => comment.video_id === id)
+    expect(old(second, 'clip-old')).toEqual(old(first, 'clip-old'))
+    expect(old(second, 'clip-hour')).toEqual(old(first, 'clip-hour'))
+    await expectDates(client)
+  })
 })
+
+async function expectDates(client: { query: (sql: string) => Promise<{ rows: Record<string, unknown>[] }> }) {
+  const comments = await rows<{
+    video_id: string
+    parent_id: string | null
+    posted_at: Date
+    published_at: Date
+    parent_posted: Date | null
+  }>(client, `
+    SELECT c.video_id, c.parent_id, c.posted_at, v.published_at, p.posted_at AS parent_posted
+    FROM demo.comments c
+    JOIN catalog.videos v ON v.id = c.video_id
+    LEFT JOIN demo.comments p ON p.id = c.parent_id
+  `)
+  expect(comments.length).toBeGreaterThan(0)
+  const now = Date.now()
+  for (const row of comments) {
+    const posted = new Date(row.posted_at).getTime()
+    const published = new Date(row.published_at).getTime()
+    expect(posted).toBeGreaterThan(published)
+    expect(posted).toBeLessThanOrEqual(now + 1000)
+    if (row.parent_id !== null) {
+      expect(row.parent_posted).not.toBeNull()
+      expect(posted).toBeGreaterThan(new Date(row.parent_posted as Date).getTime())
+    }
+  }
+}

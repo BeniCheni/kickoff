@@ -24,8 +24,12 @@ DECLARE
   replies integer;
   tops integer;
   top_ids text[];
+  top_at timestamptz[];
   comment_id text;
   parent_id text;
+  posted_at timestamptz;
+  parent_posted timestamptz;
+  cap timestamptz := statement_timestamp();
   user_ids text[];
   phrases text[] := ARRAY[
     'The little cat keeps the ball close, then lets it roll.',
@@ -62,7 +66,7 @@ BEGIN
     ('demo-user-12', '@kittywinger', 'Kitty Winger', '😹', 2, DATE '2026-10-01');
   SELECT array_agg(id ORDER BY id) INTO user_ids FROM demo.users;
 
-  FOR video IN SELECT id FROM catalog.videos ORDER BY id LOOP
+  FOR video IN SELECT id, published_at FROM catalog.videos ORDER BY id LOOP
     PERFORM setseed(demo.unit_seed(video.id));
     total := 3 + floor(random() * 10)::integer;
     replies := 1 + floor(random() * (total - 1))::integer;
@@ -80,9 +84,17 @@ BEGIN
       total
     );
     top_ids := ARRAY[]::text[];
+    top_at := ARRAY[]::timestamptz[];
     FOR n IN SELECT generate_series FROM generate_series(1, tops) LOOP
       comment_id := 'c' || substr(md5(video.id || ':top:' || n::text), 1, 16);
       top_ids := top_ids || comment_id;
+      -- n * 3 minutes after the clip. Eleven tops is the longest stack, 33 minutes.
+      posted_at := video.published_at + make_interval(mins => n * 3);
+      IF posted_at > cap AND video.published_at < cap THEN
+        posted_at := video.published_at + ((cap - video.published_at) * n) / (tops + 1);
+      END IF;
+      posted_at := least(posted_at, cap);
+      top_at := top_at || posted_at;
       INSERT INTO demo.comments (id, video_id, user_id, parent_id, body, posted_at, likes)
       VALUES (
         comment_id,
@@ -90,13 +102,23 @@ BEGIN
         user_ids[1 + floor(random() * array_length(user_ids, 1))::integer],
         NULL,
         phrases[1 + floor(random() * array_length(phrases, 1))::integer],
-        timestamptz '2026-10-02 14:00:00+00' + make_interval(hours => n * 5),
+        posted_at,
         floor(random() * 37)::integer
       );
     END LOOP;
     FOR n IN SELECT generate_series FROM generate_series(1, replies) LOOP
       comment_id := 'c' || substr(md5(video.id || ':reply:' || n::text), 1, 16);
       parent_id := top_ids[1 + floor(random() * tops)::integer];
+      parent_posted := top_at[array_position(top_ids, parent_id)];
+      -- Two minutes after the parent, still inside the same short window.
+      posted_at := parent_posted + make_interval(mins => 2);
+      IF posted_at > cap AND parent_posted < cap THEN
+        posted_at := parent_posted + ((cap - parent_posted) / 2);
+        IF posted_at <= parent_posted THEN
+          posted_at := least(parent_posted + interval '1 millisecond', cap);
+        END IF;
+      END IF;
+      posted_at := least(posted_at, cap);
       INSERT INTO demo.comments (id, video_id, user_id, parent_id, body, posted_at, likes)
       VALUES (
         comment_id,
@@ -104,7 +126,7 @@ BEGIN
         user_ids[1 + floor(random() * array_length(user_ids, 1))::integer],
         parent_id,
         reply_lines[1 + floor(random() * array_length(reply_lines, 1))::integer],
-        timestamptz '2026-10-02 18:00:00+00' + make_interval(hours => n * 5),
+        posted_at,
         floor(random() * 13)::integer
       );
     END LOOP;
