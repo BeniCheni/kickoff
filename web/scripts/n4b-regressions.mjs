@@ -166,7 +166,7 @@ export async function regressions(browser, origin, check, configure = async () =
     await ready(page, 'stub-frankenstein-one')
     const s = await state(page)
     const alert = await page.evaluate(() => document.querySelector('[role="alert"]')?.innerText ?? '')
-    check('H2 Next after a real code-4 error requests the new file in the same element', s.same && s.src?.includes('/stub-frankenstein-one/') && !s.countdown && !s.copy && !s.copyFailure && !alert.includes('Stub Frankenstein one'), { ...s, alert })
+    check('H2 Next after a real code-4 error requests the new file in the same element', s.same && s.src?.includes('/stub-frankenstein-one/') && !s.countdown && !s.copy && !s.copyFailure && alert.includes('Next opens \u201cStub both cats\u201d.'), { ...s, alert })
   })
   await scenario('M4 M5 L1 countdown', async page => {
     await visit(page, `${origin}/${watch}`, { waitUntil: 'networkidle0' })
