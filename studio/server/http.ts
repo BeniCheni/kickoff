@@ -8,7 +8,7 @@ import { LOOPBACK_HOST, assertLoopbackBind, isLoopbackHost } from './bind.ts'
 import { SESSION_COOKIE, cookieValue, guardRequest, oneTimeUrl, sessionCookie } from './guard.ts'
 import { BodyError, readBytes, readJson } from './body.ts'
 import { estimateJobs, readCompose, submitJobs } from './compose.ts'
-import { attachJob, cancelJob, downloadJob, jobIdFrom, pollInFlight, readJobs, regenerateJob } from './jobs.ts'
+import { downloadJob, jobIdFrom, pollInFlight, readJobs, regenerateJob } from './jobs.ts'
 import { serveFile as serveRecorded } from './media.ts'
 import { findPhoto, photoPath, storePhoto } from './photos.ts'
 import { publishJob, publishJobId, readPublish, recordPublishGate, retryDeleteJob, retryRemovalJob, unpublishJob } from './publish.ts'
@@ -160,16 +160,6 @@ async function handle(
   const downloadId = method === 'POST' ? jobIdFrom(url.pathname, 'download') : null
   if (downloadId) {
     sendJson(response, 200, await downloadJob(opened, downloadId), cookieHeader)
-    return
-  }
-  const cancelId = method === 'POST' ? jobIdFrom(url.pathname, 'cancel') : null
-  if (cancelId) {
-    sendJson(response, 200, await cancelJob(opened, cancelId), cookieHeader)
-    return
-  }
-  const attachId = method === 'POST' ? jobIdFrom(url.pathname, 'attach') : null
-  if (attachId) {
-    sendJson(response, 200, await attachJob(opened, attachId, await readJson(request)), cookieHeader)
     return
   }
   if (url.pathname === '/api/compose' && method === 'GET') {

@@ -14,7 +14,7 @@ export const DRAFT = {
   onePhotograph: 'This submit sends the first selected photo. The engine accepts one photograph per request.',
   publishConfirm:
     'Publish writes this clip to the catalog. It is live on the next read. There is no pull request and no release.',
-  falKey: 'Unavailable: a live submit needs FAL_KEY on this Mac, and none is set.',
+  falKey: 'Unavailable: a live fal action needs FAL_KEY on this Mac, and none is set.',
   uploadFailed: 'Unavailable: the files were not stored. The clip stays listed.',
   deleteFailed: 'Unavailable: a stored file was not removed.',
   cardWidth: 'Publish is refused: the clip has no positive width on the record.',

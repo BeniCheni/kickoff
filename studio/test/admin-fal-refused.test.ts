@@ -113,23 +113,78 @@ describe('live fal refusal', () => {
       ['/api/jobs/poll', JSON.stringify({ ids: [pending.jobId, progress.jobId, done.jobId] })],
       [`/api/jobs/${done.jobId}/download`, '{}'],
       [`/api/jobs/${done.jobId}/download`, '{}'],
-      [`/api/jobs/${pending.jobId}/cancel`, '{}'],
-      [`/api/jobs/${pending.jobId}/attach`, JSON.stringify({ requestId: 'synthetic-attach' })],
     ]
     const outcomes: string[] = []
     for (const [pathName, body] of calls) {
       const response = JSON.parse((await ask(admin, { path: pathName, method: 'POST', headers, body })).body) as { outcome?: string }
       outcomes.push(`${pathName} ${response.outcome ?? 'no-outcome'}`)
     }
+    const dropped: string[] = []
+    for (const pathName of [`/api/jobs/${pending.jobId}/cancel`, `/api/jobs/${pending.jobId}/attach`]) {
+      const response = await ask(admin, {
+        path: pathName,
+        method: 'POST',
+        headers,
+        body: pathName.endsWith('/attach') ? JSON.stringify({ requestId: 'synthetic-attach' }) : '{}',
+      })
+      dropped.push(`${response.status} ${response.body}`)
+    }
     await admin.close()
     servers.pop()
     const check = await openAdmin(env, false)
     const after = await fingerprint(check.db)
     await check.close()
-    expect({ outcomes, after, fal: shell.fal }).toEqual({
+    expect({ outcomes, dropped, after, fal: shell.fal }).toEqual({
       outcomes: calls.map(([pathName]) => `${pathName} fal-key-missing`),
+      dropped: [
+        '404 {"error":"not-found"}',
+        '404 {"error":"not-found"}',
+      ],
       after: before,
       fal: 'refused',
     })
+  })
+
+  it('answers 404 for cancel and attach in live mode when a key is set', async () => {
+    const env = {
+      STUDIO_DATA_DIR: mkdtempSync(path.join(tmpdir(), 'kickoff-studio-data-')),
+      STUDIO_MEDIA_DIR: mkdtempSync(path.join(tmpdir(), 'kickoff-studio-media-')),
+      STUDIO_NOW: '2026-10-18T18:00:00.000Z',
+      STUDIO_LIVE: '1',
+      DATABASE_URL: ['postgres', '://127.0.0.1:1/studio'].join(''),
+      STUDIO_ADMIN_LIVE_PGLITE: '1',
+      [['FAL', '_KEY'].join('')]: 'present-for-the-404',
+    }
+    const admin = await startAdmin({ live: true, env, port: 0 })
+    servers.push(admin)
+    expect(admin.fal).toBe('live')
+    const ticket = await ask(admin, { path: `/?ticket=${encodeURIComponent(admin.token)}` })
+    const cookie = (Array.isArray(ticket.headers['set-cookie']) ? ticket.headers['set-cookie'][0] : ticket.headers['set-cookie'])?.split(';')[0] ?? ''
+    const headers = { cookie, origin: admin.origin, 'content-type': 'application/json' }
+    const id = '00000000-0000-4000-8000-000000000001'
+    for (const pathName of [`/api/jobs/${id}/cancel`, `/api/jobs/${id}/attach`]) {
+      const response = await ask(admin, { path: pathName, method: 'POST', headers, body: '{}' })
+      expect(response.status).toBe(404)
+      expect(response.body).toBe('{"error":"not-found"}')
+    }
+  })
+
+  it('answers 404 for cancel and attach in stub mode', async () => {
+    const env = {
+      STUDIO_DATA_DIR: mkdtempSync(path.join(tmpdir(), 'kickoff-studio-data-')),
+      STUDIO_MEDIA_DIR: mkdtempSync(path.join(tmpdir(), 'kickoff-studio-media-')),
+      STUDIO_NOW: '2026-10-18T18:00:00.000Z',
+    }
+    const admin = await startAdmin({ live: false, env, port: 0 })
+    servers.push(admin)
+    const ticket = await ask(admin, { path: `/?ticket=${encodeURIComponent(admin.token)}` })
+    const cookie = (Array.isArray(ticket.headers['set-cookie']) ? ticket.headers['set-cookie'][0] : ticket.headers['set-cookie'])?.split(';')[0] ?? ''
+    const headers = { cookie, origin: admin.origin, 'content-type': 'application/json' }
+    const id = '00000000-0000-4000-8000-000000000001'
+    for (const pathName of [`/api/jobs/${id}/cancel`, `/api/jobs/${id}/attach`]) {
+      const response = await ask(admin, { path: pathName, method: 'POST', headers, body: '{}' })
+      expect(response.status).toBe(404)
+      expect(response.body).toBe('{"error":"not-found"}')
+    }
   })
 })
