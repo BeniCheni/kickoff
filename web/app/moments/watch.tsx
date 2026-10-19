@@ -81,6 +81,7 @@ export function WatchPage({
   const [playing, setPlaying] = useState(false)
   const [requested, setRequested] = useState(false)
   const [soundOn, setSoundOn] = useState(false)
+  const [heldMute, setHeldMute] = useState(false)
   const [ringPaused, setRingPaused] = useState(false)
   const [ringRun, setRingRun] = useState(0)
   const galleryHref = useWatchHref(search, null)
@@ -153,6 +154,7 @@ export function WatchPage({
     setRecovery(null)
     setPlaying(false)
     setRequested(false)
+    setHeldMute(false)
     setStatus(STARTING)
     document.getElementById('moments-watch-heading')?.focus()
   }, [detail.id])
@@ -182,9 +184,26 @@ export function WatchPage({
       setStatus(mutedNow ? PLAYING_MUTED : automatic ? nowPlayingStatus(detail.title) : SOUND)
     }).catch(() => {
       if (activeId.current !== detail.id) return
-      readerPlayed.current = false
-      setPlaying(false)
-      setStatus(refusedStatus(detail.title))
+      if (!on) {
+        readerPlayed.current = false
+        setPlaying(false)
+        setStatus(refusedStatus(detail.title))
+        return
+      }
+      video.muted = true
+      setHeldMute(true)
+      video.play().then(() => {
+        if (activeId.current !== detail.id) return
+        readerPlayed.current = true
+        setPlaying(true)
+        setRecovery(null)
+        setStatus(PLAYING_MUTED)
+      }).catch(() => {
+        if (activeId.current !== detail.id) return
+        readerPlayed.current = false
+        setPlaying(false)
+        setStatus(refusedStatus(detail.title))
+      })
     })
   }, [detail.id, address, detail.title])
 
@@ -236,6 +255,7 @@ export function WatchPage({
     setRequested(true)
     if (!video.getAttribute('src')) video.src = address
     const on = readSound()
+    setHeldMute(false)
     video.muted = !on
     setSoundOn(on)
     video.play().then(() => {
@@ -337,7 +357,7 @@ export function WatchPage({
           style={{ visibility: requested ? 'visible' : 'hidden' }}
           controls
           playsInline
-          muted={!soundOn}
+          muted={!soundOn || heldMute}
           preload="none"
           aria-label={`Generated clip: ${detail.title}`}
           onPlay={onPlay}
@@ -346,7 +366,7 @@ export function WatchPage({
           onError={onError}
           onVolumeChange={() => {
             const video = videoRef.current
-            if (!video || !playing) return
+            if (!video || !playing || heldMute) return
             const on = !video.muted && video.volume > 0
             setSoundOn(writeSound(on))
             setStatus(on ? SOUND : PLAYING_MUTED)
@@ -357,15 +377,17 @@ export function WatchPage({
       </div>
       <div className="moments-sound">
         <button type="button" onClick={() => {
-          const on = !soundOn
+          const restoring = heldMute
+          const on = restoring ? true : !soundOn
           const video = videoRef.current
           if (video) {
             video.muted = !on
             if (on && video.volume === 0) video.volume = 1
           }
+          setHeldMute(false)
           setSoundOn(writeSound(on))
           if (playing) setStatus(on ? SOUND : PLAYING_MUTED)
-        }}>{soundOn ? 'Mute' : 'Unmute'}</button>
+        }}>{soundOn && !heldMute ? 'Mute' : 'Unmute'}</button>
       </div>
       <p role="status">{status}</p>
       <p className="moments-keyboard" style={{ visibility: focused ? 'visible' : 'hidden' }}>{KEYBOARD}</p>

@@ -46,7 +46,6 @@ try {
     await page.evaluateOnNewDocument(themeName => {
       localStorage.setItem('kickoff-theme', themeName)
       localStorage.setItem('kickoff-theme-broadcast', themeName)
-      localStorage.removeItem('kickoff-moments-sound-v1')
     }, theme)
     const params = new URLSearchParams({ tab: 'moments', ...(lens === 'poster' ? {} : { lens }) })
     await page.goto(`${origin}/?${params}`, { waitUntil: 'networkidle0' })
@@ -129,6 +128,34 @@ try {
     check(name, name === 'empty' ? (text.includes('0 of 0') || text.includes('0 / 0')) : text.includes('The gallery is unavailable.'))
     await page.close()
   }
+  const pm1 = await browser.newPage()
+  await pm1.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 })
+  await pm1.evaluateOnNewDocument(() => {
+    const start = performance.now()
+    window.__pm1 = []
+    const timer = setInterval(() => {
+      const video = document.querySelector('video')
+      if (!video || !video.getAttribute('src')) return
+      const labels = [...document.querySelectorAll('button')].map(button => button.textContent.trim())
+      window.__pm1.push({
+        t: performance.now() - start,
+        paused: video.paused,
+        muted: video.muted,
+        line: document.body.innerText.includes('Playing muted. Unmute beside the player.'),
+        play: labels.includes('Play'),
+      })
+    }, 20)
+    setTimeout(() => clearInterval(timer), 1600)
+  })
+  await pm1.goto(`${origin}/?tab=fixtures`, { waitUntil: 'networkidle0' })
+  await pm1.evaluate(() => localStorage.setItem('kickoff-moments-sound-v1', 'on'))
+  await pm1.goto(`${origin}/?tab=moments&watch=stub-fenway-one`, { waitUntil: 'domcontentloaded' })
+  await new Promise(resolve => setTimeout(resolve, 1700))
+  const samples = await pm1.evaluate(() => window.__pm1)
+  const stored = await pm1.evaluate(() => localStorage.getItem('kickoff-moments-sound-v1'))
+  const hit = samples.find(sample => sample.t <= 1500 && sample.paused === false && sample.muted === true && sample.line && sample.play === false)
+  check('stored on retries muted within 1.5s', Boolean(hit) && stored === 'on', { stored, hit })
+  await pm1.close()
 } finally {
   await browser.close()
 }
