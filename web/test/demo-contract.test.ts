@@ -95,8 +95,8 @@ test('the demo package source does not import the app, the reader, or the studio
   const dir = path.join(repoRoot, 'packages/kickoff-demo/src')
   const specifiers = readdirSync(dir).flatMap(name => {
     const source = readFileSync(path.join(dir, name), 'utf8')
-    return [...source.matchAll(/\b(?:import|export)\s+(?:type\s+)?(?:[^;]*?\s+from\s*)?['"]([^'"]+)['"]|\b(?:import|require)\s*\(\s*['"]([^'"]+)['"]/g)]
-      .map(match => match[1] ?? match[2] ?? '')
+    return [...source.matchAll(/\b(?:import|export)\s+(?:type\s+)?['"]([^'"]+)['"]|\b(?:import|export)\s+(?:type\s+)?[^;'"]*?\sfrom\s*['"]([^'"]+)['"]|\b(?:import|require)\s*\(\s*['"]([^'"]+)['"]/g)]
+      .map(match => match[1] ?? match[2] ?? match[3] ?? '')
   })
   expect(specifiers).toEqual(["zod"])
 })

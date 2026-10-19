@@ -13,8 +13,8 @@ function filesUnder(dir: string): string[] {
   })
 }
 function imports(source: string): string[] {
-  return [...source.matchAll(/\b(?:import|export)\s+(?:type\s+)?(?:[^;]*?\s+from\s*)?['"]([^'"]+)['"]|\b(?:import|require)\s*\(\s*['"]([^'"]+)['"]|@import\s+['"]([^'"]+)['"]/g)]
-    .map(match => match[1] ?? match[2] ?? match[3]!)
+  return [...source.matchAll(/\b(?:import|export)\s+(?:type\s+)?['"]([^'"]+)['"]|\b(?:import|export)\s+(?:type\s+)?[^;'"]*?\sfrom\s*['"]([^'"]+)['"]|\b(?:import|require)\s*\(\s*['"]([^'"]+)['"]|@import\s+['"]([^'"]+)['"]/g)]
+    .map(match => match[1] ?? match[2] ?? match[3] ?? match[4]!)
 }
 function crossImports(from: string, forbidden: string) {
   return filesUnder(path.join(root, from)).flatMap(file => imports(readFileSync(file, 'utf8'))
@@ -54,6 +54,8 @@ test('src never imports the demo package', () => {
 test('a demo import written into src would fail the fence', () => {
   const source = "import { parseDemoSocial } from '@kickoff/demo'\n"
   expect(imports(source)).toEqual(['@kickoff/demo'])
+  expect(imports("import '@kickoff/demo'\nimport { z } from 'zod'\n")).toEqual(['@kickoff/demo', 'zod'])
+  expect(imports("import '../../../web/app/page'\nimport { z } from 'zod'\n")).toEqual(['../../../web/app/page', 'zod'])
 })
 
 test('the demo package does not import studio, src, or web', () => {
