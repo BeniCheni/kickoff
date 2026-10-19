@@ -293,7 +293,11 @@ export async function runCli(
   argv: readonly string[],
   env: NodeJS.ProcessEnv,
   io: CliIo,
-  options: { openDatabase?: DatabaseFactory; fetchImpl?: typeof fetch } = {},
+  options: {
+    openDatabase?: DatabaseFactory
+    fetchImpl?: typeof fetch
+    migrate?: (env: NodeJS.ProcessEnv) => Promise<void>
+  } = {},
 ): Promise<number> {
   try {
     const [command, ...rest] = argv
@@ -315,14 +319,14 @@ export async function runCli(
       }
     }
     const transport = live && missingLivePieces(loaded).length === 0 ? 'live' : 'stub'
-    const database = live ? 'postgres' : 'pglite'
+    const database = command === 'migrate' ? 'postgres' : command === 'estimate' ? 'none' : (live ? 'postgres' : 'pglite')
     const storage = command === 'publish' || command === 'unpublish' || command === 'retry-delete' || command === 'retry-removal'
       ? (live && objectStore ? 'r2' : 'stub')
       : undefined
     const placed = (outcome: string, fields: Record<string, string | number | boolean | null | undefined> = {}) =>
       line(outcome, { ...fields, database, storage })
     if (command === 'migrate') {
-      await runMigrate(loaded)
+      await (options.migrate ?? runMigrate)(loaded)
       io.stdout(placed('migrated'))
       return 0
     }
@@ -331,20 +335,20 @@ export async function runCli(
       const params = paramsFrom(flags)
       const row = selectRegistry(endpoint, params, clockFrom(loaded)())
       if (!row) {
-        io.stdout('not-in-registry')
+        io.stdout(placed('not-in-registry'))
         return 0
       }
       const unknown = unknownParam(row, params)
       if (unknown) {
-        io.stdout(line('param-not-allowed', { param: unknown }))
+        io.stdout(placed('param-not-allowed', { param: unknown }))
         return 0
       }
       const usd = estimateUsd(row, params)
       if (!usd) {
-        io.stdout('not-in-registry')
+        io.stdout(placed('not-in-registry'))
         return 0
       }
-      io.stdout(line(usd, { tag: row.price.tag, registry: row.id }))
+      io.stdout(placed(usd, { tag: row.price.tag, registry: row.id }))
       return 0
     }
 

@@ -42,11 +42,37 @@ describe('command line', () => {
       'estimate', '--endpoint', VIDEO, '--duration', '15', '--resolution', '480P',
     ], env, io)
     expect(code).toBe(0)
-    expect(io.out[0]).toContain('0.225000')
-    expect(io.out[0]).toContain('DOCUMENTED')
+    expect(io.out).toEqual([
+      '0.225000 tag=DOCUMENTED registry=minimax-h3-max-turbo-i2v-480p-through-2026-10-14 database=none',
+    ])
     const unknown = capture()
     expect(await runCli(['estimate', '--endpoint', 'not-a-model'], env, unknown)).toBe(0)
-    expect(unknown.out).toEqual(['not-in-registry'])
+    expect(unknown.out).toEqual(['not-in-registry database=none'])
+    const blocked = capture()
+    expect(await runCli([
+      'estimate', '--endpoint', VIDEO, '--duration', '15', '--resolution', '480P', '--image-size', 'square',
+    ], env, blocked)).toBe(0)
+    expect(blocked.out).toEqual(['param-not-allowed param=image_size database=none'])
+    const liveEstimate = capture()
+    expect(await runCli([
+      'estimate', '--live', '--endpoint', 'not-a-model',
+    ], { ...env, STUDIO_LIVE: '1', DATABASE_URL: 'present' }, liveEstimate)).toBe(0)
+    expect(liveEstimate.out).toEqual(['not-in-registry database=none'])
+  })
+
+  it('labels migrate as postgres even without --live', async () => {
+    let calls = 0
+    const migrate = async () => {
+      calls += 1
+    }
+    const offline = capture()
+    expect(await runCli(['migrate'], {}, offline, { migrate })).toBe(0)
+    expect(calls).toBe(1)
+    expect(offline.out).toEqual(['migrated database=postgres'])
+    const live = capture()
+    expect(await runCli(['migrate', '--live'], { STUDIO_LIVE: '1', DATABASE_URL: 'present' }, live, { migrate })).toBe(0)
+    expect(calls).toBe(2)
+    expect(live.out).toEqual(['migrated database=postgres'])
   })
 
   it('refuses migrate and an in-repo data directory without opening a database', async () => {
