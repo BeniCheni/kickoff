@@ -126,11 +126,17 @@ export async function openAdmin(env: NodeJS.ProcessEnv, live: boolean, options: 
   const cursor = loadCursor(cursorPath)
   const fails = new Set((loaded.STUDIO_STORAGE_FAIL ?? '').split(',').map((item) => item.trim()).filter(Boolean))
   const backends = adminBackends(live, loaded)
-  if (backends.storage === 'r2' && process.env.NODE_ENV === 'test' && !options.fetchImpl) {
+  const injectedFetch: typeof fetch | undefined = process.env.NODE_ENV === 'test' && loaded.STUDIO_R2_FETCH === 'inject'
+    ? async (input, init) => {
+      void input
+      return new Response(null, { status: init?.method === 'DELETE' ? 204 : 200 })
+    }
+    : undefined
+  if (backends.storage === 'r2' && process.env.NODE_ENV === 'test' && !options.fetchImpl && !injectedFetch) {
     throw new Error('refused: a test live R2 start needs an injected fetch')
   }
   const storagePort = backends.storage === 'r2'
-    ? createR2Storage({ env: loaded, fetchImpl: options.fetchImpl })
+    ? createR2Storage({ env: loaded, fetchImpl: options.fetchImpl ?? injectedFetch })
     : backends.storage === 'refused'
       ? createRefusingStorage()
       : createStorageStub({

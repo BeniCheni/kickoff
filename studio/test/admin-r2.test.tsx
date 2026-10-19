@@ -371,4 +371,23 @@ describe('live R2', () => {
     expect(seen.filter((item) => item.method === 'DELETE').length).toBeGreaterThan(0)
     expect(seen.every((item) => item.url.startsWith('https://accountid123.r2.cloudflarestorage.com/'))).toBe(true)
   })
+
+  it('uses the test inject fetch and does not call the network', async () => {
+    const env = folders({ STUDIO_R2_FETCH: 'inject' })
+    const jobId = await keptClip(env)
+    const admin = await startAdmin({ live: true, env, port: 0 })
+    servers.push(admin)
+    expect(admin.storage).toBe('r2')
+    const cookie = await cookieFor(admin)
+    const headers = { cookie, origin: admin.origin, 'content-type': 'application/json' }
+    await recordGate(admin, cookie)
+    const published = JSON.parse((await ask(admin, {
+      path: `/api/publish/${jobId}/go`,
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ publicId: 'fenway-inject', title: 'Fenway', position: 1, confirm: true }),
+    })).body) as { outcome: string }
+    expect(published.outcome).toBe('published')
+    expect(JSON.stringify(published)).not.toContain(SECRET)
+  })
 })
