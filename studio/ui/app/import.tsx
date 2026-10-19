@@ -110,12 +110,15 @@ export function ImportForm({
         <label htmlFor="i-prompt">Prompt</label>
         <textarea id="i-prompt" className="studio-field" value={prompt} onChange={(event) => onPrompt(event.target.value)} />
         <p className="studio-help">{DRAFT.importPrompt}</p>
-        <div className="studio-seg" role="group" aria-label="Subjects">
-          {SUBJECT_LABELS.map((name) => (
-            <button key={name} type="button" aria-pressed={subjects.includes(name)} onClick={() => onSubject(name, !subjects.includes(name))}>
-              {name}
-            </button>
-          ))}
+        <div className="studio-row">
+          <span id="i-subjects">Subjects</span>
+          <div className="studio-seg" role="group" aria-labelledby="i-subjects">
+            {SUBJECT_LABELS.map((name) => (
+              <button key={name} type="button" aria-pressed={subjects.includes(name)} onClick={() => onSubject(name, !subjects.includes(name))}>
+                {name}
+              </button>
+            ))}
+          </div>
         </div>
         <label htmlFor="i-title">Title</label>
         <input id="i-title" className="studio-field" value={title} onChange={(event) => onTitle(event.target.value)} />

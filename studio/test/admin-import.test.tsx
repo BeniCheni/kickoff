@@ -109,6 +109,8 @@ describe('import screen', () => {
     expect(after).toContain(DRAFT.importImported)
     const empty = renderToStaticMarkup(<ImportForm {...idle} />)
     expect(empty).toContain('Import')
+    expect(empty).toContain('>Subjects<')
+    expect(empty.indexOf('>Subjects<')).toBeLessThan(empty.indexOf('for="i-title"'))
     expect(empty).toContain(DRAFT.importChoose)
     expect(empty).toContain('disabled')
     const png = renderToStaticMarkup(<ImportForm {...idle} png clipName="clip.mp4" />)
