@@ -213,6 +213,10 @@
   color: var(--text-secondary);
   font-size: 12px;
 }
+.moments-gallery .moments-reaction-totals {
+  display: inline-flex;
+  gap: 8px;
+}
 .moments-gallery .moments-reactions,
 .moments-gallery .moments-comments [role="group"] {
   display: flex;

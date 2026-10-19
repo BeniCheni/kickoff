@@ -50,7 +50,7 @@ export function CardSocialLine({ social, publishedAt, now }: { social: MomentSoc
   return (
     <p className="moments-social">
       <span>{viewsLine(social.views, publishedAt, now)}</span>
-      <span aria-label={`Top reactions: ${label}. ${groupedCount(total)} reactions in all.`}>
+      <span className="moments-reaction-totals" role="img" aria-label={`Top reactions: ${label}. ${groupedCount(total)} reactions in all.`}>
         {top.map(key => <span key={key} aria-hidden="true">{REACTION_EMOJI[key]} {groupedCount(social.reactions[key])}</span>)}
         <span aria-hidden="true">{groupedCount(total)}</span>
       </span>

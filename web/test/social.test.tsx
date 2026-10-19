@@ -39,6 +39,7 @@ test('the card line shows views, relative time, and the top three reactions', ()
   const ranked = topReactions(social.reactions)
   expect(ranked.top).toEqual(['clap', 'soccer', 'fire'])
   expect(ranked.total).toBe(31 + 9 + 41 + 32 + 62)
+  expect(html).toContain('role="img"')
   expect(html).toContain('175')
 })
 
