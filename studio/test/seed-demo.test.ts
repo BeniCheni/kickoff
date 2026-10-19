@@ -200,13 +200,7 @@ describe('demo seed', () => {
 })
 
 async function expectDates(client: { query: (sql: string) => Promise<{ rows: Record<string, unknown>[] }> }) {
-  const comments = await rows<{
-    video_id: string
-    parent_id: string | null
-    posted_at: Date
-    published_at: Date
-    parent_posted: Date | null
-  }>(client, `
+  const comments = await rows<Record<string, unknown>>(client, `
     SELECT c.video_id, c.parent_id, c.posted_at, v.published_at, p.posted_at AS parent_posted
     FROM demo.comments c
     JOIN catalog.videos v ON v.id = c.video_id
@@ -215,13 +209,13 @@ async function expectDates(client: { query: (sql: string) => Promise<{ rows: Rec
   expect(comments.length).toBeGreaterThan(0)
   const now = Date.now()
   for (const row of comments) {
-    const posted = new Date(row.posted_at).getTime()
-    const published = new Date(row.published_at).getTime()
+    const posted = new Date(row.posted_at as string).getTime()
+    const published = new Date(row.published_at as string).getTime()
     expect(posted).toBeGreaterThan(published)
     expect(posted).toBeLessThanOrEqual(now + 1000)
     if (row.parent_id !== null) {
       expect(row.parent_posted).not.toBeNull()
-      expect(posted).toBeGreaterThan(new Date(row.parent_posted as Date).getTime())
+      expect(posted).toBeGreaterThan(new Date(row.parent_posted as string).getTime())
     }
   }
 }
