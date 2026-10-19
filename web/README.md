@@ -42,13 +42,22 @@ do not. This is Beni's Reword ruling (18 Oct 2026).
 Sample reactions are a second flag, also off unless both are set: `KICKOFF_DEMO=on`
 and `KICKOFF_DEMO_FILE` (an absolute path, no default). `VERCEL_ENV=production`
 refuses that flag before the file is opened. A file that is not `synthetic: true`,
-or that fails the demo schema, supplies no counts. With the flag off, Moments
-has no sample line and no reaction or comment payload. With it on, the line
+or that fails the demo schema, supplies no counts. A path that is not absolute is refused
+before the file is opened. The server logs one line per process, `demo social:` plus
+`not set`, `could not be read`, `not JSON`, `failed validation`, or `refused`, and never the file.
+With the flag off, Moments
+has no sample line and no reaction or comment payload. With it on, and only when the
+Moments payload carries joined rows for the gallery or the open video, the line
 beside the stub indicator reads `Sample reactions and comments · made-up viewers, not real ones`.
+It does not show on an unavailable gallery, an empty list, or a watch id that is not published.
 The counts, reaction bar and comments render only from that file, and only on the Moments tab.
 An id with no stats row shows no social layer.
+The watch payload currently carries every id's comments. N6 should scope that join to the
+watched id, and leave the cards with counts only.
 The watch page sets the video `src` and calls `play()` muted on arrival.
-If that call is refused, Play and the refusal line are unchanged.
+If that call is refused and the stored choice is off, Play and the refusal line are unchanged.
+If the stored choice is on, the page retries once muted, shows
+`Playing muted. Unmute beside the player.`, and keeps the stored choice so the next gesture restores sound.
 Unmute sits beside the player. The choice is `kickoff-moments-sound-v1`
 (`on` or `off`; absent means off) and the next video keeps it.
 Gallery cards wait 400 ms, then play a muted looping preview only for a fine
@@ -87,6 +96,7 @@ is already painted; the hover fades that layer's opacity. `prefers-reduced-motio
 | Count tick | 150 ms ease | opacity, `translateY(2px)` |
 
 Rerun the throttled trace with `node web/scripts/n4c-motion.mjs /tmp/kickoff-n4c-motion`. The receipt is `web/verification/n4c-motion.json`.
+Pass 1 (Sun 18 Oct 2026) measured a 56–59 ms main-thread task during a throttled gallery reload. The trace named it as a function call inside the runtime chunk `04yc2keri5ea0.js`, overlapping the card entrance (0–390 ms). The median frame stayed 16.6 ms because the entrance is composited. This PR did not add that hydration work. It is an accepted exception: the entrance may overlap hydration, and a task in that window is not a dropped frame.
 The demo-on browser pass is `node web/scripts/n4c-demo.mjs /tmp/kickoff-n4c-demo` against a server with `KICKOFF_DEMO=on` and `KICKOFF_DEMO_FILE` set, plus `KICKOFF_EMPTY_ORIGIN` and `KICKOFF_UNAVAILABLE_ORIGIN`. Its receipt is `web/verification/n4c-demo.json`. PNGs stay in the output directory.
 The demo-off matrix is `node web/scripts/n4b-moments.mjs /tmp/kickoff-n4c-moments-off` with the demo variables unset. Fixtures and Table against Vite are `node web/scripts/n3-next-vite.mjs`.
 
