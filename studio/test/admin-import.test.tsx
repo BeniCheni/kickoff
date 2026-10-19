@@ -1,4 +1,4 @@
-import { existsSync, lutimesSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, symlinkSync, utimesSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdtempSync, readFileSync, readdirSync, symlinkSync, utimesSync, writeFileSync } from 'node:fs'
 import { request as httpRequest, type IncomingHttpHeaders } from 'node:http'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
@@ -8,8 +8,9 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { CHECKLIST_LINES } from '../db/schema.ts'
 import { syntheticMp4 } from '../media/mp4.ts'
 import { CLIP_LIMIT, PHOTO_LIMIT } from '../server/body.ts'
-import { pathInsideWorktree, sweepIncoming } from '../server/import.ts'
+import { pathInsideWorktree } from '../server/import.ts'
 import { startAdmin, type AdminServer } from '../server/http.ts'
+import { openAdmin } from '../server/open.ts'
 import { DRAFT } from '../shared/admin-copy.ts'
 import { importRefusal, statusLine } from '../shared/status.ts'
 import { ImportForm } from '../ui/app/import.tsx'
@@ -417,26 +418,21 @@ describe('import screen', () => {
     emptyIncoming()
   })
 
-  it('sweeps only old files inside incoming/', () => {
+  it('leaves an outside folder alone when incoming is a symlink to it', async () => {
+    const data = mkdtempSync(path.join(tmpdir(), 'kickoff-studio-data-'))
     const media = mkdtempSync(path.join(tmpdir(), 'kickoff-studio-media-'))
-    const incoming = path.join(media, 'incoming')
-    const outside = path.join(media, 'keep.txt')
-    writeFileSync(outside, 'stay')
-    mkdirSync(incoming)
-    const oldFile = path.join(incoming, 'old.mp4')
-    const freshFile = path.join(incoming, 'fresh.mp4')
-    writeFileSync(oldFile, 'old')
-    writeFileSync(freshFile, 'fresh')
-    const old = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
-    utimesSync(oldFile, old, old)
-    const link = path.join(incoming, 'link.mp4')
-    symlinkSync(outside, link)
-    lutimesSync(link, old, old)
-    sweepIncoming(media)
-    expect(existsSync(outside)).toBe(true)
-    expect(readFileSync(outside, 'utf8')).toBe('stay')
-    expect(existsSync(oldFile)).toBe(false)
-    expect(existsSync(link)).toBe(false)
-    expect(existsSync(freshFile)).toBe(true)
+    const outside = mkdtempSync(path.join(tmpdir(), 'kickoff-studio-outside-'))
+    const sentinel = path.join(outside, 'sentinel.txt')
+    const other = path.join(outside, 'other.txt')
+    writeFileSync(sentinel, 'stay')
+    writeFileSync(other, 'also')
+    const old = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)
+    utimesSync(sentinel, old, old)
+    utimesSync(other, old, old)
+    symlinkSync(outside, path.join(media, 'incoming'))
+    const opened = await openAdmin({ STUDIO_DATA_DIR: data, STUDIO_MEDIA_DIR: media }, false)
+    await opened.close()
+    expect(readFileSync(sentinel, 'utf8')).toBe('stay')
+    expect(readFileSync(other, 'utf8')).toBe('also')
   })
 })

@@ -1,4 +1,4 @@
-import { existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs'
 import { randomBytes } from 'node:crypto'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -31,44 +31,6 @@ export function pathInsideWorktree(file: string, root = repoRoot): boolean {
 function incoming(mediaDir: string, id: string, extension: 'mp4' | 'jpg'): string | null {
   if (!ID.test(id)) return null
   return containedPath(mediaDir, path.join(mediaDir, 'incoming', `${id}.${extension}`))
-}
-
-const INCOMING_MAX_AGE_MS = 24 * 60 * 60 * 1000
-
-/** Drop unconfirmed uploads older than a day. A symlink is removed as a link; its target is left alone. */
-export function sweepIncoming(mediaDir: string, now = Date.now()): void {
-  const dir = path.join(mediaDir, 'incoming')
-  if (!existsSync(dir)) return
-  let base: string
-  try {
-    base = realpathSync(dir)
-  } catch {
-    return
-  }
-  for (const name of readdirSync(dir)) {
-    const entry = path.join(dir, name)
-    let info: ReturnType<typeof lstatSync>
-    try {
-      info = lstatSync(entry)
-    } catch {
-      continue
-    }
-    if (now - info.mtimeMs < INCOMING_MAX_AGE_MS) continue
-    if (info.isSymbolicLink()) {
-      rmSync(entry, { force: true })
-      continue
-    }
-    if (!info.isFile()) continue
-    let real: string
-    try {
-      real = realpathSync(entry)
-    } catch {
-      continue
-    }
-    const relative = path.relative(base, real)
-    if (relative.startsWith('..') || path.isAbsolute(relative)) continue
-    rmSync(entry, { force: true })
-  }
 }
 
 function discardUploads(mediaDir: string, clipId?: string, stillId?: string): void {

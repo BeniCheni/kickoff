@@ -16,7 +16,6 @@ import { createStorageStub } from '../storage/stub.ts'
 import type { DatabaseEngine, DatabaseName, FalMode, StorageName, TransportName } from '../shared/types.ts'
 import { createRefusingFal } from './fal-refused.ts'
 import { probeDatabase } from './probe.ts'
-import { sweepIncoming } from './import.ts'
 import { createRefusingStorage } from './storage-refused.ts'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
@@ -125,7 +124,6 @@ export async function openAdmin(env: NodeJS.ProcessEnv, live: boolean, options: 
   const mediaDir = resolveEnvFile(requiredEnv(loaded, 'STUDIO_MEDIA_DIR'), repoRoot)
   mkdirSync(dataDir, { recursive: true })
   mkdirSync(mediaDir, { recursive: true })
-  sweepIncoming(mediaDir)
   const cursorPath = cursorFile(dataDir)
   const cursor = loadCursor(cursorPath)
   const fails = new Set((loaded.STUDIO_STORAGE_FAIL ?? '').split(',').map((item) => item.trim()).filter(Boolean))
