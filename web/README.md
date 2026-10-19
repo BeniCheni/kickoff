@@ -117,6 +117,8 @@ Leave the build command as the `build` script. Vercel uses that script for Next.
 ALTER ROLE studio_reader WITH LOGIN PASSWORD 'choose-one';
 ```
 
+Delete that saved query after it succeeds. [Postgres Roles](https://supabase.com/docs/guides/database/postgres/roles), read 19 Oct 2026, says queries you run in the dashboard execute as `postgres` and include a `-- source: dashboard` comment, which you can use to find them in the Postgres logs. The password would remain in the snippet and in those logs. If you have `psql`, `\password studio_reader` asks for the password and hashes it on the client, so the SQL editor never sees it.
+
 3. After Wednesday's publishes, `npm run seed:demo` in `studio/`, again as the owner.
 4. Run `npm run seed:demo` again after each later publish. It replaces the sample rows and does not write the catalog.
 
