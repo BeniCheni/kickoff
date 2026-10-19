@@ -24,7 +24,7 @@ export function groupedCount(value: number): string {
 
 /**
  * Draft relative time for Beni. A future instant, or one under a minute, reads `just now`.
- * Months are 30 days and years are 365. Both are approximations.
+ * Months are 30 days and stop at 11. From 365 days, the line is whole years.
  */
 export function relativeTime(iso: string, nowMs: number): string {
   const then = Date.parse(iso)
@@ -37,8 +37,10 @@ export function relativeTime(iso: string, nowMs: number): string {
   if (hours < 24) return hours === 1 ? '1 hour ago' : `${hours} hours ago`
   const days = Math.floor(hours / 24)
   if (days < 30) return days === 1 ? '1 day ago' : `${days} days ago`
-  const months = Math.floor(days / 30)
-  if (months < 12) return months === 1 ? '1 month ago' : `${months} months ago`
+  if (days < 365) {
+    const months = Math.min(11, Math.floor(days / 30))
+    return months === 1 ? '1 month ago' : `${months} months ago`
+  }
   const years = Math.floor(days / 365)
   return years === 1 ? '1 year ago' : `${years} years ago`
 }

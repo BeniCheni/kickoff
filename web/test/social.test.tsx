@@ -26,6 +26,11 @@ test('relative time and the views line stay in ordinary words', () => {
   expect(relativeTime('2026-10-18T17:59:30.000Z', now)).toBe('just now')
   expect(relativeTime('2026-10-18T16:00:00.000Z', now)).toBe('2 hours ago')
   expect(relativeTime('2026-10-02T18:00:00.000Z', now)).toBe('16 days ago')
+  const day = 24 * 60 * 60 * 1000
+  expect(relativeTime(new Date(now - 359 * day).toISOString(), now)).toBe('11 months ago')
+  expect(relativeTime(new Date(now - 360 * day).toISOString(), now)).toBe('11 months ago')
+  expect(relativeTime(new Date(now - 364 * day).toISOString(), now)).toBe('11 months ago')
+  expect(relativeTime(new Date(now - 365 * day).toISOString(), now)).toBe('1 year ago')
   expect(viewsLine(1390, '2026-10-02T18:00:00.000Z', now)).toBe('1,390 views · 16 days ago')
 })
 
