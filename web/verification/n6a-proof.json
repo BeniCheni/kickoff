@@ -2,128 +2,128 @@
   "proved": "2026-10-19",
   "helper": "pglite-server 0.1.5 (MIT, published 2026-02-07)",
   "database": "Studio PGlite 0.5.9 on the Postgres wire, SET ROLE studio_reader after publish and seed",
-  "storageOrigin": "http://127.0.0.1:49388",
+  "storageOrigin": "http://127.0.0.1:58806",
   "publicId": "n6a-cat",
   "shots": [
     {
       "name": "gallery-ledger-light-390",
-      "sha256": "85bb62bc6bcdab3e8a5faa562120ff4228d2bb9ddc54e1314092bdcf040609f7",
+      "sha256": "361b4c9c51406a6e26c3f5e8df975764862479d38bc4af6b5ee8cbfc2738f7c9",
       "scrollWidth": 390,
       "innerWidth": 390
     },
     {
       "name": "watch-ledger-light-390",
-      "sha256": "f87b9cca2d26fd639a6b5eb878b78906d8343d3b41c6912e0ad8b6c4408ceec1"
+      "sha256": "3943e38bb2a4aa6600332893ab120c355f506cc91436fd952ef47860d20be42c"
     },
     {
       "name": "gallery-ledger-light-1000",
-      "sha256": "8dae89443d929b6d831162c03db45117e0fe56681c73e6cea3399852a152f2df",
+      "sha256": "7d0a6b534f7ab7b4b15d863ada1ffc41c36c09ccf9bc3829adc31442ffc36c2c",
       "scrollWidth": 1000,
       "innerWidth": 1000
     },
     {
       "name": "watch-ledger-light-1000",
-      "sha256": "8676a864ad49fd0438c4299af6576855f116aa95a4fe312afdcd13a6a8bfb951"
+      "sha256": "13c987a55a26b1b4a0f8c9d9e4951e713dd0f50da20222efa01834661d67277f"
     },
     {
       "name": "gallery-ledger-dark-390",
-      "sha256": "40d71bfbce70cca404c94061f7213e21587fa8c8a4505abcc867a0aa015b0acc",
+      "sha256": "dc0fddf2535cfca85fc61fd885945f0a11fdc8f0a8f43d0d4c7186e7cec041db",
       "scrollWidth": 390,
       "innerWidth": 390
     },
     {
       "name": "watch-ledger-dark-390",
-      "sha256": "43b663057cd1864874484c34d2088cafeae2d8fb7127a4596cead32dbb1c4b6e"
+      "sha256": "b93fa8d2dffd79ebecc2906781769ac3aa3a46cb14773462b38d9be8a170b63e"
     },
     {
       "name": "gallery-ledger-dark-1000",
-      "sha256": "5bb7b618650797a18d8c529ef0f2d5d8c867739b7d8d6d4996569d73fbcbaccd",
+      "sha256": "078c271599b7f5c072b9cd11183fc252d17ef696acfc2c5083f5d3ba14c054f8",
       "scrollWidth": 1000,
       "innerWidth": 1000
     },
     {
       "name": "watch-ledger-dark-1000",
-      "sha256": "864ebc7ee0f2f47848f5c09734d6f7e2c75efad23600c25209fd226c65b3ed1d"
+      "sha256": "b7ec6f826b82fb8e749b7bce23fce026be6d21ccf5d1a904c53378943a01e10d"
     },
     {
       "name": "gallery-poster-light-390",
-      "sha256": "1dabda2ee392cd866a3405a5669a9dc2b487c3cf77a842fd22eb264465334e44",
+      "sha256": "08d48c955d7e1bf5dad885df97db42feae29fae4adaccf51031ad4ba8657d11f",
       "scrollWidth": 390,
       "innerWidth": 390
     },
     {
       "name": "watch-poster-light-390",
-      "sha256": "928075879431b21dab5f199ee1797e4f8db7f60fd1a22b053b38db60691ce271"
+      "sha256": "8d17c59ab0d7cc78fd4e80b4ac51caf2546aa8d5b87abc87d01ec9bee9f7e765"
     },
     {
       "name": "gallery-poster-light-1000",
-      "sha256": "b4c0f0ce9d1b2aae0a8152ee8b57071a4faea1cf986204abda482c5830516479",
+      "sha256": "edfaf1306423cba9a770e8279637eb14851fe4093873d03ae4d31bacb6fd3dab",
       "scrollWidth": 1000,
       "innerWidth": 1000
     },
     {
       "name": "watch-poster-light-1000",
-      "sha256": "3b0d7e5fb877379ff0d704bf74a6c273db2a00421d360d77f3a302d6a654dd70"
+      "sha256": "f82ebad1500107dd602517449ef0b76ac899bc7a128f2158c0bc6a2310725965"
     },
     {
       "name": "gallery-poster-dark-390",
-      "sha256": "5499d7e1c87124fea42774691646b9b7b5177d8eca2f080d6cfa717934ef11a4",
+      "sha256": "59574f242e33e44c17ea916d3deaf54cb13e9a799246bb90860e42e0be6bfb28",
       "scrollWidth": 390,
       "innerWidth": 390
     },
     {
       "name": "watch-poster-dark-390",
-      "sha256": "94b78bf41a5afa232705a22f3586f9dccd351c97e3ab76ea8cc851e9ee13e32c"
+      "sha256": "6c141141c57b236c5b8b214a72821c9afe69050e01dda0261e2b01336b124536"
     },
     {
       "name": "gallery-poster-dark-1000",
-      "sha256": "2cea2bb7b01ac22569cae77f5f77472100b81d8191fe3816f935598890aacc60",
+      "sha256": "8af6be53f4604f2624786e7f273c9a6288288b186bdea1ec5f6173e9935c5ed4",
       "scrollWidth": 1000,
       "innerWidth": 1000
     },
     {
       "name": "watch-poster-dark-1000",
-      "sha256": "de57c42fadee0af32c95a9bdddc2e645a17c12a4ae5c8dc9f3b69090b8e1282a"
+      "sha256": "8c8b9e9ccfe509b904e65ac98e92e8913157ff2946e19318e149a535e87bea45"
     },
     {
       "name": "gallery-broadcast-light-390",
-      "sha256": "46d0546dae9f87b23105231b33ad4c8a62c890844172ebb803db3da6f0c9e853",
+      "sha256": "48de27096fe555f664d2aa6b74647b75334b7ddedb6e2b5e4cb4f196bda04491",
       "scrollWidth": 390,
       "innerWidth": 390
     },
     {
       "name": "watch-broadcast-light-390",
-      "sha256": "b5abcbc60ddaa1d59ed7d3f3cc686ca87946088c353c6550c0ca0945ee30481d"
+      "sha256": "e2f6e481ef106d361526c466d663e8ee1d0f680f8934fd4991196e8657027070"
     },
     {
       "name": "gallery-broadcast-light-1000",
-      "sha256": "3da62aad6a11154210d08426df31073270e5846d20f6c641e5e3b876c704560a",
+      "sha256": "a0904345f6eda11d81e2aa651c03ba842d06ce8beccdc462ac79c27d32db56d0",
       "scrollWidth": 1000,
       "innerWidth": 1000
     },
     {
       "name": "watch-broadcast-light-1000",
-      "sha256": "8a3eb912dcfc10acd29709dcbe38a214f1d20be0e7b73c59ac0aa5a105fc8572"
+      "sha256": "564be6c01bde437570364cdb84a5a41fe98a7212120bc9c59235d8b79af5ce9f"
     },
     {
       "name": "gallery-broadcast-dark-390",
-      "sha256": "95090f76bd8894051a6504078a381f556875ba1a9e59d2ed2dc8796df34807a6",
+      "sha256": "5492d9d67aa8b19a6a3eb81f983aa7feb5446ac24d0a68089dd5c81c7b7535d6",
       "scrollWidth": 390,
       "innerWidth": 390
     },
     {
       "name": "watch-broadcast-dark-390",
-      "sha256": "89660a5706457e181dc12e57b7e2de7aa2b08e10e643e217dc6c9051620ba7d0"
+      "sha256": "f0513d97251c357dc4423e4f5c12fef941afd885bfc3806c6334613dfcfb1feb"
     },
     {
       "name": "gallery-broadcast-dark-1000",
-      "sha256": "0e11919957e08161323e6e8567a6835f4ee12ab91f8cdcd97b2b550f539db32b",
+      "sha256": "702fe04e92db9169c9dfb011004e567ebc82290ea1a2a5a957ce509ca77ec4d5",
       "scrollWidth": 1000,
       "innerWidth": 1000
     },
     {
       "name": "watch-broadcast-dark-1000",
-      "sha256": "760dd93fd2499ac05359119c18ad39cbdf508c815d3f63013b0d1dc3e08f274a"
+      "sha256": "3a45f0179d02466f3f654017e1e990df6c44948c0da2ef425029146a4b34094f"
     }
   ],
   "checks": [
@@ -140,9 +140,16 @@
       "ok": true
     },
     {
+      "name": "gallery-ledger-light-390 thumbnail",
+      "ok": true,
+      "detail": [
+        160
+      ]
+    },
+    {
       "name": "watch-ledger-light-390 autoplay",
       "ok": true,
-      "detail": "http://127.0.0.1:49388/moments/n6a-cat/video-c5c43794.mp4"
+      "detail": "http://127.0.0.1:58806/moments/n6a-cat/video-c5c43794.mp4"
     },
     {
       "name": "gallery-ledger-light-1000 overflow",
@@ -157,9 +164,16 @@
       "ok": true
     },
     {
+      "name": "gallery-ledger-light-1000 thumbnail",
+      "ok": true,
+      "detail": [
+        160
+      ]
+    },
+    {
       "name": "watch-ledger-light-1000 autoplay",
       "ok": true,
-      "detail": "http://127.0.0.1:49388/moments/n6a-cat/video-c5c43794.mp4"
+      "detail": "http://127.0.0.1:58806/moments/n6a-cat/video-c5c43794.mp4"
     },
     {
       "name": "gallery-ledger-dark-390 overflow",
@@ -174,9 +188,16 @@
       "ok": true
     },
     {
+      "name": "gallery-ledger-dark-390 thumbnail",
+      "ok": true,
+      "detail": [
+        160
+      ]
+    },
+    {
       "name": "watch-ledger-dark-390 autoplay",
       "ok": true,
-      "detail": "http://127.0.0.1:49388/moments/n6a-cat/video-c5c43794.mp4"
+      "detail": "http://127.0.0.1:58806/moments/n6a-cat/video-c5c43794.mp4"
     },
     {
       "name": "gallery-ledger-dark-1000 overflow",
@@ -191,9 +212,16 @@
       "ok": true
     },
     {
+      "name": "gallery-ledger-dark-1000 thumbnail",
+      "ok": true,
+      "detail": [
+        160
+      ]
+    },
+    {
       "name": "watch-ledger-dark-1000 autoplay",
       "ok": true,
-      "detail": "http://127.0.0.1:49388/moments/n6a-cat/video-c5c43794.mp4"
+      "detail": "http://127.0.0.1:58806/moments/n6a-cat/video-c5c43794.mp4"
     },
     {
       "name": "gallery-poster-light-390 overflow",
@@ -208,9 +236,16 @@
       "ok": true
     },
     {
+      "name": "gallery-poster-light-390 thumbnail",
+      "ok": true,
+      "detail": [
+        160
+      ]
+    },
+    {
       "name": "watch-poster-light-390 autoplay",
       "ok": true,
-      "detail": "http://127.0.0.1:49388/moments/n6a-cat/video-c5c43794.mp4"
+      "detail": "http://127.0.0.1:58806/moments/n6a-cat/video-c5c43794.mp4"
     },
     {
       "name": "gallery-poster-light-1000 overflow",
@@ -225,9 +260,16 @@
       "ok": true
     },
     {
+      "name": "gallery-poster-light-1000 thumbnail",
+      "ok": true,
+      "detail": [
+        160
+      ]
+    },
+    {
       "name": "watch-poster-light-1000 autoplay",
       "ok": true,
-      "detail": "http://127.0.0.1:49388/moments/n6a-cat/video-c5c43794.mp4"
+      "detail": "http://127.0.0.1:58806/moments/n6a-cat/video-c5c43794.mp4"
     },
     {
       "name": "gallery-poster-dark-390 overflow",
@@ -242,9 +284,16 @@
       "ok": true
     },
     {
+      "name": "gallery-poster-dark-390 thumbnail",
+      "ok": true,
+      "detail": [
+        160
+      ]
+    },
+    {
       "name": "watch-poster-dark-390 autoplay",
       "ok": true,
-      "detail": "http://127.0.0.1:49388/moments/n6a-cat/video-c5c43794.mp4"
+      "detail": "http://127.0.0.1:58806/moments/n6a-cat/video-c5c43794.mp4"
     },
     {
       "name": "gallery-poster-dark-1000 overflow",
@@ -259,9 +308,16 @@
       "ok": true
     },
     {
+      "name": "gallery-poster-dark-1000 thumbnail",
+      "ok": true,
+      "detail": [
+        160
+      ]
+    },
+    {
       "name": "watch-poster-dark-1000 autoplay",
       "ok": true,
-      "detail": "http://127.0.0.1:49388/moments/n6a-cat/video-c5c43794.mp4"
+      "detail": "http://127.0.0.1:58806/moments/n6a-cat/video-c5c43794.mp4"
     },
     {
       "name": "gallery-broadcast-light-390 overflow",
@@ -276,9 +332,16 @@
       "ok": true
     },
     {
+      "name": "gallery-broadcast-light-390 thumbnail",
+      "ok": true,
+      "detail": [
+        160
+      ]
+    },
+    {
       "name": "watch-broadcast-light-390 autoplay",
       "ok": true,
-      "detail": "http://127.0.0.1:49388/moments/n6a-cat/video-c5c43794.mp4"
+      "detail": "http://127.0.0.1:58806/moments/n6a-cat/video-c5c43794.mp4"
     },
     {
       "name": "gallery-broadcast-light-1000 overflow",
@@ -293,9 +356,16 @@
       "ok": true
     },
     {
+      "name": "gallery-broadcast-light-1000 thumbnail",
+      "ok": true,
+      "detail": [
+        160
+      ]
+    },
+    {
       "name": "watch-broadcast-light-1000 autoplay",
       "ok": true,
-      "detail": "http://127.0.0.1:49388/moments/n6a-cat/video-c5c43794.mp4"
+      "detail": "http://127.0.0.1:58806/moments/n6a-cat/video-c5c43794.mp4"
     },
     {
       "name": "gallery-broadcast-dark-390 overflow",
@@ -310,9 +380,16 @@
       "ok": true
     },
     {
+      "name": "gallery-broadcast-dark-390 thumbnail",
+      "ok": true,
+      "detail": [
+        160
+      ]
+    },
+    {
       "name": "watch-broadcast-dark-390 autoplay",
       "ok": true,
-      "detail": "http://127.0.0.1:49388/moments/n6a-cat/video-c5c43794.mp4"
+      "detail": "http://127.0.0.1:58806/moments/n6a-cat/video-c5c43794.mp4"
     },
     {
       "name": "gallery-broadcast-dark-1000 overflow",
@@ -327,12 +404,22 @@
       "ok": true
     },
     {
+      "name": "gallery-broadcast-dark-1000 thumbnail",
+      "ok": true,
+      "detail": [
+        160
+      ]
+    },
+    {
       "name": "watch-broadcast-dark-1000 autoplay",
       "ok": true,
-      "detail": "http://127.0.0.1:49388/moments/n6a-cat/video-c5c43794.mp4"
+      "detail": "http://127.0.0.1:58806/moments/n6a-cat/video-c5c43794.mp4"
     }
   ],
   "demoOff": true,
   "unavailable": true,
-  "fixturesUntouched": true
+  "timedOut": true,
+  "recovered": true,
+  "fixturesUntouched": true,
+  "leakHits": 0
 }

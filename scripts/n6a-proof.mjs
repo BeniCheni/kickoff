@@ -210,11 +210,12 @@ try {
         check(`${name} thumbnail`, thumbs.length > 0 && thumbs.every(img => img.complete && img.width > 0 && img.fromStore), thumbs.map(img => img.width))
         await page.click('h2 a')
         await page.waitForFunction(() => /Playing muted|Sound on|No playable file/.test(document.body.innerText), { timeout: 8000 })
-        await new Promise(resolve => setTimeout(resolve, 450))
         const watchText = await page.evaluate(() => ({
           text: document.body.innerText,
           src: document.querySelector('video')?.getAttribute('src') ?? '',
         }))
+        // The stub clip is a third of a second, so the capture waits out the 220 ms cross-fade after the state is read.
+        await new Promise(resolve => setTimeout(resolve, 450))
         const watchPng = await page.screenshot({ fullPage: true })
         const watchName = `watch-${lens}-${theme}-${width}`
         writeFileSync(path.join(outDir, `${watchName}.png`), watchPng)
