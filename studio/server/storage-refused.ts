@@ -5,7 +5,7 @@ function refuse(): never {
   throw new Error(STORAGE_REFUSAL)
 }
 
-/** Live mode until ST3b wires R2. No method reports a write, a delete, or a removal. */
+/** Live mode without the four R2 names. No method reports a write, a delete, or a removal. */
 export function createRefusingStorage(): StoragePort {
   return {
     async putVideo() {

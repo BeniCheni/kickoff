@@ -108,7 +108,8 @@ export function createR2Storage(options: {
           'x-amz-date': signed.amzDate,
           authorization: signed.authorization,
         },
-        body,
+        // The bytes are unchanged. The cast is what the DOM fetch type accepts.
+        body: new Uint8Array(body.buffer, body.byteOffset, body.byteLength) as Uint8Array<ArrayBuffer>,
       })
     } catch {
       throw new ObjectStoreError(`${kind} upload failed`, null, 'network')

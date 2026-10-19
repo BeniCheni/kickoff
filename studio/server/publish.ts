@@ -1,7 +1,9 @@
-import { eq } from 'drizzle-orm'
-import { siteCopyPath } from '@kickoff/catalog'
+import { and, eq } from 'drizzle-orm'
+import { SUBJECT_LABELS } from '@kickoff/catalog'
 import { article50Answer, asset, generation, generationInput, generationSubject, job, subject, videos } from '../db/schema.ts'
-import { DRAFT, STORAGE_REFUSAL } from '../shared/admin-copy.ts'
+import { cardGaps } from '../engine.ts'
+import { STORAGE_REFUSAL } from '../shared/admin-copy.ts'
+import { cardRefusal } from '../shared/status.ts'
 import type { OpenedAdmin } from './open.ts'
 
 const UUID = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
@@ -12,18 +14,15 @@ export function publishJobId(pathname: string, action: '' | 'gate' | 'go' | 'unp
   return match?.[1] ?? null
 }
 
-function positive(value: number | string | null | undefined): boolean {
-  if (value === null || value === undefined) return false
-  const number = typeof value === 'number' ? value : Number(value)
-  return Number.isFinite(number) && number > 0
-}
-
 export async function readPublish(opened: OpenedAdmin, jobId: string, publicId: string) {
   const [current] = await opened.db.select().from(job).where(eq(job.id, jobId))
   if (!current) return { outcome: 'missing' as const }
   const [gen] = await opened.db.select().from(generation).where(eq(generation.id, current.generationId))
   const [output] = gen?.outputAssetId ? await opened.db.select().from(asset).where(eq(asset.id, gen.outputAssetId)) : []
-  const [k0Link] = gen ? await opened.db.select().from(generationInput).where(eq(generationInput.generationId, gen.id)) : []
+  const [k0Link] = gen ? await opened.db.select().from(generationInput).where(and(
+    eq(generationInput.generationId, gen.id),
+    eq(generationInput.role, 'first'),
+  )) : []
   const [k0] = k0Link ? await opened.db.select().from(asset).where(eq(asset.id, k0Link.assetId)) : []
   const links = gen ? await opened.db.select().from(generationSubject).where(eq(generationSubject.generationId, gen.id)) : []
   const names: string[] = []
@@ -33,13 +32,16 @@ export async function readPublish(opened: OpenedAdmin, jobId: string, publicId: 
   }
   const [gate] = await opened.db.select().from(article50Answer).limit(1)
   const [video] = await opened.db.select().from(videos).where(eq(videos.jobId, jobId))
-  const refusals: string[] = []
-  if (!positive(output?.width)) refusals.push(DRAFT.cardWidth)
-  if (!positive(output?.height)) refusals.push(DRAFT.cardHeight)
-  if (!positive(output?.durationS)) refusals.push(DRAFT.cardDuration)
-  if (names.length !== 1) refusals.push(DRAFT.cardSubject)
-  if (siteCopyPath(publicId) === null) refusals.push(DRAFT.cardPublicId)
-  if (!current.finishedAt) refusals.push(DRAFT.cardFinished)
+  const approvedSubjects = names.filter((name) => (SUBJECT_LABELS as readonly string[]).includes(name)).length
+  const missing = cardGaps({
+    publicId,
+    width: output?.width ?? null,
+    height: output?.height ?? null,
+    duration: output?.durationS ?? null,
+    approvedSubjects,
+    finishedAt: current.finishedAt,
+  })
+  const refusals = missing.map((item) => cardRefusal(item))
   const videoSha = output?.sha256
   const stillSha = k0?.sha256
   const keys = publicId && videoSha && stillSha ? {
@@ -55,6 +57,7 @@ export async function readPublish(opened: OpenedAdmin, jobId: string, publicId: 
     title: video?.title ?? null,
     gateRecorded: Boolean(gate),
     gateReason: gate ? null : 'Unavailable: the Article 50 answer is not recorded (A-06).',
+    missing,
     refusals,
     keys,
     recordedKeys: output?.bucket && output.objectPath ? { bucket: output.bucket, objectPath: output.objectPath } : null,
@@ -83,17 +86,17 @@ export async function publishJob(opened: OpenedAdmin, jobId: string, body: unkno
   if (record.confirm !== true || typeof record.publicId !== 'string' || typeof record.title !== 'string' || typeof record.position !== 'number' || !Number.isInteger(record.position) || record.position < 1) {
     return { outcome: 'refused' as const }
   }
-  const preview = await readPublish(opened, jobId, record.publicId)
-  if (preview.outcome !== 'publish') return preview
-  if (!preview.gateRecorded) return { outcome: 'gate-closed' as const, refusals: preview.refusals }
-  if (preview.refusals.length > 0) return { outcome: 'card-refused' as const, refusals: preview.refusals }
-  return opened.studio.publish({
+  const result = await opened.studio.publish({
     jobId,
     publicId: record.publicId,
     title: record.title,
     position: record.position,
     editorialNote: typeof record.note === 'string' ? record.note : undefined,
   })
+  if (result.outcome === 'card-refused') {
+    return { ...result, refusals: result.missing.map((item) => cardRefusal(item)) }
+  }
+  return result
 }
 
 function storageRefused(opened: OpenedAdmin): { outcome: 'storage-refused'; message: string } | null {

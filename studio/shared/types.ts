@@ -31,6 +31,8 @@ export type ShellView = {
   transport: TransportName
   databaseEngine: DatabaseEngine
   storage: StorageName
+  /** Present only when the test inject fetch is the storage port. */
+  storageFetch?: 'injected'
   fal: FalMode
   falConfigured: boolean
   host: '127.0.0.1'

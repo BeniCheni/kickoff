@@ -14,16 +14,43 @@ export const DRAFT = {
   onePhotograph: 'This submit sends the first selected photo. The engine accepts one photograph per request.',
   publishConfirm:
     'Publish writes this clip to the catalog. It is live on the next read. There is no pull request and no release.',
-  falKey: 'Unavailable: a live submit needs FAL_KEY on this Mac, and none is set.',
+  falKey: 'Unavailable: a live fal action needs FAL_KEY on this Mac, and none is set.',
+  uploadFailed: 'Unavailable: the files were not stored. The clip stays listed.',
+  deleteFailed: 'Unavailable: a stored file was not removed.',
   cardWidth: 'Publish is refused: the clip has no positive width on the record.',
   cardHeight: 'Publish is refused: the clip has no positive height on the record.',
   cardDuration: 'Publish is refused: the clip has no positive duration on the record.',
-  cardSubject: 'Publish is refused: the clip needs one approved subject on the record.',
+  cardSubject: 'Publish is refused: the clip needs an approved subject on the record.',
   cardPublicId: 'Publish is refused: the public id is not a safe token.',
   cardFinished: 'Publish is refused: the job has no finish time.',
   importChoose: 'Choose an MP4 clip and a JPEG still. Both stay on this Mac until you confirm.',
   importPrompt: 'The prompt as you typed it into Grok.',
   importMadeOn: 'The day you made the clip.',
+  importPng: 'This still is a PNG. Convert it with sips -s format jpeg <still.png> --out <still.jpg>.',
+  importWrongType: 'Unavailable: choose an MP4 clip and a JPEG still.',
+  importNotMp4: 'Unavailable: this is not an MP4.',
+  importTruncated: 'Unavailable: the clip is truncated.',
+  importNoVideo: 'Unavailable: the clip has no video track.',
+  importZeroDuration: 'Unavailable: the clip\'s duration is zero.',
+  importDuplicate: 'Unavailable: this file was already imported.',
+  importNeedsMadeOn: 'Unavailable: the clip has no finish time. Enter the day you made it.',
+  importNotJpeg: 'Unavailable: the keyframe is not a JPEG.',
+  importWorktree: 'Unavailable: that path is inside the worktree.',
+  importClipTooLarge: 'Unavailable: that clip is over 100 MB.',
+  importStillTooLarge: 'Unavailable: that still is over 20 MB.',
+  importMissing: 'Unavailable: that file is no longer waiting. Choose it again.',
+  clipUnrecorded: 'Unavailable: that clip is no longer recorded. Reload this page.',
+  uploadsFolder: 'Unavailable: the uploads folder is not a plain folder on this Mac.',
+  importEmpty: 'Unavailable: the file is empty.',
+  importPromptEmpty: 'Unavailable: the prompt is empty.',
+  importTitleEmpty: 'Unavailable: the title is empty.',
+  importSubject: 'Unavailable: the subjects must be Fenway or Frankenstein.',
+  importMadeOnInvalid: 'Unavailable: the made-on date must be YYYY-MM-DD.',
+  importPreview: 'This is what the file says, before it is recorded.',
+  importRead: 'Read the file',
+  importStripNone: 'Strip will remove nothing.',
+  /** When the engine names boxes, the screen says `Strip will remove <boxes>.` */
+  importImported: 'Imported. The clip is in Jobs and Review, downloaded.',
   gateUnrecorded:
     'Before any generated clip is published, an explicit answer is recorded on whether EU AI Act Article 50 applies to Kickoff, and what disclosure it would need (A-06; source: spec §6 A1). Answer on file: none. Publish stays unavailable until one is recorded.',
 } as const
@@ -68,5 +95,5 @@ export const RETIRED = [
   },
 ] as const
 
-/** Live mode has no storage port until ST3b wires R2. Every method refuses with this sentence. */
+/** Live mode without the four R2 names. Every method refuses with this sentence. */
 export const STORAGE_REFUSAL = 'Storage is not connected, so a live publish, delete, or removal is refused until the files can be stored.'

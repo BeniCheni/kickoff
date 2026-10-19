@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react'
 import { getShell } from './api.ts'
 import { ComposePage } from './compose.tsx'
 import { JobsPage } from './jobs.tsx'
+import { ImportPage } from './import.tsx'
 import { PublishPage } from './publish.tsx'
 import { ReviewPage } from './review.tsx'
 import { StudioShell } from './shell.tsx'
 import { readStoredTheme, resolveTheme, type ThemeName } from '../../shared/theme.ts'
-import { TAB_LABELS, type ShellView, type StudioTab } from '../../shared/types.ts'
+import type { ShellView, StudioTab } from '../../shared/types.ts'
 
 function tabFromHash(): StudioTab {
   const name = window.location.hash.replace('#', '')
@@ -59,7 +60,7 @@ export function App() {
       }}
       onTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
     >
-      {tab === 'jobs' ? <JobsPage shell={shell} onShell={refreshShell} /> : tab === 'compose' ? <ComposePage shell={shell} onShell={refreshShell} /> : tab === 'review' ? <ReviewPage shell={shell} onShell={refreshShell} /> : tab === 'publish' ? <PublishPage shell={shell} onShell={refreshShell} /> : <h1>{TAB_LABELS[tab]}</h1>}
+      {tab === 'jobs' ? <JobsPage shell={shell} onShell={refreshShell} /> : tab === 'compose' ? <ComposePage shell={shell} onShell={refreshShell} /> : tab === 'review' ? <ReviewPage shell={shell} onShell={refreshShell} /> : tab === 'publish' ? <PublishPage shell={shell} onShell={refreshShell} /> : <ImportPage />}
     </StudioShell>
   )
 }

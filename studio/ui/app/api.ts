@@ -178,6 +178,62 @@ export async function retryRemoval(id: string): Promise<unknown> {
   return await response.json() as unknown
 }
 
+export type ImportPreview = {
+  outcome: 'preview'
+  width: number
+  height: number
+  durationS: string
+  frameRate: number | null
+  audio: boolean
+  fastStart: boolean
+  stripped: string
+  needsMadeOn: boolean
+}
+
+async function postBytes(path: string, type: string, bytes: ArrayBuffer): Promise<unknown> {
+  const response = await fetch(path, {
+    method: 'POST',
+    headers: { accept: 'application/json', 'content-type': type },
+    body: bytes,
+  })
+  return await response.json() as unknown
+}
+
+export async function uploadImportClip(bytes: ArrayBuffer): Promise<unknown> {
+  return postBytes('/api/import/clip', 'video/mp4', bytes)
+}
+
+export async function uploadImportStill(bytes: ArrayBuffer, type: string): Promise<unknown> {
+  return postBytes('/api/import/still', type, bytes)
+}
+
+export async function discardImportUpload(id: string, kind: 'clip' | 'still'): Promise<unknown> {
+  const response = await fetch('/api/import/discard', {
+    method: 'POST',
+    headers: { accept: 'application/json', 'content-type': 'application/json' },
+    body: JSON.stringify({ id, kind }),
+  })
+  return await response.json() as unknown
+}
+
+export async function previewImport(clipId: string, stillId: string): Promise<unknown> {
+  const response = await postJson('/api/import/preview', { clipId, stillId })
+  return await response.json() as unknown
+}
+
+export async function confirmImport(body: {
+  clipId: string
+  stillId: string
+  prompt: string
+  subjects: string[]
+  title: string
+  note: string
+  madeOn: string
+}): Promise<unknown> {
+  const response = await postJson('/api/import/confirm', body)
+  return await response.json() as unknown
+}
+
 export async function uploadPhoto(bytes: ArrayBuffer): Promise<{ id: string; sha256: string }> {
   const response = await fetch('/api/photos', {
     method: 'POST',

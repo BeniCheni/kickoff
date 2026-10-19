@@ -6,9 +6,10 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { LOOPBACK_HOST, assertLoopbackBind, isLoopbackHost } from './bind.ts'
 import { SESSION_COOKIE, cookieValue, guardRequest, oneTimeUrl, sessionCookie } from './guard.ts'
-import { BodyError, readBytes, readJson } from './body.ts'
+import { BodyError, CLIP_LIMIT, PHOTO_LIMIT, readBytes, readJson } from './body.ts'
+import { confirmImport, discardIncomingUpload, previewImport, storeImport } from './import.ts'
 import { estimateJobs, readCompose, submitJobs } from './compose.ts'
-import { attachJob, cancelJob, downloadJob, jobIdFrom, pollInFlight, readJobs, regenerateJob } from './jobs.ts'
+import { downloadJob, jobIdFrom, pollInFlight, readJobs, regenerateJob } from './jobs.ts'
 import { serveFile as serveRecorded } from './media.ts'
 import { findPhoto, photoPath, storePhoto } from './photos.ts'
 import { publishJob, publishJobId, readPublish, recordPublishGate, retryDeleteJob, retryRemovalJob, unpublishJob } from './publish.ts'
@@ -39,7 +40,9 @@ export type AdminServer = {
   transport: 'stub' | 'live'
   databaseEngine: 'pglite' | 'postgres'
   storage: 'stub' | 'r2' | 'refused'
+  storageFetch: 'injected' | null
   fal: 'stub' | 'live' | 'refused'
+  opened: OpenedAdmin
   close: () => Promise<void>
 }
 
@@ -51,6 +54,8 @@ export type StartAdminOptions = {
   token?: string
   /** Test seam. A thrown message on GET /api/boom, so error paths can be proved. */
   boom?: string
+  /** Test seam. Live R2 uses this fetch and never the network. */
+  fetchImpl?: typeof fetch
 }
 
 function sendJson(response: ServerResponse, status: number, body: unknown, extra: Record<string, string> = {}): void {
@@ -160,16 +165,6 @@ async function handle(
     sendJson(response, 200, await downloadJob(opened, downloadId), cookieHeader)
     return
   }
-  const cancelId = method === 'POST' ? jobIdFrom(url.pathname, 'cancel') : null
-  if (cancelId) {
-    sendJson(response, 200, await cancelJob(opened, cancelId), cookieHeader)
-    return
-  }
-  const attachId = method === 'POST' ? jobIdFrom(url.pathname, 'attach') : null
-  if (attachId) {
-    sendJson(response, 200, await attachJob(opened, attachId, await readJson(request)), cookieHeader)
-    return
-  }
   if (url.pathname === '/api/compose' && method === 'GET') {
     sendJson(response, 200, await readCompose(opened), cookieHeader)
     return
@@ -180,6 +175,73 @@ async function handle(
   }
   if (url.pathname === '/api/submit' && method === 'POST') {
     sendJson(response, 200, await submitJobs(opened, await readJson(request)), cookieHeader)
+    return
+  }
+  if (url.pathname === '/api/import/clip' && method === 'POST') {
+    const type = request.headers['content-type']
+    const header = (Array.isArray(type) ? type[0] : type)?.toLowerCase() ?? ''
+    if (!header.startsWith('video/mp4')) {
+      sendJson(response, 415, { outcome: 'not-an-mp4' }, cookieHeader)
+      return
+    }
+    let bytes: Buffer
+    try {
+      bytes = await readBytes(request, CLIP_LIMIT)
+    } catch (error) {
+      if (error instanceof BodyError && error.status === 413) {
+        sendJson(response, 413, { outcome: 'clip-too-large' }, cookieHeader)
+        return
+      }
+      throw error
+    }
+    if (bytes.length === 0) {
+      sendJson(response, 400, { outcome: 'empty' }, cookieHeader)
+      return
+    }
+    const stored = storeImport(opened.mediaDir, 'clip', new Uint8Array(bytes))
+    sendJson(response, 'outcome' in stored ? 400 : 200, stored, cookieHeader)
+    return
+  }
+  if (url.pathname === '/api/import/still' && method === 'POST') {
+    const type = request.headers['content-type']
+    const header = (Array.isArray(type) ? type[0] : type)?.toLowerCase() ?? ''
+    if (header.startsWith('image/png')) {
+      sendJson(response, 415, { outcome: 'png' }, cookieHeader)
+      return
+    }
+    if (!header.startsWith('image/jpeg')) {
+      sendJson(response, 415, { outcome: 'not-a-jpeg' }, cookieHeader)
+      return
+    }
+    let bytes: Buffer
+    try {
+      bytes = await readBytes(request, PHOTO_LIMIT)
+    } catch (error) {
+      if (error instanceof BodyError && error.status === 413) {
+        sendJson(response, 413, { outcome: 'still-too-large' }, cookieHeader)
+        return
+      }
+      throw error
+    }
+    if (bytes.length === 0) {
+      sendJson(response, 400, { outcome: 'empty' }, cookieHeader)
+      return
+    }
+    const stored = storeImport(opened.mediaDir, 'still', new Uint8Array(bytes))
+    sendJson(response, 'outcome' in stored ? 400 : 200, stored, cookieHeader)
+    return
+  }
+  if (url.pathname === '/api/import/discard' && method === 'POST') {
+    const removed = discardIncomingUpload(opened.mediaDir, await readJson(request))
+    sendJson(response, removed.outcome === 'discarded' ? 200 : 400, removed, cookieHeader)
+    return
+  }
+  if (url.pathname === '/api/import/preview' && method === 'POST') {
+    sendJson(response, 200, await previewImport(opened, await readJson(request)), cookieHeader)
+    return
+  }
+  if (url.pathname === '/api/import/confirm' && method === 'POST') {
+    sendJson(response, 200, await confirmImport(opened, await readJson(request)), cookieHeader)
     return
   }
   if (url.pathname === '/api/photos' && method === 'POST') {
@@ -310,7 +372,7 @@ export async function startAdmin(options: StartAdminOptions = {}): Promise<Admin
   const host = options.host ?? LOOPBACK_HOST
   assertLoopbackBind(host)
   const live = options.live ?? false
-  const opened = await openAdmin(options.env ?? process.env, live)
+  const opened = await openAdmin(options.env ?? process.env, live, { fetchImpl: options.fetchImpl })
   const token = options.token ?? randomBytes(32).toString('base64url')
   const spentTickets = new Set<string>()
   const server: Server = createServer((request, response) => {
@@ -346,7 +408,9 @@ export async function startAdmin(options: StartAdminOptions = {}): Promise<Admin
     transport: opened.transport,
     databaseEngine: opened.databaseEngine,
     storage: opened.storage,
+    storageFetch: opened.storageFetch,
     fal: opened.fal,
+    opened,
     async close() {
       await new Promise<void>((resolve, reject) => {
         server.close((error) => (error ? reject(error) : resolve()))

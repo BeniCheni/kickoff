@@ -5,17 +5,21 @@
  */
 import { spawn, type ChildProcess } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
+import { closeSync, mkdirSync, openSync, rmSync, writeFileSync, writeSync } from 'node:fs'
 import { request as httpRequest } from 'node:http'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { syntheticMp4 } from '../media/mp4.ts'
+import { CLIP_LIMIT, PHOTO_LIMIT } from '../server/body.ts'
 import { assertLoopbackBind } from '../server/bind.ts'
 import { findSecrets } from '../secrets/scan.ts'
+import { statusLine } from '../shared/status.ts'
+import { minimalJpeg } from '../test/jpeg.ts'
 import { seedAdmin, type SeedManifest } from './seed-admin.ts'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const studioDir = path.resolve(here, '..')
-const proofDir = path.join(process.env.HOME ?? '/tmp', 'kickoff-st3-proofs')
+const proofDir = path.join(process.env.HOME ?? '/tmp', 'kickoff-st3b-proofs')
 const chromeBin = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 const widths = [1000, 1280, 1440] as const
 const themes = ['light', 'dark'] as const
@@ -49,7 +53,7 @@ function httpGet(url: string, method = 'GET'): Promise<string> {
   })
 }
 
-function httpCall(port: number, method: string, urlPath: string, headers: Record<string, string>, body?: string): Promise<{ status: number; body: string; setCookie: string }> {
+function httpCall(port: number, method: string, urlPath: string, headers: Record<string, string>, body?: string | Buffer): Promise<{ status: number; body: string; setCookie: string }> {
   return new Promise((resolve, reject) => {
     const req = httpRequest({
       hostname: '127.0.0.1',
@@ -118,6 +122,21 @@ class Page {
     })
   }
 
+  static async attachExisting(browserUrl: string, urlIncludes: string): Promise<Page> {
+    const list = JSON.parse(await httpGet(`${browserUrl}/json/list`)) as { type?: string; url?: string; webSocketDebuggerUrl?: string }[]
+    const target = list.find((item) => item.type === 'page' && item.url?.includes(urlIncludes) && item.webSocketDebuggerUrl)
+    if (!target?.webSocketDebuggerUrl) throw new Error(`no page matching ${urlIncludes}`)
+    const socket = new WebSocket(target.webSocketDebuggerUrl)
+    await new Promise<void>((resolve, reject) => {
+      socket.addEventListener('open', () => resolve())
+      socket.addEventListener('error', () => reject(new Error('chrome socket failed')))
+    })
+    const page = new Page(socket)
+    await page.send('Page.enable')
+    await page.send('Runtime.enable')
+    return page
+  }
+
   static async attach(browserUrl: string): Promise<Page> {
     const created = JSON.parse(await httpGet(`${browserUrl}/json/new?about:blank`, 'PUT')) as { webSocketDebuggerUrl: string }
     const socket = new WebSocket(created.webSocketDebuggerUrl)
@@ -132,14 +151,29 @@ class Page {
     return page
   }
 
-  send(method: string, params: Record<string, unknown> = {}): Promise<unknown> {
+  send(method: string, params: Record<string, unknown> = {}, timeoutMs = 15000): Promise<unknown> {
     const id = ++this.next
     this.socket.send(JSON.stringify({ id, method, params }))
-    return new Promise((resolve, reject) => this.pending.set(id, { resolve, reject }))
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => {
+        this.pending.delete(id)
+        reject(new Error(`cdp timeout ${method}`))
+      }, timeoutMs)
+      this.pending.set(id, {
+        resolve: (value) => {
+          clearTimeout(timer)
+          resolve(value)
+        },
+        reject: (error) => {
+          clearTimeout(timer)
+          reject(error)
+        },
+      })
+    })
   }
 
-  async evaluate<T>(expression: string): Promise<T> {
-    const result = await this.send('Runtime.evaluate', { expression, awaitPromise: true, returnByValue: true }) as {
+  async evaluate<T>(expression: string, timeoutMs = 15000, awaitPromise = true): Promise<T> {
+    const result = await this.send('Runtime.evaluate', { expression, awaitPromise, returnByValue: true }, timeoutMs) as {
       result?: { value?: T }
       exceptionDetails?: { text?: string; exception?: { description?: string } }
     }
@@ -181,11 +215,11 @@ function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-async function launchChrome(port: number, dir: string): Promise<ChildProcess> {
+async function launchChrome(port: number, dir: string, headless = true): Promise<ChildProcess> {
   const chrome = spawn(chromeBin, [
-    '--headless=new',
-    '--disable-gpu',
+    ...(headless ? ['--headless=new', '--disable-gpu'] : []),
     '--no-first-run',
+    '--no-default-browser-check',
     `--user-data-dir=${dir}`,
     `--remote-debugging-port=${port}`,
   ], { stdio: 'ignore' })
@@ -349,11 +383,21 @@ async function capture(page: Page, name: string, theme: string, width: number): 
 async function waitFor(page: Page, expression: string, timeout = 8000): Promise<void> {
   const start = Date.now()
   while (Date.now() - start < timeout) {
-    const ready = await page.evaluate<boolean>(expression)
-    if (ready) return
+    try {
+      const ready = await page.evaluate<boolean>(expression, 4000)
+      if (ready) return
+    } catch (error) {
+      if (!(error instanceof Error) || !error.message.startsWith('cdp timeout')) throw error
+    }
     await delay(100)
   }
-  throw new Error(`timed out waiting for ${expression}`)
+  let detail = ''
+  try {
+    detail = await page.evaluate<string>('document.body.innerText.slice(0, 400)', 4000)
+  } catch (error) {
+    detail = error instanceof Error ? error.message : 'no page'
+  }
+  throw new Error(`timed out waiting for ${expression} :: ${detail}`)
 }
 
 async function themed(page: Page, name: string, prepare: () => Promise<void>): Promise<void> {
@@ -376,6 +420,93 @@ async function themed(page: Page, name: string, prepare: () => Promise<void>): P
 async function signIn(page: Page, origin: string, token: string): Promise<void> {
   await page.goto(`${origin}/?ticket=${encodeURIComponent(token)}`)
   await waitFor(page, `!!document.querySelector('.studio-theme')`)
+}
+
+function filePayload(bytes: Uint8Array, name: string, type: string): { name: string; type: string; base64: string } {
+  return { name, type, base64: Buffer.from(bytes).toString('base64') }
+}
+
+function writeSized(file: string, size: number): void {
+  const handle = openSync(file, 'w')
+  const chunk = Buffer.alloc(1024 * 1024)
+  let left = size
+  while (left > 0) {
+    const count = Math.min(chunk.length, left)
+    writeSync(handle, chunk, 0, count)
+    left -= count
+  }
+  closeSync(handle)
+}
+
+async function chooseImportFileFromDisk(page: Page, selector: string, filePath: string): Promise<void> {
+  await page.send('DOM.enable', {}, 30000)
+  const documentNode = await page.send('DOM.getDocument', { depth: 1 }, 30000) as { root?: { nodeId?: number } }
+  const root = documentNode.root?.nodeId
+  if (!root) throw new Error('no document')
+  const found = await page.send('DOM.querySelector', { nodeId: root, selector }, 30000) as { nodeId?: number }
+  if (!found.nodeId) throw new Error(`missing ${selector}`)
+  await page.send('DOM.setFileInputFiles', { nodeId: found.nodeId, files: [filePath] }, 30000)
+}
+
+async function chooseImportFile(page: Page, id: string, file: { name: string; type: string; base64: string }): Promise<void> {
+  await page.evaluate<void>(`(() => {
+    const item = ${JSON.stringify(file)}
+    const binary = atob(item.base64)
+    const bytes = new Uint8Array(binary.length)
+    for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index)
+    const input = document.querySelector(${JSON.stringify(id)})
+    if (!input) throw new Error('missing ' + ${JSON.stringify(id)})
+    const list = new DataTransfer()
+    list.items.add(new File([bytes], item.name, { type: item.type }))
+    input.files = list.files
+    input.dispatchEvent(new Event('change', { bubbles: true }))
+  })()`)
+}
+
+async function proveOversizedFiles(origin: string, token: string): Promise<void> {
+  const dir = path.join(proofDir, 'oversize')
+  mkdirSync(dir, { recursive: true })
+  const hugeClip = path.join(dir, 'huge.mp4')
+  const hugeStill = path.join(dir, 'huge.jpg')
+  const goodClip = path.join(dir, 'good.mp4')
+  const smallStill = path.join(dir, 'small.jpg')
+  writeSized(hugeClip, CLIP_LIMIT + 1)
+  writeSized(hugeStill, PHOTO_LIMIT + 1)
+  writeFileSync(goodClip, syntheticMp4())
+  writeFileSync(smallStill, minimalJpeg)
+  const profile = path.join(proofDir, 'chrome-headed')
+  rmSync(profile, { recursive: true, force: true })
+  mkdirSync(profile, { recursive: true })
+  const chrome = await launchChrome(9335, profile, false)
+  try {
+    const page = await Page.attach('http://127.0.0.1:9335')
+    await page.send('Network.enable')
+    await page.send('Network.setCookie', { name: 'studio_session', value: token, url: origin })
+    await page.goto(`${origin}/#import`)
+    await waitFor(page, `!!document.querySelector('#i-clip')`)
+    await chooseImportFileFromDisk(page, '#i-clip', hugeClip)
+    await chooseImportFileFromDisk(page, '#i-still', smallStill)
+    await waitFor(page, `document.body.innerText.includes('huge.mp4')`)
+    await page.evaluate<void>(`[...document.querySelectorAll('button')].find((button) => button.textContent.trim() === 'Read the file')?.click(); undefined`, 5000, false)
+    const clipEye = await Page.attachExisting('http://127.0.0.1:9335', '#import')
+    await waitFor(clipEye, `document.body.innerText.includes('that clip is over 100 MB')`, 60000)
+    await themed(clipEye, 'import-clip-too-large', async () => undefined)
+    clipEye.close()
+    const again = await Page.attachExisting('http://127.0.0.1:9335', '#import')
+    await chooseImportFileFromDisk(again, '#i-clip', goodClip)
+    await chooseImportFileFromDisk(again, '#i-still', hugeStill)
+    await waitFor(again, `document.body.innerText.includes('huge.jpg')`)
+    await again.evaluate<void>(`[...document.querySelectorAll('button')].find((button) => button.textContent.trim() === 'Read the file')?.click(); undefined`, 5000, false)
+    again.close()
+    const stillEye = await Page.attachExisting('http://127.0.0.1:9335', '#import')
+    await waitFor(stillEye, `document.body.innerText.includes('that still is over 20 MB')`, 60000)
+    await themed(stillEye, 'import-still-too-large', async () => undefined)
+    stillEye.close()
+    notes.push('headed Chrome chose a 100,000,001-byte clip and a 20,000,001-byte still through the file input')
+    page.close()
+  } finally {
+    chrome.kill()
+  }
 }
 
 async function main(): Promise<void> {
@@ -716,16 +847,218 @@ async function main(): Promise<void> {
     if (stillKept.find((row) => row.id === ready)?.status !== 'kept') throw new Error('live publish changed the clip')
     notes.push(`live publish refused for ${ready}; the clip stayed kept`)
     liveServer.stop()
+
+    const importData = path.join(proofDir, 'import-data')
+    const importMedia = path.join(proofDir, 'import-media')
+    rmSync(importData, { recursive: true, force: true })
+    rmSync(importMedia, { recursive: true, force: true })
+    mkdirSync(importData, { recursive: true })
+    mkdirSync(importMedia, { recursive: true })
+    const importServer = await startServer(importData, importMedia)
+    servers.push(importServer)
+    await signIn(page, importServer.origin, importServer.token)
+    await page.goto(`${importServer.origin}/#import`)
+    await waitFor(page, `!!document.querySelector('#i-clip')`)
+    await themed(page, 'import-empty', async () => undefined)
+    const pngFile = filePayload(new Uint8Array([1, 2, 3]), 'still.png', 'image/png')
+    await chooseImportFile(page, '#i-still', pngFile)
+    await waitFor(page, `document.body.innerText.includes('This still is a PNG')`)
+    await themed(page, 'import-png', async () => undefined)
+    const made = Math.floor(Date.parse('2026-10-21T15:00:00.000Z') / 1000) + 2_082_844_800
+    const whole = syntheticMp4({ userData: true, audio: true, creationTime: made })
+    const cut = whole.slice(0, Buffer.from(whole).lastIndexOf('mdat') + 8)
+    await chooseImportFile(page, '#i-clip', filePayload(cut, 'cut.mp4', 'video/mp4'))
+    await chooseImportFile(page, '#i-still', filePayload(minimalJpeg, 'still.jpg', 'image/jpeg'))
+    await page.evaluate<void>(`{
+      function setText(id, value, proto) {
+        const el = document.querySelector(id)
+        const set = Object.getOwnPropertyDescriptor(proto, 'value').set
+        set.call(el, value)
+        el.dispatchEvent(new Event('input', { bubbles: true }))
+      }
+      setText('#i-prompt', 'a fictional cat, as typed', window.HTMLTextAreaElement.prototype)
+      document.querySelector('.studio-seg button')?.click()
+      setText('#i-title', 'Fenway', window.HTMLInputElement.prototype)
+      setText('#i-made', '2026-10-21', window.HTMLInputElement.prototype)
+    }`)
+    await page.evaluate<void>(`[...document.querySelectorAll('button')].find((button) => button.textContent.trim() === 'Read the file')?.click()`)
+    await waitFor(page, `document.body.innerText.includes('the clip is truncated')`)
+    await themed(page, 'import-refused', async () => undefined)
+    await chooseImportFile(page, '#i-clip', filePayload(whole, 'fenway.mp4', 'video/mp4'))
+    await page.evaluate<void>(`[...document.querySelectorAll('button')].find((button) => button.textContent.trim() === 'Read the file')?.click()`)
+    await waitFor(page, `document.body.innerText.includes('Width 1920') && document.body.innerText.includes('Strip will remove udta,meta')`)
+    await themed(page, 'import-preview', async () => undefined)
+    await page.evaluate<void>(`document.querySelector('.studio-primary')?.click()`)
+    await waitFor(page, `document.body.innerText.includes('The clip is in Jobs and Review')`)
+    await waitFor(page, `!!document.querySelector('.studio-primary') && document.querySelector('.studio-primary').disabled`)
+    await themed(page, 'import-imported', async () => undefined)
+    await page.evaluate<void>(`[...document.querySelectorAll('button')].find((button) => button.textContent.trim() === 'Read the file')?.click()`)
+    await waitFor(page, `document.body.innerText.includes('this file was already imported')`)
+    await themed(page, 'import-duplicate', async () => undefined)
+    const importCookie = `studio_session=${importServer.token}`
+    const importedJobs = JSON.parse((await httpCall(importServer.port, 'GET', '/api/jobs', { cookie: importCookie })).body) as { id: string; status: string }[]
+    const importedId = importedJobs.find((row) => row.status === 'downloaded')?.id
+    if (!importedId) throw new Error('imported clip is not downloaded')
+    await page.goto(`${importServer.origin}/#review`)
+    await waitFor(page, `document.querySelectorAll('.check li').length === 5`)
+    for (let index = 0; index < 5; index += 1) {
+      await page.evaluate<void>(`document.querySelectorAll('.check li')[${index}].querySelector('button')?.click()`)
+      await waitFor(page, `document.querySelectorAll('.check li')[${index}].querySelector('button').getAttribute('aria-pressed') === 'true'`)
+    }
+    await waitFor(page, `[...document.querySelectorAll('button')].some((button) => button.textContent.trim() === 'Keep' && !button.disabled)`)
+    await page.evaluate<void>(`[...document.querySelectorAll('button')].find((button) => button.textContent.trim() === 'Keep')?.click()`)
+    await waitFor(page, `document.body.innerText.includes('5 of 5 clear')`)
+    let keptJob = false
+    for (let attempt = 0; attempt < 15 && !keptJob; attempt += 1) {
+      const listed = JSON.parse((await httpCall(importServer.port, 'GET', '/api/jobs', { cookie: importCookie })).body) as { id: string; status: string }[]
+      keptJob = listed.find((row) => row.id === importedId)?.status === 'kept'
+      if (!keptJob) await delay(200)
+    }
+    if (!keptJob) throw new Error('imported clip was not kept')
+    await page.goto(`${importServer.origin}/#publish`)
+    await waitFor(page, `!!document.querySelector('#p-answer')`)
+    await page.evaluate<void>(`{
+      function setValue(id, value, proto) {
+        const el = document.querySelector(id)
+        const set = Object.getOwnPropertyDescriptor(proto, 'value').set
+        set.call(el, value)
+        el.dispatchEvent(new Event('input', { bubbles: true }))
+      }
+      setValue('#p-answer', 'Recorded in the import proof.', window.HTMLTextAreaElement.prototype)
+      setValue('#p-disclosure', 'The Generated label stays.', window.HTMLTextAreaElement.prototype)
+      setValue('#p-by', 'operator', window.HTMLInputElement.prototype)
+      setValue('#p-source', 'prove-admin', window.HTMLInputElement.prototype)
+      document.querySelector('#p-answer')?.parentElement?.querySelector('button')?.click()
+    }`)
+    await delay(400)
+    await page.evaluate<void>(`{
+      function setValue(id, value) {
+        const el = document.querySelector(id)
+        const set = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set
+        set.call(el, value)
+        el.dispatchEvent(new Event('input', { bubbles: true }))
+      }
+      setValue('#p-id', 'fenway-import')
+      setValue('#p-title', 'Fenway')
+      setValue('#p-position', '1')
+    }`)
+    await waitFor(page, `!!document.querySelector('.studio-primary') && !document.querySelector('.studio-primary').disabled && document.querySelector('.studio-primary').textContent.trim() === 'Publish'`)
+    await page.evaluate<void>(`document.querySelector('.studio-primary')?.click()`)
+    await waitFor(page, `[...document.querySelectorAll('button')].some((button) => button.textContent.trim() === 'Unpublish')`)
+    await page.evaluate<void>(`[...document.querySelectorAll('button')].find((button) => button.textContent.trim() === 'Unpublish')?.click()`)
+    await waitFor(page, `document.querySelector('#p-clip') && document.querySelector('#p-clip').selectedOptions[0].textContent.startsWith('withdrawn')`)
+    notes.push(`import flow ${importedId} published and withdrawn`)
+    const importHeaders = { cookie: importCookie, origin: importServer.origin }
+    const pngUpload = await httpCall(importServer.port, 'POST', '/api/import/still', { ...importHeaders, 'content-type': 'image/png' }, 'png')
+    const plainUpload = await httpCall(importServer.port, 'POST', '/api/import/clip', { ...importHeaders, 'content-type': 'text/plain' }, 'hello')
+    const hugeStill = await httpCall(importServer.port, 'POST', '/api/import/still', { ...importHeaders, 'content-type': 'image/jpeg' }, Buffer.alloc(PHOTO_LIMIT + 1))
+    const hugeClip = await httpCall(importServer.port, 'POST', '/api/import/clip', { ...importHeaders, 'content-type': 'video/mp4' }, Buffer.alloc(CLIP_LIMIT + 1))
+    const missing = await httpCall(importServer.port, 'POST', '/api/import/confirm', { ...importHeaders, 'content-type': 'application/json' }, JSON.stringify({ clipId: 'a'.repeat(32), stillId: 'b'.repeat(32), prompt: 'p', subjects: ['Fenway'], title: 'Fenway' }))
+    if (statusLine(JSON.parse(hugeStill.body)) !== 'Unavailable: that still is over 20 MB.') throw new Error(`still limit ${hugeStill.body}`)
+    if (statusLine(JSON.parse(hugeClip.body)) !== 'Unavailable: that clip is over 100 MB.') throw new Error(`clip limit ${hugeClip.body}`)
+    if (statusLine(JSON.parse(missing.body)) !== 'Unavailable: that file is no longer waiting. Choose it again.') throw new Error(`missing ${missing.body}`)
+    notes.push('still over 20 MB and clip over 100 MB name themselves; a missing confirm says to choose the file again')
+    for (const [name, result, status] of [
+      ['upload png', pngUpload, 415],
+      ['upload not an mp4', plainUpload, 415],
+      ['upload still too large', hugeStill, 413],
+      ['upload clip too large', hugeClip, 413],
+      ['import missing', missing, 200],
+    ] as const) {
+      if (result.status !== status) throw new Error(`${name} ${result.status}`)
+      security.push({ name, status: result.status, secrets: findSecrets(result.body) })
+    }
+    for (const [route, type] of [
+      ['/api/import/clip', 'video/mp4'],
+      ['/api/import/still', 'image/jpeg'],
+      ['/api/import/preview', 'application/json'],
+      ['/api/import/confirm', 'application/json'],
+    ] as const) {
+      const reused = await httpCall(importServer.port, 'POST', `${route}?ticket=${encodeURIComponent(importServer.token)}`, { origin: importServer.origin, 'content-type': type }, '{}')
+      const preflight = await httpCall(importServer.port, 'OPTIONS', route, { origin: 'https://evil.example', 'access-control-request-method': 'POST', 'access-control-request-headers': 'content-type' })
+      if (reused.status !== 403) throw new Error(`reused ticket ${route} ${reused.status}`)
+      if (preflight.status !== 403) throw new Error(`preflight ${route} ${preflight.status}`)
+      security.push({ name: `reused ticket ${route}`, status: reused.status, secrets: findSecrets(reused.body) })
+      security.push({ name: `preflight ${route}`, status: preflight.status, secrets: findSecrets(preflight.body) })
+    }
+    await proveOversizedFiles(importServer.origin, importServer.token)
+    importServer.stop()
+
+    const account = ['R2', '_ACCOUNT_ID'].join('')
+    const access = ['R2', '_ACCESS_KEY_ID'].join('')
+    const secretName = ['R2', '_SECRET_ACCESS_KEY'].join('')
+    const bucket = ['R2', '_BUCKET'].join('')
+    const r2Env = {
+      STUDIO_LIVE: '1',
+      DATABASE_URL: dummyUrl,
+      STUDIO_ADMIN_LIVE_PGLITE: '1',
+      NODE_ENV: 'test',
+      STUDIO_R2_FETCH: 'inject',
+      [account]: 'accountid123',
+      [access]: 'AKIAEXAMPLEKEY',
+      [secretName]: ['super', '-secret-value'].join(''),
+      [bucket]: 'moments-live',
+    }
+    const r2Data = path.join(proofDir, 'r2-data')
+    const r2Media = path.join(proofDir, 'r2-media')
+    rmSync(r2Data, { recursive: true, force: true })
+    rmSync(r2Media, { recursive: true, force: true })
+    await seedAdmin(r2Data, r2Media, 'flow')
+    const r2Server = await startServer(r2Data, r2Media, r2Env, ['--live'])
+    servers.push(r2Server)
+    await signIn(page, r2Server.origin, r2Server.token)
+    await page.goto(`${r2Server.origin}/#publish`)
+    await waitFor(page, `document.body.innerText.toLowerCase().includes('storage=r2') && document.body.innerText.toLowerCase().includes('live on the next read')`, 15000)
+    await themed(page, 'live-r2-confirm', async () => undefined)
+    r2Server.stop()
+
+    const refusedServer = await startServer(r2Data, r2Media, {
+      STUDIO_LIVE: '1',
+      DATABASE_URL: dummyUrl,
+      STUDIO_ADMIN_LIVE_PGLITE: '1',
+      NODE_ENV: 'test',
+    }, ['--live'])
+    servers.push(refusedServer)
+    await signIn(page, refusedServer.origin, refusedServer.token)
+    await page.goto(`${refusedServer.origin}/#publish`)
+    await waitFor(page, `document.body.innerText.toLowerCase().includes('storage=refused') && document.body.innerText.toLowerCase().includes('storage is not connected')`)
+    await themed(page, 'live-storage-refused', async () => undefined)
+    refusedServer.stop()
+
+    const unreachable = await startServer(r2Data, r2Media, {
+      STUDIO_LIVE: '1',
+      DATABASE_URL: dummyUrl,
+      STUDIO_ADMIN_DATABASE: 'unavailable',
+    }, ['--live'])
+    servers.push(unreachable)
+    await signIn(page, unreachable.origin, unreachable.token)
+    await page.goto(`${unreachable.origin}/#jobs`)
+    await waitFor(page, `document.body.innerText.toLowerCase().includes('database unavailable') && document.body.innerText.toLowerCase().includes('storage=refused')`)
+    await themed(page, 'live-database-unreachable', async () => undefined)
+    unreachable.stop()
+
     writeFileSync(path.join(proofDir, 'security.json'), JSON.stringify(security, null, 2))
-    const allowed = new Set(['browser live switch', 'live database paused', 'live publish', 'live unpublish delete', 'live retry delete', 'live retry removal'])
-    const failedSecurity = security.filter((item) => item.secrets.length > 0 || (!allowed.has(item.name) && item.status !== 403) || (item.name === 'browser live switch' && live.transport !== 'stub'))
+    const allowed = new Map<string, number>([
+      ['browser live switch', 405],
+      ['live database paused', 200],
+      ['live publish', 200],
+      ['live unpublish delete', 200],
+      ['live retry delete', 200],
+      ['live retry removal', 200],
+      ['upload png', 415],
+      ['upload not an mp4', 415],
+      ['upload still too large', 413],
+      ['upload clip too large', 413],
+      ['import missing', 200],
+    ])
+    const failedSecurity = security.filter((item) => item.secrets.length > 0 || (allowed.get(item.name) ?? 403) !== item.status || (item.name === 'browser live switch' && live.transport !== 'stub'))
     notes.push(`security failures ${failedSecurity.length}`)
 
     const badScroll = shots.filter((shot) => !shot.scrollEqual)
     const badContrast = shots.filter((shot) => shot.contrast.some((pair) => !pair.wcag))
     const badConsole = shots.filter((shot) => shot.consoleErrors.length > 0)
     const receipt = {
-      date: '2026-10-18',
+      date: '2026-10-19',
       shots: shots.map((shot) => ({ ...shot, file: path.relative(proofDir, shot.file) })),
       notes,
       requestLog,
@@ -737,7 +1070,7 @@ async function main(): Promise<void> {
         consoleFailures: badConsole.length,
       },
     }
-    const receiptPath = path.resolve(studioDir, 'verification/st3-admin-receipt.json')
+    const receiptPath = path.resolve(studioDir, 'verification/st3b-admin-receipt.json')
     mkdirSync(path.dirname(receiptPath), { recursive: true })
     writeFileSync(receiptPath, JSON.stringify(receipt, null, 2))
     process.stdout.write(`${receiptPath}\nshots ${shots.length} scroll ${badScroll.length} contrast ${badContrast.length} console ${badConsole.length}\n`)
