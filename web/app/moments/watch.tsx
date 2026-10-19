@@ -393,13 +393,13 @@ export function WatchPage({
       <p className="moments-keyboard" style={{ visibility: focused ? 'visible' : 'hidden' }}>{KEYBOARD}</p>
       <p className={announcement === CANCELLED ? undefined : 'moments-live'} data-countdown-announcement="" role="status" aria-atomic="true">{announcement}</p>
       {count !== null && nextRow ? (
-        <>
+        <div className="moments-countdown">
           <p aria-hidden="true">{countdownVisible(count, nextRow.title)}</p>
           <svg className="moments-ring" viewBox="0 0 36 36" aria-hidden="true" key={ringRun}>
             <circle className={ringPaused ? 'is-paused' : undefined} cx="18" cy="18" r="15" />
           </svg>
           <button type="button" onClick={() => stopCountdown(true)}>Cancel</button>
-        </>
+        </div>
       ) : null}
       <div className="moments-actions">
         {recovery === 2 || recovery === 3 ? <button type="button" onClick={retry}>Retry</button> : null}

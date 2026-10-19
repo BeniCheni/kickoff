@@ -156,6 +156,7 @@
 }
 .moments-gallery .moments-stage-anchor > .moments-trust { grid-area: 2 / 1; margin: 8px 0; background: var(--bg); }
 .moments-gallery .moments-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.moments-gallery .moments-countdown { display: flex; align-items: center; gap: 8px; }
 .moments-gallery .moments-provenance { margin-top: 16px; border-top: 1px solid var(--border); }
 .moments-gallery .moments-watch-player { min-width: 0; }
 .moments-gallery .moments-keyboard { min-height: 1.5em; }
