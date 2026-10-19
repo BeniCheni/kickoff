@@ -105,7 +105,7 @@ Record the Article 50 answer. He writes the answer, the disclosure, and the name
 npm run cli -- record-gate --answer "<answer>" --disclosure "<disclosure>" --by "<name>" --source A-06 --live
 ```
 
-Publish. `--public-id` is letters, digits, `_` and `-`, at most 64 characters, starting with a letter or a digit. `--position` is the next free position. A taken position prints `record-failed live=false reason=position-taken database=postgres storage=r2`. A taken public id prints `reason=public-id-taken`. `list` prints each stored job, or `none database=postgres` when there are none. Pick a position that is not already in the catalog.
+Publish. `--public-id` is letters, digits, `_` and `-`, at most 64 characters, starting with a letter or a digit. `--position` is the next free position. A taken position prints `record-failed live=false reason=position-taken database=postgres storage=r2`. A taken public id prints `reason=public-id-taken`. `list` prints each stored job. A job that holds a public id prints `public_id=`. A job that is still in the catalog prints `position=` as well. A withdrawn clip keeps `public_id=` and drops `position=`, because the position is free again and the public id is not. When there are no jobs, list prints `none database=postgres`. Pick a `position=` that is not already printed.
 
 ```bash
 npm run cli -- list --live

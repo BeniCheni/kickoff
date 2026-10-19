@@ -491,6 +491,8 @@ export async function runCli(
             estimate: row.estimateUsd,
             billed: row.billed,
             publishable: row.publishable,
+            public_id: row.publicId,
+            position: row.position,
           }))
         }
         return

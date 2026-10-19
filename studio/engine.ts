@@ -1392,10 +1392,14 @@ export function createStudio(options: EngineOptions) {
 
     async list() {
       const rows = await db.select().from(job).orderBy(desc(job.createdAt))
+      const catalog = await db.select().from(videos)
+      const held = new Map(catalog.map((row) => [row.jobId, row]))
       const output = []
       for (const row of rows) {
         const lines = await db.select().from(ledger).where(eq(ledger.jobId, row.id))
         const reconciled = lines.some((line) => line.settlement === 'reconciled')
+        const video = held.get(row.id)
+        const live = video !== undefined && video.publishedAt !== null && video.unpublishedAt === null
         output.push({
           id: row.id,
           status: row.status,
@@ -1403,6 +1407,8 @@ export function createStudio(options: EngineOptions) {
           estimateUsd: row.estimateUsd,
           billed: reconciled ? 'reconciled' as const : lines.length > 0 ? 'pending' as const : 'none' as const,
           publishable: row.status === 'kept',
+          publicId: video?.publicId,
+          position: live && video ? video.position : undefined,
         })
       }
       return output

@@ -113,6 +113,7 @@ describe('Wednesday walk-through', () => {
 
     const listed = capture()
     expect(await runCli(['list'], env, listed)).toBe(0)
+    expect(listed.out.find((line) => line.includes(job))).not.toContain('public_id=')
     expect(listed.out.some((line) => line.includes(job) && line.endsWith('database=pglite'))).toBe(true)
 
     const published = capture()
@@ -121,6 +122,12 @@ describe('Wednesday walk-through', () => {
     ], env, published)).toBe(0)
     expect(published.out[0]).toBe('published live=true database=pglite storage=stub')
     expect(section).toContain('Publish prints `published live=true database=postgres storage=r2`.')
+    const occupied = capture()
+    expect(await runCli(['list'], env, occupied)).toBe(0)
+    const holding = occupied.out.find((line) => line.includes(job))
+    expect(holding).toContain('public_id=fenway-wednesday')
+    expect(holding).toContain('position=1')
+    expect(section).toContain('A job that is still in the catalog prints `position=` as well.')
 
     const withdrawn = capture()
     expect(await runCli(['unpublish', '--job', job], env, withdrawn)).toBe(0)
@@ -128,6 +135,12 @@ describe('Wednesday walk-through', () => {
     const again = capture()
     expect(await runCli(['unpublish', '--job', job], env, again)).toBe(0)
     expect(again.out).toEqual(['already-withdrawn database=pglite storage=stub'])
+    const released = capture()
+    expect(await runCli(['list'], env, released)).toBe(0)
+    const freed = released.out.find((line) => line.includes(job))
+    expect(freed).toContain('public_id=fenway-wednesday')
+    expect(freed).not.toContain('position=')
+    expect(section).toContain('A withdrawn clip keeps `public_id=` and drops `position=`')
 
     const secondVideo = path.join(media, 'second.mp4')
     writeFileSync(secondVideo, syntheticMp4({
