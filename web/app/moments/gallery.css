@@ -336,6 +336,9 @@
   from { stroke-dashoffset: 0; }
   to { stroke-dashoffset: 94.2; }
 }
+::view-transition-group(*),
+::view-transition-old(root),
+::view-transition-new(root),
 ::view-transition-old(moments),
 ::view-transition-new(moments) {
   animation-duration: 180ms;

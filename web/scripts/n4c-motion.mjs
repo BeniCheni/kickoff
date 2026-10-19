@@ -78,11 +78,44 @@ try {
     }) })
     await page.close()
   }
+  const transition = await browser.newPage()
+  await transition.setViewport({ width: 390, height: 900, deviceScaleFactor: 1 })
+  await transition.goto(`${origin}/?tab=moments`, { waitUntil: 'networkidle0' })
+  await transition.evaluate(() => {
+    window.__vt = []
+    const timer = setInterval(() => {
+      for (const animation of document.getAnimations()) {
+        const pseudo = animation.effect?.pseudoElement ?? ''
+        if (!String(pseudo).includes('view-transition')) continue
+        window.__vt.push({ pseudo, duration: animation.effect.getComputedTiming().duration })
+      }
+    }, 16)
+    setTimeout(() => clearInterval(timer), 500)
+  })
+  await transition.click('h2 a')
+  await new Promise(resolve => setTimeout(resolve, 550))
+  const samples = await transition.evaluate(() => window.__vt)
+  const durations = [...new Set(samples.map(sample => sample.duration))]
+  const over = samples.filter(sample => typeof sample.duration === 'number' && sample.duration > 180)
+  runs.push({
+    name: 'view-transition',
+    width: 390,
+    ms: 550,
+    wallMs: 550,
+    frames: samples.length,
+    medianFrameMs: null,
+    medianFps: null,
+    longTasksMs: [],
+    durations,
+    pseudos: [...new Set(samples.map(sample => sample.pseudo))],
+    over: over.length,
+  })
+  await transition.close()
 } finally {
   await browser.close()
 }
 
-const failed = runs.filter(run => run.medianFps === null || run.medianFps < 55)
+const failed = runs.filter(run => run.name === 'view-transition' ? run.over > 0 || run.durations.some(duration => duration > 180) : run.medianFps === null || run.medianFps < 55)
 const receipt = {
   origin,
   throttle: '4x CPU',

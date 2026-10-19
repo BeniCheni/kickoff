@@ -11,7 +11,13 @@ export const MOMENTS_KEYFRAMES = [
   'moments-count-tick',
 ]
 const KEYFRAME_PROPS = new Set(['transform', 'opacity', 'stroke-dashoffset'])
-const VIEW_TRANSITION = /^::view-transition-(?:old|new)\(moments\)$/
+export const VIEW_TRANSITION_SELECTORS = new Set([
+  '::view-transition-group(*)',
+  '::view-transition-old(root)',
+  '::view-transition-new(root)',
+  '::view-transition-old(moments)',
+  '::view-transition-new(moments)',
+])
 const ALLOWED_TIME = /^(?:0s|30ms|150ms|180ms|220ms|400ms|5s)$/
 
 export function assertMomentsScope(css) {
@@ -19,7 +25,7 @@ export function assertMomentsScope(css) {
   sheet.walkRules(rule => {
     if (rule.parent?.type === 'atrule' && /keyframes$/i.test(rule.parent.name)) return
     for (const selector of postcss.list.comma(rule.selector)) {
-      if (VIEW_TRANSITION.test(selector)) continue
+      if (VIEW_TRANSITION_SELECTORS.has(selector.trim())) continue
       // The optional lens ancestor is the only outer scope used by this sheet.
       assert.match(selector, /^(?:\[data-lens=["'](?:ledger|poster|broadcast)["']\]\s+)?\.moments-gallery(?:$|[\s.#:\[])/, `Moments selector is not scoped: ${selector}`)
       assert.ok(!/[+~]/.test(selector), `Moments selector escapes through a sibling: ${selector}`)

@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { expect, test } from 'vitest'
-import { assertMomentsMotion, assertMomentsScope } from '../scripts/moments-css.mjs'
+import { assertMomentsMotion, assertMomentsScope, VIEW_TRANSITION_SELECTORS } from '../scripts/moments-css.mjs'
 
 test('all selector-list members and the first rule inside at-rules must be scoped', () => {
   for (const css of [
@@ -21,6 +21,13 @@ test('the Moments sheet matches the motion allowlist', () => {
   const css = readFileSync(fileURLToPath(new URL('../app/moments/gallery.css', import.meta.url)), 'utf8')
   expect(() => assertMomentsScope(css)).not.toThrow()
   expect(() => assertMomentsMotion(css)).not.toThrow()
+})
+
+test('view-transition selectors are exactly the 180 ms set', () => {
+  const css = readFileSync(fileURLToPath(new URL('../app/moments/gallery.css', import.meta.url)), 'utf8')
+  const used = [...css.matchAll(/::view-transition-[\w-]+\([^)]*\)/g)].map(match => match[0])
+  expect(new Set(used)).toEqual(VIEW_TRANSITION_SELECTORS)
+  expect(() => assertMomentsScope('::view-transition-old(other) {}')).toThrow(/scoped/)
 })
 
 test('scoped lens rules and commas inside functional selectors pass', () => {
