@@ -20,7 +20,7 @@ export const DRAFT = {
   cardWidth: 'Publish is refused: the clip has no positive width on the record.',
   cardHeight: 'Publish is refused: the clip has no positive height on the record.',
   cardDuration: 'Publish is refused: the clip has no positive duration on the record.',
-  cardSubject: 'Publish is refused: the clip needs one approved subject on the record.',
+  cardSubject: 'Publish is refused: the clip needs an approved subject on the record.',
   cardPublicId: 'Publish is refused: the public id is not a safe token.',
   cardFinished: 'Publish is refused: the job has no finish time.',
   importChoose: 'Choose an MP4 clip and a JPEG still. Both stay on this Mac until you confirm.',

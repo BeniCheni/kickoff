@@ -44,6 +44,17 @@ const SENTENCE: Record<string, string> = {
   refused: 'Unavailable: the request was refused.',
 }
 
+/** One plain sentence for one item from the engine's `cardGaps` list. */
+export function cardRefusal(item: string): string {
+  if (item === 'a positive width') return DRAFT.cardWidth
+  if (item === 'a positive height') return DRAFT.cardHeight
+  if (item === 'a positive duration') return DRAFT.cardDuration
+  if (item === 'an approved subject') return DRAFT.cardSubject
+  if (item === 'a safe public id') return DRAFT.cardPublicId
+  if (item === 'a finish time') return DRAFT.cardFinished
+  return `Publish is refused: missing ${item}.`
+}
+
 function sentence(outcome: string, reason?: string): string {
   if (outcome === 'record-failed') {
     const named = reason ? SENTENCE[reason] : undefined
@@ -61,6 +72,7 @@ export function statusLine(body: unknown): string | null {
     message?: unknown
     results?: unknown
     refusals?: unknown
+    missing?: unknown
     status?: unknown
     code?: unknown
   }
@@ -71,6 +83,10 @@ export function statusLine(body: unknown): string | null {
       if (line) return line
     }
     return null
+  }
+  if (record.outcome === 'card-refused' && Array.isArray(record.missing)) {
+    const missing = record.missing.filter((item): item is string => typeof item === 'string')
+    if (missing.length > 0) return missing.map((item) => cardRefusal(item)).join(' ')
   }
   if (record.outcome === 'card-refused' && Array.isArray(record.refusals)) {
     const words = record.refusals.filter((item): item is string => typeof item === 'string')

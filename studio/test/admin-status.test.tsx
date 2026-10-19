@@ -11,6 +11,10 @@ const outcomes: { body: unknown; text: string }[] = [
   { body: { outcome: 'record-failed', reason: 'public-id-taken' }, text: 'Unavailable: that public id is already used. The clip stays listed.' },
   { body: { outcome: 'gate-closed' }, text: COPY.gate },
   { body: { outcome: 'card-refused', refusals: [DRAFT.cardWidth] }, text: DRAFT.cardWidth },
+  {
+    body: { outcome: 'card-refused', missing: ['a positive width', 'an approved subject', 'a finish time'] },
+    text: `${DRAFT.cardWidth} ${DRAFT.cardSubject} ${DRAFT.cardFinished}`,
+  },
   { body: { outcome: 'upload-failed' }, text: DRAFT.uploadFailed },
   { body: { outcome: 'upload-failed', object: 'video', status: 403, code: 'AccessDenied' }, text: `${DRAFT.uploadFailed} status=403 code=AccessDenied` },
   { body: { outcome: 'withdrawn', status: 404, code: 'NoSuchBucket' }, text: `${DRAFT.deleteFailed} status=404 code=NoSuchBucket` },
