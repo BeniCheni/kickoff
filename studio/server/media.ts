@@ -15,7 +15,10 @@ export function serveFile(
     'cache-control': 'no-store',
     'x-content-type-options': 'nosniff',
   }
-  if (!range) {
+  const match = range ? /^bytes=(\d*)-(\d*)$/.exec(range) : null
+  const suffixOnly = Boolean(match && match[1] === '' && match[2] !== '')
+  const openRange = !range || (match?.[1] === '' && match[2] === '')
+  if (openRange) {
     response.writeHead(200, { ...common, 'content-length': size })
     if (request.method === 'HEAD') {
       response.end()
@@ -24,15 +27,15 @@ export function serveFile(
     createReadStream(file).pipe(response)
     return
   }
-  const match = /^bytes=(\d*)-(\d*)$/.exec(range)
   if (!match) {
     response.writeHead(416, { 'content-range': `bytes */${size}` })
     response.end()
     return
   }
-  const start = match[1] ? Number(match[1]) : 0
-  const end = match[2] ? Number(match[2]) : size - 1
-  if (!Number.isInteger(start) || !Number.isInteger(end) || start < 0 || end < start || start >= size) {
+  const suffix = suffixOnly ? Number(match[2]) : 0
+  const start = suffixOnly ? Math.max(0, size - suffix) : Number(match[1])
+  const end = suffixOnly ? size - 1 : (match[2] ? Number(match[2]) : size - 1)
+  if (!Number.isInteger(start) || !Number.isInteger(end) || start < 0 || end < start || start >= size || (suffixOnly && suffix <= 0)) {
     response.writeHead(416, { 'content-range': `bytes */${size}` })
     response.end()
     return
