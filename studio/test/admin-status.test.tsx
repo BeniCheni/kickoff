@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { COPY } from '../copy.ts'
-import { DRAFT, STORAGE_REFUSAL } from '../shared/admin-copy.ts'
+import { DRAFT, RETIRED, STORAGE_REFUSAL } from '../shared/admin-copy.ts'
 import { publishFieldsReady, statusLine } from '../shared/status.ts'
 import { PublishCard } from '../ui/app/publish.tsx'
 import { StatusLine } from '../ui/app/status.tsx'
@@ -70,5 +70,37 @@ describe('engine answers', () => {
     )
     expect(html).toContain('disabled')
     expect(html).toContain('>Publish<')
+  })
+
+  it('renders the Article 50 gate row once, and the confirm reason once', () => {
+    const html = renderToStaticMarkup(
+      <PublishCard
+        view={{ outcome: 'publish', status: 'kept', gateRecorded: false, gateReason: COPY.gate, refusals: [], assetId: null }}
+        publicId="clip"
+        title="Title"
+        onPublicId={() => undefined}
+        onTitle={() => undefined}
+        gateAnswer=""
+        gateDisclosure=""
+        gateBy=""
+        gateSource=""
+        position="1"
+        onGateAnswer={() => undefined}
+        onGateDisclosure={() => undefined}
+        onGateBy={() => undefined}
+        onGateSource={() => undefined}
+        onPosition={() => undefined}
+        onGate={() => undefined}
+        onPublish={() => undefined}
+        onUnpublish={() => undefined}
+        onRetryDelete={() => undefined}
+        onRetryRemoval={() => undefined}
+        confirm={DRAFT.publishConfirm}
+      />,
+    )
+    expect(html.split(DRAFT.gateUnrecorded).length - 1).toBe(1)
+    expect(html.split(COPY.gate).length - 1).toBe(1)
+    expect(RETIRED.some((row) => row.draft === 'No pull-request checks. The engine refuses a publish that lacks the Card facts or the Article 50 answer, before anything is written.')).toBe(true)
+    expect(RETIRED.some((row) => row.was.includes('Export stays unavailable') && row.draft === DRAFT.gateUnrecorded)).toBe(true)
   })
 })

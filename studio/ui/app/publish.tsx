@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { COPY } from '../../copy.ts'
 import { DRAFT, STORAGE_REFUSAL } from '../../shared/admin-copy.ts'
 import { publishFieldsReady } from '../../shared/status.ts'
 import type { ShellView } from '../../shared/types.ts'
@@ -64,8 +63,7 @@ export function PublishCard({
         ) : null}
         <section className="studio-section" data-gate>
           <span className="label-caps">Publication gate · Article 50</span>
-          <p className="studio-help">Before any generated clip is published, an explicit answer is recorded on whether EU AI Act Article 50 applies to Kickoff, and what disclosure it would need (A-06).</p>
-          {view.gateRecorded ? <p className="studio-help">Answer on file.</p> : <p className="studio-help" role="status">{COPY.gate}</p>}
+          <p className="studio-help">{view.gateRecorded ? 'Before any generated clip is published, an explicit answer is recorded on whether EU AI Act Article 50 applies to Kickoff, and what disclosure it would need (A-06; source: spec §6 A1). Answer on file.' : DRAFT.gateUnrecorded}</p>
           {view.gateRecorded ? null : (
             <>
               <label htmlFor="p-answer">Article 50 answer</label>

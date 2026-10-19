@@ -24,6 +24,8 @@ export const DRAFT = {
   importChoose: 'Choose an MP4 clip and a JPEG still. Both stay on this Mac until you confirm.',
   importPrompt: 'The prompt as you typed it into Grok.',
   importMadeOn: 'The day you made the clip.',
+  gateUnrecorded:
+    'Before any generated clip is published, an explicit answer is recorded on whether EU AI Act Article 50 applies to Kickoff, and what disclosure it would need (A-06; source: spec §6 A1). Answer on file: none. Publish stays unavailable until one is recorded.',
 } as const
 
 /** D5 sentences the pivot retires, each with a draft replacement. */
@@ -55,6 +57,14 @@ export const RETIRED = [
   {
     was: 'Clip sizes are measured (Appendix S). The PR and the release carry records and clips only: no photograph and no stripped copy. What fal received is stated on the composer.',
     draft: 'The catalog row carries the record and the stored keys. No photograph is published. What fal received is stated on Compose.',
+  },
+  {
+    was: 'validate-moments runs at build, offline: the schema, and for provider youtube that source.name ends “/ YouTube” (Q12). verify-media runs on this PR only, for records whose file address changed: HTTP 200, Content-Length equal to the recorded size, SHA-256 of the fetched bytes equal to the recorded hash. A failure makes the PR red. The build never fetches a clip. The edition stays unchanged until Beni merges.',
+    draft: 'No pull-request checks. The engine refuses a publish that lacks the Card facts or the Article 50 answer, before anything is written.',
+  },
+  {
+    was: 'Before any generated clip is published, an explicit answer is recorded on whether EU AI Act Article 50 applies to Kickoff, and what disclosure it would need (A-06; source: spec §6 A1). Answer on file: none. Export stays unavailable until one is recorded.',
+    draft: 'Before any generated clip is published, an explicit answer is recorded on whether EU AI Act Article 50 applies to Kickoff, and what disclosure it would need (A-06; source: spec §6 A1). Answer on file: none. Publish stays unavailable until one is recorded.',
   },
 ] as const
 
