@@ -6,6 +6,7 @@ import type { ThumbnailSources } from '../../lib/catalog/types'
 import { readSavedReferences, writeSavedReferences, type SavedReferences } from '../../../src/lib/momentsSaved'
 import { VideoCard, savedIdSet } from './card'
 import { applyOrder, matchingRows, shuffleIds, type BrowseOrder, type SubjectFilter } from './order'
+import type { MomentSocial } from '../../lib/catalog/types'
 
 const emptySaved: SavedReferences = { ids: [], persistence: 'local', reason: null }
 
@@ -19,6 +20,8 @@ export function Gallery({
   initialSubject = 'all',
   initialOrder = 'beni',
   initialSavedOnly = false,
+  social,
+  videos,
 }: {
   list: readonly CatalogListRow[]
   search: string
@@ -29,6 +32,8 @@ export function Gallery({
   initialSubject?: SubjectFilter
   initialOrder?: BrowseOrder
   initialSavedOnly?: boolean
+  social?: Record<string, MomentSocial>
+  videos?: Record<string, string | null>
 }) {
   const [subject, setSubject] = useState<SubjectFilter>(initialSubject)
   const [order, setOrder] = useState<BrowseOrder>(initialOrder)
@@ -36,6 +41,19 @@ export function Gallery({
   const [permutation, setPermutation] = useState<string[] | null>(null)
   const [previous, setPrevious] = useState<string[] | null>(null)
   const [saved, setSaved] = useState(initialSaved)
+  const [entranceIds] = useState(() => {
+    const ids = savedIdSet(initialSaved)
+    return applyOrder(matchingRows(list, initialSubject, initialSavedOnly, ids), initialOrder, null).slice(0, 8).map(row => row.id)
+  })
+  const [entered, setEntered] = useState<ReadonlySet<string>>(() => new Set())
+  function rememberEntrance(id: string) {
+    setEntered(current => {
+      if (current.has(id)) return current
+      const next = new Set(current)
+      next.add(id)
+      return next
+    })
+  }
   useEffect(() => {
     if (!freezeSaved) setSaved(readSavedReferences())
   }, [freezeSaved])
@@ -146,6 +164,10 @@ export function Gallery({
               saved={savedIds.has(row.id)}
               visitOnly={visitOnly}
               onToggleSave={toggleSave}
+              social={social?.[row.id]}
+              videoSrc={videos?.[row.id] ?? null}
+              enterIndex={entered.has(row.id) ? -1 : entranceIds.indexOf(row.id)}
+              onEntered={rememberEntrance}
             />
           ))}
         </div>

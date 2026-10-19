@@ -69,6 +69,7 @@
   gap: 16px;
 }
 .moments-gallery .moments-card {
+  position: relative;
   border: 1px solid var(--border);
   border-radius: 4px;
   background: var(--surface);
@@ -79,6 +80,14 @@
   overflow: hidden;
   background: var(--media);
   min-height: 120px;
+}
+.moments-gallery .moments-preview-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
 }
 .moments-gallery .moments-cover img,
 .moments-gallery .moments-stage-anchor video {
@@ -147,6 +156,11 @@
 }
 .moments-gallery .moments-stage-anchor > .moments-trust { grid-area: 2 / 1; margin: 8px 0; background: var(--bg); }
 .moments-gallery .moments-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.moments-gallery .moments-countdown { display: flex; align-items: center; gap: 8px; }
+.moments-gallery .moments-countdown p { flex: 1; min-width: 0; }
+.moments-gallery .moments-countdown .moments-ring,
+.moments-gallery .moments-countdown button { flex-shrink: 0; }
+.moments-gallery .moments-countdown button { white-space: nowrap; }
 .moments-gallery .moments-provenance { margin-top: 16px; border-top: 1px solid var(--border); }
 .moments-gallery .moments-watch-player { min-width: 0; }
 .moments-gallery .moments-keyboard { min-height: 1.5em; }
@@ -195,4 +209,155 @@
 .moments-gallery .moments-theater .moments-watch-layout {
   display: flex;
   flex-direction: column;
+}
+.moments-gallery .moments-social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+.moments-gallery .moments-reaction-totals {
+  display: inline-flex;
+  gap: 8px;
+}
+.moments-gallery .moments-reactions,
+.moments-gallery .moments-comments [role="group"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.moments-gallery .moments-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: var(--surface-alt);
+}
+.moments-gallery .moments-avatar[data-palette="1"] { background: var(--surface); }
+.moments-gallery .moments-avatar[data-palette="2"] { background: var(--border); }
+.moments-gallery .moments-avatar[data-palette="3"] { background: var(--media); }
+.moments-gallery .moments-avatar[data-palette="4"] { background: var(--surface-alt); }
+.moments-gallery .moments-avatar[data-palette="5"] { background: var(--surface); }
+.moments-gallery .moments-avatar[data-palette="6"] { background: var(--border); }
+.moments-gallery .moments-avatar[data-palette="7"] { background: var(--media); }
+.moments-gallery .moments-social-note { color: var(--text-secondary); font-size: 12px; margin: 4px 0; }
+.moments-gallery .moments-comments { margin-top: 16px; }
+.moments-gallery .moments-comments textarea {
+  display: block;
+  width: 100%;
+  min-height: 72px;
+  margin-top: 6px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+}
+
+/* Motion allowlist. Transform and opacity, plus stroke-dashoffset on the ring.
+   The card shadow is a painted layer; only its opacity moves. */
+.moments-gallery { view-transition-name: moments; }
+.moments-gallery .moments-card {
+  transition: transform 150ms ease;
+}
+.moments-gallery .moments-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 4px;
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--text) 18%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease;
+}
+.moments-gallery .moments-card:hover,
+.moments-gallery .moments-card:focus-within { transform: translateY(-2px); }
+.moments-gallery .moments-card:hover::after,
+.moments-gallery .moments-card:focus-within::after { opacity: 1; }
+.moments-gallery .moments-card[data-enter] {
+  animation: moments-card-enter 180ms cubic-bezier(.2, .7, .2, 1) backwards;
+  animation-delay: calc(var(--enter) * 30ms);
+}
+@keyframes moments-card-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.moments-gallery .moments-reaction-emoji[data-burst] {
+  display: inline-block;
+  animation: moments-reaction-burst 400ms ease;
+}
+@keyframes moments-reaction-burst {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+.moments-gallery .moments-reactions button { position: relative; }
+.moments-gallery .moments-particle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  margin: -2px 0 0 -2px;
+  border-radius: 50%;
+  background: var(--text);
+  pointer-events: none;
+  animation: moments-reaction-particle 400ms ease forwards;
+}
+@keyframes moments-reaction-particle {
+  from { opacity: 1; transform: translate(0, 0); }
+  to { opacity: 0; transform: translate(var(--x), var(--y)); }
+}
+.moments-gallery .moments-count-tick {
+  display: inline-block;
+  animation: moments-count-tick 150ms ease;
+}
+@keyframes moments-count-tick {
+  from { opacity: .4; transform: translateY(2px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.moments-gallery .moments-comment-local {
+  animation: moments-comment-in 220ms ease;
+}
+@keyframes moments-comment-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.moments-gallery .moments-ring { width: 28px; height: 28px; vertical-align: middle; }
+.moments-gallery .moments-ring circle {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 2;
+  stroke-dasharray: 94.2;
+  animation: moments-countdown-ring 5s linear forwards;
+}
+.moments-gallery .moments-ring circle.is-paused { animation-play-state: paused; }
+@keyframes moments-countdown-ring {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: 94.2; }
+}
+::view-transition-group(*),
+::view-transition-old(root),
+::view-transition-new(root),
+::view-transition-old(moments),
+::view-transition-new(moments) {
+  animation-duration: 180ms;
+  animation-timing-function: cubic-bezier(.2, .7, .2, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .moments-gallery,
+  .moments-gallery::before,
+  .moments-gallery::after,
+  .moments-gallery *,
+  .moments-gallery *::before,
+  .moments-gallery *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .moments-gallery { view-transition-name: none; }
 }

@@ -172,6 +172,16 @@ try {
           else void request.continue()
         })
       }
+      if (['ended', 'countdown'].includes(state)) {
+        await page.evaluateOnNewDocument(() => {
+          const play = HTMLMediaElement.prototype.play
+          HTMLMediaElement.prototype.play = function () {
+            const promise = play.call(this)
+            promise.then(() => { this.pause() }).catch(() => {})
+            return promise
+          }
+        })
+      }
       const isWatch = !['gallery', 'empty', 'no-results', 'unavailable'].includes(state)
       const params = new URLSearchParams({ tab: 'moments', ...(lens === 'poster' ? {} : { lens }), ...(isWatch ? { watch: state === 'not-found' ? 'withdrawn-clip' : 'stub-fenway-one' } : {}) })
       const host = state === 'empty' ? empty : ['unavailable', 'watch-unavailable'].includes(state) ? unavailable : origin
@@ -186,16 +196,21 @@ try {
         if (state === 'paused') { await button(page, 'Pause'); await page.waitForFunction(() => document.querySelector('video').paused) }
       }
       if (['ended', 'countdown'].includes(state)) {
-        await button(page, 'Play')
-        await page.waitForFunction(() => document.querySelector('video').ended)
+        await page.waitForFunction(() => /Playing muted|Paused at|Sound on/.test(document.body.innerText))
+        await page.evaluate(() => document.querySelector('video')?.dispatchEvent(new Event('ended')))
         if (state === 'countdown') await page.waitForFunction(() => /Up next in \d s/.test(document.body.innerText))
+        else await page.waitForFunction(() => document.body.innerText.includes('Ended.'))
       }
-      if (state === 'recovery') { await button(page, 'Play'); await page.waitForSelector('[role="alert"]') }
+      if (state === 'recovery') {
+        const alerted = await page.$('[role="alert"]')
+        if (!alerted) await button(page, 'Play')
+        await page.waitForSelector('[role="alert"]')
+      }
       const name = `${state}-${lens}-${theme}-${width}`
       const shot = await shoot(page, name, logs)
       check(`theme ${name}`, shot.theme === theme, shot.theme)
       if (state === 'gallery') check(`no gallery media ${name}`, media.length === 0 && await page.$('video') === null, media)
-      if (state === 'watch-ready') check(`no source before Play ${name}`, media.length === 0 && await page.$eval('video', v => !v.hasAttribute('src') && !v.hasAttribute('autoplay') && v.preload === 'none'), media)
+      if (state === 'watch-ready') check(`muted request on arrival ${name}`, media.some(url => url.includes('.mp4')) && await page.$eval('video', v => v.muted && v.hasAttribute('src') && !v.hasAttribute('autoplay') && v.preload === 'none'), media)
       await page.waitForNetworkIdle()
       await page.close()
       }
@@ -227,7 +242,10 @@ try {
   check('canonicalSearch does not normalize again on watch entry', await page.evaluate(n => window.__normalizations.length === n, normalizations), normalizations)
   const focused = await page.evaluate(() => document.activeElement?.id)
   check('watch focuses its heading', focused === 'moments-watch-heading', focused)
-  await playing(page)
+  await page.evaluate(() => document.querySelector('video')?.pause())
+  await page.waitForFunction(() => [...document.querySelectorAll('button')].some(button => ['Play', 'Replay'].includes(button.textContent.trim())))
+  await page.evaluate(() => [...document.querySelectorAll('button')].find(button => ['Play', 'Replay'].includes(button.textContent.trim()))?.click())
+  await page.waitForFunction(() => document.activeElement === document.querySelector('video'))
   check('Play focuses the video', await page.evaluate(() => document.activeElement === document.querySelector('video')))
   await page.close()
   await regressions(browser, origin, check, page => prepare(page))

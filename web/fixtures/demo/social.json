@@ -1,0 +1,342 @@
+{
+  "synthetic": true,
+  "sentinel": "KICKOFF-DEMO-SOCIAL",
+  "users": [
+    {
+      "id": "demo-user-01",
+      "handle": "@pawprint",
+      "display_name": "Paw Print",
+      "avatar": {
+        "emoji": "😺",
+        "palette": 0
+      },
+      "joined_on": "2026-01-04"
+    },
+    {
+      "id": "demo-user-02",
+      "handle": "@yarnball",
+      "display_name": "Yarn Ball",
+      "avatar": {
+        "emoji": "😸",
+        "palette": 1
+      },
+      "joined_on": "2026-02-11"
+    },
+    {
+      "id": "demo-user-03",
+      "handle": "@boxseat",
+      "display_name": "Box Seat",
+      "avatar": {
+        "emoji": "😹",
+        "palette": 2
+      },
+      "joined_on": "2026-03-02"
+    },
+    {
+      "id": "demo-user-04",
+      "handle": "@midnightmew",
+      "display_name": "Midnight Mew",
+      "avatar": {
+        "emoji": "😻",
+        "palette": 3
+      },
+      "joined_on": "2026-03-19"
+    },
+    {
+      "id": "demo-user-05",
+      "handle": "@stripedscarf",
+      "display_name": "Striped Scarf",
+      "avatar": {
+        "emoji": "😼",
+        "palette": 4
+      },
+      "joined_on": "2026-04-08"
+    },
+    {
+      "id": "demo-user-06",
+      "handle": "@windowwatcher",
+      "display_name": "Window Watcher",
+      "avatar": {
+        "emoji": "😽",
+        "palette": 5
+      },
+      "joined_on": "2026-05-16"
+    },
+    {
+      "id": "demo-user-07",
+      "handle": "@tinystadium",
+      "display_name": "Tiny Stadium",
+      "avatar": {
+        "emoji": "🐱",
+        "palette": 6
+      },
+      "joined_on": "2026-06-21"
+    },
+    {
+      "id": "demo-user-08",
+      "handle": "@quietwhistle",
+      "display_name": "Quiet Whistle",
+      "avatar": {
+        "emoji": "🐾",
+        "palette": 7
+      },
+      "joined_on": "2026-07-30"
+    }
+  ],
+  "stats": [
+    {
+      "video_id": "stub-both-cats",
+      "views": 1814,
+      "reactions": {
+        "heart_eyes_cat": 52,
+        "joy_cat": 65,
+        "soccer": 41,
+        "fire": 24,
+        "clap": 25
+      },
+      "comment_count": 3
+    },
+    {
+      "video_id": "stub-fenway-one",
+      "views": 1390,
+      "reactions": {
+        "heart_eyes_cat": 31,
+        "joy_cat": 9,
+        "soccer": 41,
+        "fire": 32,
+        "clap": 62
+      },
+      "comment_count": 3
+    },
+    {
+      "video_id": "stub-frankenstein-one",
+      "views": 1342,
+      "reactions": {
+        "heart_eyes_cat": 54,
+        "joy_cat": 62,
+        "soccer": 13,
+        "fire": 18,
+        "clap": 37
+      },
+      "comment_count": 3
+    },
+    {
+      "video_id": "stub-missing-thumb",
+      "views": 366,
+      "reactions": {
+        "heart_eyes_cat": 44,
+        "joy_cat": 15,
+        "soccer": 36,
+        "fire": 15,
+        "clap": 47
+      },
+      "comment_count": 4
+    },
+    {
+      "video_id": "stub-only-one",
+      "views": 289,
+      "reactions": {
+        "heart_eyes_cat": 39,
+        "joy_cat": 27,
+        "soccer": 50,
+        "fire": 11,
+        "clap": 49
+      },
+      "comment_count": 3
+    },
+    {
+      "video_id": "stub-title-fenway",
+      "views": 1601,
+      "reactions": {
+        "heart_eyes_cat": 33,
+        "joy_cat": 33,
+        "soccer": 54,
+        "fire": 41,
+        "clap": 19
+      },
+      "comment_count": 4
+    }
+  ],
+  "comments": [
+    {
+      "id": "demo-c-001",
+      "video_id": "stub-both-cats",
+      "user_id": "demo-user-01",
+      "parent_id": null,
+      "body": "The little cat keeps the ball close, then lets it roll. I smiled the whole way.",
+      "posted_at": "2026-10-02T14:00:00.000Z",
+      "likes": 11
+    },
+    {
+      "id": "demo-c-002",
+      "video_id": "stub-both-cats",
+      "user_id": "demo-user-02",
+      "parent_id": null,
+      "body": "That soft turn near the box is the part I rewind.",
+      "posted_at": "2026-10-02T17:00:00.000Z",
+      "likes": 25
+    },
+    {
+      "id": "demo-c-003",
+      "video_id": "stub-both-cats",
+      "user_id": "demo-user-03",
+      "parent_id": null,
+      "body": "No scoreboard, just a cat and a ball. That is enough.",
+      "posted_at": "2026-10-02T20:00:00.000Z",
+      "likes": 30
+    },
+    {
+      "id": "demo-c-004",
+      "video_id": "stub-fenway-one",
+      "user_id": "demo-user-02",
+      "parent_id": null,
+      "body": "The striped one waits, then goes. Lovely timing.",
+      "posted_at": "2026-10-02T22:00:00.000Z",
+      "likes": 0
+    },
+    {
+      "id": "demo-c-005",
+      "video_id": "stub-fenway-one",
+      "user_id": "demo-user-03",
+      "parent_id": null,
+      "body": "A tiny celebration after a tiny goal. Kind and perfect.",
+      "posted_at": "2026-10-03T01:00:00.000Z",
+      "likes": 29
+    },
+    {
+      "id": "demo-c-006",
+      "video_id": "stub-fenway-one",
+      "user_id": "demo-user-05",
+      "parent_id": "demo-c-004",
+      "body": "The pause is the whole story. Agreed.",
+      "posted_at": "2026-10-02T22:30:00.000Z",
+      "likes": 1
+    },
+    {
+      "id": "demo-c-007",
+      "video_id": "stub-frankenstein-one",
+      "user_id": "demo-user-03",
+      "parent_id": null,
+      "body": "Everyone in the frame looks like they are having a gentle day.",
+      "posted_at": "2026-10-03T06:00:00.000Z",
+      "likes": 1
+    },
+    {
+      "id": "demo-c-008",
+      "video_id": "stub-frankenstein-one",
+      "user_id": "demo-user-04",
+      "parent_id": null,
+      "body": "I like how the ball stays in the picture. Nothing is rushed.",
+      "posted_at": "2026-10-03T09:00:00.000Z",
+      "likes": 23
+    },
+    {
+      "id": "demo-c-009",
+      "video_id": "stub-frankenstein-one",
+      "user_id": "demo-user-05",
+      "parent_id": null,
+      "body": "The hop at the end made me laugh out loud.",
+      "posted_at": "2026-10-03T12:00:00.000Z",
+      "likes": 12
+    },
+    {
+      "id": "demo-c-010",
+      "video_id": "stub-missing-thumb",
+      "user_id": "demo-user-04",
+      "parent_id": null,
+      "body": "Warm light, quiet pitch, one happy cat. I would watch it again.",
+      "posted_at": "2026-10-03T14:00:00.000Z",
+      "likes": 21
+    },
+    {
+      "id": "demo-c-011",
+      "video_id": "stub-missing-thumb",
+      "user_id": "demo-user-05",
+      "parent_id": null,
+      "body": "The little cat keeps the ball close, then lets it roll. I smiled the whole way.",
+      "posted_at": "2026-10-03T17:00:00.000Z",
+      "likes": 1
+    },
+    {
+      "id": "demo-c-012",
+      "video_id": "stub-missing-thumb",
+      "user_id": "demo-user-06",
+      "parent_id": null,
+      "body": "That soft turn near the box is the part I rewind.",
+      "posted_at": "2026-10-03T20:00:00.000Z",
+      "likes": 23
+    },
+    {
+      "id": "demo-c-013",
+      "video_id": "stub-missing-thumb",
+      "user_id": "demo-user-07",
+      "parent_id": "demo-c-010",
+      "body": "Yes. A second watch is even better.",
+      "posted_at": "2026-10-03T14:30:00.000Z",
+      "likes": 2
+    },
+    {
+      "id": "demo-c-014",
+      "video_id": "stub-only-one",
+      "user_id": "demo-user-05",
+      "parent_id": null,
+      "body": "No scoreboard, just a cat and a ball. That is enough.",
+      "posted_at": "2026-10-03T22:00:00.000Z",
+      "likes": 5
+    },
+    {
+      "id": "demo-c-015",
+      "video_id": "stub-only-one",
+      "user_id": "demo-user-06",
+      "parent_id": null,
+      "body": "The striped one waits, then goes. Lovely timing.",
+      "posted_at": "2026-10-04T01:00:00.000Z",
+      "likes": 32
+    },
+    {
+      "id": "demo-c-016",
+      "video_id": "stub-only-one",
+      "user_id": "demo-user-07",
+      "parent_id": null,
+      "body": "A tiny celebration after a tiny goal. Kind and perfect.",
+      "posted_at": "2026-10-04T04:00:00.000Z",
+      "likes": 35
+    },
+    {
+      "id": "demo-c-017",
+      "video_id": "stub-title-fenway",
+      "user_id": "demo-user-06",
+      "parent_id": null,
+      "body": "The pause before the kick is my favorite moment.",
+      "posted_at": "2026-10-04T06:00:00.000Z",
+      "likes": 5
+    },
+    {
+      "id": "demo-c-018",
+      "video_id": "stub-title-fenway",
+      "user_id": "demo-user-07",
+      "parent_id": null,
+      "body": "Everyone in the frame looks like they are having a gentle day.",
+      "posted_at": "2026-10-04T09:00:00.000Z",
+      "likes": 2
+    },
+    {
+      "id": "demo-c-019",
+      "video_id": "stub-title-fenway",
+      "user_id": "demo-user-08",
+      "parent_id": null,
+      "body": "I like how the ball stays in the picture. Nothing is rushed.",
+      "posted_at": "2026-10-04T12:00:00.000Z",
+      "likes": 25
+    },
+    {
+      "id": "demo-c-020",
+      "video_id": "stub-title-fenway",
+      "user_id": "demo-user-01",
+      "parent_id": "demo-c-017",
+      "body": "The pause is the whole story. Agreed.",
+      "posted_at": "2026-10-04T06:30:00.000Z",
+      "likes": 2
+    }
+  ]
+}

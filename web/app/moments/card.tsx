@@ -7,6 +7,11 @@ import { isMomentReference } from '../../../src/lib/momentsReferences'
 import type { SavedReferences } from '../../../src/lib/momentsSaved'
 import { durationClock, generatedDate } from './format'
 import { useWatchNavigation, useWatchHref } from './watch-url'
+import dynamic from 'next/dynamic'
+import type { MomentSocial } from '../../lib/catalog/types'
+
+const CardSocial = dynamic(() => import('./social').then(mod => mod.CardSocial))
+const CardPreview = dynamic(() => import('./preview').then(mod => mod.CardPreview))
 
 export function cardFrame(row: CatalogListRow): string | null {
   if (row.width === null || row.height === null || row.width <= 0 || row.height <= 0) return null
@@ -29,12 +34,14 @@ export function Thumb({
   forcedStep,
   href,
   stage = false,
+  previewSrc = null,
 }: {
   row: CatalogListRow
   sources?: ThumbnailSources
   forcedStep?: ThumbStep
   href?: string
   stage?: boolean
+  previewSrc?: string | null
 }) {
   const navigate = useWatchNavigation()
   const { storage, site } = sources ?? { storage: null, site: null }
@@ -76,6 +83,7 @@ export function Thumb({
           <p className="moments-art-label">Original typographic art {'\u00b7'} no thumbnail could be loaded</p>
         </div>
       )}
+      {previewSrc ? <CardPreview src={previewSrc} /> : null}
     </div>
   )
   return (
@@ -98,6 +106,10 @@ export function VideoCard({
   saved,
   visitOnly,
   onToggleSave,
+  social,
+  videoSrc = null,
+  enterIndex = -1,
+  onEntered,
 }: {
   row: CatalogListRow
   search: string
@@ -105,13 +117,64 @@ export function VideoCard({
   saved: boolean
   visitOnly: boolean
   onToggleSave: (id: string) => void
+  social?: MomentSocial
+  videoSrc?: string | null
+  enterIndex?: number
+  onEntered?: (id: string) => void
 }) {
   const navigate = useWatchNavigation()
   const duration = durationClock(row.duration_s)
   const href = useWatchHref(search, row.id)
+  const [previewSrc, setPreviewSrc] = useState<string | null>(null)
+  const timer = useRef<number | null>(null)
+  function clearArm() {
+    if (timer.current !== null) window.clearTimeout(timer.current)
+    timer.current = null
+  }
+  function arm() {
+    if (previewSrc || timer.current !== null) return
+    if (!videoSrc) return
+    const started = Date.now()
+    timer.current = window.setTimeout(() => { timer.current = null }, 60_000)
+    void import('./preview-gate').then(({ PREVIEW_DELAY_MS, previewAllowed, previewGate }) => {
+      if (timer.current === null) return
+      window.clearTimeout(timer.current)
+      timer.current = null
+      if (!previewAllowed(previewGate())) return
+      const wait = Math.max(0, PREVIEW_DELAY_MS - (Date.now() - started))
+      timer.current = window.setTimeout(() => {
+        timer.current = null
+        if (!videoSrc || !previewAllowed(previewGate())) return
+        setPreviewSrc(videoSrc)
+      }, wait)
+    })
+  }
+  function disarm() {
+    clearArm()
+    setPreviewSrc(null)
+  }
+  useEffect(() => clearArm, [])
   return (
-    <article data-kind="generated" data-moment={row.id} className="moments-card">
-      <Thumb row={row} sources={thumbnail} href={href} />
+    <article
+      data-kind="generated"
+      data-moment={row.id}
+      className="moments-card"
+      data-enter={enterIndex >= 0 ? '' : undefined}
+      style={enterIndex >= 0 ? { ['--enter' as string]: String(enterIndex) } : undefined}
+      onAnimationEnd={event => {
+        if (event.target !== event.currentTarget || event.animationName !== 'moments-card-enter') return
+        onEntered?.(row.id)
+      }}
+      onMouseEnter={arm}
+      onMouseLeave={disarm}
+      onFocus={arm}
+      onBlur={event => {
+        const next = event.relatedTarget
+        if (next instanceof Node && event.currentTarget.contains(next)) return
+        disarm()
+      }}
+    >
+      <Thumb row={row} sources={thumbnail} href={href} previewSrc={previewSrc} />
       <div className="moments-card-body">
         <p className="moments-facts">
           <span className="moments-badge">Generated</span>
@@ -128,6 +191,7 @@ export function VideoCard({
             }}
           >{row.title}</a>
         </h2>
+        {social ? <CardSocial social={social} publishedAt={row.published_at} /> : null}
         {row.editorial_note ? <p className="moments-note">{row.editorial_note}</p> : null}
         <button
           type="button"

@@ -2,6 +2,7 @@ import { headers } from 'next/headers'
 import { searchParamsToQuery } from '../../src/lib/urlCodecs'
 import { loadCatalog } from '../lib/catalog/load'
 import { momentsFor, storageOriginFrom } from '../lib/catalog/request'
+import { loadDemo } from '../lib/demo/load'
 import { Shell } from './shell'
 
 // Tailwind boundary probe (never applied): outline-[#bada71]
@@ -22,6 +23,7 @@ export default async function Home({
     VERCEL_ENV: process.env.VERCEL_ENV,
     KICKOFF_STUB_STORAGE_ORIGIN: process.env.KICKOFF_STUB_STORAGE_ORIGIN,
   })
-  const moments = momentsFor(search, loadCatalog, origin)
+  const demo = loadDemo(search)
+  const moments = momentsFor(search, loadCatalog, origin, demo)
   return <Shell search={search} moments={moments} catalogMode={catalogMode} />
 }

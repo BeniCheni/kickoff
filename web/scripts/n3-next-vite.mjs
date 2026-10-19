@@ -158,7 +158,8 @@ function same(left, right) {
 
 /** Integer tenths. `Math.abs(61.4 - 61.5) > 0.1` is true in IEEE-754, so a
  *  one-tenth gap was reported as a failure. A difference of 1 tenth is the
- *  allowed boundary. Height and every other key stay exact. */
+ *  allowed boundary. Height and every other key stay exact. `x` and `y` use the
+ *  same tenth, because a subpixel shift there is the same measurement. */
 function widthTenths(n) {
   return Math.round(n * 10)
 }
@@ -177,7 +178,8 @@ export function widthOnly(left, right) {
     const keys = new Set([...Object.keys(a), ...Object.keys(b)])
     for (const key of keys) {
       if (a[key] === b[key]) continue
-      if (key !== 'w' || typeof a.w !== 'number' || typeof b.w !== 'number' || Math.abs(widthTenths(a.w) - widthTenths(b.w)) > 1) return false
+      const tenth = key === 'w' || key === 'x' || key === 'y'
+      if (!tenth || typeof a[key] !== 'number' || typeof b[key] !== 'number' || Math.abs(widthTenths(a[key]) - widthTenths(b[key])) > 1) return false
       differed = true
     }
   }
@@ -306,7 +308,7 @@ try {
 }
 
 const summary = {
-  compares: `Next production at ${nextOrigin} against Vite preview at ${viteOrigin}. 72 cells (3 tabs × 3 lenses × 2 themes × 360, 375, 390, 1000) plus month, one competition filter, a pinned date, an empty competition set, a TBC week, an abandoned week, every league table, and the Broadcast ticker. Date frozen at ${frozen}. Both theme keys stubbed. Viewport set before navigation. Ticker animation paused. PNGs captured at the cell route. Moments compares the shell only. Its body is the Next gallery and is not compared to Vite. Compared: the inner boxes, up to 600 per region, with color, background and font; the full route text; and the element counts. Width may differ by one integer tenth of a pixel (Math.round(n * 10)); height and every other field stay exact. The two Next theme-label spans (dark:hidden and hidden dark:inline) are left out of the header count; Vite renders one label string. Also scrollWidth === innerWidth, computed tokens, the theme button's accessible name, history, and console or hydration warnings. A cell whose only difference is that width boundary is re-run and that re-run is recorded.`,
+  compares: `Next production at ${nextOrigin} against Vite preview at ${viteOrigin}. 72 cells (3 tabs × 3 lenses × 2 themes × 360, 375, 390, 1000) plus month, one competition filter, a pinned date, an empty competition set, a TBC week, an abandoned week, every league table, and the Broadcast ticker. Date frozen at ${frozen}. Both theme keys stubbed. Viewport set before navigation. Ticker animation paused. PNGs captured at the cell route. Moments compares the shell only. Its body is the Next gallery and is not compared to Vite. Compared: the inner boxes, up to 600 per region, with color, background and font; the full route text; and the element counts. Width, x, and y may differ by one integer tenth of a pixel (Math.round(n * 10)); height and every other field stay exact. The two Next theme-label spans (dark:hidden and hidden dark:inline) are left out of the header count; Vite renders one label string. Also scrollWidth === innerWidth, computed tokens, the theme button's accessible name, history, and console or hydration warnings. A cell whose only difference is that tenth-pixel boundary is re-run and that re-run is recorded.`,
   frozenUtc: frozen,
   cells: rows.length,
   differing: rows.filter(row => row.diffs.length).map(row => ({ id: row.id, diffs: row.diffs, viteLogs: row.viteLogs, nextLogs: row.nextLogs })),

@@ -1,9 +1,10 @@
 # Kickoff web scaffold
 
 Unreleased sibling Next.js app. The root Vite app remains the whole public app on
-GitHub Pages. This package installs `@kickoff/catalog` as a copy
-(`file:../packages/kickoff-catalog`, `web/.npmrc` with `install-links=true`).
-After editing that package, `npm ci` in `web/` refreshes the copy; a plain
+GitHub Pages. This package installs `@kickoff/catalog` and `@kickoff/demo` as copies
+(`file:../packages/kickoff-catalog`, `file:../packages/kickoff-demo`,
+`web/.npmrc` with `install-links=true`).
+After editing either package, `npm ci` in `web/` refreshes the copy; a plain
 `npm install` does not. The catalog's zod `4.4.3` is nested at
 `web/node_modules/@kickoff/catalog/node_modules/zod`, because this install
 already hoists zod 3 for another package. Nothing is written back into
@@ -38,10 +39,68 @@ and Moments shows the unavailable state. This build has no database client, so
 that path stays unavailable. Stub states carry `Stub catalog · synthetic records`,
 a 12 px line in ordinary ink, first inside `main.moments-gallery`; non-stub states
 do not. This is Beni's Reword ruling (18 Oct 2026).
-`npm run check:client` scans client JavaScript for every Studio/database marker
-and the stub sentinel. The server list permits database code but rejects `studio/`,
-`FAL_KEY`, and any `STUDIO_*` name; non-stub server builds reject the sentinel too. Regenerate the synthetic media with
-`node web/scripts/generate-stub-media.mjs`. Moments styles live in
+Sample reactions are a second flag, also off unless both are set: `KICKOFF_DEMO=on`
+and `KICKOFF_DEMO_FILE` (an absolute path, no default). `VERCEL_ENV=production`
+refuses that flag before the file is opened. A file that is not `synthetic: true`,
+or that fails the demo schema, supplies no counts. A path that is not absolute is refused
+before the file is opened. The server logs one line per process, `demo social:` plus
+`not set`, `could not be read`, `not JSON`, `failed validation`, or `refused`, and never the file.
+With the flag off, Moments
+has no sample line and no reaction or comment payload. With it on, and only when the
+Moments payload carries joined rows for the gallery or the open video, the line
+beside the stub indicator reads `Sample reactions and comments · made-up viewers, not real ones`.
+It does not show on an unavailable gallery, an empty list, or a watch id that is not published.
+The counts, reaction bar and comments render only from that file, and only on the Moments tab.
+An id with no stats row shows no social layer.
+The watch payload currently carries every id's comments. N6 should scope that join to the
+watched id, and leave the cards with counts only.
+The watch page sets the video `src` and calls `play()` muted on arrival.
+If that call is refused and the stored choice is off, Play and the refusal line are unchanged.
+If the stored choice is on, the page retries once muted, shows
+`Playing muted. Unmute beside the player.`, and keeps the stored choice so the next gesture restores sound.
+Unmute sits beside the player. The choice is `kickoff-moments-sound-v1`
+(`on` or `off`; absent means off) and the next video keeps it.
+Gallery cards wait 400 ms, then play a muted looping preview only for a fine
+pointer that can hover, and never when reduced motion or Save-Data is set.
+Leaving the card pauses the preview, removes `src` and calls `load()`.
+Touch devices make no gallery video request.
+An ignored `watch` on Fixtures or Table is removed by the same merge
+the next time the reader navigates somewhere that is not Moments.
+Unknown keys and the fragment stay. Opening Moments keeps that `watch` and opens it.
+`npm run check:client` fails if `KICKOFF-DEMO-SOCIAL` appears in client JavaScript
+or, unless the build itself set `KICKOFF_DEMO=on`, in server HTML or flight data.
+The schema constant may remain in server JavaScript.
+`npm run check:client` scans client JavaScript for every Studio/database marker,
+the stub sentinel and `KICKOFF-DEMO-SOCIAL`. The server list permits database
+code but rejects `studio/`, `FAL_KEY`, and any `STUDIO_*` name; non-stub server
+builds reject the stub sentinel too. Response HTML and flight files reject the
+demo sentinel unless that build set `KICKOFF_DEMO=on`. Regenerate the synthetic
+media with `node web/scripts/generate-stub-media.mjs`. The sample social file
+is regenerated with `node node_modules/tsx/dist/cli.mjs web/scripts/generate-demo-social.mjs`.
+
+## Moments motion
+
+Only `web/app/moments/gallery.css` adds motion, and only the rows below.
+`npm run check:css` allows these keyframes and no others. Each one uses
+`transform`, `opacity`, or, for the ring, `stroke-dashoffset`. The card shadow
+is already painted; the hover fades that layer's opacity. `prefers-reduced-motion: reduce` sets animation and transition to `none`. The 400 ms row is the one duration outside 150 / 180 / 220 ms, named `moments-reaction-burst`.
+
+| Motion | Duration | Properties |
+| --- | --- | --- |
+| Card hover and focus lift | 150 ms ease | `transform: translateY(-2px)`, shadow opacity |
+| Card entrance, first eight, once per gallery mount, 30 ms stagger | 180 ms `cubic-bezier(.2,.7,.2,1)` | opacity, `translateY(8px)` |
+| Gallery and watch cross-fade | 180 ms, same curve, View Transitions API where the browser has it | opacity |
+| Reaction burst, `moments-reaction-burst`, six particles | 400 ms ease | scale 1 → 1.3 → 1, particle opacity and transform |
+| Countdown ring, paused with the existing timer | 5 s linear | `stroke-dashoffset` |
+| New comment | 220 ms ease | opacity, `translateY(8px)` |
+| Count tick | 150 ms ease | opacity, `translateY(2px)` |
+
+Rerun the throttled trace with `node web/scripts/n4c-motion.mjs /tmp/kickoff-n4c-motion`. The receipt is `web/verification/n4c-motion.json`.
+Pass 1 (Sun 18 Oct 2026) measured a 56–59 ms main-thread task during a throttled gallery reload. The trace named it as a function call inside the runtime chunk `04yc2keri5ea0.js`, overlapping the card entrance (0–390 ms). The median frame stayed 16.6 ms because the entrance is composited. This PR did not add that hydration work. It is an accepted exception: the entrance may overlap hydration, and a task in that window is not a dropped frame.
+The demo-on browser pass is `node web/scripts/n4c-demo.mjs /tmp/kickoff-n4c-demo` against a server with `KICKOFF_DEMO=on` and `KICKOFF_DEMO_FILE` set, plus `KICKOFF_EMPTY_ORIGIN` and `KICKOFF_UNAVAILABLE_ORIGIN`. Its receipt is `web/verification/n4c-demo.json`. PNGs stay in the output directory.
+The demo-off matrix is `node web/scripts/n4b-moments.mjs /tmp/kickoff-n4c-moments-off` with the demo variables unset. Fixtures and Table against Vite are `node web/scripts/n3-next-vite.mjs`.
+
+Moments styles live in
 `web/app/moments/gallery.css`, scoped under `.moments-gallery`. `npm run check:css`
 keeps that sheet out of the shared shell CSS and out of the Vite reader's build.
 

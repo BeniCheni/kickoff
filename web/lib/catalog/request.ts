@@ -1,3 +1,5 @@
+import type { DemoSocial } from '@kickoff/demo'
+import { socialByVideo } from '../demo/join'
 import { CatalogReadError, type MomentsPayload } from './types'
 import type { CatalogSuccess } from './read'
 import { thumbnailFor, videoFor } from './addresses'
@@ -18,6 +20,7 @@ export function momentsFor(
   search: string,
   load: () => CatalogSuccess,
   storageOrigin: string | null,
+  demo: DemoSocial | null = null,
 ): MomentsPayload {
   if (!tabIsMoments(search)) return { state: 'skipped' }
   try {
@@ -32,6 +35,8 @@ export function momentsFor(
       watchId,
       thumbnails: Object.fromEntries(read.list.map(row => [row.id, thumbnailFor(row, storageOrigin)])),
       videoAddress: videoFor(detail, storageOrigin),
+      videos: Object.fromEntries(read.details.map(row => [row.id, videoFor(row, storageOrigin)])),
+      ...(demo ? { social: socialByVideo(demo, read.list.map(row => row.id)) } : {}),
     }
   } catch (error) {
     const watchId = watchIdFrom(search)

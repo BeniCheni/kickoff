@@ -7,7 +7,10 @@ import { readCatalog } from '../lib/catalog/read'
 import { MomentsRegion } from '../app/moments/region'
 import { WatchPage } from '../app/moments/watch'
 import { readAutoplay, writeAutoplay } from '../app/moments/autoplay'
+import { readSound, writeSound } from '../app/moments/sound'
+import { PREVIEW_DELAY_MS, previewAllowed } from '../app/moments/preview-gate'
 import { mergeWatch } from '../app/moments/watch-url'
+import { scrubIgnoredWatch } from '../app/moments/watch-scrub'
 import { provenanceLines, recoveryCopy } from '../app/moments/provenance'
 import type { CatalogDetailRow } from '@kickoff/catalog'
 
@@ -30,6 +33,41 @@ test('mergeWatch keeps unknown keys and the fragment, and drops watch off Moment
     .toBe('?lens=broadcast#x')
   expect(mergeWatch('?tab=moments&watch=withdrawn-clip', '', 'table', null))
     .toBe('?tab=table')
+})
+
+test('an ignored watch is cleared on the next non-Moments URL and kept when opening Moments', () => {
+  expect(scrubIgnoredWatch('?tab=table&watch=stub-fenway-one&extra=1#clip', 'http://127.0.0.1/?tab=fixtures&watch=stub-fenway-one#clip'))
+    .toBe('/?tab=table&extra=1#clip')
+  expect(scrubIgnoredWatch('?lens=broadcast&watch=stub-fenway-one&kept=1#clip', 'http://127.0.0.1/?watch=stub-fenway-one#clip'))
+    .toBe('/?lens=broadcast&kept=1#clip')
+  expect(scrubIgnoredWatch('?tab=moments&watch=stub-fenway-one&extra=1#clip', 'http://127.0.0.1/'))
+    .toBe('?tab=moments&watch=stub-fenway-one&extra=1#clip')
+  expect(scrubIgnoredWatch('?tab=table&extra=1#clip', 'http://127.0.0.1/'))
+    .toBe('?tab=table&extra=1#clip')
+})
+
+test('sound is off unless the stored word is on', () => {
+  const memory = new Map<string, string>()
+  const storage = {
+    getItem: (key: string) => memory.get(key) ?? null,
+    setItem: (key: string, value: string) => { memory.set(key, value) },
+  }
+  expect(readSound(storage)).toBe(false)
+  storage.setItem('kickoff-moments-sound-v1', 'nope')
+  expect(readSound(storage)).toBe(false)
+  writeSound(true, storage)
+  expect(readSound(storage)).toBe(true)
+  expect(memory.get('kickoff-moments-sound-v1')).toBe('on')
+  writeSound(false, storage)
+  expect(memory.get('kickoff-moments-sound-v1')).toBe('off')
+})
+
+test('a card preview is refused for touch, reduced motion, and Save-Data', () => {
+  expect(previewAllowed({ hover: true, fine: true, reduce: false, saveData: false })).toBe(true)
+  expect(previewAllowed({ hover: false, fine: false, reduce: false, saveData: false })).toBe(false)
+  expect(previewAllowed({ hover: true, fine: true, reduce: true, saveData: false })).toBe(false)
+  expect(previewAllowed({ hover: true, fine: true, reduce: false, saveData: true })).toBe(false)
+  expect(PREVIEW_DELAY_MS).toBe(400)
 })
 
 test('autoplay is on unless the stored word is off', () => {
@@ -87,11 +125,17 @@ test('the watch page has one video, no src, and no autoplay attribute', () => {
   expect(videos[0]).toContain('preload="none"')
   expect(videos[0]).toContain('playsInline')
   expect(videos[0]).toContain('controls')
+  expect(videos[0]).toContain('muted')
   expect(videos[0]).not.toContain('src')
   expect(videos[0]).not.toContain('autoplay')
   expect(markup).toContain('Generated clip: Stub Fenway one')
-  expect(markup).toContain('The video is not requested until Play.')
+  expect(markup).toContain('Starting muted.')
+  expect(markup).toContain('Unmute')
+  expect(markup).toContain('Videos start muted when you open them.')
+  expect(markup).not.toContain('The video is not requested until Play.')
+  expect(markup).not.toContain('Nothing starts on arrival')
   expect(markup).toContain('Play')
+  expect(markup).toContain('Unmute')
   expect(markup).toContain('Copy link')
   expect(markup).toContain('Source &amp; curation')
   expect(markup).toContain('aria-label="Autoplay next"')

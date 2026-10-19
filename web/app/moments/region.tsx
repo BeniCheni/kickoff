@@ -5,11 +5,23 @@ import type { CatalogMode, MomentsPayload } from '../../lib/catalog/types'
 import { previewAllowed } from '../../lib/catalog/types'
 import { Gallery } from './gallery'
 import './gallery.css'
-import { WatchMissing, WatchPage, WatchUnavailable } from './watch'
+import dynamic from 'next/dynamic'
+import { WatchMissing, WatchUnavailable } from './watch-states'
+
+const WatchPage = dynamic(() => import('./watch').then(mod => mod.WatchPage))
 
 const UNAVAILABLE_HEADING = 'The gallery is unavailable.'
 const UNAVAILABLE_CAUSE = 'The server could not read the list of published videos. The cause is unknown from here.'
 const UNAVAILABLE_BODY = 'Nothing is shown from memory. The site\u2019s fallback thumbnails are keyed to that list, and a video withdrawn since the last deploy must not reappear, so no card is drawn without its record.'
+
+const DEMO_LABEL = 'Sample reactions and comments \u00b7 made-up viewers, not real ones'
+
+export function showSampleLabel(moments: MomentsPayload): boolean {
+  if (moments.state !== 'ready' || !moments.social) return false
+  if (moments.watchId && !moments.detail) return false
+  if (moments.detail) return moments.social[moments.detail.id] !== undefined
+  return moments.list.some(row => moments.social?.[row.id] !== undefined)
+}
 
 export function MomentsRegion({
   moments,
@@ -51,15 +63,16 @@ export function MomentsRegion({
       </div>
     )
   } else if (moments.state === 'ready' && moments.watchId && moments.detail) {
-    body = <WatchPage detail={moments.detail} list={moments.list} search={search} thumbnail={moments.thumbnails[moments.detail.id]} address={moments.videoAddress} />
+    body = <WatchPage detail={moments.detail} list={moments.list} search={search} thumbnail={moments.thumbnails[moments.detail.id]} address={moments.videoAddress} social={moments.social?.[moments.detail.id]} />
   } else if (moments.state === 'ready' && moments.watchId) {
     body = <WatchMissing search={search} />
   } else if (moments.state === 'ready') {
-    body = <Gallery list={moments.list} search={search} thumbnails={moments.thumbnails} />
+    body = <Gallery list={moments.list} search={search} thumbnails={moments.thumbnails} social={moments.social} videos={moments.videos} />
   }
   return (
     <main className="moments-gallery" aria-label="Moments" data-catalog={preview ? 'stub' : undefined}>
       {preview ? <p className="moments-preview">Stub catalog · synthetic records</p> : null}
+      {showSampleLabel(moments) ? <p className="moments-preview">{DEMO_LABEL}</p> : null}
       {body}
     </main>
   )

@@ -6,6 +6,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Thumb } from './card'
 import { durationClock, generatedDate } from './format'
 import { readAutoplay, writeAutoplay } from './autoplay'
+import { readSound, writeSound } from './sound'
 import {
   countdownAnnouncement,
   countdownVisible,
@@ -17,16 +18,20 @@ import {
   upNextSplit,
 } from './provenance'
 import { useWatchNavigation, useWatchHref } from './watch-url'
+import type { MomentSocial } from '../../lib/catalog/types'
+import dynamic from 'next/dynamic'
 
-const READY = 'The video is not requested until Play. The thumbnail above was already loaded, as on its card.'
+const WatchSocial = dynamic(() => import('./social').then(mod => mod.WatchSocial))
+
+const STARTING = 'Starting muted.'
 const SOUND = 'Sound on \u00b7 the soundtrack is generated. Mute in the player.'
-const MUTED = 'Muted \u00b7 the soundtrack is generated. Unmute in the player.'
+const PLAYING_MUTED = 'Playing muted. Unmute beside the player.'
 const ENDED = 'Ended. Replay starts from the beginning.'
 const ENDED_LAST = 'Ended. That was the last video in Beni\u2019s order; nothing loops. Replay starts from the beginning.'
 const RETURNED = 'Ended. The countdown paused while this tab was hidden and resumed when you came back.'
 const CANCELLED = 'Autoplay cancelled. Up next waits for a click.'
 const KEYBOARD = 'Keyboard: the player\u2019s own shortcuts apply while it has focus.'
-const AUTOPLAY_HELP = 'When a video ends, the next one in Up next starts after a five-second countdown with Cancel. Nothing starts on arrival; the first Play is always yours. While this tab is hidden the countdown waits.'
+const AUTOPLAY_HELP = 'Videos start muted when you open them. When one ends, the next in Up next starts after a five-second countdown with Cancel. While this tab is hidden the countdown waits.'
 const NOTHING_AFTER = 'Nothing after this one in Beni\u2019s order.'
 
 function clock(seconds: number): string | null {
@@ -48,12 +53,14 @@ export function WatchPage({
   search,
   address,
   thumbnail,
+  social,
 }: {
   detail: CatalogDetailRow
   list: readonly CatalogListRow[]
   search: string
   address: string | null
   thumbnail?: ThumbnailSources
+  social?: MomentSocial
 }) {
   const navigate = useWatchNavigation()
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -65,7 +72,7 @@ export function WatchPage({
   const activeId = useRef(detail.id)
   const [theater, setTheater] = useState(false)
   const [autoplay, setAutoplay] = useState(true)
-  const [status, setStatus] = useState(READY)
+  const [status, setStatus] = useState(STARTING)
   const [recovery, setRecovery] = useState<2 | 3 | 4 | null>(null)
   const [count, setCount] = useState<number | null>(null)
   const [announcement, setAnnouncement] = useState('')
@@ -73,6 +80,10 @@ export function WatchPage({
   const [focused, setFocused] = useState(false)
   const [playing, setPlaying] = useState(false)
   const [requested, setRequested] = useState(false)
+  const [soundOn, setSoundOn] = useState(false)
+  const [heldMute, setHeldMute] = useState(false)
+  const [ringPaused, setRingPaused] = useState(false)
+  const [ringRun, setRingRun] = useState(0)
   const galleryHref = useWatchHref(search, null)
   const { earlier, next } = upNextSplit(list, detail.id)
   const nextRow = next[0] ?? null
@@ -110,7 +121,9 @@ export function WatchPage({
 
   function startCountdown(title: string) {
     countRef.current = 5
+    setRingRun(value => value + 1)
     setCount(5)
+    setRingPaused(document.hidden)
     setAnnouncement(countdownAnnouncement(title))
     arm(title)
   }
@@ -141,7 +154,8 @@ export function WatchPage({
     setRecovery(null)
     setPlaying(false)
     setRequested(false)
-    setStatus(READY)
+    setHeldMute(false)
+    setStatus(STARTING)
     document.getElementById('moments-watch-heading')?.focus()
   }, [detail.id])
 
@@ -149,20 +163,47 @@ export function WatchPage({
 
   useEffect(() => {
     const video = videoRef.current
-    if (!video || pendingAuto.current !== detail.id) return
+    if (!video) return
+    const automatic = readerPlayed.current
     pendingAuto.current = null
-    if (!address) { setRecovery(4); return }
+    const on = readSound()
+    setSoundOn(on)
+    video.muted = !on
+    if (!address) {
+      setRecovery(4)
+      return
+    }
     setRequested(true)
     video.src = address
     video.play().then(() => {
       if (activeId.current !== detail.id) return
+      readerPlayed.current = true
       setPlaying(true)
       setRecovery(null)
-      setStatus(nowPlayingStatus(detail.title))
+      const mutedNow = video.muted || video.volume === 0
+      setStatus(mutedNow ? PLAYING_MUTED : automatic ? nowPlayingStatus(detail.title) : SOUND)
     }).catch(() => {
       if (activeId.current !== detail.id) return
-      setPlaying(false)
-      setStatus(refusedStatus(detail.title))
+      if (!on) {
+        readerPlayed.current = false
+        setPlaying(false)
+        setStatus(refusedStatus(detail.title))
+        return
+      }
+      video.muted = true
+      setHeldMute(true)
+      video.play().then(() => {
+        if (activeId.current !== detail.id) return
+        readerPlayed.current = true
+        setPlaying(true)
+        setRecovery(null)
+        setStatus(PLAYING_MUTED)
+      }).catch(() => {
+        if (activeId.current !== detail.id) return
+        readerPlayed.current = false
+        setPlaying(false)
+        setStatus(refusedStatus(detail.title))
+      })
     })
   }, [detail.id, address, detail.title])
 
@@ -170,8 +211,10 @@ export function WatchPage({
     function onVisibility() {
       if (document.hidden) {
         clearTimer()
+        setRingPaused(true)
         return
       }
+      setRingPaused(false)
       if (endedHidden.current && nextRow && autoplay && readerPlayed.current) {
         endedHidden.current = false
         setStatus(RETURNED)
@@ -211,6 +254,10 @@ export function WatchPage({
     }
     setRequested(true)
     if (!video.getAttribute('src')) video.src = address
+    const on = readSound()
+    setHeldMute(false)
+    video.muted = !on
+    setSoundOn(on)
     video.play().then(() => {
       if (activeId.current !== detail.id) return
       setPlaying(true)
@@ -231,7 +278,7 @@ export function WatchPage({
   function onPlay() {
     setPlaying(true)
     const video = videoRef.current
-    if (video?.muted || video?.volume === 0) setStatus(MUTED)
+    if (video?.muted || video?.volume === 0) setStatus(PLAYING_MUTED)
     else if (!status.startsWith('Now playing')) setStatus(SOUND)
   }
 
@@ -242,7 +289,7 @@ export function WatchPage({
     stopCountdown(false)
     const at = clock(video.currentTime)
     const of = clock(video.duration)
-    setStatus(at && of ? `Paused at ${at} of ${of}.` : READY)
+    setStatus(at && of ? `Paused at ${at} of ${of}.` : 'Paused.')
   }
 
   function onEnded() {
@@ -264,7 +311,7 @@ export function WatchPage({
     setPlaying(false)
     if (code === 1) {
       setRecovery(null)
-      setStatus(READY)
+      setStatus(STARTING)
       return
     }
     setRecovery(code === 2 || code === 3 ? code : 4)
@@ -310,6 +357,7 @@ export function WatchPage({
           style={{ visibility: requested ? 'visible' : 'hidden' }}
           controls
           playsInline
+          muted={!soundOn || heldMute}
           preload="none"
           aria-label={`Generated clip: ${detail.title}`}
           onPlay={onPlay}
@@ -318,21 +366,40 @@ export function WatchPage({
           onError={onError}
           onVolumeChange={() => {
             const video = videoRef.current
-            if (!video || !playing) return
-            setStatus(video.muted || video.volume === 0 ? MUTED : SOUND)
+            if (!video || !playing || heldMute) return
+            const on = !video.muted && video.volume > 0
+            setSoundOn(writeSound(on))
+            setStatus(on ? SOUND : PLAYING_MUTED)
           }}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
         />
       </div>
+      <div className="moments-sound">
+        <button type="button" onClick={() => {
+          const restoring = heldMute
+          const on = restoring ? true : !soundOn
+          const video = videoRef.current
+          if (video) {
+            video.muted = !on
+            if (on && video.volume === 0) video.volume = 1
+          }
+          setHeldMute(false)
+          setSoundOn(writeSound(on))
+          if (playing) setStatus(on ? SOUND : PLAYING_MUTED)
+        }}>{soundOn && !heldMute ? 'Mute' : 'Unmute'}</button>
+      </div>
       <p role="status">{status}</p>
       <p className="moments-keyboard" style={{ visibility: focused ? 'visible' : 'hidden' }}>{KEYBOARD}</p>
       <p className={announcement === CANCELLED ? undefined : 'moments-live'} data-countdown-announcement="" role="status" aria-atomic="true">{announcement}</p>
       {count !== null && nextRow ? (
-        <>
+        <div className="moments-countdown">
           <p aria-hidden="true">{countdownVisible(count, nextRow.title)}</p>
+          <svg className="moments-ring" viewBox="0 0 36 36" aria-hidden="true" key={ringRun}>
+            <circle className={ringPaused ? 'is-paused' : undefined} cx="18" cy="18" r="15" />
+          </svg>
           <button type="button" onClick={() => stopCountdown(true)}>Cancel</button>
-        </>
+        </div>
       ) : null}
       <div className="moments-actions">
         {recovery === 2 || recovery === 3 ? <button type="button" onClick={retry}>Retry</button> : null}
@@ -350,6 +417,7 @@ export function WatchPage({
           <p>{recoveryText.body}</p>
         </div>
       ) : null}
+      {social ? <WatchSocial key={detail.id} social={social} /> : null}
       <details className="moments-provenance">
         <summary>Source & curation</summary>
         {lines.map(line => <p key={line}>{line}</p>)}
@@ -405,39 +473,4 @@ function WatchRow({ row, search, prefix, onSelect }: { row: CatalogListRow; sear
     }}><span id={`${prefix}-${row.id}`}>{row.title}</span></a>
     <small>{smallLine(row)}</small>
   </li>
-}
-
-export function WatchMissing({ search }: { search: string }) {
-  const navigate = useWatchNavigation()
-  const href = useWatchHref(search, null)
-  useEffect(() => { document.getElementById('moments-missing-heading')?.focus() }, [])
-  return (
-    <>
-      <h1 id="moments-missing-heading" tabIndex={-1}>No published video has this address.</h1>
-      <p>The id in the address is not published, or never was. Nothing more is known from here.</p>
-      <a href={href} onClick={event => {
-        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
-        event.preventDefault()
-        navigate('moments', null)
-      }}>← Gallery</a>
-    </>
-  )
-}
-
-export function WatchUnavailable({ search }: { search: string }) {
-  const navigate = useWatchNavigation()
-  const href = useWatchHref(search, null)
-  useEffect(() => { document.getElementById('moments-watch-unavailable')?.focus() }, [])
-  return (
-    <>
-      <h1 id="moments-watch-unavailable" tabIndex={-1}>The watch page is unavailable.</h1>
-      <p>The server could not read this video{'\u2019'}s record. The cause is unknown from here.</p>
-      <button type="button" onClick={() => window.location.reload()}>Try again</button>
-      <a href={href} onClick={event => {
-        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
-        event.preventDefault()
-        navigate('moments', null)
-      }}>← Gallery</a>
-    </>
-  )
 }

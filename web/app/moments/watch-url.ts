@@ -15,6 +15,24 @@ export function mergeWatch(search: string, hash: string, tab: Tab, watch: string
   return `${query ? `?${query}` : ''}${fragment}`
 }
 
+export function useIgnoredWatchScrub() {
+  useEffect(() => {
+    let restore: (() => void) | undefined
+    let dead = false
+    const id = window.setTimeout(() => {
+      void import('./watch-scrub').then(mod => {
+        if (dead) return
+        restore = mod.installIgnoredWatchScrub()
+      })
+    }, 0)
+    return () => {
+      dead = true
+      window.clearTimeout(id)
+      restore?.()
+    }
+  }, [])
+}
+
 const WatchNavigation = createContext<(tab: Tab, watch: string | null) => void>(() => {})
 
 /** Next 16.4.1 caches the initial canonical URL with its hash, then appends the
@@ -29,7 +47,11 @@ export function WatchNavigationProvider({ children }: { children: ReactNode }) {
     const target = new URL(`${window.location.pathname}${href}`, window.location.origin)
     const route = `${target.pathname}${target.search}`
     pending.current = { route, search: target.searchParams.toString(), hash: target.hash }
-    router.push(route)
+    const push = () => router.push(route)
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const start = (document as Document & { startViewTransition?: (update: () => void) => void }).startViewTransition
+    if (!reduced && typeof start === 'function') start.call(document, push)
+    else push()
   }, [router])
   useLayoutEffect(() => {
     const target = pending.current

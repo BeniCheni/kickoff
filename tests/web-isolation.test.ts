@@ -13,8 +13,8 @@ function filesUnder(dir: string): string[] {
   })
 }
 function imports(source: string): string[] {
-  return [...source.matchAll(/\b(?:import|export)\s+(?:type\s+)?(?:[^;]*?\s+from\s*)?['"]([^'"]+)['"]|\b(?:import|require)\s*\(\s*['"]([^'"]+)['"]|@import\s+['"]([^'"]+)['"]/g)]
-    .map(match => match[1] ?? match[2] ?? match[3]!)
+  return [...source.matchAll(/\b(?:import|export)\s+(?:type\s+)?['"]([^'"]+)['"]|\b(?:import|export)\s+(?:type\s+)?[^;'"]*?\sfrom\s*['"]([^'"]+)['"]|\b(?:import|require)\s*\(\s*['"]([^'"]+)['"]|@import\s+['"]([^'"]+)['"]/g)]
+    .map(match => match[1] ?? match[2] ?? match[3] ?? match[4]!)
 }
 function crossImports(from: string, forbidden: string) {
   return filesUnder(path.join(root, from)).flatMap(file => imports(readFileSync(file, 'utf8'))
@@ -41,6 +41,35 @@ test('src never imports the catalog package', () => {
     imports(readFileSync(file, 'utf8')).filter(specifier =>
       specifier === '@kickoff/catalog' || specifier.startsWith('@kickoff/catalog/')))
   expect(bare).toEqual([])
+})
+
+test('src never imports the demo package', () => {
+  expect(crossImports('src', 'packages')).toEqual([])
+  const bare = filesUnder(path.join(root, 'src')).flatMap(file =>
+    imports(readFileSync(file, 'utf8')).filter(specifier =>
+      specifier === '@kickoff/demo' || specifier.startsWith('@kickoff/demo/')))
+  expect(bare).toEqual([])
+})
+
+test('a demo import written into src would fail the fence', () => {
+  const source = "import { parseDemoSocial } from '@kickoff/demo'\n"
+  expect(imports(source)).toEqual(['@kickoff/demo'])
+  expect(imports("import '@kickoff/demo'\nimport { z } from 'zod'\n")).toEqual(['@kickoff/demo', 'zod'])
+  expect(imports("import '../../../web/app/page'\nimport { z } from 'zod'\n")).toEqual(['../../../web/app/page', 'zod'])
+})
+
+test('the demo package does not import studio, src, or web', () => {
+  const hits = filesUnder(path.join(root, 'packages/kickoff-demo')).flatMap(file =>
+    imports(readFileSync(file, 'utf8')).filter(specifier => {
+      if (specifier.split(/[/\\@]/).some(part => part === 'studio' || part === 'src' || part === 'web')) return true
+      if (!specifier.startsWith('.')) return false
+      const resolved = path.resolve(path.dirname(file), specifier)
+      return ['studio', 'src', 'web'].some(forbidden => {
+        const relative = path.relative(path.join(root, forbidden), resolved)
+        return relative === '' || (!relative.startsWith('..') && !path.isAbsolute(relative))
+      })
+    }).map(specifier => ({ file: path.relative(root, file), specifier })))
+  expect(hits).toEqual([])
 })
 
 test('the catalog package name is not a studio import', () => {
