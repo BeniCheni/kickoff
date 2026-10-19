@@ -2,7 +2,7 @@ import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { expect, test } from 'vitest'
-import { STUB_SENTINEL, DEMO_SENTINEL, textLeakHits, leakHits, scanBuild } from '../scripts/check-client.mjs'
+import { STUB_SENTINEL, DEMO_SENTINEL, DATABASE_ADDRESS, textLeakHits, leakHits, scanBuild } from '../scripts/check-client.mjs'
 
 function tree() {
   const root = mkdtempSync(path.join(tmpdir(), 'kickoff-leak-'))
@@ -50,6 +50,16 @@ test('a demo sentinel in client JavaScript or a response fails unless that build
   writeFileSync(path.join(serverDir, 'schema.js'), `const sentinel = ${JSON.stringify(DEMO_SENTINEL)}\n`)
   expect(() => scanBuild(staticDir, serverDir, { demoBuild: false })).not.toThrow()
   expect(textLeakHits(`<main>${DEMO_SENTINEL}</main>`)).toContain(DEMO_SENTINEL)
+})
+
+test('a database address in a response fails even when the demo build is on', () => {
+  const { staticDir, serverDir } = tree()
+  const url = 'postgres://reader:secret@db.example:6543/postgres'
+  writeFileSync(path.join(serverDir, 'page.html'), `<main>${url}</main>`)
+  expect(() => scanBuild(staticDir, serverDir, { demoBuild: true })).toThrow(/marker/)
+  expect(textLeakHits(`<main>${url}</main>`, [DATABASE_ADDRESS]).length).toBe(1)
+  writeFileSync(path.join(serverDir, 'page.html'), '<main>Fixtures</main>')
+  expect(() => scanBuild(staticDir, serverDir, { demoBuild: true })).not.toThrow()
 })
 
 test('stub client sentinels and future private Studio names still fail', () => {
