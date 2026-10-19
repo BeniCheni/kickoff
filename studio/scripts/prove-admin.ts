@@ -10,9 +10,10 @@ import { request as httpRequest } from 'node:http'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { syntheticMp4 } from '../media/mp4.ts'
-import { PHOTO_LIMIT } from '../server/body.ts'
+import { CLIP_LIMIT, PHOTO_LIMIT } from '../server/body.ts'
 import { assertLoopbackBind } from '../server/bind.ts'
 import { findSecrets } from '../secrets/scan.ts'
+import { statusLine } from '../shared/status.ts'
 import { minimalJpeg } from '../test/jpeg.ts'
 import { seedAdmin, type SeedManifest } from './seed-admin.ts'
 
@@ -781,7 +782,11 @@ async function main(): Promise<void> {
     await themed(page, 'import-preview', async () => undefined)
     await page.evaluate<void>(`document.querySelector('.studio-primary')?.click()`)
     await waitFor(page, `document.body.innerText.includes('The clip is in Jobs and Review')`)
+    await waitFor(page, `!!document.querySelector('.studio-primary') && document.querySelector('.studio-primary').disabled`)
     await themed(page, 'import-imported', async () => undefined)
+    await page.evaluate<void>(`[...document.querySelectorAll('button')].find((button) => button.textContent.trim() === 'Read the file')?.click()`)
+    await waitFor(page, `document.body.innerText.includes('this file was already imported')`)
+    await themed(page, 'import-duplicate', async () => undefined)
     const importCookie = `studio_session=${importServer.token}`
     const importedJobs = JSON.parse((await httpCall(importServer.port, 'GET', '/api/jobs', { cookie: importCookie })).body) as { id: string; status: string }[]
     const importedId = importedJobs.find((row) => row.status === 'downloaded')?.id
@@ -838,14 +843,35 @@ async function main(): Promise<void> {
     const importHeaders = { cookie: importCookie, origin: importServer.origin }
     const pngUpload = await httpCall(importServer.port, 'POST', '/api/import/still', { ...importHeaders, 'content-type': 'image/png' }, 'png')
     const plainUpload = await httpCall(importServer.port, 'POST', '/api/import/clip', { ...importHeaders, 'content-type': 'text/plain' }, 'hello')
-    const hugeUpload = await httpCall(importServer.port, 'POST', '/api/import/still', { ...importHeaders, 'content-type': 'image/jpeg' }, Buffer.alloc(PHOTO_LIMIT + 1))
+    const hugeStill = await httpCall(importServer.port, 'POST', '/api/import/still', { ...importHeaders, 'content-type': 'image/jpeg' }, Buffer.alloc(PHOTO_LIMIT + 1))
+    const hugeClip = await httpCall(importServer.port, 'POST', '/api/import/clip', { ...importHeaders, 'content-type': 'video/mp4' }, Buffer.alloc(CLIP_LIMIT + 1))
+    const missing = await httpCall(importServer.port, 'POST', '/api/import/confirm', { ...importHeaders, 'content-type': 'application/json' }, JSON.stringify({ clipId: 'a'.repeat(32), stillId: 'b'.repeat(32), prompt: 'p', subjects: ['Fenway'], title: 'Fenway' }))
+    if (statusLine(JSON.parse(hugeStill.body)) !== 'Unavailable: that still is over 20 MB.') throw new Error(`still limit ${hugeStill.body}`)
+    if (statusLine(JSON.parse(hugeClip.body)) !== 'Unavailable: that clip is over 100 MB.') throw new Error(`clip limit ${hugeClip.body}`)
+    if (statusLine(JSON.parse(missing.body)) !== 'Unavailable: that file is no longer waiting. Choose it again.') throw new Error(`missing ${missing.body}`)
+    notes.push('still over 20 MB and clip over 100 MB name themselves; a missing confirm says to choose the file again')
     for (const [name, result, status] of [
       ['upload png', pngUpload, 415],
       ['upload not an mp4', plainUpload, 415],
-      ['upload too large', hugeUpload, 413],
+      ['upload still too large', hugeStill, 413],
+      ['upload clip too large', hugeClip, 413],
+      ['import missing', missing, 200],
     ] as const) {
       if (result.status !== status) throw new Error(`${name} ${result.status}`)
       security.push({ name, status: result.status, secrets: findSecrets(result.body) })
+    }
+    for (const [route, type] of [
+      ['/api/import/clip', 'video/mp4'],
+      ['/api/import/still', 'image/jpeg'],
+      ['/api/import/preview', 'application/json'],
+      ['/api/import/confirm', 'application/json'],
+    ] as const) {
+      const reused = await httpCall(importServer.port, 'POST', `${route}?ticket=${encodeURIComponent(importServer.token)}`, { origin: importServer.origin, 'content-type': type }, '{}')
+      const preflight = await httpCall(importServer.port, 'OPTIONS', route, { origin: 'https://evil.example', 'access-control-request-method': 'POST', 'access-control-request-headers': 'content-type' })
+      if (reused.status !== 403) throw new Error(`reused ticket ${route} ${reused.status}`)
+      if (preflight.status !== 403) throw new Error(`preflight ${route} ${preflight.status}`)
+      security.push({ name: `reused ticket ${route}`, status: reused.status, secrets: findSecrets(reused.body) })
+      security.push({ name: `preflight ${route}`, status: preflight.status, secrets: findSecrets(preflight.body) })
     }
     importServer.stop()
 
@@ -912,7 +938,9 @@ async function main(): Promise<void> {
       ['live retry removal', 200],
       ['upload png', 415],
       ['upload not an mp4', 415],
-      ['upload too large', 413],
+      ['upload still too large', 413],
+      ['upload clip too large', 413],
+      ['import missing', 200],
     ])
     const failedSecurity = security.filter((item) => item.secrets.length > 0 || (allowed.get(item.name) ?? 403) !== item.status || (item.name === 'browser live switch' && live.transport !== 'stub'))
     notes.push(`security failures ${failedSecurity.length}`)

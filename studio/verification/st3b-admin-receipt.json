@@ -646,7 +646,7 @@
     {
       "name": "jobs-all-states",
       "file": "png/jobs-all-states-light-1000.png",
-      "sha256": "4ddb9523e384e0343287149885c6b749bb2bf4d237a0143e8d369e10b71c96ff",
+      "sha256": "582055414e1c429e0237c69f81e3c821618ef61d5465cca80ccb53bc91995ef4",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -735,7 +735,7 @@
     {
       "name": "jobs-all-states",
       "file": "png/jobs-all-states-light-1280.png",
-      "sha256": "3a1bc7b7b873aa94ddcddcd6038c2c9f8e2d686ff2daf236a53c293732683330",
+      "sha256": "5b4f5e215e3fa966a3a23f6f38ea20ca9ebb16fbbe0c67c32c078cd137737f4e",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -824,7 +824,7 @@
     {
       "name": "jobs-all-states",
       "file": "png/jobs-all-states-light-1440.png",
-      "sha256": "40f585980421a82d7c973d10a666914b7e6eb39f624d83ea7f4db65c7e995999",
+      "sha256": "0c5e820c00662e7bc5c33529bf17c1ff1e1285d0284ab52b2671cfbd831fae97",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -913,7 +913,7 @@
     {
       "name": "jobs-all-states",
       "file": "png/jobs-all-states-dark-1000.png",
-      "sha256": "ca879c9c631a7106ac3809f35ba7fcfdfe22b4318e07105ffad897825b37aeb6",
+      "sha256": "8d5d1bbda69a36a06d33de35ce78c770a72f338174f33b30ccedd6cb00ea4501",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -1002,7 +1002,7 @@
     {
       "name": "jobs-all-states",
       "file": "png/jobs-all-states-dark-1280.png",
-      "sha256": "26580de1f7f26e98896622c15119117f7d80b8aaf86d72ff95f72b0661bad4a9",
+      "sha256": "4dac392a28d3e7e14f03c5e21e3cf4d7a543fbf71b684107fedef2eda1e41302",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -1091,7 +1091,7 @@
     {
       "name": "jobs-all-states",
       "file": "png/jobs-all-states-dark-1440.png",
-      "sha256": "4d71be563f149ec501b7fa05e6a6d65dc9a280ed292d2ff01421190000394eb8",
+      "sha256": "e4b191114b4010158851aabd7ac492f16f9e1098aa24cfba0b5207c4b8f6768c",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -1180,7 +1180,7 @@
     {
       "name": "review-unanswered",
       "file": "png/review-unanswered-light-1000.png",
-      "sha256": "d520c720d8a8f61547b26bfd1a480d22737421a8c143346e752060d021f5660b",
+      "sha256": "b104eb4c492806049dea89f962890fdf63f4bbfeb4f789afaf03cb6a47035deb",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -1285,7 +1285,7 @@
     {
       "name": "review-unanswered",
       "file": "png/review-unanswered-light-1280.png",
-      "sha256": "325fad1cc6ee28220a36dd97603cd39279cd4814fc255b08c3c455b34e6e57e0",
+      "sha256": "5fbcabf84f679ac4bf867b62fa8b44da855531f62168c881a1ec48f1d1e7bf0f",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -1390,7 +1390,7 @@
     {
       "name": "review-unanswered",
       "file": "png/review-unanswered-light-1440.png",
-      "sha256": "e54f76d1531431a184fb00521972ead86156602329db8525a0597c1cac3a80c8",
+      "sha256": "beae488fe23c3193438b9ee340e95cf1b460e437cc452174f8fbab439537a11d",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -1495,7 +1495,7 @@
     {
       "name": "review-unanswered",
       "file": "png/review-unanswered-dark-1000.png",
-      "sha256": "d9d024a90f3770ec38ba9d3d7c13ad762dbf1fb75b19654c97bb86b82520410d",
+      "sha256": "ecba00aa3133837f392f3a4f1fbd3ab3b12b9b92b6a55145c7d0e809e64120db",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -1600,7 +1600,7 @@
     {
       "name": "review-unanswered",
       "file": "png/review-unanswered-dark-1280.png",
-      "sha256": "b0577869f7944f905ecb0af762e19cfa65599205500577a659ec8fc45a389135",
+      "sha256": "1079ba02e7239d2b9d31948db3d9e5ac34b6d35939180c4aee7c853705d8e4f6",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -1705,7 +1705,7 @@
     {
       "name": "review-unanswered",
       "file": "png/review-unanswered-dark-1440.png",
-      "sha256": "a89e216332d070b095971d298250e8b990c3c04adcbf9265043757629cd0ad63",
+      "sha256": "1229437d0eda2a59d6b8d0a03c79cb347c7e7b7e453fef7e4d5596861beb66e1",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -1810,7 +1810,7 @@
     {
       "name": "review-partly",
       "file": "png/review-partly-light-1000.png",
-      "sha256": "52c97821f70b1f09d0c6e15b18caa5c5c70fdc410bd2cda47fe9dc1fe3396db9",
+      "sha256": "04d7e0942f794ba7fb108e2a14a94db2be1145264a4022d1e4fe2ea2dd966ed9",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -1915,7 +1915,7 @@
     {
       "name": "review-partly",
       "file": "png/review-partly-light-1280.png",
-      "sha256": "f36068c61fabf83fe9eb87f53fd8a2dafeaf2209b11f285c075b249a67392a1e",
+      "sha256": "63e8163aa01ac2194245567ac934b10327a7b0992895a4bec584dd8747c12db9",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -2020,7 +2020,7 @@
     {
       "name": "review-partly",
       "file": "png/review-partly-light-1440.png",
-      "sha256": "5ab9e87ae2d194ebb9490dfeab0e6d6489858f449b50838852382c9eac1fbf82",
+      "sha256": "c7ca3ba7cfafe0cdf46703388df0c061cffe99ac3bf902531f96132661797c5a",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -2125,7 +2125,7 @@
     {
       "name": "review-partly",
       "file": "png/review-partly-dark-1000.png",
-      "sha256": "7fb1ff851baf86f3ee309e67c15d6fafd856f510377b0841cd556ad4f1909c60",
+      "sha256": "2e35e7776621acf2acfc0f81e2dfbcc30d5af3bd6032e66fecbb9c094cd92a17",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -2230,7 +2230,7 @@
     {
       "name": "review-partly",
       "file": "png/review-partly-dark-1280.png",
-      "sha256": "122a1fd9a29b5465f59e92262f680aff9d2be566eea1ad6b874d60c897e8a231",
+      "sha256": "f8a03a9974be716298a385569e29290cddac7491b0e2fd30c342d1602d80b4fc",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -2335,7 +2335,7 @@
     {
       "name": "review-partly",
       "file": "png/review-partly-dark-1440.png",
-      "sha256": "1d49795b6b91741148e272a3a43810ae842cf38f5c541c2cceb1044261fe31c1",
+      "sha256": "808089a727a7ea13e02002f883dfede9c1a631b75aee1518f61ab6f3eecc09c0",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -2440,7 +2440,7 @@
     {
       "name": "review-all-clear",
       "file": "png/review-all-clear-light-1000.png",
-      "sha256": "b1ca2d3e81faf3eaad3f0db56f963d4ffcacf87361d7d3e74525fefda3d90039",
+      "sha256": "2212fd3ae1e939cd302081f830da54ffbc0b60fffc98aa1e2a5769f15411d0e6",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -2546,7 +2546,7 @@
     {
       "name": "review-all-clear",
       "file": "png/review-all-clear-light-1280.png",
-      "sha256": "f3dcfcfed2e6b63602ba60d0080aaa947f14c1cb78f48844aed7e4176728d00d",
+      "sha256": "501fd568d0cb1dbc7b22b4b5257980fb13eeacb3f11b8e9dce1656f2032d2edb",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -2652,7 +2652,7 @@
     {
       "name": "review-all-clear",
       "file": "png/review-all-clear-light-1440.png",
-      "sha256": "e70851fb5f54fc91117e660f6af76e18b1265b1ff96b47de24d7ebf7125010cc",
+      "sha256": "ff39fc31f40b420486933788bd57b75e008e628d74432ee477abaa609d2a9624",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -2758,7 +2758,7 @@
     {
       "name": "review-all-clear",
       "file": "png/review-all-clear-dark-1000.png",
-      "sha256": "4bb08f2e4b19efe9dfea72117df36615b7b72cd4276cb3a37a637bbdf3138d4b",
+      "sha256": "c3e35ade248ba7c1da8a69f9ac93dda6a6ca640e529d60a7128b47b323431787",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -2864,7 +2864,7 @@
     {
       "name": "review-all-clear",
       "file": "png/review-all-clear-dark-1280.png",
-      "sha256": "00c439892b2a3ba7206bfd908ae713d7266288368b3788c72e0efde5ae0b1966",
+      "sha256": "8e1c156f903682ea59635588378a5bc10e137d7d61e02776d4439da73f51de77",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -2970,7 +2970,7 @@
     {
       "name": "review-all-clear",
       "file": "png/review-all-clear-dark-1440.png",
-      "sha256": "90ee15108f08149dd053dfaea54f406a2472544bae348b443debd8289cc721b6",
+      "sha256": "8c7a1d6ad63a6444f97e6248b8ab2dc83904e8b2783186c27984c5ae8d657af2",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -3076,7 +3076,7 @@
     {
       "name": "review-kept",
       "file": "png/review-kept-light-1000.png",
-      "sha256": "e15d4ded7afd142bf48f39e581acaca64ad83eb0cc0dd86023bc1496d920d0d8",
+      "sha256": "5c2220bad762713a7b29e720655ca3b92bf424086ded25b3a915bd98466e38dd",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -3182,7 +3182,7 @@
     {
       "name": "review-kept",
       "file": "png/review-kept-light-1280.png",
-      "sha256": "d8c64464886793322ed543386913ab62e08982d512e9e12ffadb9d153a2a6cd8",
+      "sha256": "8ad9b829d3bbfcb9f46fc78b59cf6b0e563441ba5be0e0fbf6021c0be31b4b86",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -3288,7 +3288,7 @@
     {
       "name": "review-kept",
       "file": "png/review-kept-light-1440.png",
-      "sha256": "d4de984b25397bb9ab3156ef084e5c20070f66be0366eb48a36b94bdfdb7e31d",
+      "sha256": "28697a6e5c7ee64b0c08d7b3330475fd633393db7076c82577a7ec0e31919ad0",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -3394,7 +3394,7 @@
     {
       "name": "review-kept",
       "file": "png/review-kept-dark-1000.png",
-      "sha256": "9b43551e7d9fb66de0125720b3a97c01281b8b278dafcfd53a4bd675e1e639d1",
+      "sha256": "a931735bff9be055f48ffdb39742b6b044597b7c317bce4388cc8eca23b39b2a",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -3500,7 +3500,7 @@
     {
       "name": "review-kept",
       "file": "png/review-kept-dark-1280.png",
-      "sha256": "9cd2bf5d1e0c51a8f1916abeecfc28b1a3457e7529a078e0da826a85f40a05e6",
+      "sha256": "4875fc72d17c53610ebb22ad9ec56ef575bb287cfe65999284b6a70c503821b5",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -3606,7 +3606,7 @@
     {
       "name": "review-kept",
       "file": "png/review-kept-dark-1440.png",
-      "sha256": "9be2c87e2c3a989f386f6b8a399aed1f9d1938f4d8717c9f5cadc01fbdaef816",
+      "sha256": "417744f5cbd1fc3fadabd4278d993d9ddb7f1a7d59a8971c29e9d5feb496db81",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -3712,7 +3712,7 @@
     {
       "name": "review-discarded",
       "file": "png/review-discarded-light-1000.png",
-      "sha256": "fed998ee905db2f40c63f78fc9110c7cf10b71dbebd712acdc7d3e57cb2dd524",
+      "sha256": "94d5d4cc168bccc1fd765003eec8fbcb6ed8791836c346631204d3c947b1c4f2",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -3817,7 +3817,7 @@
     {
       "name": "review-discarded",
       "file": "png/review-discarded-light-1280.png",
-      "sha256": "36fcd3ad16bb6dfd7ef1e20405491b64d9a47a0e2c830f530204dfde685f0c44",
+      "sha256": "f7430678ab8f1d899b13a04471037cb2846f3ef7cc58944141a559511b55a731",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -3922,7 +3922,7 @@
     {
       "name": "review-discarded",
       "file": "png/review-discarded-light-1440.png",
-      "sha256": "25df91262c29b9f58daa89fb67bef46735cc1b8a243c4adc436ef6d74f39b83f",
+      "sha256": "b862c9c9c0e5d04da4f6d8452b53feb302380ffa731cb8243e7b27ef406e690e",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -4027,7 +4027,7 @@
     {
       "name": "review-discarded",
       "file": "png/review-discarded-dark-1000.png",
-      "sha256": "8c68ece2ab404d7e9b1655e02a83902460e45e6a5fe5968cceaa895051550393",
+      "sha256": "5199f2b82a9d85ef89854ba331d530f9ef89e77c427a3b71d54e87b5e6593370",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -4132,7 +4132,7 @@
     {
       "name": "review-discarded",
       "file": "png/review-discarded-dark-1280.png",
-      "sha256": "ef878a904f19cba095da8cb5df00a3cf33f097c840457eec1fd326512c5fcedb",
+      "sha256": "68cc1152d7d928927e3936bd6b8480908a6558f58cf3b18568d6a782f2f7787a",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -4237,7 +4237,7 @@
     {
       "name": "review-discarded",
       "file": "png/review-discarded-dark-1440.png",
-      "sha256": "78afbbdf01778d9a2b00015c34362d70bd40d1d4d6dd5c3514f044b6c512b94c",
+      "sha256": "eb47fda9a91ec2e679cf319bb2eb7a663e835094a2c1590415e20766a80ef528",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -4342,7 +4342,7 @@
     {
       "name": "publish-gate-recorded-card-refused",
       "file": "png/publish-gate-recorded-card-refused-light-1000.png",
-      "sha256": "d1609b3492ec94126695aceec98f89c4fff2156375c18a1b7bab3c929a530169",
+      "sha256": "6edd182cfee5c41e5922e37a1590211ab33f8b28e1898c741c4d0b6b89a11052",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -4435,7 +4435,7 @@
     {
       "name": "publish-gate-recorded-card-refused",
       "file": "png/publish-gate-recorded-card-refused-light-1280.png",
-      "sha256": "432d25b4ee8fe720756dc0586a6e9890f193156c936df408be6fbf5d184c1c26",
+      "sha256": "f262553f09053e7c2356dae027161a8f7f77598439b1e806a9a35fd620867d92",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -4528,7 +4528,7 @@
     {
       "name": "publish-gate-recorded-card-refused",
       "file": "png/publish-gate-recorded-card-refused-light-1440.png",
-      "sha256": "6087568157aa62e6a0af40838527f5e618ffbd10b923232505ea4433c95e09b6",
+      "sha256": "2a926f7c18603521265f34509d6fcf7a29bddd7a7e6adb421355ae85c623fd91",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -4621,7 +4621,7 @@
     {
       "name": "publish-gate-recorded-card-refused",
       "file": "png/publish-gate-recorded-card-refused-dark-1000.png",
-      "sha256": "90e510121b4322ae6e1c6e9b43cde8be752dd6630a3ef3e080a49c3f1a44aa56",
+      "sha256": "d8f37fa5c0fed74e9eb7371ee469c8522046505d9b25fd317c7dea241d167063",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -4714,7 +4714,7 @@
     {
       "name": "publish-gate-recorded-card-refused",
       "file": "png/publish-gate-recorded-card-refused-dark-1280.png",
-      "sha256": "29eb2f5edfc2791a6adc6b30813e63148036bea87db2add194b1dc4ee1a48ccb",
+      "sha256": "08dd6d053b0d0cb31d81eab31d9a92f5b7474a43e7149f2468d49457b4cc0c7e",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -4807,7 +4807,7 @@
     {
       "name": "publish-gate-recorded-card-refused",
       "file": "png/publish-gate-recorded-card-refused-dark-1440.png",
-      "sha256": "d76dd67549cf3d93ba095d295160df10c920d8233588c158f3614ae496f69a3d",
+      "sha256": "151a904b705e9c19afb0f3da7d0aec2ecd7714bccef2632e90d8b52e9b684328",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -5542,7 +5542,7 @@
     {
       "name": "jobs-database-banner",
       "file": "png/jobs-database-banner-light-1000.png",
-      "sha256": "01ad3dcc5362200d84ff32ea6c46e081ac34391b28972dc7fe140e74f3ee0281",
+      "sha256": "0c2fab569724151b1189f6a813c9f365f41337d7c731deff7ace656d03859160",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -5631,7 +5631,7 @@
     {
       "name": "jobs-database-banner",
       "file": "png/jobs-database-banner-light-1280.png",
-      "sha256": "53d158a94cc671442af4e6e9d46c194e088b1f0b13d2611583786bc199789ec9",
+      "sha256": "57f66dab1262c4718065d72beab9fe23de48f26e30f12a65c8dad3f70e4b862b",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -5720,7 +5720,7 @@
     {
       "name": "jobs-database-banner",
       "file": "png/jobs-database-banner-light-1440.png",
-      "sha256": "08d6b928c6affb0135a61d68fa98660f5e0690696ab35a4efca54381030da9ff",
+      "sha256": "5122254be24db5940803e116a38e2a5cb28cdd1ac9056714e321718f15742505",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -5809,7 +5809,7 @@
     {
       "name": "jobs-database-banner",
       "file": "png/jobs-database-banner-dark-1000.png",
-      "sha256": "21a995f89f4a2b5ff91254f22967477df6a075aa87093bb8d699822e57df7ba7",
+      "sha256": "70c57c8c5799ac7ccf15ad63faa25fc6e9689585a7cf9329b0337d26be637b81",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -5898,7 +5898,7 @@
     {
       "name": "jobs-database-banner",
       "file": "png/jobs-database-banner-dark-1280.png",
-      "sha256": "642a8d61a016a475b65c91928c2e6dfa297c851c765d4cdc9def787cfdeab754",
+      "sha256": "e95ac99a49abd65abe961ca6a8ecd332caec9110f32e5e57986be7c16337f40e",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -5987,7 +5987,7 @@
     {
       "name": "jobs-database-banner",
       "file": "png/jobs-database-banner-dark-1440.png",
-      "sha256": "04e828cb58aa63f9b78ad0fe9885694328f420f16e48aebea01269e519ff25f0",
+      "sha256": "8133d1136721302669fc367bf9980d45c7add863fc241122e814747ad896889d",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -6076,7 +6076,7 @@
     {
       "name": "jobs-credit-banner",
       "file": "png/jobs-credit-banner-light-1000.png",
-      "sha256": "fe1bfcb3b070b68c21e94b983fa2155beefddf1788668024421320408486a3e5",
+      "sha256": "61ca81217563b4068b10d21d2e5321ba50ba703088238bdbf02e367d5e8129b0",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -6165,7 +6165,7 @@
     {
       "name": "jobs-credit-banner",
       "file": "png/jobs-credit-banner-light-1280.png",
-      "sha256": "4ca57dd01287e203a2f0fa6c1ea47b14141619407ad0b1f722eafdc5d207f010",
+      "sha256": "55e0d15a6a2083910f2f826f207309dd2b09f6dc66642d5313c4fea465edd441",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -6254,7 +6254,7 @@
     {
       "name": "jobs-credit-banner",
       "file": "png/jobs-credit-banner-light-1440.png",
-      "sha256": "837d621b983c0e6dbf0034e182ef0ebe0eaa3a28c3dc6763a5f78b2925838d53",
+      "sha256": "afb807be0a8fd6e6166318b445788984b2b57ca2fcd1b57baba41fd4024f8967",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -6343,7 +6343,7 @@
     {
       "name": "jobs-credit-banner",
       "file": "png/jobs-credit-banner-dark-1000.png",
-      "sha256": "6e2ef741ec6375644826d22eab23fac2c5a4c57a464bd6cf1465f092cc6ab89b",
+      "sha256": "7b91a734fbc4d74fb9e34c2643d04353a6cfa37f8288a70f3a3e5d303021bbc8",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -6432,7 +6432,7 @@
     {
       "name": "jobs-credit-banner",
       "file": "png/jobs-credit-banner-dark-1280.png",
-      "sha256": "d65f82fd29dd13366abadb0f2f1f82b51475199fa0aec9fe8c1c4e1fe983c894",
+      "sha256": "97ae12fc1b2a51e5f2b163e46cf16cddc51c1bbd199017982e77d07eb80802fa",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -6521,7 +6521,7 @@
     {
       "name": "jobs-credit-banner",
       "file": "png/jobs-credit-banner-dark-1440.png",
-      "sha256": "381348c8c01a045de2b9a5cfc8b1da6138be052261103cf4c36926f32d8ea309",
+      "sha256": "a86fd95d2f61c573df4e6ec1eca151c6743445fb987e6cda2de3d046a5dc7c99",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -6610,7 +6610,7 @@
     {
       "name": "publish-gate-not-recorded",
       "file": "png/publish-gate-not-recorded-light-1000.png",
-      "sha256": "d71ef12fb2c6f14abb0592bf5db2de9020e749fafe30b6cfb8c508f7b0dbe288",
+      "sha256": "c4e484b531178e1b8781afb36e1423cf37e684c60faab6384e9640e70698b0a7",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -6706,7 +6706,7 @@
     {
       "name": "publish-gate-not-recorded",
       "file": "png/publish-gate-not-recorded-light-1280.png",
-      "sha256": "a3bb056f4ce2d609390c33219ea1bcbcb9ebec83fca7ac33f028f93639bd0b80",
+      "sha256": "77b40dc3d2023e9fd7b976ac7e75fc2bbfff0050aac3b04db0124c2f773294a4",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -6802,7 +6802,7 @@
     {
       "name": "publish-gate-not-recorded",
       "file": "png/publish-gate-not-recorded-light-1440.png",
-      "sha256": "f2ac80b2300ba35a843a42eefb603e3a605194ffb24f1638f96fbb34e6cdf1d0",
+      "sha256": "66f41290f5f378602ab2a807595c0aa6faf9794da7075c847ca1e40267136487",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -6898,7 +6898,7 @@
     {
       "name": "publish-gate-not-recorded",
       "file": "png/publish-gate-not-recorded-dark-1000.png",
-      "sha256": "461e09d5ceee66fe121709f0cbbf0299dc52a46b7e07240a6cd58ab1db6d1ac3",
+      "sha256": "387b9657524f3cb201b25377c545341e2defd2444514d3d01889d8ac153f3159",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -6994,7 +6994,7 @@
     {
       "name": "publish-gate-not-recorded",
       "file": "png/publish-gate-not-recorded-dark-1280.png",
-      "sha256": "3289ba7a4655b20705f70450f2980bf2dc0b2a013c887bb6ac602561bdb0dcf7",
+      "sha256": "a373fe6f0f3317f1608f92cfe7d605d53cf42d68425fa348183697deec78bfb9",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -7090,7 +7090,7 @@
     {
       "name": "publish-gate-not-recorded",
       "file": "png/publish-gate-not-recorded-dark-1440.png",
-      "sha256": "7c16b0f2a4ee4576c55d70fc04300b431361f14a5a6b70fed6ea17c60101b514",
+      "sha256": "f3edc83c0569de7a661fc0b3a1ccd11459ff25de6de03d8e0fc5251bbffdd38d",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -7828,7 +7828,7 @@
     {
       "name": "publish-after-unpublish",
       "file": "png/publish-after-unpublish-light-1000.png",
-      "sha256": "6b60dcf85c050f783d0a7bb8ad0fd467df062729d3fe466a59711fd8c13fad5c",
+      "sha256": "e4bbbed617a7e851294b8687267c03d1a8753ee5ccc0c10fe857f37dc6e71e0b",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -7921,7 +7921,7 @@
     {
       "name": "publish-after-unpublish",
       "file": "png/publish-after-unpublish-light-1280.png",
-      "sha256": "ca20a265921d6fee9f68073a364f818d46e666375af807b7519bc67197f4be5f",
+      "sha256": "f01fd4146fcadd34dd0037cc97d27b8a63d4b168b6e10807f9b7497ac5e6a9f2",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -8014,7 +8014,7 @@
     {
       "name": "publish-after-unpublish",
       "file": "png/publish-after-unpublish-light-1440.png",
-      "sha256": "bb45dffb7e90d2efa385e9f45fae768b3ce1e92af365c980ea398f829796c677",
+      "sha256": "6b144f8d3f07a7ffdac38b11715b42aa789877c73cb7c1e4df0415d9da8bdaf6",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -8107,7 +8107,7 @@
     {
       "name": "publish-after-unpublish",
       "file": "png/publish-after-unpublish-dark-1000.png",
-      "sha256": "0c17bcd237f87031fcfd4a814e4957f5d62681c1c454bce6a40bc2490cab5d2b",
+      "sha256": "eee881334ee32efd76bcfb40c1c6f8d10c921aad30cafae2512d62daadf407fb",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -8200,7 +8200,7 @@
     {
       "name": "publish-after-unpublish",
       "file": "png/publish-after-unpublish-dark-1280.png",
-      "sha256": "2a5af929744ecc8e7a78e1f8052892e1531d9e0ad34544c9fbba0d2d7da31a63",
+      "sha256": "f74a08e90e0e1ff4d0add1f8fd413790a1dc766573d196531e0192c3a05a6ab7",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -8293,7 +8293,7 @@
     {
       "name": "publish-after-unpublish",
       "file": "png/publish-after-unpublish-dark-1440.png",
-      "sha256": "705f99c4e049fb3b4ea41a4ee688a07afd60c6572e79cc22c2aaa97ba5061e95",
+      "sha256": "be78f35329ea8067b129dc865845b2520f4b7034fe72c5e2cfc7659aa68fb0d2",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -8386,7 +8386,7 @@
     {
       "name": "import-empty",
       "file": "png/import-empty-light-1000.png",
-      "sha256": "a0e119fc6f0324053fd2adc3634714a2a9d90c62163996fb8bd1093c2fef8786",
+      "sha256": "ee0029e50ad7b9f651233c902cef531eb13cc77a27e64afcde6dc6269b377112",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -8480,7 +8480,7 @@
     {
       "name": "import-empty",
       "file": "png/import-empty-light-1280.png",
-      "sha256": "8bfbd848925e1652b52c5e19052277a7070847af3004876847806b3423574212",
+      "sha256": "5402c562ed5b9ca108454ec0930215d0719be62fd382e362c555790f43af85c1",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -8574,7 +8574,7 @@
     {
       "name": "import-empty",
       "file": "png/import-empty-light-1440.png",
-      "sha256": "987ded3c4af59ccb9cfa40ac32530f76bd26c884b91f2b5ab32d2a3a3c92e90e",
+      "sha256": "199fffaf43cb5337ca56de919a97ccacb200aaeaa84adc25cf24d2619a919edc",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -8668,7 +8668,7 @@
     {
       "name": "import-empty",
       "file": "png/import-empty-dark-1000.png",
-      "sha256": "6a783098815f81a35e00ccaaa7aed27fcefec579a4df3b220bb6de1d93d0de98",
+      "sha256": "45f140a4b4565895bbc6531297028eb56d00c38429200d66091726c17c78fb8c",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -8762,7 +8762,7 @@
     {
       "name": "import-empty",
       "file": "png/import-empty-dark-1280.png",
-      "sha256": "07ee7eff79ff39e510b729b19137da51c364fd162d9ed428daef4f2d88439639",
+      "sha256": "b0dd1bb25543bc8d6e46941cbcf80d36ce16891f0a23ef4487131551b2977b51",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -8856,7 +8856,7 @@
     {
       "name": "import-empty",
       "file": "png/import-empty-dark-1440.png",
-      "sha256": "1fd437c6ecc57a3d9697969fca7c20a3e2b94aaa5356e391888e7f862584f8ae",
+      "sha256": "1036e8c69c074bd8b19b92274f232306d0ba0efbf43ad4502e02ec5ba339e3dd",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -8950,7 +8950,7 @@
     {
       "name": "import-png",
       "file": "png/import-png-light-1000.png",
-      "sha256": "7c0c837ca6b73b9b3e753419003e064ea7dff8c3d7259ac8da7eeac299bde23b",
+      "sha256": "9cf68488216f32b3b5f6bc8a7d5d8cd7c84e74706f1559e54c484e1b5ff8acb1",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -9044,7 +9044,7 @@
     {
       "name": "import-png",
       "file": "png/import-png-light-1280.png",
-      "sha256": "f342c0707462afbd4c6d005f5f566cf9f0bb3e20ad6efdbdea636a673af88376",
+      "sha256": "b406159d9b99b59c590de2beadf8667ba904a0e638ee5e5fb58fd18b699d3ef4",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -9138,7 +9138,7 @@
     {
       "name": "import-png",
       "file": "png/import-png-light-1440.png",
-      "sha256": "4ee1b5df328c0585e23ef2919a9f6a151617535db8ab9e77a358f4f32b55f4ee",
+      "sha256": "1fc79975c56a519d6f93ad8c1bc06e11402cb501cb003ba9b2389827a7cd2372",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -9232,7 +9232,7 @@
     {
       "name": "import-png",
       "file": "png/import-png-dark-1000.png",
-      "sha256": "22369c47a72a0a1907ecedabfbb135501996c0481fb3c0e20c021d5f1405ede4",
+      "sha256": "280663fab80d6b4cf9fe09240c2439e75270e83d52207e442369a1361d38cc19",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -9326,7 +9326,7 @@
     {
       "name": "import-png",
       "file": "png/import-png-dark-1280.png",
-      "sha256": "d44e34104f10b1265ea492a447b2d621245955b23e8d55fa89da29cc91401549",
+      "sha256": "e7a4d6882358bdd64a100e3e9f19b62c0ef33c6830cc81aff870db449d0996de",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -9420,7 +9420,7 @@
     {
       "name": "import-png",
       "file": "png/import-png-dark-1440.png",
-      "sha256": "76736f7732f52a962e08810efc9721a5247c265b51e35c50fec34bb87408a046",
+      "sha256": "7e1ac00b1319866603291b2a474bbed0731f7f2a11df6cf413af2bdea39c1d75",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -9514,7 +9514,7 @@
     {
       "name": "import-refused",
       "file": "png/import-refused-light-1000.png",
-      "sha256": "48c88b7ab786469ecc656e955631b29675bfd4093e2efb0557c67367f0073e7b",
+      "sha256": "c467cc62ec45a4e4464e781ba97954c324729ecaed7cc5b0bb0cfb1715d4d0d8",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -9609,7 +9609,7 @@
     {
       "name": "import-refused",
       "file": "png/import-refused-light-1280.png",
-      "sha256": "20168091cc78cdfd4b324765ca664de731a4ea4a0e1328f8df45360484dfe68b",
+      "sha256": "be3efcffeeb0609703afb19d681d681b0126b10e4f1484c7660702717de3417c",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -9704,7 +9704,7 @@
     {
       "name": "import-refused",
       "file": "png/import-refused-light-1440.png",
-      "sha256": "555cf4c6dbbe423aca1d9c0aa49a1e2de82479292df3495c2725691585ee45d4",
+      "sha256": "07d739c7ff69da5c70230156314d567b96d674f439c046326e519fade36ac7d2",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -9799,7 +9799,7 @@
     {
       "name": "import-refused",
       "file": "png/import-refused-dark-1000.png",
-      "sha256": "8c327af1b6ac8aa9029885438ca55d60e8cb9da8ae84cb9fa0e57b6d5cf61ee3",
+      "sha256": "c861c7681684bf049c8565de128aab6a7e2deedd06e72d6b881825f9f0ab275c",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -9894,7 +9894,7 @@
     {
       "name": "import-refused",
       "file": "png/import-refused-dark-1280.png",
-      "sha256": "bfa8fe2f92374ab3000bcc175dd8543c3abce65e2c9b210a2fb5f702ec1b52c9",
+      "sha256": "3e42ee6ec59ce130c82d61eed849ab9e8736d14654a9249f04086d4bdab18446",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -9989,7 +9989,7 @@
     {
       "name": "import-refused",
       "file": "png/import-refused-dark-1440.png",
-      "sha256": "dae05e7c62c0a55e81a789de830b5ab31fd6cb10b3bd26855e36080e4dbc5609",
+      "sha256": "0db01f9639b186b94342a4f378e0d27de1eb890bd1721ca3ddae4c9dd9b5c2ef",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -10084,7 +10084,7 @@
     {
       "name": "import-preview",
       "file": "png/import-preview-light-1000.png",
-      "sha256": "2d91af05951bdd9fb8d0a5681f141ece7c35677890576934ba8b49d7024862a5",
+      "sha256": "d37fc8a2c562c29a077517e1ba5b776b7c1638799747b42057b890000896e81e",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -10180,7 +10180,7 @@
     {
       "name": "import-preview",
       "file": "png/import-preview-light-1280.png",
-      "sha256": "cdbb991734c0b8e33596f17355b1ba04d8c2e0ed2c0c14288981e99499155269",
+      "sha256": "3f862bb46d798547dadfe81b9fc2ae74663b3f0486719e8ccad605a91b8a51ee",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -10276,7 +10276,7 @@
     {
       "name": "import-preview",
       "file": "png/import-preview-light-1440.png",
-      "sha256": "bea46a6a7a006de3bfcc88a7e10895724369cf1a54af1fdcfb02c07d217dc60f",
+      "sha256": "98979fb5997d9314aed96a1fba3a8190ff475ae7dc41478c1f6645f0922effa0",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -10372,7 +10372,7 @@
     {
       "name": "import-preview",
       "file": "png/import-preview-dark-1000.png",
-      "sha256": "438ca67403652c11dd0b6c9b96cb380192d5b0c6a14940e45c95e6102408b0b2",
+      "sha256": "81c9bdc23c9c47cd5ce7e0b6dd24d07fb070ea14799710cd88216112d4a4a2e8",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -10468,7 +10468,7 @@
     {
       "name": "import-preview",
       "file": "png/import-preview-dark-1280.png",
-      "sha256": "aabda3ac3b945add89e76f2e53920fc3a8e47d3af66c84c337eaeebc8a683ac8",
+      "sha256": "28890bfc354686c2b22f376597ccab6beea1a2b098f33512649bab7400765bae",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -10564,7 +10564,7 @@
     {
       "name": "import-preview",
       "file": "png/import-preview-dark-1440.png",
-      "sha256": "4bb4fde51c5021b8a14c36260b5fedd7f5bb078f660f3e5e20997c09aac22a57",
+      "sha256": "dd010cb7037c90588de5a19f9a47ea1697a5c981787aa94b0bf59de4f24d1f24",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -10660,7 +10660,7 @@
     {
       "name": "import-imported",
       "file": "png/import-imported-light-1000.png",
-      "sha256": "7479e1e41dbfedf8fc399ae8fc7826160739c526335f628ae2bcc984d09143f4",
+      "sha256": "0dfd82d5a37e54fed7b68cf726e6b84a8fb6e904fff0d96f3132cab4ee560e03",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -10749,14 +10749,13 @@
         "i-note",
         "i-made",
         "Read the file",
-        "Import",
         "Use dark theme"
       ]
     },
     {
       "name": "import-imported",
       "file": "png/import-imported-light-1280.png",
-      "sha256": "812a84f64f0a5141def881d079184e57324b03c97f7a02fa3ed644bf2cb4e6ca",
+      "sha256": "b457776025f3b54e91fc36757a10f4601e8fc8ff76a000aa10682a3ed7462162",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -10845,14 +10844,13 @@
         "i-note",
         "i-made",
         "Read the file",
-        "Import",
         "Use dark theme"
       ]
     },
     {
       "name": "import-imported",
       "file": "png/import-imported-light-1440.png",
-      "sha256": "766c8f3f5d34acd271be5ced0864160903438eafdfe6ca4ab962e824749c859f",
+      "sha256": "f689efb7c160fac50040851db0a3170e74d5f8aa18ef03f5c09db34d38f3f7be",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -10941,14 +10939,13 @@
         "i-note",
         "i-made",
         "Read the file",
-        "Import",
         "Use dark theme"
       ]
     },
     {
       "name": "import-imported",
       "file": "png/import-imported-dark-1000.png",
-      "sha256": "02394f43add1a8ea76b2d1ba1ead04c86eded6c936f90ba26cc5ba8e3f17aafc",
+      "sha256": "cd44269d592732f3b8629250fc2b1bc6881bdb854d1e7e30d5b36fdb06c44e16",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -11037,14 +11034,13 @@
         "i-note",
         "i-made",
         "Read the file",
-        "Import",
         "Use light theme"
       ]
     },
     {
       "name": "import-imported",
       "file": "png/import-imported-dark-1280.png",
-      "sha256": "7beb0b8723db2709f8243bd66018e2722c0155ef628e8a99a9981754516e57d6",
+      "sha256": "a57da51aa430aa0e2ae25cff248965ba9b2d7fc48b653356a0f11e2a483e917a",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -11133,14 +11129,13 @@
         "i-note",
         "i-made",
         "Read the file",
-        "Import",
         "Use light theme"
       ]
     },
     {
       "name": "import-imported",
       "file": "png/import-imported-dark-1440.png",
-      "sha256": "1d3716f563174a10ac094c6ec6a91a11f052b459d6537b86b93f634f0a581280",
+      "sha256": "c4ce24a26f9e1e4904e5fea819aefd7d658b0f598a2f3f86722718371fe5dbb6",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -11229,14 +11224,583 @@
         "i-note",
         "i-made",
         "Read the file",
+        "Use light theme"
+      ]
+    },
+    {
+      "name": "import-duplicate",
+      "file": "png/import-duplicate-light-1000.png",
+      "sha256": "a19131fcaca0cf6328d6e7a2939629d6cde5dca2b4b428ca5e042b5bacb1812a",
+      "theme": "light",
+      "width": 1000,
+      "scrollWidth": 1000,
+      "innerWidth": 1000,
+      "scrollEqual": true,
+      "consoleErrors": [],
+      "contrast": [
+        {
+          "pair": "ink on bg (published pill inverse)",
+          "ratio": 15.19,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface",
+          "ratio": 16.57,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on bg",
+          "ratio": 6,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on surface",
+          "ratio": 6.54,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on bg",
+          "ratio": 4.99,
+          "wcag": true
+        },
+        {
+          "pair": "pitch on bg",
+          "ratio": 4.82,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on floodlight-bg",
+          "ratio": 4.95,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on bg",
+          "ratio": 5.18,
+          "wcag": true
+        },
+        {
+          "pair": "kept pill text on pitch",
+          "ratio": 5.26,
+          "wcag": true
+        },
+        {
+          "pair": "failed pill text on accent-strong",
+          "ratio": 5.58,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface-alt",
+          "ratio": 13.76,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on media",
+          "ratio": 4.95,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on surface",
+          "ratio": 5.44,
+          "wcag": true
+        }
+      ],
+      "tabOrder": [
+        "Compose",
+        "Jobs",
+        "Review",
+        "Publish",
         "Import",
+        "i-clip",
+        "i-still",
+        "a fictional cat, as typed",
+        "Fenway",
+        "Frankenstein",
+        "i-title",
+        "i-note",
+        "i-made",
+        "Read the file",
+        "Use dark theme"
+      ]
+    },
+    {
+      "name": "import-duplicate",
+      "file": "png/import-duplicate-light-1280.png",
+      "sha256": "88f94449ddce1ba7a680c635785c5857af997eebd98fb822cadb1f83bd9d0832",
+      "theme": "light",
+      "width": 1280,
+      "scrollWidth": 1280,
+      "innerWidth": 1280,
+      "scrollEqual": true,
+      "consoleErrors": [],
+      "contrast": [
+        {
+          "pair": "ink on bg (published pill inverse)",
+          "ratio": 15.19,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface",
+          "ratio": 16.57,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on bg",
+          "ratio": 6,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on surface",
+          "ratio": 6.54,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on bg",
+          "ratio": 4.99,
+          "wcag": true
+        },
+        {
+          "pair": "pitch on bg",
+          "ratio": 4.82,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on floodlight-bg",
+          "ratio": 4.95,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on bg",
+          "ratio": 5.18,
+          "wcag": true
+        },
+        {
+          "pair": "kept pill text on pitch",
+          "ratio": 5.26,
+          "wcag": true
+        },
+        {
+          "pair": "failed pill text on accent-strong",
+          "ratio": 5.58,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface-alt",
+          "ratio": 13.76,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on media",
+          "ratio": 4.95,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on surface",
+          "ratio": 5.44,
+          "wcag": true
+        }
+      ],
+      "tabOrder": [
+        "Compose",
+        "Jobs",
+        "Review",
+        "Publish",
+        "Import",
+        "i-clip",
+        "i-still",
+        "a fictional cat, as typed",
+        "Fenway",
+        "Frankenstein",
+        "i-title",
+        "i-note",
+        "i-made",
+        "Read the file",
+        "Use dark theme"
+      ]
+    },
+    {
+      "name": "import-duplicate",
+      "file": "png/import-duplicate-light-1440.png",
+      "sha256": "7400d3e8e5cca4e7b03c1e13870c6bbc089d313415e3f77aa670addf213a22cb",
+      "theme": "light",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "scrollEqual": true,
+      "consoleErrors": [],
+      "contrast": [
+        {
+          "pair": "ink on bg (published pill inverse)",
+          "ratio": 15.19,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface",
+          "ratio": 16.57,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on bg",
+          "ratio": 6,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on surface",
+          "ratio": 6.54,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on bg",
+          "ratio": 4.99,
+          "wcag": true
+        },
+        {
+          "pair": "pitch on bg",
+          "ratio": 4.82,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on floodlight-bg",
+          "ratio": 4.95,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on bg",
+          "ratio": 5.18,
+          "wcag": true
+        },
+        {
+          "pair": "kept pill text on pitch",
+          "ratio": 5.26,
+          "wcag": true
+        },
+        {
+          "pair": "failed pill text on accent-strong",
+          "ratio": 5.58,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface-alt",
+          "ratio": 13.76,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on media",
+          "ratio": 4.95,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on surface",
+          "ratio": 5.44,
+          "wcag": true
+        }
+      ],
+      "tabOrder": [
+        "Compose",
+        "Jobs",
+        "Review",
+        "Publish",
+        "Import",
+        "i-clip",
+        "i-still",
+        "a fictional cat, as typed",
+        "Fenway",
+        "Frankenstein",
+        "i-title",
+        "i-note",
+        "i-made",
+        "Read the file",
+        "Use dark theme"
+      ]
+    },
+    {
+      "name": "import-duplicate",
+      "file": "png/import-duplicate-dark-1000.png",
+      "sha256": "68382b3a1fda0edd269583fad668eb3e2e04c68adb390ba04eb7ff5b247a7448",
+      "theme": "dark",
+      "width": 1000,
+      "scrollWidth": 1000,
+      "innerWidth": 1000,
+      "scrollEqual": true,
+      "consoleErrors": [],
+      "contrast": [
+        {
+          "pair": "ink on bg (published pill inverse)",
+          "ratio": 14.99,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface",
+          "ratio": 12.98,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on bg",
+          "ratio": 8.55,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on surface",
+          "ratio": 7.4,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on bg",
+          "ratio": 6.04,
+          "wcag": true
+        },
+        {
+          "pair": "pitch on bg",
+          "ratio": 7.75,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on floodlight-bg",
+          "ratio": 8.23,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on bg",
+          "ratio": 11.21,
+          "wcag": true
+        },
+        {
+          "pair": "kept pill text on pitch",
+          "ratio": 7.75,
+          "wcag": true
+        },
+        {
+          "pair": "failed pill text on accent-strong",
+          "ratio": 8.98,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface-alt",
+          "ratio": 11.61,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on media",
+          "ratio": 9.13,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on surface",
+          "ratio": 5.23,
+          "wcag": true
+        }
+      ],
+      "tabOrder": [
+        "Compose",
+        "Jobs",
+        "Review",
+        "Publish",
+        "Import",
+        "i-clip",
+        "i-still",
+        "a fictional cat, as typed",
+        "Fenway",
+        "Frankenstein",
+        "i-title",
+        "i-note",
+        "i-made",
+        "Read the file",
+        "Use light theme"
+      ]
+    },
+    {
+      "name": "import-duplicate",
+      "file": "png/import-duplicate-dark-1280.png",
+      "sha256": "c9b9598c0094fa69997689fbc7ca3ef62f623e64a977463831d1f45f8d1a9c04",
+      "theme": "dark",
+      "width": 1280,
+      "scrollWidth": 1280,
+      "innerWidth": 1280,
+      "scrollEqual": true,
+      "consoleErrors": [],
+      "contrast": [
+        {
+          "pair": "ink on bg (published pill inverse)",
+          "ratio": 14.99,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface",
+          "ratio": 12.98,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on bg",
+          "ratio": 8.55,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on surface",
+          "ratio": 7.4,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on bg",
+          "ratio": 6.04,
+          "wcag": true
+        },
+        {
+          "pair": "pitch on bg",
+          "ratio": 7.75,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on floodlight-bg",
+          "ratio": 8.23,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on bg",
+          "ratio": 11.21,
+          "wcag": true
+        },
+        {
+          "pair": "kept pill text on pitch",
+          "ratio": 7.75,
+          "wcag": true
+        },
+        {
+          "pair": "failed pill text on accent-strong",
+          "ratio": 8.98,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface-alt",
+          "ratio": 11.61,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on media",
+          "ratio": 9.13,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on surface",
+          "ratio": 5.23,
+          "wcag": true
+        }
+      ],
+      "tabOrder": [
+        "Compose",
+        "Jobs",
+        "Review",
+        "Publish",
+        "Import",
+        "i-clip",
+        "i-still",
+        "a fictional cat, as typed",
+        "Fenway",
+        "Frankenstein",
+        "i-title",
+        "i-note",
+        "i-made",
+        "Read the file",
+        "Use light theme"
+      ]
+    },
+    {
+      "name": "import-duplicate",
+      "file": "png/import-duplicate-dark-1440.png",
+      "sha256": "07e82afc5582f46b76e6c16743210ec6fdab37103caa962aa97fb8d12d041cd6",
+      "theme": "dark",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "scrollEqual": true,
+      "consoleErrors": [],
+      "contrast": [
+        {
+          "pair": "ink on bg (published pill inverse)",
+          "ratio": 14.99,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface",
+          "ratio": 12.98,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on bg",
+          "ratio": 8.55,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on surface",
+          "ratio": 7.4,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on bg",
+          "ratio": 6.04,
+          "wcag": true
+        },
+        {
+          "pair": "pitch on bg",
+          "ratio": 7.75,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on floodlight-bg",
+          "ratio": 8.23,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on bg",
+          "ratio": 11.21,
+          "wcag": true
+        },
+        {
+          "pair": "kept pill text on pitch",
+          "ratio": 7.75,
+          "wcag": true
+        },
+        {
+          "pair": "failed pill text on accent-strong",
+          "ratio": 8.98,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface-alt",
+          "ratio": 11.61,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on media",
+          "ratio": 9.13,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on surface",
+          "ratio": 5.23,
+          "wcag": true
+        }
+      ],
+      "tabOrder": [
+        "Compose",
+        "Jobs",
+        "Review",
+        "Publish",
+        "Import",
+        "i-clip",
+        "i-still",
+        "a fictional cat, as typed",
+        "Fenway",
+        "Frankenstein",
+        "i-title",
+        "i-note",
+        "i-made",
+        "Read the file",
         "Use light theme"
       ]
     },
     {
       "name": "live-r2-confirm",
       "file": "png/live-r2-confirm-light-1000.png",
-      "sha256": "996a0755a7660a66c3eab02d36b0bdd28518585bafb6ee406bb1b45abaa6a7f1",
+      "sha256": "bb28e4487b562ac280e08a595caa0a65c1eb37c21a62b06db1417fa218c4817f",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -11332,7 +11896,7 @@
     {
       "name": "live-r2-confirm",
       "file": "png/live-r2-confirm-light-1280.png",
-      "sha256": "93b2aa896515ab327ee215117100e869b5bae0e410c6263bc782fc7c1b08397e",
+      "sha256": "56a63a685405a3b4ad33e00ddc4b6345ebded38e4520adb3acd0fe3992526b8f",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -11428,7 +11992,7 @@
     {
       "name": "live-r2-confirm",
       "file": "png/live-r2-confirm-light-1440.png",
-      "sha256": "c582fe4c9ae5a5c648d817ea24e8a5d63204f9b5f38bf3b9fd9251b86c8baff0",
+      "sha256": "29e6662a41edc860e2dbd003022decec63921d2a646b568bdbbad5c28de120d8",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -11524,7 +12088,7 @@
     {
       "name": "live-r2-confirm",
       "file": "png/live-r2-confirm-dark-1000.png",
-      "sha256": "8a5213a8e01878b7d2fd99c46b3e15486c91721b99d652324450192f68830ffa",
+      "sha256": "c688e25a8a082aeb2ef79f948ccee5ef481cdc52607b21859a49dd9ccb6cc782",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -11620,7 +12184,7 @@
     {
       "name": "live-r2-confirm",
       "file": "png/live-r2-confirm-dark-1280.png",
-      "sha256": "379ffc31642efabeca8d3bcbe40e734be5fb47249935c6ab27b41d35ba9bd290",
+      "sha256": "ef282275214da92f03f4bd380f20f8284775e001963ccdb6c8d687520f4aa6e1",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -11716,7 +12280,7 @@
     {
       "name": "live-r2-confirm",
       "file": "png/live-r2-confirm-dark-1440.png",
-      "sha256": "4220ba603e8b1a79dd20ff5df5c05db764ec9048001138da1371f3b405bcc823",
+      "sha256": "6c6c46afdb8ca46c4d272a638b53d897ed6a57742989197f63249f07e51100b0",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -11812,7 +12376,7 @@
     {
       "name": "live-storage-refused",
       "file": "png/live-storage-refused-light-1000.png",
-      "sha256": "8fdf4448dee813971ba1e19d05faa19405a36941fb8877c50cccba3a631716a4",
+      "sha256": "89f23158c862ebdf04b1f228d83101c6c20b5559e2590e9f3a2f3fc72a1cb2f9",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -11908,7 +12472,7 @@
     {
       "name": "live-storage-refused",
       "file": "png/live-storage-refused-light-1280.png",
-      "sha256": "5f8355ef4a541a0420026a0f5924dcc25a9af7a85880dfe48faabb35e2b1dc6b",
+      "sha256": "b5915ae1635bb7a2f9cac6f54ca2c73f2d058578fe57c580062f7da6bae56851",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -12004,7 +12568,7 @@
     {
       "name": "live-storage-refused",
       "file": "png/live-storage-refused-light-1440.png",
-      "sha256": "67c210aca4cadeeca6de8d525a9bb5272a597a018fdeda34fba2ce0fc1ba1082",
+      "sha256": "fd66dddbfa63f6a1b394bd8ea25ec3f2a1254036374b05d07995311c6062bfb2",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -12100,7 +12664,7 @@
     {
       "name": "live-storage-refused",
       "file": "png/live-storage-refused-dark-1000.png",
-      "sha256": "b64e865f12a5f35cfae5691cf882b963cadd60531410cad4dcc1508b7eff6520",
+      "sha256": "e066b38d223bc9c0cbee0f73d7050d4c9634fdce5c3d3404f4d3b17596d6b347",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -12196,7 +12760,7 @@
     {
       "name": "live-storage-refused",
       "file": "png/live-storage-refused-dark-1280.png",
-      "sha256": "b5c912935d7d6302e2a611001e2576ee4b3e86e7664ef1dbb6b6d5be2376e1cb",
+      "sha256": "9f76686bec7578218db37428d8f00e4a51de655cf2fb0d1dbb1fed69bb595b80",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -12292,7 +12856,7 @@
     {
       "name": "live-storage-refused",
       "file": "png/live-storage-refused-dark-1440.png",
-      "sha256": "851583ebd4693aa42e5b4bd4dd92ea28759674d7655d5939414e47c19938d26f",
+      "sha256": "2e6df12d495e9ec01e599a1820b555c712a32b37a43f826e0e1f6d53eb32b381",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -12908,12 +13472,13 @@
     "Jobs screenshots use STUDIO_ADMIN_FREEZE=1 so a visible poll does not move seeded in-flight rows. The flow server does not set it, so compose → poll → download runs.",
     "bind off loopback refused: The Studio admin binds to 127.0.0.1 only",
     "budget reason visible",
-    "composed job 44696b60-2a6e-44cb-bc4d-f7f229008bf1",
-    "unpublished ab1fbdaf-2b4b-4881-bce2-87d70f4c2e7c",
+    "composed job 722cf9ab-c4c8-40e0-8946-a5fe70fd3e31",
+    "unpublished 878535d1-df3e-46d8-a3a5-63bd979bcd70",
     "live switch left transport=stub",
     "live database at 127.0.0.1:1 shows the paused banner",
-    "live publish refused for 0795764e-3f27-4b0f-99df-274d2e4dc449; the clip stayed kept",
-    "import flow 1b9581ef-5adf-413b-a22c-a7453b954a84 published and withdrawn",
+    "live publish refused for 8a46f6c8-0a91-481d-9fe1-23038fa212d8; the clip stayed kept",
+    "import flow f3d64bb8-1a34-4fbb-befa-4703aae1196f published and withdrawn",
+    "still over 20 MB and clip over 100 MB name themselves; a missing confirm says to choose the file again",
     "security failures 0"
   ],
   "requestLog": [
@@ -12959,7 +13524,7 @@
     },
     {
       "method": "POST",
-      "path": "/api/jobs/44696b60-2a6e-44cb-bc4d-f7f229008bf1/download",
+      "path": "/api/jobs/722cf9ab-c4c8-40e0-8946-a5fe70fd3e31/download",
       "status": 200
     },
     {
@@ -12974,17 +13539,17 @@
     },
     {
       "method": "GET",
-      "path": "/api/review/44696b60-2a6e-44cb-bc4d-f7f229008bf1",
+      "path": "/api/review/722cf9ab-c4c8-40e0-8946-a5fe70fd3e31",
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/review/44696b60-2a6e-44cb-bc4d-f7f229008bf1/keep",
+      "path": "/api/review/722cf9ab-c4c8-40e0-8946-a5fe70fd3e31/keep",
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/review/44696b60-2a6e-44cb-bc4d-f7f229008bf1",
+      "path": "/api/review/722cf9ab-c4c8-40e0-8946-a5fe70fd3e31",
       "status": 200
     },
     {
@@ -12994,12 +13559,12 @@
     },
     {
       "method": "GET",
-      "path": "/api/publish/44696b60-2a6e-44cb-bc4d-f7f229008bf1",
+      "path": "/api/publish/722cf9ab-c4c8-40e0-8946-a5fe70fd3e31",
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/publish/ab1fbdaf-2b4b-4881-bce2-87d70f4c2e7c",
+      "path": "/api/publish/878535d1-df3e-46d8-a3a5-63bd979bcd70",
       "status": 200
     },
     {
@@ -13009,17 +13574,17 @@
     },
     {
       "method": "GET",
-      "path": "/api/publish/ab1fbdaf-2b4b-4881-bce2-87d70f4c2e7c",
+      "path": "/api/publish/878535d1-df3e-46d8-a3a5-63bd979bcd70",
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/publish/ab1fbdaf-2b4b-4881-bce2-87d70f4c2e7c",
+      "path": "/api/publish/878535d1-df3e-46d8-a3a5-63bd979bcd70",
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/publish/ab1fbdaf-2b4b-4881-bce2-87d70f4c2e7c/go",
+      "path": "/api/publish/878535d1-df3e-46d8-a3a5-63bd979bcd70/go",
       "status": 200
     },
     {
@@ -13034,12 +13599,12 @@
     },
     {
       "method": "GET",
-      "path": "/api/publish/ab1fbdaf-2b4b-4881-bce2-87d70f4c2e7c",
+      "path": "/api/publish/878535d1-df3e-46d8-a3a5-63bd979bcd70",
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/publish/ab1fbdaf-2b4b-4881-bce2-87d70f4c2e7c/unpublish",
+      "path": "/api/publish/878535d1-df3e-46d8-a3a5-63bd979bcd70/unpublish",
       "status": 200
     },
     {
@@ -13054,7 +13619,7 @@
     },
     {
       "method": "GET",
-      "path": "/api/publish/ab1fbdaf-2b4b-4881-bce2-87d70f4c2e7c",
+      "path": "/api/publish/878535d1-df3e-46d8-a3a5-63bd979bcd70",
       "status": 200
     }
   ],
@@ -13120,13 +13685,63 @@
       "secrets": []
     },
     {
-      "name": "upload too large",
+      "name": "upload still too large",
       "status": 413,
+      "secrets": []
+    },
+    {
+      "name": "upload clip too large",
+      "status": 413,
+      "secrets": []
+    },
+    {
+      "name": "import missing",
+      "status": 200,
+      "secrets": []
+    },
+    {
+      "name": "reused ticket /api/import/clip",
+      "status": 403,
+      "secrets": []
+    },
+    {
+      "name": "preflight /api/import/clip",
+      "status": 403,
+      "secrets": []
+    },
+    {
+      "name": "reused ticket /api/import/still",
+      "status": 403,
+      "secrets": []
+    },
+    {
+      "name": "preflight /api/import/still",
+      "status": 403,
+      "secrets": []
+    },
+    {
+      "name": "reused ticket /api/import/preview",
+      "status": 403,
+      "secrets": []
+    },
+    {
+      "name": "preflight /api/import/preview",
+      "status": 403,
+      "secrets": []
+    },
+    {
+      "name": "reused ticket /api/import/confirm",
+      "status": 403,
+      "secrets": []
+    },
+    {
+      "name": "preflight /api/import/confirm",
+      "status": 403,
       "secrets": []
     }
   ],
   "counts": {
-    "shots": 132,
+    "shots": 138,
     "scrollFailures": 0,
     "contrastFailures": 0,
     "consoleFailures": 0
