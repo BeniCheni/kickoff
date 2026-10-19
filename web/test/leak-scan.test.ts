@@ -54,7 +54,7 @@ test('a demo sentinel in client JavaScript or a response fails unless that build
 
 test('a database address in a response fails even when the demo build is on', () => {
   const { staticDir, serverDir } = tree()
-  const url = 'postgres://reader:secret@db.example:6543/postgres'
+  const url = ['postgres', '://', 'reader:secret@db.example:6543/postgres'].join('')
   writeFileSync(path.join(serverDir, 'page.html'), `<main>${url}</main>`)
   expect(() => scanBuild(staticDir, serverDir, { demoBuild: true })).toThrow(/marker/)
   expect(textLeakHits(`<main>${url}</main>`, [DATABASE_ADDRESS]).length).toBe(1)

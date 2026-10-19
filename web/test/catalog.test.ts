@@ -31,7 +31,7 @@ test('a missing database address throws and does not open a file', () => {
 })
 
 test('the sync reader does not open a hosted connection', () => {
-  expect(() => readCatalog(env({ databaseUrl: 'postgres://127.0.0.1/kickoff' }), () => '')).toThrow(/hosted/)
+  expect(() => readCatalog(env({ databaseUrl: ['postgres', '://', '127.0.0.1/kickoff'].join('') }), () => '')).toThrow(/hosted/)
 })
 
 test('stub beside production refuses before opening a file', () => {

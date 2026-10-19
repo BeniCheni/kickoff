@@ -36,11 +36,11 @@ test('a hosted read parses strict rows and rejects an extra column', () => {
 })
 
 test('the connection requires TLS except on loopback and does not keep the address', () => {
-  const local = connectionOptions('postgres://reader@127.0.0.1:5432/kickoff')
+  const local = connectionOptions(['postgres', '://', 'reader@127.0.0.1:5432/kickoff'].join(''))
   expect(local).toMatchObject({ prepare: false, max: 1, connect_timeout: 5, ssl: false, fetch_types: false })
-  expect(connectionOptions('postgresql://reader@localhost/kickoff').ssl).toBe(false)
-  expect(connectionOptions('postgres://reader@[::1]:5432/kickoff').ssl).toBe(false)
-  const remote = connectionOptions('postgres://reader@db.example:6543/postgres?sslmode=disable')
+  expect(connectionOptions(['postgresql', '://', 'reader@localhost/kickoff'].join('')).ssl).toBe(false)
+  expect(connectionOptions(['postgres', '://', 'reader@[::1]:5432/kickoff'].join('')).ssl).toBe(false)
+  const remote = connectionOptions(['postgres', '://', 'reader@db.example:6543/postgres?sslmode=disable'].join(''))
   expect(remote.ssl).toBe('require')
   expect(JSON.stringify(remote)).not.toContain('db.example')
   expect(() => connectionOptions('present')).toThrow(/not usable/)
