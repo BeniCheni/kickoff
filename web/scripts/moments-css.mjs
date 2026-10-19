@@ -69,7 +69,12 @@ export function assertMomentsMotion(css) {
     const times = value.match(/\d+m?s/g) ?? []
     for (const time of times) assert.ok(ALLOWED_TIME.test(time), `Moments duration is not on the allowlist: ${time}`)
     if (decl.prop === 'transition' || decl.prop === 'transition-property') {
-      assert.ok(!/box-shadow|width|height|left|top|margin|padding|background/.test(value), `Moments transition is not composited: ${value}`)
+      const properties = decl.prop === 'transition-property'
+        ? value.split(',').map(part => part.trim())
+        : value.split(',').map(part => part.trim().split(/\s+/)[0] ?? '')
+      for (const property of properties) {
+        assert.ok(property === 'transform' || property === 'opacity', `Moments transition is not composited: ${value}`)
+      }
     }
     if (decl.prop === 'animation' || decl.prop === 'animation-name') {
       const names = value.split(/[\s,]+/).filter(part => part.startsWith('moments-'))

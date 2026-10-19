@@ -6,8 +6,8 @@ import { expect, test } from 'vitest'
 import { DEMO_SENTINEL, parseDemoSocial } from '@kickoff/demo'
 import { readCatalog } from '../lib/catalog/read'
 import { momentsFor } from '../lib/catalog/request'
-import { DemoReadError, readDemo, readDemoFor } from '../lib/demo/read'
-import { MomentsRegion } from '../app/moments/region'
+import { DemoReadError, readDemo, readDemoFor, warnDemoRead } from '../lib/demo/read'
+import { MomentsRegion, showSampleLabel } from '../app/moments/region'
 
 const repoRoot = fileURLToPath(new URL('../..', import.meta.url))
 const socialPath = path.join(repoRoot, 'web/fixtures/demo/social.json')
@@ -49,10 +49,10 @@ test('demo beside production refuses before opening a file', () => {
 test('a synthetic false file and an unknown reaction key fail the whole read', () => {
   const falseDoc = structuredClone(social)
   falseDoc.synthetic = false as true
-  expect(() => readDemo(env({ demo: 'on', demoFile: 'memory' }), () => JSON.stringify(falseDoc))).toThrow(/failed validation/)
+  expect(() => readDemo(env({ demo: 'on', demoFile: '/memory/social.json' }), () => JSON.stringify(falseDoc))).toThrow(/failed validation/)
   const unknown = structuredClone(social)
   unknown.stats[0]!.reactions = { ...unknown.stats[0]!.reactions, sparkle: 4 } as typeof unknown.stats[0]['reactions']
-  expect(() => readDemo(env({ demo: 'on', demoFile: 'memory' }), () => JSON.stringify(unknown))).toThrow(DemoReadError)
+  expect(() => readDemo(env({ demo: 'on', demoFile: '/memory/social.json' }), () => JSON.stringify(unknown))).toThrow(DemoReadError)
   expect(() => parseDemoSocial(unknown)).toThrow()
 })
 
@@ -76,16 +76,34 @@ test('fixtures and table do not read demo data, and a missing id has no social l
   expect(JSON.stringify(plain)).not.toContain(DEMO_SENTINEL)
 })
 
-test('demo mode shows the sample label and still hides the sentinel', () => {
-  const html = renderToStaticMarkup(
-    <MomentsRegion
-      demo
-      catalogMode="stub"
-      moments={{ state: 'ready', preview: true, list: [], detail: null, watchId: null, thumbnails: {}, videoAddress: null }}
-    />,
-  )
-  expect(html).toContain('Stub catalog · synthetic records')
-  expect(html).toContain('Sample reactions and comments · made-up viewers, not real ones')
-  expect(html).not.toContain(DEMO_SENTINEL)
-  expect(html).not.toMatch(/\d[\d,]* views/)
+test('demo mode shows the sample label only beside joined rows', () => {
+  const read = readCatalog({
+    catalog: 'stub', stubFile: severalPath, databaseUrl: undefined, vercelEnv: undefined,
+  }, file => readFileSync(file, 'utf8'))
+  const joined = momentsFor('?tab=moments', () => read, null, social)
+  expect(showSampleLabel(joined)).toBe(true)
+  const empty = renderToStaticMarkup(<MomentsRegion catalogMode="stub" moments={{ state: 'ready', preview: true, list: [], detail: null, watchId: null, thumbnails: {}, videoAddress: null, social: {} }} />)
+  expect(empty).toContain('Stub catalog · synthetic records')
+  expect(empty).not.toContain('Sample reactions and comments')
+  expect(empty).not.toContain(DEMO_SENTINEL)
+  const unavailable = renderToStaticMarkup(<MomentsRegion catalogMode="stub" moments={{ state: 'unavailable', preview: true, watchId: null }} />)
+  expect(unavailable).not.toContain('Sample reactions and comments')
+  expect(showSampleLabel(unavailable ? { state: 'unavailable', preview: true, watchId: null } : joined)).toBe(false)
+  if (joined.state !== 'ready') throw new Error('expected ready')
+  expect(showSampleLabel({ ...joined, detail: null, watchId: 'not-a-video' })).toBe(false)
+  const missing = renderToStaticMarkup(<MomentsRegion catalogMode="stub" moments={{ ...joined, detail: null, watchId: 'not-a-video' }} />)
+  expect(missing).not.toContain('Sample reactions and comments')
+})
+
+test('a relative demo file is refused before it is opened', () => {
+  let reads = 0
+  expect(() => readDemo(env({ demo: 'on', demoFile: 'fixtures/demo/social.json' }), () => { reads += 1; return socialText })).toThrow(/absolute/)
+  expect(reads).toBe(0)
+})
+
+test('a demo warning names the reason once and not the document', () => {
+  const lines: string[] = []
+  warnDemoRead(new DemoReadError('demo social file is not set', true), line => lines.push(line))
+  warnDemoRead(new DemoReadError('{"synthetic":false,"secret":"do-not-log"}', true), line => lines.push(line))
+  expect(lines).toEqual(['demo social: not set'])
 })

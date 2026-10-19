@@ -28,17 +28,15 @@ export function Shell({
   search,
   moments = { state: 'skipped' },
   catalogMode = 'closed',
-  demo = false,
 }: {
   search: string
   moments?: MomentsPayload
   catalogMode?: CatalogMode
-  demo?: boolean
 }) {
-  return <SearchProvider search={search}><WatchNavigationProvider><ShellInner moments={moments} catalogMode={catalogMode} demo={demo} /></WatchNavigationProvider></SearchProvider>
+  return <SearchProvider search={search}><WatchNavigationProvider><ShellInner moments={moments} catalogMode={catalogMode} /></WatchNavigationProvider></SearchProvider>
 }
 
-function ShellInner({ moments, catalogMode, demo }: { moments: MomentsPayload; catalogMode: CatalogMode; demo: boolean }) {
+function ShellInner({ moments, catalogMode }: { moments: MomentsPayload; catalogMode: CatalogMode }) {
   const { today } = useNow()
   const [, setTab] = useUrlState('tab', 'fixtures', encodeTab, parseTab, 'push')
   const params = useSearchParams()
@@ -76,7 +74,7 @@ function ShellInner({ moments, catalogMode, demo }: { moments: MomentsPayload; c
       <TabNav tab={tab} onSelect={onSelect}>
         <LensSwitcher lens={lens} onSelect={setLens} />
       </TabNav>
-      {tab === 'moments' ? <ViewBoundary key={tab}><MomentsRegion moments={moments} catalogMode={catalogMode} search={liveSearch} demo={demo} /></ViewBoundary> : (
+      {tab === 'moments' ? <ViewBoundary key={tab}><MomentsRegion moments={moments} catalogMode={catalogMode} search={liveSearch} /></ViewBoundary> : (
         <div data-moments-background="route"><ViewBoundary key={`${tab}:${lens}`}>
           {lens === 'broadcast' && tab === 'fixtures' && <TickerStrip />}
           <StalenessBanner />

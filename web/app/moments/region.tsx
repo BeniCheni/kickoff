@@ -6,10 +6,9 @@ import { previewAllowed } from '../../lib/catalog/types'
 import { Gallery } from './gallery'
 import './gallery.css'
 import dynamic from 'next/dynamic'
+import { WatchMissing, WatchUnavailable } from './watch-states'
 
 const WatchPage = dynamic(() => import('./watch').then(mod => mod.WatchPage))
-const WatchMissing = dynamic(() => import('./watch').then(mod => mod.WatchMissing))
-const WatchUnavailable = dynamic(() => import('./watch').then(mod => mod.WatchUnavailable))
 
 const UNAVAILABLE_HEADING = 'The gallery is unavailable.'
 const UNAVAILABLE_CAUSE = 'The server could not read the list of published videos. The cause is unknown from here.'
@@ -17,16 +16,21 @@ const UNAVAILABLE_BODY = 'Nothing is shown from memory. The site\u2019s fallback
 
 const DEMO_LABEL = 'Sample reactions and comments \u00b7 made-up viewers, not real ones'
 
+export function showSampleLabel(moments: MomentsPayload): boolean {
+  if (moments.state !== 'ready' || !moments.social) return false
+  if (moments.watchId && !moments.detail) return false
+  if (moments.detail) return moments.social[moments.detail.id] !== undefined
+  return moments.list.some(row => moments.social?.[row.id] !== undefined)
+}
+
 export function MomentsRegion({
   moments,
   catalogMode,
   search = '',
-  demo = false,
 }: {
   moments: MomentsPayload
   catalogMode: CatalogMode
   search?: string
-  demo?: boolean
 }) {
   const blocked = moments.state === 'ready' && !previewAllowed(moments.preview, catalogMode)
   const failed = blocked || moments.state !== 'ready'
@@ -68,7 +72,7 @@ export function MomentsRegion({
   return (
     <main className="moments-gallery" aria-label="Moments" data-catalog={preview ? 'stub' : undefined}>
       {preview ? <p className="moments-preview">Stub catalog · synthetic records</p> : null}
-      {demo ? <p className="moments-preview">{DEMO_LABEL}</p> : null}
+      {showSampleLabel(moments) ? <p className="moments-preview">{DEMO_LABEL}</p> : null}
       {body}
     </main>
   )

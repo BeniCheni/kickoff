@@ -1,7 +1,7 @@
 import { headers } from 'next/headers'
 import { searchParamsToQuery } from '../../src/lib/urlCodecs'
 import { loadCatalog } from '../lib/catalog/load'
-import { momentsFor, storageOriginFrom, tabIsMoments } from '../lib/catalog/request'
+import { momentsFor, storageOriginFrom } from '../lib/catalog/request'
 import { loadDemo } from '../lib/demo/load'
 import { Shell } from './shell'
 
@@ -25,5 +25,5 @@ export default async function Home({
   })
   const demo = loadDemo(search)
   const moments = momentsFor(search, loadCatalog, origin, demo)
-  return <Shell search={search} moments={moments} catalogMode={catalogMode} demo={demo !== null && tabIsMoments(search)} />
+  return <Shell search={search} moments={moments} catalogMode={catalogMode} />
 }

@@ -30,6 +30,11 @@ test('view-transition selectors are exactly the 180 ms set', () => {
   expect(() => assertMomentsScope('::view-transition-old(other) {}')).toThrow(/scoped/)
 })
 
+test('a color transition is rejected', () => {
+  const css = readFileSync(fileURLToPath(new URL('../app/moments/gallery.css', import.meta.url)), 'utf8')
+  expect(() => assertMomentsMotion(`${css}\n.moments-gallery { transition: color 150ms; }`)).toThrow(/color|composited/)
+})
+
 test('scoped lens rules and commas inside functional selectors pass', () => {
   expect(() => assertMomentsScope('@media (min-width: 888px) { .moments-gallery :is(h1,h2), [data-lens="poster"] .moments-gallery h1 {} }')).not.toThrow()
 })

@@ -1,6 +1,6 @@
 import 'server-only'
 import { readFileSync } from 'node:fs'
-import { DemoReadError, readDemoFor } from './read'
+import { DemoReadError, readDemoFor, warnDemoRead } from './read'
 
 /** Server-only. A refused or invalid file becomes no social layer, not a partial one. */
 export function loadDemo(search: string) {
@@ -11,7 +11,10 @@ export function loadDemo(search: string) {
       vercelEnv: process.env.VERCEL_ENV,
     }, file => readFileSync(file, 'utf8'))
   } catch (error) {
-    if (error instanceof DemoReadError) return null
+    if (error instanceof DemoReadError) {
+      warnDemoRead(error)
+      return null
+    }
     throw error
   }
 }

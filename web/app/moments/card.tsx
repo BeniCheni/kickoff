@@ -130,13 +130,18 @@ export function VideoCard({
     timer.current = null
   }
   function arm() {
-    clearArm()
+    if (previewSrc || timer.current !== null) return
     if (!videoSrc) return
     const started = Date.now()
+    timer.current = window.setTimeout(() => { timer.current = null }, 60_000)
     void import('./preview-gate').then(({ PREVIEW_DELAY_MS, previewAllowed, previewGate }) => {
+      if (timer.current === null) return
+      window.clearTimeout(timer.current)
+      timer.current = null
       if (!previewAllowed(previewGate())) return
       const wait = Math.max(0, PREVIEW_DELAY_MS - (Date.now() - started))
       timer.current = window.setTimeout(() => {
+        timer.current = null
         if (!videoSrc || !previewAllowed(previewGate())) return
         setPreviewSrc(videoSrc)
       }, wait)
@@ -157,7 +162,11 @@ export function VideoCard({
       onMouseEnter={arm}
       onMouseLeave={disarm}
       onFocus={arm}
-      onBlur={disarm}
+      onBlur={event => {
+        const next = event.relatedTarget
+        if (next instanceof Node && event.currentTarget.contains(next)) return
+        disarm()
+      }}
     >
       <Thumb row={row} sources={thumbnail} href={href} previewSrc={previewSrc} />
       <div className="moments-card-body">
