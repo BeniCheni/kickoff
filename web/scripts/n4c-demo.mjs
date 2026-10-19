@@ -46,6 +46,11 @@ try {
     await page.evaluateOnNewDocument(themeName => {
       localStorage.setItem('kickoff-theme', themeName)
       localStorage.setItem('kickoff-theme-broadcast', themeName)
+      const play = HTMLMediaElement.prototype.play
+      HTMLMediaElement.prototype.play = function () {
+        this.loop = true
+        return play.apply(this, arguments)
+      }
     }, theme)
     const params = new URLSearchParams({ tab: 'moments', ...(lens === 'poster' ? {} : { lens }) })
     await page.goto(`${origin}/?${params}`, { waitUntil: 'networkidle0' })
@@ -53,12 +58,25 @@ try {
     const gallery = await shoot(page, `gallery-${lens}-${theme}-${width}`)
     check(`gallery counts ${lens}-${theme}-${width}`, gallery.includes('views ·') && gallery.includes('Sample reactions'), gallery.slice(0, 240))
     await page.click('h2 a')
-    await page.waitForFunction(() => document.body.innerText.includes('Playing muted.'))
+    await page.waitForFunction(() => document.body.innerText.includes('Playing muted.') || document.body.innerText.includes('Sound on'))
     await page.evaluate(() => { const video = document.querySelector('video'); if (video) video.loop = true })
+    const arrival = await page.evaluate(() => ({
+      mutedLine: document.body.innerText.includes('Playing muted. Unmute beside the player.'),
+      sound: document.body.innerText.includes('Sound on'),
+      stored: localStorage.getItem('kickoff-moments-sound-v1'),
+    }))
     const muted = await shoot(page, `watch-muted-${lens}-${theme}-${width}`)
-    check(`watch muted ${lens}-${theme}-${width}`, muted.includes('Playing muted.') && muted.includes('Unmute'))
-    await page.evaluate(() => [...document.querySelectorAll('button')].find(button => button.textContent.trim() === 'Unmute')?.click())
-    await page.waitForFunction(() => document.body.innerText.includes('Sound on') || [...document.querySelectorAll('button')].some(button => button.textContent.trim() === 'Mute'))
+    check(
+      `watch arrival ${lens}-${theme}-${width}`,
+      arrival.mutedLine
+        ? muted.includes('Unmute')
+        : arrival.sound && arrival.stored === 'on',
+      arrival,
+    )
+    if (arrival.mutedLine) {
+      await page.evaluate(() => [...document.querySelectorAll('button')].find(button => button.textContent.trim() === 'Unmute')?.click())
+      await page.waitForFunction(() => document.body.innerText.includes('Sound on') || [...document.querySelectorAll('button')].some(button => button.textContent.trim() === 'Mute'))
+    }
     await shoot(page, `watch-sound-${lens}-${theme}-${width}`)
     await page.waitForFunction(() => {
       const button = document.querySelector('.moments-reactions button')

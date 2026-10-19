@@ -68,8 +68,8 @@ try {
     runs.push({ name: 'reaction-burst', width, ...await trace(page, 500, async () => page.click('.moments-reactions button')) })
     runs.push({ name: 'count-tick', width, ...await trace(page, 250, async () => page.click('.moments-reactions button')) })
     runs.push({ name: 'countdown-ring', width, ...await trace(page, 700, async () => {
-      await page.waitForFunction(() => document.body.innerText.includes('Playing muted.') || document.body.innerText.includes('Sound on'))
-      await page.evaluate(() => document.querySelector('video')?.dispatchEvent(new Event('ended')))
+      await page.waitForSelector('video')
+      await page.evaluate(() => document.querySelector('video').dispatchEvent(new Event('ended')))
       await page.waitForSelector('.moments-ring')
     }) })
     runs.push({ name: 'comment-in', width, ...await trace(page, 350, async () => {
