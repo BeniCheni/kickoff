@@ -7,24 +7,27 @@ import { spawn } from 'node:child_process'
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-import { PGlite } from '../../studio/node_modules/@electric-sql/pglite/dist/index.js'
-import { createServer as createWire } from 'pglite-server'
-import postgres from 'postgres'
-import { drizzle } from 'drizzle-orm/pglite'
-import { migrate } from 'drizzle-orm/pglite/migrator'
-import { CHECKLIST_LINES } from '../../studio/db/schema.ts'
-import { createStudio } from '../../studio/engine.ts'
-import { createFalStub } from '../../studio/fal/stub.ts'
-import { createStorageStub } from '../../studio/storage/stub.ts'
-import { minimalJpeg } from '../../studio/test/jpeg.ts'
-import puppeteer from 'puppeteer-core'
-import { catalogFromRows } from '../lib/catalog/hosted.ts'
-import { sql } from 'drizzle-orm'
-import { drizzle as drizzlePostgres } from 'drizzle-orm/postgres-js'
+import { fileURLToPath, pathToFileURL } from 'node:url'
+import { createRequire } from 'node:module'
+import { PGlite } from '../studio/node_modules/@electric-sql/pglite/dist/index.js'
+import { CHECKLIST_LINES } from '../studio/db/schema.ts'
+import { createStudio } from '../studio/engine.ts'
+import { createFalStub } from '../studio/fal/stub.ts'
+import { createStorageStub } from '../studio/storage/stub.ts'
+import { minimalJpeg } from '../studio/test/jpeg.ts'
+import { catalogFromRows } from '../web/lib/catalog/hosted.ts'
 
-const repoRoot = fileURLToPath(new URL('../..', import.meta.url))
+const repoRoot = fileURLToPath(new URL('..', import.meta.url))
 const webRoot = path.join(repoRoot, 'web')
+const requireWeb = createRequire(path.join(webRoot, 'package.json'))
+const loadWeb = async specifier => import(pathToFileURL(requireWeb.resolve(specifier)).href)
+const { createServer: createWire } = await loadWeb('pglite-server')
+const postgres = (await loadWeb('postgres')).default
+const { drizzle } = await loadWeb('drizzle-orm/pglite')
+const { migrate } = await loadWeb('drizzle-orm/pglite/migrator')
+const { sql } = await loadWeb('drizzle-orm')
+const { drizzle: drizzlePostgres } = await loadWeb('drizzle-orm/postgres-js')
+const puppeteer = (await loadWeb('puppeteer-core')).default
 const outDir = path.resolve(process.argv[2] ?? '/tmp/kickoff-n6a-proof')
 const receiptPath = path.resolve(process.argv[3] ?? path.join(webRoot, 'verification/n6a-proof.json'))
 const chrome = process.env.CHROME_PATH ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
