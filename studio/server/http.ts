@@ -231,7 +231,7 @@ async function handle(
     return
   }
   if (url.pathname === '/api/import/preview' && method === 'POST') {
-    sendJson(response, 200, previewImport(opened, await readJson(request)), cookieHeader)
+    sendJson(response, 200, await previewImport(opened, await readJson(request)), cookieHeader)
     return
   }
   if (url.pathname === '/api/import/confirm' && method === 'POST') {

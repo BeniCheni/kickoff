@@ -2,6 +2,9 @@ import { existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, realpathSy
 import { randomBytes } from 'node:crypto'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { and, eq } from 'drizzle-orm'
+import { asset } from '../db/schema.ts'
+import { sha256 } from '../hash.ts'
 import { containedPath } from './contain.ts'
 import type { OpenedAdmin } from './open.ts'
 import { isFastStart, readClipFacts, stripClip } from '../media/mp4.ts'
@@ -89,7 +92,7 @@ export function storeImport(mediaDir: string, kind: 'clip' | 'still', bytes: Uin
   return { id }
 }
 
-export function previewImport(opened: OpenedAdmin, body: unknown) {
+export async function previewImport(opened: OpenedAdmin, body: unknown) {
   const record = body && typeof body === 'object' ? body as { clipId?: unknown; stillId?: unknown } : {}
   if (typeof record.clipId !== 'string' || typeof record.stillId !== 'string') return { outcome: 'missing' as const }
   const clipPath = incoming(opened.mediaDir, record.clipId, 'mp4')
@@ -115,6 +118,12 @@ export function previewImport(opened: OpenedAdmin, body: unknown) {
       return { outcome: 'not-a-jpeg' as const }
     }
     throw error
+  }
+  const digest = sha256(stripped.bytes)
+  const duplicate = await opened.db.select().from(asset).where(and(eq(asset.role, 'video'), eq(asset.sha256, digest)))
+  if (duplicate.length > 0) {
+    discardUploads(opened.mediaDir, record.clipId, record.stillId)
+    return { outcome: 'already-imported' as const, sha256: digest }
   }
   const frameRate = read.facts.frameRate
   return {

@@ -372,13 +372,24 @@ describe('import screen', () => {
     emptyIncoming()
     const againClip = await upload(syntheticMp4({ creationTime: 0 }), 'video/mp4', 'clip')
     const againStill = await upload(minimalJpeg, 'image/jpeg', 'still')
+    const previewDuplicate = JSON.parse((await ask(admin, {
+      path: '/api/import/preview',
+      method: 'POST',
+      headers: { ...headers, 'content-type': 'application/json' },
+      body: JSON.stringify({ clipId: againClip.id, stillId: againStill.id }),
+    })).body) as { outcome: string }
+    expect(previewDuplicate.outcome).toBe('already-imported')
+    expect(statusLine(previewDuplicate)).toBe(DRAFT.importDuplicate)
+    emptyIncoming()
+    const thirdClip = await upload(syntheticMp4({ creationTime: 0 }), 'video/mp4', 'clip')
+    const thirdStill = await upload(minimalJpeg, 'image/jpeg', 'still')
     const duplicate = JSON.parse((await ask(admin, {
       path: '/api/import/confirm',
       method: 'POST',
       headers: { ...headers, 'content-type': 'application/json' },
       body: JSON.stringify({
-        clipId: againClip.id,
-        stillId: againStill.id,
+        clipId: thirdClip.id,
+        stillId: thirdStill.id,
         prompt: 'a fictional cat',
         subjects: ['Fenway'],
         title: 'Fenway',
