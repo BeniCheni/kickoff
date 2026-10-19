@@ -1,10 +1,9 @@
 import { headers } from 'next/headers'
 import { searchParamsToQuery } from '../../src/lib/urlCodecs'
-import { loadCatalog } from '../lib/catalog/load'
 import { requestStorageOrigin } from '../lib/catalog/origin'
 import { momentsFor, tabIsMoments, watchIdFrom } from '../lib/catalog/request'
 import { CatalogReadError, type MomentsPayload } from '../lib/catalog/types'
-import { loadDemo } from '../lib/demo/load'
+import { loadMomentsRead } from '../lib/moments-read'
 import { Shell } from './shell'
 
 // Tailwind boundary probe (never applied): outline-[#bada71]
@@ -28,8 +27,8 @@ export default async function Home({
 async function momentsPayload(search: string, origin: string | null): Promise<MomentsPayload> {
   if (!tabIsMoments(search)) return { state: 'skipped' }
   try {
-    const catalog = await loadCatalog()
-    return momentsFor(search, () => catalog, origin, await loadDemo(search))
+    const read = await loadMomentsRead(search)
+    return momentsFor(search, () => read.catalog, origin, read.demo)
   } catch (error) {
     const preview = error instanceof CatalogReadError ? error.preview : false
     return { state: 'unavailable', preview, watchId: watchIdFrom(search) }

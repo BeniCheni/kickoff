@@ -8,6 +8,7 @@ export default defineConfig({
     alias: [
       ...vitestReactAliases,
       { find: 'next/navigation', replacement: path.join(webRootPath, 'test/next-navigation.ts') },
+      { find: 'server-only', replacement: path.join(webRootPath, 'test/server-only-stub.ts') },
     ],
     dedupe: ['react', 'react-dom'],
   },
