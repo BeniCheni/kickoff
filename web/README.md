@@ -38,11 +38,12 @@ optional port) is accepted. Forwarded host/protocol headers are ignored. `VERCEL
 With the flag unset, or set to `production`, Moments reads `catalog.videos`
 and `catalog.video` through Drizzle, ordered by `position`, then `id`. The
 connection is one per server process, `prepare: false`, a five-second connect
-timeout, and TLS required except on a loopback host. A missing address, a
+timeout, and TLS required except on a loopback host when `VERCEL_ENV` is unset. A missing address, a
 failed read, or a row the strict schema rejects shows the unavailable state.
 There is no fallback to the stub. Fixtures and Table do not open a connection.
 `KICKOFF_STORAGE_ORIGIN` is an https origin with no path. A loopback `http`
-origin is accepted for the local proof only. A missing or invalid one leaves storage addresses empty: the thumbnail chain falls through, and the
+origin is accepted for the local proof only, and only when `VERCEL_ENV` is unset.
+A database on a loopback host is the same: the preview refuses it. The log class is `loopback database is local only`. A missing or invalid one leaves storage addresses empty: the thumbnail chain falls through, and the
 watch page shows recovery. The stub site-copy route is `/moments/stub-site/`,
 so a real `web/public/moments/thumbnails/<id>.jpg` is served at the Q24 address.
 Nothing writes those files yet.
@@ -143,6 +144,7 @@ ALTER ROLE studio_reader WITH LOGIN PASSWORD 'choose-one';
 | `catalog database address is not set` | The Preview variable is missing on this deployment. | Set it, then make a new Preview. A redeploy of the import's Production build does not pick it up. |
 | `catalog database address is not usable` | The value is not a postgres URI the app can use. | Copy the URI again. |
 | `connection string has extra parameters` | The URI has a query parameter other than `sslmode`. | Copy the Transaction pooler URI. It has no `?`. |
+| `loopback database is local only` | The URI points at this machine, and this deployment is on Vercel. | Use the transaction pooler host, not `127.0.0.1`. |
 | `read failed` | Anything else. | The line is only the class. It will not contain the address. |
 
 The watch page sets the video `src` and calls `play()` muted on arrival.

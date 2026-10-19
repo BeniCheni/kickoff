@@ -13,9 +13,10 @@ function loopbackHost(hostname: string): boolean {
 
 /**
  * An https origin with no userinfo, path, query, or fragment.
- * Loopback http is the local proof. Anything else that is not https is no address.
+ * Loopback http is the local proof, and only when VERCEL_ENV is unset.
+ * Anything else that is not https is no address.
  */
-export function hostedStorageOrigin(value: string | undefined): string | null {
+export function hostedStorageOrigin(value: string | undefined, vercelEnv = process.env.VERCEL_ENV): string | null {
   if (!value) return null
   let url: URL
   try {
@@ -27,7 +28,7 @@ export function hostedStorageOrigin(value: string | undefined): string | null {
   if (url.pathname !== '/' && url.pathname !== '') return null
   if (url.search || url.hash) return null
   if (url.protocol === 'https:') return url.origin
-  if (url.protocol === 'http:' && loopbackHost(url.hostname)) return url.origin
+  if (url.protocol === 'http:' && loopbackHost(url.hostname) && !vercelEnv) return url.origin
   return null
 }
 

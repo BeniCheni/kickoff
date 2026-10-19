@@ -18,7 +18,7 @@ function loopback(hostname: string): boolean {
  * TLS is required except on a loopback host, which is the local proof.
  * The address itself is not copied into the returned options.
  */
-export function connectionOptions(url: string): CatalogConnection {
+export function connectionOptions(url: string, env: NodeJS.ProcessEnv = process.env): CatalogConnection {
   let parsed: URL
   try {
     parsed = new URL(url)
@@ -34,12 +34,16 @@ export function connectionOptions(url: string): CatalogConnection {
       throw new CatalogReadError('catalog database address is not usable', false, 'connection string has extra parameters')
     }
   }
+  const local = loopback(parsed.hostname)
+  if (local && env.VERCEL_ENV) {
+    throw new CatalogReadError('catalog database address is not usable', false, 'loopback database is local only')
+  }
   return {
     prepare: false,
     max: 1,
     connect_timeout: 5,
     idle_timeout: 20,
-    ssl: loopback(parsed.hostname) ? false : 'require',
+    ssl: local ? false : 'require',
     onnotice: () => {},
   }
 }

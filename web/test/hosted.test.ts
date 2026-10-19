@@ -55,6 +55,14 @@ test('the connection requires TLS except on loopback and does not keep the addre
     expect(String(error)).not.toContain('pgbouncer')
   }
   expect(connectionOptions(['postgres', '://', 'reader@db.example:6543/postgres?sslmode=require'].join('')).ssl).toBe('require')
+  const loopbackUrl = ['postgres', '://', 'reader@127.0.0.1:5432/kickoff'].join('')
+  try {
+    connectionOptions(loopbackUrl, { VERCEL_ENV: 'preview' })
+    throw new Error('loopback was accepted on a preview')
+  } catch (error) {
+    expect(error).toBeInstanceOf(CatalogReadError)
+    expect((error as CatalogReadError).failure).toBe('loopback database is local only')
+  }
 })
 
 test('a real storage origin is https only, and a hosted row does not use the stub site route', () => {
@@ -64,6 +72,8 @@ test('a real storage origin is https only, and a hosted row does not use the stu
   expect(hostedStorageOrigin('https://media.example/moments')).toBeNull()
   expect(hostedStorageOrigin('http://media.example')).toBeNull()
   expect(hostedStorageOrigin('http://127.0.0.1:9')).toBe('http://127.0.0.1:9')
+  expect(hostedStorageOrigin('http://127.0.0.1:9', 'preview')).toBeNull()
+  expect(hostedStorageOrigin('https://media.example', 'preview')).toBe('https://media.example')
   expect(hostedStorageOrigin('https://user:secret@media.example')).toBeNull()
   expect(hostedStorageOrigin('not a url')).toBeNull()
   const stub = several()
