@@ -7,7 +7,7 @@ import { demoFromRows } from '../demo/rows'
 import { DemoReadError } from '../demo/read'
 import { connectionOptions } from './connection'
 import { asCatalogRows, catalogFromRows } from './hosted'
-import { catalogFailure } from './failure'
+import { catalogFailure, isCatalogTimeout } from './failure'
 import { CatalogReadError, type CatalogSuccess } from './types'
 
 let client: ReturnType<typeof postgres> | undefined
@@ -55,12 +55,6 @@ export function readTimeoutMs(env: NodeJS.ProcessEnv = process.env): number {
   return parsed > DEFAULT_READ_TIMEOUT_MS ? DEFAULT_READ_TIMEOUT_MS : parsed
 }
 
-function isReadTimeout(error: unknown): boolean {
-  if (error instanceof Error && error.message === 'catalog read deadline') return true
-  if (typeof error === 'object' && error !== null && 'code' in error && (error as { code?: unknown }).code === '57014') return true
-  return error instanceof Error && /statement timeout/i.test(error.message)
-}
-
 /**
  * One repeatable-read, read-only transaction for a Moments request.
  * Drizzle opens it with postgres.js `begin`, then `SET TRANSACTION`.
@@ -83,7 +77,7 @@ export async function withMomentsTransaction<T>(work: (tx: MomentsTx) => Promise
   try {
     return await Promise.race([query, deadline])
   } catch (error) {
-    if (isReadTimeout(error)) {
+    if (isCatalogTimeout(error)) {
       await closeCatalogClient()
       throw new CatalogReadError('catalog database read timed out', false, 'timed out')
     }
@@ -121,7 +115,7 @@ export async function loadHostedMoments(includeDemo: boolean): Promise<HostedMom
       })
       return { catalog, demo, demoError: null }
     } catch (error) {
-      if (isReadTimeout(error)) throw error
+      if (isCatalogTimeout(error)) throw error
       const demoError = error instanceof DemoReadError
         ? error
         : new DemoReadError('demo social could not be read', true)

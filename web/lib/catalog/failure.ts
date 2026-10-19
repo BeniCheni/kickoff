@@ -23,10 +23,19 @@ const CLASSES: Record<string, string> = {
   '08006': 'connection failed',
 }
 
-function codeOf(error: unknown): string {
-  if (typeof error !== 'object' || error === null) return ''
-  const code = (error as { code?: unknown }).code
-  return typeof code === 'string' ? code : ''
+/** The driver's code, including one Drizzle left on `.cause`. Never a message. */
+export function driverCode(error: unknown): string {
+  const seen = new Set<unknown>()
+  let current: unknown = error
+  for (let depth = 0; depth < 5; depth += 1) {
+    if (typeof current !== 'object' || current === null) return ''
+    if (seen.has(current)) return ''
+    seen.add(current)
+    const code = (current as { code?: unknown }).code
+    if (typeof code === 'string' && code !== '') return code
+    current = (current as { cause?: unknown }).cause
+  }
+  return ''
 }
 
 function safeClass(value: string): string {
@@ -34,10 +43,15 @@ function safeClass(value: string): string {
   return value
 }
 
-/** A plain class. The original message is not used, because it can carry the address. */
+/** A plain class. No message from the chain is used: Drizzle's carries the SQL, and a driver's can carry the user. */
 export function catalogFailure(error: unknown): string {
   if (error instanceof CatalogReadError) return safeClass(error.failure)
-  return CLASSES[codeOf(error)] ?? 'read failed'
+  return CLASSES[driverCode(error)] ?? 'read failed'
+}
+
+export function isCatalogTimeout(error: unknown): boolean {
+  if (error instanceof Error && error.message === 'catalog read deadline') return true
+  return driverCode(error) === '57014'
 }
 
 /** One line per process per class. The line is the class only. */
