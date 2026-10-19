@@ -6,7 +6,8 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { LOOPBACK_HOST, assertLoopbackBind, isLoopbackHost } from './bind.ts'
 import { SESSION_COOKIE, cookieValue, guardRequest, oneTimeUrl, sessionCookie } from './guard.ts'
-import { BodyError, readBytes, readJson } from './body.ts'
+import { BodyError, CLIP_LIMIT, PHOTO_LIMIT, readBytes, readJson } from './body.ts'
+import { confirmImport, previewImport, storeImport } from './import.ts'
 import { estimateJobs, readCompose, submitJobs } from './compose.ts'
 import { downloadJob, jobIdFrom, pollInFlight, readJobs, regenerateJob } from './jobs.ts'
 import { serveFile as serveRecorded } from './media.ts'
@@ -172,6 +173,68 @@ async function handle(
   }
   if (url.pathname === '/api/submit' && method === 'POST') {
     sendJson(response, 200, await submitJobs(opened, await readJson(request)), cookieHeader)
+    return
+  }
+  if (url.pathname === '/api/import/clip' && method === 'POST') {
+    const type = request.headers['content-type']
+    const header = (Array.isArray(type) ? type[0] : type)?.toLowerCase() ?? ''
+    if (!header.startsWith('video/mp4')) {
+      sendJson(response, 415, { outcome: 'not-an-mp4' }, cookieHeader)
+      return
+    }
+    let bytes: Buffer
+    try {
+      bytes = await readBytes(request, CLIP_LIMIT)
+    } catch (error) {
+      if (error instanceof BodyError && error.status === 413) {
+        sendJson(response, 413, { outcome: 'too-large' }, cookieHeader)
+        return
+      }
+      throw error
+    }
+    if (bytes.length === 0) {
+      sendJson(response, 400, { outcome: 'empty' }, cookieHeader)
+      return
+    }
+    const stored = storeImport(opened.mediaDir, 'clip', new Uint8Array(bytes))
+    sendJson(response, 'outcome' in stored ? 400 : 200, stored, cookieHeader)
+    return
+  }
+  if (url.pathname === '/api/import/still' && method === 'POST') {
+    const type = request.headers['content-type']
+    const header = (Array.isArray(type) ? type[0] : type)?.toLowerCase() ?? ''
+    if (header.startsWith('image/png')) {
+      sendJson(response, 415, { outcome: 'png' }, cookieHeader)
+      return
+    }
+    if (!header.startsWith('image/jpeg')) {
+      sendJson(response, 415, { outcome: 'not-a-jpeg' }, cookieHeader)
+      return
+    }
+    let bytes: Buffer
+    try {
+      bytes = await readBytes(request, PHOTO_LIMIT)
+    } catch (error) {
+      if (error instanceof BodyError && error.status === 413) {
+        sendJson(response, 413, { outcome: 'too-large' }, cookieHeader)
+        return
+      }
+      throw error
+    }
+    if (bytes.length === 0) {
+      sendJson(response, 400, { outcome: 'empty' }, cookieHeader)
+      return
+    }
+    const stored = storeImport(opened.mediaDir, 'still', new Uint8Array(bytes))
+    sendJson(response, 'outcome' in stored ? 400 : 200, stored, cookieHeader)
+    return
+  }
+  if (url.pathname === '/api/import/preview' && method === 'POST') {
+    sendJson(response, 200, previewImport(opened, await readJson(request)), cookieHeader)
+    return
+  }
+  if (url.pathname === '/api/import/confirm' && method === 'POST') {
+    sendJson(response, 200, await confirmImport(opened, await readJson(request)), cookieHeader)
     return
   }
   if (url.pathname === '/api/photos' && method === 'POST') {

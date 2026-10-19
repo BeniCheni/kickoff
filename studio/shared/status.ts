@@ -25,6 +25,8 @@ const SUCCESS = new Set([
   'already-withdrawn',
   'delete-retried',
   'merged',
+  'imported',
+  'preview',
 ])
 
 const SENTENCE: Record<string, string> = {
@@ -55,6 +57,32 @@ export function cardRefusal(item: string): string {
   return `Publish is refused: missing ${item}.`
 }
 
+/** Plain words for an import refusal. A named brand is appended only when it is a short token. */
+export function importRefusal(body: { outcome?: string; reason?: string; brand?: string }): string | null {
+  if (body.outcome === 'clip-refused' && body.reason === 'truncated') return DRAFT.importTruncated
+  if (body.outcome === 'clip-refused' && body.reason === 'not-mp4') {
+    return body.brand && /^[A-Za-z0-9]{1,8}$/.test(body.brand)
+      ? `${DRAFT.importNotMp4} The brand is ${body.brand}.`
+      : DRAFT.importNotMp4
+  }
+  if (body.outcome === 'clip-refused' && body.reason === 'no-video') return DRAFT.importNoVideo
+  if (body.outcome === 'clip-refused') return DRAFT.importZeroDuration
+  if (body.outcome === 'not-an-mp4') return DRAFT.importNotMp4
+  if (body.outcome === 'already-imported') return DRAFT.importDuplicate
+  if (body.outcome === 'needs-made-on') return DRAFT.importNeedsMadeOn
+  if (body.outcome === 'not-a-jpeg') return DRAFT.importNotJpeg
+  if (body.outcome === 'inside-worktree') return DRAFT.importWorktree
+  if (body.outcome === 'png') return DRAFT.importPng
+  if (body.outcome === 'too-large') return DRAFT.importTooLarge
+  if (body.outcome === 'empty') return DRAFT.importEmpty
+  if (body.outcome === 'prompt-empty') return DRAFT.importPromptEmpty
+  if (body.outcome === 'title-empty') return DRAFT.importTitleEmpty
+  if (body.outcome === 'subject-refused') return DRAFT.importSubject
+  if (body.outcome === 'made-on-invalid') return DRAFT.importMadeOnInvalid
+  if (body.outcome === 'wrong-type') return DRAFT.importWrongType
+  return null
+}
+
 function sentence(outcome: string, reason?: string): string {
   if (outcome === 'record-failed') {
     const named = reason ? SENTENCE[reason] : undefined
@@ -75,6 +103,7 @@ export function statusLine(body: unknown): string | null {
     missing?: unknown
     status?: unknown
     code?: unknown
+    brand?: unknown
   }
   if (typeof record.outcome !== 'string') return null
   if (record.outcome === 'submitted-batch' && Array.isArray(record.results)) {
@@ -98,6 +127,12 @@ export function statusLine(body: unknown): string | null {
   if ((record.outcome === 'withdrawn' || record.outcome === 'delete-retried') && detail) {
     return `${DRAFT.deleteFailed} ${detail}`
   }
+  const imported = importRefusal({
+    outcome: record.outcome,
+    reason: typeof record.reason === 'string' ? record.reason : undefined,
+    brand: typeof record.brand === 'string' ? record.brand : undefined,
+  })
+  if (imported) return imported
   if (SUCCESS.has(record.outcome)) return null
   return sentence(record.outcome, typeof record.reason === 'string' ? record.reason : undefined)
 }

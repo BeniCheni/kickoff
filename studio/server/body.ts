@@ -1,7 +1,9 @@
 import type { IncomingMessage } from 'node:http'
 
 const JSON_LIMIT = 1_000_000
-const PHOTO_LIMIT = 20_000_000
+export const PHOTO_LIMIT = 20_000_000
+/** A 1080p clip posted to the local admin. Larger bodies are refused. */
+export const CLIP_LIMIT = 100_000_000
 
 export class BodyError extends Error {
   constructor(readonly status: 400 | 413 | 415) {
