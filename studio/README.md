@@ -96,7 +96,31 @@ STUDIO_LIVE=1 npm run studio -- --live
 
 `--live` starts only when `STUDIO_LIVE=1` and `DATABASE_URL` are set. It names a missing piece and does not print a value. It never opens the local database. `FAL_KEY` is not required to start. Without it, Submit, Regenerate, poll, Download and Retry download stay disabled and say so. When `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` and `R2_BUCKET` are set, storage is the R2 adapter and Publish shows the confirmation that the clip is live on the next read. Without those four names, storage stays `refused` and Publish shows that refusal instead: a publish does not write a catalog row, and unpublish with a file delete, retry-delete, and retry-removal are refused. The browser cannot switch the transport. Without `FAL_KEY`, poll, Download and Retry download refuse with `Unavailable: a live fal action needs FAL_KEY on this Mac, and none is set.` Jobs does not poll. Cancel and attach are not on this page: those addresses answer 404. The CLI still has `cancel` and `attach-request`. The shell prints `transport=`, `database=` and `storage=stub`, `storage=r2` or `storage=refused`. With a key it prints `fal=live`; without one, `fal=refused`.
 
-Import of a Grok clip is not on this page yet. The `import` command is on main. Wiring this screen to it is ST3b.
+Import is on this page. A PNG still is refused, with the `sips` line from the Wednesday section below. A file over 100 MB is refused. The clip must be `video/mp4` and the still `image/jpeg`.
+
+### Wednesday, in the admin
+
+The env file already holds `STUDIO_LIVE`, `DATABASE_URL`, and the four R2 names. One command starts the live admin. The shell prints `transport=live`, `database=postgres` and `storage=r2`.
+
+```bash
+STUDIO_LIVE=1 npm run studio -- --live
+```
+
+The process prints one URL. Open that URL. It sets the cookie and is not printed again.
+
+On Import, choose the mp4 and the JPEG. Type the prompt, choose Fenway or Frankenstein or both, type the title and the note, and set the made-on date. Read the file. The preview shows width, height, duration, frame rate, audio, fast start, and what Strip will remove. Import. The clip is downloaded, in Jobs and in Review.
+
+On Review, answer the five lines Clear and Keep. On Publish, record the Article 50 answer, then Publish. The confirmation says the clip is live on the next read.
+
+In the Cloudflare dashboard, the bucket named by `R2_BUCKET` has the two keys from the Publish screen. In the Supabase SQL editor, the same row the CLI section reads:
+
+```sql
+select id, endpoint, pinned_on, prompt, prompt_expansion, seed, subjects, video_bucket, video_object_path, thumbnail_object_path
+from catalog.video
+where id = 'fenway-wednesday';
+```
+
+On Publish, Unpublish takes the row out of the catalog. The files stay until Retry delete.
 
 ## Wednesday 21 Oct 2026
 
