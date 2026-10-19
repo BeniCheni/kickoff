@@ -171,3 +171,32 @@ After a withdraw, or after a delete that left one object, retry the delete. It s
 ```bash
 npm run cli -- retry-delete --live --job <job-id>
 ```
+
+## The sample audience
+
+Migration `0004_demo_social.sql` adds schema `demo`. It does not edit `0000` through `0003`, and it does not change `catalog.videos` or `catalog.video`. `npm run migrate` applies it with the others.
+
+Three tables hold the sample shapes from `@kickoff/demo`: `users`, `video_stats`, and `comments`. The five reaction counts are integer columns (`heart_eyes_cat`, `joy_cat`, `soccer`, `fire`, `clap`), not a JSON document on the table. `video_id` stores a published public id by value. It is not a foreign key, so withdrawing a clip does not need this schema. Every row has `synthetic boolean not null default true`, and a check rejects any other value. The three tables enable row-level security and create no policies, the same posture as the Studio tables, so they stay off the Data API.
+
+`demo.social_users`, `demo.social_stats`, and `demo.social_comments` are the read-only projections. Each one lists the package's fields and then `synthetic`, so a reader can refuse a row that is not synthetic. `studio_reader` receives `USAGE` on `demo` and `SELECT` on those three views. It receives nothing else in this schema. Turning that role into a login stays Beni's step, as it was for the catalog views.
+
+`npm run seed:demo` generates that audience inside Postgres. It uses the same `DATABASE_URL` as `npm run migrate`, from the env file outside the worktree, and you run it as the owner. It does not run as `studio_reader`. For every published id in `catalog.videos` it writes modest view counts, the five reaction counts, and 3–12 comments with one level of replies. The names and lines are fictional. `setseed()`, `generate_series`, and a hash of the public id make the same catalog produce the same rows. Each clip's comments are dated from that clip's `published_at`: a top-level comment is `n * 3` minutes later, and each reply is two minutes after its parent. The longest unclamped stack is 35 minutes after the clip. Anything that would fall after the seed's own `statement_timestamp()` is clamped to that instant, and a reply stays after its parent. The Moments page renders a future instant as "just now", so the clamp keeps a Wednesday-afternoon clip from showing a stack of comments dated after Thursday. Two runs are byte-identical for every clip older than that 35-minute window, which is every re-seed after a publish that has had time to settle. A clip younger than the window can move on the next run, because the clamp follows the clock. Running it again truncates the demo tables and inserts them once more, in one transaction. It does not write `studio` or `catalog`. Run it after `npm run migrate`, again after the first real publish, and again after each later publish. If a clip's publish time is not yet one second in the past on the database's clock, the command exits non-zero, prints `Not seeded: a clip's publish time is not yet in the past on the database's clock. Wait a minute, then run npm run seed:demo again. The sample rows from the last run are unchanged.`, and leaves the previous sample rows in place.
+
+`npm run migrate` prints `migrated database=postgres applied=` and the tags it applied, or `applied=none` when they were already there. `npm run seed:demo` prints `seeded database=postgres videos=N users=12 comments=M`. `database=postgres` names the engine, not the host.
+
+After both, these two queries are the check. Run them as the owner.
+
+```sql
+SELECT table_schema, table_name, privilege_type
+FROM information_schema.role_table_grants
+WHERE grantee = 'studio_reader'
+ORDER BY table_name, privilege_type;
+```
+
+Five rows, all `SELECT`: `demo.social_comments`, `demo.social_stats`, `demo.social_users`, `catalog.video`, `catalog.videos`.
+
+```sql
+SELECT (SELECT count(*) FROM demo.social_stats) = (SELECT count(*) FROM catalog.videos) AS seeded;
+```
+
+`seeded` is true. The two counts are the same number, one row per published clip.

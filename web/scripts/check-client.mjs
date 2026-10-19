@@ -13,7 +13,9 @@ export const LEAK_MARKERS = [
 export const STUB_SENTINEL = ['KICKOFF', 'STUB', 'CATALOG'].join('-')
 /** Present in the demo social schema and fixture. Client output and response text must not contain it unless a demo build is explicit. */
 export const DEMO_SENTINEL = 'KICKOFF-DEMO-SOCIAL'
-export const CLIENT_MARKERS = [...LEAK_MARKERS, /STUDIO_[A-Z0-9_]+/, STUB_SENTINEL, DEMO_SENTINEL]
+/** A database address value. Response text must not contain one, demo build or not. */
+export const DATABASE_ADDRESS = /postgres(?:ql)?:\/\/\S+/i
+export const CLIENT_MARKERS = [...LEAK_MARKERS, /STUDIO_[A-Z0-9_]+/, STUB_SENTINEL, DEMO_SENTINEL, DATABASE_ADDRESS]
 export const SERVER_MARKERS = ['studio/', 'FAL_KEY', /STUDIO_[A-Z0-9_]+/]
 
 export function textLeakHits(source, markers = CLIENT_MARKERS) {
@@ -44,7 +46,7 @@ export function scanBuild(staticDir, serverDir, { stubBuild = false, demoBuild =
   const server = filesUnder(serverDir, file => SERVER_EXT.test(file))
   assert.ok(server.length, 'No built server output; run the web build first')
   const serverMarkers = stubBuild ? SERVER_MARKERS : [...SERVER_MARKERS, STUB_SENTINEL]
-  const responseMarkers = demoBuild ? [] : [DEMO_SENTINEL]
+  const responseMarkers = demoBuild ? [DATABASE_ADDRESS] : [DEMO_SENTINEL, DATABASE_ADDRESS]
   const responses = server.filter(file => RESPONSE_EXT.test(file))
   const leaks = [
     ...leakHits(client, CLIENT_MARKERS),

@@ -29,11 +29,11 @@ export function momentsFor(
     const detail = watchId === null ? null : read.details.find(row => row.id === watchId) ?? null
     return {
       state: 'ready',
-      preview: true,
+      preview: read.preview,
       list: read.list,
       detail,
       watchId,
-      thumbnails: Object.fromEntries(read.list.map(row => [row.id, thumbnailFor(row, storageOrigin)])),
+      thumbnails: Object.fromEntries(read.list.map(row => [row.id, thumbnailFor(row, storageOrigin, read.preview)])),
       videoAddress: videoFor(detail, storageOrigin),
       videos: Object.fromEntries(read.details.map(row => [row.id, videoFor(row, storageOrigin)])),
       ...(demo ? { social: socialByVideo(demo, read.list.map(row => row.id)) } : {}),

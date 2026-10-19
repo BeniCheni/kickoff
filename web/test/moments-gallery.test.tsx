@@ -128,11 +128,11 @@ test('a missing storage address starts at the site copy, and the cover is the la
   const site = renderToStaticMarkup(<Gallery list={[missing]} search="?tab=moments" thumbnails={{ [missing.id]: thumbnailFor(missing, null) }} />)
   expect(site).toContain('/moments/thumbnails/stub-missing-thumb.jpg')
   expect(site).not.toContain('/stub-storage/')
-  expect(site).toContain('Thumbnail from the site\u2019s copy \u00b7 Supabase did not answer.')
+  expect(site).toContain('Thumbnail from the site&#x27;s copy \u00b7 the file store did not answer.')
   const cover = renderToStaticMarkup(<Thumb row={missing} sources={thumbnailFor(missing, null)} forcedStep="cover" />)
   expect(cover).toContain('STUDIO')
   expect(cover).toContain('Original typographic art')
-  expect(cover).toContain('No thumbnail: Supabase and the site\u2019s copy both failed.')
+  expect(cover).toContain('No thumbnail: the file store and the site&#x27;s copy both failed.')
 })
 
 test('shuffle permutes and can be recognised', () => {

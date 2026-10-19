@@ -250,7 +250,7 @@ export async function regressions(browser, origin, check, configure = async () =
         images: [...document.querySelectorAll('.moments-cover img')].map(img => ({ src: img.src, loaded: img.complete && img.naturalWidth > 0 })),
         trust: [...document.querySelectorAll('.moments-trust')].map(p => p.textContent),
       }))
-      check(`M1 errors before hydration recover to loaded site copies: ${route}`, result.early.length > 0 && result.images.length > 0 && result.images.every(img => img.loaded && img.src.includes('/moments/thumbnails/')) && result.trust.length === result.images.length && result.trust.every(t => t.startsWith('Thumbnail from the site')), result)
+      check(`M1 errors before hydration recover to loaded site copies: ${route}`, result.early.length > 0 && result.images.length > 0 && result.images.every(img => img.loaded && img.src.includes('/moments/stub-site/')) && result.trust.length === result.images.length && result.trust.every(t => t === 'Thumbnail from the site\'s copy \u00b7 the file store did not answer.'), result)
     }
   })
   await scenario('M2 M3 M10 L4 geometry', async page => {

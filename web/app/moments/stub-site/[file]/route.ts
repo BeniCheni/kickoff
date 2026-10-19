@@ -1,5 +1,5 @@
-import { siteCopyPath } from '@kickoff/catalog'
 import { readFileSync } from 'node:fs'
+import { stubSiteCopyPath } from '../../../../lib/catalog/addresses'
 import { bytesResponse, openMapped } from '../../../../lib/catalog/serve'
 
 export const dynamic = 'force-dynamic'
@@ -8,7 +8,7 @@ export function GET(request: Request, context: { params: Promise<{ file: string 
   return context.params.then(params => {
     if (!params.file.endsWith('.jpg')) return new Response(null, { status: 404 })
     const id = params.file.slice(0, -'.jpg'.length)
-    if (siteCopyPath(id) !== `/moments/thumbnails/${id}.jpg`) return new Response(null, { status: 404 })
+    if (stubSiteCopyPath(id) !== `/moments/stub-site/${id}.jpg`) return new Response(null, { status: 404 })
     const opened = openMapped({
       catalog: process.env.KICKOFF_CATALOG,
       vercelEnv: process.env.VERCEL_ENV,

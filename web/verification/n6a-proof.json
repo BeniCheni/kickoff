@@ -1,0 +1,425 @@
+{
+  "proved": "2026-10-19",
+  "helper": "pglite-server 0.1.5 (MIT, published 2026-02-07)",
+  "database": "Studio PGlite 0.5.9 on the Postgres wire, SET ROLE studio_reader after publish and seed",
+  "storageOrigin": "http://127.0.0.1:58806",
+  "publicId": "n6a-cat",
+  "shots": [
+    {
+      "name": "gallery-ledger-light-390",
+      "sha256": "361b4c9c51406a6e26c3f5e8df975764862479d38bc4af6b5ee8cbfc2738f7c9",
+      "scrollWidth": 390,
+      "innerWidth": 390
+    },
+    {
+      "name": "watch-ledger-light-390",
+      "sha256": "3943e38bb2a4aa6600332893ab120c355f506cc91436fd952ef47860d20be42c"
+    },
+    {
+      "name": "gallery-ledger-light-1000",
+      "sha256": "7d0a6b534f7ab7b4b15d863ada1ffc41c36c09ccf9bc3829adc31442ffc36c2c",
+      "scrollWidth": 1000,
+      "innerWidth": 1000
+    },
+    {
+      "name": "watch-ledger-light-1000",
+      "sha256": "13c987a55a26b1b4a0f8c9d9e4951e713dd0f50da20222efa01834661d67277f"
+    },
+    {
+      "name": "gallery-ledger-dark-390",
+      "sha256": "dc0fddf2535cfca85fc61fd885945f0a11fdc8f0a8f43d0d4c7186e7cec041db",
+      "scrollWidth": 390,
+      "innerWidth": 390
+    },
+    {
+      "name": "watch-ledger-dark-390",
+      "sha256": "b93fa8d2dffd79ebecc2906781769ac3aa3a46cb14773462b38d9be8a170b63e"
+    },
+    {
+      "name": "gallery-ledger-dark-1000",
+      "sha256": "078c271599b7f5c072b9cd11183fc252d17ef696acfc2c5083f5d3ba14c054f8",
+      "scrollWidth": 1000,
+      "innerWidth": 1000
+    },
+    {
+      "name": "watch-ledger-dark-1000",
+      "sha256": "b7ec6f826b82fb8e749b7bce23fce026be6d21ccf5d1a904c53378943a01e10d"
+    },
+    {
+      "name": "gallery-poster-light-390",
+      "sha256": "08d48c955d7e1bf5dad885df97db42feae29fae4adaccf51031ad4ba8657d11f",
+      "scrollWidth": 390,
+      "innerWidth": 390
+    },
+    {
+      "name": "watch-poster-light-390",
+      "sha256": "8d17c59ab0d7cc78fd4e80b4ac51caf2546aa8d5b87abc87d01ec9bee9f7e765"
+    },
+    {
+      "name": "gallery-poster-light-1000",
+      "sha256": "edfaf1306423cba9a770e8279637eb14851fe4093873d03ae4d31bacb6fd3dab",
+      "scrollWidth": 1000,
+      "innerWidth": 1000
+    },
+    {
+      "name": "watch-poster-light-1000",
+      "sha256": "f82ebad1500107dd602517449ef0b76ac899bc7a128f2158c0bc6a2310725965"
+    },
+    {
+      "name": "gallery-poster-dark-390",
+      "sha256": "59574f242e33e44c17ea916d3deaf54cb13e9a799246bb90860e42e0be6bfb28",
+      "scrollWidth": 390,
+      "innerWidth": 390
+    },
+    {
+      "name": "watch-poster-dark-390",
+      "sha256": "6c141141c57b236c5b8b214a72821c9afe69050e01dda0261e2b01336b124536"
+    },
+    {
+      "name": "gallery-poster-dark-1000",
+      "sha256": "8af6be53f4604f2624786e7f273c9a6288288b186bdea1ec5f6173e9935c5ed4",
+      "scrollWidth": 1000,
+      "innerWidth": 1000
+    },
+    {
+      "name": "watch-poster-dark-1000",
+      "sha256": "8c8b9e9ccfe509b904e65ac98e92e8913157ff2946e19318e149a535e87bea45"
+    },
+    {
+      "name": "gallery-broadcast-light-390",
+      "sha256": "48de27096fe555f664d2aa6b74647b75334b7ddedb6e2b5e4cb4f196bda04491",
+      "scrollWidth": 390,
+      "innerWidth": 390
+    },
+    {
+      "name": "watch-broadcast-light-390",
+      "sha256": "e2f6e481ef106d361526c466d663e8ee1d0f680f8934fd4991196e8657027070"
+    },
+    {
+      "name": "gallery-broadcast-light-1000",
+      "sha256": "a0904345f6eda11d81e2aa651c03ba842d06ce8beccdc462ac79c27d32db56d0",
+      "scrollWidth": 1000,
+      "innerWidth": 1000
+    },
+    {
+      "name": "watch-broadcast-light-1000",
+      "sha256": "564be6c01bde437570364cdb84a5a41fe98a7212120bc9c59235d8b79af5ce9f"
+    },
+    {
+      "name": "gallery-broadcast-dark-390",
+      "sha256": "5492d9d67aa8b19a6a3eb81f983aa7feb5446ac24d0a68089dd5c81c7b7535d6",
+      "scrollWidth": 390,
+      "innerWidth": 390
+    },
+    {
+      "name": "watch-broadcast-dark-390",
+      "sha256": "f0513d97251c357dc4423e4f5c12fef941afd885bfc3806c6334613dfcfb1feb"
+    },
+    {
+      "name": "gallery-broadcast-dark-1000",
+      "sha256": "702fe04e92db9169c9dfb011004e567ebc82290ea1a2a5a957ce509ca77ec4d5",
+      "scrollWidth": 1000,
+      "innerWidth": 1000
+    },
+    {
+      "name": "watch-broadcast-dark-1000",
+      "sha256": "3a45f0179d02466f3f654017e1e990df6c44948c0da2ef425029146a4b34094f"
+    }
+  ],
+  "checks": [
+    {
+      "name": "gallery-ledger-light-390 overflow",
+      "ok": true,
+      "detail": {
+        "scroll": 390,
+        "inner": 390
+      }
+    },
+    {
+      "name": "gallery-ledger-light-390 catalog",
+      "ok": true
+    },
+    {
+      "name": "gallery-ledger-light-390 thumbnail",
+      "ok": true,
+      "detail": [
+        160
+      ]
+    },
+    {
+      "name": "watch-ledger-light-390 autoplay",
+      "ok": true,
+      "detail": "http://127.0.0.1:58806/moments/n6a-cat/video-c5c43794.mp4"
+    },
+    {
+      "name": "gallery-ledger-light-1000 overflow",
+      "ok": true,
+      "detail": {
+        "scroll": 1000,
+        "inner": 1000
+      }
+    },
+    {
+      "name": "gallery-ledger-light-1000 catalog",
+      "ok": true
+    },
+    {
+      "name": "gallery-ledger-light-1000 thumbnail",
+      "ok": true,
+      "detail": [
+        160
+      ]
+    },
+    {
+      "name": "watch-ledger-light-1000 autoplay",
+      "ok": true,
+      "detail": "http://127.0.0.1:58806/moments/n6a-cat/video-c5c43794.mp4"
+    },
+    {
+      "name": "gallery-ledger-dark-390 overflow",
+      "ok": true,
+      "detail": {
+        "scroll": 390,
+        "inner": 390
+      }
+    },
+    {
+      "name": "gallery-ledger-dark-390 catalog",
+      "ok": true
+    },
+    {
+      "name": "gallery-ledger-dark-390 thumbnail",
+      "ok": true,
+      "detail": [
+        160
+      ]
+    },
+    {
+      "name": "watch-ledger-dark-390 autoplay",
+      "ok": true,
+      "detail": "http://127.0.0.1:58806/moments/n6a-cat/video-c5c43794.mp4"
+    },
+    {
+      "name": "gallery-ledger-dark-1000 overflow",
+      "ok": true,
+      "detail": {
+        "scroll": 1000,
+        "inner": 1000
+      }
+    },
+    {
+      "name": "gallery-ledger-dark-1000 catalog",
+      "ok": true
+    },
+    {
+      "name": "gallery-ledger-dark-1000 thumbnail",
+      "ok": true,
+      "detail": [
+        160
+      ]
+    },
+    {
+      "name": "watch-ledger-dark-1000 autoplay",
+      "ok": true,
+      "detail": "http://127.0.0.1:58806/moments/n6a-cat/video-c5c43794.mp4"
+    },
+    {
+      "name": "gallery-poster-light-390 overflow",
+      "ok": true,
+      "detail": {
+        "scroll": 390,
+        "inner": 390
+      }
+    },
+    {
+      "name": "gallery-poster-light-390 catalog",
+      "ok": true
+    },
+    {
+      "name": "gallery-poster-light-390 thumbnail",
+      "ok": true,
+      "detail": [
+        160
+      ]
+    },
+    {
+      "name": "watch-poster-light-390 autoplay",
+      "ok": true,
+      "detail": "http://127.0.0.1:58806/moments/n6a-cat/video-c5c43794.mp4"
+    },
+    {
+      "name": "gallery-poster-light-1000 overflow",
+      "ok": true,
+      "detail": {
+        "scroll": 1000,
+        "inner": 1000
+      }
+    },
+    {
+      "name": "gallery-poster-light-1000 catalog",
+      "ok": true
+    },
+    {
+      "name": "gallery-poster-light-1000 thumbnail",
+      "ok": true,
+      "detail": [
+        160
+      ]
+    },
+    {
+      "name": "watch-poster-light-1000 autoplay",
+      "ok": true,
+      "detail": "http://127.0.0.1:58806/moments/n6a-cat/video-c5c43794.mp4"
+    },
+    {
+      "name": "gallery-poster-dark-390 overflow",
+      "ok": true,
+      "detail": {
+        "scroll": 390,
+        "inner": 390
+      }
+    },
+    {
+      "name": "gallery-poster-dark-390 catalog",
+      "ok": true
+    },
+    {
+      "name": "gallery-poster-dark-390 thumbnail",
+      "ok": true,
+      "detail": [
+        160
+      ]
+    },
+    {
+      "name": "watch-poster-dark-390 autoplay",
+      "ok": true,
+      "detail": "http://127.0.0.1:58806/moments/n6a-cat/video-c5c43794.mp4"
+    },
+    {
+      "name": "gallery-poster-dark-1000 overflow",
+      "ok": true,
+      "detail": {
+        "scroll": 1000,
+        "inner": 1000
+      }
+    },
+    {
+      "name": "gallery-poster-dark-1000 catalog",
+      "ok": true
+    },
+    {
+      "name": "gallery-poster-dark-1000 thumbnail",
+      "ok": true,
+      "detail": [
+        160
+      ]
+    },
+    {
+      "name": "watch-poster-dark-1000 autoplay",
+      "ok": true,
+      "detail": "http://127.0.0.1:58806/moments/n6a-cat/video-c5c43794.mp4"
+    },
+    {
+      "name": "gallery-broadcast-light-390 overflow",
+      "ok": true,
+      "detail": {
+        "scroll": 390,
+        "inner": 390
+      }
+    },
+    {
+      "name": "gallery-broadcast-light-390 catalog",
+      "ok": true
+    },
+    {
+      "name": "gallery-broadcast-light-390 thumbnail",
+      "ok": true,
+      "detail": [
+        160
+      ]
+    },
+    {
+      "name": "watch-broadcast-light-390 autoplay",
+      "ok": true,
+      "detail": "http://127.0.0.1:58806/moments/n6a-cat/video-c5c43794.mp4"
+    },
+    {
+      "name": "gallery-broadcast-light-1000 overflow",
+      "ok": true,
+      "detail": {
+        "scroll": 1000,
+        "inner": 1000
+      }
+    },
+    {
+      "name": "gallery-broadcast-light-1000 catalog",
+      "ok": true
+    },
+    {
+      "name": "gallery-broadcast-light-1000 thumbnail",
+      "ok": true,
+      "detail": [
+        160
+      ]
+    },
+    {
+      "name": "watch-broadcast-light-1000 autoplay",
+      "ok": true,
+      "detail": "http://127.0.0.1:58806/moments/n6a-cat/video-c5c43794.mp4"
+    },
+    {
+      "name": "gallery-broadcast-dark-390 overflow",
+      "ok": true,
+      "detail": {
+        "scroll": 390,
+        "inner": 390
+      }
+    },
+    {
+      "name": "gallery-broadcast-dark-390 catalog",
+      "ok": true
+    },
+    {
+      "name": "gallery-broadcast-dark-390 thumbnail",
+      "ok": true,
+      "detail": [
+        160
+      ]
+    },
+    {
+      "name": "watch-broadcast-dark-390 autoplay",
+      "ok": true,
+      "detail": "http://127.0.0.1:58806/moments/n6a-cat/video-c5c43794.mp4"
+    },
+    {
+      "name": "gallery-broadcast-dark-1000 overflow",
+      "ok": true,
+      "detail": {
+        "scroll": 1000,
+        "inner": 1000
+      }
+    },
+    {
+      "name": "gallery-broadcast-dark-1000 catalog",
+      "ok": true
+    },
+    {
+      "name": "gallery-broadcast-dark-1000 thumbnail",
+      "ok": true,
+      "detail": [
+        160
+      ]
+    },
+    {
+      "name": "watch-broadcast-dark-1000 autoplay",
+      "ok": true,
+      "detail": "http://127.0.0.1:58806/moments/n6a-cat/video-c5c43794.mp4"
+    }
+  ],
+  "demoOff": true,
+  "unavailable": true,
+  "timedOut": true,
+  "recovered": true,
+  "fixturesUntouched": true,
+  "leakHits": 0
+}

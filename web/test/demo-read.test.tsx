@@ -7,6 +7,7 @@ import { DEMO_SENTINEL, parseDemoSocial } from '@kickoff/demo'
 import { readCatalog } from '../lib/catalog/read'
 import { momentsFor } from '../lib/catalog/request'
 import { DemoReadError, readDemo, readDemoFor, warnDemoRead } from '../lib/demo/read'
+import { demoFromRows } from '../lib/demo/rows'
 import { MomentsRegion, showSampleLabel } from '../app/moments/region'
 
 const repoRoot = fileURLToPath(new URL('../..', import.meta.url))
@@ -14,10 +15,11 @@ const socialPath = path.join(repoRoot, 'web/fixtures/demo/social.json')
 const severalPath = path.join(repoRoot, 'web/fixtures/catalog/several.json')
 const socialText = readFileSync(socialPath, 'utf8')
 const social = parseDemoSocial(JSON.parse(socialText))
-const env = (over: Partial<{ demo: string; demoFile: string; vercelEnv: string }> = {}) => ({
+const env = (over: Partial<{ demo: string; demoFile: string; vercelEnv: string; catalog: string }> = {}) => ({
   demo: undefined as string | undefined,
   demoFile: undefined as string | undefined,
   vercelEnv: undefined as string | undefined,
+  catalog: undefined as string | undefined,
   ...over,
 })
 
@@ -26,7 +28,10 @@ test('the flag off does not open a file, and there is no baked-in path', () => {
   expect(readDemo(env({ demoFile: socialPath }), () => { reads += 1; return socialText })).toBeNull()
   expect(readDemo(env({ demo: 'yes', demoFile: socialPath }), () => { reads += 1; return socialText })).toBeNull()
   expect(reads).toBe(0)
-  expect(() => readDemo(env({ demo: 'on' }), () => socialText)).toThrow(/not set/)
+  expect(() => readDemo(env({ demo: 'on', catalog: 'stub' }), () => socialText)).toThrow(/not set/)
+  let hostedReads = 0
+  expect(() => readDemo(env({ demo: 'on', demoFile: socialPath }), () => { hostedReads += 1; return socialText })).toThrow(/hosted/)
+  expect(hostedReads).toBe(0)
   const source = readFileSync(fileURLToPath(new URL('../lib/demo/read.ts', import.meta.url)), 'utf8')
     + readFileSync(fileURLToPath(new URL('../lib/demo/load.ts', import.meta.url)), 'utf8')
   expect(source).toContain("import 'server-only'")
@@ -49,10 +54,10 @@ test('demo beside production refuses before opening a file', () => {
 test('a synthetic false file and an unknown reaction key fail the whole read', () => {
   const falseDoc = structuredClone(social)
   falseDoc.synthetic = false as true
-  expect(() => readDemo(env({ demo: 'on', demoFile: '/memory/social.json' }), () => JSON.stringify(falseDoc))).toThrow(/failed validation/)
+  expect(() => readDemo(env({ demo: 'on', catalog: 'stub', demoFile: '/memory/social.json' }), () => JSON.stringify(falseDoc))).toThrow(/failed validation/)
   const unknown = structuredClone(social)
   unknown.stats[0]!.reactions = { ...unknown.stats[0]!.reactions, sparkle: 4 } as typeof unknown.stats[0]['reactions']
-  expect(() => readDemo(env({ demo: 'on', demoFile: '/memory/social.json' }), () => JSON.stringify(unknown))).toThrow(DemoReadError)
+  expect(() => readDemo(env({ demo: 'on', catalog: 'stub', demoFile: '/memory/social.json' }), () => JSON.stringify(unknown))).toThrow(DemoReadError)
   expect(() => parseDemoSocial(unknown)).toThrow()
 })
 
@@ -82,6 +87,7 @@ test('demo mode shows the sample label only beside joined rows', () => {
   }, file => readFileSync(file, 'utf8'))
   const joined = momentsFor('?tab=moments', () => read, null, social)
   expect(showSampleLabel(joined)).toBe(true)
+  if (joined.state === 'ready') expect(showSampleLabel({ ...joined, preview: false })).toBe(true)
   const empty = renderToStaticMarkup(<MomentsRegion catalogMode="stub" moments={{ state: 'ready', preview: true, list: [], detail: null, watchId: null, thumbnails: {}, videoAddress: null, social: {} }} />)
   expect(empty).toContain('Stub catalog · synthetic records')
   expect(empty).not.toContain('Sample reactions and comments')
@@ -97,7 +103,7 @@ test('demo mode shows the sample label only beside joined rows', () => {
 
 test('a relative demo file is refused before it is opened', () => {
   let reads = 0
-  expect(() => readDemo(env({ demo: 'on', demoFile: 'fixtures/demo/social.json' }), () => { reads += 1; return socialText })).toThrow(/absolute/)
+  expect(() => readDemo(env({ demo: 'on', catalog: 'stub', demoFile: 'fixtures/demo/social.json' }), () => { reads += 1; return socialText })).toThrow(/absolute/)
   expect(reads).toBe(0)
 })
 
@@ -106,4 +112,13 @@ test('a demo warning names the reason once and not the document', () => {
   warnDemoRead(new DemoReadError('demo social file is not set', true), line => lines.push(line))
   warnDemoRead(new DemoReadError('{"synthetic":false,"secret":"do-not-log"}', true), line => lines.push(line))
   expect(lines).toEqual(['demo social: not set'])
+})
+
+test('a non-synthetic demo view row fails the whole document', () => {
+  const users = social.users.map(user => ({ ...user, synthetic: true }))
+  const stats = social.stats.map(row => ({ ...row, synthetic: true }))
+  const comments = social.comments.map(comment => ({ ...comment, synthetic: true }))
+  expect(demoFromRows(users, stats, comments)).toEqual(social)
+  expect(() => demoFromRows(users.map((user, index) => index === 0 ? { ...user, synthetic: false } : user), stats, comments)).toThrow()
+  expect(() => demoFromRows(users.map((user, index) => index === 0 ? { ...user, synthetic: true, job_id: 'private' } : user), stats, comments)).toThrow()
 })

@@ -146,7 +146,7 @@ try {
       result.routes.push({ route, status: response.status, indicator: shown, hits })
       check(`environment ${name} ${route || 'Fixtures'}`, response.ok && hits.length === 0 && shown === (stub && isMoments) && (!isMoments || !unavailableState || body.includes('is unavailable.')), result.routes.at(-1))
     }
-    if (!stub) for (const route of ['/moments/thumbnails/stub-fenway-one.jpg', '/stub-storage/moments/stub-fenway-one/video-b1b2c3d4.mp4']) {
+    if (!stub) for (const route of ['/moments/thumbnails/stub-fenway-one.jpg', '/moments/stub-site/stub-fenway-one.jpg', '/stub-storage/moments/stub-fenway-one/video-b1b2c3d4.mp4']) {
       const response = await fetch(`${host}${route}`)
       check(`environment ${name} media refuses ${route}`, response.status === 404, response.status)
       await response.arrayBuffer()

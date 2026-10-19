@@ -6,6 +6,7 @@ export type DemoEnv = {
   demo: string | undefined
   demoFile: string | undefined
   vercelEnv: string | undefined
+  catalog: string | undefined
 }
 
 export class DemoReadError extends Error {
@@ -25,6 +26,14 @@ export class DemoReadError extends Error {
 export function readDemo(env: DemoEnv, readFile: (file: string) => string): DemoSocial | null {
   if (env.demo !== 'on') return null
   if (env.vercelEnv === 'production') throw new DemoReadError('demo social refused', false)
+  if (env.catalog === 'stub') return readDemoFile(env, readFile)
+  if (env.catalog === undefined || env.catalog === '' || env.catalog === 'production') {
+    throw new DemoReadError('demo social read is hosted', true)
+  }
+  throw new DemoReadError('demo social refused', false)
+}
+
+function readDemoFile(env: DemoEnv, readFile: (file: string) => string): DemoSocial {
   if (!env.demoFile) throw new DemoReadError('demo social file is not set', true)
   if (!isAbsolute(env.demoFile)) throw new DemoReadError('demo social file must be absolute', true)
   let text: string

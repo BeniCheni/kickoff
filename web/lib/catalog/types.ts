@@ -30,7 +30,7 @@ export type MomentsPayload =
   | { state: 'unavailable'; preview: boolean; watchId: string | null }
   | {
       state: 'ready'
-      preview: true
+      preview: boolean
       list: CatalogListRow[]
       detail: CatalogDetailRow | null
       watchId: string | null
@@ -42,6 +42,12 @@ export type MomentsPayload =
 
 export type CatalogMode = 'stub' | 'closed'
 
+export type CatalogSuccess = {
+  preview: boolean
+  list: CatalogListRow[]
+  details: CatalogDetailRow[]
+}
+
 /** Shared without importing the server's schema or address resolvers. */
 export function previewAllowed(preview: boolean, mode: CatalogMode): boolean {
   return !preview || mode === 'stub'
@@ -49,9 +55,12 @@ export function previewAllowed(preview: boolean, mode: CatalogMode): boolean {
 
 export class CatalogReadError extends Error {
   readonly preview: boolean
-  constructor(message: string, preview: boolean) {
+  /** A fixed class. Never an address, a host, or a query. */
+  readonly failure: string
+  constructor(message: string, preview: boolean, failure = message) {
     super(message)
     this.name = 'CatalogReadError'
     this.preview = preview
+    this.failure = failure
   }
 }

@@ -8,7 +8,8 @@ After editing either package, `npm ci` in `web/` refreshes the copy; a plain
 `npm install` does not. The catalog's zod `4.4.3` is nested at
 `web/node_modules/@kickoff/catalog/node_modules/zod`, because this install
 already hoists zod 3 for another package. Nothing is written back into
-`packages/`. There is no database client, credential, or deploy.
+`packages/`. The database client is server-only. There is no credential in
+the repo, and no deploy.
 Its private tooling version is never displayed. The header shows the root
 package version. Reverting this PR leaves the N1 scaffold buildable.
 
@@ -34,26 +35,116 @@ Stub catalog, off unless both are set: `KICKOFF_CATALOG=stub` and
 names the stub storage origin for a remote preview, including `/stub-storage`.
 Without it only a loopback `Host` (`127.0.0.1`, `localhost`, or `[::1]`, with an
 optional port) is accepted. Forwarded host/protocol headers are ignored. `VERCEL_ENV=production` refuses the stub flag.
-With the flag unset, or set to `production`, a missing database address throws
-and Moments shows the unavailable state. This build has no database client, so
-that path stays unavailable. Stub states carry `Stub catalog · synthetic records`,
+With the flag unset, or set to `production`, Moments reads `catalog.videos`
+and `catalog.video` through Drizzle, in one repeatable-read, read-only transaction, ordered by `position`, then `id`. The
+connection is one per server process, `prepare: false`, a five-second connect
+timeout, and TLS required except on a loopback host when `VERCEL_ENV` is unset. A missing address, a
+failed read, or a row the strict schema rejects shows the unavailable state.
+There is no fallback to the stub. Fixtures and Table do not open a connection.
+`KICKOFF_STORAGE_ORIGIN` is an https origin with no path. A loopback `http`
+origin is accepted for the local proof only, and only when `VERCEL_ENV` is unset.
+A database on a loopback host is the same: the preview refuses it. The log class is `loopback database is local only`. A missing or invalid one leaves storage addresses empty: the thumbnail chain falls through, and the
+watch page shows recovery. The stub site-copy route is `/moments/stub-site/`,
+so a real `web/public/moments/thumbnails/<id>.jpg` is served at the Q24 address.
+Nothing writes those files yet.
+Stub states carry `Stub catalog · synthetic records`,
 a 12 px line in ordinary ink, first inside `main.moments-gallery`; non-stub states
 do not. This is Beni's Reword ruling (18 Oct 2026).
-Sample reactions are a second flag, also off unless both are set: `KICKOFF_DEMO=on`
-and `KICKOFF_DEMO_FILE` (an absolute path, no default). `VERCEL_ENV=production`
-refuses that flag before the file is opened. A file that is not `synthetic: true`,
-or that fails the demo schema, supplies no counts. A path that is not absolute is refused
-before the file is opened. The server logs one line per process, `demo social:` plus
-`not set`, `could not be read`, `not JSON`, `failed validation`, or `refused`, and never the file.
+Sample reactions are a second flag. `VERCEL_ENV=production` refuses it before any
+read. In stub mode it also needs `KICKOFF_DEMO_FILE`, an absolute path with no
+default. With the production catalog (`KICKOFF_CATALOG` unset or `production`)
+and `KICKOFF_DEMO=on`, the sample audience is read from `demo.social_users`,
+`demo.social_stats`, and `demo.social_comments`, not from a file. A refused or
+failed demo read leaves the catalog in place and supplies no counts. The server
+logs one line per process, `demo social:` plus `not set`, `could not be read`,
+`not JSON`, `failed validation`, or `refused`, and never the rows. A row that is
+not synthetic fails validation.
 With the flag off, Moments
 has no sample line and no reaction or comment payload. With it on, and only when the
 Moments payload carries joined rows for the gallery or the open video, the line
-beside the stub indicator reads `Sample reactions and comments · made-up viewers, not real ones`.
+reads `Sample reactions and comments · made-up viewers, not real ones`.
+On a stub catalog it sits beside the stub indicator. On a real catalog it is the
+only one of those lines.
 It does not show on an unavailable gallery, an empty list, or a watch id that is not published.
-The counts, reaction bar and comments render only from that file, and only on the Moments tab.
+The counts, reaction bar and comments render only from that read, and only on the Moments tab.
 An id with no stats row shows no social layer.
-The watch payload currently carries every id's comments. N6 should scope that join to the
-watched id, and leave the cards with counts only.
+The payload carries each published id's comments with its counts. A later slice scopes that join to the watched id, and the cards carry counts only. That work is not in this preview.
+
+## The private preview on Vercel
+
+Read 19 Oct 2026, America/New_York. This is the layout Beni ruled: **Unused**. Production Branch Tracking is an unused name, so `main` deploys as a Preview and carries the Preview variables. Nothing here creates the project, sets a variable, or runs a migration against Supabase. Do these in this order.
+
+**1. Team default, before the import, only if the account has one.** [Deployment Protection](https://vercel.com/docs/deployment-protection), read 19 Oct 2026: **All Deployments** — "Protecting all deployments is available on all plans" — and "Vercel Authentication for All Deployments and Deployment Protection Exceptions do not require a paid add-on." Method is **Vercel Authentication**. Password Protection is not on Hobby. The same page says a team default applies to new projects. Set that default to All Deployments and Vercel Authentication before you import, if the account offers a team default. If it does not, skip this step. The project does not exist yet, so there is no project setting to change.
+
+**2. Import.** On the import form, set Root Directory to `web/` and turn on **Include source files outside of the Root Directory in the Build Step**. [Configuring a Build](https://vercel.com/docs/builds/configure-a-build), read 19 Oct 2026, says a Root Directory cannot see parent files and cannot use `..`. [Monorepos FAQ](https://vercel.com/docs/monorepos/monorepo-faq), read 19 Oct 2026, says that switch is on by default for projects created after 27 Aug 2020 23:50 UTC. Confirm the checkbox anyway. The app imports `../src`, installs `@kickoff/catalog` and `@kickoff/demo` from `file:../packages`, and the build runs `../node_modules/tsx` on `../scripts/write-theme-head.ts`.
+
+Override the install command, because the install path is the Root Directory (Configuring a Build, same page):
+
+```sh
+npm ci --prefix .. --no-audit --no-fund && npm ci --no-audit --no-fund
+```
+
+Leave the build command as the `build` script. Vercel uses that script for Next.js. It writes the theme files, then runs `next build`. Node.js version **24.x** in Build and Deployment. That is the current default, and `package.json` `engines` allows it ([Node.js versions](https://vercel.com/docs/functions/runtimes/node-js/node-js-versions), read 19 Oct 2026). CI uses Node 24.
+
+Importing builds `main` once as a Production deployment before any project setting can change. [Environments](https://vercel.com/docs/deployments/environments), read 19 Oct 2026: "The first deployment of a new project is always a production deployment", including "Import a Git repository in the dashboard". That first build has no variables. [Environment variables](https://vercel.com/docs/environment-variables), read 19 Oct 2026: a variable applies to new deployments, and these three are added only after the project exists. Moments on that first build is unavailable. Fixtures and Table still render. The production domain is public until step 3, unless step 1 already covered the new project.
+
+**3. Protection, straight after the import.** Settings → Deployment Protection → scope **All Deployments**, method **Vercel Authentication** (Deployment Protection, same page). Do this before Branch Tracking and before the variables. This is what closes the window the import opened.
+
+**4. Branch Tracking.** Settings → Environments → Production → Branch Tracking. Change the branch name to one you will never push, for example `kickoff-no-production`, and save. [Git](https://vercel.com/docs/git), read 19 Oct 2026: a Production deployment is created when you push the production branch, and the default production branch is `main`. The Environments page says you change it under Production → Branch Tracking. After the save, `main` is not the production branch, so a deployment of `main` is a Preview and receives the Preview variables.
+
+**5. The variables.** Environment Variables, environment **Preview**, not Production (Environment variables, same page). Do not use a `NEXT_PUBLIC_` name. Mark each value **Secret** when the form offers it. The same page says Secret values are write-only after saving; Config values stay readable. Production gets none of these yet.
+
+- `KICKOFF_DATABASE_URL` — the `studio_reader` login through the shared transaction pooler. Supabase, read 19 Oct 2026, says a serverless function uses that pooler, port 6543, and a custom role's username is `[ROLE].[PROJECT-REF]` ([Connect to your database](https://supabase.com/docs/guides/database/connecting-to-postgres)). Click Connect, choose **Transaction pooler**, and copy that URI. The sample on that page has no `?`. Set the user to `studio_reader.<project ref>`. Do not commit the string. A query parameter other than `sslmode` — including `?pgbouncer=true` — is refused. The log class is `connection string has extra parameters`. Choose a password of letters and digits only. If it contains `@`, `:`, `/`, `?`, `#`, `%`, `&`, or a space, percent-encode it. The same page says: "Percent-encode any reserved characters it contains, such as `&`, `#`, `?`, or a space."
+- `KICKOFF_STORAGE_ORIGIN` — the same https origin as the Studio's `STUDIO_STORAGE_ORIGIN`, with no path.
+- `KICKOFF_DEMO` — `on`.
+
+**6. A Preview of `main`, now.** Deployments → **Create Deployment** → branch `main` → **Create Deployment**. [Git: creating a deployment from a Git reference](https://vercel.com/docs/git#creating-a-deployment-from-a-git-reference), read 19 Oct 2026: open Deployments, choose Create Deployment, enter the branch name, and select Create Deployment. Confirm the new row says **Preview**. You do not need the CLI, and you do not wait for a sync merge. Redeploying the import's deployment does not make a Preview. [Managing Deployments](https://vercel.com/docs/deployments/managing-deployments), read 19 Oct 2026, labels that dialog **Redeploy to Production**. The CLI alternative, if you want it, is `vercel redeploy <import-deployment-url> --target=preview` ([vercel redeploy](https://vercel.com/docs/cli/redeploy), read 19 Oct 2026). A plain `vercel redeploy` of that URL does not change the environment.
+
+**7. The URL on Thursday.** Open the row from step 6, signed in to Vercel. The stable Git branch URL for `main`, once that Preview exists, is `<project-name>-git-main-<scope-slug>.vercel.app` ([Generated URLs](https://vercel.com/docs/deployments/generated-urls), read 19 Oct 2026). Do not open the import's Production deployment.
+
+**8. What builds, and the check.** Every push to any branch builds a deployment, including `sync/scheduled` and agent branches. [Project settings](https://vercel.com/docs/project-configuration/project-settings), read 19 Oct 2026: the default Ignored Build Step is Automatic, and each commit issues a new build. After step 4 those builds are Previews, they carry the Preview variables, and step 3 protects them. [Hobby](https://vercel.com/docs/plans/hobby), read 19 Oct 2026, includes 100 deployments per day, 2 build vCPUs, and 8 GB build memory. A day with many sync merges can spend that deployment count. In a signed-out or private window, open the Preview branch URL and the production domain (`<project-name>.vercel.app`, or the production domain the project shows). Both should be the Vercel sign-in page. All Deployments covers production domains and generated URLs (Deployment Protection, same page). If either page renders the app, protection is not All Deployments yet.
+
+**Database, in this order.** You run these. The app does not.
+
+1. `npm run migrate` in `studio/`, against the session pooler, as the owner. That applies `0000` through `0004`.
+2. In the Supabase SQL editor, as the owner, turn `studio_reader` into a login. Choose a password of letters and digits only, and give that password to the Preview variable only:
+
+```sql
+ALTER ROLE studio_reader WITH LOGIN PASSWORD 'choose-one';
+```
+
+Delete that saved query after it succeeds. [Postgres Roles](https://supabase.com/docs/guides/database/postgres/roles), read 19 Oct 2026, says queries you run in the dashboard execute as `postgres` and include a `-- source: dashboard` comment, which you can use to find them in the Postgres logs. The password would remain in the snippet and in those logs. If you have `psql`, `\password studio_reader` asks for the password and hashes it on the client, so the SQL editor never sees it.
+
+3. After Wednesday's publishes, `npm run seed:demo` in `studio/`, again as the owner.
+4. Run `npm run seed:demo` again after each later publish. It replaces the sample rows and does not write the catalog.
+
+**What you should see.** Open the preview while signed in to Vercel.
+
+- The Moments count matches `select count(*) from catalog.videos`.
+- A card image or the watch video requests an address that starts with `KICKOFF_STORAGE_ORIGIN`. Opening that address returns the file.
+- The line `Sample reactions and comments · made-up viewers, not real ones` is on the gallery.
+- Redeploy the same Preview with `KICKOFF_DEMO` removed. The gallery stays, and the counts, reactions, and comments are gone.
+- Stop the database, or point the variable at a closed port, and reload Moments. The heading is `The gallery is unavailable.` Fixtures and Table still render.
+
+**If the gallery is unavailable.** The page does not say why. The deployment's function logs do, one line per process per class, `catalog read:` and the class. Open that deployment and read the logs. The line never includes the address, the host, the user, the password, or the query.
+
+| Class | What it most likely means | What to check |
+| --- | --- | --- |
+| `connection refused` | The host rejected the connection, or the port is closed. | The transaction pooler host and port 6543, and that the project is not paused. |
+| `connection timed out` | The handshake did not finish. | The same host and port. |
+| `host not found` | The host name did not resolve. | The URI you copied, especially the host. |
+| `authentication failed` | The user or the password was rejected. | `studio_reader.<project ref>` and the password on the Preview variable. |
+| `permission denied` | The role cannot select. | The five grants in the Studio README. |
+| `database not found` | The database name in the URI is wrong. | It is usually `postgres`. |
+| `relation not found` | The views are not there. | `npm run migrate` in `studio/`, as the owner. |
+| `timed out` | The read exceeded its bound. | Reload once. If it persists, the pooler accepted the connection and did not finish. |
+| `catalog list row failed validation`, `catalog detail row failed validation`, `catalog list repeated an id`, `catalog detail repeated an id`, `catalog list and detail do not match` | The views returned rows the app will not parse. | Do not edit the views. The class names the check that failed. |
+| `catalog database address is not set` | The Preview variable is missing on this deployment. | Set it, then make a new Preview. A redeploy of the import's Production build does not pick it up. |
+| `catalog database address is not usable` | The value is not a postgres URI the app can use. | Copy the URI again. |
+| `connection string has extra parameters` | The URI has a query parameter other than `sslmode`. | Copy the Transaction pooler URI. It has no `?`. |
+| `loopback database is local only` | The URI points at this machine, and this deployment is on Vercel. | Use the transaction pooler host, not `127.0.0.1`. |
+| `read failed` | Anything else. | The line is only the class. It will not contain the address. |
+
 The watch page sets the video `src` and calls `play()` muted on arrival.
 If that call is refused and the stored choice is off, Play and the refusal line are unchanged.
 If the stored choice is on, the page retries once muted, shows
@@ -262,7 +353,9 @@ move only in a PR that bumps Next, and that PR must re-prove U01. The check
 stays inside `typecheck`.
 
 Every direct dependency is MIT except TypeScript and puppeteer-core (both
-Apache-2.0), verified from the installed packages. Exact versions are in
+Apache-2.0), `drizzle-orm` 0.45.4 (Apache-2.0), `postgres` 3.4.9 (Unlicense),
+and the test-only `pglite-server` 0.1.5 (MIT, published 2026-02-07).
+Verified from the installed packages. Exact versions are in
 package.json and package-lock.json.
 
 Isolation checks live in the new root `tests/web-isolation.test.ts` and web's

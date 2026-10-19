@@ -18,17 +18,20 @@
   "dependencies": {
     "@kickoff/catalog": "file:../packages/kickoff-catalog",
     "@kickoff/demo": "file:../packages/kickoff-demo",
+    "drizzle-orm": "0.45.4",
     "next": "16.4.1",
+    "postgres": "3.4.9",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.3.3",
-    "puppeteer-core": "24.23.0",
     "@types/node": "24.19.2",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "pglite-server": "0.1.5",
     "postcss": "8.5.30",
+    "puppeteer-core": "24.23.0",
     "tailwindcss": "4.3.3",
     "typescript": "6.0.3",
     "vitest": "4.1.11"

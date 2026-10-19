@@ -26,10 +26,9 @@ onto disk. A mapped name of `..` is rejected.
 Stub pages label these records `Stub catalog · synthetic records`, the first
 12 px line inside `main.moments-gallery`, including unavailable and not-found.
 
-N6 must delete or move `app/moments/thumbnails/[file]/route.ts` before the first
-real site copy lands: a file in `public/moments/thumbnails/` takes precedence
-over this stub route, including outside stub mode. Whether the route may remain
-until N6 is a pending ruling for Beni.
+N6 moved the stub route to `/moments/stub-site/<id>.jpg`. A file in
+`public/moments/thumbnails/` is served at `/moments/thumbnails/<id>.jpg`.
+The stub route returns 404 unless `KICKOFF_CATALOG=stub`.
 
 The media generator has no output argument and always replaces this directory's
 `media/`; run it in a disposable checkout when testing regeneration.
