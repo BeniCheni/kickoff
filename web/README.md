@@ -68,7 +68,7 @@ only one of those lines.
 It does not show on an unavailable gallery, an empty list, or a watch id that is not published.
 The counts, reaction bar and comments render only from that read, and only on the Moments tab.
 An id with no stats row shows no social layer.
-The payload carries each published id's comments with its counts.
+The payload carries each published id's comments with its counts. A later slice scopes that join to the watched id, and the cards carry counts only. That work is not in this preview.
 
 ## The private preview on Vercel
 
