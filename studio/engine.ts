@@ -241,10 +241,10 @@ export function createStudio(options: EngineOptions) {
     await writer.insert(event).values({ jobId, at: clock(), type, detail: detail ?? null })
   }
 
-  function storeFailure(error: unknown): { status?: number; code?: string } {
+  function storeFailure(error: unknown): { status?: number | 'none'; code?: string } {
     if (!(error instanceof ObjectStoreError)) return {}
     return {
-      ...(typeof error.status === 'number' ? { status: error.status } : {}),
+      status: typeof error.status === 'number' ? error.status : 'none',
       code: error.code,
     }
   }
@@ -328,7 +328,7 @@ export function createStudio(options: EngineOptions) {
     let videoRemoved = row.videoRemovedAt !== null
     let thumbnailRemoved = row.thumbnailRemovedAt !== null
     let attempted = 0
-    let failure: { status?: number; code?: string } = {}
+    let failure: { status?: number | 'none'; code?: string } = {}
     const note = async (object: 'video' | 'thumbnail', error: unknown) => {
       const fields = storeFailure(error)
       if (failure.code === undefined) failure = fields

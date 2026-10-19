@@ -1,4 +1,4 @@
-import { mkdtempSync, writeFileSync } from 'node:fs'
+import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -380,5 +380,76 @@ describe('R2 storage', () => {
       { object: 'video', status: 500, code: 'NoSuchBucket' },
       { object: 'thumbnail', status: 500, code: 'NoSuchBucket' },
     ])
+  })
+
+  it('prints status=none when an upload or a delete throws', async () => {
+    const { db, client } = await freshDatabase()
+    clients.push(client)
+    const factory: DatabaseFactory = async ({ live }) => {
+      if (!live) throw new Error('pglite')
+      return { db, kind: 'postgres', close: async () => undefined }
+    }
+    const media = mkdtempSync(path.join(tmpdir(), 'kickoff-r2-network-'))
+    const data = mkdtempSync(path.join(tmpdir(), 'kickoff-r2-network-data-'))
+    const video = path.join(media, 'clip.mp4')
+    const still = path.join(media, 'k0.jpg')
+    const prompt = path.join(media, 'prompt.txt')
+    const created = Math.floor(Date.parse('2026-10-18T15:00:00.000Z') / 1000) + MAC_EPOCH_SECONDS
+    writeFileSync(video, syntheticMp4({ width: 1920, height: 1080, durationS: 5, frameRate: 24, audio: true, creationTime: created }))
+    writeFileSync(still, minimalJpeg)
+    writeFileSync(prompt, 'A cat scores\n')
+    const databaseUrl = ['postgres', '://', 'example.invalid/studio'].join('')
+    const env = {
+      ...r2Env(),
+      STUDIO_LIVE: '1',
+      DATABASE_URL: databaseUrl,
+      STUDIO_DATA_DIR: data,
+      STUDIO_MEDIA_DIR: media,
+      STUDIO_NOW: '2026-10-21T16:00:00.000Z',
+    }
+    let offline = true
+    const { fetchImpl } = capturing(() => {
+      if (offline) throw new Error('connect ECONNREFUSED secret-host')
+      return new Response(null, { status: 200 })
+    })
+    const options = { openDatabase: factory, fetchImpl }
+    const say = () => {
+      const out: string[] = []
+      const err: string[] = []
+      return { out, err, stdout: (line: string) => out.push(line), stderr: (line: string) => err.push(line) }
+    }
+    const imported = say()
+    expect(await runCli([
+      'import', '--live', '--file', video, '--keyframe', still, '--source', 'grok-imagine',
+      '--prompt-file', prompt, '--subjects', 'Fenway', '--title', 'Fenway', '--made-on', '2026-10-21',
+    ], env, imported, options)).toBe(0)
+    const job = /job=([0-9a-f-]{36})/.exec(imported.out[0] ?? '')?.[1] ?? ''
+    expect(await runCli(['keep', '--live', '--job', job, '--answers', CHECKLIST_LINES.map(() => 'clear').join(',')], env, say(), options)).toBe(0)
+    expect(await runCli(['record-gate', '--live', '--answer', 'recorded', '--disclosure', 'pending', '--by', 'unspecified', '--source', 'A-06'], env, say(), options)).toBe(0)
+
+    const failed = say()
+    expect(await runCli(['publish', '--live', '--job', job, '--public-id', 'fenway', '--title', 'Fenway', '--position', '1'], env, failed, options)).toBe(0)
+    expect(failed.out).toEqual(['upload-failed live=false object=video status=none code=network database=postgres storage=r2'])
+    expect(failed.out.join('\n')).not.toContain('secret-host')
+    const failedEvents = await db.select().from(event).where(eq(event.jobId, job))
+    expect(failedEvents.filter((row) => row.type === 'upload-failed').map((row) => row.detail)).toEqual([
+      { object: 'video', status: 'none', code: 'network' },
+    ])
+
+    offline = false
+    expect(await runCli(['publish', '--live', '--job', job, '--public-id', 'fenway', '--title', 'Fenway', '--position', '1'], env, say(), options)).toBe(0)
+    offline = true
+    const withdrawn = say()
+    expect(await runCli(['unpublish', '--live', '--delete', '--job', job], env, withdrawn, options)).toBe(0)
+    expect(withdrawn.out).toEqual(['withdrawn removal=merged filesReadable=true status=none code=network database=postgres storage=r2'])
+    expect(withdrawn.out.join('\n')).not.toContain('secret-host')
+    const deleted = await db.select().from(event).where(eq(event.jobId, job))
+    expect(deleted.filter((row) => row.type === 'delete-failed').map((row) => row.detail)).toEqual([
+      { object: 'video', status: 'none', code: 'network' },
+      { object: 'thumbnail', status: 'none', code: 'network' },
+    ])
+    const readme = readFileSync(path.join(repoRoot, 'studio/README.md'), 'utf8')
+    expect(readme).toContain('upload-failed live=false object=video status=none code=network database=postgres storage=r2')
+    expect(readme).toContain('status=none code=network')
   })
 })
