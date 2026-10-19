@@ -367,7 +367,6 @@ export function WatchPage({
           if (playing) setStatus(on ? SOUND : PLAYING_MUTED)
         }}>{soundOn ? 'Mute' : 'Unmute'}</button>
       </div>
-      {social ? <WatchSocial key={detail.id} social={social} /> : null}
       <p role="status">{status}</p>
       <p className="moments-keyboard" style={{ visibility: focused ? 'visible' : 'hidden' }}>{KEYBOARD}</p>
       <p className={announcement === CANCELLED ? undefined : 'moments-live'} data-countdown-announcement="" role="status" aria-atomic="true">{announcement}</p>
@@ -396,6 +395,7 @@ export function WatchPage({
           <p>{recoveryText.body}</p>
         </div>
       ) : null}
+      {social ? <WatchSocial key={detail.id} social={social} /> : null}
       <details className="moments-provenance">
         <summary>Source & curation</summary>
         {lines.map(line => <p key={line}>{line}</p>)}
