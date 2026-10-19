@@ -646,7 +646,7 @@
     {
       "name": "jobs-all-states",
       "file": "png/jobs-all-states-light-1000.png",
-      "sha256": "582055414e1c429e0237c69f81e3c821618ef61d5465cca80ccb53bc91995ef4",
+      "sha256": "b7b1130c74a37ee6649be8b6b1dd3c7a21e8cfc0eca4e48939e448d0f9ce261b",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -735,7 +735,7 @@
     {
       "name": "jobs-all-states",
       "file": "png/jobs-all-states-light-1280.png",
-      "sha256": "5b4f5e215e3fa966a3a23f6f38ea20ca9ebb16fbbe0c67c32c078cd137737f4e",
+      "sha256": "9bc66e91f8fbdebd1bebcb74915ab34c8273fe3c6c1d6989fca3a6f84b61108b",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -824,7 +824,7 @@
     {
       "name": "jobs-all-states",
       "file": "png/jobs-all-states-light-1440.png",
-      "sha256": "0c5e820c00662e7bc5c33529bf17c1ff1e1285d0284ab52b2671cfbd831fae97",
+      "sha256": "bfffa86c20d70f188d8b813db2cb5b0c3a359c3a92ba91034740f90449a4bd8f",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -913,7 +913,7 @@
     {
       "name": "jobs-all-states",
       "file": "png/jobs-all-states-dark-1000.png",
-      "sha256": "8d5d1bbda69a36a06d33de35ce78c770a72f338174f33b30ccedd6cb00ea4501",
+      "sha256": "c67f9e5225be1d60f462e112c4c5030a5e1acad99408414547b3c873dce26e33",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -1002,7 +1002,7 @@
     {
       "name": "jobs-all-states",
       "file": "png/jobs-all-states-dark-1280.png",
-      "sha256": "4dac392a28d3e7e14f03c5e21e3cf4d7a543fbf71b684107fedef2eda1e41302",
+      "sha256": "b8e7966fc38659f34b99ba2f9c7a1ce8d5ce531746110624bae5b1ecb5f4d8bd",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -1091,7 +1091,7 @@
     {
       "name": "jobs-all-states",
       "file": "png/jobs-all-states-dark-1440.png",
-      "sha256": "e4b191114b4010158851aabd7ac492f16f9e1098aa24cfba0b5207c4b8f6768c",
+      "sha256": "b7c289aa470a6753dc5f45cf01c784eb503a9d632f44e8663934781b72a259d8",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -1180,7 +1180,7 @@
     {
       "name": "review-unanswered",
       "file": "png/review-unanswered-light-1000.png",
-      "sha256": "b104eb4c492806049dea89f962890fdf63f4bbfeb4f789afaf03cb6a47035deb",
+      "sha256": "d908290afc55723c48e649e0f009adf3183c8137d626689fc86948d82c86c192",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -1285,7 +1285,7 @@
     {
       "name": "review-unanswered",
       "file": "png/review-unanswered-light-1280.png",
-      "sha256": "5fbcabf84f679ac4bf867b62fa8b44da855531f62168c881a1ec48f1d1e7bf0f",
+      "sha256": "f548e0dd7cc3937e4c2d1671b826b05b61cf8dd5ddcd10d56d1f3163b8392896",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -1390,7 +1390,7 @@
     {
       "name": "review-unanswered",
       "file": "png/review-unanswered-light-1440.png",
-      "sha256": "beae488fe23c3193438b9ee340e95cf1b460e437cc452174f8fbab439537a11d",
+      "sha256": "3aa92948c14850b5af9c899509aa05851cd4e1a60c0857e28ac4c52cb969531e",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -1495,7 +1495,7 @@
     {
       "name": "review-unanswered",
       "file": "png/review-unanswered-dark-1000.png",
-      "sha256": "ecba00aa3133837f392f3a4f1fbd3ab3b12b9b92b6a55145c7d0e809e64120db",
+      "sha256": "929530a5e598d2068e7127fa93d1cd8b887101a18ce6ffea673052d62a3ff3f1",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -1600,7 +1600,7 @@
     {
       "name": "review-unanswered",
       "file": "png/review-unanswered-dark-1280.png",
-      "sha256": "1079ba02e7239d2b9d31948db3d9e5ac34b6d35939180c4aee7c853705d8e4f6",
+      "sha256": "46ebcf618d75ee05c3eb2eba1f91a6cc6114eb9027c7cf091cd9d66bac132f8b",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -1705,7 +1705,7 @@
     {
       "name": "review-unanswered",
       "file": "png/review-unanswered-dark-1440.png",
-      "sha256": "1229437d0eda2a59d6b8d0a03c79cb347c7e7b7e453fef7e4d5596861beb66e1",
+      "sha256": "afe143532ca010067099a1b7b714a3c3c2a74841617806f02ed44c49df0a8c29",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -1810,7 +1810,7 @@
     {
       "name": "review-partly",
       "file": "png/review-partly-light-1000.png",
-      "sha256": "04d7e0942f794ba7fb108e2a14a94db2be1145264a4022d1e4fe2ea2dd966ed9",
+      "sha256": "5c7755b8a145d62bbfdc3b0dc660d19f307ecb0259809e0b641c7ecd40515dd8",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -1915,7 +1915,7 @@
     {
       "name": "review-partly",
       "file": "png/review-partly-light-1280.png",
-      "sha256": "63e8163aa01ac2194245567ac934b10327a7b0992895a4bec584dd8747c12db9",
+      "sha256": "a6179c8322ae78dcba415757298c701a0fe1d2939d2936dbb5ec4d3eebc889cd",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -2020,7 +2020,7 @@
     {
       "name": "review-partly",
       "file": "png/review-partly-light-1440.png",
-      "sha256": "c7ca3ba7cfafe0cdf46703388df0c061cffe99ac3bf902531f96132661797c5a",
+      "sha256": "2a1baad5d53840586676ff46922a5b7fb187db19d8b2d3620f744eb3f965c503",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -2125,7 +2125,7 @@
     {
       "name": "review-partly",
       "file": "png/review-partly-dark-1000.png",
-      "sha256": "2e35e7776621acf2acfc0f81e2dfbcc30d5af3bd6032e66fecbb9c094cd92a17",
+      "sha256": "3eaf978e7ebc5b97c2ec1d90c378e6ae91434096a848d1faedb1d330d8b2f4a0",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -2230,7 +2230,7 @@
     {
       "name": "review-partly",
       "file": "png/review-partly-dark-1280.png",
-      "sha256": "f8a03a9974be716298a385569e29290cddac7491b0e2fd30c342d1602d80b4fc",
+      "sha256": "b9f9e2587451640beb0de75e51818d0897c1403cb43091d8b03aba7767c7d6f4",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -2335,7 +2335,7 @@
     {
       "name": "review-partly",
       "file": "png/review-partly-dark-1440.png",
-      "sha256": "808089a727a7ea13e02002f883dfede9c1a631b75aee1518f61ab6f3eecc09c0",
+      "sha256": "4a05ce525ba6ff044bf40224602a48eb19979236209fa53674ac06545a9bd55d",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -2440,7 +2440,7 @@
     {
       "name": "review-all-clear",
       "file": "png/review-all-clear-light-1000.png",
-      "sha256": "2212fd3ae1e939cd302081f830da54ffbc0b60fffc98aa1e2a5769f15411d0e6",
+      "sha256": "a54bbcf6c3dcd283262113b867e352946538d19d68b0d3453db15cfd301bca4a",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -2546,7 +2546,7 @@
     {
       "name": "review-all-clear",
       "file": "png/review-all-clear-light-1280.png",
-      "sha256": "501fd568d0cb1dbc7b22b4b5257980fb13eeacb3f11b8e9dce1656f2032d2edb",
+      "sha256": "841e84ef5086c15b5737a823703254486d5e3619d00238dd00614ad56551ece6",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -2652,7 +2652,7 @@
     {
       "name": "review-all-clear",
       "file": "png/review-all-clear-light-1440.png",
-      "sha256": "ff39fc31f40b420486933788bd57b75e008e628d74432ee477abaa609d2a9624",
+      "sha256": "ed442ecaf6505f403fdbae239b3a35d1dfd3a44afce1af5da7c6f7d61a22c322",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -2758,7 +2758,7 @@
     {
       "name": "review-all-clear",
       "file": "png/review-all-clear-dark-1000.png",
-      "sha256": "c3e35ade248ba7c1da8a69f9ac93dda6a6ca640e529d60a7128b47b323431787",
+      "sha256": "691611e80308b690c4362d04a365d661843c884aa635feea918464305b5e52d9",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -2864,7 +2864,7 @@
     {
       "name": "review-all-clear",
       "file": "png/review-all-clear-dark-1280.png",
-      "sha256": "8e1c156f903682ea59635588378a5bc10e137d7d61e02776d4439da73f51de77",
+      "sha256": "c2473f26c68ab9806370aeac7ac8523c087d129c4648fdb3a7a2c8dbc9a94931",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -2970,7 +2970,7 @@
     {
       "name": "review-all-clear",
       "file": "png/review-all-clear-dark-1440.png",
-      "sha256": "8c7a1d6ad63a6444f97e6248b8ab2dc83904e8b2783186c27984c5ae8d657af2",
+      "sha256": "6dbfbd7b795c9fd255ccb2c1551e986e7c38022aa0ceac4debf08e39f5a6ae47",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -3076,7 +3076,7 @@
     {
       "name": "review-kept",
       "file": "png/review-kept-light-1000.png",
-      "sha256": "5c2220bad762713a7b29e720655ca3b92bf424086ded25b3a915bd98466e38dd",
+      "sha256": "9d30d6d62067ca60d61574517499704dbffa38fac369b482425f168108e52222",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -3182,7 +3182,7 @@
     {
       "name": "review-kept",
       "file": "png/review-kept-light-1280.png",
-      "sha256": "8ad9b829d3bbfcb9f46fc78b59cf6b0e563441ba5be0e0fbf6021c0be31b4b86",
+      "sha256": "ed48b38329bb090bbaee64eb5e23c19d1b57f7934f56c96ba28abaef8e30bcdd",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -3288,7 +3288,7 @@
     {
       "name": "review-kept",
       "file": "png/review-kept-light-1440.png",
-      "sha256": "28697a6e5c7ee64b0c08d7b3330475fd633393db7076c82577a7ec0e31919ad0",
+      "sha256": "f3a37ad6a08ac3f2fe646f6d8db14cf66b91923c99da77e7696e9b4e0952841d",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -3394,7 +3394,7 @@
     {
       "name": "review-kept",
       "file": "png/review-kept-dark-1000.png",
-      "sha256": "a931735bff9be055f48ffdb39742b6b044597b7c317bce4388cc8eca23b39b2a",
+      "sha256": "9775da8e240f8efee004f760bcde970d1ad432b6753b6a62dfec72a2fa676a66",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -3500,7 +3500,7 @@
     {
       "name": "review-kept",
       "file": "png/review-kept-dark-1280.png",
-      "sha256": "4875fc72d17c53610ebb22ad9ec56ef575bb287cfe65999284b6a70c503821b5",
+      "sha256": "f60049f8a6d8c7424acde195d8bdd248d19561cb44ab5405220dd9b3b45de3a8",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -3606,7 +3606,7 @@
     {
       "name": "review-kept",
       "file": "png/review-kept-dark-1440.png",
-      "sha256": "417744f5cbd1fc3fadabd4278d993d9ddb7f1a7d59a8971c29e9d5feb496db81",
+      "sha256": "b91eaf4a773fa46fa3d6b0e40135864e79e8d24b682e88ebc700b695ba42a2b8",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -3712,7 +3712,7 @@
     {
       "name": "review-discarded",
       "file": "png/review-discarded-light-1000.png",
-      "sha256": "94d5d4cc168bccc1fd765003eec8fbcb6ed8791836c346631204d3c947b1c4f2",
+      "sha256": "d2a798d99f25f1a079471b2d4cd8fe3566b78fda653c288dc7f7285be041be0a",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -3817,7 +3817,7 @@
     {
       "name": "review-discarded",
       "file": "png/review-discarded-light-1280.png",
-      "sha256": "f7430678ab8f1d899b13a04471037cb2846f3ef7cc58944141a559511b55a731",
+      "sha256": "8516e4788673ec8a229fa4cb7c9dc399ee0f63184aca5f3a332dd3fe1032ef65",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -3922,7 +3922,7 @@
     {
       "name": "review-discarded",
       "file": "png/review-discarded-light-1440.png",
-      "sha256": "b862c9c9c0e5d04da4f6d8452b53feb302380ffa731cb8243e7b27ef406e690e",
+      "sha256": "2325486406a7733b897f7b1d9fbb55e4916e654a3e9533e5a72cade3f45d6c72",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -4027,7 +4027,7 @@
     {
       "name": "review-discarded",
       "file": "png/review-discarded-dark-1000.png",
-      "sha256": "5199f2b82a9d85ef89854ba331d530f9ef89e77c427a3b71d54e87b5e6593370",
+      "sha256": "1039793037e53b029f2848bccf57d26b75f9114ad41452b317364d2b02eeee41",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -4132,7 +4132,7 @@
     {
       "name": "review-discarded",
       "file": "png/review-discarded-dark-1280.png",
-      "sha256": "68cc1152d7d928927e3936bd6b8480908a6558f58cf3b18568d6a782f2f7787a",
+      "sha256": "468d6a2524a8eacc27b8cfd3c545a7c034ca6e7898568b24f441683f9150d6d5",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -4237,7 +4237,7 @@
     {
       "name": "review-discarded",
       "file": "png/review-discarded-dark-1440.png",
-      "sha256": "eb47fda9a91ec2e679cf319bb2eb7a663e835094a2c1590415e20766a80ef528",
+      "sha256": "2b3bd83965912fcc45d439c9af9850f06c72bebca0d5a36c5929170cb50ade40",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -4342,7 +4342,7 @@
     {
       "name": "publish-gate-recorded-card-refused",
       "file": "png/publish-gate-recorded-card-refused-light-1000.png",
-      "sha256": "6edd182cfee5c41e5922e37a1590211ab33f8b28e1898c741c4d0b6b89a11052",
+      "sha256": "343f1c68ce8b01f330d57e6620b685e98341beba6aaf4969ec0903348ca6e06f",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -4435,7 +4435,7 @@
     {
       "name": "publish-gate-recorded-card-refused",
       "file": "png/publish-gate-recorded-card-refused-light-1280.png",
-      "sha256": "f262553f09053e7c2356dae027161a8f7f77598439b1e806a9a35fd620867d92",
+      "sha256": "983928bd299e0ad72ffb06793a419f1369b48223f45285169072a6e3a8a63b74",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -4528,7 +4528,7 @@
     {
       "name": "publish-gate-recorded-card-refused",
       "file": "png/publish-gate-recorded-card-refused-light-1440.png",
-      "sha256": "2a926f7c18603521265f34509d6fcf7a29bddd7a7e6adb421355ae85c623fd91",
+      "sha256": "adffb17e392a84fe09b999a164b099cff552a810e24b35fa035707055337b4ad",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -4621,7 +4621,7 @@
     {
       "name": "publish-gate-recorded-card-refused",
       "file": "png/publish-gate-recorded-card-refused-dark-1000.png",
-      "sha256": "d8f37fa5c0fed74e9eb7371ee469c8522046505d9b25fd317c7dea241d167063",
+      "sha256": "dfc9131e5447299362080aa45da3de4207cc5d0bbb1c2f15a00b5c6e081f6f19",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -4714,7 +4714,7 @@
     {
       "name": "publish-gate-recorded-card-refused",
       "file": "png/publish-gate-recorded-card-refused-dark-1280.png",
-      "sha256": "08dd6d053b0d0cb31d81eab31d9a92f5b7474a43e7149f2468d49457b4cc0c7e",
+      "sha256": "4b12ecbe58f966a3c3eebf831d07d23ad15cb58611408d17ea23ff89ee0e14a8",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -4807,7 +4807,7 @@
     {
       "name": "publish-gate-recorded-card-refused",
       "file": "png/publish-gate-recorded-card-refused-dark-1440.png",
-      "sha256": "151a904b705e9c19afb0f3da7d0aec2ecd7714bccef2632e90d8b52e9b684328",
+      "sha256": "c60f590a2344dfc40e1e71a3649d228d269f40a3119096125325131fff33cef2",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -5542,7 +5542,7 @@
     {
       "name": "jobs-database-banner",
       "file": "png/jobs-database-banner-light-1000.png",
-      "sha256": "0c2fab569724151b1189f6a813c9f365f41337d7c731deff7ace656d03859160",
+      "sha256": "de2cbb19edb96aee521a73c3b3dc689e8a586aeab07ab6c83201dce28215d147",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -5631,7 +5631,7 @@
     {
       "name": "jobs-database-banner",
       "file": "png/jobs-database-banner-light-1280.png",
-      "sha256": "57f66dab1262c4718065d72beab9fe23de48f26e30f12a65c8dad3f70e4b862b",
+      "sha256": "ca71c11dd19984038f3f1c7eab0e54990786f58b2a0b582828fc8828a113d451",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -5720,7 +5720,7 @@
     {
       "name": "jobs-database-banner",
       "file": "png/jobs-database-banner-light-1440.png",
-      "sha256": "5122254be24db5940803e116a38e2a5cb28cdd1ac9056714e321718f15742505",
+      "sha256": "c4204e87e3b0937b30d38807efb339dab3b53bec69e2a4c4fa09bc9cf536524c",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -5809,7 +5809,7 @@
     {
       "name": "jobs-database-banner",
       "file": "png/jobs-database-banner-dark-1000.png",
-      "sha256": "70c57c8c5799ac7ccf15ad63faa25fc6e9689585a7cf9329b0337d26be637b81",
+      "sha256": "bc8c0162477f89ff552ac22e8d42b4d3752db761f8e0e9874c7b3492624bc5f9",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -5898,7 +5898,7 @@
     {
       "name": "jobs-database-banner",
       "file": "png/jobs-database-banner-dark-1280.png",
-      "sha256": "e95ac99a49abd65abe961ca6a8ecd332caec9110f32e5e57986be7c16337f40e",
+      "sha256": "97c49f47284d159abf5094f2dc01c9eba254e150cb5433bf727dfa5d3262fc35",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -5987,7 +5987,7 @@
     {
       "name": "jobs-database-banner",
       "file": "png/jobs-database-banner-dark-1440.png",
-      "sha256": "8133d1136721302669fc367bf9980d45c7add863fc241122e814747ad896889d",
+      "sha256": "a75677119fe3744f40274c721a04eb56e5e1f860c5c61467156a2b7432993ae3",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -6076,7 +6076,7 @@
     {
       "name": "jobs-credit-banner",
       "file": "png/jobs-credit-banner-light-1000.png",
-      "sha256": "61ca81217563b4068b10d21d2e5321ba50ba703088238bdbf02e367d5e8129b0",
+      "sha256": "184193d62f70a9b858edaab67ca180b280c178a2c58d686603a7456a9e68c379",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -6165,7 +6165,7 @@
     {
       "name": "jobs-credit-banner",
       "file": "png/jobs-credit-banner-light-1280.png",
-      "sha256": "55e0d15a6a2083910f2f826f207309dd2b09f6dc66642d5313c4fea465edd441",
+      "sha256": "89fccd22b1b983c9c55ef360da3ee21c8be815183b5a070983cee27d973e9fa7",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -6254,7 +6254,7 @@
     {
       "name": "jobs-credit-banner",
       "file": "png/jobs-credit-banner-light-1440.png",
-      "sha256": "afb807be0a8fd6e6166318b445788984b2b57ca2fcd1b57baba41fd4024f8967",
+      "sha256": "350980ea5d44b34adf79e942326377b15b6c538a8d967016326a725308d94f7a",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -6343,7 +6343,7 @@
     {
       "name": "jobs-credit-banner",
       "file": "png/jobs-credit-banner-dark-1000.png",
-      "sha256": "7b91a734fbc4d74fb9e34c2643d04353a6cfa37f8288a70f3a3e5d303021bbc8",
+      "sha256": "ed11ee48e5f52484ef4d69803677d25f6375be070c64b2648b6d631d90cf2be6",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -6432,7 +6432,7 @@
     {
       "name": "jobs-credit-banner",
       "file": "png/jobs-credit-banner-dark-1280.png",
-      "sha256": "97ae12fc1b2a51e5f2b163e46cf16cddc51c1bbd199017982e77d07eb80802fa",
+      "sha256": "ed0467a84b9e950ce7922202c61df1522a90ed57cc95889272cfa8fb47ff10ff",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -6521,7 +6521,7 @@
     {
       "name": "jobs-credit-banner",
       "file": "png/jobs-credit-banner-dark-1440.png",
-      "sha256": "a86fd95d2f61c573df4e6ec1eca151c6743445fb987e6cda2de3d046a5dc7c99",
+      "sha256": "1ba66a0a8d62bce83886bca326e9cf24bea56516d80215a8040b2b04ba54cc95",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -6610,7 +6610,7 @@
     {
       "name": "publish-gate-not-recorded",
       "file": "png/publish-gate-not-recorded-light-1000.png",
-      "sha256": "c4e484b531178e1b8781afb36e1423cf37e684c60faab6384e9640e70698b0a7",
+      "sha256": "cdd863540df09fb7cdd7f7c42b218cf8a143f877174313c10594e7905ed47126",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -6706,7 +6706,7 @@
     {
       "name": "publish-gate-not-recorded",
       "file": "png/publish-gate-not-recorded-light-1280.png",
-      "sha256": "77b40dc3d2023e9fd7b976ac7e75fc2bbfff0050aac3b04db0124c2f773294a4",
+      "sha256": "875311a35359fc090d3bf178915f1e3fa01a95e4e606132525bbf562ea4ec9ea",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -6802,7 +6802,7 @@
     {
       "name": "publish-gate-not-recorded",
       "file": "png/publish-gate-not-recorded-light-1440.png",
-      "sha256": "66f41290f5f378602ab2a807595c0aa6faf9794da7075c847ca1e40267136487",
+      "sha256": "cf45a91bdc4e43f35fcda2ae77efc765462d52c33766d2a1ec59650ab6f28f54",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -6898,7 +6898,7 @@
     {
       "name": "publish-gate-not-recorded",
       "file": "png/publish-gate-not-recorded-dark-1000.png",
-      "sha256": "387b9657524f3cb201b25377c545341e2defd2444514d3d01889d8ac153f3159",
+      "sha256": "83f06dcd96cf17f47e37f4f14e78b8fcffe74b98e6360b7ec9c9741cfed5382f",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -6994,7 +6994,7 @@
     {
       "name": "publish-gate-not-recorded",
       "file": "png/publish-gate-not-recorded-dark-1280.png",
-      "sha256": "a373fe6f0f3317f1608f92cfe7d605d53cf42d68425fa348183697deec78bfb9",
+      "sha256": "ee3942d8ad295cc92d27523e3a086139b490e440026dc249fd90c1e6a40ff1ea",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -7090,7 +7090,7 @@
     {
       "name": "publish-gate-not-recorded",
       "file": "png/publish-gate-not-recorded-dark-1440.png",
-      "sha256": "f3edc83c0569de7a661fc0b3a1ccd11459ff25de6de03d8e0fc5251bbffdd38d",
+      "sha256": "f4d37a00efb68b63e4dcc9228021ac04022aa8d7dbfea396393ef171a52d6b31",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -7828,7 +7828,7 @@
     {
       "name": "publish-after-unpublish",
       "file": "png/publish-after-unpublish-light-1000.png",
-      "sha256": "e4bbbed617a7e851294b8687267c03d1a8753ee5ccc0c10fe857f37dc6e71e0b",
+      "sha256": "40601c6a0e539ea46f72df6843ababc032ef8768bbe4772f299276740297f39e",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -7921,7 +7921,7 @@
     {
       "name": "publish-after-unpublish",
       "file": "png/publish-after-unpublish-light-1280.png",
-      "sha256": "f01fd4146fcadd34dd0037cc97d27b8a63d4b168b6e10807f9b7497ac5e6a9f2",
+      "sha256": "28fc575d1c571c71aa31799168e68b707a8aa8e57d487ebe457cb91314ad378e",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -8014,7 +8014,7 @@
     {
       "name": "publish-after-unpublish",
       "file": "png/publish-after-unpublish-light-1440.png",
-      "sha256": "6b144f8d3f07a7ffdac38b11715b42aa789877c73cb7c1e4df0415d9da8bdaf6",
+      "sha256": "4e3d96e9efdd1ee5b3f283063df67fa777ec20c7230ef397931489af462a247d",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -8107,7 +8107,7 @@
     {
       "name": "publish-after-unpublish",
       "file": "png/publish-after-unpublish-dark-1000.png",
-      "sha256": "eee881334ee32efd76bcfb40c1c6f8d10c921aad30cafae2512d62daadf407fb",
+      "sha256": "ee4d3dac18d3e9d268a8565d962991688dc0ee0678fbee43987b5dfc682b3880",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -8200,7 +8200,7 @@
     {
       "name": "publish-after-unpublish",
       "file": "png/publish-after-unpublish-dark-1280.png",
-      "sha256": "f74a08e90e0e1ff4d0add1f8fd413790a1dc766573d196531e0192c3a05a6ab7",
+      "sha256": "5612237c65f238d9d31df1753c89ad85486059c1cb69f94863c3ad630b03537c",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -8293,7 +8293,7 @@
     {
       "name": "publish-after-unpublish",
       "file": "png/publish-after-unpublish-dark-1440.png",
-      "sha256": "be78f35329ea8067b129dc865845b2520f4b7034fe72c5e2cfc7659aa68fb0d2",
+      "sha256": "cb3d1012352d67f0b43e7240f2fa75f7d62cabe5fd5f3c68cc0a7ebbc85007f5",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -11798,9 +11798,1149 @@
       ]
     },
     {
+      "name": "import-clip-too-large",
+      "file": "png/import-clip-too-large-light-1000.png",
+      "sha256": "c5b1049383df4c8abaf75076f5fd78dbe191ef7acd03216c03a01c8b4945db93",
+      "theme": "light",
+      "width": 1000,
+      "scrollWidth": 1000,
+      "innerWidth": 1000,
+      "scrollEqual": true,
+      "consoleErrors": [],
+      "contrast": [
+        {
+          "pair": "ink on bg (published pill inverse)",
+          "ratio": 15.19,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface",
+          "ratio": 16.57,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on bg",
+          "ratio": 6,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on surface",
+          "ratio": 6.54,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on bg",
+          "ratio": 4.99,
+          "wcag": true
+        },
+        {
+          "pair": "pitch on bg",
+          "ratio": 4.82,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on floodlight-bg",
+          "ratio": 4.95,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on bg",
+          "ratio": 5.18,
+          "wcag": true
+        },
+        {
+          "pair": "kept pill text on pitch",
+          "ratio": 5.26,
+          "wcag": true
+        },
+        {
+          "pair": "failed pill text on accent-strong",
+          "ratio": 5.58,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface-alt",
+          "ratio": 13.76,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on media",
+          "ratio": 4.95,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on surface",
+          "ratio": 5.44,
+          "wcag": true
+        }
+      ],
+      "tabOrder": [
+        "Compose",
+        "Jobs",
+        "Review",
+        "Publish",
+        "Import",
+        "i-clip",
+        "i-still",
+        "i-prompt",
+        "Fenway",
+        "Frankenstein",
+        "i-title",
+        "i-note",
+        "i-made",
+        "Read the file",
+        "Use dark theme"
+      ]
+    },
+    {
+      "name": "import-clip-too-large",
+      "file": "png/import-clip-too-large-light-1280.png",
+      "sha256": "85e0c3b2f4c327e443eddb0fdd067cbe75e756882974b2a25c05f18b18472ae9",
+      "theme": "light",
+      "width": 1280,
+      "scrollWidth": 1280,
+      "innerWidth": 1280,
+      "scrollEqual": true,
+      "consoleErrors": [],
+      "contrast": [
+        {
+          "pair": "ink on bg (published pill inverse)",
+          "ratio": 15.19,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface",
+          "ratio": 16.57,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on bg",
+          "ratio": 6,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on surface",
+          "ratio": 6.54,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on bg",
+          "ratio": 4.99,
+          "wcag": true
+        },
+        {
+          "pair": "pitch on bg",
+          "ratio": 4.82,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on floodlight-bg",
+          "ratio": 4.95,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on bg",
+          "ratio": 5.18,
+          "wcag": true
+        },
+        {
+          "pair": "kept pill text on pitch",
+          "ratio": 5.26,
+          "wcag": true
+        },
+        {
+          "pair": "failed pill text on accent-strong",
+          "ratio": 5.58,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface-alt",
+          "ratio": 13.76,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on media",
+          "ratio": 4.95,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on surface",
+          "ratio": 5.44,
+          "wcag": true
+        }
+      ],
+      "tabOrder": [
+        "Compose",
+        "Jobs",
+        "Review",
+        "Publish",
+        "Import",
+        "i-clip",
+        "i-still",
+        "i-prompt",
+        "Fenway",
+        "Frankenstein",
+        "i-title",
+        "i-note",
+        "i-made",
+        "Read the file",
+        "Use dark theme"
+      ]
+    },
+    {
+      "name": "import-clip-too-large",
+      "file": "png/import-clip-too-large-light-1440.png",
+      "sha256": "95c09b44ec62149cf432b1e8e63e6e6989f7933f26fe8c77dbefe9aa36c35bce",
+      "theme": "light",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "scrollEqual": true,
+      "consoleErrors": [],
+      "contrast": [
+        {
+          "pair": "ink on bg (published pill inverse)",
+          "ratio": 15.19,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface",
+          "ratio": 16.57,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on bg",
+          "ratio": 6,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on surface",
+          "ratio": 6.54,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on bg",
+          "ratio": 4.99,
+          "wcag": true
+        },
+        {
+          "pair": "pitch on bg",
+          "ratio": 4.82,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on floodlight-bg",
+          "ratio": 4.95,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on bg",
+          "ratio": 5.18,
+          "wcag": true
+        },
+        {
+          "pair": "kept pill text on pitch",
+          "ratio": 5.26,
+          "wcag": true
+        },
+        {
+          "pair": "failed pill text on accent-strong",
+          "ratio": 5.58,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface-alt",
+          "ratio": 13.76,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on media",
+          "ratio": 4.95,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on surface",
+          "ratio": 5.44,
+          "wcag": true
+        }
+      ],
+      "tabOrder": [
+        "Compose",
+        "Jobs",
+        "Review",
+        "Publish",
+        "Import",
+        "i-clip",
+        "i-still",
+        "i-prompt",
+        "Fenway",
+        "Frankenstein",
+        "i-title",
+        "i-note",
+        "i-made",
+        "Read the file",
+        "Use dark theme"
+      ]
+    },
+    {
+      "name": "import-clip-too-large",
+      "file": "png/import-clip-too-large-dark-1000.png",
+      "sha256": "191a4a2ed2a094a65d7def3e4722de53305f81643aed8c5101284940cc3c3495",
+      "theme": "dark",
+      "width": 1000,
+      "scrollWidth": 1000,
+      "innerWidth": 1000,
+      "scrollEqual": true,
+      "consoleErrors": [],
+      "contrast": [
+        {
+          "pair": "ink on bg (published pill inverse)",
+          "ratio": 14.99,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface",
+          "ratio": 12.98,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on bg",
+          "ratio": 8.55,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on surface",
+          "ratio": 7.4,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on bg",
+          "ratio": 6.04,
+          "wcag": true
+        },
+        {
+          "pair": "pitch on bg",
+          "ratio": 7.75,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on floodlight-bg",
+          "ratio": 8.23,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on bg",
+          "ratio": 11.21,
+          "wcag": true
+        },
+        {
+          "pair": "kept pill text on pitch",
+          "ratio": 7.75,
+          "wcag": true
+        },
+        {
+          "pair": "failed pill text on accent-strong",
+          "ratio": 8.98,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface-alt",
+          "ratio": 11.61,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on media",
+          "ratio": 9.13,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on surface",
+          "ratio": 5.23,
+          "wcag": true
+        }
+      ],
+      "tabOrder": [
+        "Compose",
+        "Jobs",
+        "Review",
+        "Publish",
+        "Import",
+        "i-clip",
+        "i-still",
+        "i-prompt",
+        "Fenway",
+        "Frankenstein",
+        "i-title",
+        "i-note",
+        "i-made",
+        "Read the file",
+        "Use light theme"
+      ]
+    },
+    {
+      "name": "import-clip-too-large",
+      "file": "png/import-clip-too-large-dark-1280.png",
+      "sha256": "8bfeef1d7090cedeb3eb932e64b498819571808e5fa263e655df816160a31d6c",
+      "theme": "dark",
+      "width": 1280,
+      "scrollWidth": 1280,
+      "innerWidth": 1280,
+      "scrollEqual": true,
+      "consoleErrors": [],
+      "contrast": [
+        {
+          "pair": "ink on bg (published pill inverse)",
+          "ratio": 14.99,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface",
+          "ratio": 12.98,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on bg",
+          "ratio": 8.55,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on surface",
+          "ratio": 7.4,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on bg",
+          "ratio": 6.04,
+          "wcag": true
+        },
+        {
+          "pair": "pitch on bg",
+          "ratio": 7.75,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on floodlight-bg",
+          "ratio": 8.23,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on bg",
+          "ratio": 11.21,
+          "wcag": true
+        },
+        {
+          "pair": "kept pill text on pitch",
+          "ratio": 7.75,
+          "wcag": true
+        },
+        {
+          "pair": "failed pill text on accent-strong",
+          "ratio": 8.98,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface-alt",
+          "ratio": 11.61,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on media",
+          "ratio": 9.13,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on surface",
+          "ratio": 5.23,
+          "wcag": true
+        }
+      ],
+      "tabOrder": [
+        "Compose",
+        "Jobs",
+        "Review",
+        "Publish",
+        "Import",
+        "i-clip",
+        "i-still",
+        "i-prompt",
+        "Fenway",
+        "Frankenstein",
+        "i-title",
+        "i-note",
+        "i-made",
+        "Read the file",
+        "Use light theme"
+      ]
+    },
+    {
+      "name": "import-clip-too-large",
+      "file": "png/import-clip-too-large-dark-1440.png",
+      "sha256": "c90ea6db971e692b94e16e336d0790dedd1b343dc53f29abd81ed6227ba35ee8",
+      "theme": "dark",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "scrollEqual": true,
+      "consoleErrors": [],
+      "contrast": [
+        {
+          "pair": "ink on bg (published pill inverse)",
+          "ratio": 14.99,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface",
+          "ratio": 12.98,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on bg",
+          "ratio": 8.55,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on surface",
+          "ratio": 7.4,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on bg",
+          "ratio": 6.04,
+          "wcag": true
+        },
+        {
+          "pair": "pitch on bg",
+          "ratio": 7.75,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on floodlight-bg",
+          "ratio": 8.23,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on bg",
+          "ratio": 11.21,
+          "wcag": true
+        },
+        {
+          "pair": "kept pill text on pitch",
+          "ratio": 7.75,
+          "wcag": true
+        },
+        {
+          "pair": "failed pill text on accent-strong",
+          "ratio": 8.98,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface-alt",
+          "ratio": 11.61,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on media",
+          "ratio": 9.13,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on surface",
+          "ratio": 5.23,
+          "wcag": true
+        }
+      ],
+      "tabOrder": [
+        "Compose",
+        "Jobs",
+        "Review",
+        "Publish",
+        "Import",
+        "i-clip",
+        "i-still",
+        "i-prompt",
+        "Fenway",
+        "Frankenstein",
+        "i-title",
+        "i-note",
+        "i-made",
+        "Read the file",
+        "Use light theme"
+      ]
+    },
+    {
+      "name": "import-still-too-large",
+      "file": "png/import-still-too-large-light-1000.png",
+      "sha256": "2f55e486399e17dfdcca1dc1ac31216b8ce365272b6f8bd5d21005e331b3f10f",
+      "theme": "light",
+      "width": 1000,
+      "scrollWidth": 1000,
+      "innerWidth": 1000,
+      "scrollEqual": true,
+      "consoleErrors": [],
+      "contrast": [
+        {
+          "pair": "ink on bg (published pill inverse)",
+          "ratio": 15.19,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface",
+          "ratio": 16.57,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on bg",
+          "ratio": 6,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on surface",
+          "ratio": 6.54,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on bg",
+          "ratio": 4.99,
+          "wcag": true
+        },
+        {
+          "pair": "pitch on bg",
+          "ratio": 4.82,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on floodlight-bg",
+          "ratio": 4.95,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on bg",
+          "ratio": 5.18,
+          "wcag": true
+        },
+        {
+          "pair": "kept pill text on pitch",
+          "ratio": 5.26,
+          "wcag": true
+        },
+        {
+          "pair": "failed pill text on accent-strong",
+          "ratio": 5.58,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface-alt",
+          "ratio": 13.76,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on media",
+          "ratio": 4.95,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on surface",
+          "ratio": 5.44,
+          "wcag": true
+        }
+      ],
+      "tabOrder": [
+        "Compose",
+        "Jobs",
+        "Review",
+        "Publish",
+        "Import",
+        "i-clip",
+        "i-still",
+        "i-prompt",
+        "Fenway",
+        "Frankenstein",
+        "i-title",
+        "i-note",
+        "i-made",
+        "Read the file",
+        "Use dark theme"
+      ]
+    },
+    {
+      "name": "import-still-too-large",
+      "file": "png/import-still-too-large-light-1280.png",
+      "sha256": "e532e54ad361dc0ab233cfd8a72c4c05cb6b378d93eff0d4e3c97265b333c982",
+      "theme": "light",
+      "width": 1280,
+      "scrollWidth": 1280,
+      "innerWidth": 1280,
+      "scrollEqual": true,
+      "consoleErrors": [],
+      "contrast": [
+        {
+          "pair": "ink on bg (published pill inverse)",
+          "ratio": 15.19,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface",
+          "ratio": 16.57,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on bg",
+          "ratio": 6,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on surface",
+          "ratio": 6.54,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on bg",
+          "ratio": 4.99,
+          "wcag": true
+        },
+        {
+          "pair": "pitch on bg",
+          "ratio": 4.82,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on floodlight-bg",
+          "ratio": 4.95,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on bg",
+          "ratio": 5.18,
+          "wcag": true
+        },
+        {
+          "pair": "kept pill text on pitch",
+          "ratio": 5.26,
+          "wcag": true
+        },
+        {
+          "pair": "failed pill text on accent-strong",
+          "ratio": 5.58,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface-alt",
+          "ratio": 13.76,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on media",
+          "ratio": 4.95,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on surface",
+          "ratio": 5.44,
+          "wcag": true
+        }
+      ],
+      "tabOrder": [
+        "Compose",
+        "Jobs",
+        "Review",
+        "Publish",
+        "Import",
+        "i-clip",
+        "i-still",
+        "i-prompt",
+        "Fenway",
+        "Frankenstein",
+        "i-title",
+        "i-note",
+        "i-made",
+        "Read the file",
+        "Use dark theme"
+      ]
+    },
+    {
+      "name": "import-still-too-large",
+      "file": "png/import-still-too-large-light-1440.png",
+      "sha256": "1829ea68e853bbff9a518b8abfdcab0899c5fac542f52608231c723ae6cb3804",
+      "theme": "light",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "scrollEqual": true,
+      "consoleErrors": [],
+      "contrast": [
+        {
+          "pair": "ink on bg (published pill inverse)",
+          "ratio": 15.19,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface",
+          "ratio": 16.57,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on bg",
+          "ratio": 6,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on surface",
+          "ratio": 6.54,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on bg",
+          "ratio": 4.99,
+          "wcag": true
+        },
+        {
+          "pair": "pitch on bg",
+          "ratio": 4.82,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on floodlight-bg",
+          "ratio": 4.95,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on bg",
+          "ratio": 5.18,
+          "wcag": true
+        },
+        {
+          "pair": "kept pill text on pitch",
+          "ratio": 5.26,
+          "wcag": true
+        },
+        {
+          "pair": "failed pill text on accent-strong",
+          "ratio": 5.58,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface-alt",
+          "ratio": 13.76,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on media",
+          "ratio": 4.95,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on surface",
+          "ratio": 5.44,
+          "wcag": true
+        }
+      ],
+      "tabOrder": [
+        "Compose",
+        "Jobs",
+        "Review",
+        "Publish",
+        "Import",
+        "i-clip",
+        "i-still",
+        "i-prompt",
+        "Fenway",
+        "Frankenstein",
+        "i-title",
+        "i-note",
+        "i-made",
+        "Read the file",
+        "Use dark theme"
+      ]
+    },
+    {
+      "name": "import-still-too-large",
+      "file": "png/import-still-too-large-dark-1000.png",
+      "sha256": "6d2fb6db956188c3a2e0fc7375dc105795500d392139d8e013ca5ddf581c6edb",
+      "theme": "dark",
+      "width": 1000,
+      "scrollWidth": 1000,
+      "innerWidth": 1000,
+      "scrollEqual": true,
+      "consoleErrors": [],
+      "contrast": [
+        {
+          "pair": "ink on bg (published pill inverse)",
+          "ratio": 14.99,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface",
+          "ratio": 12.98,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on bg",
+          "ratio": 8.55,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on surface",
+          "ratio": 7.4,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on bg",
+          "ratio": 6.04,
+          "wcag": true
+        },
+        {
+          "pair": "pitch on bg",
+          "ratio": 7.75,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on floodlight-bg",
+          "ratio": 8.23,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on bg",
+          "ratio": 11.21,
+          "wcag": true
+        },
+        {
+          "pair": "kept pill text on pitch",
+          "ratio": 7.75,
+          "wcag": true
+        },
+        {
+          "pair": "failed pill text on accent-strong",
+          "ratio": 8.98,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface-alt",
+          "ratio": 11.61,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on media",
+          "ratio": 9.13,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on surface",
+          "ratio": 5.23,
+          "wcag": true
+        }
+      ],
+      "tabOrder": [
+        "Compose",
+        "Jobs",
+        "Review",
+        "Publish",
+        "Import",
+        "i-clip",
+        "i-still",
+        "i-prompt",
+        "Fenway",
+        "Frankenstein",
+        "i-title",
+        "i-note",
+        "i-made",
+        "Read the file",
+        "Use light theme"
+      ]
+    },
+    {
+      "name": "import-still-too-large",
+      "file": "png/import-still-too-large-dark-1280.png",
+      "sha256": "00817e07bbbeda45408ddc0a1685ad6d980f338ab033f7ac3a9215f74b9d74a2",
+      "theme": "dark",
+      "width": 1280,
+      "scrollWidth": 1280,
+      "innerWidth": 1280,
+      "scrollEqual": true,
+      "consoleErrors": [],
+      "contrast": [
+        {
+          "pair": "ink on bg (published pill inverse)",
+          "ratio": 14.99,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface",
+          "ratio": 12.98,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on bg",
+          "ratio": 8.55,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on surface",
+          "ratio": 7.4,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on bg",
+          "ratio": 6.04,
+          "wcag": true
+        },
+        {
+          "pair": "pitch on bg",
+          "ratio": 7.75,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on floodlight-bg",
+          "ratio": 8.23,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on bg",
+          "ratio": 11.21,
+          "wcag": true
+        },
+        {
+          "pair": "kept pill text on pitch",
+          "ratio": 7.75,
+          "wcag": true
+        },
+        {
+          "pair": "failed pill text on accent-strong",
+          "ratio": 8.98,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface-alt",
+          "ratio": 11.61,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on media",
+          "ratio": 9.13,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on surface",
+          "ratio": 5.23,
+          "wcag": true
+        }
+      ],
+      "tabOrder": [
+        "Compose",
+        "Jobs",
+        "Review",
+        "Publish",
+        "Import",
+        "i-clip",
+        "i-still",
+        "i-prompt",
+        "Fenway",
+        "Frankenstein",
+        "i-title",
+        "i-note",
+        "i-made",
+        "Read the file",
+        "Use light theme"
+      ]
+    },
+    {
+      "name": "import-still-too-large",
+      "file": "png/import-still-too-large-dark-1440.png",
+      "sha256": "1744f56666b22c7e202e1eb95aabb88a8e7510965676848a7638337e944bf7f7",
+      "theme": "dark",
+      "width": 1440,
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "scrollEqual": true,
+      "consoleErrors": [],
+      "contrast": [
+        {
+          "pair": "ink on bg (published pill inverse)",
+          "ratio": 14.99,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface",
+          "ratio": 12.98,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on bg",
+          "ratio": 8.55,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on surface",
+          "ratio": 7.4,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on bg",
+          "ratio": 6.04,
+          "wcag": true
+        },
+        {
+          "pair": "pitch on bg",
+          "ratio": 7.75,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on floodlight-bg",
+          "ratio": 8.23,
+          "wcag": true
+        },
+        {
+          "pair": "floodlight-strong on bg",
+          "ratio": 11.21,
+          "wcag": true
+        },
+        {
+          "pair": "kept pill text on pitch",
+          "ratio": 7.75,
+          "wcag": true
+        },
+        {
+          "pair": "failed pill text on accent-strong",
+          "ratio": 8.98,
+          "wcag": true
+        },
+        {
+          "pair": "ink on surface-alt",
+          "ratio": 11.61,
+          "wcag": true
+        },
+        {
+          "pair": "ink-secondary on media",
+          "ratio": 9.13,
+          "wcag": true
+        },
+        {
+          "pair": "ink-muted on surface",
+          "ratio": 5.23,
+          "wcag": true
+        }
+      ],
+      "tabOrder": [
+        "Compose",
+        "Jobs",
+        "Review",
+        "Publish",
+        "Import",
+        "i-clip",
+        "i-still",
+        "i-prompt",
+        "Fenway",
+        "Frankenstein",
+        "i-title",
+        "i-note",
+        "i-made",
+        "Read the file",
+        "Use light theme"
+      ]
+    },
+    {
       "name": "live-r2-confirm",
       "file": "png/live-r2-confirm-light-1000.png",
-      "sha256": "bb28e4487b562ac280e08a595caa0a65c1eb37c21a62b06db1417fa218c4817f",
+      "sha256": "24293f5eb4d1a3e09e92f5367e848ca051151e252a9fc8f2b0b7e5c8d6752b33",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -11896,7 +13036,7 @@
     {
       "name": "live-r2-confirm",
       "file": "png/live-r2-confirm-light-1280.png",
-      "sha256": "56a63a685405a3b4ad33e00ddc4b6345ebded38e4520adb3acd0fe3992526b8f",
+      "sha256": "410e3a9110ca6ebfe46e836dd3211f180f0d343a47c4c802cdcf52e3caba9416",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -11992,7 +13132,7 @@
     {
       "name": "live-r2-confirm",
       "file": "png/live-r2-confirm-light-1440.png",
-      "sha256": "29e6662a41edc860e2dbd003022decec63921d2a646b568bdbbad5c28de120d8",
+      "sha256": "227e9966f0b24b22085f2f3bd6a10b03eb5af816714b2ed519e033f6b5fcf1d4",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -12088,7 +13228,7 @@
     {
       "name": "live-r2-confirm",
       "file": "png/live-r2-confirm-dark-1000.png",
-      "sha256": "c688e25a8a082aeb2ef79f948ccee5ef481cdc52607b21859a49dd9ccb6cc782",
+      "sha256": "9c6bd83e8995b15228f49290c00cc64745958225891254f5d4cec7904005ecd4",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -12184,7 +13324,7 @@
     {
       "name": "live-r2-confirm",
       "file": "png/live-r2-confirm-dark-1280.png",
-      "sha256": "ef282275214da92f03f4bd380f20f8284775e001963ccdb6c8d687520f4aa6e1",
+      "sha256": "93c1642540f2ba6d9887c2dc71d6438dd2dc1a7fcdefe751fc4ebf689c8d2e5a",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -12280,7 +13420,7 @@
     {
       "name": "live-r2-confirm",
       "file": "png/live-r2-confirm-dark-1440.png",
-      "sha256": "6c6c46afdb8ca46c4d272a638b53d897ed6a57742989197f63249f07e51100b0",
+      "sha256": "9db93241b0c97a9e89e69eca65a6d31a60080349a97d9237dd0dbbccac352b82",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -12376,7 +13516,7 @@
     {
       "name": "live-storage-refused",
       "file": "png/live-storage-refused-light-1000.png",
-      "sha256": "89f23158c862ebdf04b1f228d83101c6c20b5559e2590e9f3a2f3fc72a1cb2f9",
+      "sha256": "e0f24c83a62d12f0e6fcceb5f19df0aea48866f3b788b2d01c6fe0dffc110c58",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -12472,7 +13612,7 @@
     {
       "name": "live-storage-refused",
       "file": "png/live-storage-refused-light-1280.png",
-      "sha256": "b5915ae1635bb7a2f9cac6f54ca2c73f2d058578fe57c580062f7da6bae56851",
+      "sha256": "341b796304e1a1e6967278acdd7a41f462600246648332201b648bbfb6f80a70",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -12568,7 +13708,7 @@
     {
       "name": "live-storage-refused",
       "file": "png/live-storage-refused-light-1440.png",
-      "sha256": "fd66dddbfa63f6a1b394bd8ea25ec3f2a1254036374b05d07995311c6062bfb2",
+      "sha256": "32b8282b0d4ed9aea37fb839bc2fa89930c014b237e06631cb4af981a97aefa3",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -12664,7 +13804,7 @@
     {
       "name": "live-storage-refused",
       "file": "png/live-storage-refused-dark-1000.png",
-      "sha256": "e066b38d223bc9c0cbee0f73d7050d4c9634fdce5c3d3404f4d3b17596d6b347",
+      "sha256": "82befe462f0397726b2d0fd030b533a9187cda70cdf9aec5d5db0c7f010fa859",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -12760,7 +13900,7 @@
     {
       "name": "live-storage-refused",
       "file": "png/live-storage-refused-dark-1280.png",
-      "sha256": "9f76686bec7578218db37428d8f00e4a51de655cf2fb0d1dbb1fed69bb595b80",
+      "sha256": "232eb0336b4244bdd195eafdc7967d353346f1c09edd5bcb2fa4f9c2fb92a0c3",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -12856,7 +13996,7 @@
     {
       "name": "live-storage-refused",
       "file": "png/live-storage-refused-dark-1440.png",
-      "sha256": "2e6df12d495e9ec01e599a1820b555c712a32b37a43f826e0e1f6d53eb32b381",
+      "sha256": "7879fa57e9abedbd4bb11c46e592164dde0527d4aa6f118646e4a61ac0f5ec6e",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -13472,13 +14612,14 @@
     "Jobs screenshots use STUDIO_ADMIN_FREEZE=1 so a visible poll does not move seeded in-flight rows. The flow server does not set it, so compose → poll → download runs.",
     "bind off loopback refused: The Studio admin binds to 127.0.0.1 only",
     "budget reason visible",
-    "composed job 722cf9ab-c4c8-40e0-8946-a5fe70fd3e31",
-    "unpublished 878535d1-df3e-46d8-a3a5-63bd979bcd70",
+    "composed job d24e1cea-4ff0-4133-8085-b61656dcf7dd",
+    "unpublished 4da52884-f6f4-4916-8506-aafb0989b327",
     "live switch left transport=stub",
     "live database at 127.0.0.1:1 shows the paused banner",
-    "live publish refused for 8a46f6c8-0a91-481d-9fe1-23038fa212d8; the clip stayed kept",
-    "import flow f3d64bb8-1a34-4fbb-befa-4703aae1196f published and withdrawn",
+    "live publish refused for 81f4084e-3dd5-4e8e-b7c3-a2f85e0a40e0; the clip stayed kept",
+    "import flow 4a3cfa0c-ee02-44d2-ae00-3ac404d2679f published and withdrawn",
     "still over 20 MB and clip over 100 MB name themselves; a missing confirm says to choose the file again",
+    "headed Chrome chose a 100,000,001-byte clip and a 20,000,001-byte still through the file input",
     "security failures 0"
   ],
   "requestLog": [
@@ -13524,7 +14665,7 @@
     },
     {
       "method": "POST",
-      "path": "/api/jobs/722cf9ab-c4c8-40e0-8946-a5fe70fd3e31/download",
+      "path": "/api/jobs/d24e1cea-4ff0-4133-8085-b61656dcf7dd/download",
       "status": 200
     },
     {
@@ -13539,17 +14680,17 @@
     },
     {
       "method": "GET",
-      "path": "/api/review/722cf9ab-c4c8-40e0-8946-a5fe70fd3e31",
+      "path": "/api/review/d24e1cea-4ff0-4133-8085-b61656dcf7dd",
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/review/722cf9ab-c4c8-40e0-8946-a5fe70fd3e31/keep",
+      "path": "/api/review/d24e1cea-4ff0-4133-8085-b61656dcf7dd/keep",
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/review/722cf9ab-c4c8-40e0-8946-a5fe70fd3e31",
+      "path": "/api/review/d24e1cea-4ff0-4133-8085-b61656dcf7dd",
       "status": 200
     },
     {
@@ -13559,12 +14700,12 @@
     },
     {
       "method": "GET",
-      "path": "/api/publish/722cf9ab-c4c8-40e0-8946-a5fe70fd3e31",
+      "path": "/api/publish/d24e1cea-4ff0-4133-8085-b61656dcf7dd",
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/publish/878535d1-df3e-46d8-a3a5-63bd979bcd70",
+      "path": "/api/publish/4da52884-f6f4-4916-8506-aafb0989b327",
       "status": 200
     },
     {
@@ -13574,17 +14715,17 @@
     },
     {
       "method": "GET",
-      "path": "/api/publish/878535d1-df3e-46d8-a3a5-63bd979bcd70",
+      "path": "/api/publish/4da52884-f6f4-4916-8506-aafb0989b327",
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/publish/878535d1-df3e-46d8-a3a5-63bd979bcd70",
+      "path": "/api/publish/4da52884-f6f4-4916-8506-aafb0989b327",
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/publish/878535d1-df3e-46d8-a3a5-63bd979bcd70/go",
+      "path": "/api/publish/4da52884-f6f4-4916-8506-aafb0989b327/go",
       "status": 200
     },
     {
@@ -13599,12 +14740,12 @@
     },
     {
       "method": "GET",
-      "path": "/api/publish/878535d1-df3e-46d8-a3a5-63bd979bcd70",
+      "path": "/api/publish/4da52884-f6f4-4916-8506-aafb0989b327",
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/publish/878535d1-df3e-46d8-a3a5-63bd979bcd70/unpublish",
+      "path": "/api/publish/4da52884-f6f4-4916-8506-aafb0989b327/unpublish",
       "status": 200
     },
     {
@@ -13619,7 +14760,7 @@
     },
     {
       "method": "GET",
-      "path": "/api/publish/878535d1-df3e-46d8-a3a5-63bd979bcd70",
+      "path": "/api/publish/4da52884-f6f4-4916-8506-aafb0989b327",
       "status": 200
     }
   ],
@@ -13741,7 +14882,7 @@
     }
   ],
   "counts": {
-    "shots": 138,
+    "shots": 150,
     "scrollFailures": 0,
     "contrastFailures": 0,
     "consoleFailures": 0

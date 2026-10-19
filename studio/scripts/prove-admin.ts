@@ -5,7 +5,7 @@
  */
 import { spawn, type ChildProcess } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { mkdirSync, rmSync, writeFileSync } from 'node:fs'
+import { closeSync, mkdirSync, openSync, rmSync, writeFileSync, writeSync } from 'node:fs'
 import { request as httpRequest } from 'node:http'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -122,6 +122,21 @@ class Page {
     })
   }
 
+  static async attachExisting(browserUrl: string, urlIncludes: string): Promise<Page> {
+    const list = JSON.parse(await httpGet(`${browserUrl}/json/list`)) as { type?: string; url?: string; webSocketDebuggerUrl?: string }[]
+    const target = list.find((item) => item.type === 'page' && item.url?.includes(urlIncludes) && item.webSocketDebuggerUrl)
+    if (!target?.webSocketDebuggerUrl) throw new Error(`no page matching ${urlIncludes}`)
+    const socket = new WebSocket(target.webSocketDebuggerUrl)
+    await new Promise<void>((resolve, reject) => {
+      socket.addEventListener('open', () => resolve())
+      socket.addEventListener('error', () => reject(new Error('chrome socket failed')))
+    })
+    const page = new Page(socket)
+    await page.send('Page.enable')
+    await page.send('Runtime.enable')
+    return page
+  }
+
   static async attach(browserUrl: string): Promise<Page> {
     const created = JSON.parse(await httpGet(`${browserUrl}/json/new?about:blank`, 'PUT')) as { webSocketDebuggerUrl: string }
     const socket = new WebSocket(created.webSocketDebuggerUrl)
@@ -136,14 +151,29 @@ class Page {
     return page
   }
 
-  send(method: string, params: Record<string, unknown> = {}): Promise<unknown> {
+  send(method: string, params: Record<string, unknown> = {}, timeoutMs = 15000): Promise<unknown> {
     const id = ++this.next
     this.socket.send(JSON.stringify({ id, method, params }))
-    return new Promise((resolve, reject) => this.pending.set(id, { resolve, reject }))
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => {
+        this.pending.delete(id)
+        reject(new Error(`cdp timeout ${method}`))
+      }, timeoutMs)
+      this.pending.set(id, {
+        resolve: (value) => {
+          clearTimeout(timer)
+          resolve(value)
+        },
+        reject: (error) => {
+          clearTimeout(timer)
+          reject(error)
+        },
+      })
+    })
   }
 
-  async evaluate<T>(expression: string): Promise<T> {
-    const result = await this.send('Runtime.evaluate', { expression, awaitPromise: true, returnByValue: true }) as {
+  async evaluate<T>(expression: string, timeoutMs = 15000, awaitPromise = true): Promise<T> {
+    const result = await this.send('Runtime.evaluate', { expression, awaitPromise, returnByValue: true }, timeoutMs) as {
       result?: { value?: T }
       exceptionDetails?: { text?: string; exception?: { description?: string } }
     }
@@ -185,11 +215,11 @@ function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-async function launchChrome(port: number, dir: string): Promise<ChildProcess> {
+async function launchChrome(port: number, dir: string, headless = true): Promise<ChildProcess> {
   const chrome = spawn(chromeBin, [
-    '--headless=new',
-    '--disable-gpu',
+    ...(headless ? ['--headless=new', '--disable-gpu'] : []),
     '--no-first-run',
+    '--no-default-browser-check',
     `--user-data-dir=${dir}`,
     `--remote-debugging-port=${port}`,
   ], { stdio: 'ignore' })
@@ -353,11 +383,21 @@ async function capture(page: Page, name: string, theme: string, width: number): 
 async function waitFor(page: Page, expression: string, timeout = 8000): Promise<void> {
   const start = Date.now()
   while (Date.now() - start < timeout) {
-    const ready = await page.evaluate<boolean>(expression)
-    if (ready) return
+    try {
+      const ready = await page.evaluate<boolean>(expression, 4000)
+      if (ready) return
+    } catch (error) {
+      if (!(error instanceof Error) || !error.message.startsWith('cdp timeout')) throw error
+    }
     await delay(100)
   }
-  throw new Error(`timed out waiting for ${expression}`)
+  let detail = ''
+  try {
+    detail = await page.evaluate<string>('document.body.innerText.slice(0, 400)', 4000)
+  } catch (error) {
+    detail = error instanceof Error ? error.message : 'no page'
+  }
+  throw new Error(`timed out waiting for ${expression} :: ${detail}`)
 }
 
 async function themed(page: Page, name: string, prepare: () => Promise<void>): Promise<void> {
@@ -386,6 +426,28 @@ function filePayload(bytes: Uint8Array, name: string, type: string): { name: str
   return { name, type, base64: Buffer.from(bytes).toString('base64') }
 }
 
+function writeSized(file: string, size: number): void {
+  const handle = openSync(file, 'w')
+  const chunk = Buffer.alloc(1024 * 1024)
+  let left = size
+  while (left > 0) {
+    const count = Math.min(chunk.length, left)
+    writeSync(handle, chunk, 0, count)
+    left -= count
+  }
+  closeSync(handle)
+}
+
+async function chooseImportFileFromDisk(page: Page, selector: string, filePath: string): Promise<void> {
+  await page.send('DOM.enable', {}, 30000)
+  const documentNode = await page.send('DOM.getDocument', { depth: 1 }, 30000) as { root?: { nodeId?: number } }
+  const root = documentNode.root?.nodeId
+  if (!root) throw new Error('no document')
+  const found = await page.send('DOM.querySelector', { nodeId: root, selector }, 30000) as { nodeId?: number }
+  if (!found.nodeId) throw new Error(`missing ${selector}`)
+  await page.send('DOM.setFileInputFiles', { nodeId: found.nodeId, files: [filePath] }, 30000)
+}
+
 async function chooseImportFile(page: Page, id: string, file: { name: string; type: string; base64: string }): Promise<void> {
   await page.evaluate<void>(`(() => {
     const item = ${JSON.stringify(file)}
@@ -399,6 +461,52 @@ async function chooseImportFile(page: Page, id: string, file: { name: string; ty
     input.files = list.files
     input.dispatchEvent(new Event('change', { bubbles: true }))
   })()`)
+}
+
+async function proveOversizedFiles(origin: string, token: string): Promise<void> {
+  const dir = path.join(proofDir, 'oversize')
+  mkdirSync(dir, { recursive: true })
+  const hugeClip = path.join(dir, 'huge.mp4')
+  const hugeStill = path.join(dir, 'huge.jpg')
+  const goodClip = path.join(dir, 'good.mp4')
+  const smallStill = path.join(dir, 'small.jpg')
+  writeSized(hugeClip, CLIP_LIMIT + 1)
+  writeSized(hugeStill, PHOTO_LIMIT + 1)
+  writeFileSync(goodClip, syntheticMp4())
+  writeFileSync(smallStill, minimalJpeg)
+  const profile = path.join(proofDir, 'chrome-headed')
+  rmSync(profile, { recursive: true, force: true })
+  mkdirSync(profile, { recursive: true })
+  const chrome = await launchChrome(9335, profile, false)
+  try {
+    const page = await Page.attach('http://127.0.0.1:9335')
+    await page.send('Network.enable')
+    await page.send('Network.setCookie', { name: 'studio_session', value: token, url: origin })
+    await page.goto(`${origin}/#import`)
+    await waitFor(page, `!!document.querySelector('#i-clip')`)
+    await chooseImportFileFromDisk(page, '#i-clip', hugeClip)
+    await chooseImportFileFromDisk(page, '#i-still', smallStill)
+    await waitFor(page, `document.body.innerText.includes('huge.mp4')`)
+    await page.evaluate<void>(`[...document.querySelectorAll('button')].find((button) => button.textContent.trim() === 'Read the file')?.click(); undefined`, 5000, false)
+    const clipEye = await Page.attachExisting('http://127.0.0.1:9335', '#import')
+    await waitFor(clipEye, `document.body.innerText.includes('that clip is over 100 MB')`, 60000)
+    await themed(clipEye, 'import-clip-too-large', async () => undefined)
+    clipEye.close()
+    const again = await Page.attachExisting('http://127.0.0.1:9335', '#import')
+    await chooseImportFileFromDisk(again, '#i-clip', goodClip)
+    await chooseImportFileFromDisk(again, '#i-still', hugeStill)
+    await waitFor(again, `document.body.innerText.includes('huge.jpg')`)
+    await again.evaluate<void>(`[...document.querySelectorAll('button')].find((button) => button.textContent.trim() === 'Read the file')?.click(); undefined`, 5000, false)
+    again.close()
+    const stillEye = await Page.attachExisting('http://127.0.0.1:9335', '#import')
+    await waitFor(stillEye, `document.body.innerText.includes('that still is over 20 MB')`, 60000)
+    await themed(stillEye, 'import-still-too-large', async () => undefined)
+    stillEye.close()
+    notes.push('headed Chrome chose a 100,000,001-byte clip and a 20,000,001-byte still through the file input')
+    page.close()
+  } finally {
+    chrome.kill()
+  }
 }
 
 async function main(): Promise<void> {
@@ -873,6 +981,7 @@ async function main(): Promise<void> {
       security.push({ name: `reused ticket ${route}`, status: reused.status, secrets: findSecrets(reused.body) })
       security.push({ name: `preflight ${route}`, status: preflight.status, secrets: findSecrets(preflight.body) })
     }
+    await proveOversizedFiles(importServer.origin, importServer.token)
     importServer.stop()
 
     const account = ['R2', '_ACCOUNT_ID'].join('')
