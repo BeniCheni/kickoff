@@ -7,5 +7,8 @@ export function publicError(error: unknown): string {
   const cleaned = redact(raw)
   if (findSecrets(raw).length > 0 || findSecrets(cleaned).length > 0) return 'refused'
   if (cleaned.includes('[redacted]') || cleaned.includes('[connection-redacted]')) return 'refused'
+  if (/failed query|econnrefused|etimedout|enotfound|connect_timeout|password authentication|too many clients/i.test(raw) || /failed query|econnrefused|etimedout|enotfound|connect_timeout|password authentication|too many clients/i.test(cleaned)) {
+    return 'refused'
+  }
   return cleaned.length > 0 ? cleaned : 'refused'
 }

@@ -2,11 +2,15 @@ import { desc, eq, isNull } from 'drizzle-orm'
 import { PER_JOB_CAP_USD, SESSION_CAP_USD } from '../caps.ts'
 import { balanceEntry, ledger, session } from '../db/schema.ts'
 import { aboveManualCeiling, sessionExposure, type LedgerView } from '../ledger.ts'
+import { probeDatabase } from './probe.ts'
 import type { OpenedAdmin } from './open.ts'
 import type { ShellView } from '../shared/types.ts'
 
 /** Balance, session, caps and database, read from the engine's records. Nothing here is filled in. */
 export async function readShell(opened: OpenedAdmin, port: number): Promise<ShellView> {
+  if (!opened.databaseHold) {
+    opened.database = (await probeDatabase(opened.db)) ? 'reachable' : 'unavailable'
+  }
   const caps = {
     perJobUsd: PER_JOB_CAP_USD,
     sessionUsd: SESSION_CAP_USD,

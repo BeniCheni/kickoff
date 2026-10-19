@@ -5,10 +5,26 @@ import { sessionExposure, type LedgerView } from '../ledger.ts'
 import { addUsd, cmpUsd } from '../money.ts'
 import { registry, selectRegistry } from '../registry.ts'
 import { largestEstimate, sumEstimates } from '../shared/compose.ts'
+import { probeDatabase } from './probe.ts'
 import type { OpenedAdmin } from './open.ts'
 import { findPhoto, loadPhotos, photoBytes } from './photos.ts'
 
 export async function readCompose(opened: OpenedAdmin) {
+  if (!opened.databaseHold) {
+    opened.database = (await probeDatabase(opened.db)) ? 'reachable' : 'unavailable'
+  }
+  if (opened.database === 'unavailable' && !opened.databaseHold) {
+    return {
+      subjects: [],
+      photos: [],
+      keyframeModels: [],
+      clipModels: [],
+      sessionSpendUsd: '0.000000',
+      perJobCapUsd: PER_JOB_CAP_USD,
+      sessionCapUsd: SESSION_CAP_USD,
+      database: 'unavailable' as const,
+    }
+  }
   const now = opened.clock()
   const subjects = await opened.db.select().from(subject).orderBy(desc(subject.createdAt))
   const keyframeModels = registry.filter((row) => row.task === 'edit' && selectRegistry(row.endpoint, {}, now)?.id === row.id)

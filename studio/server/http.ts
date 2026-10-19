@@ -14,6 +14,7 @@ import { findPhoto, photoPath, storePhoto } from './photos.ts'
 import { publishJob, publishJobId, readPublish, recordPublishGate, retryDeleteJob, retryRemovalJob, unpublishJob } from './publish.ts'
 import { assetIdFrom, discardJob, keepJob, readReview, recordedAssetFile, regenerateReview, reviewJobId } from './review.ts'
 import { openAdmin, type OpenedAdmin } from './open.ts'
+import { probeDatabase } from './probe.ts'
 import { publicError } from './public-error.ts'
 import { readShell } from './shell.ts'
 
@@ -133,7 +134,11 @@ async function handle(
     return
   }
   if (url.pathname === '/api/jobs' && method === 'GET') {
-    sendJson(response, 200, await readJobs(opened.db, opened.studio, opened.clock()), cookieHeader)
+    if (!opened.databaseHold) opened.database = (await probeDatabase(opened.db)) ? 'reachable' : 'unavailable'
+    const rows = opened.database === 'unavailable' && !opened.databaseHold
+      ? []
+      : await readJobs(opened.db, opened.studio, opened.clock())
+    sendJson(response, 200, rows, cookieHeader)
     return
   }
   if (url.pathname === '/api/jobs/poll' && method === 'POST') {

@@ -13,8 +13,10 @@ import { startAdmin, type AdminServer } from '../server/http.ts'
 import { DRAFT, STORAGE_REFUSAL } from '../shared/admin-copy.ts'
 import type { ComposeDraft } from '../shared/compose.ts'
 import type { ShellView } from '../shared/types.ts'
+import { COPY } from '../copy.ts'
 import { ComposeForm } from '../ui/app/compose.tsx'
 import { PublishCard } from '../ui/app/publish.tsx'
+import { StudioShell } from '../ui/app/shell.tsx'
 import { minimalJpeg } from './jpeg.ts'
 
 const servers: AdminServer[] = []
@@ -259,5 +261,76 @@ describe('live storage refusal', () => {
     )
     expect(html).toContain(STORAGE_REFUSAL)
     expect(html).not.toContain('live on the next read')
+  })
+
+  it('shows the paused banner for a database that does not answer, with no driver text', async () => {
+    const env = folders()
+    delete env.STUDIO_ADMIN_LIVE_PGLITE
+    env[['FAL', '_KEY'].join('')] = 'present'
+    const admin = await startAdmin({
+      live: true,
+      env,
+      port: 0,
+      boom: 'Failed query: select "id" from "studio"."balance_entry"',
+    })
+    servers.push(admin)
+    const cookie = await cookieFor(admin)
+    const shellResponse = await ask(admin, { path: '/api/shell', headers: { cookie } })
+    expect(shellResponse.status).toBe(200)
+    expect(shellResponse.body).not.toContain('Failed query')
+    const shell = JSON.parse(shellResponse.body) as ShellView
+    expect(shell.database).toBe('unavailable')
+    expect(shell.databaseEngine).toBe('postgres')
+    const jobs = await ask(admin, { path: '/api/jobs', headers: { cookie } })
+    expect(jobs.status).toBe(200)
+    expect(jobs.body).toBe('[]')
+    expect(jobs.body).not.toContain('Failed query')
+    const compose = JSON.parse((await ask(admin, { path: '/api/compose', headers: { cookie } })).body) as { database: string }
+    expect(compose.database).toBe('unavailable')
+    const banner = renderToStaticMarkup(
+      <StudioShell shell={{ ...shell, port: 5176 }} tab="jobs" theme="light" onTab={() => undefined} onTheme={() => undefined} />,
+    )
+    const split = COPY.databaseUnavailable.indexOf('. ')
+    expect(banner).toContain(COPY.databaseUnavailable.slice(0, split + 1))
+    expect(banner).toContain(COPY.databaseUnavailable.slice(split + 2))
+    expect(banner).toContain('data-kind="ledger"')
+    const form = renderToStaticMarkup(
+      <ComposeForm
+        catalog={{
+          subjects: [],
+          photos: [],
+          keyframeModels: [],
+          clipModels: [],
+          sessionSpendUsd: '0.000000',
+          perJobCapUsd: PER_JOB_CAP_USD,
+          sessionCapUsd: SESSION_CAP_USD,
+          database: 'unavailable',
+        }}
+        shell={{ ...shell, port: 5176 }}
+        draft={{
+          subjectId: null,
+          photoId: null,
+          keyframeEndpoint: 'openai/gpt-image-2/edit',
+          canvas: '16:10',
+          prompts: { k0: '', k1: '', k2: '' },
+          clipEndpoint: 'minimax/h3-max-turbo/image-to-video',
+          frames: 'k0-k2',
+          resolution: '480P',
+          duration: 15,
+          motion: 'a fictional cat walks',
+          seed: '',
+          expansion: 'off',
+        }}
+        onDraft={() => undefined}
+        lines={[{ outcome: 'estimate', usd: '0.375000', registryId: 'clip', tag: 'current' }]}
+        onEstimate={() => undefined}
+        onSubmit={() => undefined}
+      />,
+    )
+    expect(form).toContain(DRAFT.submitDatabase)
+    const boom = await ask(admin, { path: '/api/boom', headers: { cookie } })
+    expect(boom.status).toBe(500)
+    expect(boom.body).toBe('{"error":"refused"}')
+    expect(boom.body).not.toContain('Failed query')
   })
 })

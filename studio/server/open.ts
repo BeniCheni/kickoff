@@ -13,6 +13,7 @@ import { selectFalTransport } from '../fal/live.ts'
 import { createFalStub, type ScriptName, type StubCursor } from '../fal/stub.ts'
 import { createStorageStub } from '../storage/stub.ts'
 import type { DatabaseEngine, DatabaseName, StorageName, TransportName } from '../shared/types.ts'
+import { probeDatabase } from './probe.ts'
 import { createRefusingStorage } from './storage-refused.ts'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
@@ -35,6 +36,8 @@ export type OpenedAdmin = {
   mediaDir: string
   transport: TransportName
   database: DatabaseName
+  /** Set when a test forces the paused banner. A live probe does not clear it. */
+  databaseHold: boolean
   databaseEngine: DatabaseEngine
   storage: StorageName
   falConfigured: boolean
@@ -128,13 +131,13 @@ export async function openAdmin(env: NodeJS.ProcessEnv, live: boolean): Promise<
   const stub = createFalStub(script, cursor)
   const fal = selectFalTransport({ argv: live ? ['--live'] : [], env: loaded, stub })
   const transport: TransportName = live ? 'live' : 'stub'
-  const database: DatabaseName = loaded.STUDIO_ADMIN_DATABASE === 'unavailable' ? 'unavailable' : 'reachable'
+  const databaseHold = loaded.STUDIO_ADMIN_DATABASE === 'unavailable'
   const clock = () => (loaded.STUDIO_NOW ? new Date(loaded.STUDIO_NOW) : new Date())
 
   let db: StudioDatabase
   let closeDb: () => Promise<void>
   if (!backends.pglite) {
-    const sql = postgres(loaded.DATABASE_URL ?? '', { prepare: false, max: 1 })
+    const sql = postgres(loaded.DATABASE_URL ?? '', { prepare: false, max: 1, connect_timeout: 5 })
     db = drizzlePostgres(sql, { schema: studioTables }) as unknown as StudioDatabase
     closeDb = async () => {
       await sql.end({ timeout: 5 })
@@ -148,12 +151,15 @@ export async function openAdmin(env: NodeJS.ProcessEnv, live: boolean): Promise<
   }
 
   const studio = createStudio({ db, fal, storage: storagePort, mediaDir, repoRoot, clock })
+  let database: DatabaseName = databaseHold ? 'unavailable' : 'reachable'
+  if (!databaseHold && !(await probeDatabase(db))) database = 'unavailable'
   return {
     studio,
     db,
     mediaDir,
     transport,
     database,
+    databaseHold,
     databaseEngine: backends.databaseEngine,
     storage: backends.storage,
     falConfigured: !live || Boolean(loaded.FAL_KEY),

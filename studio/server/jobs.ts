@@ -7,6 +7,7 @@ import {
   type JobBilled,
   type JobView,
 } from '../shared/jobs.ts'
+import { probeDatabase } from './probe.ts'
 import type { OpenedAdmin } from './open.ts'
 
 const IN_FLIGHT = new Set<AdminJobState>(['submitted', 'queued', 'in-progress'])
@@ -89,7 +90,11 @@ export function jobIdFrom(pathname: string, action: 'download' | 'regenerate'): 
 }
 
 export async function pollInFlight(opened: OpenedAdmin, ids: readonly string[]): Promise<JobView[]> {
-  if (opened.database === 'unavailable' || process.env.STUDIO_ADMIN_FREEZE === '1') {
+  if (!opened.databaseHold) {
+    opened.database = (await probeDatabase(opened.db)) ? 'reachable' : 'unavailable'
+    if (opened.database === 'unavailable') return []
+  }
+  if (opened.databaseHold || process.env.STUDIO_ADMIN_FREEZE === '1') {
     return readJobs(opened.db, opened.studio, opened.clock())
   }
   const current = await readJobs(opened.db, opened.studio, opened.clock())
