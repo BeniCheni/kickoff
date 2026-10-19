@@ -12,6 +12,7 @@
     "test": "vitest run",
     "test:contract": "vitest run test/schema.test.ts test/catalog-contract.test.ts test/catalog-publish.test.ts test/isolation.test.ts test/schema-boundary.test.ts test/secrets.test.ts",
     "migrate": "tsx db/migrate.ts",
+    "seed:demo": "tsx db/seed-demo.ts",
     "cli": "tsx cli.ts",
     "studio": "vite build --config ui/vite.config.ts && tsx server/main.ts"
   },
