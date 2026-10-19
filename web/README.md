@@ -71,27 +71,41 @@ The payload carries each published id's comments with its counts.
 
 ## The private preview on Vercel
 
-Read 2026-10-19, America/New_York. This is the layout for Beni's project. Nothing here creates the project, sets a variable, or runs a migration against Supabase.
+Read 2026-10-19, America/New_York. This is the layout Beni ruled: **Unused**. Production Branch Tracking is an unused name, so `main` deploys as a Preview and carries the Preview variables. Nothing here creates the project, sets a variable, or runs a migration against Supabase. Do these in order. One block is one action.
 
-**Root Directory `web/`, with files outside it included.** [Configuring a Build](https://vercel.com/docs/builds/configure-a-build) says a Root Directory cannot see parent files and cannot use `..`. [Monorepos FAQ](https://vercel.com/docs/monorepos/monorepo-faq) says the Root Directory section has **Include source files outside of the Root Directory in the Build Step**, on by default for projects created after 27 Aug 2020 23:50 UTC. Turn that on and confirm the checkbox. The app imports `../src`, installs `@kickoff/catalog` and `@kickoff/demo` from `file:../packages`, and the build runs `../node_modules/tsx` on `../scripts/write-theme-head.ts`. Those paths exist only when the parent checkout is present. The repo-root layout would hide `web/next.config.ts` from Next's project root, so this layout keeps Root Directory at `web/` and includes the parent.
+**1. Protection first.** [Deployment Protection](https://vercel.com/docs/deployment-protection), read 19 Oct 2026: **All Deployments** — "Protecting all deployments is available on all plans" — and "Vercel Authentication for All Deployments and Deployment Protection Exceptions do not require a paid add-on." Method is **Vercel Authentication**. Password Protection is not on Hobby.
 
-**Install and build.** Override the install command, because the install path is the Root Directory ([Configuring a Build](https://vercel.com/docs/builds/configure-a-build)):
+If the account has a team default for new projects, set that default to All Deployments and Vercel Authentication before the import. The same page says a team default applies to new projects, and a project can override it later.
+
+Importing the repo builds `main` once as a Production deployment before any project setting can change. [Environments](https://vercel.com/docs/deployments/environments), read 19 Oct 2026: "The first deployment of a new project is always a production deployment", including "Import a Git repository in the dashboard". That first build carries no variables. [Environment variables](https://vercel.com/docs/environment-variables), read 19 Oct 2026: a variable applies to new deployments, and these three are added only after the project exists. Moments on that first build is unavailable. Fixtures and Table still render, and the production domain is public until protection is on.
+
+If the team default was not already All Deployments, the first click after the project appears is Settings → Deployment Protection → scope **All Deployments**, method **Vercel Authentication**. Do that before Branch Tracking and before the variables. That is what closes the window.
+
+**2. The import.** On the import form, set Root Directory to `web/` and turn on **Include source files outside of the Root Directory in the Build Step**. [Configuring a Build](https://vercel.com/docs/builds/configure-a-build), read 19 Oct 2026, says a Root Directory cannot see parent files and cannot use `..`. [Monorepos FAQ](https://vercel.com/docs/monorepos/monorepo-faq), read 19 Oct 2026, says that switch is on by default for projects created after 27 Aug 2020 23:50 UTC. Confirm the checkbox anyway. The app imports `../src`, installs `@kickoff/catalog` and `@kickoff/demo` from `file:../packages`, and the build runs `../node_modules/tsx` on `../scripts/write-theme-head.ts`.
+
+Override the install command, because the install path is the Root Directory (Configuring a Build, same page):
 
 ```sh
 npm ci --prefix .. --no-audit --no-fund && npm ci --no-audit --no-fund
 ```
 
-Leave the build command as the `build` script. Vercel uses that script for Next.js. It writes the theme files, then runs `next build`. Node.js version **24.x** in Build and Deployment. That is the current default, and `package.json` `engines` allows it ([Node.js versions](https://vercel.com/docs/functions/runtimes/node-js/node-js-versions)). CI uses Node 24.
+Leave the build command as the `build` script. Vercel uses that script for Next.js. It writes the theme files, then runs `next build`. Node.js version **24.x** in Build and Deployment. That is the current default, and `package.json` `engines` allows it ([Node.js versions](https://vercel.com/docs/functions/runtimes/node-js/node-js-versions), read 19 Oct 2026). CI uses Node 24.
 
-**Preview variables only.** In Environment Variables, select Preview and not Production ([Environment variables](https://vercel.com/docs/environment-variables)). Do not use a `NEXT_PUBLIC_` name.
+**3. Branch Tracking.** Settings → Environments → Production → Branch Tracking. Change the branch name to one you will never push, for example `kickoff-no-production`, and save. [Git](https://vercel.com/docs/git), read 19 Oct 2026: a Production deployment is created when you push the production branch, and the default production branch is `main`. The Environments page says you change it under Production → Branch Tracking. After the save, `main` is not the production branch, so a deployment of `main` is a Preview and receives the Preview variables.
+
+**4. The variables.** Environment Variables, environment **Preview**, not Production (Environment variables, same page). Do not use a `NEXT_PUBLIC_` name. Mark each value **Secret** when the form offers it. The same page says Secret values are write-only after saving; Config values stay readable. Production gets none of these yet.
 
 - `KICKOFF_DATABASE_URL` — the `studio_reader` login through the shared transaction pooler. Supabase, read 2026-10-19, says a serverless function uses that pooler, port 6543, and a custom role's username is `[ROLE].[PROJECT-REF]` ([Connect to your database](https://supabase.com/docs/guides/database/connecting-to-postgres)). Copy the transaction pooler string from the dashboard's Connect dialog. Set the user to `studio_reader.<project ref>` and the password you choose below. Do not commit the string.
 - `KICKOFF_STORAGE_ORIGIN` — the same https origin as the Studio's `STUDIO_STORAGE_ORIGIN`, with no path.
 - `KICKOFF_DEMO` — `on`.
 
-Production gets none of these yet.
+**5. How a Preview of `main` is produced.** Redeploying the import's deployment does not make one. [Managing Deployments](https://vercel.com/docs/deployments/managing-deployments), read 19 Oct 2026, labels that dialog **Redeploy to Production**, so the rebuild stays a Production deployment and still has no variables. What does produce a Preview of `main`, after step 3, is the next push to `main`. Each sync merge is one of those pushes. [Environments](https://vercel.com/docs/deployments/environments), same read: a preview is created when you push a branch that is not the production branch. From the CLI, `vercel redeploy <import-deployment-url> --target=preview` names the environment ([vercel redeploy](https://vercel.com/docs/cli/redeploy), read 19 Oct 2026). A plain `vercel redeploy` of that URL does not.
 
-**Deployment Protection stays on.** Standard Protection is available on every plan and protects every deployment except production domains ([Deployment Protection](https://vercel.com/docs/deployment-protection)). Leave Vercel Authentication on. The preview asks a visitor to sign in to Vercel. Password Protection is not on Hobby.
+**6. The URL on Thursday.** Open the project's Deployments page, signed in to Vercel, and open the latest deployment whose branch is `main`. Use the Branch filter on that page (Managing Deployments, same page). The stable Git branch URL for `main`, once a Preview of it exists, is `<project-name>-git-main-<scope-slug>.vercel.app` ([Generated URLs](https://vercel.com/docs/deployments/generated-urls), read 19 Oct 2026). The unique deployment URL is `<project-name>-<unique-hash>-<scope-slug>.vercel.app`. Open the branch URL or the latest row. Do not open the import's Production deployment.
+
+**7. What builds.** Every push to any branch builds a deployment, including `sync/scheduled` and agent branches. [Project settings](https://vercel.com/docs/project-configuration/project-settings), read 19 Oct 2026: the default Ignored Build Step is Automatic, and each commit issues a new build. After step 3 those builds are Previews, they carry the Preview variables, and step 1 protects them. [Hobby](https://vercel.com/docs/plans/hobby), read 19 Oct 2026, includes 100 deployments per day, 2 build vCPUs, and 8 GB build memory. A day with many sync merges can spend that deployment count.
+
+**8. Check it.** In a signed-out or private window, open the Preview branch URL and the production domain (`<project-name>.vercel.app`, or the production domain the project shows). Both should be the Vercel sign-in page. All Deployments covers production domains and generated URLs (Deployment Protection, same page). If either page renders the app, protection is not All Deployments yet.
 
 **Database, in this order.** You run these. The app does not.
 
