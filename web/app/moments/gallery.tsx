@@ -45,6 +45,15 @@ export function Gallery({
     const ids = savedIdSet(initialSaved)
     return applyOrder(matchingRows(list, initialSubject, initialSavedOnly, ids), initialOrder, null).slice(0, 8).map(row => row.id)
   })
+  const [entered, setEntered] = useState<ReadonlySet<string>>(() => new Set())
+  function rememberEntrance(id: string) {
+    setEntered(current => {
+      if (current.has(id)) return current
+      const next = new Set(current)
+      next.add(id)
+      return next
+    })
+  }
   useEffect(() => {
     if (!freezeSaved) setSaved(readSavedReferences())
   }, [freezeSaved])
@@ -157,7 +166,8 @@ export function Gallery({
               onToggleSave={toggleSave}
               social={social?.[row.id]}
               videoSrc={videos?.[row.id] ?? null}
-              enterIndex={entranceIds.indexOf(row.id)}
+              enterIndex={entered.has(row.id) ? -1 : entranceIds.indexOf(row.id)}
+              onEntered={rememberEntrance}
             />
           ))}
         </div>

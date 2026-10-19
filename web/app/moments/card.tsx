@@ -109,6 +109,7 @@ export function VideoCard({
   social,
   videoSrc = null,
   enterIndex = -1,
+  onEntered,
 }: {
   row: CatalogListRow
   search: string
@@ -119,6 +120,7 @@ export function VideoCard({
   social?: MomentSocial
   videoSrc?: string | null
   enterIndex?: number
+  onEntered?: (id: string) => void
 }) {
   const navigate = useWatchNavigation()
   const duration = durationClock(row.duration_s)
@@ -159,6 +161,10 @@ export function VideoCard({
       className="moments-card"
       data-enter={enterIndex >= 0 ? '' : undefined}
       style={enterIndex >= 0 ? { ['--enter' as string]: String(enterIndex) } : undefined}
+      onAnimationEnd={event => {
+        if (event.target !== event.currentTarget || event.animationName !== 'moments-card-enter') return
+        onEntered?.(row.id)
+      }}
       onMouseEnter={arm}
       onMouseLeave={disarm}
       onFocus={arm}
