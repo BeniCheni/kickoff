@@ -25,8 +25,8 @@ export function nextThumbStep(step: ThumbStep, site: string | null): ThumbStep {
   return 'cover'
 }
 
-const SITE_LINE = 'Thumbnail from the site\u2019s copy \u00b7 Supabase did not answer.'
-const COVER_LINE = 'No thumbnail: Supabase and the site\u2019s copy both failed.'
+const SITE_LINE = 'Thumbnail from the site\'s copy \u00b7 the file store did not answer.'
+const COVER_LINE = 'No thumbnail: the file store and the site\'s copy both failed.'
 
 export function Thumb({
   row,
