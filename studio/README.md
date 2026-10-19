@@ -71,6 +71,33 @@ Beni creates the bucket, the custom domain, and an API token scoped to that one 
 
 The request is SigV4, region `auto`, with the file's SHA-256 in `x-amz-content-sha256` and the MIME type as Content-Type. A failed upload leaves the clip unpublished and records which object failed (`video` or `thumbnail`). The next `publish` retries only the object that has no address yet. `unpublish --delete` and `retry-delete` delete through the same adapter. Only 200 and 204 count as deleted. S3 answers 204 when the key is already absent. A 404 fails with its status and its S3 code. That was not verified against a live bucket. The site's thumbnail copy stays on the stub. Every `--live` command refuses, by name, when `STUDIO_LIVE` is not `1` or `DATABASE_URL` is missing, so a live upload cannot write the catalog only into the local database.
 
+## The web admin
+
+The admin is a local page on this Mac. It binds to `127.0.0.1:5176` and nothing else. It does not deploy, and it has no sign-in. Set the same directories as the CLI, outside the repo.
+
+```bash
+export STUDIO_ENV_FILE=$HOME/studio.env
+export STUDIO_DATA_DIR=$HOME/studio-data
+export STUDIO_MEDIA_DIR=$HOME/studio-media
+npm run studio
+```
+
+The process prints one URL. Open that URL. It sets an HttpOnly, SameSite=Strict cookie and does not print the token again. A request without that cookie is refused. A write from another origin is refused. A Host header that is not loopback is refused.
+
+```bash
+npm run studio
+```
+
+That start is stub mode. The shell shows `transport=stub · fal=stub · database=pglite · storage=stub`. Paid submits use the fal stub. `STUDIO_STUB` selects the script, the same names as the CLI.
+
+```bash
+STUDIO_LIVE=1 npm run studio -- --live
+```
+
+`--live` starts only when `STUDIO_LIVE=1` and `DATABASE_URL` are set. It names a missing piece and does not print a value. `FAL_KEY` is not required to start. Without it, Submit and Regenerate stay disabled and say so. Storage stays `refused` until a later change wires the bucket: a publish does not write a catalog row, and unpublish with a file delete, retry-delete, and retry-removal are refused. The browser cannot switch the transport. Without `FAL_KEY`, poll, download, cancel, and attach refuse, and Jobs does not poll. The shell shows `transport=live · fal=refused · database=postgres · storage=refused` until the key is set, and `fal=live` when it is.
+
+Import of a Grok clip is not on this page yet. The `import` command is on main. Wiring this screen to it is ST3b.
+
 ## Wednesday 21 Oct 2026
 
 `--live` is what points a command at Supabase. Every command below carries it. Without `STUDIO_LIVE` set to `1` and `DATABASE_URL`, the command refuses and names the missing piece. It does not open the local database. With nothing set, `import`, `keep`, `record-gate`, `list`, `migrate` and a plain `unpublish` print `refused: --live needs STUDIO_LIVE and DATABASE_URL`. `publish`, `unpublish --delete` and `retry-delete` also name `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` and `R2_BUCKET`. Without `--live` the same commands print `database=pglite`, and a storage command prints `storage=stub`. `migrate` is the exception: it always uses Postgres, so without `DATABASE_URL` it refuses as well.

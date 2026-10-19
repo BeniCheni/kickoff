@@ -1,0 +1,56 @@
+/*
+ * Fergie Time token values. The test in test/admin-tokens.test.ts reads this file and
+ * src/shell.css (imported by src/index.css) as text and checks the values match.
+ * studio/ does not import src/.
+ */
+:root {
+  --bg: #f7f5ee;
+  --surface: #ffffff;
+  --surface-alt: #efead9;
+  --media: #e4e0d2;
+  --border: rgb(22 33 27 / 0.12);
+  --border-strong: rgb(22 33 27 / 0.22);
+  --text: #16211b;
+  --text-secondary: #55614f;
+  --text-muted: #646c61;
+  --pitch: #2c7a4b;
+  --pitch-deep: #1e5636;
+  --floodlight: #c98a00;
+  --floodlight-strong: #8a5f00;
+  --floodlight-bg: #fbefd3;
+  --accent: #d85a30;
+  --accent-strong: #b4431e;
+  --glow: rgb(201 138 0 / 0.18);
+  --accent-lead: var(--pitch);
+  --lens-accent: var(--pitch);
+  --on-accent-lead: var(--bg);
+  --accent-lead-strong: var(--accent-lead);
+  --font-display: 'Oswald', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', monospace;
+  --ink: var(--text);
+  --ink-secondary: var(--text-secondary);
+  --ink-muted: var(--text-muted);
+  --line: var(--border);
+  --line-strong: var(--border-strong);
+}
+
+[data-theme='dark'] {
+  --bg: #0e1c15;
+  --surface: #142a1f;
+  --surface-alt: #1a3325;
+  --media: #0a140f;
+  --border: rgb(231 239 233 / 0.14);
+  --border-strong: rgb(231 239 233 / 0.26);
+  --text: #e7efe9;
+  --text-secondary: #a9b9ac;
+  --text-muted: #8a9c8e;
+  --pitch: #56c083;
+  --pitch-deep: #2f7a4d;
+  --floodlight: #f7c948;
+  --floodlight-strong: var(--floodlight);
+  --floodlight-bg: rgb(247 201 72 / 0.14);
+  --accent: #f7a864;
+  --accent-strong: var(--accent);
+  --glow: rgb(247 201 72 / 0.18);
+}
