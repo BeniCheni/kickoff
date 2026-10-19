@@ -372,22 +372,49 @@ describe('live R2', () => {
     expect(seen.every((item) => item.url.startsWith('https://accountid123.r2.cloudflarestorage.com/'))).toBe(true)
   })
 
+  it('refuses the inject flag before a database handle opens when the PGlite seam is off', async () => {
+    const env = folders({ STUDIO_R2_FETCH: 'inject' })
+    delete env.STUDIO_ADMIN_LIVE_PGLITE
+    const started = Date.now()
+    await expect(openAdmin(env, true)).rejects.toThrow('refused: STUDIO_R2_FETCH=inject needs the PGlite test seam')
+    expect(Date.now() - started).toBeLessThan(1000)
+  })
+
   it('uses the test inject fetch and does not call the network', async () => {
     const env = folders({ STUDIO_R2_FETCH: 'inject' })
     const jobId = await keptClip(env)
-    const admin = await startAdmin({ live: true, env, port: 0 })
-    servers.push(admin)
-    expect(admin.storage).toBe('r2')
-    const cookie = await cookieFor(admin)
-    const headers = { cookie, origin: admin.origin, 'content-type': 'application/json' }
-    await recordGate(admin, cookie)
-    const published = JSON.parse((await ask(admin, {
-      path: `/api/publish/${jobId}/go`,
-      method: 'POST',
-      headers,
-      body: JSON.stringify({ publicId: 'fenway-inject', title: 'Fenway', position: 1, confirm: true }),
-    })).body) as { outcome: string }
-    expect(published.outcome).toBe('published')
-    expect(JSON.stringify(published)).not.toContain(SECRET)
+    const realFetch = globalThis.fetch
+    let networkCalls = 0
+    globalThis.fetch = (async (...args: Parameters<typeof fetch>) => {
+      networkCalls += 1
+      throw new Error(`network fetch must not run: ${String(args[0])}`)
+    }) as typeof fetch
+    try {
+      const admin = await startAdmin({ live: true, env, port: 0 })
+      servers.push(admin)
+      expect(admin.storage).toBe('r2')
+      expect(admin.storageFetch).toBe('injected')
+      const cookie = await cookieFor(admin)
+      const headers = { cookie, origin: admin.origin, 'content-type': 'application/json' }
+      const shell = JSON.parse((await ask(admin, { path: '/api/shell', headers: { cookie } })).body) as ShellView
+      expect(shell.storage).toBe('r2')
+      expect(shell.storageFetch).toBe('injected')
+      const html = renderToStaticMarkup(
+        <StudioShell shell={{ ...shell, port: 5176 }} tab="publish" theme="light" onTab={() => undefined} onTheme={() => undefined} />,
+      )
+      expect(html).toContain('storage=r2 fetch=injected')
+      await recordGate(admin, cookie)
+      const published = JSON.parse((await ask(admin, {
+        path: `/api/publish/${jobId}/go`,
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ publicId: 'fenway-inject', title: 'Fenway', position: 1, confirm: true }),
+      })).body) as { outcome: string }
+      expect(published.outcome).toBe('published')
+      expect(JSON.stringify(published)).not.toContain(SECRET)
+      expect(networkCalls).toBe(0)
+    } finally {
+      globalThis.fetch = realFetch
+    }
   })
 })

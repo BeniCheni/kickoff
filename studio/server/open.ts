@@ -42,6 +42,8 @@ export type OpenedAdmin = {
   databaseHold: boolean
   databaseEngine: DatabaseEngine
   storage: StorageName
+  /** Set only when the test inject fetch is the R2 port. Never on a real Postgres start. */
+  storageFetch: 'injected' | null
   fal: FalMode
   falConfigured: boolean
   script: ScriptName
@@ -126,7 +128,10 @@ export async function openAdmin(env: NodeJS.ProcessEnv, live: boolean, options: 
   const cursor = loadCursor(cursorPath)
   const fails = new Set((loaded.STUDIO_STORAGE_FAIL ?? '').split(',').map((item) => item.trim()).filter(Boolean))
   const backends = adminBackends(live, loaded)
-  const injectedFetch: typeof fetch | undefined = process.env.NODE_ENV === 'test' && loaded.STUDIO_R2_FETCH === 'inject'
+  if (loaded.STUDIO_R2_FETCH === 'inject' && !backends.pglite) {
+    throw new Error('refused: STUDIO_R2_FETCH=inject needs the PGlite test seam')
+  }
+  const injectedFetch: typeof fetch | undefined = backends.pglite && process.env.NODE_ENV === 'test' && loaded.STUDIO_R2_FETCH === 'inject'
     ? async (input, init) => {
       void input
       return new Response(null, { status: init?.method === 'DELETE' ? 204 : 200 })
@@ -186,6 +191,7 @@ export async function openAdmin(env: NodeJS.ProcessEnv, live: boolean, options: 
     databaseHold,
     databaseEngine: backends.databaseEngine,
     storage: backends.storage,
+    storageFetch: injectedFetch ? 'injected' : null,
     fal: falMode,
     falConfigured: falMode !== 'refused',
     script,

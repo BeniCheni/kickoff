@@ -40,6 +40,7 @@ export type AdminServer = {
   transport: 'stub' | 'live'
   databaseEngine: 'pglite' | 'postgres'
   storage: 'stub' | 'r2' | 'refused'
+  storageFetch: 'injected' | null
   fal: 'stub' | 'live' | 'refused'
   close: () => Promise<void>
 }
@@ -401,6 +402,7 @@ export async function startAdmin(options: StartAdminOptions = {}): Promise<Admin
     transport: opened.transport,
     databaseEngine: opened.databaseEngine,
     storage: opened.storage,
+    storageFetch: opened.storageFetch,
     fal: opened.fal,
     async close() {
       await new Promise<void>((resolve, reject) => {
