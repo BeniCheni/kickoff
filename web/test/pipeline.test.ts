@@ -3,7 +3,7 @@ import { connect, createServer as createTcp } from 'node:net'
 import { afterAll, expect, test } from 'vitest'
 import { PGlite } from '@electric-sql/pglite'
 import { createServer as createWire } from 'pglite-server'
-import { closeCatalogClient, loadHostedMoments } from '../lib/catalog/database'
+import { closeCatalogClient, loadHostedMoments, momentsTransactionSettings } from '../lib/catalog/database'
 
 const database = new PGlite()
 await database.waitReady
@@ -76,6 +76,11 @@ afterAll(async () => {
   proxy.close()
   await new Promise<void>((resolve) => wire.close(() => resolve()))
   await database.close()
+})
+
+test('the Moments transaction is repeatable read and read only', async () => {
+  const settings = await momentsTransactionSettings()
+  expect(settings).toEqual({ isolation: 'repeatable read', readOnly: 'on' })
 })
 
 test('six concurrent Moments reads keep one query outstanding', async () => {

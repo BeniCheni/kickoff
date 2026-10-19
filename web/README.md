@@ -36,7 +36,7 @@ names the stub storage origin for a remote preview, including `/stub-storage`.
 Without it only a loopback `Host` (`127.0.0.1`, `localhost`, or `[::1]`, with an
 optional port) is accepted. Forwarded host/protocol headers are ignored. `VERCEL_ENV=production` refuses the stub flag.
 With the flag unset, or set to `production`, Moments reads `catalog.videos`
-and `catalog.video` through Drizzle, ordered by `position`, then `id`. The
+and `catalog.video` through Drizzle, in one repeatable-read, read-only transaction, ordered by `position`, then `id`. The
 connection is one per server process, `prepare: false`, a five-second connect
 timeout, and TLS required except on a loopback host when `VERCEL_ENV` is unset. A missing address, a
 failed read, or a row the strict schema rejects shows the unavailable state.

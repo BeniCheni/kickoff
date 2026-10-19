@@ -1,4 +1,6 @@
 import 'server-only'
+import { sql } from 'drizzle-orm'
+import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
 import type { DemoSocial } from '@kickoff/demo'
 import { demoFromRows } from '../demo/rows'
@@ -35,13 +37,14 @@ export type HostedMoments = {
   demoError: DemoReadError | null
 }
 
-type Bound = {
-  (strings: TemplateStringsArray, ...values: never[]): Promise<unknown>
-  unsafe(query: string): Promise<unknown>
-  savepoint<T>(fn: (tx: Bound) => Promise<T>): Promise<T>
-}
-
 const DEFAULT_READ_TIMEOUT_MS = 8000
+
+const momentsTransaction = {
+  isolationLevel: 'repeatable read',
+  accessMode: 'read only',
+} as const
+
+type MomentsTx = Parameters<Parameters<ReturnType<typeof drizzle>['transaction']>[0]>[0]
 
 /** Eight seconds unless a test sets a shorter integer. Never longer. */
 export function readTimeoutMs(env: NodeJS.ProcessEnv = process.env): number {
@@ -59,42 +62,20 @@ function isReadTimeout(error: unknown): boolean {
 }
 
 /**
- * One read-only transaction for a Moments request.
- * postgres.js pipelines by default, and the transaction pooler cannot take that.
- * begin holds the single connection until commit, and each statement is awaited,
- * so a second request waits instead of sending another query early.
- * List and detail are the same snapshot.
+ * One repeatable-read, read-only transaction for a Moments request.
+ * Drizzle opens it with postgres.js `begin`, then `SET TRANSACTION`.
+ * The pooler sees one statement at a time because each read is awaited,
+ * and `max: 1` keeps the connection for this request alone.
+ * Repeatable read is what makes the list and the detail one snapshot.
  */
-export async function loadHostedMoments(includeDemo: boolean): Promise<HostedMoments> {
+export async function withMomentsTransaction<T>(work: (tx: MomentsTx) => Promise<T>): Promise<T> {
   const timeoutMs = readTimeoutMs()
-  const sql = catalogClient()
+  const db = drizzle(catalogClient())
   let timer: ReturnType<typeof setTimeout> | undefined
-  const query = sql.begin('read only', async (tx: Bound) => {
-    await tx.unsafe(`SET LOCAL statement_timeout = ${timeoutMs}`)
-    const list = asCatalogRows(await tx`SELECT * FROM catalog.videos ORDER BY position ASC, id ASC`)
-    const detail = asCatalogRows(await tx`SELECT * FROM catalog.video ORDER BY position ASC, id ASC`)
-    const catalog = catalogFromRows(list, detail)
-    if (!includeDemo) return { catalog, demo: null, demoError: null }
-    try {
-      const demo = await tx.savepoint(async (sp) => {
-        const users = asCatalogRows(await sp`SELECT * FROM demo.social_users ORDER BY id`)
-        const stats = asCatalogRows(await sp`SELECT * FROM demo.social_stats ORDER BY video_id`)
-        const comments = asCatalogRows(await sp`SELECT * FROM demo.social_comments ORDER BY id`)
-        try {
-          return demoFromRows(users, stats, comments)
-        } catch {
-          throw new DemoReadError('demo social failed validation', true)
-        }
-      })
-      return { catalog, demo, demoError: null }
-    } catch (error) {
-      if (isReadTimeout(error)) throw error
-      const demoError = error instanceof DemoReadError
-        ? error
-        : new DemoReadError('demo social could not be read', true)
-      return { catalog, demo: null, demoError }
-    }
-  })
+  const query = db.transaction(async (tx) => {
+    await tx.execute(sql.raw(`SET LOCAL statement_timeout = ${timeoutMs}`))
+    return work(tx)
+  }, momentsTransaction)
   const deadline = new Promise<never>((_, reject) => {
     timer = setTimeout(() => reject(new Error('catalog read deadline')), timeoutMs + 250)
   })
@@ -111,6 +92,42 @@ export async function loadHostedMoments(includeDemo: boolean): Promise<HostedMom
   } finally {
     if (timer) clearTimeout(timer)
   }
+}
+
+export async function momentsTransactionSettings(): Promise<{ isolation: string, readOnly: string }> {
+  return withMomentsTransaction(async (tx) => {
+    const [row] = asCatalogRows(await tx.execute(sql`SELECT current_setting('transaction_isolation') AS isolation, current_setting('transaction_read_only') AS read_only`))
+    const record = row as { isolation?: unknown, read_only?: unknown }
+    return { isolation: String(record.isolation), readOnly: String(record.read_only) }
+  })
+}
+
+export async function loadHostedMoments(includeDemo: boolean): Promise<HostedMoments> {
+  return withMomentsTransaction(async (tx) => {
+    const list = asCatalogRows(await tx.execute(sql`SELECT * FROM catalog.videos ORDER BY position ASC, id ASC`))
+    const detail = asCatalogRows(await tx.execute(sql`SELECT * FROM catalog.video ORDER BY position ASC, id ASC`))
+    const catalog = catalogFromRows(list, detail)
+    if (!includeDemo) return { catalog, demo: null, demoError: null }
+    try {
+      const demo = await tx.transaction(async (sp) => {
+        const users = asCatalogRows(await sp.execute(sql`SELECT * FROM demo.social_users ORDER BY id`))
+        const stats = asCatalogRows(await sp.execute(sql`SELECT * FROM demo.social_stats ORDER BY video_id`))
+        const comments = asCatalogRows(await sp.execute(sql`SELECT * FROM demo.social_comments ORDER BY id`))
+        try {
+          return demoFromRows(users, stats, comments)
+        } catch {
+          throw new DemoReadError('demo social failed validation', true)
+        }
+      })
+      return { catalog, demo, demoError: null }
+    } catch (error) {
+      if (isReadTimeout(error)) throw error
+      const demoError = error instanceof DemoReadError
+        ? error
+        : new DemoReadError('demo social could not be read', true)
+      return { catalog, demo: null, demoError }
+    }
+  })
 }
 
 /** List and detail only. Same transaction as a Moments request with the sample layer off. */
