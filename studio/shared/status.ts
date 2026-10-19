@@ -77,6 +77,7 @@ export function importRefusal(body: { outcome?: string; reason?: string; brand?:
   if (body.outcome === 'clip-too-large') return DRAFT.importClipTooLarge
   if (body.outcome === 'still-too-large') return DRAFT.importStillTooLarge
   if (body.outcome === 'upload-missing') return DRAFT.importMissing
+  if (body.outcome === 'uploads-folder') return DRAFT.uploadsFolder
   if (body.outcome === 'empty') return DRAFT.importEmpty
   if (body.outcome === 'prompt-empty') return DRAFT.importPromptEmpty
   if (body.outcome === 'title-empty') return DRAFT.importTitleEmpty

@@ -40,6 +40,7 @@ export const DRAFT = {
   importStillTooLarge: 'Unavailable: that still is over 20 MB.',
   importMissing: 'Unavailable: that file is no longer waiting. Choose it again.',
   clipUnrecorded: 'Unavailable: that clip is no longer recorded. Reload this page.',
+  uploadsFolder: 'Unavailable: the uploads folder is not a plain folder on this Mac.',
   importEmpty: 'Unavailable: the file is empty.',
   importPromptEmpty: 'Unavailable: the prompt is empty.',
   importTitleEmpty: 'Unavailable: the title is empty.',

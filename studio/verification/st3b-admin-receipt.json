@@ -646,7 +646,7 @@
     {
       "name": "jobs-all-states",
       "file": "png/jobs-all-states-light-1000.png",
-      "sha256": "b7b1130c74a37ee6649be8b6b1dd3c7a21e8cfc0eca4e48939e448d0f9ce261b",
+      "sha256": "9fd8def5ba5243b238d9de0aec771332a7396031d1bf3c6e2cad70a6377a0249",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -735,7 +735,7 @@
     {
       "name": "jobs-all-states",
       "file": "png/jobs-all-states-light-1280.png",
-      "sha256": "9bc66e91f8fbdebd1bebcb74915ab34c8273fe3c6c1d6989fca3a6f84b61108b",
+      "sha256": "4d5c274b237624f0b66e73f3464a7c7659395e1af78fd1e1245d7e4f9ad6ccf9",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -824,7 +824,7 @@
     {
       "name": "jobs-all-states",
       "file": "png/jobs-all-states-light-1440.png",
-      "sha256": "bfffa86c20d70f188d8b813db2cb5b0c3a359c3a92ba91034740f90449a4bd8f",
+      "sha256": "3b88d027c4054348c53f7e8dc89e4ebc4e5f4470df35e5ddd255ce3ad81dbe2e",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -913,7 +913,7 @@
     {
       "name": "jobs-all-states",
       "file": "png/jobs-all-states-dark-1000.png",
-      "sha256": "c67f9e5225be1d60f462e112c4c5030a5e1acad99408414547b3c873dce26e33",
+      "sha256": "d4e6fe8b379452b449b4623deb9f623a7ef2b716b744bccf284477f0b59fc241",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -1002,7 +1002,7 @@
     {
       "name": "jobs-all-states",
       "file": "png/jobs-all-states-dark-1280.png",
-      "sha256": "b8e7966fc38659f34b99ba2f9c7a1ce8d5ce531746110624bae5b1ecb5f4d8bd",
+      "sha256": "49ba478ae4ca4a3effe5e652c98905cffd009f3b048d0d3ddee47bb1d9eab173",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -1091,7 +1091,7 @@
     {
       "name": "jobs-all-states",
       "file": "png/jobs-all-states-dark-1440.png",
-      "sha256": "b7c289aa470a6753dc5f45cf01c784eb503a9d632f44e8663934781b72a259d8",
+      "sha256": "be29255078c525d36cfbb054348e2c224780233404f63b4b09293edbc4002f1c",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -1180,7 +1180,7 @@
     {
       "name": "review-unanswered",
       "file": "png/review-unanswered-light-1000.png",
-      "sha256": "d908290afc55723c48e649e0f009adf3183c8137d626689fc86948d82c86c192",
+      "sha256": "0f3c5ccacb0f43b5378d9ac7d95e5c899543b5ac58a1a5343e03f7f7297a373a",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -1285,7 +1285,7 @@
     {
       "name": "review-unanswered",
       "file": "png/review-unanswered-light-1280.png",
-      "sha256": "f548e0dd7cc3937e4c2d1671b826b05b61cf8dd5ddcd10d56d1f3163b8392896",
+      "sha256": "0115b31f73f830df487ba7d054775370e7a6c27afda97d01b9a69ae8bcbb6ea5",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -1390,7 +1390,7 @@
     {
       "name": "review-unanswered",
       "file": "png/review-unanswered-light-1440.png",
-      "sha256": "3aa92948c14850b5af9c899509aa05851cd4e1a60c0857e28ac4c52cb969531e",
+      "sha256": "ec33d43fea5ef38fbfbba1ad6cd4a384c1541a4e74b1d0e61187f418319377cb",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -1495,7 +1495,7 @@
     {
       "name": "review-unanswered",
       "file": "png/review-unanswered-dark-1000.png",
-      "sha256": "929530a5e598d2068e7127fa93d1cd8b887101a18ce6ffea673052d62a3ff3f1",
+      "sha256": "7d2ca636bc5e61db306ba90adf8c05b089ab18ec668ab901c2d5e8ae01e8c316",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -1600,7 +1600,7 @@
     {
       "name": "review-unanswered",
       "file": "png/review-unanswered-dark-1280.png",
-      "sha256": "46ebcf618d75ee05c3eb2eba1f91a6cc6114eb9027c7cf091cd9d66bac132f8b",
+      "sha256": "228ce43c235ca3845f709c10013c6c04c2f0cf7d03074652f2580312da45c3a4",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -1705,7 +1705,7 @@
     {
       "name": "review-unanswered",
       "file": "png/review-unanswered-dark-1440.png",
-      "sha256": "afe143532ca010067099a1b7b714a3c3c2a74841617806f02ed44c49df0a8c29",
+      "sha256": "cbf66e02dd2a76346286502aa7f1c7f794d94629aeb036eef295caf561af5ab4",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -1810,7 +1810,7 @@
     {
       "name": "review-partly",
       "file": "png/review-partly-light-1000.png",
-      "sha256": "5c7755b8a145d62bbfdc3b0dc660d19f307ecb0259809e0b641c7ecd40515dd8",
+      "sha256": "1490bfcb42f5c91e0b6672cd3816fc7080c3538f955dd604dcc6b800b30cc837",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -1915,7 +1915,7 @@
     {
       "name": "review-partly",
       "file": "png/review-partly-light-1280.png",
-      "sha256": "a6179c8322ae78dcba415757298c701a0fe1d2939d2936dbb5ec4d3eebc889cd",
+      "sha256": "ef042d86d9eb2fc8d0ba0d7ab840a49947ebb8635f10332210330b5845a0ad75",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -2020,7 +2020,7 @@
     {
       "name": "review-partly",
       "file": "png/review-partly-light-1440.png",
-      "sha256": "2a1baad5d53840586676ff46922a5b7fb187db19d8b2d3620f744eb3f965c503",
+      "sha256": "c8be82d847690c545c6d6e7a3078c427f48800e1c975feffb6a0ca626ed148dc",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -2125,7 +2125,7 @@
     {
       "name": "review-partly",
       "file": "png/review-partly-dark-1000.png",
-      "sha256": "3eaf978e7ebc5b97c2ec1d90c378e6ae91434096a848d1faedb1d330d8b2f4a0",
+      "sha256": "bb03c98823594b1a3be4c38b665d7231db3da34a3e701844e1ffe230daa125be",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -2230,7 +2230,7 @@
     {
       "name": "review-partly",
       "file": "png/review-partly-dark-1280.png",
-      "sha256": "b9f9e2587451640beb0de75e51818d0897c1403cb43091d8b03aba7767c7d6f4",
+      "sha256": "d7a0e2ba12ab737fb9a58efd22fc394ed5078704d96a0f17815da194d585080f",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -2335,7 +2335,7 @@
     {
       "name": "review-partly",
       "file": "png/review-partly-dark-1440.png",
-      "sha256": "4a05ce525ba6ff044bf40224602a48eb19979236209fa53674ac06545a9bd55d",
+      "sha256": "6f25aeea40dd9c90d9e5b4dd1814f0dc299516bce3d2949f2b854d3b560f82ac",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -2440,7 +2440,7 @@
     {
       "name": "review-all-clear",
       "file": "png/review-all-clear-light-1000.png",
-      "sha256": "a54bbcf6c3dcd283262113b867e352946538d19d68b0d3453db15cfd301bca4a",
+      "sha256": "3ba036d70c912ff3e466cb76b1960c509d4136b0bce839cac481dd8af6bb0d0c",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -2546,7 +2546,7 @@
     {
       "name": "review-all-clear",
       "file": "png/review-all-clear-light-1280.png",
-      "sha256": "841e84ef5086c15b5737a823703254486d5e3619d00238dd00614ad56551ece6",
+      "sha256": "f94b36431747539bd311ff8cbaa8596a6b3fbc000980ee7847a9e6c1880ac38f",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -2652,7 +2652,7 @@
     {
       "name": "review-all-clear",
       "file": "png/review-all-clear-light-1440.png",
-      "sha256": "ed442ecaf6505f403fdbae239b3a35d1dfd3a44afce1af5da7c6f7d61a22c322",
+      "sha256": "9c3589e6176df189b94e4dc35847a77dbf37570fa751b82ee2b2a03e383138d6",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -2758,7 +2758,7 @@
     {
       "name": "review-all-clear",
       "file": "png/review-all-clear-dark-1000.png",
-      "sha256": "691611e80308b690c4362d04a365d661843c884aa635feea918464305b5e52d9",
+      "sha256": "570534c922170fbcc0641440bf6b1345bb02db6af2f3c819c7fe0d55ddd10d41",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -2864,7 +2864,7 @@
     {
       "name": "review-all-clear",
       "file": "png/review-all-clear-dark-1280.png",
-      "sha256": "c2473f26c68ab9806370aeac7ac8523c087d129c4648fdb3a7a2c8dbc9a94931",
+      "sha256": "b12705387207c9736b7bc0bca67b6ca1d5892f93bf81c339a2722dbc03d5a69a",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -2970,7 +2970,7 @@
     {
       "name": "review-all-clear",
       "file": "png/review-all-clear-dark-1440.png",
-      "sha256": "6dbfbd7b795c9fd255ccb2c1551e986e7c38022aa0ceac4debf08e39f5a6ae47",
+      "sha256": "d2fa9c28e99130fd02e45b7c43a6fc1d129717fbd27d9fb80ac91e7782cef341",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -3076,7 +3076,7 @@
     {
       "name": "review-kept",
       "file": "png/review-kept-light-1000.png",
-      "sha256": "9d30d6d62067ca60d61574517499704dbffa38fac369b482425f168108e52222",
+      "sha256": "d64ee3f3067c856c7c6e0eebab12a29c871a50dcd3fbd547e65053b48b973645",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -3182,7 +3182,7 @@
     {
       "name": "review-kept",
       "file": "png/review-kept-light-1280.png",
-      "sha256": "ed48b38329bb090bbaee64eb5e23c19d1b57f7934f56c96ba28abaef8e30bcdd",
+      "sha256": "bc54be62cd511bdae6282a7ad16698ba2f077b9260226e4b969c0e5533c835ef",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -3288,7 +3288,7 @@
     {
       "name": "review-kept",
       "file": "png/review-kept-light-1440.png",
-      "sha256": "f3a37ad6a08ac3f2fe646f6d8db14cf66b91923c99da77e7696e9b4e0952841d",
+      "sha256": "30fb4ad8889be968258ccf50a17c2aa0fb1dae4744b3bd879f66e1d19f258dd3",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -3394,7 +3394,7 @@
     {
       "name": "review-kept",
       "file": "png/review-kept-dark-1000.png",
-      "sha256": "9775da8e240f8efee004f760bcde970d1ad432b6753b6a62dfec72a2fa676a66",
+      "sha256": "bab8cd0ee079dfc80f63ebeb5f69cc1db3d8da691c29dc720da42f771716596c",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -3500,7 +3500,7 @@
     {
       "name": "review-kept",
       "file": "png/review-kept-dark-1280.png",
-      "sha256": "f60049f8a6d8c7424acde195d8bdd248d19561cb44ab5405220dd9b3b45de3a8",
+      "sha256": "4111d07e1fc6c6037eddf16af899580e4d02ab698f2375c88603e1b2ce194bd6",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -3606,7 +3606,7 @@
     {
       "name": "review-kept",
       "file": "png/review-kept-dark-1440.png",
-      "sha256": "b91eaf4a773fa46fa3d6b0e40135864e79e8d24b682e88ebc700b695ba42a2b8",
+      "sha256": "34119bc36031b3a4ffde5b7722c521c48b69f4d159d9244b91c5efb0fb14e635",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -3712,7 +3712,7 @@
     {
       "name": "review-discarded",
       "file": "png/review-discarded-light-1000.png",
-      "sha256": "d2a798d99f25f1a079471b2d4cd8fe3566b78fda653c288dc7f7285be041be0a",
+      "sha256": "f101e0584215df2c9348bc82f283806858ee774757011862048d51d506bf8df2",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -3817,7 +3817,7 @@
     {
       "name": "review-discarded",
       "file": "png/review-discarded-light-1280.png",
-      "sha256": "8516e4788673ec8a229fa4cb7c9dc399ee0f63184aca5f3a332dd3fe1032ef65",
+      "sha256": "6d1042f844f522ea1ab0301474268b4e5cd35cbf5f49ea371f13cf164979f467",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -3922,7 +3922,7 @@
     {
       "name": "review-discarded",
       "file": "png/review-discarded-light-1440.png",
-      "sha256": "2325486406a7733b897f7b1d9fbb55e4916e654a3e9533e5a72cade3f45d6c72",
+      "sha256": "f427b1bd3aead7df6029cf9ddd1701a58420ef369f15ca636d240f2b289a1045",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -4027,7 +4027,7 @@
     {
       "name": "review-discarded",
       "file": "png/review-discarded-dark-1000.png",
-      "sha256": "1039793037e53b029f2848bccf57d26b75f9114ad41452b317364d2b02eeee41",
+      "sha256": "2b67f9f354fd8cf564c64406fb8587f45140f343174df11b4aaa0032c7d4510c",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -4132,7 +4132,7 @@
     {
       "name": "review-discarded",
       "file": "png/review-discarded-dark-1280.png",
-      "sha256": "468d6a2524a8eacc27b8cfd3c545a7c034ca6e7898568b24f441683f9150d6d5",
+      "sha256": "42fadad76b101c3c35b4c782502aa533a6e81df525812ecdfdba85e628306f6d",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -4237,7 +4237,7 @@
     {
       "name": "review-discarded",
       "file": "png/review-discarded-dark-1440.png",
-      "sha256": "2b3bd83965912fcc45d439c9af9850f06c72bebca0d5a36c5929170cb50ade40",
+      "sha256": "b048f7f0ff923ea5e04b1dc283fd9b5d9b23090606c67464297bdf3a27750220",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -4342,7 +4342,7 @@
     {
       "name": "publish-gate-recorded-card-refused",
       "file": "png/publish-gate-recorded-card-refused-light-1000.png",
-      "sha256": "343f1c68ce8b01f330d57e6620b685e98341beba6aaf4969ec0903348ca6e06f",
+      "sha256": "f4af772305d7f4b385ddff71c9cccad1cb9d2f830aa096abf3a077d1a46ed283",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -4435,7 +4435,7 @@
     {
       "name": "publish-gate-recorded-card-refused",
       "file": "png/publish-gate-recorded-card-refused-light-1280.png",
-      "sha256": "983928bd299e0ad72ffb06793a419f1369b48223f45285169072a6e3a8a63b74",
+      "sha256": "21d83fa8cfcaaa548c74f10f19a9b5e16b93b768337e845f536cef3c6f6f1327",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -4528,7 +4528,7 @@
     {
       "name": "publish-gate-recorded-card-refused",
       "file": "png/publish-gate-recorded-card-refused-light-1440.png",
-      "sha256": "adffb17e392a84fe09b999a164b099cff552a810e24b35fa035707055337b4ad",
+      "sha256": "69dcf50c650ba23893cc8519c2b82fb42bbdafb0880c5e33fac4ea59b20a325d",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -4621,7 +4621,7 @@
     {
       "name": "publish-gate-recorded-card-refused",
       "file": "png/publish-gate-recorded-card-refused-dark-1000.png",
-      "sha256": "dfc9131e5447299362080aa45da3de4207cc5d0bbb1c2f15a00b5c6e081f6f19",
+      "sha256": "4f1686350590f121c06adad459cdf1e69806e1e427a1f1c9e6845301ac83a728",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -4714,7 +4714,7 @@
     {
       "name": "publish-gate-recorded-card-refused",
       "file": "png/publish-gate-recorded-card-refused-dark-1280.png",
-      "sha256": "4b12ecbe58f966a3c3eebf831d07d23ad15cb58611408d17ea23ff89ee0e14a8",
+      "sha256": "1f3242fb55fde6a6e85c84a07dfc465d789e3ef652601cfc9f3948e2a9217cf2",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -4807,7 +4807,7 @@
     {
       "name": "publish-gate-recorded-card-refused",
       "file": "png/publish-gate-recorded-card-refused-dark-1440.png",
-      "sha256": "c60f590a2344dfc40e1e71a3649d228d269f40a3119096125325131fff33cef2",
+      "sha256": "d209cd24a6c80b6b0cfb29cf0c4a7729dd977e6627c279b08f72a1e3f2ffb727",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -5542,7 +5542,7 @@
     {
       "name": "jobs-database-banner",
       "file": "png/jobs-database-banner-light-1000.png",
-      "sha256": "de2cbb19edb96aee521a73c3b3dc689e8a586aeab07ab6c83201dce28215d147",
+      "sha256": "b0df1e97f1233a0494dd7d301528df3474b585d95404ab22a25309abd93dd99a",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -5631,7 +5631,7 @@
     {
       "name": "jobs-database-banner",
       "file": "png/jobs-database-banner-light-1280.png",
-      "sha256": "ca71c11dd19984038f3f1c7eab0e54990786f58b2a0b582828fc8828a113d451",
+      "sha256": "3d8a85720c1c692cb06f53493fde7d5a1062028993dc3b19104db6d1392b5d38",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -5720,7 +5720,7 @@
     {
       "name": "jobs-database-banner",
       "file": "png/jobs-database-banner-light-1440.png",
-      "sha256": "c4204e87e3b0937b30d38807efb339dab3b53bec69e2a4c4fa09bc9cf536524c",
+      "sha256": "8a2038b88132f371b38f68aed10a916785c0d62a6d648e663cf6d276b0cff2f2",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -5809,7 +5809,7 @@
     {
       "name": "jobs-database-banner",
       "file": "png/jobs-database-banner-dark-1000.png",
-      "sha256": "bc8c0162477f89ff552ac22e8d42b4d3752db761f8e0e9874c7b3492624bc5f9",
+      "sha256": "e268dbc9f7fb5e37368d1a30ef2f5940f632c82f5c0735b0189b51937acef8f6",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -5898,7 +5898,7 @@
     {
       "name": "jobs-database-banner",
       "file": "png/jobs-database-banner-dark-1280.png",
-      "sha256": "97c49f47284d159abf5094f2dc01c9eba254e150cb5433bf727dfa5d3262fc35",
+      "sha256": "f18c1f4ae6a278782a49353469f977366060e61ea613f9ecbeeb77645510bd7f",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -5987,7 +5987,7 @@
     {
       "name": "jobs-database-banner",
       "file": "png/jobs-database-banner-dark-1440.png",
-      "sha256": "a75677119fe3744f40274c721a04eb56e5e1f860c5c61467156a2b7432993ae3",
+      "sha256": "cac46e9de33fd41f871f40c7e358ba74932e2858d9cb30d805dc9487b6593edb",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -6076,7 +6076,7 @@
     {
       "name": "jobs-credit-banner",
       "file": "png/jobs-credit-banner-light-1000.png",
-      "sha256": "184193d62f70a9b858edaab67ca180b280c178a2c58d686603a7456a9e68c379",
+      "sha256": "06f7c81dbfa83103f864060d6a8d65ef7f699151ad103c273b2bf1f4f21d56dc",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -6165,7 +6165,7 @@
     {
       "name": "jobs-credit-banner",
       "file": "png/jobs-credit-banner-light-1280.png",
-      "sha256": "89fccd22b1b983c9c55ef360da3ee21c8be815183b5a070983cee27d973e9fa7",
+      "sha256": "be4132620863f6dbbe915794f420d42254feef65c5941d68f4516f738fbf319c",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -6254,7 +6254,7 @@
     {
       "name": "jobs-credit-banner",
       "file": "png/jobs-credit-banner-light-1440.png",
-      "sha256": "350980ea5d44b34adf79e942326377b15b6c538a8d967016326a725308d94f7a",
+      "sha256": "0a75e1b219eb0cf64948329dfc6c93c52f01da747e13d50c9a08381c43acc82f",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -6343,7 +6343,7 @@
     {
       "name": "jobs-credit-banner",
       "file": "png/jobs-credit-banner-dark-1000.png",
-      "sha256": "ed11ee48e5f52484ef4d69803677d25f6375be070c64b2648b6d631d90cf2be6",
+      "sha256": "e5086e1d9f714035557f900415384a80bc71ed25adcbcd35e4146b9d82330b43",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -6432,7 +6432,7 @@
     {
       "name": "jobs-credit-banner",
       "file": "png/jobs-credit-banner-dark-1280.png",
-      "sha256": "ed0467a84b9e950ce7922202c61df1522a90ed57cc95889272cfa8fb47ff10ff",
+      "sha256": "b4d12e124277cb61e55e64cffad81a2223f540658f53f41b476f251fdf8edd08",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -6521,7 +6521,7 @@
     {
       "name": "jobs-credit-banner",
       "file": "png/jobs-credit-banner-dark-1440.png",
-      "sha256": "1ba66a0a8d62bce83886bca326e9cf24bea56516d80215a8040b2b04ba54cc95",
+      "sha256": "641a01ff3c7f5a1f02ec17a86c855cf6e3f7c35a140b257f366fffef38a2c2be",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -6610,7 +6610,7 @@
     {
       "name": "publish-gate-not-recorded",
       "file": "png/publish-gate-not-recorded-light-1000.png",
-      "sha256": "cdd863540df09fb7cdd7f7c42b218cf8a143f877174313c10594e7905ed47126",
+      "sha256": "563fc38300c5921f0da43f90dcf8fe4cbc8b8961de36435c94ed4d2cf66d0f21",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -6706,7 +6706,7 @@
     {
       "name": "publish-gate-not-recorded",
       "file": "png/publish-gate-not-recorded-light-1280.png",
-      "sha256": "875311a35359fc090d3bf178915f1e3fa01a95e4e606132525bbf562ea4ec9ea",
+      "sha256": "ec0183e295966eb162307703f8ea4c3d834828ef363187c8bc04f6795911851a",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -6802,7 +6802,7 @@
     {
       "name": "publish-gate-not-recorded",
       "file": "png/publish-gate-not-recorded-light-1440.png",
-      "sha256": "cf45a91bdc4e43f35fcda2ae77efc765462d52c33766d2a1ec59650ab6f28f54",
+      "sha256": "3ec140ddb26d09a40d0579d44925229933876e2b7162ca3939f2c4ffa77f3657",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -6898,7 +6898,7 @@
     {
       "name": "publish-gate-not-recorded",
       "file": "png/publish-gate-not-recorded-dark-1000.png",
-      "sha256": "83f06dcd96cf17f47e37f4f14e78b8fcffe74b98e6360b7ec9c9741cfed5382f",
+      "sha256": "ec10a65806950468443065dff01c70294f61a0d4cb2901b093c90b39f6f2f1c6",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -6994,7 +6994,7 @@
     {
       "name": "publish-gate-not-recorded",
       "file": "png/publish-gate-not-recorded-dark-1280.png",
-      "sha256": "ee3942d8ad295cc92d27523e3a086139b490e440026dc249fd90c1e6a40ff1ea",
+      "sha256": "c6c8cb0d4cea697bf4646bb5dc92e0655a4845b8bd9be08922402eef3799ffbc",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -7090,7 +7090,7 @@
     {
       "name": "publish-gate-not-recorded",
       "file": "png/publish-gate-not-recorded-dark-1440.png",
-      "sha256": "f4d37a00efb68b63e4dcc9228021ac04022aa8d7dbfea396393ef171a52d6b31",
+      "sha256": "242d6aa9c2fd932a26adf6a09206df5301ce759c18953016d54e06b3dec7bf7c",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -7828,7 +7828,7 @@
     {
       "name": "publish-after-unpublish",
       "file": "png/publish-after-unpublish-light-1000.png",
-      "sha256": "40601c6a0e539ea46f72df6843ababc032ef8768bbe4772f299276740297f39e",
+      "sha256": "f4a39883fdb5ed1ea6c5c505c0e3426e03266c2b0ddf29e252bf4336f4cd207e",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -7921,7 +7921,7 @@
     {
       "name": "publish-after-unpublish",
       "file": "png/publish-after-unpublish-light-1280.png",
-      "sha256": "28fc575d1c571c71aa31799168e68b707a8aa8e57d487ebe457cb91314ad378e",
+      "sha256": "ed5962cd21fc0878c68cf915c0e51ea700b968ba4a77d308cef84674ba9cbce5",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -8014,7 +8014,7 @@
     {
       "name": "publish-after-unpublish",
       "file": "png/publish-after-unpublish-light-1440.png",
-      "sha256": "4e3d96e9efdd1ee5b3f283063df67fa777ec20c7230ef397931489af462a247d",
+      "sha256": "f5813a2d1e33fa5eef2ed45e42cac4413e0a220aacd48c94958f08bc662b5fa8",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -8107,7 +8107,7 @@
     {
       "name": "publish-after-unpublish",
       "file": "png/publish-after-unpublish-dark-1000.png",
-      "sha256": "ee4d3dac18d3e9d268a8565d962991688dc0ee0678fbee43987b5dfc682b3880",
+      "sha256": "3b5179c17a3a093c7dcfa7c7e5dbddfbd0b1664ff54aeb4fa17df569aa2064cd",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -8200,7 +8200,7 @@
     {
       "name": "publish-after-unpublish",
       "file": "png/publish-after-unpublish-dark-1280.png",
-      "sha256": "5612237c65f238d9d31df1753c89ad85486059c1cb69f94863c3ad630b03537c",
+      "sha256": "a75f38541d4b5f20d67866fb85f8f806a33b91304a60ab0a2f6a6f1de43b5d73",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -8293,7 +8293,7 @@
     {
       "name": "publish-after-unpublish",
       "file": "png/publish-after-unpublish-dark-1440.png",
-      "sha256": "cb3d1012352d67f0b43e7240f2fa75f7d62cabe5fd5f3c68cc0a7ebbc85007f5",
+      "sha256": "d6ca84e726305f97baada2a021362604b6881a9ec57b302ec2b164c71e4a267d",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -12940,7 +12940,7 @@
     {
       "name": "live-r2-confirm",
       "file": "png/live-r2-confirm-light-1000.png",
-      "sha256": "24293f5eb4d1a3e09e92f5367e848ca051151e252a9fc8f2b0b7e5c8d6752b33",
+      "sha256": "6eb6fc253dafd3e8e36158aed4575ec8daf9a76664b7adffbdc432570085980e",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -13036,7 +13036,7 @@
     {
       "name": "live-r2-confirm",
       "file": "png/live-r2-confirm-light-1280.png",
-      "sha256": "410e3a9110ca6ebfe46e836dd3211f180f0d343a47c4c802cdcf52e3caba9416",
+      "sha256": "6fc7935d536eae423e0aec7b68c1e4b0aa3f9c331e599731dae986d0674872a6",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -13132,7 +13132,7 @@
     {
       "name": "live-r2-confirm",
       "file": "png/live-r2-confirm-light-1440.png",
-      "sha256": "227e9966f0b24b22085f2f3bd6a10b03eb5af816714b2ed519e033f6b5fcf1d4",
+      "sha256": "ec7b628486fe4a930331515a6ad661ab8a345afa848fcb54244899ea113a6dc0",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -13228,7 +13228,7 @@
     {
       "name": "live-r2-confirm",
       "file": "png/live-r2-confirm-dark-1000.png",
-      "sha256": "9c6bd83e8995b15228f49290c00cc64745958225891254f5d4cec7904005ecd4",
+      "sha256": "34aeb56d4feb98332b61db9e1ad17279338baed470ea8ec08bbcc82b73eb2024",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -13324,7 +13324,7 @@
     {
       "name": "live-r2-confirm",
       "file": "png/live-r2-confirm-dark-1280.png",
-      "sha256": "93c1642540f2ba6d9887c2dc71d6438dd2dc1a7fcdefe751fc4ebf689c8d2e5a",
+      "sha256": "58bc762b3ce6a2f8591484b223db6357e65e8e9eeeb37231209157b6a2c16daa",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -13420,7 +13420,7 @@
     {
       "name": "live-r2-confirm",
       "file": "png/live-r2-confirm-dark-1440.png",
-      "sha256": "9db93241b0c97a9e89e69eca65a6d31a60080349a97d9237dd0dbbccac352b82",
+      "sha256": "ae404be98364a0fd1c32b531b22a942d12e5bb2c569f5f5573dd11c0900a4724",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -13516,7 +13516,7 @@
     {
       "name": "live-storage-refused",
       "file": "png/live-storage-refused-light-1000.png",
-      "sha256": "e0f24c83a62d12f0e6fcceb5f19df0aea48866f3b788b2d01c6fe0dffc110c58",
+      "sha256": "2c02f219f68e3e194a931cbab6179fba2cee806c4261284aba98fbde79519d2a",
       "theme": "light",
       "width": 1000,
       "scrollWidth": 1000,
@@ -13612,7 +13612,7 @@
     {
       "name": "live-storage-refused",
       "file": "png/live-storage-refused-light-1280.png",
-      "sha256": "341b796304e1a1e6967278acdd7a41f462600246648332201b648bbfb6f80a70",
+      "sha256": "ff0a618f585e1ff38cde21ac07d60ea8818e54b6d725d0de5da98a14dc43cf75",
       "theme": "light",
       "width": 1280,
       "scrollWidth": 1280,
@@ -13708,7 +13708,7 @@
     {
       "name": "live-storage-refused",
       "file": "png/live-storage-refused-light-1440.png",
-      "sha256": "32b8282b0d4ed9aea37fb839bc2fa89930c014b237e06631cb4af981a97aefa3",
+      "sha256": "a1f2bcced60a5fd73baa7472f94c1ddabfe28e99336b0b9f8df4fee6186b2b1f",
       "theme": "light",
       "width": 1440,
       "scrollWidth": 1440,
@@ -13804,7 +13804,7 @@
     {
       "name": "live-storage-refused",
       "file": "png/live-storage-refused-dark-1000.png",
-      "sha256": "82befe462f0397726b2d0fd030b533a9187cda70cdf9aec5d5db0c7f010fa859",
+      "sha256": "0d1ac7d01a09b277a8f72dfea861be7ac42ab941547134e45bfb66a0bf1dd9ec",
       "theme": "dark",
       "width": 1000,
       "scrollWidth": 1000,
@@ -13900,7 +13900,7 @@
     {
       "name": "live-storage-refused",
       "file": "png/live-storage-refused-dark-1280.png",
-      "sha256": "232eb0336b4244bdd195eafdc7967d353346f1c09edd5bcb2fa4f9c2fb92a0c3",
+      "sha256": "fd162a74b39f2b0ff465fe24560fb5c6d10631fdc82ccc6d0a59c5e22320b9b1",
       "theme": "dark",
       "width": 1280,
       "scrollWidth": 1280,
@@ -13996,7 +13996,7 @@
     {
       "name": "live-storage-refused",
       "file": "png/live-storage-refused-dark-1440.png",
-      "sha256": "7879fa57e9abedbd4bb11c46e592164dde0527d4aa6f118646e4a61ac0f5ec6e",
+      "sha256": "b3e2f1c0f3621ca9b5db8d8fee6859670c20e8bbd32ba369bb4ed11c639d358c",
       "theme": "dark",
       "width": 1440,
       "scrollWidth": 1440,
@@ -14612,12 +14612,12 @@
     "Jobs screenshots use STUDIO_ADMIN_FREEZE=1 so a visible poll does not move seeded in-flight rows. The flow server does not set it, so compose → poll → download runs.",
     "bind off loopback refused: The Studio admin binds to 127.0.0.1 only",
     "budget reason visible",
-    "composed job d24e1cea-4ff0-4133-8085-b61656dcf7dd",
-    "unpublished 4da52884-f6f4-4916-8506-aafb0989b327",
+    "composed job e31b94f0-c888-4ee3-b8f6-e0368a1b40d5",
+    "unpublished d0f1a3a5-84cc-4070-8f7b-0a6326960ce3",
     "live switch left transport=stub",
     "live database at 127.0.0.1:1 shows the paused banner",
-    "live publish refused for 81f4084e-3dd5-4e8e-b7c3-a2f85e0a40e0; the clip stayed kept",
-    "import flow 4a3cfa0c-ee02-44d2-ae00-3ac404d2679f published and withdrawn",
+    "live publish refused for ab7d6c54-a4dd-4dd3-84be-b7f5a99ea6e6; the clip stayed kept",
+    "import flow 0f954724-06f9-41d0-9205-8e6159a97b3a published and withdrawn",
     "still over 20 MB and clip over 100 MB name themselves; a missing confirm says to choose the file again",
     "headed Chrome chose a 100,000,001-byte clip and a 20,000,001-byte still through the file input",
     "security failures 0"
@@ -14665,7 +14665,7 @@
     },
     {
       "method": "POST",
-      "path": "/api/jobs/d24e1cea-4ff0-4133-8085-b61656dcf7dd/download",
+      "path": "/api/jobs/e31b94f0-c888-4ee3-b8f6-e0368a1b40d5/download",
       "status": 200
     },
     {
@@ -14680,17 +14680,17 @@
     },
     {
       "method": "GET",
-      "path": "/api/review/d24e1cea-4ff0-4133-8085-b61656dcf7dd",
+      "path": "/api/review/e31b94f0-c888-4ee3-b8f6-e0368a1b40d5",
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/review/d24e1cea-4ff0-4133-8085-b61656dcf7dd/keep",
+      "path": "/api/review/e31b94f0-c888-4ee3-b8f6-e0368a1b40d5/keep",
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/review/d24e1cea-4ff0-4133-8085-b61656dcf7dd",
+      "path": "/api/review/e31b94f0-c888-4ee3-b8f6-e0368a1b40d5",
       "status": 200
     },
     {
@@ -14700,12 +14700,12 @@
     },
     {
       "method": "GET",
-      "path": "/api/publish/d24e1cea-4ff0-4133-8085-b61656dcf7dd",
+      "path": "/api/publish/e31b94f0-c888-4ee3-b8f6-e0368a1b40d5",
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/publish/4da52884-f6f4-4916-8506-aafb0989b327",
+      "path": "/api/publish/d0f1a3a5-84cc-4070-8f7b-0a6326960ce3",
       "status": 200
     },
     {
@@ -14715,17 +14715,17 @@
     },
     {
       "method": "GET",
-      "path": "/api/publish/4da52884-f6f4-4916-8506-aafb0989b327",
+      "path": "/api/publish/d0f1a3a5-84cc-4070-8f7b-0a6326960ce3",
       "status": 200
     },
     {
       "method": "GET",
-      "path": "/api/publish/4da52884-f6f4-4916-8506-aafb0989b327",
+      "path": "/api/publish/d0f1a3a5-84cc-4070-8f7b-0a6326960ce3",
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/publish/4da52884-f6f4-4916-8506-aafb0989b327/go",
+      "path": "/api/publish/d0f1a3a5-84cc-4070-8f7b-0a6326960ce3/go",
       "status": 200
     },
     {
@@ -14740,12 +14740,12 @@
     },
     {
       "method": "GET",
-      "path": "/api/publish/4da52884-f6f4-4916-8506-aafb0989b327",
+      "path": "/api/publish/d0f1a3a5-84cc-4070-8f7b-0a6326960ce3",
       "status": 200
     },
     {
       "method": "POST",
-      "path": "/api/publish/4da52884-f6f4-4916-8506-aafb0989b327/unpublish",
+      "path": "/api/publish/d0f1a3a5-84cc-4070-8f7b-0a6326960ce3/unpublish",
       "status": 200
     },
     {
@@ -14760,7 +14760,7 @@
     },
     {
       "method": "GET",
-      "path": "/api/publish/4da52884-f6f4-4916-8506-aafb0989b327",
+      "path": "/api/publish/d0f1a3a5-84cc-4070-8f7b-0a6326960ce3",
       "status": 200
     }
   ],

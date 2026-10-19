@@ -1,4 +1,4 @@
-import { existsSync, mkdtempSync, readFileSync, readdirSync, symlinkSync, utimesSync, writeFileSync } from 'node:fs'
+import { existsSync, lstatSync, mkdtempSync, readFileSync, readdirSync, rmSync, symlinkSync, utimesSync, writeFileSync } from 'node:fs'
 import { request as httpRequest, type IncomingHttpHeaders } from 'node:http'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
@@ -487,6 +487,117 @@ describe('import screen', () => {
       expect(JSON.parse(refused.body)).toEqual({ outcome: 'refused' })
     }
     expect(readdirSync(incomingDir)).toEqual([`${keeper.id}.mp4`])
+  })
+
+  it('refuses a symlink in incoming and leaves its target', async () => {
+    const env = folders()
+    const admin = await startAdmin({ env, port: 0 })
+    servers.push(admin)
+    const cookie = await cookieFor(admin)
+    const headers = { cookie, origin: admin.origin, 'content-type': 'application/json' }
+    const mediaDir = env.STUDIO_MEDIA_DIR
+    if (!mediaDir) throw new Error('media dir')
+    const sentinel = path.join(mediaDir, 'downloaded-sentinel.mp4')
+    writeFileSync(sentinel, syntheticMp4())
+    const plant = async () => {
+      const clip = JSON.parse((await ask(admin, {
+        path: '/api/import/clip',
+        method: 'POST',
+        headers: { cookie, origin: admin.origin, 'content-type': 'video/mp4' },
+        body: Buffer.from(syntheticMp4()),
+      })).body) as { id: string }
+      const still = JSON.parse((await ask(admin, {
+        path: '/api/import/still',
+        method: 'POST',
+        headers: { cookie, origin: admin.origin, 'content-type': 'image/jpeg' },
+        body: Buffer.from(minimalJpeg),
+      })).body) as { id: string }
+      const link = path.join(mediaDir, 'incoming', `${clip.id}.mp4`)
+      rmSync(link)
+      symlinkSync(sentinel, link)
+      return { clipId: clip.id, stillId: still.id, link }
+    }
+    const discarded = await plant()
+    const discard = JSON.parse((await ask(admin, {
+      path: '/api/import/discard',
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ id: discarded.clipId, kind: 'clip' }),
+    })).body) as { outcome: string }
+    expect(discard.outcome).toBe('refused')
+    expect(readFileSync(sentinel).equals(syntheticMp4())).toBe(true)
+    expect(lstatSync(discarded.link).isSymbolicLink()).toBe(true)
+    const previewed = await plant()
+    const preview = JSON.parse((await ask(admin, {
+      path: '/api/import/preview',
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ clipId: previewed.clipId, stillId: previewed.stillId }),
+    })).body) as { outcome: string }
+    expect(preview.outcome).toBe('refused')
+    expect(preview.outcome).not.toBe('preview')
+    expect(readFileSync(sentinel).equals(syntheticMp4())).toBe(true)
+    expect(lstatSync(previewed.link).isSymbolicLink()).toBe(true)
+    const confirmed = await plant()
+    const confirmedBody = JSON.parse((await ask(admin, {
+      path: '/api/import/confirm',
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        clipId: confirmed.clipId,
+        stillId: confirmed.stillId,
+        prompt: 'a fictional cat',
+        subjects: ['Fenway'],
+        title: 'Fenway',
+      }),
+    })).body) as { outcome: string }
+    expect(confirmedBody.outcome).toBe('refused')
+    expect(confirmedBody.outcome).not.toBe('imported')
+    expect(readFileSync(sentinel).equals(syntheticMp4())).toBe(true)
+    expect(lstatSync(confirmed.link).isSymbolicLink()).toBe(true)
+  })
+
+  it('refuses every import route when incoming is a symlink', async () => {
+    const env = folders()
+    const admin = await startAdmin({ env, port: 0 })
+    servers.push(admin)
+    const cookie = await cookieFor(admin)
+    const headers = { cookie, origin: admin.origin, 'content-type': 'application/json' }
+    const mediaDir = env.STUDIO_MEDIA_DIR
+    if (!mediaDir) throw new Error('media dir')
+    const outside = mkdtempSync(path.join(tmpdir(), 'kickoff-studio-outside-'))
+    const keep = path.join(outside, 'keep.txt')
+    writeFileSync(keep, 'stay')
+    const incomingDir = path.join(mediaDir, 'incoming')
+    if (existsSync(incomingDir)) rmSync(incomingDir, { recursive: true })
+    symlinkSync(outside, incomingDir)
+    const before = readdirSync(outside)
+    const stored = JSON.parse((await ask(admin, {
+      path: '/api/import/clip',
+      method: 'POST',
+      headers: { cookie, origin: admin.origin, 'content-type': 'video/mp4' },
+      body: Buffer.from(syntheticMp4()),
+    })).body) as { outcome?: string; id?: string }
+    expect(stored.outcome).toBe('uploads-folder')
+    expect(stored.id).toBeUndefined()
+    expect(statusLine(stored)).toBe(DRAFT.uploadsFolder)
+    const id = 'a'.repeat(32)
+    for (const [route, body] of [
+      ['/api/import/preview', { clipId: id, stillId: id }],
+      ['/api/import/confirm', { clipId: id, stillId: id, prompt: 'p', subjects: ['Fenway'], title: 'Fenway' }],
+      ['/api/import/discard', { id, kind: 'clip' }],
+    ] as const) {
+      const refused = JSON.parse((await ask(admin, {
+        path: route,
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body),
+      })).body) as { outcome: string }
+      expect(refused.outcome).toBe('uploads-folder')
+      expect(statusLine(refused)).toBe('Unavailable: the uploads folder is not a plain folder on this Mac.')
+    }
+    expect(readdirSync(outside)).toEqual(before)
+    expect(readFileSync(keep, 'utf8')).toBe('stay')
   })
 
   it('leaves an outside folder alone when incoming is a symlink to it', async () => {
