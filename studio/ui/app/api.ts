@@ -35,8 +35,9 @@ export async function downloadJob(id: string): Promise<void> {
   await postJson(`/api/jobs/${id}/download`)
 }
 
-export async function regenerateJob(id: string, confirmEstimate: string): Promise<void> {
-  await postJson(`/api/jobs/${id}/regenerate`, { confirmEstimate })
+export async function regenerateJob(id: string, confirmEstimate: string): Promise<unknown> {
+  const response = await postJson(`/api/jobs/${id}/regenerate`, { confirmEstimate })
+  return await response.json() as unknown
 }
 
 export type ComposeCatalog = {
@@ -117,16 +118,19 @@ export async function getReview(id: string): Promise<ReviewView> {
   return await response.json() as ReviewView
 }
 
-export async function keepReview(id: string, answers: { line: string; answer: string }[]): Promise<void> {
-  await postJson(`/api/review/${id}/keep`, { answers })
+export async function keepReview(id: string, answers: { line: string; answer: string }[]): Promise<unknown> {
+  const response = await postJson(`/api/review/${id}/keep`, { answers })
+  return await response.json() as unknown
 }
 
-export async function discardReview(id: string): Promise<void> {
-  await postJson(`/api/review/${id}/discard`, {})
+export async function discardReview(id: string): Promise<unknown> {
+  const response = await postJson(`/api/review/${id}/discard`, {})
+  return await response.json() as unknown
 }
 
-export async function regenerateReview(id: string, confirmEstimate: string): Promise<void> {
-  await postJson(`/api/review/${id}/regenerate`, { confirmEstimate })
+export async function regenerateReview(id: string, confirmEstimate: string): Promise<unknown> {
+  const response = await postJson(`/api/review/${id}/regenerate`, { confirmEstimate })
+  return await response.json() as unknown
 }
 
 export type PublishView = {
@@ -145,8 +149,9 @@ export async function getPublish(id: string, publicId: string): Promise<PublishV
   return await response.json() as PublishView
 }
 
-export async function recordGate(body: { answer: string; disclosure: string; recordedBy: string; source: string }): Promise<void> {
-  await postJson('/api/gate', body)
+export async function recordGate(body: { answer: string; disclosure: string; recordedBy: string; source: string }): Promise<unknown> {
+  const response = await postJson('/api/gate', body)
+  return await response.json() as unknown
 }
 
 export async function publishClip(id: string, body: { publicId: string; title: string; position: number; confirm: true }): Promise<unknown> {
@@ -154,16 +159,19 @@ export async function publishClip(id: string, body: { publicId: string; title: s
   return await response.json() as unknown
 }
 
-export async function unpublishClip(id: string, deleteFiles: boolean): Promise<void> {
-  await postJson(`/api/publish/${id}/unpublish`, { deleteFiles })
+export async function unpublishClip(id: string, deleteFiles: boolean): Promise<unknown> {
+  const response = await postJson(`/api/publish/${id}/unpublish`, { deleteFiles })
+  return await response.json() as unknown
 }
 
-export async function retryDelete(id: string): Promise<void> {
-  await postJson(`/api/publish/${id}/retry-delete`, {})
+export async function retryDelete(id: string): Promise<unknown> {
+  const response = await postJson(`/api/publish/${id}/retry-delete`, {})
+  return await response.json() as unknown
 }
 
-export async function retryRemoval(id: string): Promise<void> {
-  await postJson(`/api/publish/${id}/retry-removal`, {})
+export async function retryRemoval(id: string): Promise<unknown> {
+  const response = await postJson(`/api/publish/${id}/retry-removal`, {})
+  return await response.json() as unknown
 }
 
 export async function uploadPhoto(bytes: ArrayBuffer): Promise<{ id: string; sha256: string }> {

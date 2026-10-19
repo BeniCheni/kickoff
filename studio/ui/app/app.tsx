@@ -38,16 +38,12 @@ export function App() {
     return () => window.removeEventListener('hashchange', onHash)
   }, [])
 
+  function refreshShell() {
+    getShell().then(setShell).catch(() => setFailed(true))
+  }
+
   useEffect(() => {
-    let gone = false
-    getShell().then((next) => {
-      if (!gone) setShell(next)
-    }).catch(() => {
-      if (!gone) setFailed(true)
-    })
-    return () => {
-      gone = true
-    }
+    refreshShell()
   }, [])
 
   if (failed) return <p className="studio-help" role="alert">The Studio admin refused this request.</p>
@@ -63,7 +59,7 @@ export function App() {
       }}
       onTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
     >
-      {tab === 'jobs' ? <JobsPage shell={shell} /> : tab === 'compose' ? <ComposePage shell={shell} /> : tab === 'review' ? <ReviewPage shell={shell} /> : tab === 'publish' ? <PublishPage shell={shell} /> : <h1>{TAB_LABELS[tab]}</h1>}
+      {tab === 'jobs' ? <JobsPage shell={shell} onShell={refreshShell} /> : tab === 'compose' ? <ComposePage shell={shell} onShell={refreshShell} /> : tab === 'review' ? <ReviewPage shell={shell} onShell={refreshShell} /> : tab === 'publish' ? <PublishPage shell={shell} onShell={refreshShell} /> : <h1>{TAB_LABELS[tab]}</h1>}
     </StudioShell>
   )
 }

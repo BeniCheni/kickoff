@@ -14,7 +14,9 @@ import {
 } from '../../shared/jobs.ts'
 import { DRAFT } from '../../shared/admin-copy.ts'
 import type { ShellView } from '../../shared/types.ts'
+import { statusLine } from '../../shared/status.ts'
 import { downloadJob, getJobs, pollJobs, regenerateJob } from './api.ts'
+import { StatusLine } from './status.tsx'
 
 function billedText(row: JobView): { text: string; pending: boolean } {
   if (row.billed.kind === 'unknown') return { text: 'unknown', pending: false }
@@ -101,9 +103,10 @@ export function JobsTable({
   )
 }
 
-export function JobsPage({ shell }: { shell: ShellView }) {
+export function JobsPage({ shell, onShell }: { shell: ShellView; onShell: () => void }) {
   const [rows, setRows] = useState<JobView[] | null>(null)
   const [failed, setFailed] = useState(false)
+  const [notice, setNotice] = useState<unknown>(null)
 
   useEffect(() => {
     let gone = false
@@ -154,8 +157,10 @@ export function JobsPage({ shell }: { shell: ShellView }) {
   }
 
   async function onRegenerate(row: JobView) {
-    if (!row.regenerateEstimateUsd) return
-    await regenerateJob(row.id, row.regenerateEstimateUsd)
+    if (!row.regenerateEstimateUsd || !shell.falConfigured) return
+    const result = await regenerateJob(row.id, row.regenerateEstimateUsd)
+    setNotice(statusLine(result))
+    onShell()
     setRows(await getJobs())
   }
 
@@ -164,6 +169,7 @@ export function JobsPage({ shell }: { shell: ShellView }) {
   return (
     <>
       {shell.falConfigured ? null : <p className="studio-help" role="status">{DRAFT.falKey}</p>}
+      <StatusLine body={notice} />
       <JobsTable rows={rows} regenerateBlocked={!shell.falConfigured} onDownload={(id) => void onDownload(id)} onRegenerate={(row) => void onRegenerate(row)} />
     </>
   )

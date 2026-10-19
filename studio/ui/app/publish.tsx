@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { COPY } from '../../copy.ts'
 import { DRAFT, STORAGE_REFUSAL } from '../../shared/admin-copy.ts'
+import { publishFieldsReady } from '../../shared/status.ts'
 import type { ShellView } from '../../shared/types.ts'
+import { StatusLine } from './status.tsx'
 import type { JobView } from '../../shared/jobs.ts'
 import { getJobs, getPublish, publishClip, recordGate, retryDelete, retryRemoval, unpublishClip, type PublishView } from './api.ts'
 
@@ -27,6 +29,7 @@ export function PublishCard({
   onRetryDelete,
   onRetryRemoval,
   confirm,
+  notice = null,
 }: {
   view: PublishView
   publicId: string
@@ -49,8 +52,9 @@ export function PublishCard({
   onRetryDelete: () => void
   onRetryRemoval: () => void
   confirm: string
+  notice?: unknown
 }) {
-  const blocked = !view.gateRecorded || view.refusals.length > 0 || view.status !== 'kept'
+  const blocked = !view.gateRecorded || view.refusals.length > 0 || view.status !== 'kept' || !publishFieldsReady(publicId, title, position)
   return (
     <div className="studio-grid">
       <div>
@@ -100,6 +104,7 @@ export function PublishCard({
         <span className="label-caps">Confirm</span>
         <p className="studio-help">{confirm}</p>
         <button type="button" className="studio-primary" disabled={blocked} onClick={onPublish}>Publish</button>
+        <StatusLine body={notice} />
         {view.gateReason ? <p className="studio-help" role="status">{view.gateReason}</p> : null}
         {view.status === 'published' ? (
           <>
@@ -119,7 +124,7 @@ export function PublishCard({
   )
 }
 
-export function PublishPage({ shell }: { shell: ShellView }) {
+export function PublishPage({ shell, onShell }: { shell: ShellView; onShell: () => void }) {
   const [jobs, setJobs] = useState<JobView[] | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
   const [view, setView] = useState<PublishView | null>(null)
@@ -130,6 +135,7 @@ export function PublishPage({ shell }: { shell: ShellView }) {
   const [gateDisclosure, setGateDisclosure] = useState('')
   const [gateBy, setGateBy] = useState('')
   const [gateSource, setGateSource] = useState('')
+  const [notice, setNotice] = useState<unknown>(null)
 
   function reloadClip(id: string, nextPublicId: string) {
     void getJobs().then((rows) => {
@@ -183,17 +189,29 @@ export function PublishPage({ shell }: { shell: ShellView }) {
         disclosure: gateDisclosure,
         recordedBy: gateBy,
         source: gateSource,
-      }).then(() => getPublish(selected, publicId).then(setView))}
+      }).then((result) => {
+        setNotice(result)
+        return getPublish(selected, publicId).then(setView)
+      })}
       onPublish={() => void publishClip(selected, {
         publicId,
         title,
         position: Number(position),
         confirm: true,
-      }).then(() => reloadClip(selected, publicId))}
-      onUnpublish={() => void unpublishClip(selected, false).then(() => reloadClip(selected, publicId))}
-      onRetryDelete={() => void retryDelete(selected)}
-      onRetryRemoval={() => void retryRemoval(selected)}
+      }).then((result) => {
+        setNotice(result)
+        onShell()
+        return reloadClip(selected, publicId)
+      })}
+      onUnpublish={() => void unpublishClip(selected, false).then((result) => {
+        setNotice(result)
+        onShell()
+        return reloadClip(selected, publicId)
+      })}
+      onRetryDelete={() => void retryDelete(selected).then(setNotice)}
+      onRetryRemoval={() => void retryRemoval(selected).then(setNotice)}
       confirm={shell.storage === 'refused' ? STORAGE_REFUSAL : DRAFT.publishConfirm}
+      notice={notice}
     />
     </>
   )

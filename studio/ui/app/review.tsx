@@ -4,6 +4,7 @@ import type { ShellView } from '../../shared/types.ts'
 import { regenerateLabel } from '../../shared/jobs.ts'
 import { CHECKLIST, CHECKLIST_RULE, PLAYER_HELP, keepReason } from '../../shared/review.ts'
 import { discardReview, getJobs, getReview, keepReview, regenerateReview, type ReviewView } from './api.ts'
+import { StatusLine } from './status.tsx'
 import type { JobView } from '../../shared/jobs.ts'
 
 const ANSWERS = ['clear', 'present', 'unsure'] as const
@@ -47,11 +48,12 @@ export function ReviewChecklist({
   )
 }
 
-export function ReviewPage({ shell }: { shell: ShellView }) {
+export function ReviewPage({ shell, onShell }: { shell: ShellView; onShell: () => void }) {
   const [jobs, setJobs] = useState<JobView[] | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
   const [review, setReview] = useState<ReviewView | null>(null)
   const [answers, setAnswers] = useState<Record<string, string>>({})
+  const [notice, setNotice] = useState<unknown>(null)
 
   useEffect(() => {
     void getJobs().then((rows) => {
@@ -106,18 +108,29 @@ export function ReviewPage({ shell }: { shell: ShellView }) {
           <p className="studio-help">{(review.parents ?? []).length === 0 ? 'First generation; no parent.' : `Regeneration of ${(review.parents ?? []).join(', ')}.`}</p>
           {shell.falConfigured ? null : <p className="studio-help" role="status">{DRAFT.falKey}</p>}
           {review.regenerateEstimateUsd ? (
-            <button type="button" className="studio-button" disabled={!shell.falConfigured} onClick={() => void regenerateReview(selected, review.regenerateEstimateUsd ?? '').then(() => getJobs())}>
+            <button type="button" className="studio-button" disabled={!shell.falConfigured} onClick={() => void regenerateReview(selected, review.regenerateEstimateUsd ?? '').then((result) => {
+              setNotice(result)
+              onShell()
+              return getJobs()
+            })}>
               {regenerateLabel(review.regenerateEstimateUsd)}
             </button>
           ) : null}
+          <StatusLine body={notice} />
         </section>
       </div>
       <div>
         <ReviewChecklist
           answers={answers}
           onAnswer={(line, answer) => setAnswers({ ...answers, [line]: answer })}
-          onKeep={() => void keepReview(selected, CHECKLIST.map((item) => ({ line: item.line, answer: answers[item.line] ?? '' }))).then(() => getReview(selected).then(setReview))}
-          onDiscard={() => void discardReview(selected).then(() => getReview(selected).then(setReview))}
+          onKeep={() => void keepReview(selected, CHECKLIST.map((item) => ({ line: item.line, answer: answers[item.line] ?? '' }))).then((result) => {
+            setNotice(result)
+            return getReview(selected).then(setReview)
+          })}
+          onDiscard={() => void discardReview(selected).then((result) => {
+            setNotice(result)
+            return getReview(selected).then(setReview)
+          })}
         />
         <div className="studio-card">
           <span className="label-caps">Attestation, written at Keep</span>

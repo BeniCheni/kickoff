@@ -12,7 +12,9 @@ import {
 import { displayUsd } from '../../shared/display.ts'
 import { cmpUsd } from '../../money.ts'
 import type { ShellView } from '../../shared/types.ts'
+import { statusLine } from '../../shared/status.ts'
 import { estimateJobs, getCompose, submitJobs, uploadPhoto, type ComposeCatalog, type EstimateLine } from './api.ts'
+import { StatusLine } from './status.tsx'
 
 const CANVAS_HELP = '16:10 is what every H3 image-to-video clip so far measures (Appendix S; that appendix’s other models and aspects are not this series). 16:9 is UNVERIFIED (H3 takes its canvas from the input image). The verification run, decided 8 Oct: crop the existing K0 to 768 × 432 locally (free), one 5 s 480P clip ($0.075), pass if ffprobe reports a 16:9 frame. Pass flips this default to 16:9; fail closes the question at 16:10 with the bars.'
 
@@ -49,6 +51,7 @@ export function ComposeForm({
   onEstimate,
   onSubmit,
   onChoosePhoto,
+  notice,
 }: {
   catalog: ComposeCatalog
   shell: ShellView
@@ -58,6 +61,7 @@ export function ComposeForm({
   onEstimate: () => void
   onSubmit: () => void
   onChoosePhoto?: (file: File) => void
+  notice?: unknown
 }) {
   const jobs = composeJobs(draft)
   const priced = lines.flatMap((line) => line.outcome === 'estimate' ? [line.usd] : [])
@@ -219,6 +223,7 @@ export function ComposeForm({
         shell={shell}
         block={block}
         onSubmit={onSubmit}
+        notice={notice}
       />
     </div>
   )
@@ -243,6 +248,7 @@ function EstimateCard({
   shell,
   block,
   onSubmit,
+  notice,
 }: {
   jobs: readonly ComposeJob[]
   lines: readonly EstimateLine[]
@@ -254,6 +260,7 @@ function EstimateCard({
   shell: ShellView
   block: string | null
   onSubmit: () => void
+  notice?: unknown
 }) {
   return (
     <div>
@@ -298,6 +305,7 @@ function EstimateCard({
           {block ? 'Submit' : `Submit ${jobs.length} jobs · est. ${displayUsd(total)}`}
         </button>
         {block ? <p className="studio-help" role="status">{block}</p> : null}
+        <StatusLine body={notice} />
       </div>
     </div>
   )
@@ -322,10 +330,11 @@ const EMPTY: ComposeDraft = {
   expansion: 'off',
 }
 
-export function ComposePage({ shell }: { shell: ShellView }) {
+export function ComposePage({ shell, onShell }: { shell: ShellView; onShell: () => void }) {
   const [catalog, setCatalog] = useState<ComposeCatalog | null>(null)
   const [draft, setDraft] = useState<ComposeDraft>(EMPTY)
   const [lines, setLines] = useState<EstimateLine[]>([])
+  const [notice, setNotice] = useState<unknown>(null)
 
   useEffect(() => {
     void getCompose().then(setCatalog).catch(() => setCatalog(null))
@@ -352,7 +361,7 @@ export function ComposePage({ shell }: { shell: ShellView }) {
     const estimate = await estimateJobs(built.map((job) => ({ endpoint: job.endpoint, params: job.params })))
     setLines(estimate.lines)
     if (estimate.overBudget || estimate.unpriced) return
-    await submitJobs({
+    const result = await submitJobs({
       confirmTotalUsd: estimate.totalUsd,
       jobs: built.map((job) => ({
         endpoint: job.endpoint,
@@ -363,6 +372,10 @@ export function ComposePage({ shell }: { shell: ShellView }) {
         subjectId: job.subjectId,
       })),
     })
+    const line = statusLine(result)
+    setNotice(line)
+    onShell()
+    if (line) return
     setDraft({ ...draft, prompts: { k0: '', k1: '', k2: '' }, motion: '' })
     setLines([])
   }
@@ -382,6 +395,7 @@ export function ComposePage({ shell }: { shell: ShellView }) {
         onEstimate={() => void refreshEstimate()}
         onSubmit={() => void onSubmit()}
         onChoosePhoto={(file) => void onPhoto(file)}
+        notice={notice}
       />
     </>
   )
