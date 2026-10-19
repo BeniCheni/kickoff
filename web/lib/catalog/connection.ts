@@ -29,6 +29,11 @@ export function connectionOptions(url: string): CatalogConnection {
     throw new CatalogReadError('catalog database address is not usable', false)
   }
   if (!parsed.hostname) throw new CatalogReadError('catalog database address is not usable', false)
+  for (const key of parsed.searchParams.keys()) {
+    if (key !== 'sslmode') {
+      throw new CatalogReadError('catalog database address is not usable', false, 'connection string has extra parameters')
+    }
+  }
   return {
     prepare: false,
     max: 1,

@@ -95,7 +95,7 @@ Leave the build command as the `build` script. Vercel uses that script for Next.
 
 **4. The variables.** Environment Variables, environment **Preview**, not Production (Environment variables, same page). Do not use a `NEXT_PUBLIC_` name. Mark each value **Secret** when the form offers it. The same page says Secret values are write-only after saving; Config values stay readable. Production gets none of these yet.
 
-- `KICKOFF_DATABASE_URL` — the `studio_reader` login through the shared transaction pooler. Supabase, read 2026-10-19, says a serverless function uses that pooler, port 6543, and a custom role's username is `[ROLE].[PROJECT-REF]` ([Connect to your database](https://supabase.com/docs/guides/database/connecting-to-postgres)). Copy the transaction pooler string from the dashboard's Connect dialog. Set the user to `studio_reader.<project ref>` and the password you choose below. Do not commit the string.
+- `KICKOFF_DATABASE_URL` — the `studio_reader` login through the shared transaction pooler. Supabase, read 19 Oct 2026, says a serverless function uses that pooler, port 6543, and a custom role's username is `[ROLE].[PROJECT-REF]` ([Connect to your database](https://supabase.com/docs/guides/database/connecting-to-postgres)). Click Connect, choose **Transaction pooler**, and copy that URI. The sample on that page has no `?`. Set the user to `studio_reader.<project ref>`. Do not commit the string. A query parameter other than `sslmode` — including `?pgbouncer=true` — is refused. The log class is `connection string has extra parameters`. Choose a password of letters and digits only. If it contains `@`, `:`, `/`, `?`, `#`, `%`, `&`, or a space, percent-encode it. The same page says: "Percent-encode any reserved characters it contains, such as `&`, `#`, `?`, or a space."
 - `KICKOFF_STORAGE_ORIGIN` — the same https origin as the Studio's `STUDIO_STORAGE_ORIGIN`, with no path.
 - `KICKOFF_DEMO` — `on`.
 
@@ -110,7 +110,7 @@ Leave the build command as the `build` script. Vercel uses that script for Next.
 **Database, in this order.** You run these. The app does not.
 
 1. `npm run migrate` in `studio/`, against the session pooler, as the owner. That applies `0000` through `0004`.
-2. In the Supabase SQL editor, as the owner, turn `studio_reader` into a login with a password you choose. Give that password to the Preview variable only:
+2. In the Supabase SQL editor, as the owner, turn `studio_reader` into a login. Choose a password of letters and digits only, and give that password to the Preview variable only:
 
 ```sql
 ALTER ROLE studio_reader WITH LOGIN PASSWORD 'choose-one';
@@ -142,6 +142,7 @@ ALTER ROLE studio_reader WITH LOGIN PASSWORD 'choose-one';
 | `catalog list row failed validation`, `catalog detail row failed validation`, `catalog list repeated an id`, `catalog detail repeated an id`, `catalog list and detail do not match` | The views returned rows the app will not parse. | Do not edit the views. The class names the check that failed. |
 | `catalog database address is not set` | The Preview variable is missing on this deployment. | Set it, then make a new Preview. A redeploy of the import's Production build does not pick it up. |
 | `catalog database address is not usable` | The value is not a postgres URI the app can use. | Copy the URI again. |
+| `connection string has extra parameters` | The URI has a query parameter other than `sslmode`. | Copy the Transaction pooler URI. It has no `?`. |
 | `read failed` | Anything else. | The line is only the class. It will not contain the address. |
 
 The watch page sets the video `src` and calls `play()` muted on arrival.

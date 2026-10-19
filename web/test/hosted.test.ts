@@ -45,6 +45,16 @@ test('the connection requires TLS except on loopback and does not keep the addre
   expect(JSON.stringify(remote)).not.toContain('db.example')
   expect(() => connectionOptions('present')).toThrow(/not usable/)
   expect(() => connectionOptions('https://db.example/postgres')).toThrow(/not usable/)
+  const extra = ['postgres', '://', 'reader@db.example:6543/postgres?pgbouncer=true'].join('')
+  expect(() => connectionOptions(extra)).toThrow(CatalogReadError)
+  try {
+    connectionOptions(extra)
+  } catch (error) {
+    expect(error).toBeInstanceOf(CatalogReadError)
+    expect((error as CatalogReadError).failure).toBe('connection string has extra parameters')
+    expect(String(error)).not.toContain('pgbouncer')
+  }
+  expect(connectionOptions(['postgres', '://', 'reader@db.example:6543/postgres?sslmode=require'].join('')).ssl).toBe('require')
 })
 
 test('a real storage origin is https only, and a hosted row does not use the stub site route', () => {

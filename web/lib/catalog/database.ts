@@ -19,7 +19,8 @@ export function catalogClient(): ReturnType<typeof postgres> {
   let opened: ReturnType<typeof postgres>
   try {
     opened = postgres(url, connectionOptions(url))
-  } catch {
+  } catch (error) {
+    if (error instanceof CatalogReadError) throw error
     throw new CatalogReadError('catalog database address is not usable', false)
   }
   client = opened
