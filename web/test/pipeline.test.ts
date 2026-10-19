@@ -1,3 +1,4 @@
+import { spawn } from 'node:child_process'
 import { connect, createServer as createTcp } from 'node:net'
 import { afterAll, expect, test } from 'vitest'
 import { PGlite } from '@electric-sql/pglite'
@@ -93,3 +94,43 @@ test('six concurrent Moments reads keep one query outstanding', async () => {
   expect(maxOutstanding).toBeLessThanOrEqual(1)
   expect(queries).toBeGreaterThanOrEqual(30)
 })
+
+function wireUrl(port: number): string {
+  return ['postgres', '://', `reader:x@127.0.0.1:${port}/postgres`].join('')
+}
+
+function startSleepServer(mode: 'sleep' | 'ready'): Promise<{ port: number, stop: () => void }> {
+  const child = spawn(process.execPath, ['test/sleep-server.mjs', mode], { cwd: process.cwd(), stdio: ['ignore', 'pipe', 'pipe'] })
+  return new Promise((resolve, reject) => {
+    let port = ''
+    const timer = setTimeout(() => reject(new Error('sleep server did not listen')), 10000)
+    child.stdout.on('data', (chunk: Buffer) => {
+      port += chunk.toString()
+      if (!port.includes('\n')) return
+      clearTimeout(timer)
+      resolve({
+        port: Number(port.trim()),
+        stop: () => child.kill('SIGKILL'),
+      })
+    })
+    child.on('error', reject)
+  })
+}
+
+test('a pg_sleep in the catalog read is unavailable within the bound, then the next read works', async () => {
+  process.env.KICKOFF_READ_TIMEOUT_MS = '400'
+  const sleeping = await startSleepServer('sleep')
+  process.env.KICKOFF_DATABASE_URL = wireUrl(sleeping.port)
+  await closeCatalogClient()
+  const started = Date.now()
+  await expect(loadHostedMoments(false)).rejects.toThrow(/timed out/)
+  expect(Date.now() - started).toBeLessThan(1500)
+  sleeping.stop()
+  const ready = await startSleepServer('ready')
+  process.env.KICKOFF_DATABASE_URL = wireUrl(ready.port)
+  const again = await loadHostedMoments(false)
+  expect(again.catalog.list).toEqual([])
+  expect(again.demoError).toBeNull()
+  ready.stop()
+  delete process.env.KICKOFF_READ_TIMEOUT_MS
+}, 20000)

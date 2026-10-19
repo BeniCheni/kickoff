@@ -35,7 +35,25 @@ export type HostedMoments = {
 
 type Bound = {
   (strings: TemplateStringsArray, ...values: never[]): Promise<unknown>
+  unsafe(query: string): Promise<unknown>
   savepoint<T>(fn: (tx: Bound) => Promise<T>): Promise<T>
+}
+
+const DEFAULT_READ_TIMEOUT_MS = 8000
+
+/** Eight seconds unless a test sets a shorter integer. Never longer. */
+export function readTimeoutMs(env: NodeJS.ProcessEnv = process.env): number {
+  const raw = env.KICKOFF_READ_TIMEOUT_MS
+  if (raw === undefined || raw === '') return DEFAULT_READ_TIMEOUT_MS
+  if (!/^[1-9][0-9]{0,3}$/.test(raw)) return DEFAULT_READ_TIMEOUT_MS
+  const parsed = Number(raw)
+  return parsed > DEFAULT_READ_TIMEOUT_MS ? DEFAULT_READ_TIMEOUT_MS : parsed
+}
+
+function isReadTimeout(error: unknown): boolean {
+  if (error instanceof Error && error.message === 'catalog read deadline') return true
+  if (typeof error === 'object' && error !== null && 'code' in error && (error as { code?: unknown }).code === '57014') return true
+  return error instanceof Error && /statement timeout/i.test(error.message)
 }
 
 /**
@@ -46,35 +64,50 @@ type Bound = {
  * List and detail are the same snapshot.
  */
 export async function loadHostedMoments(includeDemo: boolean): Promise<HostedMoments> {
-  const client = catalogClient()
+  const timeoutMs = readTimeoutMs()
+  const sql = catalogClient()
+  let timer: ReturnType<typeof setTimeout> | undefined
+  const query = sql.begin('read only', async (tx: Bound) => {
+    await tx.unsafe(`SET LOCAL statement_timeout = ${timeoutMs}`)
+    const list = asCatalogRows(await tx`SELECT * FROM catalog.videos ORDER BY position ASC, id ASC`)
+    const detail = asCatalogRows(await tx`SELECT * FROM catalog.video ORDER BY position ASC, id ASC`)
+    const catalog = catalogFromRows(list, detail)
+    if (!includeDemo) return { catalog, demo: null, demoError: null }
+    try {
+      const demo = await tx.savepoint(async (sp) => {
+        const users = asCatalogRows(await sp`SELECT * FROM demo.social_users ORDER BY id`)
+        const stats = asCatalogRows(await sp`SELECT * FROM demo.social_stats ORDER BY video_id`)
+        const comments = asCatalogRows(await sp`SELECT * FROM demo.social_comments ORDER BY id`)
+        try {
+          return demoFromRows(users, stats, comments)
+        } catch {
+          throw new DemoReadError('demo social failed validation', true)
+        }
+      })
+      return { catalog, demo, demoError: null }
+    } catch (error) {
+      if (isReadTimeout(error)) throw error
+      const demoError = error instanceof DemoReadError
+        ? error
+        : new DemoReadError('demo social could not be read', true)
+      return { catalog, demo: null, demoError }
+    }
+  })
+  const deadline = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error('catalog read deadline')), timeoutMs + 250)
+  })
+  query.catch(() => {})
   try {
-    return await client.begin('read only', async (tx: Bound) => {
-      const list = asCatalogRows(await tx`SELECT * FROM catalog.videos ORDER BY position ASC, id ASC`)
-      const detail = asCatalogRows(await tx`SELECT * FROM catalog.video ORDER BY position ASC, id ASC`)
-      const catalog = catalogFromRows(list, detail)
-      if (!includeDemo) return { catalog, demo: null, demoError: null }
-      try {
-        const demo = await tx.savepoint(async (sp) => {
-          const users = asCatalogRows(await sp`SELECT * FROM demo.social_users ORDER BY id`)
-          const stats = asCatalogRows(await sp`SELECT * FROM demo.social_stats ORDER BY video_id`)
-          const comments = asCatalogRows(await sp`SELECT * FROM demo.social_comments ORDER BY id`)
-          try {
-            return demoFromRows(users, stats, comments)
-          } catch {
-            throw new DemoReadError('demo social failed validation', true)
-          }
-        })
-        return { catalog, demo, demoError: null }
-      } catch (error) {
-        const demoError = error instanceof DemoReadError
-          ? error
-          : new DemoReadError('demo social could not be read', true)
-        return { catalog, demo: null, demoError }
-      }
-    })
+    return await Promise.race([query, deadline])
   } catch (error) {
+    if (isReadTimeout(error)) {
+      await closeCatalogClient()
+      throw new CatalogReadError('catalog database read timed out', false)
+    }
     if (error instanceof CatalogReadError) throw error
     throw new CatalogReadError('catalog database read failed', false)
+  } finally {
+    if (timer) clearTimeout(timer)
   }
 }
 
@@ -87,5 +120,5 @@ export async function closeCatalogClient(): Promise<void> {
   const current = client
   client = undefined
   openedFor = undefined
-  if (current) await current.end({ timeout: 1 })
+  if (current) await current.end({ timeout: 0 })
 }
