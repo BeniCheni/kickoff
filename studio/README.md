@@ -1,6 +1,6 @@
 # Moments Studio
 
-Local, offline core for Kickoff's own generated videos. The reader in `src/` does not import this folder. A green test run is not generation: every command uses the fal stub and the storage stub unless `--live` is present together with `STUDIO_LIVE=1` and the secret that command needs. This package does not call fal or Supabase in tests, and this slice never uploads a file or opens a pull request.
+Local, offline core for Kickoff's own generated videos. The reader in `src/` does not import this folder. A green test run is not generation: every command uses the fal stub and the storage stub unless `--live` is present together with `STUDIO_LIVE=1` and the secret that command needs. This package does not call fal, Cloudflare, Supabase or Vercel in tests, and it does not open a pull request. `--live` is the only path that can upload, and only when `STUDIO_LIVE=1` and the named secrets are set.
 
 `studio/db/` is the schema module. It imports nothing from the rest of `studio/`. The public row contract lives in `@kickoff/catalog` (`packages/kickoff-catalog`), installed as a copy (`studio/.npmrc`, `install-links=true`). After editing the package, run `npm ci` in `studio/` to refresh the installed copy before `npm test` sees the edit. CI installs fresh. Drizzle stays in this package. The tables live in the Postgres schema `studio`, which Supabase's Data API does not expose. The public app's names are the views `catalog.videos` and `catalog.video` (`videos` where `published_at` is not null, ordered by `position` — the view does not apply the order; the app does).
 
@@ -35,9 +35,13 @@ The role `studio_reader` is created `NOLOGIN` with `SELECT` on `catalog.videos` 
 
 ## Commands
 
-`estimate`, `submit`, `poll`, `resume`, `download`, `list`, `keep`, `discard`, `cancel`, `publish`, `unpublish`, `retry-delete`, `retry-removal`, `close-session`, `attach-request`, `settle-unconfirmed`, `record-gate`, `record-balance`, and `migrate`.
+`estimate`, `submit`, `poll`, `resume`, `download`, `import`, `list`, `keep`, `discard`, `cancel`, `publish`, `unpublish`, `retry-delete`, `retry-removal`, `close-session`, `attach-request`, `settle-unconfirmed`, `record-gate`, `record-balance`, and `migrate`.
+
+`import` takes a clip made somewhere else (E5, 18 Oct 2026). The source is `grok-imagine`. The Studio reads the MP4's own boxes for the container, codec, width, height, duration, frame rate and audio, copies the clip and a stripped JPEG keyframe into `STUDIO_MEDIA_DIR`, and lands the job in `downloaded`. The seed, the prompt expansion and the request id stay null. There is no fal request and no ledger line. The finish time is `--made-on`, or the creation time in the MP4 header; if neither is there, import refuses and asks for `--made-on`. Importing the same file twice is refused by hash. `keep` and `record-gate` then work as they do for a fal clip.
 
 `keep` takes five answers, checklist order: extra players, text on boards, logo-like marks, subject identity, soundtrack. Each is `clear`, `present`, or `unsure`. Keep needs five `clear` answers. `record-gate` records the Article 50 answer (who answers is not named). An empty or blank answer is refused, in this process and by the database check. Blank means every character is in one shared set: the characters JavaScript's `\s` matches, plus U+200B, U+200C, U+200D and U+2060. The check is a PostgreSQL `~` test of a standard-SQL `U&` escape string. A second answer is refused with the date already recorded. This slice has no command to amend that answer. Publish refuses until that row exists, in the database as well as in this process.
+
+Publish also refuses, before it uploads or writes, when the clip lacks a positive width, a positive height, a positive duration, an approved subject (Fenway or Frankenstein), a safe public id (`[A-Za-z0-9][A-Za-z0-9_-]{0,63}`), or a finish time (N4-Q3 Card, decided 16 Oct 2026). The refusal names each missing item in plain words. The safe public id is also a database check, `videos_id_token`, added in migration `0003_card_gate.sql`. The other facts live on other tables, so a check cannot express them; the catalog views are not changed and still omit a subject that is not one of those two names.
 
 Unpublish withdraws first, in one transaction: it clears `published_at`, sets `unpublished_at`, and moves the job to `withdrawn`. The clip leaves both catalog views when that write commits. If the write fails, the clip stays published and no file is touched. `unpublish --delete` then deletes the stored video and thumbnail, each recorded on its own. Plain `unpublish` deletes nothing. A failed delete leaves the clip withdrawn, and the file that did not delete stays readable at the address on the record until `retry-delete` succeeds. The stub treats an object that is already gone as removed. Whether Supabase Storage does the same is not verified here. A removal of the site's copy always follows, through the same port as the fallback copy. Its outcomes are `pr-opened`, `checks-running`, `merged`, and `checks-failed`. `retry-removal` retries a failed removal. The clip stays withdrawn either way. A withdrawn clip is never relisted (Q21, decided 12 Oct 2026). There is no relist command. A new version is a new submit with `--parent` set to the withdrawn generation.
 
@@ -55,6 +59,88 @@ Cancel follows the same queue page. Only `202` with `{"status":"CANCELLATION_REQ
 
 A response that carries a request id but no usable queue URLs stores that id in the same write. The job stays off the resubmit path until `attach-request`. `close-session` still refuses it, because fal may have accepted the request. An out-of-credit draft, reconciled at $0, can be submitted again.
 
-`STUDIO_STUB` selects the script: `queued-then-completed` (the default), `error-payload`, `safety-refusal`, `timeout`, `expired-result`, `duplicate-delivery`, `out-of-credit`. `STUDIO_STORAGE_FAIL` is a comma list of `video`, `thumbnail`, `fallback`, `remove`.
+`STUDIO_STUB` selects the script: `queued-then-completed` (the default), `error-payload`, `safety-refusal`, `timeout`, `expired-result`, `duplicate-delivery`, `out-of-credit`. `STUDIO_STORAGE_FAIL` is a comma list of `video`, `thumbnail`, `fallback`, `removal`, `remove`, `video-remove`, `thumbnail-remove`.
 
 The photograph strip takes JPEG only. HEIC and PNG are refused, so convert first. It removes every metadata block, including APP2 (ICC) and APP14, so a Display P3 photo loses its colour profile. The hash stored is the hash of the bytes that would be sent. Those bytes are a `data:image/jpeg;base64,...` URI, the form fal's file-input docs describe. The Studio does not upload the photograph to fal storage. `--live` with `STUDIO_LIVE` or `FAL_KEY` missing refuses and names the missing piece. It never prints a value. Every command that talks to fal prints `transport=stub` or `transport=live`.
+
+## Cloudflare R2
+
+Videos and thumbnails for a live publish go to Cloudflare R2 (E4, 18 Oct 2026). The catalog row stays in Supabase Postgres. The storage stub is still what every test uses, and what every command uses unless the command is `publish`, `unpublish --delete`, or `retry-delete` and `--live` is set. `--live` is the switch to Supabase. It refuses, and names the missing piece, unless `STUDIO_LIVE` is `1` and `DATABASE_URL` is set, and it never opens the local database instead. A missing variable is refused by name. The value is never printed.
+
+Beni creates the bucket, the custom domain, and an API token scoped to that one bucket, and writes the four names into the env file outside the worktree: `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`. The record always stores bucket `moments` and an object path `<public id>/video-<sha8>.mp4` or `<public id>/thumbnail-<sha8>.jpg`. The R2 object key is `moments/` plus that object path, so the public address `STUDIO_STORAGE_ORIGIN/moments/<object path>` is the bucket's custom domain plus the key. `STUDIO_STORAGE_ORIGIN` is the address the Next app will use at N6. Upload does not read it.
+
+The request is SigV4, region `auto`, with the file's SHA-256 in `x-amz-content-sha256` and the MIME type as Content-Type. A failed upload leaves the clip unpublished and records which object failed (`video` or `thumbnail`). The next `publish` retries only the object that has no address yet. `unpublish --delete` and `retry-delete` delete through the same adapter. Only 200 and 204 count as deleted. S3 answers 204 when the key is already absent. A 404 fails with its status and its S3 code. That was not verified against a live bucket. The site's thumbnail copy stays on the stub. Every `--live` command refuses, by name, when `STUDIO_LIVE` is not `1` or `DATABASE_URL` is missing, so a live upload cannot write the catalog only into the local database.
+
+## Wednesday 21 Oct 2026
+
+`--live` is what points a command at Supabase. Every command below carries it. Without `STUDIO_LIVE` set to `1` and `DATABASE_URL`, the command refuses and names the missing piece. It does not open the local database. With nothing set, `import`, `keep`, `record-gate`, `list`, `migrate` and a plain `unpublish` print `refused: --live needs STUDIO_LIVE and DATABASE_URL`. `publish`, `unpublish --delete` and `retry-delete` also name `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` and `R2_BUCKET`. Without `--live` the same commands print `database=pglite`, and a storage command prints `storage=stub`. `migrate` is the exception: it always uses Postgres, so without `DATABASE_URL` it refuses as well.
+
+Beni does every account step himself. Nothing in this repo creates the bucket, the domain, the token, or the database password.
+
+In Cloudflare he creates one R2 bucket, attaches his custom domain to that bucket, and creates an API token that can read and write only that bucket. In the env file outside the worktree he sets `STUDIO_LIVE` to `1`, and he sets `DATABASE_URL`, `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, and `STUDIO_STORAGE_ORIGIN`. The origin is the custom domain, with no path on the end, for the Next app at N6. The Studio does not read the origin when it uploads. `STUDIO_DATA_DIR` and `STUDIO_MEDIA_DIR` stay outside the worktree, as above. He does not commit the env file.
+
+In grok.com/imagine, in his own browser, he makes the clip at 16:9 and 1080p and downloads the mp4. The still he gave Grok is the keyframe, saved as a JPEG. A PNG is refused (`refused: keyframe is not a jpeg`). Convert one with `sips -s format jpeg <still.png> --out <still.jpg>`. The prompt he typed goes in a text file. No one else opens that site.
+
+From `studio/`, apply the migrations to his Supabase database. This prints `migrated database=postgres`.
+
+```bash
+npm run cli -- migrate --live
+```
+
+Import the clip. The subjects are `Fenway`, `Frankenstein`, or both, separated by a comma, in that spelling. `--made-on` is the day he made the clip. This prints one line: `imported`, then `job`, `sha256`, `width`, `height`, `duration`, `container`, `codec`, `audio`, `fps`, `stripped=none` or `stripped=udta,meta`, `faststart=true` or `faststart=false`, `transport=stub`, and `database=postgres`. `faststart=false` means a slower first frame on phones. Import does not call fal, so the transport stays the stub. A 1080p 16:9 clip reads as width 1920 and height 1080. If he omits `--made-on` and the file has no creation time, the line is `refused: pass --made-on YYYY-MM-DD; the clip has no creation time database=postgres`. The same file a second time is `refused: this file was already imported database=postgres`.
+
+```bash
+npm run cli -- import --file "$HOME/clips/fenway.mp4" --keyframe "$HOME/clips/fenway.jpg" --source grok-imagine --prompt-file "$HOME/clips/fenway.txt" --subjects Fenway --title "Fenway" --made-on 2026-10-21 --live
+```
+
+Keep the clip. The five answers, in order, are extra players, text on boards, logo-like marks, subject identity, and soundtrack. Each must be `clear`. This prints `kept database=postgres`.
+
+```bash
+npm run cli -- keep --job <job-id> --answers clear,clear,clear,clear,clear --live
+```
+
+Record the Article 50 answer. He writes the answer, the disclosure, and the name. This prints `gate-recorded recordedOn=<the time> database=postgres`. A second recording prints `gate-already-recorded recordedOn=<the time already stored> database=postgres`.
+
+```bash
+npm run cli -- record-gate --answer "<answer>" --disclosure "<disclosure>" --by "<name>" --source A-06 --live
+```
+
+Publish. `--public-id` is letters, digits, `_` and `-`, at most 64 characters, starting with a letter or a digit. `--position` is the next free position. A taken position prints `record-failed live=false reason=position-taken database=postgres storage=r2`. A taken public id prints `reason=public-id-taken`. `list` prints each stored job. A job that holds a public id prints `public_id=`. A job that is still in the catalog prints `position=` as well. A withdrawn clip keeps `public_id=` and drops `position=`, because the position is free again and the public id is not. When there are no jobs, list prints `none database=postgres`. Pick a `position=` that is not already printed.
+
+```bash
+npm run cli -- list --live
+```
+
+Publish prints `published live=true database=postgres storage=r2`. When `--title` is omitted, publish uses the import's `--title`. That means the row is in the catalog view. The line names where it wrote. It does not by itself prove the file landed in R2. A missing Card fact prints `card-refused: missing ...` and names the fact. A failed upload prints `upload-failed live=false object=video status=<status> code=<code> database=postgres storage=r2`, or the same line with `object=thumbnail`. A thrown upload prints `upload-failed live=false object=video status=none code=network database=postgres storage=r2`. A failed delete adds `status=` and `code=` to its line, and a thrown delete prints `status=none code=network`. `code` is the S3 `<Code>` only, passed through the log redaction. `status=none` means the request threw and there is no HTTP status. The body is not printed. The same publish command again sends only the object that has no address yet. There is no ledger line and the caps do not move. `pinned_on` is the Brooklyn date of the import. The finish time is midnight in Brooklyn on `--made-on`.
+
+```bash
+npm run cli -- publish --live --job <job-id> --public-id fenway-wednesday --title "Fenway" --position 1
+```
+
+In the Cloudflare dashboard, the bucket named by `R2_BUCKET` has two keys: `moments/fenway-wednesday/video-<first 8 of the sha256>.mp4` and `moments/fenway-wednesday/thumbnail-<first 8 of the stripped keyframe>.jpg`. The video's eight characters match the import line. The thumbnail's eight characters are the stripped JPEG, not the file before the strip. After the custom domain is attached, the public address is `STUDIO_STORAGE_ORIGIN/moments/fenway-wednesday/video-<those 8>.mp4`.
+
+In the Supabase SQL editor, the detail view returns the row. The public id's column is `id`. `endpoint` is `xai/grok-imagine (grok.com, made by hand)`. `prompt_expansion` and `seed` are null. `video_bucket` is `moments`. The object paths match the keys above without the leading `moments/`.
+
+```sql
+select id, endpoint, pinned_on, prompt, prompt_expansion, seed, subjects, video_bucket, video_object_path, thumbnail_object_path
+from catalog.video
+where id = 'fenway-wednesday';
+```
+
+To take the row out of the catalog and leave the files in R2, withdraw it. This prints `withdrawn removal=merged filesReadable=false database=postgres storage=stub`. The files are still in the bucket. `filesReadable=false` here means a delete was not asked for. `removal=merged` is the stub for the site's copy. No pull request is opened. A second unpublish prints `already-withdrawn database=postgres storage=stub` and does not delete.
+
+```bash
+npm run cli -- unpublish --live --job <job-id>
+```
+
+To withdraw and delete in one step, pass `--delete` while the clip is still published. When both deletes succeed this prints `withdrawn removal=merged filesReadable=false database=postgres storage=r2`, and the keys are gone from the bucket. If one delete fails, the same line has `filesReadable=true`.
+
+```bash
+npm run cli -- unpublish --live --job <job-id> --delete
+```
+
+After a withdraw, or after a delete that left one object, retry the delete. It sends only the object that is still recorded. When both are already gone it prints `delete-retried filesReadable=false idempotent=true database=postgres storage=r2`. Only 200 and 204 count as deleted. A 404 prints its `status=` and `code=` and leaves `filesReadable=true`. That was not verified against a live bucket.
+
+```bash
+npm run cli -- retry-delete --live --job <job-id>
+```

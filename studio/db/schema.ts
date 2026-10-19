@@ -303,6 +303,7 @@ export const videos = studio.table('videos', {
 }, (table) => [
   uniqueIndex('videos_public_id').on(table.publicId),
   uniqueIndex('videos_job_id').on(table.jobId),
+  check('videos_id_token', sql.raw(`"public_id" ~ '^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$'`)),
   check('videos_fallback_status', oneOf('fallback_status', ['pending', 'failed', 'merged'])),
   check('videos_removal_status', sql.raw(
     `"removal_status" is null or "removal_status" in ('pending', 'failed', 'merged')`,

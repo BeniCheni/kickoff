@@ -12,6 +12,7 @@ import type { ScriptName } from '../fal/stub.ts'
 import { createFalStub } from '../fal/stub.ts'
 import { sha256 } from '../hash.ts'
 import { createStorageStub, type StorageScript } from '../storage/stub.ts'
+import { attachCardFacts } from './card-facts.ts'
 import { freshDatabase, type StudioClient, type StudioDatabase } from './harness.ts'
 import { minimalJpeg, taggedJpeg } from './jpeg.ts'
 
@@ -113,6 +114,7 @@ async function keptClip(script: ScriptName = 'queued-then-completed') {
     assetId: k0.id,
     role: 'first',
   })
+  await attachCardFacts(opened.db, row.generationId)
   return { ...opened, jobId: done.jobId, generationId: row.generationId }
 }
 
@@ -961,6 +963,7 @@ describe('state machine', () => {
     }).returning()
     if (!k0) throw new Error('missing keyframe')
     await first.db.insert(generationInput).values({ generationId: row.generationId, assetId: k0.id, role: 'first' })
+    await attachCardFacts(first.db, row.generationId)
     const taken = await first.studio.publish({
       jobId: secondDone.jobId,
       publicId: 'other',

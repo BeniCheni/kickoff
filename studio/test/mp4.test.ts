@@ -1,0 +1,111 @@
+import { describe, expect, it } from 'vitest'
+import { chunkOffsets, isFastStart, readClipFacts, stripClip, syntheticMp4 } from '../media/mp4.ts'
+
+const MAC_EPOCH_SECONDS = 2_082_844_800
+
+describe('mp4 facts', () => {
+  it('reads container, codec, frame, duration, frame rate, audio and creation time from the boxes', () => {
+    const created = new Date('2026-10-18T15:00:00.000Z')
+    const creationTime = Math.floor(created.getTime() / 1000) + MAC_EPOCH_SECONDS
+    const bytes = syntheticMp4({
+      width: 1920,
+      height: 1080,
+      durationS: 5,
+      frameRate: 24,
+      audio: true,
+      creationTime,
+    })
+    const read = readClipFacts(bytes)
+    expect(read.ok).toBe(true)
+    if (!read.ok) return
+    expect(read.facts.container).toBe('isom')
+    expect(read.facts.videoCodec).toBe('H.264')
+    expect(read.facts.width).toBe(1920)
+    expect(read.facts.height).toBe(1080)
+    expect(read.facts.durationS).toBe(5)
+    expect(read.facts.frameRate).toBe(24)
+    expect(read.facts.audio).toBe(true)
+    expect(read.facts.createdAt?.toISOString()).toBe(created.toISOString())
+  })
+
+  it('reports no audio and no creation time when the header has neither', () => {
+    const read = readClipFacts(syntheticMp4({ audio: false, creationTime: 0 }))
+    expect(read.ok).toBe(true)
+    if (!read.ok) return
+    expect(read.facts.audio).toBe(false)
+    expect(read.facts.createdAt).toBeNull()
+  })
+
+  it('refuses a non-mp4, a file with no video track, and a zero duration', () => {
+    expect(readClipFacts(new Uint8Array([0x1a, 0x45, 0xdf, 0xa3, 0, 0, 0, 0]))).toEqual({ ok: false, reason: 'truncated' })
+    expect(readClipFacts(syntheticMp4({ brand: 'qt  ', compatible: ['qt  '] }))).toEqual({ ok: false, reason: 'not-mp4', brand: 'qt' })
+    expect(readClipFacts(syntheticMp4({ video: false, audio: true }))).toEqual({ ok: false, reason: 'no-video' })
+    expect(readClipFacts(syntheticMp4({ durationS: 0 }))).toEqual({ ok: false, reason: 'zero-duration' })
+  })
+
+  it('turns udta and meta into free without moving the samples', () => {
+    const created = new Date('2026-10-18T15:00:00.000Z')
+    const raw = syntheticMp4({
+      width: 1280,
+      height: 720,
+      durationS: 5,
+      frameRate: 24,
+      audio: true,
+      creationTime: Math.floor(created.getTime() / 1000) + MAC_EPOCH_SECONDS,
+      userData: true,
+      chunks: true,
+    })
+    const before = readClipFacts(raw)
+    expect(Buffer.from(raw).includes('©xyz')).toBe(true)
+    expect(Buffer.from(raw).includes('©too')).toBe(true)
+    const stripped = stripClip(raw)
+    expect(stripped.stripped).toBe('udta,meta')
+    expect(Buffer.from(stripped.bytes).includes('©xyz')).toBe(false)
+    expect(Buffer.from(stripped.bytes).includes('©too')).toBe(false)
+    expect(stripped.bytes.byteLength).toBe(raw.byteLength)
+    const offsets = chunkOffsets(raw)
+    expect(offsets.stco.length).toBe(1)
+    expect(offsets.co64.length).toBe(1)
+    expect(chunkOffsets(stripped.bytes)).toEqual(offsets)
+    const sample = (bytes: Uint8Array, offset: number, marker: string) =>
+      Buffer.from(bytes.slice(offset, offset + Buffer.byteLength(marker))).toString()
+    expect(sample(raw, offsets.stco[0] ?? 0, 'SAMPLE-ONE-STCO')).toBe('SAMPLE-ONE-STCO')
+    expect(sample(stripped.bytes, offsets.stco[0] ?? 0, 'SAMPLE-ONE-STCO')).toBe('SAMPLE-ONE-STCO')
+    expect(sample(raw, offsets.co64[0] ?? 0, 'SAMPLE-TWO-CO64')).toBe('SAMPLE-TWO-CO64')
+    expect(sample(stripped.bytes, offsets.co64[0] ?? 0, 'SAMPLE-TWO-CO64')).toBe('SAMPLE-TWO-CO64')
+    const after = readClipFacts(stripped.bytes)
+    expect(after).toEqual(before)
+    expect(isFastStart(raw)).toBe(true)
+    expect(isFastStart(stripped.bytes)).toBe(true)
+    const late = syntheticMp4({ chunks: true, mdatFirst: true, userData: true })
+    expect(isFastStart(late)).toBe(false)
+    expect(isFastStart(stripClip(late).bytes)).toBe(false)
+    expect(stripClip(syntheticMp4()).stripped).toBe('none')
+  })
+
+  it('treats a header creation time before 2024-01-01 as absent', () => {
+    const at = (iso: string) => Math.floor(Date.parse(iso) / 1000) + MAC_EPOCH_SECONDS
+    const created = (creationTime: number) => {
+      const read = readClipFacts(syntheticMp4({ creationTime }))
+      return read.ok ? read.facts.createdAt : 'refused'
+    }
+    expect(created(MAC_EPOCH_SECONDS)?.toString() ?? null).toBeNull()
+    expect(created(at('2023-12-31T00:00:00.000Z'))).toBeNull()
+    const floor = created(at('2024-01-01T00:00:00.000Z'))
+    expect(floor instanceof Date ? floor.toISOString() : floor).toBe('2024-01-01T00:00:00.000Z')
+  })
+
+  it('refuses a top-level box that runs past the end of the file', () => {
+    const fast = syntheticMp4({ chunks: true })
+    const mdatAt = Buffer.from(fast).lastIndexOf('mdat')
+    expect(mdatAt).toBeGreaterThan(8)
+    expect(readClipFacts(fast.slice(0, mdatAt + 8))).toEqual({ ok: false, reason: 'truncated' })
+    const late = syntheticMp4({ chunks: true, mdatFirst: true })
+    const moovAt = Buffer.from(late).lastIndexOf('moov')
+    expect(moovAt).toBeGreaterThan(8)
+    expect(Buffer.from(late).indexOf('mdat')).toBeLessThan(moovAt)
+    expect(readClipFacts(late.slice(0, moovAt + 8))).toEqual({ ok: false, reason: 'truncated' })
+    expect(isFastStart(fast)).toBe(true)
+    expect(isFastStart(late)).toBe(false)
+  })
+})

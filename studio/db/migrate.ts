@@ -9,11 +9,11 @@ const here = path.dirname(fileURLToPath(import.meta.url))
 const repoRoot = path.resolve(here, '../..')
 const migrationsFolder = path.join(here, 'migrations')
 
-export function resolveEnvFile(file: string, root = repoRoot): string {
+export function resolveEnvFile(file: string, root = repoRoot, kind = 'env file'): string {
   const resolved = path.resolve(file)
   const relative = path.relative(root, resolved)
   const inside = relative === '' || (!relative.startsWith('..') && !path.isAbsolute(relative))
-  if (inside) throw new Error('Refusing to read an env file inside the worktree')
+  if (inside) throw new Error(`Refusing to read a ${kind} inside the worktree`)
   return resolved
 }
 

@@ -15,9 +15,11 @@ import { createFalStub, type ScriptName, type StubCursor } from './fal/stub.ts'
 import { sha256 } from './hash.ts'
 import { redact } from './log/redact.ts'
 import { estimateUsd, selectRegistry, unknownParam } from './registry.ts'
+import { createR2Storage, missingR2 } from './storage/r2.ts'
 import { createStorageStub } from './storage/stub.ts'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
+const repoRoot = path.resolve(here, '..')
 const migrationsFolder = path.join(here, 'db', 'migrations')
 
 const SCRIPTS: readonly ScriptName[] = [
@@ -36,6 +38,7 @@ const USAGE = [
   'poll --job <id>',
   'resume --job <id>',
   'download --job <id>',
+  'import --file <clip.mp4> --keyframe <still.jpg> --source grok-imagine --prompt-file <prompt.txt> --subjects Fenway,Frankenstein --title <title> [--note <text>] [--made-on YYYY-MM-DD]',
   'list',
   'keep --job <id> --answers <clear|present|unsure>,... (five, checklist order)',
   'discard --job <id>',
@@ -50,7 +53,7 @@ const USAGE = [
   'record-gate --answer <text> --disclosure <text> --by <name> --source <source>',
   'record-balance --amount <usd>',
   'migrate',
-  'Offline unless --live is set together with STUDIO_LIVE=1 and FAL_KEY. --live refuses, and names the missing piece, when either is absent.',
+  'Offline unless --live is set. --live is the switch to Supabase: it needs STUDIO_LIVE=1 and DATABASE_URL, and it never opens the local database. Fal commands also need FAL_KEY. publish, unpublish --delete and retry-delete also need the R2 names. --live refuses, and names the missing piece.',
 ].join('\n')
 
 export type CliIo = {
@@ -59,7 +62,61 @@ export type CliIo = {
 }
 
 export function liveDatabaseArmed(argv: readonly string[], env: NodeJS.ProcessEnv): boolean {
-  return argv.includes('--live') && env.STUDIO_LIVE === '1' && Boolean(env.DATABASE_URL)
+  return argv.includes('--live') && env.STUDIO_LIVE === '1' && Boolean(env.DATABASE_URL?.trim())
+}
+
+export type OpenedDatabase = {
+  db: StudioDatabase
+  close: () => Promise<void>
+  kind: 'postgres' | 'pglite'
+}
+
+export type DatabaseFactory = (input: {
+  env: NodeJS.ProcessEnv
+  live: boolean
+  dataDir: string
+}) => Promise<OpenedDatabase>
+
+type DatabasePorts = {
+  postgres?: (url: string, options: { prepare: false; max: 1 }) => { end: (options?: { timeout?: number }) => Promise<void> }
+  PGlite?: typeof PGlite
+}
+
+/** `--live` opens Postgres. Anything else opens PGlite. There is no fallback. */
+export async function openDatabase(
+  env: NodeJS.ProcessEnv,
+  live: boolean,
+  dataDir: string,
+  ports: DatabasePorts = {},
+): Promise<OpenedDatabase> {
+  if (live) {
+    const url = env.DATABASE_URL ?? ''
+    const sql = (ports.postgres ?? postgres)(url, { prepare: false, max: 1 })
+    // An injected connector is a test double. Drizzle reads postgres-js internals, so the
+    // double stops before that wrap. The real client is wrapped only on the live path.
+    const db = ports.postgres
+      ? ({} as StudioDatabase)
+      : drizzlePostgres(sql as never, { schema: studioTables }) as unknown as StudioDatabase
+    return {
+      db,
+      kind: 'postgres',
+      close: async () => {
+        await sql.end({ timeout: 5 })
+      },
+    }
+  }
+  const Client = ports.PGlite ?? PGlite
+  const client = new Client(path.join(dataDir, 'pglite'))
+  const db = drizzle(client, { schema: studioTables })
+  await migratePglite(db, { migrationsFolder })
+  return { db, kind: 'pglite', close: () => client.close() }
+}
+
+export function missingLiveDatabase(env: NodeJS.ProcessEnv): string[] {
+  const missing: string[] = []
+  if (env.STUDIO_LIVE !== '1') missing.push('STUDIO_LIVE')
+  if (!env.DATABASE_URL?.trim()) missing.push('DATABASE_URL')
+  return missing
 }
 
 function loadEnv(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
@@ -138,35 +195,48 @@ function loadCursor(file: string): StubCursor {
   }
 }
 
-async function openStudio(env: NodeJS.ProcessEnv, live: boolean) {
+function needsObjectStore(command: string, flags: Record<string, string>): boolean {
+  return command === 'publish' || command === 'retry-delete' || (command === 'unpublish' && flags.delete === '1')
+}
+
+async function openStudio(
+  env: NodeJS.ProcessEnv,
+  live: boolean,
+  objectStore: boolean,
+  open: DatabaseFactory,
+  fetchImpl?: typeof fetch,
+) {
   const dataDir = resolveEnvFile(requiredEnv(env, 'STUDIO_DATA_DIR'))
   const mediaDir = resolveEnvFile(requiredEnv(env, 'STUDIO_MEDIA_DIR'))
   mkdirSync(dataDir, { recursive: true })
   mkdirSync(mediaDir, { recursive: true })
   const cursor = loadCursor(cursorFile(dataDir))
   const fails = new Set((env.STUDIO_STORAGE_FAIL ?? '').split(',').map((item) => item.trim()).filter(Boolean))
-  const storage = createStorageStub({
-    failVideo: fails.has('video'),
-    failThumbnail: fails.has('thumbnail'),
-    failFallback: fails.has('fallback'),
-    failRemoval: fails.has('removal'),
-    failRemove: fails.has('remove'),
-    failRemoveVideo: fails.has('video-remove'),
-    failRemoveThumbnail: fails.has('thumbnail-remove'),
-  })
+  const useR2 = live && objectStore
+  const storage = useR2
+    ? { port: createR2Storage({ env, fetchImpl }) }
+    : createStorageStub({
+      failVideo: fails.has('video'),
+      failThumbnail: fails.has('thumbnail'),
+      failFallback: fails.has('fallback'),
+      failRemoval: fails.has('removal'),
+      failRemove: fails.has('remove'),
+      failRemoveVideo: fails.has('video-remove'),
+      failRemoveThumbnail: fails.has('thumbnail-remove'),
+    })
   const stub = createFalStub(scriptFrom(env), cursor)
   const fal = selectFalTransport({
     argv: live ? ['--live'] : [],
     env,
     stub,
   })
-  const opened = await openDatabase(env, live, dataDir)
+  const opened = await open({ env, live, dataDir })
   const studio = createStudio({
     db: opened.db,
     fal,
     storage: storage.port,
     mediaDir,
-    repoRoot: path.resolve(here, '..'),
+    repoRoot,
     clock: clockFrom(env),
   })
   return {
@@ -182,26 +252,6 @@ function requiredEnv(env: NodeJS.ProcessEnv, key: string): string {
   const value = env[key]
   if (!value) throw new Error(`${key} is not set. Point it at a directory outside the worktree.`)
   return value
-}
-
-async function openDatabase(env: NodeJS.ProcessEnv, live: boolean, dataDir: string): Promise<{
-  db: StudioDatabase
-  close: () => Promise<void>
-}> {
-  if (live && env.STUDIO_LIVE === '1' && env.DATABASE_URL) {
-    const sql = postgres(env.DATABASE_URL, { prepare: false, max: 1 })
-    const db = drizzlePostgres(sql, { schema: studioTables })
-    return {
-      db: db as unknown as StudioDatabase,
-      close: async () => {
-        await sql.end({ timeout: 5 })
-      },
-    }
-  }
-  const client = new PGlite(path.join(dataDir, 'pglite'))
-  const db = drizzle(client, { schema: studioTables })
-  await migratePglite(db, { migrationsFolder })
-  return { db, close: () => client.close() }
 }
 
 function line(outcome: string, fields: Record<string, string | number | boolean | null | undefined> = {}): string {
@@ -226,9 +276,12 @@ function explain(io: CliIo, outcome: string) {
 async function withStudio(
   env: NodeJS.ProcessEnv,
   live: boolean,
+  objectStore: boolean,
+  open: DatabaseFactory,
+  fetchImpl: typeof fetch | undefined,
   run: (studio: Studio) => Promise<void>,
 ): Promise<void> {
-  const opened = await openStudio(env, live)
+  const opened = await openStudio(env, live, objectStore, open, fetchImpl)
   try {
     await run(opened.studio)
   } finally {
@@ -236,7 +289,16 @@ async function withStudio(
   }
 }
 
-export async function runCli(argv: readonly string[], env: NodeJS.ProcessEnv, io: CliIo): Promise<number> {
+export async function runCli(
+  argv: readonly string[],
+  env: NodeJS.ProcessEnv,
+  io: CliIo,
+  options: {
+    openDatabase?: DatabaseFactory
+    fetchImpl?: typeof fetch
+    migrate?: (env: NodeJS.ProcessEnv) => Promise<void>
+  } = {},
+): Promise<number> {
   try {
     const [command, ...rest] = argv
     if (!command || command === 'help') {
@@ -246,17 +308,26 @@ export async function runCli(argv: readonly string[], env: NodeJS.ProcessEnv, io
     const loaded = loadEnv(env)
     const { flags, live } = parseArgs(rest)
     const touchesFal = new Set(['submit', 'poll', 'resume', 'download', 'cancel'])
-    if (live && touchesFal.has(command)) {
-      const missing = missingLivePieces(loaded)
+    const objectStore = needsObjectStore(command, flags)
+    if (live) {
+      const missing = missingLiveDatabase(loaded)
+      if (touchesFal.has(command) && !loaded.FAL_KEY) missing.push('FAL_KEY')
+      if (objectStore) missing.push(...missingR2(loaded))
       if (missing.length > 0) {
         io.stderr(`refused: --live needs ${missing.join(' and ')}`)
         return 1
       }
     }
     const transport = live && missingLivePieces(loaded).length === 0 ? 'live' : 'stub'
+    const database = command === 'migrate' ? 'postgres' : command === 'estimate' ? 'none' : (live ? 'postgres' : 'pglite')
+    const storage = command === 'publish' || command === 'unpublish' || command === 'retry-delete' || command === 'retry-removal'
+      ? (live && objectStore ? 'r2' : 'stub')
+      : undefined
+    const placed = (outcome: string, fields: Record<string, string | number | boolean | null | undefined> = {}) =>
+      line(outcome, { ...fields, database, storage })
     if (command === 'migrate') {
-      await runMigrate(loaded)
-      io.stdout('migrated')
+      await (options.migrate ?? runMigrate)(loaded)
+      io.stdout(placed('migrated'))
       return 0
     }
     if (command === 'estimate') {
@@ -264,31 +335,32 @@ export async function runCli(argv: readonly string[], env: NodeJS.ProcessEnv, io
       const params = paramsFrom(flags)
       const row = selectRegistry(endpoint, params, clockFrom(loaded)())
       if (!row) {
-        io.stdout('not-in-registry')
+        io.stdout(placed('not-in-registry'))
         return 0
       }
       const unknown = unknownParam(row, params)
       if (unknown) {
-        io.stdout(line('param-not-allowed', { param: unknown }))
+        io.stdout(placed('param-not-allowed', { param: unknown }))
         return 0
       }
       const usd = estimateUsd(row, params)
       if (!usd) {
-        io.stdout('not-in-registry')
+        io.stdout(placed('not-in-registry'))
         return 0
       }
-      io.stdout(line(usd, { tag: row.price.tag, registry: row.id }))
+      io.stdout(placed(usd, { tag: row.price.tag, registry: row.id }))
       return 0
     }
 
-    await withStudio(loaded, live, async (studio) => {
+    const open = options.openDatabase ?? ((input) => openDatabase(input.env, input.live, input.dataDir))
+    await withStudio(loaded, live, objectStore, open, options.fetchImpl, async (studio) => {
       if (command === 'submit') {
         const endpoint = required(flags, 'endpoint')
         const prompt = required(flags, 'prompt')
-        const photograph = flags.photo ? new Uint8Array(readFileSync(resolveEnvFile(flags.photo))) : undefined
+        const photograph = flags.photo ? new Uint8Array(readFileSync(resolveEnvFile(flags.photo, repoRoot, 'photograph'))) : undefined
         const keyframe = flags.keyframe
           ? (() => {
-              const localPath = resolveEnvFile(flags.keyframe ?? '')
+              const localPath = resolveEnvFile(flags.keyframe ?? '', repoRoot, 'keyframe')
               const bytes = readFileSync(localPath)
               return { localPath, sha256: sha256(bytes), bytes: bytes.byteLength }
             })()
@@ -303,14 +375,14 @@ export async function runCli(argv: readonly string[], env: NodeJS.ProcessEnv, io
           keyframe,
         })
         if (result.outcome === 'submitted') {
-          io.stdout(line('submitted', { job: result.jobId, request: result.requestId, sha256: result.sentSha256, transport }))
+          io.stdout(placed('submitted', { job: result.jobId, request: result.requestId, sha256: result.sentSha256, transport }))
           return
         }
         if (result.outcome === 'budget-refused' || result.outcome === 'cache-hit' || result.outcome === 'in-flight' || result.outcome === 'submit-unconfirmed' || result.outcome === 'urls-unusable' || result.outcome === 'failed' || result.outcome === 'refused' || result.outcome === 'database-unavailable') {
-          io.stdout(line(result.outcome, { job: 'jobId' in result ? result.jobId : undefined, transport }))
+          io.stdout(placed(result.outcome, { job: 'jobId' in result ? result.jobId : undefined, transport }))
           return
         }
-        io.stdout(line(result.outcome, { transport }))
+        io.stdout(placed(result.outcome, { transport }))
         explain(io, result.outcome)
         return
       }
@@ -318,26 +390,109 @@ export async function runCli(argv: readonly string[], env: NodeJS.ProcessEnv, io
         const result = command === 'poll'
           ? await studio.poll(required(flags, 'job'))
           : await studio.resume(required(flags, 'job'))
-        io.stdout(line(result.outcome, { job: 'jobId' in result ? result.jobId : undefined, transport }))
+        io.stdout(placed(result.outcome, { job: 'jobId' in result ? result.jobId : undefined, transport }))
         explain(io, result.outcome)
         return
       }
       if (command === 'download') {
         const result = await studio.download(required(flags, 'job'))
-        io.stdout(line(result.outcome, { transport }))
+        io.stdout(placed(result.outcome, { transport }))
         explain(io, result.outcome)
         return
       }
+      if (command === 'import') {
+        const video = new Uint8Array(readFileSync(resolveEnvFile(required(flags, 'file'), repoRoot, 'clip')))
+        const keyframe = new Uint8Array(readFileSync(resolveEnvFile(required(flags, 'keyframe'), repoRoot, 'keyframe')))
+        const prompt = readFileSync(resolveEnvFile(required(flags, 'prompt-file'), repoRoot, 'prompt file'), 'utf8')
+        const result = await studio.importClip({
+          video,
+          keyframe,
+          source: required(flags, 'source'),
+          prompt,
+          subjects: required(flags, 'subjects').split(','),
+          title: required(flags, 'title'),
+          note: flags.note,
+          madeOn: flags['made-on'],
+        })
+        if (result.outcome === 'imported') {
+          io.stdout(placed('imported', {
+            job: result.jobId,
+            sha256: result.sha256,
+            width: result.width,
+            height: result.height,
+            duration: result.durationS,
+            container: result.container,
+            codec: result.videoCodec,
+            audio: result.audio,
+            fps: result.frameRate,
+            stripped: result.stripped,
+            faststart: result.fastStart,
+            transport,
+          }))
+          return
+        }
+        if (result.outcome === 'clip-refused' && result.reason === 'truncated') {
+          io.stdout(placed('refused: truncated'))
+          return
+        }
+        if (result.outcome === 'clip-refused' && result.reason === 'not-mp4') {
+          io.stdout(placed(result.brand ? `refused: not an mp4; brand=${result.brand}` : 'refused: not an mp4'))
+          return
+        }
+        if (result.outcome === 'clip-refused' && result.reason === 'no-video') {
+          io.stdout(placed('refused: missing a video track'))
+          return
+        }
+        if (result.outcome === 'clip-refused') {
+          io.stdout(placed('refused: duration is zero'))
+          return
+        }
+        if (result.outcome === 'not-a-jpeg') {
+          io.stdout(placed('refused: keyframe is not a jpeg'))
+          return
+        }
+        if (result.outcome === 'already-imported') {
+          io.stdout(placed('refused: this file was already imported'))
+          return
+        }
+        if (result.outcome === 'needs-made-on') {
+          io.stdout(placed('refused: pass --made-on YYYY-MM-DD; the clip has no creation time'))
+          return
+        }
+        if (result.outcome === 'made-on-invalid') {
+          io.stdout(placed('refused: --made-on must be YYYY-MM-DD'))
+          return
+        }
+        if (result.outcome === 'source-refused') {
+          io.stdout(placed('refused: source must be grok-imagine'))
+          return
+        }
+        if (result.outcome === 'subject-refused') {
+          io.stdout(placed('refused: subjects must be Fenway or Frankenstein'))
+          return
+        }
+        if (result.outcome === 'prompt-empty') {
+          io.stdout(placed('refused: the prompt file is empty'))
+          return
+        }
+        if (result.outcome === 'title-empty') {
+          io.stdout(placed('refused: the title is empty'))
+          return
+        }
+        throw new Error('unexpected import result')
+      }
       if (command === 'list') {
         const rows = await studio.list()
-        if (rows.length === 0) io.stdout('none')
+        if (rows.length === 0) io.stdout(placed('none'))
         for (const row of rows) {
-          io.stdout(line(row.status, {
+          io.stdout(placed(row.status, {
             job: row.id,
             substate: row.substate,
             estimate: row.estimateUsd,
             billed: row.billed,
             publishable: row.publishable,
+            public_id: row.publicId,
+            position: row.position,
           }))
         }
         return
@@ -350,16 +505,16 @@ export async function runCli(argv: readonly string[], env: NodeJS.ProcessEnv, io
           answer: answers[index] as ChecklistAnswer,
           by: flags.by ?? 'operator',
         })))
-        io.stdout(result.outcome)
+        io.stdout(placed(result.outcome))
         return
       }
       if (command === 'discard') {
-        io.stdout((await studio.discard(required(flags, 'job'))).outcome)
+        io.stdout(placed((await studio.discard(required(flags, 'job'))).outcome))
         return
       }
       if (command === 'cancel') {
         const result = await studio.cancel(required(flags, 'job'))
-        io.stdout(line(result.outcome, {
+        io.stdout(placed(result.outcome, {
           charge: 'chargeRetained' in result ? result.chargeRetained : undefined,
           hint: 'hint' in result ? result.hint : undefined,
           transport,
@@ -368,7 +523,7 @@ export async function runCli(argv: readonly string[], env: NodeJS.ProcessEnv, io
       }
       if (command === 'close-session') {
         const result = await studio.closeSession()
-        io.stdout(line(result.outcome, {
+        io.stdout(placed(result.outcome, {
           total: result.outcome === 'closed' ? result.totalUsd : undefined,
           jobs: result.outcome === 'close-refused' ? result.jobIds.join(',') : undefined,
         }))
@@ -381,7 +536,7 @@ export async function runCli(argv: readonly string[], env: NodeJS.ProcessEnv, io
           evidence: required(flags, 'evidence'),
           ...(flags.amount ? { amountUsd: flags.amount } : {}),
         })
-        io.stdout(line(result.outcome, { job: 'jobId' in result ? result.jobId : undefined }))
+        io.stdout(placed(result.outcome, { job: 'jobId' in result ? result.jobId : undefined }))
         return
       }
       if (command === 'attach-request') {
@@ -389,7 +544,7 @@ export async function runCli(argv: readonly string[], env: NodeJS.ProcessEnv, io
           jobId: required(flags, 'job'),
           requestId: required(flags, 'request-id'),
         })
-        io.stdout(line(result.outcome, { job: 'jobId' in result ? result.jobId : undefined }))
+        io.stdout(placed(result.outcome, { job: 'jobId' in result ? result.jobId : undefined }))
         return
       }
       if (command === 'record-gate') {
@@ -399,12 +554,12 @@ export async function runCli(argv: readonly string[], env: NodeJS.ProcessEnv, io
           recordedBy: required(flags, 'by'),
           source: required(flags, 'source'),
         })
-        io.stdout(line(result.outcome, { recordedOn: 'recordedOn' in result ? result.recordedOn : undefined }))
+        io.stdout(placed(result.outcome, { recordedOn: 'recordedOn' in result ? result.recordedOn : undefined }))
         return
       }
       if (command === 'record-balance') {
         const result = await studio.recordBalance(required(flags, 'amount'))
-        io.stdout(line('balance', {
+        io.stdout(placed('balance', {
           amount: result.amountUsd,
           aboveCeiling: result.aboveCeiling,
           readFromFal: result.readFromFal,
@@ -415,37 +570,53 @@ export async function runCli(argv: readonly string[], env: NodeJS.ProcessEnv, io
         const result = await studio.publish({
           jobId: required(flags, 'job'),
           publicId: required(flags, 'public-id'),
-          title: required(flags, 'title'),
+          title: flags.title,
           position: Number(required(flags, 'position')),
           editorialNote: flags.note,
         })
-        io.stdout(line(result.outcome, {
+        if (result.outcome === 'card-refused') {
+          io.stdout(placed(`card-refused: missing ${result.missing.join('; missing ')}`))
+          return
+        }
+        if (result.outcome === 'title-empty') {
+          io.stdout(placed('refused: the title is empty'))
+          return
+        }
+        io.stdout(placed(result.outcome, {
           live: 'live' in result ? result.live : undefined,
           retryable: 'retryable' in result ? result.retryable : undefined,
+          reason: 'reason' in result ? result.reason : undefined,
+          object: 'object' in result ? result.object : undefined,
+          status: 'status' in result ? result.status : undefined,
+          code: 'code' in result ? result.code : undefined,
         }))
         explain(io, result.outcome)
         return
       }
       if (command === 'unpublish') {
         const result = await studio.unpublish(required(flags, 'job'), { deleteFiles: flags.delete === '1' })
-        io.stdout(line(result.outcome, {
+        io.stdout(placed(result.outcome, {
           removal: 'removal' in result ? result.removal : undefined,
           filesReadable: 'filesReadable' in result ? result.filesReadable : undefined,
           live: 'live' in result ? result.live : undefined,
+          status: 'status' in result ? result.status : undefined,
+          code: 'code' in result ? result.code : undefined,
         }))
         return
       }
       if (command === 'retry-delete') {
         const result = await studio.retryDelete(required(flags, 'job'))
-        io.stdout(line(result.outcome, {
+        io.stdout(placed(result.outcome, {
           filesReadable: 'filesReadable' in result ? result.filesReadable : undefined,
           idempotent: 'idempotent' in result ? result.idempotent : undefined,
+          status: 'status' in result ? result.status : undefined,
+          code: 'code' in result ? result.code : undefined,
         }))
         return
       }
       if (command === 'retry-removal') {
         const result = await studio.retryRemoval(required(flags, 'job'))
-        io.stdout(line(result.outcome, { idempotent: 'idempotent' in result ? result.idempotent : undefined }))
+        io.stdout(placed(result.outcome, { idempotent: 'idempotent' in result ? result.idempotent : undefined }))
         return
       }
       throw new Error(`unknown command ${command}`)

@@ -9,6 +9,9 @@ const BINARY = new Set([
 export const SECRET_PATTERNS: { name: string; pattern: RegExp }[] = [
   { name: 'postgres-url', pattern: /postgres(?:ql)?:\/\/\S+/i },
   { name: 'fal-assignment', pattern: /FAL_KEY\s*=\s*\S+/ },
+  { name: 'r2-account', pattern: /R2_ACCOUNT_ID\s*=\s*\S+/ },
+  { name: 'r2-access-key', pattern: /R2_ACCESS_KEY_ID\s*=\s*\S+/ },
+  { name: 'r2-secret', pattern: /R2_SECRET_ACCESS_KEY\s*=\s*\S+/ },
   { name: 'provider-key', pattern: /\bsk-[A-Za-z0-9]{8,}/ },
   { name: 'jwt', pattern: /\beyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{10,}\./ },
   { name: 'supabase-publishable', pattern: /sb_publishable_[A-Za-z0-9]{8,}/ },

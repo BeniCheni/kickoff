@@ -10,6 +10,7 @@ import { createStudio, type StudioFlags } from '../engine.ts'
 import type { ScriptName } from '../fal/stub.ts'
 import { createFalStub } from '../fal/stub.ts'
 import { createStorageStub, type StorageScript } from '../storage/stub.ts'
+import { attachCardFacts } from './card-facts.ts'
 import { freshDatabase, type StudioClient } from './harness.ts'
 import { minimalJpeg } from './jpeg.ts'
 
@@ -94,6 +95,7 @@ async function publishedClip() {
   }).returning()
   if (!k0) throw new Error('missing keyframe')
   await db.insert(generationInput).values({ generationId: current.generationId, assetId: k0.id, role: 'first' })
+  await attachCardFacts(db, current.generationId)
   expect((await studio.recordGate({
     answer: 'recorded',
     disclosure: 'pending a named answer',
@@ -122,7 +124,7 @@ describe('publish projection', () => {
     const parsed = catalogDetailRowSchema.parse(projected)
     expect(parsed.id).toBe('fenway')
     expect(parsed.title).toBe('Fenway')
-    expect(parsed.subjects).toEqual([])
+    expect(parsed.subjects).toEqual(['Fenway'])
     expect(parsed.thumbnail_is_keyframe).toBe(true)
     expect(parsed.kept_at).not.toBeNull()
     expect(JSON.stringify(parsed)).not.toContain(jobId)
