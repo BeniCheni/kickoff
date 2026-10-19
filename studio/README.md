@@ -100,7 +100,25 @@ Import is on this page. A PNG still is refused, with the `sips` line from the We
 
 ### Wednesday, in the admin
 
-The env file already holds `STUDIO_LIVE`, `DATABASE_URL`, and the four R2 names. One command starts the live admin. The shell prints `transport=live`, `database=postgres` and `storage=r2`.
+From the repository root, one command at a time. The env file already holds `STUDIO_LIVE`, `DATABASE_URL`, and the four R2 names.
+
+```bash
+cd studio
+```
+
+```bash
+export STUDIO_ENV_FILE=$HOME/studio.env
+```
+
+```bash
+export STUDIO_DATA_DIR=$HOME/studio-data
+```
+
+```bash
+export STUDIO_MEDIA_DIR=$HOME/studio-media
+```
+
+One command starts the live admin. The shell prints `transport=live`, `database=postgres` and `storage=r2`. It also prints `fal=refused`. That is expected on Wednesday: Import does not need `FAL_KEY`. Jobs shows `Unavailable: a live fal action needs FAL_KEY on this Mac, and none is set.` for the same reason.
 
 ```bash
 STUDIO_LIVE=1 npm run studio -- --live
@@ -110,9 +128,11 @@ The process prints one URL. Open that URL. It sets the cookie and is not printed
 
 On Import, choose the mp4 and the JPEG. Type the prompt, choose Fenway or Frankenstein or both, type the title and the note, and set the made-on date. Read the file. The preview shows width, height, duration, frame rate, audio, fast start, and what Strip will remove. Import. The clip is downloaded, in Jobs and in Review.
 
-On Review, answer the five lines Clear and Keep. On Publish, record the Article 50 answer, then Publish. The confirmation says the clip is live on the next read.
+On Review, play the clip and look at all four corners for a Grok watermark before you answer the logo line. Then answer the five lines Clear and Keep.
 
-In the Cloudflare dashboard, the bucket named by `R2_BUCKET` has the two keys from the Publish screen. In the Supabase SQL editor, the same row the CLI section reads:
+On Publish, record the Article 50 answer. Type the public id `fenway-wednesday`, the title, and position 1. The two storage keys appear before you press Publish. The confirmation says the clip is live on the next read. Then Publish.
+
+In the Cloudflare dashboard, the bucket named by `R2_BUCKET` has those two keys. In the Supabase SQL editor, the same row the CLI section reads:
 
 ```sql
 select id, endpoint, pinned_on, prompt, prompt_expansion, seed, subjects, video_bucket, video_object_path, thumbnail_object_path
