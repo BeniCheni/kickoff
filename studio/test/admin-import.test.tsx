@@ -288,8 +288,15 @@ describe('import screen', () => {
       body: Buffer.alloc(PHOTO_LIMIT + 1),
     })
     expect(huge.status).toBe(413)
-    expect(statusLine(JSON.parse(huge.body))).toBe(DRAFT.importTooLarge)
-    expect(CLIP_LIMIT).toBe(100_000_000)
+    expect(statusLine(JSON.parse(huge.body))).toBe('Unavailable: that still is over 20 MB.')
+    const hugeClip = await ask(admin, {
+      path: '/api/import/clip',
+      method: 'POST',
+      headers: { ...headers, 'content-type': 'video/mp4' },
+      body: Buffer.alloc(CLIP_LIMIT + 1),
+    })
+    expect(hugeClip.status).toBe(413)
+    expect(statusLine(JSON.parse(hugeClip.body))).toBe('Unavailable: that clip is over 100 MB.')
 
     const upload = async (bytes: Uint8Array, type: string, route: 'clip' | 'still') => JSON.parse((await ask(admin, {
       path: `/api/import/${route}`,

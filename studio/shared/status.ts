@@ -73,7 +73,8 @@ export function importRefusal(body: { outcome?: string; reason?: string; brand?:
   if (body.outcome === 'not-a-jpeg') return DRAFT.importNotJpeg
   if (body.outcome === 'inside-worktree') return DRAFT.importWorktree
   if (body.outcome === 'png') return DRAFT.importPng
-  if (body.outcome === 'too-large') return DRAFT.importTooLarge
+  if (body.outcome === 'clip-too-large') return DRAFT.importClipTooLarge
+  if (body.outcome === 'still-too-large') return DRAFT.importStillTooLarge
   if (body.outcome === 'missing') return DRAFT.importMissing
   if (body.outcome === 'empty') return DRAFT.importEmpty
   if (body.outcome === 'prompt-empty') return DRAFT.importPromptEmpty

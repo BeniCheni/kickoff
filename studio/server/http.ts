@@ -188,7 +188,7 @@ async function handle(
       bytes = await readBytes(request, CLIP_LIMIT)
     } catch (error) {
       if (error instanceof BodyError && error.status === 413) {
-        sendJson(response, 413, { outcome: 'too-large' }, cookieHeader)
+        sendJson(response, 413, { outcome: 'clip-too-large' }, cookieHeader)
         return
       }
       throw error
@@ -217,7 +217,7 @@ async function handle(
       bytes = await readBytes(request, PHOTO_LIMIT)
     } catch (error) {
       if (error instanceof BodyError && error.status === 413) {
-        sendJson(response, 413, { outcome: 'too-large' }, cookieHeader)
+        sendJson(response, 413, { outcome: 'still-too-large' }, cookieHeader)
         return
       }
       throw error
