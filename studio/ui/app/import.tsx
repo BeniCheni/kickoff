@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { SUBJECT_LABELS } from '@kickoff/catalog'
 import { DRAFT } from '../../shared/admin-copy.ts'
-import { statusLine } from '../../shared/status.ts'
 import { confirmImport, previewImport, uploadImportClip, uploadImportStill, type ImportPreview } from './api.ts'
 import { StatusLine } from './status.tsx'
 

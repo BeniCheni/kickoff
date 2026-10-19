@@ -257,7 +257,9 @@ describe('import screen', () => {
   it('refuses the upload by type, size, truncation, brand, a duplicate, a missing date and a non-JPEG', async () => {
     const env = folders()
     const admin = await startAdmin({ env, port: 0 })
-    const incomingDir = path.join(env.STUDIO_MEDIA_DIR, 'incoming')
+    const mediaDir = env.STUDIO_MEDIA_DIR
+    if (!mediaDir) throw new Error('media dir')
+    const incomingDir = path.join(mediaDir, 'incoming')
     const emptyIncoming = () => {
       if (!existsSync(incomingDir)) return
       expect(readdirSync(incomingDir)).toEqual([])
