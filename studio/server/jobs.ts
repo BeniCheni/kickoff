@@ -107,6 +107,7 @@ export async function downloadJob(opened: OpenedAdmin, jobId: string) {
 }
 
 export async function regenerateJob(opened: OpenedAdmin, jobId: string, confirmEstimate: string) {
+  if (!opened.falConfigured) return { outcome: 'fal-key-missing' as const }
   if (opened.database === 'unavailable') return { outcome: 'database-unavailable' as const }
   const [current] = await opened.db.select().from(job).where(eq(job.id, jobId))
   if (!current || current.completedSubstate !== 'result-expired') return { outcome: 'not-ready' as const }

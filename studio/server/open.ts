@@ -9,10 +9,11 @@ import postgres from 'postgres'
 import { parseEnvFile, resolveEnvFile } from '../db/migrate.ts'
 import { studioTables } from '../db/schema.ts'
 import { createStudio, type Studio, type StudioDatabase } from '../engine.ts'
-import { missingLivePieces, selectFalTransport } from '../fal/live.ts'
+import { selectFalTransport } from '../fal/live.ts'
 import { createFalStub, type ScriptName, type StubCursor } from '../fal/stub.ts'
 import { createStorageStub } from '../storage/stub.ts'
-import type { DatabaseName, TransportName } from '../shared/types.ts'
+import type { DatabaseEngine, DatabaseName, StorageName, TransportName } from '../shared/types.ts'
+import { createRefusingStorage } from './storage-refused.ts'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
 const repoRoot = path.resolve(here, '../..')
@@ -34,6 +35,9 @@ export type OpenedAdmin = {
   mediaDir: string
   transport: TransportName
   database: DatabaseName
+  databaseEngine: DatabaseEngine
+  storage: StorageName
+  falConfigured: boolean
   script: ScriptName
   outOfCredit: { current: boolean }
   clock: () => Date
@@ -76,14 +80,26 @@ function loadCursor(file: string): StubCursor {
 }
 
 /**
- * Live mode is a start-up choice, the same pair the CLI requires.
- * The browser has no way to set it.
+ * A live admin starts with STUDIO_LIVE=1 and DATABASE_URL.
+ * FAL_KEY is checked later, only behind Submit and Regenerate.
+ * The browser has no way to set any of this.
  */
 export function assertLiveStart(live: boolean, env: NodeJS.ProcessEnv): void {
   if (!live) return
-  const missing = missingLivePieces(env)
+  const missing: string[] = []
+  if (env.STUDIO_LIVE !== '1') missing.push('STUDIO_LIVE')
   if (!env.DATABASE_URL) missing.push('DATABASE_URL')
   if (missing.length > 0) throw new Error(`refused: --live needs ${missing.join(' and ')}`)
+}
+
+/** Which database and storage a start will use. Live storage stays refused until ST3b wires R2. */
+export function adminBackends(live: boolean, env: NodeJS.ProcessEnv): { databaseEngine: DatabaseEngine; storage: StorageName; pglite: boolean } {
+  const pglite = !live || (env.STUDIO_ADMIN_LIVE_PGLITE === '1' && process.env.NODE_ENV === 'test')
+  return {
+    databaseEngine: pglite ? 'pglite' : 'postgres',
+    storage: live ? 'refused' : 'stub',
+    pglite,
+  }
 }
 
 export async function openAdmin(env: NodeJS.ProcessEnv, live: boolean): Promise<OpenedAdmin> {
@@ -96,15 +112,18 @@ export async function openAdmin(env: NodeJS.ProcessEnv, live: boolean): Promise<
   const cursorPath = cursorFile(dataDir)
   const cursor = loadCursor(cursorPath)
   const fails = new Set((loaded.STUDIO_STORAGE_FAIL ?? '').split(',').map((item) => item.trim()).filter(Boolean))
-  const storage = createStorageStub({
-    failVideo: fails.has('video'),
-    failThumbnail: fails.has('thumbnail'),
-    failFallback: fails.has('fallback'),
-    failRemoval: fails.has('removal'),
-    failRemove: fails.has('remove'),
-    failRemoveVideo: fails.has('video-remove'),
-    failRemoveThumbnail: fails.has('thumbnail-remove'),
-  })
+  const backends = adminBackends(live, loaded)
+  const storagePort = backends.storage === 'refused'
+    ? createRefusingStorage()
+    : createStorageStub({
+      failVideo: fails.has('video'),
+      failThumbnail: fails.has('thumbnail'),
+      failFallback: fails.has('fallback'),
+      failRemoval: fails.has('removal'),
+      failRemove: fails.has('remove'),
+      failRemoveVideo: fails.has('video-remove'),
+      failRemoveThumbnail: fails.has('thumbnail-remove'),
+    }).port
   const script = scriptFrom(loaded)
   const stub = createFalStub(script, cursor)
   const fal = selectFalTransport({ argv: live ? ['--live'] : [], env: loaded, stub })
@@ -114,7 +133,7 @@ export async function openAdmin(env: NodeJS.ProcessEnv, live: boolean): Promise<
 
   let db: StudioDatabase
   let closeDb: () => Promise<void>
-  if (live) {
+  if (!backends.pglite) {
     const sql = postgres(loaded.DATABASE_URL ?? '', { prepare: false, max: 1 })
     db = drizzlePostgres(sql, { schema: studioTables }) as unknown as StudioDatabase
     closeDb = async () => {
@@ -128,13 +147,16 @@ export async function openAdmin(env: NodeJS.ProcessEnv, live: boolean): Promise<
     closeDb = () => client.close()
   }
 
-  const studio = createStudio({ db, fal, storage: storage.port, mediaDir, repoRoot, clock })
+  const studio = createStudio({ db, fal, storage: storagePort, mediaDir, repoRoot, clock })
   return {
     studio,
     db,
     mediaDir,
     transport,
     database,
+    databaseEngine: backends.databaseEngine,
+    storage: backends.storage,
+    falConfigured: !live || Boolean(loaded.FAL_KEY),
     script,
     outOfCredit: { current: script === 'out-of-credit' },
     clock,

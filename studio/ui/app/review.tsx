@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { DRAFT } from '../../shared/admin-copy.ts'
+import type { ShellView } from '../../shared/types.ts'
 import { regenerateLabel } from '../../shared/jobs.ts'
 import { CHECKLIST, CHECKLIST_RULE, PLAYER_HELP, keepReason } from '../../shared/review.ts'
 import { discardReview, getJobs, getReview, keepReview, regenerateReview, type ReviewView } from './api.ts'
@@ -45,7 +47,7 @@ export function ReviewChecklist({
   )
 }
 
-export function ReviewPage() {
+export function ReviewPage({ shell }: { shell: ShellView }) {
   const [jobs, setJobs] = useState<JobView[] | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
   const [review, setReview] = useState<ReviewView | null>(null)
@@ -102,8 +104,9 @@ export function ReviewPage() {
         <section className="studio-section">
           <span className="label-caps">Lineage</span>
           <p className="studio-help">{(review.parents ?? []).length === 0 ? 'First generation; no parent.' : `Regeneration of ${(review.parents ?? []).join(', ')}.`}</p>
+          {shell.falConfigured ? null : <p className="studio-help" role="status">{DRAFT.falKey}</p>}
           {review.regenerateEstimateUsd ? (
-            <button type="button" className="studio-button" onClick={() => void regenerateReview(selected, review.regenerateEstimateUsd ?? '').then(() => getJobs())}>
+            <button type="button" className="studio-button" disabled={!shell.falConfigured} onClick={() => void regenerateReview(selected, review.regenerateEstimateUsd ?? '').then(() => getJobs())}>
               {regenerateLabel(review.regenerateEstimateUsd)}
             </button>
           ) : null}

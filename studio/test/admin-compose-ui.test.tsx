@@ -21,6 +21,9 @@ const catalog: ComposeCatalog = {
 
 const shell: ShellView = {
   transport: 'stub',
+  databaseEngine: 'pglite',
+  storage: 'stub',
+  falConfigured: true,
   host: '127.0.0.1',
   port: 5176,
   balance: null,

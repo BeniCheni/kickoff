@@ -68,6 +68,7 @@ export function ComposeForm({
     || (priced.length > 0 && cmpUsd(sumEstimates([spend, total]), shell.caps.sessionUsd) > 0)
   const block = submitBlock({
     database: shell.database,
+    falConfigured: shell.falConfigured,
     jobCount: jobs.length,
     overBudget,
     unpriced: jobs.length > 0 && (lines.length !== jobs.length || lines.some((line) => line.outcome !== 'estimate')),

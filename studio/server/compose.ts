@@ -82,6 +82,7 @@ export async function estimateJobs(opened: OpenedAdmin, body: unknown) {
 }
 
 export async function submitJobs(opened: OpenedAdmin, body: unknown) {
+  if (!opened.falConfigured) return { outcome: 'fal-key-missing' as const }
   if (opened.database === 'unavailable') return { outcome: 'database-unavailable' as const }
   const estimate = await estimateJobs(opened, body)
   const confirm = body && typeof body === 'object' ? (body as { confirmTotalUsd?: unknown }).confirmTotalUsd : undefined

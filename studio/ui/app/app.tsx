@@ -63,7 +63,7 @@ export function App() {
       }}
       onTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
     >
-      {tab === 'jobs' ? <JobsPage /> : tab === 'compose' ? <ComposePage shell={shell} /> : tab === 'review' ? <ReviewPage /> : tab === 'publish' ? <PublishPage /> : <h1>{TAB_LABELS[tab]}</h1>}
+      {tab === 'jobs' ? <JobsPage shell={shell} /> : tab === 'compose' ? <ComposePage shell={shell} /> : tab === 'review' ? <ReviewPage shell={shell} /> : tab === 'publish' ? <PublishPage shell={shell} /> : <h1>{TAB_LABELS[tab]}</h1>}
     </StudioShell>
   )
 }

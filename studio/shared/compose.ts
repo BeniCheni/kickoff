@@ -95,10 +95,12 @@ export function largestEstimate(amounts: readonly string[]): string | null {
 
 export function submitBlock(input: {
   database: 'reachable' | 'unavailable'
+  falConfigured?: boolean
   jobCount: number
   overBudget: boolean
   unpriced: boolean
 }): string | null {
+  if (input.falConfigured === false) return DRAFT.falKey
   if (input.database === 'unavailable') return DRAFT.submitDatabase
   if (input.jobCount === 0) return DRAFT.submitEmpty
   if (input.unpriced) return DRAFT.submitUnpriced

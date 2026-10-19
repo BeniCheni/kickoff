@@ -101,6 +101,9 @@ describe('admin server', () => {
       caps: { perJobUsd: string; sessionUsd: string; prepaidCeilingUsd: string }
     }
     expect(body.transport).toBe('stub')
+    expect(JSON.parse(shell.body).databaseEngine).toBe('pglite')
+    expect(JSON.parse(shell.body).storage).toBe('stub')
+    expect(JSON.parse(shell.body).falConfigured).toBe(true)
     expect(body.host).toBe('127.0.0.1')
     expect(body.balance).toBeNull()
     expect(body.session).toBeNull()
@@ -157,7 +160,7 @@ describe('admin server', () => {
       port: 0,
     })).rejects.toThrow(/worktree/)
     await expect(startAdmin({ live: true, env: env(), port: 0 })).rejects.toThrow(/STUDIO_LIVE/)
-    await expect(startAdmin({ live: true, env: env(), port: 0 })).rejects.toThrow(/FAL_KEY/)
+    await expect(startAdmin({ live: true, env: env({ STUDIO_LIVE: '1' }), port: 0 })).rejects.toThrow(/DATABASE_URL/)
   })
 
   it('keeps a secret out of an error response', async () => {

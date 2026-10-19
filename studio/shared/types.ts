@@ -2,6 +2,10 @@ export type TransportName = 'stub' | 'live'
 
 export type DatabaseName = 'reachable' | 'unavailable'
 
+export type DatabaseEngine = 'pglite' | 'postgres'
+
+export type StorageName = 'stub' | 'r2' | 'refused'
+
 export type BalanceView = {
   amountUsd: string
   aboveCeiling: boolean
@@ -23,6 +27,9 @@ export type CapsView = {
 
 export type ShellView = {
   transport: TransportName
+  databaseEngine: DatabaseEngine
+  storage: StorageName
+  falConfigured: boolean
   host: '127.0.0.1'
   port: number
   balance: BalanceView | null

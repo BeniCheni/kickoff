@@ -36,6 +36,8 @@ export type AdminServer = {
   origin: string
   url: string
   transport: 'stub' | 'live'
+  databaseEngine: 'pglite' | 'postgres'
+  storage: 'stub' | 'r2' | 'refused'
   close: () => Promise<void>
 }
 
@@ -319,6 +321,8 @@ export async function startAdmin(options: StartAdminOptions = {}): Promise<Admin
     origin,
     url: oneTimeUrl(origin, token),
     transport: opened.transport,
+    databaseEngine: opened.databaseEngine,
+    storage: opened.storage,
     async close() {
       await new Promise<void>((resolve, reject) => {
         server.close((error) => (error ? reject(error) : resolve()))

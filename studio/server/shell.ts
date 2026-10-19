@@ -15,6 +15,9 @@ export async function readShell(opened: OpenedAdmin, port: number): Promise<Shel
   if (opened.database === 'unavailable') {
     return {
       transport: opened.transport,
+      databaseEngine: opened.databaseEngine,
+      storage: opened.storage,
+      falConfigured: opened.falConfigured,
       host: '127.0.0.1',
       port,
       balance: null,
@@ -47,6 +50,9 @@ export async function readShell(opened: OpenedAdmin, port: number): Promise<Shel
 
   return {
     transport: opened.transport,
+    databaseEngine: opened.databaseEngine,
+    storage: opened.storage,
+    falConfigured: opened.falConfigured,
     host: '127.0.0.1',
     port,
     balance: latestBalance

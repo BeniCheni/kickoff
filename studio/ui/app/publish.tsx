@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { COPY } from '../../copy.ts'
-import { DRAFT } from '../../shared/admin-copy.ts'
+import { DRAFT, STORAGE_REFUSAL } from '../../shared/admin-copy.ts'
+import type { ShellView } from '../../shared/types.ts'
 import type { JobView } from '../../shared/jobs.ts'
 import { getJobs, getPublish, publishClip, recordGate, retryDelete, retryRemoval, unpublishClip, type PublishView } from './api.ts'
 
@@ -25,6 +26,7 @@ export function PublishCard({
   onUnpublish,
   onRetryDelete,
   onRetryRemoval,
+  confirm,
 }: {
   view: PublishView
   publicId: string
@@ -46,6 +48,7 @@ export function PublishCard({
   onUnpublish: () => void
   onRetryDelete: () => void
   onRetryRemoval: () => void
+  confirm: string
 }) {
   const blocked = !view.gateRecorded || view.refusals.length > 0 || view.status !== 'kept'
   return (
@@ -95,7 +98,7 @@ export function PublishCard({
       </div>
       <div className="studio-card">
         <span className="label-caps">Confirm</span>
-        <p className="studio-help">{DRAFT.publishConfirm}</p>
+        <p className="studio-help">{confirm}</p>
         <button type="button" className="studio-primary" disabled={blocked} onClick={onPublish}>Publish</button>
         {view.gateReason ? <p className="studio-help" role="status">{view.gateReason}</p> : null}
         {view.status === 'published' ? (
@@ -116,7 +119,7 @@ export function PublishCard({
   )
 }
 
-export function PublishPage() {
+export function PublishPage({ shell }: { shell: ShellView }) {
   const [jobs, setJobs] = useState<JobView[] | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
   const [view, setView] = useState<PublishView | null>(null)
@@ -190,6 +193,7 @@ export function PublishPage() {
       onUnpublish={() => void unpublishClip(selected, false).then(() => reloadClip(selected, publicId))}
       onRetryDelete={() => void retryDelete(selected)}
       onRetryRemoval={() => void retryRemoval(selected)}
+      confirm={shell.storage === 'refused' ? STORAGE_REFUSAL : DRAFT.publishConfirm}
     />
     </>
   )

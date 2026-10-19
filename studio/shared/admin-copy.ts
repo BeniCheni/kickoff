@@ -14,6 +14,7 @@ export const DRAFT = {
   onePhotograph: 'This submit sends the first selected photo. The engine accepts one photograph per request.',
   publishConfirm:
     'Publish writes this clip to the catalog. It is live on the next read. There is no pull request and no release.',
+  falKey: 'Unavailable: a live submit needs FAL_KEY on this Mac, and none is set.',
   cardWidth: 'Publish is refused: the clip has no positive width on the record.',
   cardHeight: 'Publish is refused: the clip has no positive height on the record.',
   cardDuration: 'Publish is refused: the clip has no positive duration on the record.',
@@ -56,3 +57,6 @@ export const RETIRED = [
     draft: 'The catalog row carries the record and the stored keys. No photograph is published. What fal received is stated on Compose.',
   },
 ] as const
+
+/** Live mode has no storage port until ST3b wires R2. Every method refuses with this sentence. */
+export const STORAGE_REFUSAL = 'Storage is not connected, so a live publish, delete, or removal is refused until the files can be stored.'

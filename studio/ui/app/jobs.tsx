@@ -12,6 +12,8 @@ import {
   shouldPoll,
   type JobView,
 } from '../../shared/jobs.ts'
+import { DRAFT } from '../../shared/admin-copy.ts'
+import type { ShellView } from '../../shared/types.ts'
 import { downloadJob, getJobs, pollJobs, regenerateJob } from './api.ts'
 
 function billedText(row: JobView): { text: string; pending: boolean } {
@@ -37,10 +39,12 @@ export function JobsTable({
   rows,
   onDownload,
   onRegenerate,
+  regenerateBlocked,
 }: {
   rows: readonly JobView[]
   onDownload: (id: string) => void
   onRegenerate: (row: JobView) => void
+  regenerateBlocked?: boolean
 }) {
   if (rows.length === 0) return <p className="studio-help">No jobs recorded.</p>
   return (
@@ -80,7 +84,7 @@ export function JobsTable({
                   <button type="button" className="studio-button" onClick={() => onDownload(row.id)}>{RETRY_DOWNLOAD_LABEL}</button>
                 ) : null}
                 {action === 'regenerate' && row.regenerateEstimateUsd ? (
-                  <button type="button" className="studio-button" onClick={() => onRegenerate(row)}>
+                  <button type="button" className="studio-button" disabled={regenerateBlocked} onClick={() => onRegenerate(row)}>
                     {regenerateLabel(row.regenerateEstimateUsd)}
                   </button>
                 ) : null}
@@ -97,7 +101,7 @@ export function JobsTable({
   )
 }
 
-export function JobsPage() {
+export function JobsPage({ shell }: { shell: ShellView }) {
   const [rows, setRows] = useState<JobView[] | null>(null)
   const [failed, setFailed] = useState(false)
 
@@ -157,5 +161,10 @@ export function JobsPage() {
 
   if (failed) return <p className="studio-help" role="alert">The jobs list was refused.</p>
   if (!rows) return <p className="studio-help">Reading jobs.</p>
-  return <JobsTable rows={rows} onDownload={(id) => void onDownload(id)} onRegenerate={(row) => void onRegenerate(row)} />
+  return (
+    <>
+      {shell.falConfigured ? null : <p className="studio-help" role="status">{DRAFT.falKey}</p>}
+      <JobsTable rows={rows} regenerateBlocked={!shell.falConfigured} onDownload={(id) => void onDownload(id)} onRegenerate={(row) => void onRegenerate(row)} />
+    </>
+  )
 }

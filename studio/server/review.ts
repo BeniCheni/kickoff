@@ -117,6 +117,7 @@ async function reviewEstimate(opened: OpenedAdmin, endpoint: string | undefined,
 }
 
 export async function regenerateReview(opened: OpenedAdmin, jobId: string, body: unknown) {
+  if (!opened.falConfigured) return { outcome: 'fal-key-missing' as const }
   const confirm = body && typeof body === 'object' ? (body as { confirmEstimate?: unknown }).confirmEstimate : undefined
   if (typeof confirm !== 'string') return { outcome: 'refused' as const }
   const [current] = await opened.db.select().from(job).where(eq(job.id, jobId))

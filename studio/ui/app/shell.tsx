@@ -41,7 +41,7 @@ export function StudioShell({
           <div>
             <span className="kh-word">Kickoff</span>
             <span className="kh-sub">Studio · {shell.host}:{shell.port} · this Mac only</span>
-            <span className="kh-meta">transport={shell.transport}</span>
+            <span className="kh-meta">transport={shell.transport} · database={shell.databaseEngine} · storage={shell.storage}</span>
           </div>
           <div className="studio-meta">
             <span>fal balance <b>{balance}</b> · cap ≤ {displayUsd(shell.caps.prepaidCeilingUsd)}</span>

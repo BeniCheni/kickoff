@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm'
 import { siteCopyPath } from '@kickoff/catalog'
 import { article50Answer, asset, generation, generationInput, generationSubject, job, subject, videos } from '../db/schema.ts'
-import { DRAFT } from '../shared/admin-copy.ts'
+import { DRAFT, STORAGE_REFUSAL } from '../shared/admin-copy.ts'
 import type { OpenedAdmin } from './open.ts'
 
 const UUID = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'
@@ -96,15 +96,28 @@ export async function publishJob(opened: OpenedAdmin, jobId: string, body: unkno
   })
 }
 
+function storageRefused(opened: OpenedAdmin): { outcome: 'storage-refused'; message: string } | null {
+  if (opened.storage !== 'refused') return null
+  return { outcome: 'storage-refused', message: STORAGE_REFUSAL }
+}
+
 export async function unpublishJob(opened: OpenedAdmin, jobId: string, body: unknown) {
   const deleteFiles = Boolean(body && typeof body === 'object' && (body as { deleteFiles?: unknown }).deleteFiles === true)
+  if (deleteFiles) {
+    const refused = storageRefused(opened)
+    if (refused) return refused
+  }
   return opened.studio.unpublish(jobId, { deleteFiles })
 }
 
 export async function retryDeleteJob(opened: OpenedAdmin, jobId: string) {
+  const refused = storageRefused(opened)
+  if (refused) return refused
   return opened.studio.retryDelete(jobId)
 }
 
 export async function retryRemovalJob(opened: OpenedAdmin, jobId: string) {
+  const refused = storageRefused(opened)
+  if (refused) return refused
   return opened.studio.retryRemoval(jobId)
 }

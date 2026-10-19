@@ -76,12 +76,12 @@ The process prints one URL. Open that URL. It sets an HttpOnly, SameSite=Strict 
 npm run studio
 ```
 
-That start is stub mode. The shell shows `transport=stub`. Paid submits use the fal stub. `STUDIO_STUB` selects the script, the same names as the CLI.
+That start is stub mode. The shell shows `transport=stub · database=pglite · storage=stub`. Paid submits use the fal stub. `STUDIO_STUB` selects the script, the same names as the CLI.
 
 ```bash
 STUDIO_LIVE=1 npm run studio -- --live
 ```
 
-`--live` turns the process live only when `STUDIO_LIVE=1` and the env file holds `FAL_KEY` and `DATABASE_URL`. If either is missing, the process refuses and names the missing piece. It does not print the value. The browser cannot switch the transport. The shell shows `transport=live` only when the process was started that way.
+`--live` starts only when `STUDIO_LIVE=1` and `DATABASE_URL` are set. It names a missing piece and does not print a value. `FAL_KEY` is not required to start. Without it, Submit and Regenerate stay disabled and say so. Storage stays `refused` until a later change wires the bucket: a publish does not write a catalog row, and unpublish with a file delete, retry-delete, and retry-removal are refused. The browser cannot switch the transport. The shell shows `transport=live · database=postgres · storage=refused` only when the process was started that way.
 
 Import of a Grok clip is not on this page yet. The `import` command is not on `main`. The walk-through — choose the MP4 and the JPEG, read the clip's facts, keep, then publish — waits until that command has merged.
