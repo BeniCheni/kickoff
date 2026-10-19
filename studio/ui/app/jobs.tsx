@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { displayUsd } from '../../shared/display.ts'
 import {
   formatElapsed,
@@ -107,6 +107,9 @@ export function JobsPage({ shell, onShell }: { shell: ShellView; onShell: () => 
   const [rows, setRows] = useState<JobView[] | null>(null)
   const [failed, setFailed] = useState(false)
   const [notice, setNotice] = useState<unknown>(null)
+  const rowsRef = useRef<JobView[]>([])
+  const polling = useRef(false)
+  rowsRef.current = rows ?? []
 
   useEffect(() => {
     let gone = false
@@ -127,14 +130,20 @@ export function JobsPage({ shell, onShell }: { shell: ShellView; onShell: () => 
       if (timer !== undefined || !shouldPoll(document.visibilityState)) return
       void refresh()
       timer = window.setInterval(() => {
-        if (!shouldPoll(document.visibilityState)) {
-          stop()
+        if (polling.current || !shouldPoll(document.visibilityState)) {
+          if (!shouldPoll(document.visibilityState)) stop()
           return
         }
-        void pollJobs().then((next) => {
+        polling.current = true
+        const ids = rowsRef.current
+          .filter((row) => row.status === 'submitted' || row.status === 'queued' || row.status === 'in-progress')
+          .map((row) => row.id)
+        void pollJobs(ids).then((next) => {
           if (!gone) setRows(next)
         }).catch(() => {
           if (!gone) setFailed(true)
+        }).finally(() => {
+          polling.current = false
         })
       }, 2000)
     }

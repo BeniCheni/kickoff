@@ -1,4 +1,4 @@
-import { desc, eq } from 'drizzle-orm'
+import { desc, eq, inArray } from 'drizzle-orm'
 import { generation, generationSubject, job, ledger, model, subject } from '../db/schema.ts'
 import type { Studio, StudioDatabase } from '../engine.ts'
 import {
@@ -38,20 +38,42 @@ function billedOf(status: AdminJobState, lines: readonly { settlement: string; a
 
 export async function readJobs(db: StudioDatabase, studio: Studio, now: Date): Promise<JobView[]> {
   const rows = await db.select().from(job).orderBy(desc(job.createdAt))
+  const generationIds = [...new Set(rows.map((row) => row.generationId))]
+  const generations = generationIds.length === 0
+    ? []
+    : await db.select().from(generation).where(inArray(generation.id, generationIds))
+  const generationById = new Map(generations.map((row) => [row.id, row]))
+  const modelIds = [...new Set(generations.map((row) => row.modelId))]
+  const models = modelIds.length === 0 ? [] : await db.select().from(model).where(inArray(model.id, modelIds))
+  const modelById = new Map(models.map((row) => [row.id, row]))
+  const jobIds = rows.map((row) => row.id)
+  const lines = jobIds.length === 0 ? [] : await db.select().from(ledger).where(inArray(ledger.jobId, jobIds))
+  const linesByJob = new Map<string, typeof lines>()
+  for (const line of lines) {
+    const list = linesByJob.get(line.jobId) ?? []
+    list.push(line)
+    linesByJob.set(line.jobId, list)
+  }
+  const links = generationIds.length === 0
+    ? []
+    : await db.select().from(generationSubject).where(inArray(generationSubject.generationId, generationIds))
+  const subjectIds = [...new Set(links.map((link) => link.subjectId))]
+  const subjects = subjectIds.length === 0 ? [] : await db.select().from(subject).where(inArray(subject.id, subjectIds))
+  const subjectById = new Map(subjects.map((row) => [row.id, row.name]))
+  const namesByGeneration = new Map<string, string[]>()
+  for (const link of links) {
+    const name = subjectById.get(link.subjectId)
+    if (!name) continue
+    const list = namesByGeneration.get(link.generationId) ?? []
+    list.push(name)
+    namesByGeneration.set(link.generationId, list)
+  }
   const views: JobView[] = []
   for (const row of rows) {
     if (!isState(row.status)) continue
-    const [gen] = await db.select().from(generation).where(eq(generation.id, row.generationId))
-    const [pinned] = gen ? await db.select().from(model).where(eq(model.id, gen.modelId)) : []
-    const lines = await db.select().from(ledger).where(eq(ledger.jobId, row.id))
-    const links = gen
-      ? await db.select().from(generationSubject).where(eq(generationSubject.generationId, gen.id))
-      : []
-    const names: string[] = []
-    for (const link of links) {
-      const [who] = await db.select().from(subject).where(eq(subject.id, link.subjectId))
-      if (who) names.push(who.name)
-    }
+    const gen = generationById.get(row.generationId)
+    const pinned = gen ? modelById.get(gen.modelId) : undefined
+    const names = gen ? namesByGeneration.get(gen.id) ?? [] : []
     const substate = row.completedSubstate === 'download-failed' || row.completedSubstate === 'result-expired'
       ? row.completedSubstate
       : null
@@ -73,7 +95,7 @@ export async function readJobs(db: StudioDatabase, studio: Studio, now: Date): P
       step: gen ? stepOf(gen.kind, gen.params) : row.status,
       model: pinned?.endpoint ?? null,
       estimateUsd: row.estimateUsd,
-      billed: billedOf(row.status, lines),
+      billed: billedOf(row.status, linesByJob.get(row.id) ?? []),
       at: at.toISOString(),
       elapsedSeconds,
       regenerateEstimateUsd,
@@ -100,8 +122,7 @@ export async function pollInFlight(opened: OpenedAdmin, ids: readonly string[]):
   const current = await readJobs(opened.db, opened.studio, opened.clock())
   const wanted = new Set(ids)
   for (const row of current) {
-    if (!IN_FLIGHT.has(row.status)) continue
-    if (wanted.size > 0 && !wanted.has(row.id)) continue
+    if (!IN_FLIGHT.has(row.status) || !wanted.has(row.id)) continue
     await opened.studio.poll(row.id)
   }
   return readJobs(opened.db, opened.studio, opened.clock())

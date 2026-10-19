@@ -26,8 +26,8 @@ export async function getJobs(): Promise<JobView[]> {
   return await response.json() as JobView[]
 }
 
-export async function pollJobs(): Promise<JobView[]> {
-  const response = await postJson('/api/jobs/poll', {})
+export async function pollJobs(ids: readonly string[]): Promise<JobView[]> {
+  const response = await postJson('/api/jobs/poll', { ids })
   return await response.json() as JobView[]
 }
 

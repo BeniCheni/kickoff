@@ -11,7 +11,7 @@ import { createFalStub, type ScriptName } from '../fal/stub.ts'
 import { createStorageStub } from '../storage/stub.ts'
 import { DOWNLOAD_FAILED_NOTE, jobLabel, jobNote, jobVoice, shouldPoll } from '../shared/jobs.ts'
 import { ADMIN_JOB_STATES } from '../shared/jobs.ts'
-import { readJobs } from '../server/jobs.ts'
+import { pollInFlight, readJobs } from '../server/jobs.ts'
 import { openAdmin } from '../server/open.ts'
 import { startAdmin, type AdminServer } from '../server/http.ts'
 import { freshDatabase, type StudioClient } from './harness.ts'
@@ -175,19 +175,21 @@ describe('job states', () => {
     const ticket = await ask(admin, { path: `/?ticket=${encodeURIComponent(admin.token)}` })
     const cookie = cookieFrom(ticket.headers['set-cookie'])
     const listed = await ask(admin, { path: '/api/jobs', headers: { cookie } })
-    const rows = JSON.parse(listed.body) as { status: string; billed: { kind: string } }[]
+    const rows = JSON.parse(listed.body) as { id: string; status: string; billed: { kind: string } }[]
     expect(rows[0]?.status).toBe('submitted')
     expect(rows[0]?.billed).toEqual({ kind: 'pending' })
     const foreign = await ask(admin, {
       path: '/api/jobs/poll',
       method: 'POST',
       headers: { cookie, origin: 'http://evil.example', 'content-type': 'application/json' },
+      body: JSON.stringify({ ids: [rows[0]?.id] }),
     })
     expect(foreign.status).toBe(403)
     const polled = await ask(admin, {
       path: '/api/jobs/poll',
       method: 'POST',
       headers: { cookie, origin: admin.origin, 'content-type': 'application/json' },
+      body: JSON.stringify({ ids: [rows[0]?.id] }),
     })
     expect(polled.status).toBe(200)
     const after = JSON.parse(polled.body) as { status: string }[]
@@ -195,12 +197,46 @@ describe('job states', () => {
     const again = JSON.parse((await ask(admin, { path: '/api/jobs', headers: { cookie } })).body) as { status: string }[]
     expect(again[0]?.status).toBe('queued')
   })
+
+  it('reads nineteen jobs without a query per row', async () => {
+    const data = mkdtempSync(path.join(tmpdir(), 'kickoff-studio-data-'))
+    const media = mkdtempSync(path.join(tmpdir(), 'kickoff-studio-media-'))
+    const opened = await openAdmin({
+      STUDIO_DATA_DIR: data,
+      STUDIO_MEDIA_DIR: media,
+      STUDIO_NOW: '2026-10-18T18:00:00.000Z',
+    }, false)
+    const ids: string[] = []
+    for (let index = 0; index < 19; index += 1) {
+      const submitted = await opened.studio.submit(video(`bounded-${index}`, 5))
+      expect(submitted.outcome).toBe('submitted')
+      if (submitted.outcome === 'submitted') ids.push(submitted.jobId)
+    }
+    expect(ids).toHaveLength(19)
+    let queries = 0
+    const select = opened.db.select.bind(opened.db)
+    opened.db.select = ((...args: unknown[]) => {
+      queries += 1
+      return select(...args as [])
+    }) as typeof opened.db.select
+    const rows = await readJobs(opened.db, opened.studio, new Date('2026-10-18T18:00:00.000Z'))
+    expect(rows).toHaveLength(19)
+    expect(queries).toBeLessThan(12)
+    queries = 0
+    await pollInFlight(opened, [ids[0] ?? ''])
+    expect(queries).toBeLessThan(40)
+    queries = 0
+    await pollInFlight(opened, [])
+    expect(queries).toBeLessThan(12)
+    await opened.close()
+  })
 })
 
 function ask(admin: AdminServer, options: {
   path: string
   method?: string
   headers?: IncomingHttpHeaders
+  body?: string
 }): Promise<{ status: number; headers: IncomingHttpHeaders; body: string }> {
   return new Promise((resolve, reject) => {
     const req = httpRequest({
@@ -219,7 +255,8 @@ function ask(admin: AdminServer, options: {
       }))
     })
     req.on('error', reject)
-    if (options.method === 'POST') req.write('{}')
+    if (options.body) req.write(options.body)
+    else if (options.method === 'POST') req.write('{}')
     req.end()
   })
 }
