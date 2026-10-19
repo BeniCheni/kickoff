@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs'
+import { existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, realpathSync, rmSync, writeFileSync } from 'node:fs'
 import { randomBytes } from 'node:crypto'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -30,6 +30,52 @@ function incoming(mediaDir: string, id: string, extension: 'mp4' | 'jpg'): strin
   return containedPath(mediaDir, path.join(mediaDir, 'incoming', `${id}.${extension}`))
 }
 
+const INCOMING_MAX_AGE_MS = 24 * 60 * 60 * 1000
+
+/** Drop unconfirmed uploads older than a day. A symlink is removed as a link; its target is left alone. */
+export function sweepIncoming(mediaDir: string, now = Date.now()): void {
+  const dir = path.join(mediaDir, 'incoming')
+  if (!existsSync(dir)) return
+  let base: string
+  try {
+    base = realpathSync(dir)
+  } catch {
+    return
+  }
+  for (const name of readdirSync(dir)) {
+    const entry = path.join(dir, name)
+    let info: ReturnType<typeof lstatSync>
+    try {
+      info = lstatSync(entry)
+    } catch {
+      continue
+    }
+    if (now - info.mtimeMs < INCOMING_MAX_AGE_MS) continue
+    if (info.isSymbolicLink()) {
+      rmSync(entry, { force: true })
+      continue
+    }
+    if (!info.isFile()) continue
+    let real: string
+    try {
+      real = realpathSync(entry)
+    } catch {
+      continue
+    }
+    const relative = path.relative(base, real)
+    if (relative.startsWith('..') || path.isAbsolute(relative)) continue
+    rmSync(entry, { force: true })
+  }
+}
+
+function discardUploads(mediaDir: string, clipId?: string, stillId?: string): void {
+  for (const [id, extension] of [[clipId, 'mp4'], [stillId, 'jpg']] as const) {
+    if (!id) continue
+    const file = incoming(mediaDir, id, extension)
+    if (file) rmSync(file, { force: true })
+  }
+}
+
 export function storeImport(mediaDir: string, kind: 'clip' | 'still', bytes: Uint8Array): { id: string } | { outcome: 'inside-worktree' } {
   const id = randomBytes(16).toString('hex')
   const dir = path.join(mediaDir, 'incoming')
@@ -49,16 +95,23 @@ export function previewImport(opened: OpenedAdmin, body: unknown) {
   const clipPath = incoming(opened.mediaDir, record.clipId, 'mp4')
   const stillPath = incoming(opened.mediaDir, record.stillId, 'jpg')
   if (!clipPath || !stillPath) return { outcome: 'missing' as const }
-  if (pathInsideWorktree(clipPath) || pathInsideWorktree(stillPath)) return { outcome: 'inside-worktree' as const }
+  if (pathInsideWorktree(clipPath) || pathInsideWorktree(stillPath)) {
+    discardUploads(opened.mediaDir, record.clipId, record.stillId)
+    return { outcome: 'inside-worktree' as const }
+  }
   const video = new Uint8Array(readFileSync(clipPath))
   const keyframe = new Uint8Array(readFileSync(stillPath))
   const stripped = stripClip(video)
   const read = readClipFacts(stripped.bytes)
-  if (!read.ok) return { outcome: 'clip-refused' as const, reason: read.reason, brand: read.brand }
+  if (!read.ok) {
+    discardUploads(opened.mediaDir, record.clipId, record.stillId)
+    return { outcome: 'clip-refused' as const, reason: read.reason, brand: read.brand }
+  }
   try {
     preparePhotograph(keyframe)
   } catch (error) {
     if (error instanceof Error && (error.message === 'not a jpeg' || error.message === 'bad jpeg')) {
+      discardUploads(opened.mediaDir, record.clipId, record.stillId)
       return { outcome: 'not-a-jpeg' as const }
     }
     throw error
@@ -95,7 +148,10 @@ export async function confirmImport(opened: OpenedAdmin, body: unknown) {
   const clipPath = incoming(opened.mediaDir, record.clipId, 'mp4')
   const stillPath = incoming(opened.mediaDir, record.stillId, 'jpg')
   if (!clipPath || !stillPath) return { outcome: 'missing' as const }
-  if (pathInsideWorktree(clipPath) || pathInsideWorktree(stillPath)) return { outcome: 'inside-worktree' as const }
+  if (pathInsideWorktree(clipPath) || pathInsideWorktree(stillPath)) {
+    discardUploads(opened.mediaDir, record.clipId, record.stillId)
+    return { outcome: 'inside-worktree' as const }
+  }
   const result = await opened.studio.importClip({
     video: new Uint8Array(readFileSync(clipPath)),
     keyframe: new Uint8Array(readFileSync(stillPath)),
@@ -106,9 +162,6 @@ export async function confirmImport(opened: OpenedAdmin, body: unknown) {
     note: typeof record.note === 'string' ? record.note : undefined,
     madeOn: typeof record.madeOn === 'string' && record.madeOn.length > 0 ? record.madeOn : undefined,
   })
-  if (result.outcome === 'imported') {
-    rmSync(clipPath, { force: true })
-    rmSync(stillPath, { force: true })
-  }
+  discardUploads(opened.mediaDir, record.clipId, record.stillId)
   return result
 }

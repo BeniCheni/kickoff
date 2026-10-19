@@ -1,4 +1,4 @@
-import { mkdtempSync } from 'node:fs'
+import { existsSync, lutimesSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, symlinkSync, utimesSync, writeFileSync } from 'node:fs'
 import { request as httpRequest, type IncomingHttpHeaders } from 'node:http'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
@@ -8,7 +8,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { CHECKLIST_LINES } from '../db/schema.ts'
 import { syntheticMp4 } from '../media/mp4.ts'
 import { CLIP_LIMIT, PHOTO_LIMIT } from '../server/body.ts'
-import { pathInsideWorktree } from '../server/import.ts'
+import { pathInsideWorktree, sweepIncoming } from '../server/import.ts'
 import { startAdmin, type AdminServer } from '../server/http.ts'
 import { DRAFT } from '../shared/admin-copy.ts'
 import { importRefusal, statusLine } from '../shared/status.ts'
@@ -253,7 +253,13 @@ describe('import screen', () => {
   })
 
   it('refuses the upload by type, size, truncation, brand, a duplicate, a missing date and a non-JPEG', async () => {
-    const admin = await startAdmin({ env: folders(), port: 0 })
+    const env = folders()
+    const admin = await startAdmin({ env, port: 0 })
+    const incomingDir = path.join(env.STUDIO_MEDIA_DIR, 'incoming')
+    const emptyIncoming = () => {
+      if (!existsSync(incomingDir)) return
+      expect(readdirSync(incomingDir)).toEqual([])
+    }
     servers.push(admin)
     const cookie = await cookieFor(admin)
     const headers = { cookie, origin: admin.origin }
@@ -317,15 +323,18 @@ describe('import screen', () => {
     })).body) as { outcome: string; reason: string }
     expect(truncated).toMatchObject({ outcome: 'clip-refused', reason: 'truncated' })
     expect(statusLine(truncated)).toBe(DRAFT.importTruncated)
+    emptyIncoming()
 
     const qt = await upload(syntheticMp4({ brand: 'qt  ', compatible: ['qt  '] }), 'video/mp4', 'clip')
+    const qtStill = await upload(minimalJpeg, 'image/jpeg', 'still')
     const branded = JSON.parse((await ask(admin, {
       path: '/api/import/preview',
       method: 'POST',
       headers: { ...headers, 'content-type': 'application/json' },
-      body: JSON.stringify({ clipId: qt.id, stillId: stillId.id }),
+      body: JSON.stringify({ clipId: qt.id, stillId: qtStill.id }),
     })).body) as { reason: string; brand: string }
     expect(statusLine(branded)).toBe(`${DRAFT.importNotMp4} The brand is qt.`)
+    emptyIncoming()
 
     const good = await upload(syntheticMp4({ creationTime: 0 }), 'video/mp4', 'clip')
     const jpeg = await upload(minimalJpeg, 'image/jpeg', 'still')
@@ -343,13 +352,16 @@ describe('import screen', () => {
     })).body) as { outcome: string }
     expect(undated.outcome).toBe('needs-made-on')
     expect(statusLine(undated)).toBe(DRAFT.importNeedsMadeOn)
+    emptyIncoming()
+    const datedClip = await upload(syntheticMp4({ creationTime: 0 }), 'video/mp4', 'clip')
+    const datedStill = await upload(minimalJpeg, 'image/jpeg', 'still')
     const dated = JSON.parse((await ask(admin, {
       path: '/api/import/confirm',
       method: 'POST',
       headers: { ...headers, 'content-type': 'application/json' },
       body: JSON.stringify({
-        clipId: good.id,
-        stillId: jpeg.id,
+        clipId: datedClip.id,
+        stillId: datedStill.id,
         prompt: 'a fictional cat',
         subjects: ['Fenway'],
         title: 'Fenway',
@@ -357,6 +369,7 @@ describe('import screen', () => {
       }),
     })).body) as { outcome: string }
     expect(dated.outcome).toBe('imported')
+    emptyIncoming()
     const againClip = await upload(syntheticMp4({ creationTime: 0 }), 'video/mp4', 'clip')
     const againStill = await upload(minimalJpeg, 'image/jpeg', 'still')
     const duplicate = JSON.parse((await ask(admin, {
@@ -374,6 +387,7 @@ describe('import screen', () => {
     })).body) as { outcome: string }
     expect(duplicate.outcome).toBe('already-imported')
     expect(statusLine(duplicate)).toBe(DRAFT.importDuplicate)
+    emptyIncoming()
 
     const fakeStill = await upload(syntheticMp4(), 'image/jpeg', 'still')
     const clipId = await upload(syntheticMp4({ creationTime: creationTime('2026-10-21T15:00:00.000Z') }), 'video/mp4', 'clip')
@@ -385,5 +399,29 @@ describe('import screen', () => {
     })).body) as { outcome: string }
     expect(notJpeg.outcome).toBe('not-a-jpeg')
     expect(statusLine(notJpeg)).toBe(DRAFT.importNotJpeg)
+    emptyIncoming()
+  })
+
+  it('sweeps only old files inside incoming/', () => {
+    const media = mkdtempSync(path.join(tmpdir(), 'kickoff-studio-media-'))
+    const incoming = path.join(media, 'incoming')
+    const outside = path.join(media, 'keep.txt')
+    writeFileSync(outside, 'stay')
+    mkdirSync(incoming)
+    const oldFile = path.join(incoming, 'old.mp4')
+    const freshFile = path.join(incoming, 'fresh.mp4')
+    writeFileSync(oldFile, 'old')
+    writeFileSync(freshFile, 'fresh')
+    const old = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
+    utimesSync(oldFile, old, old)
+    const link = path.join(incoming, 'link.mp4')
+    symlinkSync(outside, link)
+    lutimesSync(link, old, old)
+    sweepIncoming(media)
+    expect(existsSync(outside)).toBe(true)
+    expect(readFileSync(outside, 'utf8')).toBe('stay')
+    expect(existsSync(oldFile)).toBe(false)
+    expect(existsSync(link)).toBe(false)
+    expect(existsSync(freshFile)).toBe(true)
   })
 })

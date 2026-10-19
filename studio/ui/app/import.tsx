@@ -159,17 +159,23 @@ export function ImportPage() {
   async function readFile() {
     if (!clip || !still || png) return
     const clipBody = await uploadImportClip(await clip.arrayBuffer())
-    const stillBody = await uploadImportStill(await still.arrayBuffer(), still.type || 'image/jpeg')
     const clipId = clipBody && typeof clipBody === 'object' && typeof (clipBody as { id?: unknown }).id === 'string'
       ? (clipBody as { id: string }).id
       : null
+    if (!clipId) {
+      setPreview(null)
+      setIds(null)
+      setNotice(clipBody)
+      return
+    }
+    const stillBody = await uploadImportStill(await still.arrayBuffer(), still.type || 'image/jpeg')
     const stillId = stillBody && typeof stillBody === 'object' && typeof (stillBody as { id?: unknown }).id === 'string'
       ? (stillBody as { id: string }).id
       : null
-    if (!clipId || !stillId) {
+    if (!stillId) {
       setPreview(null)
       setIds(null)
-      setNotice(statusLine(clipBody) ? clipBody : stillBody)
+      setNotice(stillBody)
       return
     }
     const facts = await previewImport(clipId, stillId)
@@ -197,10 +203,8 @@ export function ImportPage() {
     })
     const imported = Boolean(result && typeof result === 'object' && (result as { outcome?: unknown }).outcome === 'imported')
     setNotice(imported ? DRAFT.importImported : result)
-    if (imported) {
-      setPreview(null)
-      setIds(null)
-    }
+    setPreview(null)
+    setIds(null)
   }
 
   return (
