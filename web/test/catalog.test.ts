@@ -30,8 +30,8 @@ test('a missing database address throws and does not open a file', () => {
   }
 })
 
-test('a database address without a client still throws', () => {
-  expect(() => readCatalog(env({ databaseUrl: 'present' }), () => '')).toThrow(/not in this build/)
+test('the sync reader does not open a hosted connection', () => {
+  expect(() => readCatalog(env({ databaseUrl: 'postgres://127.0.0.1/kickoff' }), () => '')).toThrow(/hosted/)
 })
 
 test('stub beside production refuses before opening a file', () => {
@@ -126,7 +126,7 @@ test('moments calls the loader once and keeps prompts off the list', () => {
   expect(gallery.videoAddress).toBeNull()
   expect(gallery.thumbnails['stub-fenway-one']).toEqual({
     storage: 'http://127.0.0.1/stub-storage/moments/stub-fenway-one/thumbnail-a1b2c3d4.jpg',
-    site: '/moments/thumbnails/stub-fenway-one.jpg',
+    site: '/moments/stub-site/stub-fenway-one.jpg',
   })
 })
 
@@ -155,8 +155,16 @@ test('preview outside stub mode is refused', () => {
 test('the loader source is server-only and has no baked-in fixture path', () => {
   const load = readFileSync(fileURLToPath(new URL('../lib/catalog/load.ts', import.meta.url)), 'utf8')
   const reader = readFileSync(fileURLToPath(new URL('../lib/catalog/read.ts', import.meta.url)), 'utf8')
+  const database = readFileSync(fileURLToPath(new URL('../lib/catalog/database.ts', import.meta.url)), 'utf8')
+  const connection = readFileSync(fileURLToPath(new URL('../lib/catalog/connection.ts', import.meta.url)), 'utf8')
   expect(load).toContain("import 'server-only'")
-  expect(load).toContain('process.env.KICKOFF_DATABASE_URL')
-  expect(load + reader).not.toContain('KICKOFF-STUB-CATALOG')
-  expect(load + reader).not.toContain('fixtures/catalog')
+  expect(database).toContain("import 'server-only'")
+  expect(database).toContain('process.env.KICKOFF_DATABASE_URL')
+  expect(database).toContain('connectionOptions')
+  expect(connection).toContain('prepare: false')
+  expect(connection).toContain('connect_timeout: 5')
+  expect(connection).toContain("ssl: loopback(parsed.hostname) ? false : 'require'")
+  expect(database + connection).not.toContain('studio_reader')
+  expect(load + reader + database).not.toContain('KICKOFF-STUB-CATALOG')
+  expect(load + reader + database).not.toContain('fixtures/catalog')
 })

@@ -1,17 +1,13 @@
 import { catalogDetailRowSchema, catalogListRowSchema, publishedListColumns, type CatalogDetailRow, type CatalogListRow } from '@kickoff/catalog'
-import { CatalogReadError } from './types'
+import { CatalogReadError, type CatalogSuccess } from './types'
+
+export type { CatalogSuccess }
 
 export type CatalogEnv = {
   catalog: string | undefined
   stubFile: string | undefined
   databaseUrl: string | undefined
   vercelEnv: string | undefined
-}
-
-export type CatalogSuccess = {
-  preview: true
-  list: CatalogListRow[]
-  details: CatalogDetailRow[]
 }
 
 function projectList(detail: CatalogDetailRow): CatalogListRow {
@@ -66,8 +62,8 @@ function readStub(text: string): CatalogSuccess {
 
 /**
  * One read. Either a validated list and its detail rows, or a throw.
- * Stub is opt-in. There is no baked-in file path. A database address without
- * a client in this build still fails. The throw is not replaced with stub rows.
+ * Stub is opt-in. There is no baked-in file path. A hosted address is not opened
+ * here. The throw is not replaced with stub rows.
  */
 export function readCatalog(env: CatalogEnv, readFile: (file: string) => string): CatalogSuccess {
   if (env.catalog === 'stub') {
@@ -83,7 +79,7 @@ export function readCatalog(env: CatalogEnv, readFile: (file: string) => string)
   }
   if (env.catalog === undefined || env.catalog === '' || env.catalog === 'production') {
     if (!env.databaseUrl) throw new CatalogReadError('catalog database address is not set', false)
-    throw new CatalogReadError('catalog database client is not in this build', false)
+    throw new CatalogReadError('catalog database read is hosted', false)
   }
   throw new CatalogReadError('unknown catalog mode', false)
 }

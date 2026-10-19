@@ -8,7 +8,8 @@ After editing either package, `npm ci` in `web/` refreshes the copy; a plain
 `npm install` does not. The catalog's zod `4.4.3` is nested at
 `web/node_modules/@kickoff/catalog/node_modules/zod`, because this install
 already hoists zod 3 for another package. Nothing is written back into
-`packages/`. There is no database client, credential, or deploy.
+`packages/`. The database client is server-only. There is no credential in
+the repo, and no deploy.
 Its private tooling version is never displayed. The header shows the root
 package version. Reverting this PR leaves the N1 scaffold buildable.
 
@@ -34,9 +35,18 @@ Stub catalog, off unless both are set: `KICKOFF_CATALOG=stub` and
 names the stub storage origin for a remote preview, including `/stub-storage`.
 Without it only a loopback `Host` (`127.0.0.1`, `localhost`, or `[::1]`, with an
 optional port) is accepted. Forwarded host/protocol headers are ignored. `VERCEL_ENV=production` refuses the stub flag.
-With the flag unset, or set to `production`, a missing database address throws
-and Moments shows the unavailable state. This build has no database client, so
-that path stays unavailable. Stub states carry `Stub catalog · synthetic records`,
+With the flag unset, or set to `production`, Moments reads `catalog.videos`
+and `catalog.video` through Drizzle, ordered by `position`, then `id`. The
+connection is one per server process, `prepare: false`, a five-second connect
+timeout, and TLS required except on a loopback host. A missing address, a
+failed read, or a row the strict schema rejects shows the unavailable state.
+There is no fallback to the stub. Fixtures and Table do not open a connection.
+`KICKOFF_STORAGE_ORIGIN` is an https origin with no path. A missing or invalid
+one leaves storage addresses empty: the thumbnail chain falls through, and the
+watch page shows recovery. The stub site-copy route is `/moments/stub-site/`,
+so a real `web/public/moments/thumbnails/<id>.jpg` is served at the Q24 address.
+Nothing writes those files yet.
+Stub states carry `Stub catalog · synthetic records`,
 a 12 px line in ordinary ink, first inside `main.moments-gallery`; non-stub states
 do not. This is Beni's Reword ruling (18 Oct 2026).
 Sample reactions are a second flag, also off unless both are set: `KICKOFF_DEMO=on`
@@ -262,7 +272,8 @@ move only in a PR that bumps Next, and that PR must re-prove U01. The check
 stays inside `typecheck`.
 
 Every direct dependency is MIT except TypeScript and puppeteer-core (both
-Apache-2.0), verified from the installed packages. Exact versions are in
+Apache-2.0), `drizzle-orm` 0.45.4 (Apache-2.0), and `postgres` 3.4.9 (Unlicense),
+verified from the installed packages. Exact versions are in
 package.json and package-lock.json.
 
 Isolation checks live in the new root `tests/web-isolation.test.ts` and web's
