@@ -1,11 +1,15 @@
 // Local proof: Postgres on the wire over PGlite, a clip published through the
 // Studio engine, and the sample audience generated in the database.
-// PNGs stay outside the repo. The receipt lists their SHA-256s.
+//
+// Run from the repo root. Plain `node` fails on type stripping:
+// node node_modules/tsx/dist/cli.mjs scripts/n6a-proof.mjs ~/kickoff-n6a-proof web/verification/n6a-proof.json
+//
+// PNGs go to ~/kickoff-n6a-proof, outside the repo. The receipt lists their SHA-256s.
 import { createHash } from 'node:crypto'
 import { createServer } from 'node:http'
 import { spawn } from 'node:child_process'
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
-import { tmpdir } from 'node:os'
+import { homedir, tmpdir } from 'node:os'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { createRequire } from 'node:module'
@@ -14,7 +18,6 @@ import { CHECKLIST_LINES } from '../studio/db/schema.ts'
 import { createStudio } from '../studio/engine.ts'
 import { createFalStub } from '../studio/fal/stub.ts'
 import { createStorageStub } from '../studio/storage/stub.ts'
-import { minimalJpeg } from '../studio/test/jpeg.ts'
 import { catalogFromRows } from '../web/lib/catalog/hosted.ts'
 
 const repoRoot = fileURLToPath(new URL('..', import.meta.url))
@@ -28,7 +31,7 @@ const { migrate } = await loadWeb('drizzle-orm/pglite/migrator')
 const { sql } = await loadWeb('drizzle-orm')
 const { drizzle: drizzlePostgres } = await loadWeb('drizzle-orm/postgres-js')
 const puppeteer = (await loadWeb('puppeteer-core')).default
-const outDir = path.resolve(process.argv[2] ?? '/tmp/kickoff-n6a-proof')
+const outDir = path.resolve(process.argv[2] ?? path.join(homedir(), 'kickoff-n6a-proof'))
 const receiptPath = path.resolve(process.argv[3] ?? path.join(webRoot, 'verification/n6a-proof.json'))
 const chrome = process.env.CHROME_PATH ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 const hash = bytes => createHash('sha256').update(bytes).digest('hex')
@@ -54,9 +57,10 @@ const studio = createStudio({
   clock: () => new Date('2026-10-18T16:00:00.000Z'),
 })
 const video = new Uint8Array(readFileSync(path.join(webRoot, 'fixtures/catalog/media/clip.mp4')))
+const keyframe = new Uint8Array(readFileSync(path.join(webRoot, 'fixtures/catalog/media/thumb-16x9.jpg')))
 const imported = await studio.importClip({
   video,
-  keyframe: minimalJpeg,
+  keyframe,
   source: 'grok-imagine',
   prompt: 'A fictional cat keeps a ball close.',
   subjects: ['Fenway'],
@@ -107,7 +111,9 @@ const media = createServer((request, response) => {
 })
 await new Promise(resolve => media.listen(0, '127.0.0.1', resolve))
 const mediaPort = media.address().port
-const databaseUrl = ['postgres', '://', `studio_reader:local@127.0.0.1:${wirePort}/postgres`].join('')
+const databasePassword = 'n6a-proof-pw'
+const databaseUser = 'studio_reader'
+const databaseUrl = ['postgres', '://', `${databaseUser}:${databasePassword}@127.0.0.1:${wirePort}/postgres`].join('')
 const storageOrigin = `http://127.0.0.1:${mediaPort}`
 const probe = postgres(databaseUrl, { prepare: false, max: 1, ssl: false, connect_timeout: 5 })
 const probed = drizzlePostgres(probe)
@@ -124,15 +130,23 @@ try {
 await probe.end({ timeout: 1 })
 
 function startNext(port, env) {
+  const childEnv = { ...process.env, NEXT_TELEMETRY_DISABLED: '1', KICKOFF_CATALOG: '', KICKOFF_DEMO_FILE: '', ...env }
+  delete childEnv.VERCEL_ENV
   const child = spawn(process.execPath, ['node_modules/next/dist/bin/next', 'start', '--hostname', '127.0.0.1', '--port', String(port)], {
     cwd: webRoot,
-    env: { ...process.env, NEXT_TELEMETRY_DISABLED: '1', KICKOFF_CATALOG: '', KICKOFF_DEMO_FILE: '', ...env },
+    env: childEnv,
     stdio: ['ignore', 'pipe', 'pipe'],
   })
-  let logs = ''
-  child.stdout.on('data', chunk => { logs += chunk })
-  child.stderr.on('data', chunk => { logs += chunk })
-  return { child, logs: () => logs }
+  let stdout = ''
+  let stderr = ''
+  child.stdout.on('data', chunk => { stdout += chunk })
+  child.stderr.on('data', chunk => { stderr += chunk })
+  return { child, logs: () => stdout + stderr, stdout: () => stdout, stderr: () => stderr }
+}
+
+const leakParts = [databaseUrl, `${databaseUser}:${databasePassword}`, databaseUser, databasePassword, `127.0.0.1:${wirePort}`, 'postgres://', 'postgresql://']
+function leakHits(text) {
+  return leakParts.filter(part => part && text.includes(part)).length
 }
 
 async function ready(url, started) {
@@ -175,7 +189,17 @@ try {
         }, theme)
         const params = new URLSearchParams({ tab: 'moments', ...(lens === 'poster' ? {} : { lens }) })
         await page.goto(`http://127.0.0.1:5196/?${params}`, { waitUntil: 'networkidle0' })
+        await page.waitForFunction(origin => {
+          const images = [...document.querySelectorAll('.moments-card img')]
+          return images.length > 0 && images.every(img => img.complete && img.naturalWidth > 0 && img.src.startsWith(origin))
+        }, { timeout: 8000 }, storageOrigin)
         const galleryText = await page.evaluate(() => document.body.innerText)
+        const thumbs = await page.evaluate(origin => [...document.querySelectorAll('.moments-card img')].map(img => ({
+          complete: img.complete,
+          width: img.naturalWidth,
+          src: img.src,
+          fromStore: img.src.startsWith(origin),
+        })), storageOrigin)
         const galleryPng = await page.screenshot({ fullPage: true })
         const name = `gallery-${lens}-${theme}-${width}`
         writeFileSync(path.join(outDir, `${name}.png`), galleryPng)
@@ -183,8 +207,10 @@ try {
         shots.push({ name, sha256: hash(galleryPng), scrollWidth: box.scroll, innerWidth: box.inner })
         check(`${name} overflow`, box.scroll === box.inner, box)
         check(`${name} catalog`, galleryText.includes('Synthetic cat') && galleryText.includes('Sample reactions') && !galleryText.includes('Stub catalog'))
+        check(`${name} thumbnail`, thumbs.length > 0 && thumbs.every(img => img.complete && img.width > 0 && img.fromStore), thumbs.map(img => img.width))
         await page.click('h2 a')
         await page.waitForFunction(() => /Playing muted|Sound on|No playable file/.test(document.body.innerText), { timeout: 8000 })
+        await new Promise(resolve => setTimeout(resolve, 450))
         const watchText = await page.evaluate(() => ({
           text: document.body.innerText,
           src: document.querySelector('video')?.getAttribute('src') ?? '',
@@ -202,6 +228,8 @@ try {
   await browser.close()
 }
 
+const galleryHtml = gallery
+const watchHtml = await (await fetch('http://127.0.0.1:5196/?tab=moments&watch=n6a-cat')).text()
 app.child.kill('SIGTERM')
 const quiet = startNext(5197, { KICKOFF_DATABASE_URL: databaseUrl, KICKOFF_STORAGE_ORIGIN: storageOrigin })
 await ready('http://127.0.0.1:5197', quiet)
@@ -210,12 +238,42 @@ if (without.includes('Sample reactions') || without.includes('views ·')) fail('
 if (!without.includes('Synthetic cat')) fail('demo off lost the catalog')
 quiet.child.kill('SIGTERM')
 
+const sleepChild = spawn(process.execPath, ['web/test/sleep-server.mjs', 'sleep'], { cwd: repoRoot, stdio: ['ignore', 'pipe', 'pipe'] })
+let sleepPort = ''
+await new Promise((resolve, reject) => {
+  const timer = setTimeout(() => reject(new Error('sleep server did not listen')), 15000)
+  sleepChild.stdout.on('data', chunk => {
+    sleepPort += chunk.toString()
+    if (!sleepPort.includes('\n')) return
+    clearTimeout(timer)
+    resolve()
+  })
+  sleepChild.on('error', reject)
+})
+const sleepUrl = ['postgres', '://', `${databaseUser}:${databasePassword}@127.0.0.1:${sleepPort.trim()}/postgres`].join('')
+const slow = startNext(5199, {
+  KICKOFF_DATABASE_URL: sleepUrl,
+  KICKOFF_STORAGE_ORIGIN: 'https://media.example',
+  KICKOFF_READ_TIMEOUT_MS: '400',
+})
+await ready('http://127.0.0.1:5199', slow)
+const slowStarted = Date.now()
+const timedOut = await (await fetch('http://127.0.0.1:5199/?tab=moments')).text()
+const slowElapsed = Date.now() - slowStarted
+slow.child.kill('SIGTERM')
+sleepChild.kill('SIGKILL')
+const recovered = startNext(5200, { KICKOFF_DATABASE_URL: databaseUrl, KICKOFF_STORAGE_ORIGIN: storageOrigin, KICKOFF_DEMO: 'on' })
+await ready('http://127.0.0.1:5200', recovered)
+const afterTimeout = await (await fetch('http://127.0.0.1:5200/?tab=moments')).text()
+recovered.child.kill('SIGTERM')
+
 wire.close()
 const down = startNext(5198, { KICKOFF_DATABASE_URL: databaseUrl, KICKOFF_STORAGE_ORIGIN: storageOrigin, KICKOFF_DEMO: 'on' })
 await ready('http://127.0.0.1:5198', down)
 const unavailable = await (await fetch('http://127.0.0.1:5198/?tab=moments')).text()
 if (!unavailable.includes('The gallery is unavailable.')) fail(unavailable.slice(0, 400))
 down.child.kill('SIGTERM')
+
 media.close()
 await database.close()
 
@@ -229,9 +287,15 @@ const receipt = {
   checks,
   demoOff: !without.includes('Sample reactions') && without.includes('Synthetic cat'),
   unavailable: unavailable.includes('The gallery is unavailable.'),
+  timedOut: timedOut.includes('The gallery is unavailable.') && slowElapsed < 2000,
+  recovered: afterTimeout.includes('Synthetic cat'),
   fixturesUntouched: fixtures.includes('Kickoff') && !fixtures.includes('Sample reactions'),
+  leakHits: [
+    galleryHtml, watchHtml, fixtures, without, unavailable, timedOut, afterTimeout,
+    app.stdout(), app.stderr(), quiet.stdout(), quiet.stderr(), down.stdout(), down.stderr(), slow.stdout(), slow.stderr(), recovered.stdout(), recovered.stderr(),
+  ].reduce((sum, text) => sum + leakHits(text), 0),
 }
 writeFileSync(receiptPath, `${JSON.stringify(receipt, null, 2)}\n`)
 const failed = checks.filter(item => !item.ok).map(item => item.name)
-console.log(JSON.stringify({ shots: shots.length, failed, demoOff: receipt.demoOff, unavailable: receipt.unavailable }, null, 2))
-if (failed.length || !receipt.demoOff || !receipt.unavailable) process.exitCode = 1
+console.log(JSON.stringify({ shots: shots.length, failed, demoOff: receipt.demoOff, unavailable: receipt.unavailable, timedOut: receipt.timedOut, recovered: receipt.recovered, leakHits: receipt.leakHits, slowElapsed }, null, 2))
+if (failed.length || !receipt.demoOff || !receipt.unavailable || !receipt.timedOut || !receipt.recovered || receipt.leakHits !== 0) process.exitCode = 1
