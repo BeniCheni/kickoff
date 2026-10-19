@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "@kickoff/catalog": "file:../packages/kickoff-catalog",
+    "@kickoff/demo": "file:../packages/kickoff-demo",
     "drizzle-orm": "0.45.4",
     "postgres": "3.4.9",
     "react": "19.2.8",
