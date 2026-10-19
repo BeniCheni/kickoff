@@ -176,6 +176,9 @@ body {
 .jobs .mono {
   font-family: var(--font-mono);
 }
+.jobs td.job-id {
+  white-space: nowrap;
+}
 .jobs small {
   display: block;
   font-size: 10.5px;

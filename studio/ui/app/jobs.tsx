@@ -70,7 +70,7 @@ export function JobsTable({
           const action = jobAction(row.status, row.substate)
           return (
             <tr key={row.id} data-state={row.status} data-substate={row.substate ?? undefined}>
-              <td className="mono">{row.id}</td>
+              <td className="mono job-id" title={row.id}>{row.id.slice(0, 8)}</td>
               <td>{row.subject ?? 'none recorded'}</td>
               <td>{row.step}</td>
               <td className="mono">{row.model ?? 'none recorded'}</td>

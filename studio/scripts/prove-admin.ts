@@ -657,7 +657,6 @@ async function main(): Promise<void> {
     const badConsole = shots.filter((shot) => shot.consoleErrors.length > 0)
     const receipt = {
       date: '2026-10-18',
-      proofDir,
       shots: shots.map((shot) => ({ ...shot, file: path.relative(proofDir, shot.file) })),
       notes,
       requestLog,

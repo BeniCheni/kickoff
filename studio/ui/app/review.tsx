@@ -102,6 +102,7 @@ export function ReviewPage({ shell, onShell }: { shell: ShellView; onShell: () =
             </p>
           ) : null}
           {review.prompt ? <p className="studio-help">“{review.prompt}”</p> : null}
+          <p className="studio-help">Model · {review.endpoint ?? 'none recorded'} · {review.resolution ?? 'resolution none recorded'} · seed {review.seed ?? 'none recorded'} · {review.expansion ?? 'expansion none recorded'}</p>
         </section>
         <section className="studio-section">
           <span className="label-caps">Lineage</span>

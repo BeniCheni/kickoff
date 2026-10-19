@@ -97,6 +97,10 @@ export type ReviewView = {
   jobId?: string
   status?: string
   prompt?: string | null
+  endpoint?: string | null
+  resolution?: string | null
+  seed?: string | null
+  expansion?: string | null
   assetId?: string | null
   file?: {
     mime: string

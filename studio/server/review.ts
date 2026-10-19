@@ -64,6 +64,10 @@ export async function readReview(opened: OpenedAdmin, jobId: string) {
     prompt: gen?.prompt ?? null,
     seed: gen?.seed ?? null,
     endpoint: pinned?.endpoint ?? null,
+    resolution: gen?.params && typeof gen.params === 'object' && typeof (gen.params as { resolution?: unknown }).resolution === 'string'
+      ? (gen.params as { resolution: string }).resolution
+      : null,
+    expansion: gen?.promptExpansion ?? null,
     pinnedOn: pinned?.pinnedOn ?? null,
     estimateUsd: current.estimateUsd,
     assetId: file && output ? output.id : null,

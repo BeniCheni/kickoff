@@ -92,7 +92,9 @@ export function PublishCard({
             <label htmlFor="p-position">Position</label>
             <input id="p-position" className="studio-field" inputMode="numeric" value={position} onChange={(event) => onPosition(event.target.value)} />
           </div>
-          {view.keys ? (
+          {!publicId.trim() ? (
+            <p className="studio-help">The storage keys cannot be named until a public id is typed.</p>
+          ) : view.keys ? (
             <p className="studio-help">Storage keys: {view.keys.video} · {view.keys.thumbnail}</p>
           ) : <p className="studio-help">The storage keys cannot be named until the clip and its still have recorded hashes.</p>}
           {view.refusals.map((refusal) => <p key={refusal} className="studio-help" role="status">{refusal}</p>)}

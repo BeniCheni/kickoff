@@ -64,3 +64,15 @@ Deliberate differences, from the pivot:
 - Frame 11 has no numbered list in §8. The built order is the five tabs, then whichever row actions are on the table (Regenerate, Retry download, Download), then the theme control.
 - Frame 12’s 21 stops are four tabs, Regenerate, five questions, and Discard, with Keep out until every line is Clear. The built review adds Import, the clip menu, and the `<video controls>` stop the canvas counted as a picture. Keep is absent while a line is unanswered and sits before Discard once all five are Clear.
 - Frame 13’s 8 stops (Confirm out while the Article 50 gate is empty) become five tabs, the clip menu, the video, the gate fields, and Record the answer. Publish stays out of the order while the gate is empty or the card check refuses, the same rule as the disabled Confirm. After unpublish the stops are the five tabs, the clip, the video, the public id, the title, the position, Retry delete, Retry removal, and the theme control. Upload, the PR button, and Cancel are retired with the export copy.
+
+## Drops recorded against the canvas
+
+Pass 1 compared each frame’s text with the screen. These lines are on the canvas and not on the page. Each drop is deliberate.
+
+- Frame 10, the longer subject help, the registry help, and the Frames help. D5 §3 names the controls. The page uses those names. The canvas’s extra sentences under the rows are not in §3.
+- Frame 10, “Each submit writes…” and “Refusals this surface makes”. They are canvas annotations, not D5 §3 sentences. Refusals the engine returns are shown as status lines when a submit is refused.
+- Frame 11, the per-state row notes for draft, budget-refused, submitted, queued, in progress, downloaded, kept, discarded, failed, and cancelled. The page uses D5 §3’s one-line state sentences where D5 has one. The canvas’s extra commentary on each row is illustrative.
+- Frame 12, the Model line. It was not rendered. `readReview` returns the endpoint, and the page now also reads resolution, seed, and expansion and renders `Model · endpoint · resolution · seed · expansion`.
+- Frame 12, the attestation footnote. The card uses the attestation written on the record. The canvas footnote is a design annotation, not a second sentence in §3.
+- Jobs at 1000. The canvas draws one-line rows. The Job cell now shows eight characters of the id and does not wrap. The full id is the cell’s title.
+- An empty public id used to say the keys wait on recorded hashes. It now says they cannot be named until a public id is typed. The hash sentence remains for a typed id whose clip or still has no hash.
