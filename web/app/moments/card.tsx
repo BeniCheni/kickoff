@@ -9,7 +9,6 @@ import { durationClock, generatedDate } from './format'
 import { useWatchNavigation, useWatchHref } from './watch-url'
 import dynamic from 'next/dynamic'
 import type { MomentSocial } from '../../lib/catalog/types'
-import { PREVIEW_DELAY_MS, previewAllowed, previewGate } from './preview-gate'
 
 const CardSocial = dynamic(() => import('./social').then(mod => mod.CardSocial))
 const CardPreview = dynamic(() => import('./preview').then(mod => mod.CardPreview))
@@ -132,11 +131,16 @@ export function VideoCard({
   }
   function arm() {
     clearArm()
-    if (!videoSrc || !previewAllowed(previewGate())) return
-    timer.current = window.setTimeout(() => {
-      if (!videoSrc || !previewAllowed(previewGate())) return
-      setPreviewSrc(videoSrc)
-    }, PREVIEW_DELAY_MS)
+    if (!videoSrc) return
+    const started = Date.now()
+    void import('./preview-gate').then(({ PREVIEW_DELAY_MS, previewAllowed, previewGate }) => {
+      if (!previewAllowed(previewGate())) return
+      const wait = Math.max(0, PREVIEW_DELAY_MS - (Date.now() - started))
+      timer.current = window.setTimeout(() => {
+        if (!videoSrc || !previewAllowed(previewGate())) return
+        setPreviewSrc(videoSrc)
+      }, wait)
+    })
   }
   function disarm() {
     clearArm()

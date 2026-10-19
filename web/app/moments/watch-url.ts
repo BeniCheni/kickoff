@@ -1,4 +1,4 @@
-import { encodeTab, parseTab, type Tab } from '../../../src/lib/urlCodecs'
+import { encodeTab, type Tab } from '../../../src/lib/urlCodecs'
 import { createContext, createElement, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
@@ -15,40 +15,18 @@ export function mergeWatch(search: string, hash: string, tab: Tab, watch: string
   return `${query ? `?${query}` : ''}${fragment}`
 }
 
-/** Drop an ignored `watch` from a non-Moments URL. Moments URLs and watch-less URLs pass through. */
-export function scrubIgnoredWatch(url: string | URL | null | undefined, currentHref = 'http://127.0.0.1/'): string | URL | null | undefined {
-  if (url == null || url === '') return url
-  let parsed: URL
-  try {
-    parsed = new URL(String(url), currentHref)
-  } catch {
-    return url
-  }
-  const current = new URL(currentHref)
-  if (parsed.origin !== current.origin) return url
-  if (parseTab(parsed.searchParams.get('tab') ?? '') === 'moments' || !parsed.searchParams.has('watch')) return url
-  const tab = parseTab(parsed.searchParams.get('tab') ?? '')
-  const merged = mergeWatch(parsed.search, parsed.hash, tab, null)
-  return `${parsed.pathname}${merged}`
-}
-
 export function useIgnoredWatchScrub() {
   useEffect(() => {
-    let restore: (() => void) | null = null
+    let restore: (() => void) | undefined
+    let dead = false
     const id = window.setTimeout(() => {
-      const push = window.history.pushState
-      const replace = window.history.replaceState
-      const wrap = (original: History['pushState']) => function (this: History, data: unknown, unused: string, url?: string | URL | null) {
-        return original.call(this, data, unused, scrubIgnoredWatch(url, window.location.href) as string | URL | null | undefined)
-      }
-      window.history.pushState = wrap(push)
-      window.history.replaceState = wrap(replace)
-      restore = () => {
-        window.history.pushState = push
-        window.history.replaceState = replace
-      }
+      void import('./watch-scrub').then(mod => {
+        if (dead) return
+        restore = mod.installIgnoredWatchScrub()
+      })
     }, 0)
     return () => {
+      dead = true
       window.clearTimeout(id)
       restore?.()
     }

@@ -5,7 +5,11 @@ import type { CatalogMode, MomentsPayload } from '../../lib/catalog/types'
 import { previewAllowed } from '../../lib/catalog/types'
 import { Gallery } from './gallery'
 import './gallery.css'
-import { WatchMissing, WatchPage, WatchUnavailable } from './watch'
+import dynamic from 'next/dynamic'
+
+const WatchPage = dynamic(() => import('./watch').then(mod => mod.WatchPage))
+const WatchMissing = dynamic(() => import('./watch').then(mod => mod.WatchMissing))
+const WatchUnavailable = dynamic(() => import('./watch').then(mod => mod.WatchUnavailable))
 
 const UNAVAILABLE_HEADING = 'The gallery is unavailable.'
 const UNAVAILABLE_CAUSE = 'The server could not read the list of published videos. The cause is unknown from here.'
