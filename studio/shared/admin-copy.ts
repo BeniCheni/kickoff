@@ -15,6 +15,8 @@ export const DRAFT = {
   publishConfirm:
     'Publish writes this clip to the catalog. It is live on the next read. There is no pull request and no release.',
   falKey: 'Unavailable: a live submit needs FAL_KEY on this Mac, and none is set.',
+  uploadFailed: 'Unavailable: the files were not stored. The clip stays listed.',
+  deleteFailed: 'Unavailable: a stored file was not removed.',
   cardWidth: 'Publish is refused: the clip has no positive width on the record.',
   cardHeight: 'Publish is refused: the clip has no positive height on the record.',
   cardDuration: 'Publish is refused: the clip has no positive duration on the record.',
@@ -68,5 +70,5 @@ export const RETIRED = [
   },
 ] as const
 
-/** Live mode has no storage port until ST3b wires R2. Every method refuses with this sentence. */
+/** Live mode without the four R2 names. Every method refuses with this sentence. */
 export const STORAGE_REFUSAL = 'Storage is not connected, so a live publish, delete, or removal is refused until the files can be stored.'

@@ -72,8 +72,36 @@ async function cookieFor(admin: AdminServer): Promise<string> {
 }
 
 describe('live storage refusal', () => {
-  it('selects postgres and refused storage for a real live start', () => {
-    expect(adminBackends(true, { STUDIO_LIVE: '1', DATABASE_URL: ['postgres', '://example/studio'].join('') })).toEqual({
+  it('selects postgres, and R2 only when the four names are set', () => {
+    const database = ['postgres', '://example/studio'].join('')
+    expect(adminBackends(true, { STUDIO_LIVE: '1', DATABASE_URL: database })).toEqual({
+      databaseEngine: 'postgres',
+      storage: 'refused',
+      pglite: false,
+    })
+    const account = ['R2', '_ACCOUNT_ID'].join('')
+    const access = ['R2', '_ACCESS_KEY_ID'].join('')
+    const secret = ['R2', '_SECRET_ACCESS_KEY'].join('')
+    const bucket = ['R2', '_BUCKET'].join('')
+    expect(adminBackends(true, {
+      STUDIO_LIVE: '1',
+      DATABASE_URL: database,
+      [account]: 'account',
+      [access]: 'access',
+      [secret]: 'secret',
+      [bucket]: 'bucket',
+    })).toEqual({
+      databaseEngine: 'postgres',
+      storage: 'r2',
+      pglite: false,
+    })
+    expect(adminBackends(true, {
+      STUDIO_LIVE: '1',
+      DATABASE_URL: database,
+      [account]: 'account',
+      [access]: 'access',
+      [secret]: 'secret',
+    })).toEqual({
       databaseEngine: 'postgres',
       storage: 'refused',
       pglite: false,

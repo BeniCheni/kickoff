@@ -51,6 +51,8 @@ export type StartAdminOptions = {
   token?: string
   /** Test seam. A thrown message on GET /api/boom, so error paths can be proved. */
   boom?: string
+  /** Test seam. Live R2 uses this fetch and never the network. */
+  fetchImpl?: typeof fetch
 }
 
 function sendJson(response: ServerResponse, status: number, body: unknown, extra: Record<string, string> = {}): void {
@@ -310,7 +312,7 @@ export async function startAdmin(options: StartAdminOptions = {}): Promise<Admin
   const host = options.host ?? LOOPBACK_HOST
   assertLoopbackBind(host)
   const live = options.live ?? false
-  const opened = await openAdmin(options.env ?? process.env, live)
+  const opened = await openAdmin(options.env ?? process.env, live, { fetchImpl: options.fetchImpl })
   const token = options.token ?? randomBytes(32).toString('base64url')
   const spentTickets = new Set<string>()
   const server: Server = createServer((request, response) => {

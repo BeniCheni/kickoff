@@ -11,6 +11,7 @@ import { studioTables } from '../db/schema.ts'
 import { createStudio, type Studio, type StudioDatabase } from '../engine.ts'
 import { selectFalTransport } from '../fal/live.ts'
 import { createFalStub, type ScriptName, type StubCursor } from '../fal/stub.ts'
+import { createR2Storage, missingR2 } from '../storage/r2.ts'
 import { createStorageStub } from '../storage/stub.ts'
 import type { DatabaseEngine, DatabaseName, FalMode, StorageName, TransportName } from '../shared/types.ts'
 import { createRefusingFal } from './fal-refused.ts'
@@ -84,9 +85,15 @@ function loadCursor(file: string): StubCursor {
   }
 }
 
+export type OpenAdminOptions = {
+  /** Test seam. Live R2 uses this fetch and never the network. */
+  fetchImpl?: typeof fetch
+}
+
 /**
  * A live admin starts with STUDIO_LIVE=1 and DATABASE_URL.
- * FAL_KEY is checked later, only behind Submit and Regenerate.
+ * It never opens the local database. FAL_KEY is checked later, behind each fal action.
+ * The four R2 names select the R2 adapter. Without them, storage stays refused.
  * The browser has no way to set any of this.
  */
 export function assertLiveStart(live: boolean, env: NodeJS.ProcessEnv): void {
@@ -97,17 +104,18 @@ export function assertLiveStart(live: boolean, env: NodeJS.ProcessEnv): void {
   if (missing.length > 0) throw new Error(`refused: --live needs ${missing.join(' and ')}`)
 }
 
-/** Which database and storage a start will use. Live storage stays refused until ST3b wires R2. */
+/** Which database and storage a start will use. Live never falls back to PGlite. */
 export function adminBackends(live: boolean, env: NodeJS.ProcessEnv): { databaseEngine: DatabaseEngine; storage: StorageName; pglite: boolean } {
   const pglite = !live || (env.STUDIO_ADMIN_LIVE_PGLITE === '1' && process.env.NODE_ENV === 'test')
+  const storage: StorageName = !live ? 'stub' : missingR2(env).length === 0 ? 'r2' : 'refused'
   return {
     databaseEngine: pglite ? 'pglite' : 'postgres',
-    storage: live ? 'refused' : 'stub',
+    storage,
     pglite,
   }
 }
 
-export async function openAdmin(env: NodeJS.ProcessEnv, live: boolean): Promise<OpenedAdmin> {
+export async function openAdmin(env: NodeJS.ProcessEnv, live: boolean, options: OpenAdminOptions = {}): Promise<OpenedAdmin> {
   const loaded = loadEnv(env)
   assertLiveStart(live, loaded)
   const dataDir = resolveEnvFile(requiredEnv(loaded, 'STUDIO_DATA_DIR'), repoRoot)
@@ -118,17 +126,22 @@ export async function openAdmin(env: NodeJS.ProcessEnv, live: boolean): Promise<
   const cursor = loadCursor(cursorPath)
   const fails = new Set((loaded.STUDIO_STORAGE_FAIL ?? '').split(',').map((item) => item.trim()).filter(Boolean))
   const backends = adminBackends(live, loaded)
-  const storagePort = backends.storage === 'refused'
-    ? createRefusingStorage()
-    : createStorageStub({
-      failVideo: fails.has('video'),
-      failThumbnail: fails.has('thumbnail'),
-      failFallback: fails.has('fallback'),
-      failRemoval: fails.has('removal'),
-      failRemove: fails.has('remove'),
-      failRemoveVideo: fails.has('video-remove'),
-      failRemoveThumbnail: fails.has('thumbnail-remove'),
-    }).port
+  if (backends.storage === 'r2' && process.env.NODE_ENV === 'test' && !options.fetchImpl) {
+    throw new Error('refused: a test live R2 start needs an injected fetch')
+  }
+  const storagePort = backends.storage === 'r2'
+    ? createR2Storage({ env: loaded, fetchImpl: options.fetchImpl })
+    : backends.storage === 'refused'
+      ? createRefusingStorage()
+      : createStorageStub({
+        failVideo: fails.has('video'),
+        failThumbnail: fails.has('thumbnail'),
+        failFallback: fails.has('fallback'),
+        failRemoval: fails.has('removal'),
+        failRemove: fails.has('remove'),
+        failRemoveVideo: fails.has('video-remove'),
+        failRemoveThumbnail: fails.has('thumbnail-remove'),
+      }).port
   const script = scriptFrom(loaded)
   const stub = createFalStub(script, cursor)
   const falMode: FalMode = !live ? 'stub' : loaded.FAL_KEY ? 'live' : 'refused'
