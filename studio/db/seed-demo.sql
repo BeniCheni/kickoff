@@ -50,6 +50,12 @@ DECLARE
     'Yes. A second watch is even better.'
   ];
 BEGIN
+  IF EXISTS (
+    SELECT 1 FROM catalog.videos
+    WHERE published_at > statement_timestamp() - interval '1 second'
+  ) THEN
+    RAISE EXCEPTION 'Not seeded: a clip''s publish time is not yet in the past on the database''s clock. Wait a minute, then run npm run seed:demo again. The sample rows from the last run are unchanged.';
+  END IF;
   TRUNCATE demo.comments, demo.video_stats, demo.users;
   INSERT INTO demo.users (id, handle, display_name, avatar_emoji, avatar_palette, joined_on) VALUES
     ('demo-user-01', '@pawprint', 'Paw Print', '😺', 0, DATE '2026-01-04'),

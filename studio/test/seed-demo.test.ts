@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { parseDemoSocial, type DemoSocial } from '@kickoff/demo'
 import { article50Answer, generation, job, videos } from '../db/schema.ts'
-import { seedDemoSql } from '../db/seed-demo.ts'
+import { seedDemoSql, seedNotReady } from '../db/seed-demo.ts'
 import { markKept, seedClip } from './fixture.ts'
 import { freshDatabase } from './harness.ts'
 
@@ -195,6 +195,46 @@ describe('demo seed', () => {
     const old = (socialRows: DemoSocial, id: string) => socialRows.comments.filter((comment) => comment.video_id === id)
     expect(old(second, 'clip-old')).toEqual(old(first, 'clip-old'))
     expect(old(second, 'clip-hour')).toEqual(old(first, 'clip-hour'))
+    await expectDates(client)
+  })
+
+  it('refuses a publish time that is not yet in the past and keeps the previous rows', async () => {
+    const { client, db } = await freshDatabase()
+    const clip = await seedClip(db)
+    await markKept(db, clip.generationId, clip.jobId)
+    await db.insert(article50Answer).values({
+      answer: 'recorded for the test',
+      disclosure: 'the test disclosure',
+      recordedOn: clip.when,
+      recordedBy: 'the test',
+      source: 'seed test',
+    })
+    await publish(db, clip, 'clip-old', 1)
+    await client.exec(seedDemoSql())
+    const kept = await social(client)
+
+    await client.exec(`UPDATE studio.videos SET published_at = statement_timestamp() + interval '5 seconds' WHERE public_id = 'clip-old'`)
+    await expect(client.exec('CALL demo.seed_social()')).rejects.toThrow(seedNotReady)
+    expect(await social(client)).toEqual(kept)
+
+    await client.exec(`UPDATE studio.videos SET published_at = statement_timestamp() WHERE public_id = 'clip-old'`)
+    await expect(client.exec('CALL demo.seed_social()')).rejects.toThrow(seedNotReady)
+    expect(await social(client)).toEqual(kept)
+
+    await publish(db, clip, 'clip-30m', 2)
+    await publish(db, clip, 'clip-5m', 3)
+    await publish(db, clip, 'clip-10s', 4)
+    await client.exec(`UPDATE studio.videos SET published_at = statement_timestamp() - interval '2 hours' WHERE public_id = 'clip-old'`)
+    await client.exec(`UPDATE studio.videos SET published_at = statement_timestamp() - interval '30 minutes' WHERE public_id = 'clip-30m'`)
+    await client.exec(`UPDATE studio.videos SET published_at = statement_timestamp() - interval '5 minutes' WHERE public_id = 'clip-5m'`)
+    await client.exec(`UPDATE studio.videos SET published_at = statement_timestamp() - interval '10 seconds' WHERE public_id = 'clip-10s'`)
+    await client.exec('CALL demo.seed_social()')
+    await expectDates(client)
+    const once = await social(client)
+    await client.exec('CALL demo.seed_social()')
+    const twice = await social(client)
+    const only = (rows: DemoSocial, id: string) => rows.comments.filter((comment) => comment.video_id === id)
+    expect(only(twice, 'clip-old')).toEqual(only(once, 'clip-old'))
     await expectDates(client)
   })
 })

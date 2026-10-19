@@ -10,6 +10,8 @@ export function seedDemoSql(): string {
   return readFileSync(path.join(here, 'seed-demo.sql'), 'utf8')
 }
 
+export const seedNotReady = 'Not seeded: a clip\'s publish time is not yet in the past on the database\'s clock. Wait a minute, then run npm run seed:demo again. The sample rows from the last run are unchanged.'
+
 export function seedReport(counts: { videos: number, users: number, comments: number }): string {
   return `seeded database=postgres videos=${counts.videos} users=${counts.users} comments=${counts.comments}\n`
 }
@@ -46,7 +48,8 @@ const invokedDirectly = process.argv[1] !== undefined
 if (invokedDirectly) {
   runSeedDemo().catch((error: unknown) => {
     const message = error instanceof Error ? error.message : 'seed failed'
-    process.stderr.write(`${redactConnectionText(message)}\n`)
+    const line = message.includes('Not seeded:') ? `${seedNotReady}\n` : `${redactConnectionText(message)}\n`
+    process.stderr.write(line)
     process.exitCode = 1
   })
 }
