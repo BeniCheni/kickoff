@@ -52,7 +52,7 @@ Deliberate differences, from the pivot:
 - The heading is Publish, not “Export 2 kept clips as a draft pull request”.
 - The PR table, the upload question, the release identity, the GitHub release addresses, the branch, and “Upload 2 clips, then open draft PR” are retired. Replacements are drafted in `studio/shared/admin-copy.ts`.
 - The confirmation says the clip is written to the catalog and is live on the next read. There is no pull request and no release.
-- The Card check (width, height, duration, one subject, a safe public id, a finish time) is shown in plain words. On this main the engine does not refuse those gaps itself; the screen does, until ST3b reads `cardGaps`.
+- The Card check (width, height, duration, one subject, a safe public id, a finish time) is shown in plain words. Since #226 the engine refuses those gaps. The screen's check remains a stand-in until ST3b reads `cardGaps`, so the rule lives in one place.
 - Storage keys are named from the recorded hashes and the public id the operator typed, in the `<public id>/video-<sha8>.mp4` shape. They are not GitHub release addresses.
 - Unpublish, Retry delete, and Retry removal follow the README: withdraw first, delete as a separate retry, removal of the site copy as its own retry. A withdrawn clip is not relisted. The clip menu refreshes after Publish and Unpublish, so the label reads `withdrawn` once the job has moved.
 
