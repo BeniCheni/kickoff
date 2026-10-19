@@ -41,7 +41,25 @@ export function redactConnectionText(text: string): string {
   return text.replace(/postgres(?:ql)?:\/\/\S+/gi, '[connection-redacted]')
 }
 
-export async function runMigrate(env: NodeJS.ProcessEnv = process.env): Promise<void> {
+export function migrateReport(tags: readonly string[]): string {
+  return `migrated database=postgres applied=${tags.length === 0 ? 'none' : tags.join(',')}\n`
+}
+
+export async function appliedMigrationTags(sql: postgres.Sql): Promise<string[]> {
+  const journal = JSON.parse(readFileSync(path.join(migrationsFolder, 'meta/_journal.json'), 'utf8')) as {
+    entries: { tag: string, when: number }[]
+  }
+  let rows: { created_at: string | number }[] = []
+  try {
+    rows = await sql`SELECT created_at FROM drizzle.__drizzle_migrations`
+  } catch {
+    return []
+  }
+  const have = new Set(rows.map((row) => Number(row.created_at)))
+  return journal.entries.filter((entry) => have.has(entry.when)).map((entry) => entry.tag)
+}
+
+export async function runMigrate(env: NodeJS.ProcessEnv = process.env, write: (line: string) => void = (line) => process.stdout.write(line)): Promise<void> {
   const next = { ...env }
   if (next.STUDIO_ENV_FILE) {
     const parsed = parseEnvFile(readFileSync(resolveEnvFile(next.STUDIO_ENV_FILE), 'utf8'))
@@ -53,7 +71,10 @@ export async function runMigrate(env: NodeJS.ProcessEnv = process.env): Promise<
   }
   const sql = postgres(url, { prepare: false, max: 1 })
   try {
+    const before = new Set(await appliedMigrationTags(sql))
     await migrate(drizzle(sql), { migrationsFolder })
+    const applied = (await appliedMigrationTags(sql)).filter((tag) => !before.has(tag))
+    write(migrateReport(applied))
   } finally {
     await sql.end({ timeout: 5 })
   }

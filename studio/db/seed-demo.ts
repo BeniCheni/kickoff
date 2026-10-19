@@ -10,7 +10,11 @@ export function seedDemoSql(): string {
   return readFileSync(path.join(here, 'seed-demo.sql'), 'utf8')
 }
 
-export async function runSeedDemo(env: NodeJS.ProcessEnv = process.env): Promise<void> {
+export function seedReport(counts: { videos: number, users: number, comments: number }): string {
+  return `seeded database=postgres videos=${counts.videos} users=${counts.users} comments=${counts.comments}\n`
+}
+
+export async function runSeedDemo(env: NodeJS.ProcessEnv = process.env, write: (line: string) => void = (line) => process.stdout.write(line)): Promise<void> {
   const next = { ...env }
   if (next.STUDIO_ENV_FILE) {
     const parsed = parseEnvFile(readFileSync(resolveEnvFile(next.STUDIO_ENV_FILE), 'utf8'))
@@ -23,6 +27,14 @@ export async function runSeedDemo(env: NodeJS.ProcessEnv = process.env): Promise
   const sql = postgres(url, { prepare: false, max: 1, connect_timeout: 5 })
   try {
     await sql.unsafe(seedDemoSql())
+    const [videos] = await sql`SELECT count(*)::int AS n FROM catalog.videos`
+    const [users] = await sql`SELECT count(*)::int AS n FROM demo.users`
+    const [comments] = await sql`SELECT count(*)::int AS n FROM demo.comments`
+    write(seedReport({
+      videos: Number(videos?.n ?? 0),
+      users: Number(users?.n ?? 0),
+      comments: Number(comments?.n ?? 0),
+    }))
   } finally {
     await sql.end({ timeout: 5 })
   }
