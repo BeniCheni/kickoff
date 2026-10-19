@@ -49,21 +49,25 @@ Nothing writes those files yet.
 Stub states carry `Stub catalog · synthetic records`,
 a 12 px line in ordinary ink, first inside `main.moments-gallery`; non-stub states
 do not. This is Beni's Reword ruling (18 Oct 2026).
-Sample reactions are a second flag, also off unless both are set: `KICKOFF_DEMO=on`
-and `KICKOFF_DEMO_FILE` (an absolute path, no default). `VERCEL_ENV=production`
-refuses that flag before the file is opened. A file that is not `synthetic: true`,
-or that fails the demo schema, supplies no counts. A path that is not absolute is refused
-before the file is opened. The server logs one line per process, `demo social:` plus
-`not set`, `could not be read`, `not JSON`, `failed validation`, or `refused`, and never the file.
+Sample reactions are a second flag. `VERCEL_ENV=production` refuses it before any
+read. In stub mode it also needs `KICKOFF_DEMO_FILE`, an absolute path with no
+default. With the production catalog (`KICKOFF_CATALOG` unset or `production`)
+and `KICKOFF_DEMO=on`, the sample audience is read from `demo.social_users`,
+`demo.social_stats`, and `demo.social_comments`, not from a file. A refused or
+failed demo read leaves the catalog in place and supplies no counts. The server
+logs one line per process, `demo social:` plus `not set`, `could not be read`,
+`not JSON`, `failed validation`, or `refused`, and never the rows. A row that is
+not synthetic fails validation.
 With the flag off, Moments
 has no sample line and no reaction or comment payload. With it on, and only when the
 Moments payload carries joined rows for the gallery or the open video, the line
-beside the stub indicator reads `Sample reactions and comments · made-up viewers, not real ones`.
+reads `Sample reactions and comments · made-up viewers, not real ones`.
+On a stub catalog it sits beside the stub indicator. On a real catalog it is the
+only one of those lines.
 It does not show on an unavailable gallery, an empty list, or a watch id that is not published.
-The counts, reaction bar and comments render only from that file, and only on the Moments tab.
+The counts, reaction bar and comments render only from that read, and only on the Moments tab.
 An id with no stats row shows no social layer.
-The watch payload currently carries every id's comments. N6 should scope that join to the
-watched id, and leave the cards with counts only.
+The payload carries each published id's comments with its counts.
 The watch page sets the video `src` and calls `play()` muted on arrival.
 If that call is refused and the stored choice is off, Play and the refusal line are unchanged.
 If the stored choice is on, the page retries once muted, shows
