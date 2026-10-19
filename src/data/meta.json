@@ -1,5 +1,5 @@
 {
-  "lastSyncAt": "2026-10-19T14:45:19.282Z",
+  "lastSyncAt": "2026-10-19T17:37:31.375Z",
   "provider": "espn",
   "window": {
     "from": "2026-09-19",
@@ -12,11 +12,11 @@
     "uel": 126,
     "uecl": 108,
     "laliga": 220,
-    "pl": 243,
+    "pl": 249,
     "seriea": 239,
     "ligue1": 179,
     "bundesliga": 206
   },
-  "total": 1450,
+  "total": 1456,
   "standingsDegraded": []
 }
