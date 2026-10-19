@@ -1,4 +1,5 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { containedPath } from './contain.ts'
 import { randomBytes } from 'node:crypto'
 import path from 'node:path'
 import { preparePhotograph } from '../photos/strip.ts'
@@ -28,11 +29,7 @@ function savePhotos(mediaDir: string, photos: readonly StoredPhoto[]): void {
 }
 
 export function photoPath(mediaDir: string, photo: StoredPhoto): string | null {
-  const full = path.resolve(mediaDir, photo.relativePath)
-  const relative = path.relative(mediaDir, full)
-  if (relative.startsWith('..') || path.isAbsolute(relative)) return null
-  if (!existsSync(full)) return null
-  return full
+  return containedPath(mediaDir, path.resolve(mediaDir, photo.relativePath))
 }
 
 export function findPhoto(mediaDir: string, id: string): StoredPhoto | null {

@@ -1,5 +1,4 @@
-import { existsSync } from 'node:fs'
-import path from 'node:path'
+import { containedPath } from './contain.ts'
 import { desc, eq } from 'drizzle-orm'
 import {
   CHECKLIST_LINES,
@@ -28,11 +27,7 @@ export function assetIdFrom(pathname: string): string | null {
 }
 
 function insideMedia(mediaDir: string, localPath: string): string | null {
-  const full = path.resolve(localPath)
-  const relative = path.relative(path.resolve(mediaDir), full)
-  if (relative.startsWith('..') || path.isAbsolute(relative)) return null
-  if (!existsSync(full)) return null
-  return full
+  return containedPath(mediaDir, localPath)
 }
 
 export async function recordedAssetFile(opened: OpenedAdmin, assetId: string): Promise<{ file: string; mime: string } | null> {
