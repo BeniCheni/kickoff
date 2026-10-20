@@ -141,6 +141,15 @@ export function statusLine(body: unknown): string | null {
   return sentence(record.outcome, typeof record.reason === 'string' ? record.reason : undefined)
 }
 
+/** The Publish screen's sentence for the embedding outcome. Draft copy for Beni. */
+export function embeddingNotice(body: unknown): string | null {
+  if (!body || typeof body !== 'object') return null
+  const embedding = (body as { embedding?: unknown }).embedding
+  if (embedding === 'written') return DRAFT.embeddingWritten
+  if (embedding === 'missing') return DRAFT.embeddingMissing
+  return null
+}
+
 export function publishFieldsReady(publicId: string, title: string, position: string): boolean {
   if (!/^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/.test(publicId)) return false
   if (title.trim().length === 0) return false

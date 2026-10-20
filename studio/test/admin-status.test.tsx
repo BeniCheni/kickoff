@@ -2,7 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { COPY } from '../copy.ts'
 import { DRAFT, RETIRED, STORAGE_REFUSAL } from '../shared/admin-copy.ts'
-import { publishFieldsReady, statusLine } from '../shared/status.ts'
+import { embeddingNotice, publishFieldsReady, statusLine } from '../shared/status.ts'
 import { PublishCard } from '../ui/app/publish.tsx'
 import { StatusLine } from '../ui/app/status.tsx'
 
@@ -108,5 +108,13 @@ describe('engine answers', () => {
     expect(html.split(COPY.gate).length - 1).toBe(1)
     expect(RETIRED.some((row) => row.draft === 'No pull-request checks. The engine refuses a publish that lacks the Card facts or the Article 50 answer, before anything is written.')).toBe(true)
     expect(RETIRED.some((row) => row.was.includes('Export stays unavailable') && row.draft === DRAFT.gateUnrecorded)).toBe(true)
+  })
+
+  it('shows whether the similarity vectors were stored', () => {
+    expect(embeddingNotice({ outcome: 'published', embedding: 'written' })).toBe(DRAFT.embeddingWritten)
+    expect(statusLine({ outcome: 'published', embedding: 'written' })).toBeNull()
+    const html = renderToStaticMarkup(<StatusLine body={{ outcome: 'published', embedding: 'missing' }} />)
+    expect(html).toContain(DRAFT.embeddingMissing)
+    expect(html).toContain('npm run cli -- embed --backfill --live')
   })
 })

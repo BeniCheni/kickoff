@@ -120,7 +120,7 @@ describe('Wednesday walk-through', () => {
     expect(await runCli([
       'publish', '--job', job, '--public-id', 'fenway-wednesday', '--title', 'Fenway', '--position', '1',
     ], env, published)).toBe(0)
-    expect(published.out[0]).toBe('published live=true database=pglite storage=stub')
+    expect(published.out[0]).toBe('published live=true database=pglite storage=stub embedding=missing reason=model-absent')
     expect(section).toContain('Publish prints `published live=true database=postgres storage=r2`.')
     const occupied = capture()
     expect(await runCli(['list'], env, occupied)).toBe(0)

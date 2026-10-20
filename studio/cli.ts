@@ -14,6 +14,7 @@ import { createStudio, type Studio, type StudioDatabase } from './engine.ts'
 import { missingLivePieces, selectFalTransport } from './fal/live.ts'
 import { createFalStub, type ScriptName, type StubCursor } from './fal/stub.ts'
 import { fetchModelFiles, resolveModelDir } from './embed/fetch-model.ts'
+import { selectEmbedder } from './embed/select.ts'
 import { sha256 } from './hash.ts'
 import { redact } from './log/redact.ts'
 import { estimateUsd, selectRegistry, unknownParam } from './registry.ts'
@@ -56,6 +57,7 @@ const USAGE = [
   'record-balance --amount <usd>',
   'migrate',
   'fetch-model',
+  'embed --backfill [--public-id <id>]',
   'Offline unless --live is set. --live is the switch to Supabase: it needs STUDIO_LIVE=1 and DATABASE_URL, and it never opens the local database. Fal commands also need FAL_KEY. publish, unpublish --delete and retry-delete also need the R2 names. --live refuses, and names the missing piece.',
 ].join('\n')
 
@@ -145,6 +147,10 @@ function parseArgs(argv: readonly string[]) {
     }
     if (arg === '--delete') {
       flags.delete = '1'
+      continue
+    }
+    if (arg === '--backfill') {
+      flags.backfill = '1'
       continue
     }
     if (arg === '--not-accepted') {
@@ -243,6 +249,7 @@ async function openStudio(
     mediaDir,
     repoRoot,
     clock: clockFrom(env),
+    embedder: selectEmbedder(env, repoRoot),
   })
   return {
     studio,
@@ -577,6 +584,18 @@ export async function runCli(
         }))
         return
       }
+      if (command === 'embed') {
+        if (flags.backfill !== '1') throw new Error('embed needs --backfill')
+        const result = await studio.embedBackfill(flags['public-id'])
+        for (const clip of result.clips) {
+          io.stdout(placed(
+            clip.embedding === 'not-published' ? `clip=${clip.publicId} not-published` : `clip=${clip.publicId} embedding=${clip.embedding}`,
+            { reason: clip.reason },
+          ))
+        }
+        io.stdout(line('embedded', { database, written: result.written, skipped: result.skipped, missing: result.missing }))
+        return
+      }
       if (command === 'publish') {
         const result = await studio.publish({
           jobId: required(flags, 'job'),
@@ -593,13 +612,18 @@ export async function runCli(
           io.stdout(placed('refused: the title is empty'))
           return
         }
-        io.stdout(placed(result.outcome, {
+        const embeddingReason = 'embeddingReason' in result ? result.embeddingReason : undefined
+        io.stdout(line(result.outcome, {
           live: 'live' in result ? result.live : undefined,
           retryable: 'retryable' in result ? result.retryable : undefined,
-          reason: 'reason' in result ? result.reason : undefined,
+          ...(embeddingReason ? {} : { reason: 'reason' in result ? result.reason : undefined }),
           object: 'object' in result ? result.object : undefined,
           status: 'status' in result ? result.status : undefined,
           code: 'code' in result ? result.code : undefined,
+          database,
+          storage,
+          embedding: 'embedding' in result ? result.embedding : undefined,
+          ...(embeddingReason ? { reason: embeddingReason } : {}),
         }))
         explain(io, result.outcome)
         return

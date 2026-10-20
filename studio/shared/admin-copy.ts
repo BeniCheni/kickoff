@@ -14,6 +14,9 @@ export const DRAFT = {
   onePhotograph: 'This submit sends the first selected photo. The engine accepts one photograph per request.',
   publishConfirm:
     'Publish writes this clip to the catalog. It is live on the next read. There is no pull request and no release.',
+  embeddingWritten: 'Published. The similarity vectors are stored.',
+  embeddingMissing:
+    'Published. The similarity vectors were not stored. From studio/, run npm run cli -- embed --backfill --live.',
   falKey: 'Unavailable: a live fal action needs FAL_KEY on this Mac, and none is set.',
   uploadFailed: 'Unavailable: the files were not stored. The clip stays listed.',
   deleteFailed: 'Unavailable: a stored file was not removed.',

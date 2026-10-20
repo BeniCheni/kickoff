@@ -1,7 +1,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { randomUUID } from 'node:crypto'
-import { and, desc, eq, isNull } from 'drizzle-orm'
+import { and, asc, desc, eq, isNotNull, isNull } from 'drizzle-orm'
 import {
   CHECKLIST_LINES,
   type ChecklistAnswer,
@@ -26,6 +26,8 @@ import {
   studioTables,
 } from './db/schema.ts'
 import { SUBJECT_LABELS } from '@kickoff/catalog'
+import type { Embedder, EmbedReason } from './embed/model.ts'
+import { storeClipEmbeddings, type StoredClip } from './embed/store.ts'
 import { hasVisibleAnswer } from './answer.ts'
 import { decideBudget, PER_JOB_CAP_USD, PREPAID_CEILING_USD, REQUEST_START_TIMEOUT_SECONDS, SESSION_CAP_USD, TIMEOUT_CEILING_LABEL, TIMEOUT_CEILING_MS } from './caps.ts'
 import { falHeaders } from './fal/headers.ts'
@@ -157,6 +159,7 @@ type EngineOptions = {
   timeoutCeilingMs?: number
   requestTimeoutSeconds?: number
   flags?: StudioFlags
+  embedder?: Embedder
 }
 
 function assertOutsideWorktree(dir: string, repoRoot: string) {
@@ -320,6 +323,13 @@ export function createStudio(options: EngineOptions) {
       fallback: outcome,
       ...(retried ? { fallbackRetried: true as const } : {}),
     }
+  }
+
+  async function embeddingsFor(clip: StoredClip): Promise<{ embedding: 'written' | 'missing'; embeddingReason?: EmbedReason }> {
+    if (!options.embedder) return { embedding: 'missing', embeddingReason: 'model-absent' }
+    const stored = await storeClipEmbeddings(db, options.embedder, clip)
+    if (stored.status === 'missing') return { embedding: 'missing', embeddingReason: stored.reason ?? 'write-failed' }
+    return { embedding: 'written' }
   }
 
   async function deleteRemaining(videoId: string) {
@@ -1194,7 +1204,15 @@ export function createStudio(options: EngineOptions) {
         if (existingVideo?.fallbackStatus === 'failed') {
           const [thumb] = await db.select().from(asset).where(eq(asset.id, existingVideo.thumbnailAssetId))
           if (!thumb) return { outcome: 'not-ready' as const }
-          return finishFallback(existingVideo.id, existingVideo.publicId, thumb.sha256, true)
+          const embedded = await embeddingsFor({
+            videoId: existingVideo.id,
+            title: existingVideo.title,
+            editorialNote: existingVideo.editorialNote,
+            keyframePath: thumb.localPath,
+            keyframeSha256: thumb.sha256,
+          })
+          const finished = await finishFallback(existingVideo.id, existingVideo.publicId, thumb.sha256, true)
+          return { ...finished, ...embedded }
         }
         return { outcome: 'already-published' as const }
       }
@@ -1325,7 +1343,62 @@ export function createStudio(options: EngineOptions) {
 
       const [liveRow] = await db.select().from(videos).where(eq(videos.jobId, current.id))
       if (!liveRow) return { outcome: 'record-failed' as const, live: false as const, listedAgain: true as const, reason: 'unspecified' as const }
-      return finishFallback(liveRow.id, input.publicId, thumbnail.sha256, false)
+      const embedded = await embeddingsFor({
+        videoId: liveRow.id,
+        title,
+        editorialNote: editorialNote ?? null,
+        keyframePath: thumbnail.localPath ?? k0.localPath,
+        keyframeSha256: thumbnail.sha256,
+      })
+      const finished = await finishFallback(liveRow.id, input.publicId, thumbnail.sha256, false)
+      return { ...finished, ...embedded }
+    },
+
+    async embedBackfill(publicId?: string) {
+      const rows = await db.select().from(videos).where(and(
+        isNotNull(videos.publishedAt),
+        isNull(videos.unpublishedAt),
+        ...(publicId ? [eq(videos.publicId, publicId)] : []),
+      )).orderBy(asc(videos.position), asc(videos.publicId))
+      const clips: {
+        publicId: string
+        embedding: 'written' | 'skipped' | 'missing' | 'not-published'
+        reason?: EmbedReason
+      }[] = []
+      if (publicId && rows.length === 0) {
+        return { clips: [{ publicId, embedding: 'not-published' as const }], written: 0, skipped: 0, missing: 0 }
+      }
+      let written = 0
+      let skipped = 0
+      let missing = 0
+      for (const row of rows) {
+        const [thumb] = await db.select().from(asset).where(eq(asset.id, row.thumbnailAssetId))
+        if (!options.embedder || !thumb) {
+          missing += 1
+          clips.push({
+            publicId: row.publicId,
+            embedding: 'missing',
+            reason: thumb ? 'model-absent' : 'read-failed',
+          })
+          continue
+        }
+        const stored = await storeClipEmbeddings(db, options.embedder, {
+          videoId: row.id,
+          title: row.title,
+          editorialNote: row.editorialNote,
+          keyframePath: thumb.localPath,
+          keyframeSha256: thumb.sha256,
+        })
+        if (stored.status === 'written') written += 1
+        else if (stored.status === 'skipped') skipped += 1
+        else missing += 1
+        clips.push({
+          publicId: row.publicId,
+          embedding: stored.status,
+          ...(stored.reason ? { reason: stored.reason } : {}),
+        })
+      }
+      return { clips, written, skipped, missing }
     },
 
     async unpublish(jobId: string, options?: { deleteFiles?: boolean }) {

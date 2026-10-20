@@ -6,6 +6,7 @@ import { migrate as migratePglite } from 'drizzle-orm/pglite/migrator'
 import { drizzle as drizzlePostgres } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
 import { parseEnvFile, resolveEnvFile } from '../db/migrate.ts'
+import { selectEmbedder } from '../embed/select.ts'
 import { openPglite } from '../db/pglite.ts'
 import { studioTables } from '../db/schema.ts'
 import { createStudio, type Studio, type StudioDatabase } from '../engine.ts'
@@ -179,7 +180,15 @@ export async function openAdmin(env: NodeJS.ProcessEnv, live: boolean, options: 
     closeDb = () => client.close()
   }
 
-  const studio = createStudio({ db, fal, storage: storagePort, mediaDir, repoRoot, clock })
+  const studio = createStudio({
+    db,
+    fal,
+    storage: storagePort,
+    mediaDir,
+    repoRoot,
+    clock,
+    embedder: selectEmbedder(loaded, repoRoot),
+  })
   let database: DatabaseName = databaseHold ? 'unavailable' : 'reachable'
   if (!databaseHold && !(await probeDatabase(db))) database = 'unavailable'
   return {
