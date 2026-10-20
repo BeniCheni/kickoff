@@ -15,7 +15,7 @@ const databaseScheme = ['postgres', '://'].join('')
 const commands = [
   'estimate', 'submit', 'poll', 'resume', 'download', 'import', 'list', 'keep', 'discard', 'cancel',
   'publish', 'unpublish', 'retry-delete', 'retry-removal', 'close-session', 'attach-request',
-  'settle-unconfirmed', 'record-gate', 'record-balance', 'migrate',
+  'settle-unconfirmed', 'record-gate', 'record-balance', 'migrate', 'fetch-model', 'embed',
 ]
 
 afterEach(async () => {

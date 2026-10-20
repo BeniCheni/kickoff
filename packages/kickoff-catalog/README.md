@@ -24,6 +24,11 @@ One entry, the package root:
 - `siteCopyPath(id)` — `/moments/thumbnails/<id>.jpg` when `id` matches
   `[A-Za-z0-9][A-Za-z0-9_-]*` and is at most 64 characters. Otherwise null.
 - `CatalogListRow` and `CatalogDetailRow` — the inferred types.
+- `similarMomentRowSchema` — one row from `catalog.similar_moments` or
+  `catalog.moments_like`: the list row's `id`, and a finite `score`. An extra
+  key fails. The functions do not return a vector.
+- `SIMILAR_LIMIT_MAX` — `12`, the cap both functions apply.
+- `SIMILAR_MOMENTS` and `MOMENTS_LIKE` are the qualified names `catalog.similar_moments` and `catalog.moments_like`. Import the constants. Do not add another `catalog.` prefix.
 
 `duration_s` is the stored numeric text (`15.084`), or null. It is not a JSON
 number. Instants are ISO-8601 strings with an offset, including `Z`. Integers

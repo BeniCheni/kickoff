@@ -131,6 +131,7 @@ describe('migrations on a fresh database', () => {
       'article50_answer',
       'asset',
       'balance_entry',
+      'clip_embeddings',
       'event',
       'generation',
       'generation_input',
@@ -147,12 +148,12 @@ describe('migrations on a fresh database', () => {
     ])
   })
 
-  it('applies 0000 through 0004 and a second migrate is a no-op', async () => {
+  it('applies 0000 through 0005 and a second migrate is a no-op', async () => {
     const { client, db } = await freshDatabase()
     const before = await rows<{ count: number }>(client, `
       SELECT count(*)::int AS count FROM drizzle.__drizzle_migrations
     `)
-    expect(before[0]?.count).toBe(5)
+    expect(before[0]?.count).toBe(6)
     const gate = readFileSync(path.join(migrationsDir, '0003_card_gate.sql'), 'utf8')
     expect(gate).toContain('videos_id_token')
     expect(gate).not.toMatch(/create\s+(or\s+replace\s+)?view/i)
@@ -518,6 +519,16 @@ describe('read-only catalog role', () => {
       demo_usage: true,
       demo_create: false,
     }])
+    const routines = await rows<{ routine_schema: string; routine_name: string; privilege_type: string }>(client, `
+      SELECT routine_schema, routine_name, privilege_type
+      FROM information_schema.routine_privileges
+      WHERE grantee = 'studio_reader'
+      ORDER BY routine_name, privilege_type
+    `)
+    expect(routines).toEqual([
+      { routine_schema: 'catalog', routine_name: 'moments_like', privilege_type: 'EXECUTE' },
+      { routine_schema: 'catalog', routine_name: 'similar_moments', privilege_type: 'EXECUTE' },
+    ])
     const options = await rows<{ relname: string; reloptions: string[] | null }>(client, `
       SELECT c.relname, c.reloptions
       FROM pg_class c
@@ -578,6 +589,8 @@ describe('read-only catalog role', () => {
       'SELECT type FROM studio.event',
       'SELECT status FROM studio.job',
       'SELECT amount_usd FROM studio.ledger',
+      'SELECT embedding FROM studio.clip_embeddings',
+      'SELECT source_sha256 FROM studio.clip_embeddings',
       'SELECT id FROM demo.users',
       'SELECT video_id FROM demo.video_stats',
       'SELECT id FROM demo.comments',
