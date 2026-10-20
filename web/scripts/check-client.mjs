@@ -18,6 +18,24 @@ export const DATABASE_ADDRESS = /postgres(?:ql)?:\/\/\S+/i
 export const CLIENT_MARKERS = [...LEAK_MARKERS, /STUDIO_[A-Z0-9_]+/, STUB_SENTINEL, DEMO_SENTINEL, DATABASE_ADDRESS]
 export const SERVER_MARKERS = ['studio/', 'FAL_KEY', /STUDIO_[A-Z0-9_]+/]
 
+/** A Moments payload may list neighbour ids. It may not carry a score field. */
+export function payloadScoreHits(value) {
+  const hits = []
+  const walk = (node) => {
+    if (!node || typeof node !== 'object') return
+    if (Array.isArray(node)) {
+      node.forEach(walk)
+      return
+    }
+    for (const [key, child] of Object.entries(node)) {
+      if (key === 'score') hits.push('score')
+      walk(child)
+    }
+  }
+  walk(value)
+  return hits
+}
+
 export function textLeakHits(source, markers = CLIENT_MARKERS) {
   return markers.filter(marker => typeof marker === 'string' ? source.includes(marker) : marker.test(source)).map(String)
 }

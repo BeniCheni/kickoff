@@ -2,7 +2,7 @@ import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { expect, test } from 'vitest'
-import { STUB_SENTINEL, DEMO_SENTINEL, DATABASE_ADDRESS, textLeakHits, leakHits, scanBuild } from '../scripts/check-client.mjs'
+import { STUB_SENTINEL, DEMO_SENTINEL, DATABASE_ADDRESS, textLeakHits, leakHits, scanBuild, payloadScoreHits } from '../scripts/check-client.mjs'
 
 function tree() {
   const root = mkdtempSync(path.join(tmpdir(), 'kickoff-leak-'))
@@ -60,6 +60,12 @@ test('a database address in a response fails even when the demo build is on', ()
   expect(textLeakHits(`<main>${url}</main>`, [DATABASE_ADDRESS]).length).toBe(1)
   writeFileSync(path.join(serverDir, 'page.html'), '<main>Fixtures</main>')
   expect(() => scanBuild(staticDir, serverDir, { demoBuild: true })).not.toThrow()
+})
+
+test('a score field in a Moments payload fails the leak scan', () => {
+  expect(payloadScoreHits({ state: 'ready', similar: ['stub-fenway-one'] })).toEqual([])
+  expect(payloadScoreHits({ state: 'ready', similar: ['stub-fenway-one'], score: 0.912345678 })).toEqual(['score'])
+  expect(payloadScoreHits({ list: [{ id: 'stub-fenway-one', score: 0.2 }] })).toEqual(['score'])
 })
 
 test('stub client sentinels and future private Studio names still fail', () => {

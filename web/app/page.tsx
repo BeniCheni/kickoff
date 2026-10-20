@@ -29,7 +29,7 @@ async function momentsPayload(search: string, origin: string | null): Promise<Mo
   if (!tabIsMoments(search)) return { state: 'skipped' }
   try {
     const read = await loadMomentsRead(search)
-    return momentsFor(search, () => read.catalog, origin, read.demo)
+    return momentsFor(search, () => read.catalog, origin, read.demo, read.similar)
   } catch (error) {
     warnCatalogRead(error)
     const preview = error instanceof CatalogReadError ? error.preview : false

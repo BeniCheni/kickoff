@@ -1,0 +1,3000 @@
+{
+  "checked": "2026-10-20T01:32:28.053Z",
+  "pngDirectory": "/Users/benicheni/kickoff-n4d-proof",
+  "shots": [
+    {
+      "name": "with-ledger-light-360",
+      "sha256": "f3d004eebff27244401f8491632da552754879ff939482465de9d913bab9ac20",
+      "scrollEqual": true,
+      "scrollWidth": 360,
+      "innerWidth": 360,
+      "theme": "light",
+      "lens": "ledger",
+      "heading": true,
+      "line": true,
+      "upFirst": "Stub Frankenstein one",
+      "names": [
+        "Autoplay next",
+        "Stub Frankenstein one",
+        "Stub both cats",
+        "Fenway",
+        "Fenway",
+        "Stub both cats"
+      ]
+    },
+    {
+      "name": "with-ledger-light-375",
+      "sha256": "158576148a2a73fb3ada6814dcb95b0ba3902c990c234389fed733d9b8532bfc",
+      "scrollEqual": true,
+      "scrollWidth": 375,
+      "innerWidth": 375,
+      "theme": "light",
+      "lens": "ledger",
+      "heading": true,
+      "line": true,
+      "upFirst": "Stub Frankenstein one",
+      "names": [
+        "Autoplay next",
+        "Stub Frankenstein one",
+        "Stub both cats",
+        "Fenway",
+        "Fenway",
+        "Stub both cats"
+      ]
+    },
+    {
+      "name": "with-ledger-light-390",
+      "sha256": "05a2deca53777588a26298185c8b29373e7fd95babf7a4a9eeb6c7b4edee8598",
+      "scrollEqual": true,
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "theme": "light",
+      "lens": "ledger",
+      "heading": true,
+      "line": true,
+      "upFirst": "Stub Frankenstein one",
+      "names": [
+        "Autoplay next",
+        "Stub Frankenstein one",
+        "Stub both cats",
+        "Fenway",
+        "Fenway",
+        "Stub both cats"
+      ]
+    },
+    {
+      "name": "with-ledger-light-1000",
+      "sha256": "aee6e8c1f47aa357cc3a50e34be641ca8c6a541e0ae2b11364052f9add7e81a5",
+      "scrollEqual": true,
+      "scrollWidth": 1000,
+      "innerWidth": 1000,
+      "theme": "light",
+      "lens": "ledger",
+      "heading": true,
+      "line": true,
+      "upFirst": "Stub Frankenstein one",
+      "names": [
+        "Autoplay next",
+        "Stub Frankenstein one",
+        "Stub both cats",
+        "Fenway",
+        "Fenway",
+        "Stub both cats"
+      ]
+    },
+    {
+      "name": "with-ledger-dark-360",
+      "sha256": "9312ca5caa72067360ed4ca5b81af43c6f5d76304db83503dfb546679242b5f5",
+      "scrollEqual": true,
+      "scrollWidth": 360,
+      "innerWidth": 360,
+      "theme": "dark",
+      "lens": "ledger",
+      "heading": true,
+      "line": true,
+      "upFirst": "Stub Frankenstein one",
+      "names": [
+        "Autoplay next",
+        "Stub Frankenstein one",
+        "Stub both cats",
+        "Fenway",
+        "Fenway",
+        "Stub both cats"
+      ]
+    },
+    {
+      "name": "with-ledger-dark-375",
+      "sha256": "4818bff67eef9aae1392f1b852c02e89f2995c2ebe9caa9f17e7b4ce2220d701",
+      "scrollEqual": true,
+      "scrollWidth": 375,
+      "innerWidth": 375,
+      "theme": "dark",
+      "lens": "ledger",
+      "heading": true,
+      "line": true,
+      "upFirst": "Stub Frankenstein one",
+      "names": [
+        "Autoplay next",
+        "Stub Frankenstein one",
+        "Stub both cats",
+        "Fenway",
+        "Fenway",
+        "Stub both cats"
+      ]
+    },
+    {
+      "name": "with-ledger-dark-390",
+      "sha256": "c99d3bfe601b06c2c5deaf2afddae7a514651cdfa19bb70c9bb35a13a857fbf0",
+      "scrollEqual": true,
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "theme": "dark",
+      "lens": "ledger",
+      "heading": true,
+      "line": true,
+      "upFirst": "Stub Frankenstein one",
+      "names": [
+        "Autoplay next",
+        "Stub Frankenstein one",
+        "Stub both cats",
+        "Fenway",
+        "Fenway",
+        "Stub both cats"
+      ]
+    },
+    {
+      "name": "with-ledger-dark-1000",
+      "sha256": "3ce1ebbc609882b7328d56f9a1e2a9a930351258ca5f7695b592bcf2b252e7f1",
+      "scrollEqual": true,
+      "scrollWidth": 1000,
+      "innerWidth": 1000,
+      "theme": "dark",
+      "lens": "ledger",
+      "heading": true,
+      "line": true,
+      "upFirst": "Stub Frankenstein one",
+      "names": [
+        "Autoplay next",
+        "Stub Frankenstein one",
+        "Stub both cats",
+        "Fenway",
+        "Fenway",
+        "Stub both cats"
+      ]
+    },
+    {
+      "name": "with-poster-light-360",
+      "sha256": "5afacadecc8380d62d9b8cbe4989a4db0ceba6d1395181f53e3dd5f3a4eff0db",
+      "scrollEqual": true,
+      "scrollWidth": 360,
+      "innerWidth": 360,
+      "theme": "light",
+      "lens": "poster",
+      "heading": true,
+      "line": true,
+      "upFirst": "Stub Frankenstein one",
+      "names": [
+        "Autoplay next",
+        "Stub Frankenstein one",
+        "Stub both cats",
+        "Fenway",
+        "Fenway",
+        "Stub both cats"
+      ]
+    },
+    {
+      "name": "with-poster-light-375",
+      "sha256": "14dc67851a5fb2f5d54cfc81ec3407321f55dc4ac69f264f923a0df746bb8c64",
+      "scrollEqual": true,
+      "scrollWidth": 375,
+      "innerWidth": 375,
+      "theme": "light",
+      "lens": "poster",
+      "heading": true,
+      "line": true,
+      "upFirst": "Stub Frankenstein one",
+      "names": [
+        "Autoplay next",
+        "Stub Frankenstein one",
+        "Stub both cats",
+        "Fenway",
+        "Fenway",
+        "Stub both cats"
+      ]
+    },
+    {
+      "name": "with-poster-light-390",
+      "sha256": "381ffbe5f83c5dceea8aaa043b0105250394bf4f088add5f226198bc10f80dc2",
+      "scrollEqual": true,
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "theme": "light",
+      "lens": "poster",
+      "heading": true,
+      "line": true,
+      "upFirst": "Stub Frankenstein one",
+      "names": [
+        "Autoplay next",
+        "Stub Frankenstein one",
+        "Stub both cats",
+        "Fenway",
+        "Fenway",
+        "Stub both cats"
+      ]
+    },
+    {
+      "name": "with-poster-light-1000",
+      "sha256": "546afca33f056a6509c2d1264861537436d6cc27ebb14badc947b7a8f0879da2",
+      "scrollEqual": true,
+      "scrollWidth": 1000,
+      "innerWidth": 1000,
+      "theme": "light",
+      "lens": "poster",
+      "heading": true,
+      "line": true,
+      "upFirst": "Stub Frankenstein one",
+      "names": [
+        "Autoplay next",
+        "Stub Frankenstein one",
+        "Stub both cats",
+        "Fenway",
+        "Fenway",
+        "Stub both cats"
+      ]
+    },
+    {
+      "name": "with-poster-dark-360",
+      "sha256": "01e8a68b109b45a23b81634ab79fe66ca4c5ffa88408d390277412028ccdfc04",
+      "scrollEqual": true,
+      "scrollWidth": 360,
+      "innerWidth": 360,
+      "theme": "dark",
+      "lens": "poster",
+      "heading": true,
+      "line": true,
+      "upFirst": "Stub Frankenstein one",
+      "names": [
+        "Autoplay next",
+        "Stub Frankenstein one",
+        "Stub both cats",
+        "Fenway",
+        "Fenway",
+        "Stub both cats"
+      ]
+    },
+    {
+      "name": "with-poster-dark-375",
+      "sha256": "1b765be5589df99ac33b300e9bf9d113cd5172674caa7b62709627e7d655527f",
+      "scrollEqual": true,
+      "scrollWidth": 375,
+      "innerWidth": 375,
+      "theme": "dark",
+      "lens": "poster",
+      "heading": true,
+      "line": true,
+      "upFirst": "Stub Frankenstein one",
+      "names": [
+        "Autoplay next",
+        "Stub Frankenstein one",
+        "Stub both cats",
+        "Fenway",
+        "Fenway",
+        "Stub both cats"
+      ]
+    },
+    {
+      "name": "with-poster-dark-390",
+      "sha256": "12860d5a405a9bb5091a025e53f9277369f87fbbc89839d8a703fec6a52e50fd",
+      "scrollEqual": true,
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "theme": "dark",
+      "lens": "poster",
+      "heading": true,
+      "line": true,
+      "upFirst": "Stub Frankenstein one",
+      "names": [
+        "Autoplay next",
+        "Stub Frankenstein one",
+        "Stub both cats",
+        "Fenway",
+        "Fenway",
+        "Stub both cats"
+      ]
+    },
+    {
+      "name": "with-poster-dark-1000",
+      "sha256": "3b0712b1bbb08346f081743119717cec077aa394c8f767f6311eb43ffa2f735c",
+      "scrollEqual": true,
+      "scrollWidth": 1000,
+      "innerWidth": 1000,
+      "theme": "dark",
+      "lens": "poster",
+      "heading": true,
+      "line": true,
+      "upFirst": "Stub Frankenstein one",
+      "names": [
+        "Autoplay next",
+        "Stub Frankenstein one",
+        "Stub both cats",
+        "Fenway",
+        "Fenway",
+        "Stub both cats"
+      ]
+    },
+    {
+      "name": "with-broadcast-light-360",
+      "sha256": "57230184d45ef995d893fc77c836c5d3c72baf1aba9ef909f7faf2e0270d1311",
+      "scrollEqual": true,
+      "scrollWidth": 360,
+      "innerWidth": 360,
+      "theme": "light",
+      "lens": "broadcast",
+      "heading": true,
+      "line": true,
+      "upFirst": "Stub Frankenstein one",
+      "names": [
+        "Autoplay next",
+        "Stub Frankenstein one",
+        "Stub both cats",
+        "Fenway",
+        "Fenway",
+        "Stub both cats"
+      ]
+    },
+    {
+      "name": "with-broadcast-light-375",
+      "sha256": "002add8e3a1fe0d4b0249378b80dced103e85d20c757a72432177c6ac8c72c7a",
+      "scrollEqual": true,
+      "scrollWidth": 375,
+      "innerWidth": 375,
+      "theme": "light",
+      "lens": "broadcast",
+      "heading": true,
+      "line": true,
+      "upFirst": "Stub Frankenstein one",
+      "names": [
+        "Autoplay next",
+        "Stub Frankenstein one",
+        "Stub both cats",
+        "Fenway",
+        "Fenway",
+        "Stub both cats"
+      ]
+    },
+    {
+      "name": "with-broadcast-light-390",
+      "sha256": "c0de55edfc364f5320df6dc98a4b886f6e61058e9184fff176ba44016bfdc16a",
+      "scrollEqual": true,
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "theme": "light",
+      "lens": "broadcast",
+      "heading": true,
+      "line": true,
+      "upFirst": "Stub Frankenstein one",
+      "names": [
+        "Autoplay next",
+        "Stub Frankenstein one",
+        "Stub both cats",
+        "Fenway",
+        "Fenway",
+        "Stub both cats"
+      ]
+    },
+    {
+      "name": "with-broadcast-light-1000",
+      "sha256": "201f447f03521dc0e96fb554fa20dd4328118a75b5b57a6544acd46e6b4a5614",
+      "scrollEqual": true,
+      "scrollWidth": 1000,
+      "innerWidth": 1000,
+      "theme": "light",
+      "lens": "broadcast",
+      "heading": true,
+      "line": true,
+      "upFirst": "Stub Frankenstein one",
+      "names": [
+        "Autoplay next",
+        "Stub Frankenstein one",
+        "Stub both cats",
+        "Fenway",
+        "Fenway",
+        "Stub both cats"
+      ]
+    },
+    {
+      "name": "with-broadcast-dark-360",
+      "sha256": "39b8afb6c290055c0aa51a2fdc63949faa53ba66568d6a0e52a702af3476e2f8",
+      "scrollEqual": true,
+      "scrollWidth": 360,
+      "innerWidth": 360,
+      "theme": "dark",
+      "lens": "broadcast",
+      "heading": true,
+      "line": true,
+      "upFirst": "Stub Frankenstein one",
+      "names": [
+        "Autoplay next",
+        "Stub Frankenstein one",
+        "Stub both cats",
+        "Fenway",
+        "Fenway",
+        "Stub both cats"
+      ]
+    },
+    {
+      "name": "with-broadcast-dark-375",
+      "sha256": "3eeae05e5f141500b4db685d7a9a96c3c36e193358cc3bf1597d2c800386e704",
+      "scrollEqual": true,
+      "scrollWidth": 375,
+      "innerWidth": 375,
+      "theme": "dark",
+      "lens": "broadcast",
+      "heading": true,
+      "line": true,
+      "upFirst": "Stub Frankenstein one",
+      "names": [
+        "Autoplay next",
+        "Stub Frankenstein one",
+        "Stub both cats",
+        "Fenway",
+        "Fenway",
+        "Stub both cats"
+      ]
+    },
+    {
+      "name": "with-broadcast-dark-390",
+      "sha256": "4002b7840b24a381f00b34b6a5f570c5f2a46ae5e43e75842e39f77f431e84f5",
+      "scrollEqual": true,
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "theme": "dark",
+      "lens": "broadcast",
+      "heading": true,
+      "line": true,
+      "upFirst": "Stub Frankenstein one",
+      "names": [
+        "Autoplay next",
+        "Stub Frankenstein one",
+        "Stub both cats",
+        "Fenway",
+        "Fenway",
+        "Stub both cats"
+      ]
+    },
+    {
+      "name": "with-broadcast-dark-1000",
+      "sha256": "b83ff726d3f3ab1f5d6d41fac432fac7b4191d14b8337a2dea213412b0b9868b",
+      "scrollEqual": true,
+      "scrollWidth": 1000,
+      "innerWidth": 1000,
+      "theme": "dark",
+      "lens": "broadcast",
+      "heading": true,
+      "line": true,
+      "upFirst": "Stub Frankenstein one",
+      "names": [
+        "Autoplay next",
+        "Stub Frankenstein one",
+        "Stub both cats",
+        "Fenway",
+        "Fenway",
+        "Stub both cats"
+      ]
+    },
+    {
+      "name": "without-ledger-light-360",
+      "sha256": "3665630c8fd9f962ea7d61bf08c809d2b4a2d4e5f265bdb2d9a5d4b21ceb52d2",
+      "scrollEqual": true,
+      "scrollWidth": 360,
+      "innerWidth": 360,
+      "theme": "light",
+      "lens": "ledger",
+      "heading": false,
+      "line": false,
+      "upFirst": null,
+      "names": [
+        "Autoplay next"
+      ]
+    },
+    {
+      "name": "without-ledger-light-375",
+      "sha256": "2cee5df515f4dc6025511f250d5ba9bdd3d566bbef8d52657ccd773b81a8fb54",
+      "scrollEqual": true,
+      "scrollWidth": 375,
+      "innerWidth": 375,
+      "theme": "light",
+      "lens": "ledger",
+      "heading": false,
+      "line": false,
+      "upFirst": null,
+      "names": [
+        "Autoplay next"
+      ]
+    },
+    {
+      "name": "without-ledger-light-390",
+      "sha256": "b52f8d05ad526c8077aefb62b12f81bd1f739ab62859369f79ac48c20c9cdcae",
+      "scrollEqual": true,
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "theme": "light",
+      "lens": "ledger",
+      "heading": false,
+      "line": false,
+      "upFirst": null,
+      "names": [
+        "Autoplay next"
+      ]
+    },
+    {
+      "name": "without-ledger-light-1000",
+      "sha256": "ecb5ed4b3fe49a1a02e08baef782de495a66e7d3e7d1b3cf17031c5c6779920d",
+      "scrollEqual": true,
+      "scrollWidth": 1000,
+      "innerWidth": 1000,
+      "theme": "light",
+      "lens": "ledger",
+      "heading": false,
+      "line": false,
+      "upFirst": null,
+      "names": [
+        "Autoplay next"
+      ]
+    },
+    {
+      "name": "without-ledger-dark-360",
+      "sha256": "41898633aba92e7dba426a7e4a50cef435cb261ef53e61ffebb78070cde796ba",
+      "scrollEqual": true,
+      "scrollWidth": 360,
+      "innerWidth": 360,
+      "theme": "dark",
+      "lens": "ledger",
+      "heading": false,
+      "line": false,
+      "upFirst": null,
+      "names": [
+        "Autoplay next"
+      ]
+    },
+    {
+      "name": "without-ledger-dark-375",
+      "sha256": "c54954aa486360f11a7e5e1c06047b224d07feb5e3c0b9c996961bcaa7ea918d",
+      "scrollEqual": true,
+      "scrollWidth": 375,
+      "innerWidth": 375,
+      "theme": "dark",
+      "lens": "ledger",
+      "heading": false,
+      "line": false,
+      "upFirst": null,
+      "names": [
+        "Autoplay next"
+      ]
+    },
+    {
+      "name": "without-ledger-dark-390",
+      "sha256": "2e2732fd633f6690a50bc1eea046c71448176535cad4281990f7e83a92baf8c6",
+      "scrollEqual": true,
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "theme": "dark",
+      "lens": "ledger",
+      "heading": false,
+      "line": false,
+      "upFirst": null,
+      "names": [
+        "Autoplay next"
+      ]
+    },
+    {
+      "name": "without-ledger-dark-1000",
+      "sha256": "c3a5a167cf7d0ac93fa60cc43de5397f71bb15b74f8e8b23a9f7ef3aa0e3a32a",
+      "scrollEqual": true,
+      "scrollWidth": 1000,
+      "innerWidth": 1000,
+      "theme": "dark",
+      "lens": "ledger",
+      "heading": false,
+      "line": false,
+      "upFirst": null,
+      "names": [
+        "Autoplay next"
+      ]
+    },
+    {
+      "name": "without-poster-light-360",
+      "sha256": "3102479fa9d2d7275b4445a37ef1b6e16c98890c467ea1827b2b07c6f2c46d2a",
+      "scrollEqual": true,
+      "scrollWidth": 360,
+      "innerWidth": 360,
+      "theme": "light",
+      "lens": "poster",
+      "heading": false,
+      "line": false,
+      "upFirst": null,
+      "names": [
+        "Autoplay next"
+      ]
+    },
+    {
+      "name": "without-poster-light-375",
+      "sha256": "98f1a26d7a8327d342e0f37867c4fd31a6c982c5422981550be366241346e7ef",
+      "scrollEqual": true,
+      "scrollWidth": 375,
+      "innerWidth": 375,
+      "theme": "light",
+      "lens": "poster",
+      "heading": false,
+      "line": false,
+      "upFirst": null,
+      "names": [
+        "Autoplay next"
+      ]
+    },
+    {
+      "name": "without-poster-light-390",
+      "sha256": "705e509c83379dab79d0f89b4d0c169039636067757daf09a35404a94ea536f2",
+      "scrollEqual": true,
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "theme": "light",
+      "lens": "poster",
+      "heading": false,
+      "line": false,
+      "upFirst": null,
+      "names": [
+        "Autoplay next"
+      ]
+    },
+    {
+      "name": "without-poster-light-1000",
+      "sha256": "a78b52587bb1544fccfe1f3ebca9a4b5fffb03e75832d1ede160fdaaa25c1f21",
+      "scrollEqual": true,
+      "scrollWidth": 1000,
+      "innerWidth": 1000,
+      "theme": "light",
+      "lens": "poster",
+      "heading": false,
+      "line": false,
+      "upFirst": null,
+      "names": [
+        "Autoplay next"
+      ]
+    },
+    {
+      "name": "without-poster-dark-360",
+      "sha256": "9bd0f0fbd617c0565ddad8e932fffa6be9025fba418b49a30bc4a8eee6ce346f",
+      "scrollEqual": true,
+      "scrollWidth": 360,
+      "innerWidth": 360,
+      "theme": "dark",
+      "lens": "poster",
+      "heading": false,
+      "line": false,
+      "upFirst": null,
+      "names": [
+        "Autoplay next"
+      ]
+    },
+    {
+      "name": "without-poster-dark-375",
+      "sha256": "847f66730b0d681e6e60e4db859bb73b38df6ae13b6536a6a6127b5aa4867bef",
+      "scrollEqual": true,
+      "scrollWidth": 375,
+      "innerWidth": 375,
+      "theme": "dark",
+      "lens": "poster",
+      "heading": false,
+      "line": false,
+      "upFirst": null,
+      "names": [
+        "Autoplay next"
+      ]
+    },
+    {
+      "name": "without-poster-dark-390",
+      "sha256": "0c4c24306d83f38dbb8aa41f59a0a36473819f630795087b8cff76a6215d328f",
+      "scrollEqual": true,
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "theme": "dark",
+      "lens": "poster",
+      "heading": false,
+      "line": false,
+      "upFirst": null,
+      "names": [
+        "Autoplay next"
+      ]
+    },
+    {
+      "name": "without-poster-dark-1000",
+      "sha256": "cc218fb9fab5bf131e0da09cf52e20c202b6505e887f63a58b47f7b6de6eeebe",
+      "scrollEqual": true,
+      "scrollWidth": 1000,
+      "innerWidth": 1000,
+      "theme": "dark",
+      "lens": "poster",
+      "heading": false,
+      "line": false,
+      "upFirst": null,
+      "names": [
+        "Autoplay next"
+      ]
+    },
+    {
+      "name": "without-broadcast-light-360",
+      "sha256": "9894eca3d9c7318411cef16abefecd03c6636372dd6c1ee47c359c6c66b3b56c",
+      "scrollEqual": true,
+      "scrollWidth": 360,
+      "innerWidth": 360,
+      "theme": "light",
+      "lens": "broadcast",
+      "heading": false,
+      "line": false,
+      "upFirst": null,
+      "names": [
+        "Autoplay next"
+      ]
+    },
+    {
+      "name": "without-broadcast-light-375",
+      "sha256": "a79cff2b39611f0e7750bd6c6ac5d4728fbd58f1fa07b33c8d7e491955e4c911",
+      "scrollEqual": true,
+      "scrollWidth": 375,
+      "innerWidth": 375,
+      "theme": "light",
+      "lens": "broadcast",
+      "heading": false,
+      "line": false,
+      "upFirst": null,
+      "names": [
+        "Autoplay next"
+      ]
+    },
+    {
+      "name": "without-broadcast-light-390",
+      "sha256": "c9e41c65288bcd028ae8f2668b074d5c51da352c08676842ad2b296cc2c08932",
+      "scrollEqual": true,
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "theme": "light",
+      "lens": "broadcast",
+      "heading": false,
+      "line": false,
+      "upFirst": null,
+      "names": [
+        "Autoplay next"
+      ]
+    },
+    {
+      "name": "without-broadcast-light-1000",
+      "sha256": "28d94aabcfceb299a854a69d309ad53a3faec8e14af197855c9bb89dba66ea28",
+      "scrollEqual": true,
+      "scrollWidth": 1000,
+      "innerWidth": 1000,
+      "theme": "light",
+      "lens": "broadcast",
+      "heading": false,
+      "line": false,
+      "upFirst": null,
+      "names": [
+        "Autoplay next"
+      ]
+    },
+    {
+      "name": "without-broadcast-dark-360",
+      "sha256": "7e3681a7aeed1c46b41a7e897a363d2918631587f1d678f78a539b72e39c3b69",
+      "scrollEqual": true,
+      "scrollWidth": 360,
+      "innerWidth": 360,
+      "theme": "dark",
+      "lens": "broadcast",
+      "heading": false,
+      "line": false,
+      "upFirst": null,
+      "names": [
+        "Autoplay next"
+      ]
+    },
+    {
+      "name": "without-broadcast-dark-375",
+      "sha256": "1513ff64b60bd2d7ac77ef8b0e153df18be5827dceb0042ab94a7ea024a9174b",
+      "scrollEqual": true,
+      "scrollWidth": 375,
+      "innerWidth": 375,
+      "theme": "dark",
+      "lens": "broadcast",
+      "heading": false,
+      "line": false,
+      "upFirst": null,
+      "names": [
+        "Autoplay next"
+      ]
+    },
+    {
+      "name": "without-broadcast-dark-390",
+      "sha256": "a07806b351812229e3d2e6246b23872c28c05793f71d6aded54c0eb4e1f1e1aa",
+      "scrollEqual": true,
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "theme": "dark",
+      "lens": "broadcast",
+      "heading": false,
+      "line": false,
+      "upFirst": null,
+      "names": [
+        "Autoplay next"
+      ]
+    },
+    {
+      "name": "without-broadcast-dark-1000",
+      "sha256": "d34134e79ac1f49696f76f7d1cf9d1f3210986abe2661c6dda0aac710a6a0427",
+      "scrollEqual": true,
+      "scrollWidth": 1000,
+      "innerWidth": 1000,
+      "theme": "dark",
+      "lens": "broadcast",
+      "heading": false,
+      "line": false,
+      "upFirst": null,
+      "names": [
+        "Autoplay next"
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "name": "ssr with list has the heading and no score key",
+      "ok": true
+    },
+    {
+      "name": "ssr without list has no heading",
+      "ok": true
+    },
+    {
+      "name": "ssr gallery has no heading",
+      "ok": true
+    },
+    {
+      "name": "up next still leads",
+      "ok": true
+    },
+    {
+      "name": "scroll with-ledger-light-360",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 360,
+        "innerWidth": 360,
+        "theme": "light",
+        "lens": "ledger",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "theme with-ledger-light-360",
+      "ok": true,
+      "detail": "light"
+    },
+    {
+      "name": "list with-ledger-light-360",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 360,
+        "innerWidth": 360,
+        "theme": "light",
+        "lens": "ledger",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "scroll with-ledger-light-375",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "theme": "light",
+        "lens": "ledger",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "theme with-ledger-light-375",
+      "ok": true,
+      "detail": "light"
+    },
+    {
+      "name": "list with-ledger-light-375",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "theme": "light",
+        "lens": "ledger",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "scroll with-ledger-light-390",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "theme": "light",
+        "lens": "ledger",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "theme with-ledger-light-390",
+      "ok": true,
+      "detail": "light"
+    },
+    {
+      "name": "list with-ledger-light-390",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "theme": "light",
+        "lens": "ledger",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "scroll with-ledger-light-1000",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 1000,
+        "innerWidth": 1000,
+        "theme": "light",
+        "lens": "ledger",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "theme with-ledger-light-1000",
+      "ok": true,
+      "detail": "light"
+    },
+    {
+      "name": "list with-ledger-light-1000",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 1000,
+        "innerWidth": 1000,
+        "theme": "light",
+        "lens": "ledger",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "scroll with-ledger-dark-360",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 360,
+        "innerWidth": 360,
+        "theme": "dark",
+        "lens": "ledger",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "theme with-ledger-dark-360",
+      "ok": true,
+      "detail": "dark"
+    },
+    {
+      "name": "list with-ledger-dark-360",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 360,
+        "innerWidth": 360,
+        "theme": "dark",
+        "lens": "ledger",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "scroll with-ledger-dark-375",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "theme": "dark",
+        "lens": "ledger",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "theme with-ledger-dark-375",
+      "ok": true,
+      "detail": "dark"
+    },
+    {
+      "name": "list with-ledger-dark-375",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "theme": "dark",
+        "lens": "ledger",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "scroll with-ledger-dark-390",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "theme": "dark",
+        "lens": "ledger",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "theme with-ledger-dark-390",
+      "ok": true,
+      "detail": "dark"
+    },
+    {
+      "name": "list with-ledger-dark-390",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "theme": "dark",
+        "lens": "ledger",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "scroll with-ledger-dark-1000",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 1000,
+        "innerWidth": 1000,
+        "theme": "dark",
+        "lens": "ledger",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "theme with-ledger-dark-1000",
+      "ok": true,
+      "detail": "dark"
+    },
+    {
+      "name": "list with-ledger-dark-1000",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 1000,
+        "innerWidth": 1000,
+        "theme": "dark",
+        "lens": "ledger",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "scroll with-poster-light-360",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 360,
+        "innerWidth": 360,
+        "theme": "light",
+        "lens": "poster",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "theme with-poster-light-360",
+      "ok": true,
+      "detail": "light"
+    },
+    {
+      "name": "list with-poster-light-360",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 360,
+        "innerWidth": 360,
+        "theme": "light",
+        "lens": "poster",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "scroll with-poster-light-375",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "theme": "light",
+        "lens": "poster",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "theme with-poster-light-375",
+      "ok": true,
+      "detail": "light"
+    },
+    {
+      "name": "list with-poster-light-375",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "theme": "light",
+        "lens": "poster",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "scroll with-poster-light-390",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "theme": "light",
+        "lens": "poster",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "theme with-poster-light-390",
+      "ok": true,
+      "detail": "light"
+    },
+    {
+      "name": "list with-poster-light-390",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "theme": "light",
+        "lens": "poster",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "scroll with-poster-light-1000",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 1000,
+        "innerWidth": 1000,
+        "theme": "light",
+        "lens": "poster",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "theme with-poster-light-1000",
+      "ok": true,
+      "detail": "light"
+    },
+    {
+      "name": "list with-poster-light-1000",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 1000,
+        "innerWidth": 1000,
+        "theme": "light",
+        "lens": "poster",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "scroll with-poster-dark-360",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 360,
+        "innerWidth": 360,
+        "theme": "dark",
+        "lens": "poster",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "theme with-poster-dark-360",
+      "ok": true,
+      "detail": "dark"
+    },
+    {
+      "name": "list with-poster-dark-360",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 360,
+        "innerWidth": 360,
+        "theme": "dark",
+        "lens": "poster",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "scroll with-poster-dark-375",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "theme": "dark",
+        "lens": "poster",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "theme with-poster-dark-375",
+      "ok": true,
+      "detail": "dark"
+    },
+    {
+      "name": "list with-poster-dark-375",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "theme": "dark",
+        "lens": "poster",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "scroll with-poster-dark-390",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "theme": "dark",
+        "lens": "poster",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "theme with-poster-dark-390",
+      "ok": true,
+      "detail": "dark"
+    },
+    {
+      "name": "list with-poster-dark-390",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "theme": "dark",
+        "lens": "poster",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "scroll with-poster-dark-1000",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 1000,
+        "innerWidth": 1000,
+        "theme": "dark",
+        "lens": "poster",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "theme with-poster-dark-1000",
+      "ok": true,
+      "detail": "dark"
+    },
+    {
+      "name": "list with-poster-dark-1000",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 1000,
+        "innerWidth": 1000,
+        "theme": "dark",
+        "lens": "poster",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "scroll with-broadcast-light-360",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 360,
+        "innerWidth": 360,
+        "theme": "light",
+        "lens": "broadcast",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "theme with-broadcast-light-360",
+      "ok": true,
+      "detail": "light"
+    },
+    {
+      "name": "list with-broadcast-light-360",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 360,
+        "innerWidth": 360,
+        "theme": "light",
+        "lens": "broadcast",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "scroll with-broadcast-light-375",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "theme": "light",
+        "lens": "broadcast",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "theme with-broadcast-light-375",
+      "ok": true,
+      "detail": "light"
+    },
+    {
+      "name": "list with-broadcast-light-375",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "theme": "light",
+        "lens": "broadcast",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "scroll with-broadcast-light-390",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "theme": "light",
+        "lens": "broadcast",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "theme with-broadcast-light-390",
+      "ok": true,
+      "detail": "light"
+    },
+    {
+      "name": "list with-broadcast-light-390",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "theme": "light",
+        "lens": "broadcast",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "scroll with-broadcast-light-1000",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 1000,
+        "innerWidth": 1000,
+        "theme": "light",
+        "lens": "broadcast",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "theme with-broadcast-light-1000",
+      "ok": true,
+      "detail": "light"
+    },
+    {
+      "name": "list with-broadcast-light-1000",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 1000,
+        "innerWidth": 1000,
+        "theme": "light",
+        "lens": "broadcast",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "scroll with-broadcast-dark-360",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 360,
+        "innerWidth": 360,
+        "theme": "dark",
+        "lens": "broadcast",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "theme with-broadcast-dark-360",
+      "ok": true,
+      "detail": "dark"
+    },
+    {
+      "name": "list with-broadcast-dark-360",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 360,
+        "innerWidth": 360,
+        "theme": "dark",
+        "lens": "broadcast",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "scroll with-broadcast-dark-375",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "theme": "dark",
+        "lens": "broadcast",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "theme with-broadcast-dark-375",
+      "ok": true,
+      "detail": "dark"
+    },
+    {
+      "name": "list with-broadcast-dark-375",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "theme": "dark",
+        "lens": "broadcast",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "scroll with-broadcast-dark-390",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "theme": "dark",
+        "lens": "broadcast",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "theme with-broadcast-dark-390",
+      "ok": true,
+      "detail": "dark"
+    },
+    {
+      "name": "list with-broadcast-dark-390",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "theme": "dark",
+        "lens": "broadcast",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "scroll with-broadcast-dark-1000",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 1000,
+        "innerWidth": 1000,
+        "theme": "dark",
+        "lens": "broadcast",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "theme with-broadcast-dark-1000",
+      "ok": true,
+      "detail": "dark"
+    },
+    {
+      "name": "list with-broadcast-dark-1000",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 1000,
+        "innerWidth": 1000,
+        "theme": "dark",
+        "lens": "broadcast",
+        "heading": true,
+        "line": true,
+        "upFirst": "Stub Frankenstein one",
+        "names": [
+          "Autoplay next",
+          "Stub Frankenstein one",
+          "Stub both cats",
+          "Fenway",
+          "Fenway",
+          "Stub both cats"
+        ]
+      }
+    },
+    {
+      "name": "scroll without-ledger-light-360",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 360,
+        "innerWidth": 360,
+        "theme": "light",
+        "lens": "ledger",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "theme without-ledger-light-360",
+      "ok": true,
+      "detail": "light"
+    },
+    {
+      "name": "list without-ledger-light-360",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 360,
+        "innerWidth": 360,
+        "theme": "light",
+        "lens": "ledger",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "scroll without-ledger-light-375",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "theme": "light",
+        "lens": "ledger",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "theme without-ledger-light-375",
+      "ok": true,
+      "detail": "light"
+    },
+    {
+      "name": "list without-ledger-light-375",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "theme": "light",
+        "lens": "ledger",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "scroll without-ledger-light-390",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "theme": "light",
+        "lens": "ledger",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "theme without-ledger-light-390",
+      "ok": true,
+      "detail": "light"
+    },
+    {
+      "name": "list without-ledger-light-390",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "theme": "light",
+        "lens": "ledger",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "scroll without-ledger-light-1000",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 1000,
+        "innerWidth": 1000,
+        "theme": "light",
+        "lens": "ledger",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "theme without-ledger-light-1000",
+      "ok": true,
+      "detail": "light"
+    },
+    {
+      "name": "list without-ledger-light-1000",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 1000,
+        "innerWidth": 1000,
+        "theme": "light",
+        "lens": "ledger",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "scroll without-ledger-dark-360",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 360,
+        "innerWidth": 360,
+        "theme": "dark",
+        "lens": "ledger",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "theme without-ledger-dark-360",
+      "ok": true,
+      "detail": "dark"
+    },
+    {
+      "name": "list without-ledger-dark-360",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 360,
+        "innerWidth": 360,
+        "theme": "dark",
+        "lens": "ledger",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "scroll without-ledger-dark-375",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "theme": "dark",
+        "lens": "ledger",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "theme without-ledger-dark-375",
+      "ok": true,
+      "detail": "dark"
+    },
+    {
+      "name": "list without-ledger-dark-375",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "theme": "dark",
+        "lens": "ledger",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "scroll without-ledger-dark-390",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "theme": "dark",
+        "lens": "ledger",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "theme without-ledger-dark-390",
+      "ok": true,
+      "detail": "dark"
+    },
+    {
+      "name": "list without-ledger-dark-390",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "theme": "dark",
+        "lens": "ledger",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "scroll without-ledger-dark-1000",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 1000,
+        "innerWidth": 1000,
+        "theme": "dark",
+        "lens": "ledger",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "theme without-ledger-dark-1000",
+      "ok": true,
+      "detail": "dark"
+    },
+    {
+      "name": "list without-ledger-dark-1000",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 1000,
+        "innerWidth": 1000,
+        "theme": "dark",
+        "lens": "ledger",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "scroll without-poster-light-360",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 360,
+        "innerWidth": 360,
+        "theme": "light",
+        "lens": "poster",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "theme without-poster-light-360",
+      "ok": true,
+      "detail": "light"
+    },
+    {
+      "name": "list without-poster-light-360",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 360,
+        "innerWidth": 360,
+        "theme": "light",
+        "lens": "poster",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "scroll without-poster-light-375",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "theme": "light",
+        "lens": "poster",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "theme without-poster-light-375",
+      "ok": true,
+      "detail": "light"
+    },
+    {
+      "name": "list without-poster-light-375",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "theme": "light",
+        "lens": "poster",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "scroll without-poster-light-390",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "theme": "light",
+        "lens": "poster",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "theme without-poster-light-390",
+      "ok": true,
+      "detail": "light"
+    },
+    {
+      "name": "list without-poster-light-390",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "theme": "light",
+        "lens": "poster",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "scroll without-poster-light-1000",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 1000,
+        "innerWidth": 1000,
+        "theme": "light",
+        "lens": "poster",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "theme without-poster-light-1000",
+      "ok": true,
+      "detail": "light"
+    },
+    {
+      "name": "list without-poster-light-1000",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 1000,
+        "innerWidth": 1000,
+        "theme": "light",
+        "lens": "poster",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "scroll without-poster-dark-360",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 360,
+        "innerWidth": 360,
+        "theme": "dark",
+        "lens": "poster",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "theme without-poster-dark-360",
+      "ok": true,
+      "detail": "dark"
+    },
+    {
+      "name": "list without-poster-dark-360",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 360,
+        "innerWidth": 360,
+        "theme": "dark",
+        "lens": "poster",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "scroll without-poster-dark-375",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "theme": "dark",
+        "lens": "poster",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "theme without-poster-dark-375",
+      "ok": true,
+      "detail": "dark"
+    },
+    {
+      "name": "list without-poster-dark-375",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "theme": "dark",
+        "lens": "poster",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "scroll without-poster-dark-390",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "theme": "dark",
+        "lens": "poster",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "theme without-poster-dark-390",
+      "ok": true,
+      "detail": "dark"
+    },
+    {
+      "name": "list without-poster-dark-390",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "theme": "dark",
+        "lens": "poster",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "scroll without-poster-dark-1000",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 1000,
+        "innerWidth": 1000,
+        "theme": "dark",
+        "lens": "poster",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "theme without-poster-dark-1000",
+      "ok": true,
+      "detail": "dark"
+    },
+    {
+      "name": "list without-poster-dark-1000",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 1000,
+        "innerWidth": 1000,
+        "theme": "dark",
+        "lens": "poster",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "scroll without-broadcast-light-360",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 360,
+        "innerWidth": 360,
+        "theme": "light",
+        "lens": "broadcast",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "theme without-broadcast-light-360",
+      "ok": true,
+      "detail": "light"
+    },
+    {
+      "name": "list without-broadcast-light-360",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 360,
+        "innerWidth": 360,
+        "theme": "light",
+        "lens": "broadcast",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "scroll without-broadcast-light-375",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "theme": "light",
+        "lens": "broadcast",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "theme without-broadcast-light-375",
+      "ok": true,
+      "detail": "light"
+    },
+    {
+      "name": "list without-broadcast-light-375",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "theme": "light",
+        "lens": "broadcast",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "scroll without-broadcast-light-390",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "theme": "light",
+        "lens": "broadcast",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "theme without-broadcast-light-390",
+      "ok": true,
+      "detail": "light"
+    },
+    {
+      "name": "list without-broadcast-light-390",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "theme": "light",
+        "lens": "broadcast",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "scroll without-broadcast-light-1000",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 1000,
+        "innerWidth": 1000,
+        "theme": "light",
+        "lens": "broadcast",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "theme without-broadcast-light-1000",
+      "ok": true,
+      "detail": "light"
+    },
+    {
+      "name": "list without-broadcast-light-1000",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 1000,
+        "innerWidth": 1000,
+        "theme": "light",
+        "lens": "broadcast",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "scroll without-broadcast-dark-360",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 360,
+        "innerWidth": 360,
+        "theme": "dark",
+        "lens": "broadcast",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "theme without-broadcast-dark-360",
+      "ok": true,
+      "detail": "dark"
+    },
+    {
+      "name": "list without-broadcast-dark-360",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 360,
+        "innerWidth": 360,
+        "theme": "dark",
+        "lens": "broadcast",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "scroll without-broadcast-dark-375",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "theme": "dark",
+        "lens": "broadcast",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "theme without-broadcast-dark-375",
+      "ok": true,
+      "detail": "dark"
+    },
+    {
+      "name": "list without-broadcast-dark-375",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 375,
+        "innerWidth": 375,
+        "theme": "dark",
+        "lens": "broadcast",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "scroll without-broadcast-dark-390",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "theme": "dark",
+        "lens": "broadcast",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "theme without-broadcast-dark-390",
+      "ok": true,
+      "detail": "dark"
+    },
+    {
+      "name": "list without-broadcast-dark-390",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 390,
+        "innerWidth": 390,
+        "theme": "dark",
+        "lens": "broadcast",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "scroll without-broadcast-dark-1000",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 1000,
+        "innerWidth": 1000,
+        "theme": "dark",
+        "lens": "broadcast",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "theme without-broadcast-dark-1000",
+      "ok": true,
+      "detail": "dark"
+    },
+    {
+      "name": "list without-broadcast-dark-1000",
+      "ok": true,
+      "detail": {
+        "scrollEqual": true,
+        "scrollWidth": 1000,
+        "innerWidth": 1000,
+        "theme": "dark",
+        "lens": "broadcast",
+        "heading": false,
+        "line": false,
+        "upFirst": null,
+        "names": [
+          "Autoplay next"
+        ]
+      }
+    },
+    {
+      "name": "tab order through the aside",
+      "ok": true,
+      "detail": [
+        "Autoplay next",
+        "Stub Frankenstein one",
+        "Stub both cats",
+        "Fenway",
+        "Fenway",
+        "Stub both cats"
+      ]
+    },
+    {
+      "name": "a similar row navigates like up next",
+      "ok": true,
+      "detail": {
+        "watch": "stub-title-fenway",
+        "upGone": true,
+        "earlier": true,
+        "nothing": true,
+        "similarFirst": "similar-stub-frankenstein-one"
+      }
+    }
+  ],
+  "failed": []
+}

@@ -63,7 +63,7 @@ export function MomentsRegion({
       </div>
     )
   } else if (moments.state === 'ready' && moments.watchId && moments.detail) {
-    body = <WatchPage detail={moments.detail} list={moments.list} search={search} thumbnail={moments.thumbnails[moments.detail.id]} address={moments.videoAddress} social={moments.social?.[moments.detail.id]} />
+    body = <WatchPage detail={moments.detail} list={moments.list} search={search} thumbnail={moments.thumbnails[moments.detail.id]} address={moments.videoAddress} social={moments.social?.[moments.detail.id]} similar={moments.similar} />
   } else if (moments.state === 'ready' && moments.watchId) {
     body = <WatchMissing search={search} />
   } else if (moments.state === 'ready') {

@@ -13,7 +13,7 @@ The JPEG and MP4 bytes do not: they are media, written by
 | --- | --- |
 | `empty.json` | Successful list of zero. Count `0 of 0 videos`. |
 | `one.json` | One Fenway clip, 768×480, note, seed, `kept_at`, keyframe true. |
-| `several.json` | Fenway, Frankenstein, both labels, and a row titled Fenway with no subject. One frame is 768×432, one is 768×480, one has no frame. Two `generated_at` values match. One digest is not 64 hex. |
+| `several.json` | Fenway, Frankenstein, both labels, and a row titled Fenway with no subject. One frame is 768×432, one is 768×480, one has no frame. Two `generated_at` values match. One digest is not 64 hex. `similar` maps each of the four ids to other ids in that file: known ids only, no self, no repeats, at most six. |
 | `missing-thumbnail.json` | Thumbnail bucket and path are null. The site-copy map points at a JPEG. The record has no Storage address. |
 | `unavailable.json` | `mode` is `unavailable`. The loader throws. No video objects are parsed. |
 

@@ -61,3 +61,17 @@ export function warnCatalogRead(error: unknown, warn: (line: string) => void = c
   seen.add(failure)
   warn(`catalog read: ${failure}`)
 }
+
+const similarSeen = new Set<string>()
+
+/** One line per process per class. The line is the class only, never the row or the query. */
+export function warnSimilarRead(error: unknown, warn: (line: string) => void = console.warn) {
+  const failure = catalogFailure(error)
+  if (similarSeen.has(failure)) return
+  similarSeen.add(failure)
+  warn(`similar read: ${failure}`)
+}
+
+export function resetSimilarReadWarnings() {
+  similarSeen.clear()
+}

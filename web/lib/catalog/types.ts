@@ -38,15 +38,19 @@ export type MomentsPayload =
       videoAddress: string | null
       videos?: Record<string, string | null>
       social?: Record<string, MomentSocial>
+      /** Published ids, in neighbour order. Absent when this request has no watch id. Scores stay on the server. */
+      similar?: string[]
     }
-
-export type CatalogMode = 'stub' | 'closed'
 
 export type CatalogSuccess = {
   preview: boolean
   list: CatalogListRow[]
   details: CatalogDetailRow[]
+  /** Stub files only. The hosted read resolves one watch id and does not carry this map. */
+  similarById?: Readonly<Record<string, readonly string[]>>
 }
+
+export type CatalogMode = 'stub' | 'closed'
 
 /** Shared without importing the server's schema or address resolvers. */
 export function previewAllowed(preview: boolean, mode: CatalogMode): boolean {

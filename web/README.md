@@ -445,3 +445,47 @@ and history traversals, not only direct loads. Retain one live region and record
 its writes. Use a real first pointer click when focus can move surrounding content.
 Static scans cannot prove dynamic HTML/flight safety. PostCSS walks each rule and
 each selector-list member so nested at-rules cannot evade the scope check.
+
+## Similar moments
+
+The watch page can list other published clips under Up next and Earlier.
+The heading is `Similar moments`. The line under it is
+`Picked by how alike the opening frame and title are.`
+The section is absent, heading and line included, when the list is empty or missing.
+Up next, Earlier, the countdown, and autoplay-next are unchanged. Autoplay still
+follows the first clip in Up next, which is Beni's order. Nothing in the section
+is a score.
+
+**What it reads.** When the watch id is one of the published clips, the Moments
+transaction runs one more statement after the list and the detail, inside a
+savepoint: `SELECT id, score FROM catalog.similar_moments(<id>, 6)`. The gallery
+does not call it. Fixtures and Table do not open a connection. Rows are parsed
+strictly. The watched id, an id that is not in the list, and a repeat are dropped.
+At most six ids are kept, in the function's order. The score is not put on the
+payload.
+
+A stub file may carry `similar`, a map from a clip id to other ids in that file.
+Known ids only, no self, no repeats, at most six. Anything else is the stub's
+failed-validation throw. `several.json` has the map. `one.json` and `empty.json`
+do not.
+
+**Failure.** A refused, failing, or invalid similarity read leaves the catalog
+in place. Moments stays ready. The server logs one line per process per class,
+`similar read:` and the class, and the line does not include the row, the score,
+or the query. A statement timeout is treated as the demo savepoint treats one:
+the read is unavailable, the cached client is dropped, and the class on that
+failure is `catalog read: timed out`.
+
+| Class | What it most likely means |
+| --- | --- |
+| `similar read: permission denied` | `studio_reader` cannot execute the function. |
+| `similar read: failed validation` | A returned row was not exactly an id and a finite score. |
+| `similar read: read failed` | Anything else, including the function not being installed yet. |
+| `catalog read: timed out` | The statement exceeded the read's bound. Reload once. |
+
+**How to check it on the preview.** Open a watch page while signed in.
+If the migration that installs `catalog.similar_moments` is on the database,
+neighbours appear under Up next in an order that is not Beni's order.
+If the function is not there yet, the heading is absent and the rest of the
+watch page stays. The deployment log shows `similar read: read failed` once
+for the process. No number from the function is on the page.
