@@ -13,7 +13,7 @@ import { homedir, tmpdir } from 'node:os'
 import path from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { createRequire } from 'node:module'
-import { PGlite } from '../studio/node_modules/@electric-sql/pglite/dist/index.js'
+import { openPglite } from '../studio/db/pglite.ts'
 import { CHECKLIST_LINES } from '../studio/db/schema.ts'
 import { createStudio } from '../studio/engine.ts'
 import { createFalStub } from '../studio/fal/stub.ts'
@@ -42,8 +42,7 @@ function fail(message) {
   throw new Error(message)
 }
 
-const database = new PGlite()
-await database.waitReady
+const database = await openPglite()
 const orm = drizzle(database)
 await migrate(orm, { migrationsFolder: path.join(repoRoot, 'studio/db/migrations') })
 const mediaDir = mkdtempSync(path.join(tmpdir(), 'kickoff-n6a-'))

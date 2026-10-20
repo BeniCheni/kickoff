@@ -2,6 +2,7 @@ import { mkdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { PGlite } from '@electric-sql/pglite'
+import { openPglite } from './db/pglite.ts'
 import { drizzle } from 'drizzle-orm/pglite'
 import { migrate as migratePglite } from 'drizzle-orm/pglite/migrator'
 import { drizzle as drizzlePostgres } from 'drizzle-orm/postgres-js'
@@ -12,6 +13,8 @@ import { COPY } from './copy.ts'
 import { createStudio, type Studio, type StudioDatabase } from './engine.ts'
 import { missingLivePieces, selectFalTransport } from './fal/live.ts'
 import { createFalStub, type ScriptName, type StubCursor } from './fal/stub.ts'
+import { fetchModelFiles, resolveModelDir } from './embed/fetch-model.ts'
+import { FAKE_EMBED_REFUSAL, fakeEmbedAllowed, selectEmbedder } from './embed/select.ts'
 import { sha256 } from './hash.ts'
 import { redact } from './log/redact.ts'
 import { estimateUsd, selectRegistry, unknownParam } from './registry.ts'
@@ -53,6 +56,8 @@ const USAGE = [
   'record-gate --answer <text> --disclosure <text> --by <name> --source <source>',
   'record-balance --amount <usd>',
   'migrate',
+  'fetch-model',
+  'embed --backfill [--public-id <id>]',
   'Offline unless --live is set. --live is the switch to Supabase: it needs STUDIO_LIVE=1 and DATABASE_URL, and it never opens the local database. Fal commands also need FAL_KEY. publish, unpublish --delete and retry-delete also need the R2 names. --live refuses, and names the missing piece.',
 ].join('\n')
 
@@ -105,8 +110,10 @@ export async function openDatabase(
       },
     }
   }
-  const Client = ports.PGlite ?? PGlite
-  const client = new Client(path.join(dataDir, 'pglite'))
+  const Client = ports.PGlite
+  const client = Client
+    ? new Client(path.join(dataDir, 'pglite'))
+    : await openPglite(path.join(dataDir, 'pglite'))
   const db = drizzle(client, { schema: studioTables })
   await migratePglite(db, { migrationsFolder })
   return { db, kind: 'pglite', close: () => client.close() }
@@ -140,6 +147,10 @@ function parseArgs(argv: readonly string[]) {
     }
     if (arg === '--delete') {
       flags.delete = '1'
+      continue
+    }
+    if (arg === '--backfill') {
+      flags.backfill = '1'
       continue
     }
     if (arg === '--not-accepted') {
@@ -238,6 +249,7 @@ async function openStudio(
     mediaDir,
     repoRoot,
     clock: clockFrom(env),
+    embedder: selectEmbedder(env, repoRoot, { pglite: !live }),
   })
   return {
     studio,
@@ -317,6 +329,16 @@ export async function runCli(
         io.stderr(`refused: --live needs ${missing.join(' and ')}`)
         return 1
       }
+    }
+    if (command === 'fetch-model') {
+      const directory = resolveModelDir(loaded, repoRoot)
+      const fetched = await fetchModelFiles({ directory, log: (message) => io.stdout(message) })
+      io.stdout(line('fetched', { database: 'none', downloaded: fetched.downloaded, skipped: fetched.skipped }))
+      return 0
+    }
+    if (loaded.STUDIO_EMBED === 'fake' && !fakeEmbedAllowed(!live)) {
+      io.stderr(FAKE_EMBED_REFUSAL)
+      return 1
     }
     const transport = live && missingLivePieces(loaded).length === 0 ? 'live' : 'stub'
     const database = command === 'migrate' ? 'postgres' : command === 'estimate' ? 'none' : (live ? 'postgres' : 'pglite')
@@ -566,6 +588,18 @@ export async function runCli(
         }))
         return
       }
+      if (command === 'embed') {
+        if (flags.backfill !== '1') throw new Error('embed needs --backfill')
+        const result = await studio.embedBackfill(flags['public-id'])
+        for (const clip of result.clips) {
+          io.stdout(placed(
+            clip.embedding === 'not-published' ? `clip=${clip.publicId} not-published` : `clip=${clip.publicId} embedding=${clip.embedding}`,
+            { reason: clip.reason },
+          ))
+        }
+        io.stdout(line('embedded', { database, written: result.written, skipped: result.skipped, missing: result.missing }))
+        return
+      }
       if (command === 'publish') {
         const result = await studio.publish({
           jobId: required(flags, 'job'),
@@ -582,13 +616,18 @@ export async function runCli(
           io.stdout(placed('refused: the title is empty'))
           return
         }
-        io.stdout(placed(result.outcome, {
+        const embeddingReason = 'embeddingReason' in result ? result.embeddingReason : undefined
+        io.stdout(line(result.outcome, {
           live: 'live' in result ? result.live : undefined,
           retryable: 'retryable' in result ? result.retryable : undefined,
-          reason: 'reason' in result ? result.reason : undefined,
+          ...(embeddingReason ? {} : { reason: 'reason' in result ? result.reason : undefined }),
           object: 'object' in result ? result.object : undefined,
           status: 'status' in result ? result.status : undefined,
           code: 'code' in result ? result.code : undefined,
+          database,
+          storage,
+          embedding: 'embedding' in result ? result.embedding : undefined,
+          ...(embeddingReason ? { reason: embeddingReason } : {}),
         }))
         explain(io, result.outcome)
         return

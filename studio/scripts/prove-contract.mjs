@@ -161,7 +161,7 @@ try {
   run('publish-clean-green', studioCwd, [vitest, 'run', 'test/catalog-publish.test.ts'], false)
 
   contractCase('extra-key', 'rejects an extra key', () => {
-    replaceCounted(indexFile, 'z.strictObject', 'z.object', 2)
+    replaceCounted(indexFile, 'z.strictObject', 'z.object', 3)
   }, /job_id/)
   contractCase('missing-key', 'rejects an extra key', () => {
     replaceCounted(
@@ -206,7 +206,7 @@ try {
     write(indexFile, `${text(indexFile)}\nconst broken: number = 'no'\n`)
   }, /Command failed:.*tsc/)
 
-  replaceCounted(indexFile, 'z.strictObject', 'z.object', 2)
+  replaceCounted(indexFile, 'z.strictObject', 'z.object', 3)
   run('publish-private-field-red', studioCwd, [vitest, 'run', 'test/catalog-publish.test.ts'], true, /withPrivate/)
   restore()
   run('publish-private-field-green', studioCwd, [vitest, 'run', 'test/catalog-publish.test.ts'], false)

@@ -36,6 +36,13 @@
       "when": 1792603200000,
       "tag": "0004_demo_social",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792700000000,
+      "tag": "0005_clip_embeddings",
+      "breakpoints": true
     }
   ]
 }
