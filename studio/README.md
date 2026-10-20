@@ -159,7 +159,7 @@ In Cloudflare he creates one R2 bucket, attaches his custom domain to that bucke
 
 In grok.com/imagine, in his own browser, he makes the clip at 16:9 and 1080p and downloads the mp4. The still he gave Grok is the keyframe, saved as a JPEG. A PNG is refused (`refused: keyframe is not a jpeg`). Convert one with `sips -s format jpeg <still.png> --out <still.jpg>`. The prompt he typed goes in a text file. No one else opens that site.
 
-From `studio/`, apply the migrations to his Supabase database. This prints `migrated database=postgres`.
+From `studio/`, apply the migrations to his Supabase database. The migration prints `migrated database=postgres applied=<tags>`, or `applied=none` when nothing new applied. This CLI command then prints its own line, `migrated database=postgres`.
 
 ```bash
 npm run cli -- migrate --live
@@ -229,20 +229,57 @@ Publish stores two CLIP vectors for the clip after the catalog row commits. One 
 
 The vectors live in `studio.clip_embeddings`. Each row is one video, one kind (`keyframe` or `text`), and one model: `Xenova/clip-vit-base-patch32` at revision `d15189d7028b43f1d3e65039190477f6af591c2a`, dtype `fp32`, 512 dimensions. fp32 is the file the library asks for on CPU, the unsuffixed `onnx/vision_model.onnx` and `onnx/text_model.onnx`. The table has row-level security and no policies. `studio_reader` cannot select it.
 
-`catalog.similar_moments(p_id text, p_limit integer)` and `catalog.moments_like(p_ids text[], p_limit integer)` return `id` and `score` only. Both are `LANGUAGE sql STABLE SECURITY DEFINER`, with `search_path` fixed to `pg_catalog, public, extensions, catalog, studio, pg_temp`, and `EXECUTE` granted only to `studio_reader`. Published means `published_at IS NOT NULL AND unpublished_at IS NULL`, the same rule as `catalog.videos`. The score is `0.7` times the keyframe cosine similarity plus `0.3` times the text cosine similarity. When either side has no text vector, the score is the keyframe similarity alone. A clip with no keyframe vector is never a candidate. `moments_like` averages each kind with pgvector's `avg` over the usable inputs, the first 50 distinct ids in array order. A NULL id is ignored. Every distinct input is excluded, including one past that first 50. Rows are ordered by `score` descending, then `id` ascending, at most 12. Unpublish does not delete the vectors. The published rule hides them.
+`catalog.similar_moments(p_id text, p_limit integer)` and `catalog.moments_like(p_ids text[], p_limit integer)` return `id` and `score` only. Both are `LANGUAGE sql STABLE SECURITY DEFINER`, with `search_path` fixed to `pg_catalog, public, extensions, catalog, studio, pg_temp`, and `EXECUTE` granted only to `studio_reader`. Published means `published_at IS NOT NULL AND unpublished_at IS NULL`, the same rule as `catalog.videos`. The score is `0.7` times the keyframe cosine similarity plus `0.3` times the text cosine similarity. When either side has no text vector, the score is the keyframe similarity alone. A clip with no keyframe vector is never a candidate. `moments_like` first keeps the distinct non-null ids, in array order, and reads only the first 50 of those. A NULL element is dropped before that window, so it does not take a slot. An unknown, unpublished, or vectorless id still takes a slot. The mean is pgvector's `avg` of each kind over the rows inside that window that are published, have a keyframe vector, and share the model chosen from the window. Every distinct input is excluded from the result, including one outside that window. Fifty unknown ids followed by a published anchor return no rows. Rows are ordered by `score` descending, then `id` ascending, at most 12. Unpublish does not delete the vectors. The published rule hides them.
 
 The model files are not in the repo. `STUDIO_MODEL_DIR` names the directory that holds them, and it is refused when it sits inside the worktree, the same way `STUDIO_MEDIA_DIR` is. The committed manifest lists the six files, their sizes, and their SHA-256s. OpenAI's CLIP repository states the MIT licence (https://github.com/openai/CLIP/blob/main/LICENSE, read 19 Oct 2026). The Hugging Face model page does not.
 
-On this Mac, in order:
+### After main is pulled
+
+From `studio/`, one command at a time, after pulling the merged main. `npm ci` is also the install at the top of this file. Run it again here so the copied `@kickoff/catalog` in `studio/node_modules` matches the merged package.
 
 ```bash
-export STUDIO_MODEL_DIR=$HOME/studio-models
+npm ci --no-audit --no-fund
+```
+
+The env file already holds `STUDIO_LIVE`, `DATABASE_URL`, and the four R2 names. It is also a valid home for `STUDIO_MODEL_DIR`. These exports name the same directories the admin uses.
+
+```bash
+export STUDIO_ENV_FILE=$HOME/studio.env
+```
+
+```bash
+export STUDIO_DATA_DIR=$HOME/studio-data
+```
+
+```bash
+export STUDIO_MEDIA_DIR=$HOME/studio-media
+```
+
+The model files already on this Mac can be reused. They live in `$HOME/kickoff-st4-models/Xenova/clip-vit-base-patch32`. Leave that directory where it is. `$HOME/studio-models` is the other valid home when that directory already holds the same six files. A leading `~` or `$HOME` is expanded. The admin needs this same directory, in the shell or in the env file.
+
+```bash
+export STUDIO_MODEL_DIR=$HOME/kickoff-st4-models/Xenova/clip-vit-base-patch32
+```
+
+`fetch-model` reads the manifest and downloads only a missing file, only from the pinned revision. Each missing file prints `fetching <path> <bytes> bytes` before the request and `landed <path> <bytes> bytes` after the file is in place. The body is streamed to `<path>.partial`, checked, then renamed. An intact directory prints no fetching line. The command then prints `fetched database=none downloaded=0 skipped=6`. A file that is already there and does not match the manifest is left in place, and the command refuses. Running the backfill again does not replace that file.
+
+```bash
 npm run cli -- fetch-model
+```
+
+`npm run migrate` applies `0005_clip_embeddings.sql` with the earlier migrations. It prints one line, `migrated database=postgres applied=0005_clip_embeddings`, when 0000 through 0004 are already applied, or `applied=` and the tags it actually applied on a fresh database. A second run prints `applied=none`. The CLI form in the Wednesday section prints that same applied line and then its own `migrated database=postgres`.
+
+```bash
 npm run migrate
+```
+
+`embed --backfill` writes vectors that are missing for published clips and skips a row whose model and source hash already match. Each clip prints `clip=<id> embedding=written`, `embedding=skipped`, or `embedding=missing reason=<reason>`, then `database=postgres`. The last line is `embedded database=postgres written=N skipped=M missing=K`. `--live` needs `STUDIO_LIVE=1` and `DATABASE_URL`, and it does not open the local database. Read every clip line before treating the vectors as ready.
+
+```bash
 npm run cli -- embed --backfill --live
 ```
 
-`fetch-model` downloads only a missing file, and only from the pinned revision. A file that is already there and does not match the manifest is left in place, and the command refuses. `npm run migrate` applies `0005_clip_embeddings.sql` with the earlier migrations. `embed --backfill` writes vectors that are missing for published clips and skips a row whose model and source hash already match. It prints one line per clip, then `embedded database=postgres written=N skipped=M missing=K`. `--live` needs `STUDIO_LIVE=1` and `DATABASE_URL`, and it does not open the local database.
+If `fetch-model` refuses because a file does not match, keep those files for inspection. Move that directory aside, or point `STUDIO_MODEL_DIR` at a fresh directory outside the worktree, then run `fetch-model` again so it can write valid files. Restart the admin after that. The hash check is cached for the life of the process, so a repaired directory is not re-read by the process that already loaded the bad one. Then run the backfill. The backfill alone cannot heal a bad model file.
 
 Then run these two as `studio_reader`. The SQL editor runs as `postgres`. On Postgres 16 and later, `postgres` cannot `SET` a role it created until that role is granted to it. This was not verified on Supabase. Run the grant once, then set the role, then reset it.
 
@@ -261,7 +298,15 @@ SELECT * FROM catalog.similar_moments('<a published id>', 6);
 RESET ROLE;
 ```
 
+Start the live admin from `studio/` in a shell that still has the same `STUDIO_MODEL_DIR`, or with that name in the env file. Future publishes then use the files `fetch-model` just checked.
+
+```bash
+STUDIO_LIVE=1 npm run studio -- --live
+```
+
 The Publish screen uses four draft sentences. On `published`: "Published. The similarity vectors are stored." and "Published. The similarity vectors were not stored. From studio/, run npm run cli -- embed --backfill --live." On `checks-failed`: "The similarity vectors are stored." and "The similarity vectors were not stored. From studio/, run npm run cli -- embed --backfill --live."
+
+Those four sentences stay as approved. A `model-corrupt` result still uses the generic missing sentence. Whether that sentence should instead say to repair the model files, restart the Studio, and then backfill is Beni's open choice, Repair or Keep. Until he answers, the recovery above is the instruction.
 
 An HNSW cosine index covers the keyframe rows. At a handful of clips the function call plans as a Function Scan, so that index is not what the similarity query is shown using.
 
