@@ -53,7 +53,7 @@ describe('Vercel ignored build step', () => {
     const h = history(); h.commit('docs/note.md')
     expect(h.run('feature', prior)).toBe(1)
   })
-  it.each(['src/lib/time.ts', 'src/data/fixtures.json', 'scripts/themeBootstrap.ts', 'packages/new/input.ts', 'package-lock.json', 'public/favicon-32.png'])(
+  it.each(['src/lib/time.ts', 'src/data/fixtures.json', 'scripts/themeBootstrap.ts', 'packages/new/input.ts', 'package-lock.json', 'public/favicon-32.png', 'tsconfig.app.json', 'tsconfig.node.json', 'tsconfig.test-dom.json'])(
     'builds a changed shared input: %s', file => {
       const h = history(); h.commit(file)
       expect(h.run()).toBe(1)

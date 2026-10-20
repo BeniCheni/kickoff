@@ -13,6 +13,7 @@ const INPUTS = [
   'web/', 'packages/',
   'public/favicon-32.png', 'public/favicon-64.png', 'public/favicon-192.png',
   'package.json', 'package-lock.json', '.npmrc', 'tsconfig.json',
+  'tsconfig.app.json', 'tsconfig.node.json', 'tsconfig.test-dom.json',
   'src/data/', 'src/shell.css', 'src/themeBoot.ts',
   'scripts/write-theme-head.ts', 'scripts/themeBootstrap.ts',
   ...SRC_ALLOWLIST,
