@@ -13,6 +13,7 @@ import { COPY } from './copy.ts'
 import { createStudio, type Studio, type StudioDatabase } from './engine.ts'
 import { missingLivePieces, selectFalTransport } from './fal/live.ts'
 import { createFalStub, type ScriptName, type StubCursor } from './fal/stub.ts'
+import { fetchModelFiles, resolveModelDir } from './embed/fetch-model.ts'
 import { sha256 } from './hash.ts'
 import { redact } from './log/redact.ts'
 import { estimateUsd, selectRegistry, unknownParam } from './registry.ts'
@@ -54,6 +55,7 @@ const USAGE = [
   'record-gate --answer <text> --disclosure <text> --by <name> --source <source>',
   'record-balance --amount <usd>',
   'migrate',
+  'fetch-model',
   'Offline unless --live is set. --live is the switch to Supabase: it needs STUDIO_LIVE=1 and DATABASE_URL, and it never opens the local database. Fal commands also need FAL_KEY. publish, unpublish --delete and retry-delete also need the R2 names. --live refuses, and names the missing piece.',
 ].join('\n')
 
@@ -320,6 +322,12 @@ export async function runCli(
         io.stderr(`refused: --live needs ${missing.join(' and ')}`)
         return 1
       }
+    }
+    if (command === 'fetch-model') {
+      const directory = resolveModelDir(loaded, repoRoot)
+      const fetched = await fetchModelFiles({ directory })
+      io.stdout(line('fetched', { database: 'none', downloaded: fetched.downloaded, skipped: fetched.skipped }))
+      return 0
     }
     const transport = live && missingLivePieces(loaded).length === 0 ? 'live' : 'stub'
     const database = command === 'migrate' ? 'postgres' : command === 'estimate' ? 'none' : (live ? 'postgres' : 'pglite')

@@ -1,4 +1,4 @@
-import { mkdtempSync, writeFileSync } from 'node:fs'
+import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -73,6 +73,23 @@ describe('command line', () => {
     expect(await runCli(['migrate', '--live'], { STUDIO_LIVE: '1', DATABASE_URL: 'present' }, live, { migrate })).toBe(0)
     expect(calls).toBe(2)
     expect(live.out).toEqual(['migrated database=postgres'])
+  })
+
+  it('refuses fetch-model inside the worktree and leaves a mismatched file', async () => {
+    const missing = capture()
+    expect(await runCli(['fetch-model'], {}, missing)).toBe(1)
+    expect(missing.err.join('\n')).toMatch(/STUDIO_MODEL_DIR is not set/)
+    const inside = capture()
+    expect(await runCli(['fetch-model'], { STUDIO_MODEL_DIR: repoRoot }, inside)).toBe(1)
+    expect(inside.err.join('\n')).toMatch(/outside the worktree/)
+    const dir = mkdtempSync(path.join(tmpdir(), 'st4-cli-model-'))
+    const file = path.join(dir, 'config.json')
+    writeFileSync(file, 'not the model')
+    const before = readFileSync(file)
+    const mismatch = capture()
+    expect(await runCli(['fetch-model'], { STUDIO_MODEL_DIR: dir }, mismatch)).toBe(1)
+    expect(mismatch.err.join('\n')).toMatch(/manifest mismatch config.json/)
+    expect(readFileSync(file)).toEqual(before)
   })
 
   it('refuses migrate and an in-repo data directory without opening a database', async () => {
