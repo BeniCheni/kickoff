@@ -2,6 +2,7 @@ import { mkdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { PGlite } from '@electric-sql/pglite'
+import { openPglite } from './db/pglite.ts'
 import { drizzle } from 'drizzle-orm/pglite'
 import { migrate as migratePglite } from 'drizzle-orm/pglite/migrator'
 import { drizzle as drizzlePostgres } from 'drizzle-orm/postgres-js'
@@ -105,8 +106,10 @@ export async function openDatabase(
       },
     }
   }
-  const Client = ports.PGlite ?? PGlite
-  const client = new Client(path.join(dataDir, 'pglite'))
+  const Client = ports.PGlite
+  const client = Client
+    ? new Client(path.join(dataDir, 'pglite'))
+    : await openPglite(path.join(dataDir, 'pglite'))
   const db = drizzle(client, { schema: studioTables })
   await migratePglite(db, { migrationsFolder })
   return { db, kind: 'pglite', close: () => client.close() }

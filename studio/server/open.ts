@@ -1,12 +1,12 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { PGlite } from '@electric-sql/pglite'
 import { drizzle } from 'drizzle-orm/pglite'
 import { migrate as migratePglite } from 'drizzle-orm/pglite/migrator'
 import { drizzle as drizzlePostgres } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
 import { parseEnvFile, resolveEnvFile } from '../db/migrate.ts'
+import { openPglite } from '../db/pglite.ts'
 import { studioTables } from '../db/schema.ts'
 import { createStudio, type Studio, type StudioDatabase } from '../engine.ts'
 import { selectFalTransport } from '../fal/live.ts'
@@ -172,7 +172,7 @@ export async function openAdmin(env: NodeJS.ProcessEnv, live: boolean, options: 
       await sql.end({ timeout: 5 })
     }
   } else {
-    const client = new PGlite(path.join(dataDir, 'pglite'))
+    const client = await openPglite(path.join(dataDir, 'pglite'))
     const opened = drizzle(client, { schema: studioTables })
     await migratePglite(opened, { migrationsFolder })
     db = opened

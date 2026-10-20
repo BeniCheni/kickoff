@@ -1,10 +1,10 @@
-import { PGlite } from '@electric-sql/pglite'
 import { mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { liveDatabaseArmed, runCli, type CliIo } from '../cli.ts'
+import { openPglite } from '../db/pglite.ts'
 import { minimalJpeg } from './jpeg.ts'
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
@@ -155,7 +155,7 @@ describe('command line', () => {
     expect(refusedCard.out[0]).toBe(
       'card-refused: missing a positive width; missing a positive height; missing a positive duration; missing an approved subject database=pglite storage=stub',
     )
-    const pg = new PGlite(path.join(data, 'pglite'))
+    const pg = await openPglite(path.join(data, 'pglite'))
     await pg.exec(`
       UPDATE studio.asset SET width = 768, height = 480, duration_s = 15.084 WHERE role = 'video';
       INSERT INTO studio.subject (name) VALUES ('Fenway');

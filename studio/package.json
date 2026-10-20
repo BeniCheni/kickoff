@@ -10,7 +10,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.ui.json",
     "test": "vitest run",
-    "test:contract": "vitest run test/schema.test.ts test/catalog-contract.test.ts test/catalog-publish.test.ts test/isolation.test.ts test/schema-boundary.test.ts test/secrets.test.ts",
+    "test:contract": "vitest run test/schema.test.ts test/embeddings.test.ts test/catalog-contract.test.ts test/catalog-publish.test.ts test/isolation.test.ts test/schema-boundary.test.ts test/secrets.test.ts",
     "migrate": "tsx db/migrate.ts",
     "seed:demo": "tsx db/seed-demo.ts",
     "cli": "tsx cli.ts",
@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.5.9",
+    "@electric-sql/pglite-pgvector": "0.0.10",
     "@tailwindcss/vite": "4.3.3",
     "@types/node": "26.2.0",
     "@types/react": "19.2.2",
