@@ -182,7 +182,7 @@ Publish. `--public-id` is letters, digits, `_` and `-`, at most 64 characters, s
 npm run cli -- list --live
 ```
 
-Publish prints `published live=true database=postgres storage=r2`. When `--title` is omitted, publish uses the import's `--title`. That means the row is in the catalog view. The line names where it wrote. It does not by itself prove the file landed in R2. A missing Card fact prints `card-refused: missing ...` and names the fact. A failed upload prints `upload-failed live=false object=video status=<status> code=<code> database=postgres storage=r2`, or the same line with `object=thumbnail`. A thrown upload prints `upload-failed live=false object=video status=none code=network database=postgres storage=r2`. A failed delete adds `status=` and `code=` to its line, and a thrown delete prints `status=none code=network`. `code` is the S3 `<Code>` only, passed through the log redaction. `status=none` means the request threw and there is no HTTP status. The body is not printed. The same publish command again sends only the object that has no address yet. There is no ledger line and the caps do not move. `pinned_on` is the Brooklyn date of the import. The finish time is midnight in Brooklyn on `--made-on`.
+Publish prints `published live=true database=postgres storage=r2 embedding=written`. When `--title` is omitted, publish uses the import's `--title`. That means the row is in the catalog view. The line names where it wrote. It does not by itself prove the file landed in R2. A missing Card fact prints `card-refused: missing ...` and names the fact. A failed upload prints `upload-failed live=false object=video status=<status> code=<code> database=postgres storage=r2`, or the same line with `object=thumbnail`. A thrown upload prints `upload-failed live=false object=video status=none code=network database=postgres storage=r2`. A failed delete adds `status=` and `code=` to its line, and a thrown delete prints `status=none code=network`. `code` is the S3 `<Code>` only, passed through the log redaction. `status=none` means the request threw and there is no HTTP status. The body is not printed. The same publish command again sends only the object that has no address yet. There is no ledger line and the caps do not move. `pinned_on` is the Brooklyn date of the import. The finish time is midnight in Brooklyn on `--made-on`.
 
 ```bash
 npm run cli -- publish --live --job <job-id> --public-id fenway-wednesday --title "Fenway" --position 1
@@ -215,6 +215,43 @@ After a withdraw, or after a delete that left one object, retry the delete. It s
 ```bash
 npm run cli -- retry-delete --live --job <job-id>
 ```
+
+## Embeddings
+
+Publish stores two CLIP vectors for the clip after the catalog row commits. One is the keyframe, the thumbnail the clip already holds. The other is the text: the title, then a newline and the editorial note when there is one. The tokenizer truncates what the model sees. The source hash of the text is the SHA-256 of that exact string. The source hash of the keyframe is the thumbnail asset's `sha256`. A failure at this step does not unpublish the clip. The same outcome line gains `embedding=written`, or `embedding=missing reason=` with one of `model-absent`, `read-failed`, `embed-failed`, or `write-failed`.
+
+The vectors live in `studio.clip_embeddings`. Each row is one video, one kind (`keyframe` or `text`), and one model: `Xenova/clip-vit-base-patch32` at revision `d15189d7028b43f1d3e65039190477f6af591c2a`, dtype `fp32`, 512 dimensions. fp32 is the file the library asks for on CPU, the unsuffixed `onnx/vision_model.onnx` and `onnx/text_model.onnx`. The table has row-level security and no policies. `studio_reader` cannot select it.
+
+`catalog.similar_moments(p_id text, p_limit integer)` and `catalog.moments_like(p_ids text[], p_limit integer)` return `id` and `score` only. Both are `LANGUAGE sql STABLE SECURITY DEFINER`, with `search_path` fixed to `pg_catalog, public, extensions, catalog, studio, pg_temp`, and `EXECUTE` granted only to `studio_reader`. Published means `published_at IS NOT NULL AND unpublished_at IS NULL`, the same rule as `catalog.videos`. The score is `0.7` times the keyframe cosine similarity plus `0.3` times the text cosine similarity. When either side has no text vector, the score is the keyframe similarity alone. A clip with no keyframe vector is never a candidate. `moments_like` averages each kind with pgvector's `avg` over the usable inputs, the first 50 distinct ids in array order. Rows are ordered by `score` descending, then `id` ascending, at most 12. Unpublish does not delete the vectors. The published rule hides them.
+
+The model files are not in the repo. `STUDIO_MODEL_DIR` names the directory that holds them, and it is refused when it sits inside the worktree, the same way `STUDIO_MEDIA_DIR` is. The committed manifest lists the six files, their sizes, and their SHA-256s. OpenAI's CLIP repository states the MIT licence (https://github.com/openai/CLIP/blob/main/LICENSE, read 19 Oct 2026). The Hugging Face model page does not.
+
+On this Mac, in order:
+
+```bash
+export STUDIO_MODEL_DIR=$HOME/studio-models
+npm run cli -- fetch-model
+npm run migrate
+npm run cli -- embed --backfill --live
+```
+
+`fetch-model` downloads only a missing file, and only from the pinned revision. A file that is already there and does not match the manifest is left in place, and the command refuses. `npm run migrate` applies `0005_clip_embeddings.sql` with the earlier migrations. `embed --backfill` writes vectors that are missing for published clips and skips a row whose model and source hash already match. It prints one line per clip, then `embedded database=postgres written=N skipped=M missing=K`. `--live` needs `STUDIO_LIVE=1` and `DATABASE_URL`, and it does not open the local database.
+
+Then run these two as `studio_reader`. The first should list `EXECUTE` on `moments_like` and `similar_moments`, and no other routine. The second should return ids and scores, and no vector.
+
+```sql
+SELECT routine_schema, routine_name, privilege_type
+FROM information_schema.routine_privileges
+WHERE grantee = 'studio_reader'
+  AND routine_schema = 'catalog'
+ORDER BY routine_name, privilege_type;
+
+SELECT * FROM catalog.similar_moments('<a published id>', 6);
+```
+
+The Publish screen uses two draft sentences. Written: "Published. The similarity vectors are stored." Missing: "Published. The similarity vectors were not stored. From studio/, run npm run cli -- embed --backfill --live."
+
+An HNSW cosine index covers the keyframe rows. At a handful of clips the function call plans as a Function Scan, so that index is not what the similarity query is shown using.
 
 ## The sample audience
 

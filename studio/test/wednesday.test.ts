@@ -14,7 +14,7 @@ const MAC_EPOCH_SECONDS = 2_082_844_800
 
 function wednesday(): string {
   const readme = readFileSync(path.join(repoRoot, 'studio/README.md'), 'utf8')
-  const section = readme.split('## Wednesday 21 Oct 2026')[1]
+  const section = readme.split('## Wednesday 21 Oct 2026')[1]?.split('\n## ')[0]
   if (!section) throw new Error('Wednesday section missing')
   return section
 }
@@ -121,7 +121,7 @@ describe('Wednesday walk-through', () => {
       'publish', '--job', job, '--public-id', 'fenway-wednesday', '--title', 'Fenway', '--position', '1',
     ], env, published)).toBe(0)
     expect(published.out[0]).toBe('published live=true database=pglite storage=stub embedding=missing reason=model-absent')
-    expect(section).toContain('Publish prints `published live=true database=postgres storage=r2`.')
+    expect(section).toContain('Publish prints `published live=true database=postgres storage=r2 embedding=written`.')
     const occupied = capture()
     expect(await runCli(['list'], env, occupied)).toBe(0)
     const holding = occupied.out.find((line) => line.includes(job))
