@@ -486,7 +486,8 @@ failure is `catalog read: timed out`.
 
 **How to check it on the preview.** Open a watch page while signed in.
 If the migration that installs `catalog.similar_moments` is on the database,
-neighbours appear under Up next in an order that is not Beni's order.
+neighbours appear under Up next. That list follows similarity order. Up next
+keeps Beni's order. The two orders can be the same.
 If the function is not there yet, the heading is absent and the rest of the
-watch page stays. The deployment log shows `similar read: read failed` once
+watch page stays. The deployment log shows `similar read: function not found` once
 for the process. No number from the function is on the page.

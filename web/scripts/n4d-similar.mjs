@@ -86,7 +86,7 @@ try {
   const withBody = await (await fetch(`${severalOrigin}/?${search('poster', 'stub-fenway-one')}`)).text()
   const withoutBody = await (await fetch(`${oneOrigin}/?${search('poster', 'stub-only-one')}`)).text()
   const galleryBody = await (await fetch(`${severalOrigin}/?tab=moments`)).text()
-  check('ssr with list has the heading and no score key', withBody.includes('Similar moments') && withBody.includes('Picked by how alike the opening frame, title and note are.') && flightScoreHits(withBody).length === 0 && !withBody.includes('\\"score\\"'))
+  check('ssr with list has the heading and no score key', withBody.includes('Similar moments') && withBody.includes('Picked by how alike the opening frame, title and note are.') && flightScoreHits(withBody).length === 0)
   check('ssr without list has no heading', !withoutBody.includes('Similar moments') && !withoutBody.includes('Picked by how alike'))
   check('ssr gallery has no heading', !galleryBody.includes('Similar moments'))
   check('up next still leads', withBody.indexOf('id="up-stub-frankenstein-one"') > -1 && withBody.indexOf('id="up-stub-frankenstein-one"') < withBody.indexOf('Similar moments'))

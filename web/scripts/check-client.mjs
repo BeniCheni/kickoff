@@ -28,18 +28,38 @@ export function flightText(html) {
 }
 
 /**
- * A score in the Moments payload. Raw HTML hides the key inside an escaped
- * flight string, so this decodes that string and also looks for `\"score\"`.
+ * JSON keys named `score` in decoded flight text.
+ * A string value of `score`, including one that contains a quote, is not a key.
+ * Chunks are joined first, so a key split across push calls is still visible.
  */
-export function flightScoreHits(html) {
-  const decoded = flightText(html)
+export function scoreKeyHits(text) {
   const hits = []
-  if (html.includes('\\"score\\"') || decoded.includes('"score"')) hits.push('score')
-  const similar = /"similar":(\[[^\]]*\])/.exec(decoded)
-  if (similar) {
-    try { hits.push(...payloadScoreHits(JSON.parse(`{"similar":${similar[1]}}`))) } catch { /* the key scan above already covers a broken fragment */ }
+  let index = 0
+  while (index < text.length) {
+    if (text[index] !== '"') { index += 1; continue }
+    let cursor = index + 1
+    let escaped = false
+    let closed = false
+    while (cursor < text.length) {
+      if (escaped) { escaped = false; cursor += 1; continue }
+      if (text[cursor] === '\\') { escaped = true; cursor += 1; continue }
+      if (text[cursor] === '"') { closed = true; break }
+      cursor += 1
+    }
+    if (!closed) break
+    let key = text.slice(index + 1, cursor)
+    try { key = JSON.parse(`"${key}"`) } catch { /* keep the raw slice */ }
+    let after = cursor + 1
+    while (after < text.length && /\s/.test(text[after])) after += 1
+    if (text[after] === ':' && key === 'score') hits.push('score')
+    index = cursor + 1
   }
-  return [...new Set(hits)]
+  return hits
+}
+
+/** A score property in the Moments flight. A title whose text is "score" is not one. */
+export function flightScoreHits(html) {
+  return [...new Set(scoreKeyHits(flightText(html)))]
 }
 
 /** A Moments payload may list neighbour ids. It may not carry a score field. */
