@@ -13,6 +13,7 @@ import {
   studioTables,
   videos,
 } from '../db/schema.ts'
+import { similarMomentRowSchema } from '@kickoff/catalog'
 import { seedClip } from './fixture.ts'
 import { freshDatabase } from './harness.ts'
 
@@ -239,7 +240,10 @@ describe('similarity functions', () => {
     `)
     expect(listed.map((row) => row.id)).toEqual(['m-keyonly', 'm-notext', 'm-same', 'm-blend', 'm-orth'])
     expect(listed.map((row) => Object.keys(row))).toEqual(listed.map(() => ['id', 'score']))
-    for (const row of listed) expect(typeof row.score).toBe('number')
+    for (const row of listed) {
+      expect(typeof row.score).toBe('number')
+      expect(similarMomentRowSchema.parse(row)).toEqual({ id: row.id, score: row.score })
+    }
     near(listed[0]?.score ?? NaN, 1)
     near(listed[1]?.score ?? NaN, 1)
     near(listed[2]?.score ?? NaN, 1)
