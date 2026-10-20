@@ -9,7 +9,7 @@ export const CLIP_REVISION = 'd15189d7028b43f1d3e65039190477f6af591c2a'
 export const CLIP_DTYPE = 'fp32' as const
 export const CLIP_DIMS = 512
 
-export const EMBED_REASONS = ['model-absent', 'read-failed', 'embed-failed', 'write-failed'] as const
+export const EMBED_REASONS = ['model-absent', 'model-corrupt', 'read-failed', 'embed-failed', 'write-failed'] as const
 
 export type EmbedReason = (typeof EMBED_REASONS)[number]
 

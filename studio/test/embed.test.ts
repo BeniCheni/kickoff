@@ -1,9 +1,10 @@
-import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
+import { createHash } from 'node:crypto'
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import { createClipEmbedder } from '../embed/clip.ts'
+import { createClipEmbedder, modelVerifyMs, verifyModelDir } from '../embed/clip.ts'
 import { createFakeEmbedder, FAKE_DTYPE, FAKE_MODEL, FAKE_REVISION, fakeVector } from '../embed/fake.ts'
 import { fetchModelFiles, readManifest, resolveModelDir } from '../embed/fetch-model.ts'
 import { CLIP_DTYPE, CLIP_MODEL, CLIP_REVISION, EmbedError } from '../embed/model.ts'
@@ -130,5 +131,42 @@ describe('model directory', () => {
     expect(embedder.identity).toEqual({ model: CLIP_MODEL, revision: CLIP_REVISION, dtype: CLIP_DTYPE })
     await expect(embedder.text('Fenway')).rejects.toBeInstanceOf(EmbedError)
     await expect(embedder.text('Fenway')).rejects.toMatchObject({ reason: 'model-absent' })
+  })
+})
+
+describe('model hash', () => {
+  function tinyManifest(bytes: Buffer) {
+    return {
+      model: CLIP_MODEL,
+      revision: CLIP_REVISION,
+      dtype: CLIP_DTYPE,
+      files: [{
+        path: 'config.json',
+        bytes: bytes.length,
+        sha256: createHash('sha256').update(bytes).digest('hex'),
+      }],
+    }
+  }
+
+  it('caches a matching directory and names a same-size mismatch model-corrupt', async () => {
+    const dir = mkdtempSync(path.join(tmpdir(), 'st4-hash-ok-'))
+    const bytes = Buffer.from('clip')
+    writeFileSync(path.join(dir, 'config.json'), bytes)
+    const manifest = tinyManifest(bytes)
+    const first = await verifyModelDir(dir, manifest)
+    expect(first).toBeGreaterThanOrEqual(0)
+    rmSync(path.join(dir, 'config.json'))
+    const second = await verifyModelDir(dir, manifest)
+    expect(second).toBe(first)
+
+    const bad = mkdtempSync(path.join(tmpdir(), 'st4-hash-bad-'))
+    writeFileSync(path.join(bad, 'config.json'), Buffer.from('xxxx'))
+    const wrong = tinyManifest(Buffer.from('clip'))
+    wrong.files[0] = { path: 'config.json', bytes: 4, sha256: wrong.files[0]?.sha256 ?? '' }
+    await expect(verifyModelDir(bad, wrong)).rejects.toMatchObject({ reason: 'model-corrupt' })
+    expect(modelVerifyMs(bad)).toBeUndefined()
+
+    const missing = mkdtempSync(path.join(tmpdir(), 'st4-hash-miss-'))
+    await expect(verifyModelDir(missing, manifest)).rejects.toMatchObject({ reason: 'model-absent' })
   })
 })

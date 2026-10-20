@@ -39,7 +39,7 @@ export function modelFileUrl(model: string, revision: string, file: string): str
   return `https://huggingface.co/${model}/resolve/${revision}/${file}`
 }
 
-function hashFile(file: string): Promise<{ sha256: string; bytes: number }> {
+export function hashFile(file: string): Promise<{ sha256: string; bytes: number }> {
   return new Promise((resolve, reject) => {
     const hash = createHash('sha256')
     let bytes = 0
