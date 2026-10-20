@@ -23,7 +23,15 @@ export class EmbedError extends Error {
   }
 }
 
+/** What a row is allowed to claim. The fake never wears the CLIP name. */
+export type EmbedderIdentity = {
+  model: string
+  revision: string
+  dtype: string
+}
+
 export type Embedder = {
+  identity: EmbedderIdentity
   keyframe(localPath: string): Promise<number[]>
   text(value: string): Promise<number[]>
 }

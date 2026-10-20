@@ -6,7 +6,7 @@ import { migrate as migratePglite } from 'drizzle-orm/pglite/migrator'
 import { drizzle as drizzlePostgres } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
 import { parseEnvFile, resolveEnvFile } from '../db/migrate.ts'
-import { selectEmbedder } from '../embed/select.ts'
+import { FAKE_EMBED_REFUSAL, fakeEmbedAllowed, selectEmbedder } from '../embed/select.ts'
 import { openPglite } from '../db/pglite.ts'
 import { studioTables } from '../db/schema.ts'
 import { createStudio, type Studio, type StudioDatabase } from '../engine.ts'
@@ -129,6 +129,9 @@ export async function openAdmin(env: NodeJS.ProcessEnv, live: boolean, options: 
   const cursor = loadCursor(cursorPath)
   const fails = new Set((loaded.STUDIO_STORAGE_FAIL ?? '').split(',').map((item) => item.trim()).filter(Boolean))
   const backends = adminBackends(live, loaded)
+  if (loaded.STUDIO_EMBED === 'fake' && !fakeEmbedAllowed(backends.pglite)) {
+    throw new Error(FAKE_EMBED_REFUSAL)
+  }
   if (loaded.STUDIO_R2_FETCH === 'inject' && !backends.pglite) {
     throw new Error('refused: STUDIO_R2_FETCH=inject needs the PGlite test seam')
   }
@@ -187,7 +190,7 @@ export async function openAdmin(env: NodeJS.ProcessEnv, live: boolean, options: 
     mediaDir,
     repoRoot,
     clock,
-    embedder: selectEmbedder(loaded, repoRoot),
+    embedder: selectEmbedder(loaded, repoRoot, { pglite: backends.pglite }),
   })
   let database: DatabaseName = databaseHold ? 'unavailable' : 'reachable'
   if (!databaseHold && !(await probeDatabase(db))) database = 'unavailable'

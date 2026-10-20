@@ -71,8 +71,9 @@ describe('publish embeddings', () => {
     expect(again.out[1]).toBe('embedded database=pglite written=0 skipped=1 missing=0')
 
     const database = await openPglite(path.join(data, 'pglite'))
-    const vectors = await database.query<{ kind: string }>('SELECT kind FROM studio.clip_embeddings ORDER BY kind')
+    const vectors = await database.query<{ kind: string; model_id: string }>('SELECT kind, model_id FROM studio.clip_embeddings ORDER BY kind')
     expect(vectors.rows.map((row) => row.kind)).toEqual(['keyframe', 'text'])
+    expect(vectors.rows.map((row) => row.model_id)).toEqual(['fake/sha256-unit', 'fake/sha256-unit'])
     const similar = await database.query('SELECT id, score FROM catalog.similar_moments(\'fenway-note\', 6)')
     expect(similar.rows).toEqual([])
     await database.close()

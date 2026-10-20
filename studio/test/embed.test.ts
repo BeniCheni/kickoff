@@ -4,7 +4,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { createClipEmbedder } from '../embed/clip.ts'
-import { createFakeEmbedder, fakeVector } from '../embed/fake.ts'
+import { createFakeEmbedder, FAKE_DTYPE, FAKE_MODEL, FAKE_REVISION, fakeVector } from '../embed/fake.ts'
 import { fetchModelFiles, readManifest, resolveModelDir } from '../embed/fetch-model.ts'
 import { CLIP_DTYPE, CLIP_MODEL, CLIP_REVISION, EmbedError } from '../embed/model.ts'
 import { clipText, clipTextSha256 } from '../embed/text.ts'
@@ -29,6 +29,8 @@ describe('fake embedder', () => {
     const file = path.join(dir, 'still.jpg')
     writeFileSync(file, minimalJpeg)
     const embedder = createFakeEmbedder()
+    expect(embedder.identity).toEqual({ model: FAKE_MODEL, revision: FAKE_REVISION, dtype: FAKE_DTYPE })
+    expect(embedder.identity.model).not.toBe(CLIP_MODEL)
     const first = await embedder.keyframe(file)
     const second = await embedder.keyframe(file)
     expect(first).toEqual(second)
@@ -125,6 +127,7 @@ describe('model directory', () => {
   it('reports the model absent without loading it when the files are not there', async () => {
     const dir = mkdtempSync(path.join(tmpdir(), 'st4-absent-'))
     const embedder = createClipEmbedder(dir)
+    expect(embedder.identity).toEqual({ model: CLIP_MODEL, revision: CLIP_REVISION, dtype: CLIP_DTYPE })
     await expect(embedder.text('Fenway')).rejects.toBeInstanceOf(EmbedError)
     await expect(embedder.text('Fenway')).rejects.toMatchObject({ reason: 'model-absent' })
   })

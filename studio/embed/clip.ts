@@ -1,6 +1,6 @@
 import { existsSync, statSync } from 'node:fs'
 import path from 'node:path'
-import { EmbedError, type Embedder } from './model.ts'
+import { CLIP_DTYPE, CLIP_MODEL, CLIP_REVISION, EmbedError, type Embedder } from './model.ts'
 import { readManifest } from './fetch-model.ts'
 import { unitVector } from './vector.ts'
 
@@ -42,6 +42,7 @@ export function createClipEmbedder(modelDir: string): Embedder {
     return loading
   }
   return {
+    identity: { model: CLIP_MODEL, revision: CLIP_REVISION, dtype: CLIP_DTYPE },
     async keyframe(localPath: string) {
       const clip = await load()
       return clip.keyframe(localPath)

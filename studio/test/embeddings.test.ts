@@ -14,6 +14,8 @@ import {
   videos,
 } from '../db/schema.ts'
 import { similarMomentRowSchema } from '@kickoff/catalog'
+import { FAKE_DTYPE, FAKE_MODEL, FAKE_REVISION } from '../embed/fake.ts'
+import { CLIP_DTYPE, CLIP_MODEL, CLIP_REVISION } from '../embed/model.ts'
 import { seedClip } from './fixture.ts'
 import { freshDatabase } from './harness.ts'
 
@@ -113,11 +115,22 @@ async function publish(db: Database, clip: Clip, publicId: string, position: num
 }
 
 async function embed(client: Client, videoId: string, kind: 'keyframe' | 'text', axisIndex: number, source: string) {
+  await embedAs(client, videoId, kind, axisIndex, source, { model: 'test/clip', revision: 'rev', dtype: 'fp32' })
+}
+
+async function embedAs(
+  client: Client,
+  videoId: string,
+  kind: 'keyframe' | 'text',
+  axisIndex: number,
+  source: string,
+  identity: { model: string; revision: string; dtype: string },
+) {
   await client.query(
     `INSERT INTO studio.clip_embeddings
       (video_id, kind, model_id, revision, dtype, dims, embedding, source_sha256)
-     VALUES ($1::uuid, $2, 'test/clip', 'rev', 'fp32', 512, $3::vector, $4)`,
-    [videoId, kind, axis(axisIndex), source],
+     VALUES ($1::uuid, $2, $3, $4, $5, 512, $6::vector, $7)`,
+    [videoId, kind, identity.model, identity.revision, identity.dtype, axis(axisIndex), source],
   )
 }
 
@@ -270,6 +283,32 @@ describe('similarity functions', () => {
     ]) {
       expect(await rows(client, call), call).toEqual([])
     }
+  })
+
+  it('never returns a fake-model row for a CLIP anchor', async () => {
+    const opened = await freshDatabase()
+    const clip = await seedClip(opened.db)
+    await opened.db.insert(article50Answer).values({
+      answer: 'recorded for the test',
+      disclosure: 'the test disclosure',
+      recordedOn: clip.when,
+      recordedBy: 'the test',
+      source: 'embeddings test',
+    })
+    const anchor = await publish(opened.db, clip, 'clip-anchor', 1, true)
+    const neighbour = await publish(opened.db, clip, 'clip-neighbour', 2, true)
+    const fake = await publish(opened.db, clip, 'fake-neighbour', 3, true)
+    const clipIdentity = { model: CLIP_MODEL, revision: CLIP_REVISION, dtype: CLIP_DTYPE }
+    const fakeIdentity = { model: FAKE_MODEL, revision: FAKE_REVISION, dtype: FAKE_DTYPE }
+    await embedAs(opened.client, anchor, 'keyframe', 0, 'anchor', clipIdentity)
+    await embedAs(opened.client, neighbour, 'keyframe', 1, 'neighbour', clipIdentity)
+    await embedAs(opened.client, fake, 'keyframe', 0, 'fake', fakeIdentity)
+    const listed = await rows<{ id: string }>(opened.client, `SELECT id FROM catalog.similar_moments('clip-anchor', 12)`)
+    expect(listed.map((row) => row.id)).toEqual(['clip-neighbour'])
+    const stored = await rows<{ model_id: string }>(opened.client, `
+      SELECT DISTINCT model_id FROM studio.clip_embeddings ORDER BY model_id
+    `)
+    expect(stored.map((row) => row.model_id)).toEqual([CLIP_MODEL, FAKE_MODEL])
   })
 
   it('averages the usable inputs and ignores the rest', async () => {

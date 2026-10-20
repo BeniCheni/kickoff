@@ -1,6 +1,6 @@
 import { sql } from 'drizzle-orm'
 import { clipText, clipTextSha256 } from './text.ts'
-import { CLIP_DIMS, CLIP_DTYPE, CLIP_MODEL, CLIP_REVISION, EmbedError, type Embedder, type EmbedReason } from './model.ts'
+import { CLIP_DIMS, EmbedError, type Embedder, type EmbedderIdentity, type EmbedReason } from './model.ts'
 
 export type StoredClip = {
   videoId: string
@@ -35,21 +35,33 @@ function vectorLiteral(values: readonly number[]): string {
   return `[${values.join(',')}]`
 }
 
-async function sourceOf(db: VectorDatabase, videoId: string, kind: 'keyframe' | 'text'): Promise<string | null> {
+async function sourceOf(
+  db: VectorDatabase,
+  videoId: string,
+  kind: 'keyframe' | 'text',
+  identity: EmbedderIdentity,
+): Promise<string | null> {
   const rows = await query(db, sql`
     SELECT source_sha256
     FROM studio.clip_embeddings
     WHERE video_id = ${videoId}::uuid
       AND kind = ${kind}
-      AND model_id = ${CLIP_MODEL}
-      AND revision = ${CLIP_REVISION}
-      AND dtype = ${CLIP_DTYPE}
+      AND model_id = ${identity.model}
+      AND revision = ${identity.revision}
+      AND dtype = ${identity.dtype}
   `)
   const value = rows[0]?.source_sha256
   return typeof value === 'string' ? value : null
 }
 
-async function writeVector(db: VectorDatabase, videoId: string, kind: 'keyframe' | 'text', source: string, values: readonly number[]) {
+async function writeVector(
+  db: VectorDatabase,
+  videoId: string,
+  kind: 'keyframe' | 'text',
+  source: string,
+  values: readonly number[],
+  identity: EmbedderIdentity,
+) {
   const literal = vectorLiteral(values)
   await db.execute(sql`
     INSERT INTO studio.clip_embeddings (
@@ -57,9 +69,9 @@ async function writeVector(db: VectorDatabase, videoId: string, kind: 'keyframe'
     ) VALUES (
       ${videoId}::uuid,
       ${kind},
-      ${CLIP_MODEL},
-      ${CLIP_REVISION},
-      ${CLIP_DTYPE},
+      ${identity.model},
+      ${identity.revision},
+      ${identity.dtype},
       ${CLIP_DIMS},
       ${literal}::vector,
       ${source}
@@ -78,17 +90,17 @@ export async function storeClipEmbeddings(db: VectorDatabase, embedder: Embedder
   const textHash = clipTextSha256(clip.title, clip.editorialNote)
   let wrote = false
   try {
-    const keyStored = await sourceOf(db, clip.videoId, 'keyframe')
+    const keyStored = await sourceOf(db, clip.videoId, 'keyframe', embedder.identity)
     if (keyStored !== clip.keyframeSha256) {
       if (!clip.keyframePath) throw new EmbedError('read-failed', 'the keyframe has no local file')
       const vector = await embedder.keyframe(clip.keyframePath)
-      await writeVector(db, clip.videoId, 'keyframe', clip.keyframeSha256, vector)
+      await writeVector(db, clip.videoId, 'keyframe', clip.keyframeSha256, vector, embedder.identity)
       wrote = true
     }
-    const textStored = await sourceOf(db, clip.videoId, 'text')
+    const textStored = await sourceOf(db, clip.videoId, 'text', embedder.identity)
     if (textStored !== textHash) {
       const vector = await embedder.text(text)
-      await writeVector(db, clip.videoId, 'text', textHash, vector)
+      await writeVector(db, clip.videoId, 'text', textHash, vector, embedder.identity)
       wrote = true
     }
     return { status: wrote ? 'written' : 'skipped' }

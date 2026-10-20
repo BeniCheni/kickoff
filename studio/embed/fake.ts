@@ -4,6 +4,11 @@ import { sha256 } from '../hash.ts'
 import { CLIP_DIMS, EmbedError, type Embedder } from './model.ts'
 import { unitVector } from './vector.ts'
 
+/** Not a CLIP label. Rows written by the test double say this, and the functions treat it as another model. */
+export const FAKE_MODEL = 'fake/sha256-unit'
+export const FAKE_REVISION = 'unit'
+export const FAKE_DTYPE = 'sha256'
+
 /** A deterministic stand-in. The same bytes or the same string always return the same unit vector. */
 export function fakeVector(seed: string): number[] {
   const bytes = new Uint8Array(CLIP_DIMS)
@@ -22,6 +27,7 @@ export function fakeVector(seed: string): number[] {
 
 export function createFakeEmbedder(): Embedder {
   return {
+    identity: { model: FAKE_MODEL, revision: FAKE_REVISION, dtype: FAKE_DTYPE },
     async keyframe(localPath: string) {
       try {
         const bytes = readFileSync(localPath)

@@ -14,7 +14,7 @@ import { createStudio, type Studio, type StudioDatabase } from './engine.ts'
 import { missingLivePieces, selectFalTransport } from './fal/live.ts'
 import { createFalStub, type ScriptName, type StubCursor } from './fal/stub.ts'
 import { fetchModelFiles, resolveModelDir } from './embed/fetch-model.ts'
-import { selectEmbedder } from './embed/select.ts'
+import { FAKE_EMBED_REFUSAL, fakeEmbedAllowed, selectEmbedder } from './embed/select.ts'
 import { sha256 } from './hash.ts'
 import { redact } from './log/redact.ts'
 import { estimateUsd, selectRegistry, unknownParam } from './registry.ts'
@@ -249,7 +249,7 @@ async function openStudio(
     mediaDir,
     repoRoot,
     clock: clockFrom(env),
-    embedder: selectEmbedder(env, repoRoot),
+    embedder: selectEmbedder(env, repoRoot, { pglite: !live }),
   })
   return {
     studio,
@@ -335,6 +335,10 @@ export async function runCli(
       const fetched = await fetchModelFiles({ directory })
       io.stdout(line('fetched', { database: 'none', downloaded: fetched.downloaded, skipped: fetched.skipped }))
       return 0
+    }
+    if (loaded.STUDIO_EMBED === 'fake' && !fakeEmbedAllowed(!live)) {
+      io.stderr(FAKE_EMBED_REFUSAL)
+      return 1
     }
     const transport = live && missingLivePieces(loaded).length === 0 ? 'live' : 'stub'
     const database = command === 'migrate' ? 'postgres' : command === 'estimate' ? 'none' : (live ? 'postgres' : 'pglite')
