@@ -51,6 +51,14 @@ describe('secrets', () => {
     ]) expect(findSecrets(text)).toContain('vercel-bypass-literal')
   })
 
+  it.each(['assignment', 'export assignment', 'YAML literal'])('rejects a literal bypass %s', form => {
+    const name = ['VERCEL_AUTOMATION', 'BYPASS_SECRET'].join('_')
+    const value = randomUUID()
+    const text = form === 'assignment' ? `${name}=${value}`
+      : form === 'export assignment' ? `export ${name}="${value}"` : `${name}: ${value}`
+    expect(findSecrets(text)).toContain(form === 'YAML literal' ? 'vercel-bypass-yaml-literal' : 'vercel-bypass-assignment')
+  })
+
   it('permits Actions secret references and runtime environment references', () => {
     const header = ['x', 'vercel', 'protection', 'bypass'].join('-')
     for (const reference of [
@@ -59,7 +67,11 @@ describe('secrets', () => {
       '$VERCEL_AUTOMATION_BYPASS_SECRET',
       'process.env.VERCEL_AUTOMATION_BYPASS_SECRET',
     ]) expect(findSecrets(`${header}: ${reference}`)).toEqual([])
-    for (const file of ['.github/workflows/preview-smoke.yml', '.github/workflows/sync.yml']) {
+    const name = ['VERCEL_AUTOMATION', 'BYPASS_SECRET'].join('_')
+    for (const text of [`${name}: ''`, name + ': ${{ secrets.' + name + ' }}', `${name}: secrets.${name}`]) {
+      expect(findSecrets(text)).toEqual([])
+    }
+    for (const file of ['.github/workflows/preview-smoke.yml', '.github/workflows/sync.yml', 'tests/vercelSmoke.test.ts']) {
       expect(findSecrets(readFileSync(path.join(repoRoot, file), 'utf8'))).toEqual([])
     }
   })

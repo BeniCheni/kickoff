@@ -17,6 +17,10 @@ export const SECRET_PATTERNS: { name: string; pattern: RegExp }[] = [
   { name: 'supabase-publishable', pattern: /sb_publishable_[A-Za-z0-9]{8,}/ },
   { name: 'supabase-secret', pattern: /sb_secret_[A-Za-z0-9]{8,}/ },
   { name: 'vercel-deploy-hook', pattern: /https:\/\/api\.vercel\.com\/v1\/integrations\/deploy\/[^\s'"`<>]+/i },
+  { name: 'vercel-bypass-assignment', pattern: /VERCEL_AUTOMATION_BYPASS_SECRET\s*=\s*\S+/ },
+  // YAML/JS literal values count too; empty strings and environment/Actions
+  // references do not. Keep this separate from the equals-assignment pattern.
+  { name: 'vercel-bypass-yaml-literal', pattern: /\bVERCEL_AUTOMATION_BYPASS_SECRET["']?\s*:\s*(?:["'][A-Za-z0-9_~-][A-Za-z0-9._~-]*["']|(?!(?:process\.env\.|secrets\.))[A-Za-z0-9_~-][A-Za-z0-9._~-]*(?=["'\s,}]|$))/ },
   // Match literal JSON/JS/YAML/curl header values. Environment expressions and
   // Actions secrets references are not values. Runtime code uses Headers.set.
   { name: 'vercel-bypass-literal', pattern: /\bx-vercel-protection-bypass["']?\s*[:=]\s*(?:["'][A-Za-z0-9_~-][A-Za-z0-9._~-]*["']|(?!(?:process\.env\.|secrets\.))[A-Za-z0-9_~-][A-Za-z0-9._~-]*(?=["'\s,}]|$))/i },
