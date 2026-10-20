@@ -8,7 +8,7 @@ const SHA = /^[a-f0-9]{40}$/
 const root = fileURLToPath(new URL('..', import.meta.url))
 
 export function deploymentUrl(raw, project) {
-  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(project ?? '')) throw new Error('VERCEL_PROJECT_NAME is missing or invalid')
+  if (!/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(project ?? '')) throw new Error('VERCEL_PROJECT_NAME is missing or invalid')
   let url
   try { url = new URL(raw?.includes('://') ? raw : `https://${raw}`) } catch { throw new Error('Invalid deployment URL') }
   if (url.protocol !== 'https:' || url.username || url.password || url.port || url.search || url.hash || url.pathname !== '/' ||

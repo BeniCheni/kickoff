@@ -114,7 +114,7 @@ The [Ignored Build Step guide](https://vercel.com/kb/guide/how-do-i-use-the-igno
 
 **11. Store the bypass in Actions.** In GitHub's repository Settings → Secrets and variables → Actions → Secrets, store that value as `VERCEL_AUTOMATION_BYPASS_SECRET`.
 
-**12. Add the project name in Actions.** In the same Actions settings, under Variables, add `VERCEL_PROJECT_NAME` with the exact Vercel project name. This is a variable, not a secret. The smoke accepts only `https://<VERCEL_PROJECT_NAME>-….vercel.app` generated hosts; it refuses aliases, other hosts, credentials, ports and query strings before sending a request. It never follows redirects with the bypass header.
+**12. Add the project name in Actions.** In the same Actions settings, under Variables, add `VERCEL_PROJECT_NAME` with the exact Vercel project name. This is a variable, not a secret. The smoke accepts only `https://<VERCEL_PROJECT_NAME>-….vercel.app` generated hosts; it refuses aliases, other hosts, credentials, non-default ports and query strings before sending a request. It never follows redirects with the bypass header. A shortened or rewritten project prefix is refused too; confirm the generated host has the literal project prefix before the first real smoke.
 
 **13. Confirm system variables are exposed.** In Vercel's Environment Variables settings, enable access to System Environment Variables ([System environment variables](https://vercel.com/docs/environment-variables/system-environment-variables), read 19 Oct 2026). `VERCEL_GIT_COMMIT_REF` and `VERCEL_GIT_COMMIT_SHA` identify the branch and deployed commit. `/api/snapshot` uses the latter when `KICKOFF_SOURCE_SHA` is unset or empty; do not add a manual SHA variable for Vercel.
 

@@ -37,6 +37,9 @@ describe('trusted-main Vercel smoke', () => {
     expect(() => readDeployment('repository_dispatch', payload(), 'other')).toThrow('project')
     expect(() => readDeployment('workflow_dispatch', { inputs: { url, sha: '--help' } }, project)).toThrow('metadata')
   })
+  it('accepts an interior double hyphen in the project prefix', () => {
+    expect(deploymentUrl('https://kickoff--web-deployment.vercel.app', 'kickoff--web')).toBe('https://kickoff--web-deployment.vercel.app')
+  })
   it.each([
     'https://other-deployment.vercel.app', 'https://kickoff.vercel.app', 'https://kickoff-.vercel.app',
     'https://kickoff-deployment.vercel.app.evil.invalid', 'http://kickoff-deployment.vercel.app',
