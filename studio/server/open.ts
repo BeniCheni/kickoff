@@ -1,12 +1,13 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { PGlite } from '@electric-sql/pglite'
 import { drizzle } from 'drizzle-orm/pglite'
 import { migrate as migratePglite } from 'drizzle-orm/pglite/migrator'
 import { drizzle as drizzlePostgres } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
 import { parseEnvFile, resolveEnvFile } from '../db/migrate.ts'
+import { FAKE_EMBED_REFUSAL, fakeEmbedAllowed, selectEmbedder } from '../embed/select.ts'
+import { openPglite } from '../db/pglite.ts'
 import { studioTables } from '../db/schema.ts'
 import { createStudio, type Studio, type StudioDatabase } from '../engine.ts'
 import { selectFalTransport } from '../fal/live.ts'
@@ -128,6 +129,9 @@ export async function openAdmin(env: NodeJS.ProcessEnv, live: boolean, options: 
   const cursor = loadCursor(cursorPath)
   const fails = new Set((loaded.STUDIO_STORAGE_FAIL ?? '').split(',').map((item) => item.trim()).filter(Boolean))
   const backends = adminBackends(live, loaded)
+  if (loaded.STUDIO_EMBED === 'fake' && !fakeEmbedAllowed(backends.pglite)) {
+    throw new Error(FAKE_EMBED_REFUSAL)
+  }
   if (loaded.STUDIO_R2_FETCH === 'inject' && !backends.pglite) {
     throw new Error('refused: STUDIO_R2_FETCH=inject needs the PGlite test seam')
   }
@@ -172,14 +176,22 @@ export async function openAdmin(env: NodeJS.ProcessEnv, live: boolean, options: 
       await sql.end({ timeout: 5 })
     }
   } else {
-    const client = new PGlite(path.join(dataDir, 'pglite'))
+    const client = await openPglite(path.join(dataDir, 'pglite'))
     const opened = drizzle(client, { schema: studioTables })
     await migratePglite(opened, { migrationsFolder })
     db = opened
     closeDb = () => client.close()
   }
 
-  const studio = createStudio({ db, fal, storage: storagePort, mediaDir, repoRoot, clock })
+  const studio = createStudio({
+    db,
+    fal,
+    storage: storagePort,
+    mediaDir,
+    repoRoot,
+    clock,
+    embedder: selectEmbedder(loaded, repoRoot, { pglite: backends.pglite }),
+  })
   let database: DatabaseName = databaseHold ? 'unavailable' : 'reachable'
   if (!databaseHold && !(await probeDatabase(db))) database = 'unavailable'
   return {

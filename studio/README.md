@@ -35,7 +35,7 @@ The role `studio_reader` is created `NOLOGIN` with `SELECT` on `catalog.videos` 
 
 ## Commands
 
-`estimate`, `submit`, `poll`, `resume`, `download`, `import`, `list`, `keep`, `discard`, `cancel`, `publish`, `unpublish`, `retry-delete`, `retry-removal`, `close-session`, `attach-request`, `settle-unconfirmed`, `record-gate`, `record-balance`, and `migrate`.
+`estimate`, `submit`, `poll`, `resume`, `download`, `import`, `list`, `keep`, `discard`, `cancel`, `publish`, `unpublish`, `retry-delete`, `retry-removal`, `close-session`, `attach-request`, `settle-unconfirmed`, `record-gate`, `record-balance`, `migrate`, `fetch-model`, and `embed --backfill`.
 
 `import` takes a clip made somewhere else (E5, 18 Oct 2026). The source is `grok-imagine`. The Studio reads the MP4's own boxes for the container, codec, width, height, duration, frame rate and audio, copies the clip and a stripped JPEG keyframe into `STUDIO_MEDIA_DIR`, and lands the job in `downloaded`. The seed, the prompt expansion and the request id stay null. There is no fal request and no ledger line. The finish time is `--made-on`, or the creation time in the MP4 header; if neither is there, import refuses and asks for `--made-on`. Importing the same file twice is refused by hash. `keep` and `record-gate` then work as they do for a fal clip.
 
@@ -79,8 +79,11 @@ The admin is a local page on this Mac. It binds to `127.0.0.1:5176` and nothing 
 export STUDIO_ENV_FILE=$HOME/studio.env
 export STUDIO_DATA_DIR=$HOME/studio-data
 export STUDIO_MEDIA_DIR=$HOME/studio-media
+export STUDIO_MODEL_DIR=$HOME/studio-models
 npm run studio
 ```
+
+`STUDIO_MODEL_DIR` may instead be a line in that env file. A leading `~` or `$HOME` in the value is expanded. Publish uses the directory for the similarity vectors.
 
 The process prints one URL. Open that URL. It sets an HttpOnly, SameSite=Strict cookie and does not print the token again. A request without that cookie is refused. A write from another origin is refused. A Host header that is not loopback is refused.
 
@@ -100,7 +103,7 @@ Import is on this page. A PNG still is refused, with the `sips` line from the We
 
 ### Wednesday, in the admin
 
-From the repository root, one command at a time. The env file already holds `STUDIO_LIVE`, `DATABASE_URL`, and the four R2 names.
+From the repository root, one command at a time. The env file already holds `STUDIO_LIVE`, `DATABASE_URL`, and the four R2 names. It is also a valid home for `STUDIO_MODEL_DIR`.
 
 ```bash
 cd studio
@@ -116,6 +119,10 @@ export STUDIO_DATA_DIR=$HOME/studio-data
 
 ```bash
 export STUDIO_MEDIA_DIR=$HOME/studio-media
+```
+
+```bash
+export STUDIO_MODEL_DIR=$HOME/studio-models
 ```
 
 One command starts the live admin. The shell prints `transport=live`, `database=postgres` and `storage=r2`. It also prints `fal=refused`. That is expected on Wednesday: Import does not need `FAL_KEY`. Jobs shows `Unavailable: a live fal action needs FAL_KEY on this Mac, and none is set.` for the same reason.
@@ -152,7 +159,7 @@ In Cloudflare he creates one R2 bucket, attaches his custom domain to that bucke
 
 In grok.com/imagine, in his own browser, he makes the clip at 16:9 and 1080p and downloads the mp4. The still he gave Grok is the keyframe, saved as a JPEG. A PNG is refused (`refused: keyframe is not a jpeg`). Convert one with `sips -s format jpeg <still.png> --out <still.jpg>`. The prompt he typed goes in a text file. No one else opens that site.
 
-From `studio/`, apply the migrations to his Supabase database. This prints `migrated database=postgres`.
+From `studio/`, apply the migrations to his Supabase database. The migration prints `migrated database=postgres applied=<tags>`, or `applied=none` when nothing new applied. This CLI command then prints its own line, `migrated database=postgres`.
 
 ```bash
 npm run cli -- migrate --live
@@ -182,7 +189,7 @@ Publish. `--public-id` is letters, digits, `_` and `-`, at most 64 characters, s
 npm run cli -- list --live
 ```
 
-Publish prints `published live=true database=postgres storage=r2`. When `--title` is omitted, publish uses the import's `--title`. That means the row is in the catalog view. The line names where it wrote. It does not by itself prove the file landed in R2. A missing Card fact prints `card-refused: missing ...` and names the fact. A failed upload prints `upload-failed live=false object=video status=<status> code=<code> database=postgres storage=r2`, or the same line with `object=thumbnail`. A thrown upload prints `upload-failed live=false object=video status=none code=network database=postgres storage=r2`. A failed delete adds `status=` and `code=` to its line, and a thrown delete prints `status=none code=network`. `code` is the S3 `<Code>` only, passed through the log redaction. `status=none` means the request threw and there is no HTTP status. The body is not printed. The same publish command again sends only the object that has no address yet. There is no ledger line and the caps do not move. `pinned_on` is the Brooklyn date of the import. The finish time is midnight in Brooklyn on `--made-on`.
+Publish prints `published live=true database=postgres storage=r2 embedding=written`. When `--title` is omitted, publish uses the import's `--title`. That means the row is in the catalog view. The line names where it wrote. It does not by itself prove the file landed in R2. A missing Card fact prints `card-refused: missing ...` and names the fact. A failed upload prints `upload-failed live=false object=video status=<status> code=<code> database=postgres storage=r2`, or the same line with `object=thumbnail`. A thrown upload prints `upload-failed live=false object=video status=none code=network database=postgres storage=r2`. A failed delete adds `status=` and `code=` to its line, and a thrown delete prints `status=none code=network`. `code` is the S3 `<Code>` only, passed through the log redaction. `status=none` means the request threw and there is no HTTP status. The body is not printed. The same publish command again sends only the object that has no address yet. There is no ledger line and the caps do not move. `pinned_on` is the Brooklyn date of the import. The finish time is midnight in Brooklyn on `--made-on`.
 
 ```bash
 npm run cli -- publish --live --job <job-id> --public-id fenway-wednesday --title "Fenway" --position 1
@@ -215,6 +222,93 @@ After a withdraw, or after a delete that left one object, retry the delete. It s
 ```bash
 npm run cli -- retry-delete --live --job <job-id>
 ```
+
+## Embeddings
+
+Publish stores two CLIP vectors for the clip after the catalog row commits. One is the keyframe, the thumbnail the clip already holds. The other is the text: the title, then a newline and the editorial note when there is one. The tokenizer truncates what the model sees. The source hash of the text is the SHA-256 of that exact string. The source hash of the keyframe is the thumbnail asset's `sha256`. A failure at this step does not unpublish the clip. The same outcome line gains `embedding=written` when a row was written, `embedding=stored` when the vectors already match, or `embedding=missing reason=` with one of `model-absent`, `model-corrupt`, `read-failed`, `embed-failed`, or `write-failed`. `model-corrupt` means a file is the expected size and its SHA-256 does not match the manifest. The check runs once, the first time this process loads the model, and before the model itself loads.
+
+The vectors live in `studio.clip_embeddings`. Each row is one video, one kind (`keyframe` or `text`), and one model: `Xenova/clip-vit-base-patch32` at revision `d15189d7028b43f1d3e65039190477f6af591c2a`, dtype `fp32`, 512 dimensions. fp32 is the file the library asks for on CPU, the unsuffixed `onnx/vision_model.onnx` and `onnx/text_model.onnx`. The table has row-level security and no policies. `studio_reader` cannot select it.
+
+`catalog.similar_moments(p_id text, p_limit integer)` and `catalog.moments_like(p_ids text[], p_limit integer)` return `id` and `score` only. Both are `LANGUAGE sql STABLE SECURITY DEFINER`, with `search_path` fixed to `pg_catalog, public, extensions, catalog, studio, pg_temp`, and `EXECUTE` granted only to `studio_reader`. Published means `published_at IS NOT NULL AND unpublished_at IS NULL`, the same rule as `catalog.videos`. The score is `0.7` times the keyframe cosine similarity plus `0.3` times the text cosine similarity. When either side has no text vector, the score is the keyframe similarity alone. A clip with no keyframe vector is never a candidate. `moments_like` first keeps the distinct non-null ids, in array order, and reads only the first 50 of those. A NULL element is dropped before that window, so it does not take a slot. An unknown, unpublished, or vectorless id still takes a slot. The mean is pgvector's `avg` of each kind over the rows inside that window that are published, have a keyframe vector, and share the model chosen from the window. Every distinct input is excluded from the result, including one outside that window. Fifty unknown ids followed by a published anchor return no rows. Rows are ordered by `score` descending, then `id` ascending, at most 12. Unpublish does not delete the vectors. The published rule hides them.
+
+The model files are not in the repo. `STUDIO_MODEL_DIR` names the directory that holds them, and it is refused when it sits inside the worktree, the same way `STUDIO_MEDIA_DIR` is. The committed manifest lists the six files, their sizes, and their SHA-256s. OpenAI's CLIP repository states the MIT licence (https://github.com/openai/CLIP/blob/main/LICENSE, read 19 Oct 2026). The Hugging Face model page does not.
+
+### After main is pulled
+
+From `studio/`, one command at a time, after pulling the merged main. `npm ci` is also the install at the top of this file. Run it again here so the copied `@kickoff/catalog` in `studio/node_modules` matches the merged package.
+
+```bash
+npm ci --no-audit --no-fund
+```
+
+The env file already holds `STUDIO_LIVE`, `DATABASE_URL`, and the four R2 names. It is also a valid home for `STUDIO_MODEL_DIR`. These exports name the same directories the admin uses.
+
+```bash
+export STUDIO_ENV_FILE=$HOME/studio.env
+```
+
+```bash
+export STUDIO_DATA_DIR=$HOME/studio-data
+```
+
+```bash
+export STUDIO_MEDIA_DIR=$HOME/studio-media
+```
+
+The model files already on this Mac can be reused. They live in `$HOME/kickoff-st4-models/Xenova/clip-vit-base-patch32`. Leave that directory where it is. `$HOME/studio-models` is the other valid home when that directory already holds the same six files. A leading `~` or `$HOME` is expanded. The admin needs this same directory, in the shell or in the env file.
+
+```bash
+export STUDIO_MODEL_DIR=$HOME/kickoff-st4-models/Xenova/clip-vit-base-patch32
+```
+
+`fetch-model` reads the manifest and downloads only a missing file, only from the pinned revision. Each missing file prints `fetching <path> <bytes> bytes` before the request and `landed <path> <bytes> bytes` after the file is in place. The body is streamed to `<path>.partial`, checked, then renamed. An intact directory prints no fetching line. The command then prints `fetched database=none downloaded=0 skipped=6`. A file that is already there and does not match the manifest is left in place, and the command refuses. Running the backfill again does not replace that file.
+
+```bash
+npm run cli -- fetch-model
+```
+
+`npm run migrate` applies `0005_clip_embeddings.sql` with the earlier migrations. It prints one line, `migrated database=postgres applied=0005_clip_embeddings`, when 0000 through 0004 are already applied, or `applied=` and the tags it actually applied on a fresh database. A second run prints `applied=none`. The CLI form in the Wednesday section prints that same applied line and then its own `migrated database=postgres`.
+
+```bash
+npm run migrate
+```
+
+`embed --backfill` writes vectors that are missing for published clips and skips a row whose model and source hash already match. Each clip prints `clip=<id> embedding=written`, `embedding=skipped`, or `embedding=missing reason=<reason>`, then `database=postgres`. The last line is `embedded database=postgres written=N skipped=M missing=K`. `--live` needs `STUDIO_LIVE=1` and `DATABASE_URL`, and it does not open the local database. Read every clip line before treating the vectors as ready.
+
+```bash
+npm run cli -- embed --backfill --live
+```
+
+If `fetch-model` refuses because a file does not match, keep those files for inspection. Move that directory aside, or point `STUDIO_MODEL_DIR` at a fresh directory outside the worktree, then run `fetch-model` again so it can write valid files. Restart the admin after that. The hash check is cached for the life of the process, so a repaired directory is not re-read by the process that already loaded the bad one. Then run the backfill. The backfill alone cannot heal a bad model file.
+
+Then run these two as `studio_reader`. The SQL editor runs as `postgres`. On Postgres 16 and later, `postgres` cannot `SET` a role it created until that role is granted to it. This was not verified on Supabase. Run the grant once, then set the role, then reset it.
+
+```sql
+GRANT studio_reader TO postgres WITH SET TRUE;
+SET ROLE studio_reader;
+
+SELECT routine_schema, routine_name, privilege_type
+FROM information_schema.routine_privileges
+WHERE grantee = 'studio_reader'
+  AND routine_schema = 'catalog'
+ORDER BY routine_name, privilege_type;
+
+SELECT * FROM catalog.similar_moments('<a published id>', 6);
+
+RESET ROLE;
+```
+
+Start the live admin from `studio/` in a shell that still has the same `STUDIO_MODEL_DIR`, or with that name in the env file. Future publishes then use the files `fetch-model` just checked.
+
+```bash
+STUDIO_LIVE=1 npm run studio -- --live
+```
+
+The Publish screen uses four draft sentences. On `published`: "Published. The similarity vectors are stored." and "Published. The similarity vectors were not stored. From studio/, run npm run cli -- embed --backfill --live." On `checks-failed`: "The similarity vectors are stored." and "The similarity vectors were not stored. From studio/, run npm run cli -- embed --backfill --live."
+
+Those four sentences stay as approved. Beni ruled Keep for this PR on Tue 20 Oct 2026: a `model-corrupt` result still uses the generic missing sentence, and this PR adds no sentence of its own for that reason. Repair, a reason-specific sentence, is a follow-up after this PR merges. Until that follow-up, the recovery above is the instruction.
+
+An HNSW cosine index covers the keyframe rows. At a handful of clips the function call plans as a Function Scan, so that index is not what the similarity query is shown using.
 
 ## The sample audience
 

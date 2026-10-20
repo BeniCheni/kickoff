@@ -11,6 +11,10 @@ import {
   catalogListRowSchema,
   publishedDetailColumns,
   publishedListColumns,
+  MOMENTS_LIKE,
+  SIMILAR_LIMIT_MAX,
+  SIMILAR_MOMENTS,
+  similarMomentRowSchema,
   siteCopyPath,
   storageAddress,
 } from '@kickoff/catalog'
@@ -94,6 +98,24 @@ describe('catalog row schemas', () => {
       .filter((entry) => typeof entry[1] === 'function')
       .map((entry) => entry[0])
     expect(functions).toEqual(['storageAddress', 'siteCopyPath'])
+  })
+})
+
+describe('similar moment row', () => {
+  it('accepts a finite score and rejects an extra key, a missing score, and a non-finite number', () => {
+    expect(SIMILAR_LIMIT_MAX).toBe(12)
+    expect(SIMILAR_MOMENTS).toBe('catalog.similar_moments')
+    expect(MOMENTS_LIKE).toBe('catalog.moments_like')
+    expect(similarMomentRowSchema.parse({ id: 'fenway-strike', score: 0.7 })).toEqual({
+      id: 'fenway-strike',
+      score: 0.7,
+    })
+    expect(similarMomentRowSchema.shape.id).toBe(catalogListRowSchema.shape.id)
+    expect(similarMomentRowSchema.safeParse({ id: 'fenway-strike', score: 0.7, embedding: [1] }).success).toBe(false)
+    expect(similarMomentRowSchema.safeParse({ id: 'fenway-strike' }).success).toBe(false)
+    expect(similarMomentRowSchema.safeParse({ id: 'fenway-strike', score: Number.POSITIVE_INFINITY }).success).toBe(false)
+    expect(similarMomentRowSchema.safeParse({ id: 'fenway-strike', score: Number.NaN }).success).toBe(false)
+    expect(similarMomentRowSchema.safeParse({ id: 'fenway-strike', score: '0.7' }).success).toBe(false)
   })
 })
 

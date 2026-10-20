@@ -74,6 +74,25 @@ export const catalogDetailRowSchema = z.strictObject({
 export type CatalogListRow = z.infer<typeof catalogListRowSchema>
 export type CatalogDetailRow = z.infer<typeof catalogDetailRowSchema>
 
+/**
+ * One row of `catalog.similar_moments` or `catalog.moments_like`.
+ * `id` is the list row's id. `score` is the blended cosine similarity.
+ * The functions return no vector.
+ */
+export const similarMomentRowSchema = z.strictObject({
+  id: catalogListRowSchema.shape.id,
+  score: z.number().finite(),
+})
+
+/** The SQL cap on both functions. `least(p_limit, 12)`. */
+export const SIMILAR_LIMIT_MAX = 12
+
+/** `catalog.similar_moments(p_id text, p_limit integer)`. */
+export const SIMILAR_MOMENTS = 'catalog.similar_moments'
+
+/** `catalog.moments_like(p_ids text[], p_limit integer)`. */
+export const MOMENTS_LIKE = 'catalog.moments_like'
+
 export const publishedListColumns = [
   'id',
   'title',

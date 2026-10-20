@@ -39,6 +39,7 @@ test('a failed catalog read logs one class and never the address', () => {
   expect(catalogFailure(Object.assign(new Error('x'), { code: '42501' }))).toBe('permission denied')
   expect(catalogFailure(Object.assign(new Error('x'), { code: '3D000' }))).toBe('database not found')
   expect(catalogFailure(Object.assign(new Error('x'), { code: '42P01' }))).toBe('relation not found')
+  expect(catalogFailure(Object.assign(new Error('x'), { code: '42883' }))).toBe('function not found')
   expect(catalogFailure(new Error(leaked))).toBe('read failed')
   expect(catalogFailure(new CatalogReadError('nope', false, leaked))).toBe('read failed')
 })

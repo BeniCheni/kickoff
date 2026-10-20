@@ -15,18 +15,38 @@ export function watchIdFrom(search: string): string | null {
   return new URLSearchParams(query).get('watch')
 }
 
+/** Ids that are published on this list, in the given order. Scores are not accepted. */
+export function similarForPayload(
+  watchId: string | null,
+  list: readonly { id: string }[],
+  similar: readonly string[] | undefined,
+): string[] | undefined {
+  if (watchId === null || !similar) return undefined
+  const allowed = new Set(list.map(row => row.id))
+  const ids: string[] = []
+  const seen = new Set<string>()
+  for (const id of similar) {
+    if (typeof id !== 'string' || id === watchId || !allowed.has(id) || seen.has(id)) continue
+    seen.add(id)
+    ids.push(id)
+  }
+  return ids.length > 0 ? ids : undefined
+}
+
 /** Fixtures and Table never call `load`. Moments calls it once per request. */
 export function momentsFor(
   search: string,
   load: () => CatalogSuccess,
   storageOrigin: string | null,
   demo: DemoSocial | null = null,
+  similar?: readonly string[],
 ): MomentsPayload {
   if (!tabIsMoments(search)) return { state: 'skipped' }
   try {
     const read = load()
     const watchId = watchIdFrom(search)
     const detail = watchId === null ? null : read.details.find(row => row.id === watchId) ?? null
+    const neighbours = similarForPayload(watchId, read.list, similar)
     return {
       state: 'ready',
       preview: read.preview,
@@ -37,6 +57,7 @@ export function momentsFor(
       videoAddress: videoFor(detail, storageOrigin),
       videos: Object.fromEntries(read.details.map(row => [row.id, videoFor(row, storageOrigin)])),
       ...(demo ? { social: socialByVideo(demo, read.list.map(row => row.id)) } : {}),
+      ...(neighbours ? { similar: neighbours } : {}),
     }
   } catch (error) {
     const watchId = watchIdFrom(search)

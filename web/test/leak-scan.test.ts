@@ -2,7 +2,12 @@ import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { expect, test } from 'vitest'
-import { STUB_SENTINEL, DEMO_SENTINEL, DATABASE_ADDRESS, textLeakHits, leakHits, scanBuild } from '../scripts/check-client.mjs'
+import { STUB_SENTINEL, DEMO_SENTINEL, DATABASE_ADDRESS, textLeakHits, leakHits, scanBuild, payloadScoreHits, flightText, flightScoreHits } from '../scripts/check-client.mjs'
+
+function flight(payload: Record<string, unknown>) {
+  const encoded = JSON.stringify(JSON.stringify(payload)).slice(1, -1)
+  return `self.__next_f.push([1,"${encoded}"])`
+}
 
 function tree() {
   const root = mkdtempSync(path.join(tmpdir(), 'kickoff-leak-'))
@@ -60,6 +65,41 @@ test('a database address in a response fails even when the demo build is on', ()
   expect(textLeakHits(`<main>${url}</main>`, [DATABASE_ADDRESS]).length).toBe(1)
   writeFileSync(path.join(serverDir, 'page.html'), '<main>Fixtures</main>')
   expect(() => scanBuild(staticDir, serverDir, { demoBuild: true })).not.toThrow()
+})
+
+test('a score field in a Moments payload fails the leak scan', () => {
+  expect(payloadScoreHits({ state: 'ready', similar: ['stub-fenway-one'] })).toEqual([])
+  expect(payloadScoreHits({ state: 'ready', similar: ['stub-fenway-one'], score: 0.912345678 })).toEqual(['score'])
+  expect(payloadScoreHits({ list: [{ id: 'stub-fenway-one', score: 0.2 }] })).toEqual(['score'])
+})
+
+test('a flight string hides a payload key until it is decoded, and a score turns the check red', () => {
+  const clean = flight({ similar: ['stub-both-cats'], title: 'score' })
+  expect(clean.includes('"similar"')).toBe(false)
+  expect(flightText(clean)).toContain('"title":"score"')
+  expect(flightScoreHits(clean)).toEqual([])
+  const scored = flight({ similar: ['stub-both-cats'], score: 0.9 })
+  expect(scored.includes('"score"')).toBe(false)
+  expect(flightScoreHits(scored)).toEqual(['score'])
+})
+
+test('a title of score, an escaped quote, a split key, and a nested score stay distinct', () => {
+  expect(flightScoreHits(flight({ title: 'score', note: 'say "hello"', similar: ['stub-both-cats'] }))).toEqual([])
+  const quoted = flight({ title: 'he said "score" once', similar: ['a'] })
+  expect(flightText(quoted)).toContain('\\"score\\"')
+  expect(flightScoreHits(quoted)).toEqual([])
+  const whole = JSON.stringify({ title: 'Fenway', similar: ['a'], score: 0.912345678 })
+  const splitAt = whole.indexOf('score') + 2
+  const html = `self.__next_f.push([1,${JSON.stringify(whole.slice(0, splitAt))}])self.__next_f.push([1,${JSON.stringify(whole.slice(splitAt))}])`
+  expect(flightText(html)).toContain('"score":')
+  expect(html.includes('"score":')).toBe(false)
+  expect(flightScoreHits(html)).toEqual(['score'])
+  const cleanSplit = JSON.stringify({ title: 'score', similar: ['a', 'b'] })
+  const mid = Math.floor(cleanSplit.length / 2)
+  const cleanHtml = `self.__next_f.push([1,${JSON.stringify(cleanSplit.slice(0, mid))}])self.__next_f.push([1,${JSON.stringify(cleanSplit.slice(mid))}])`
+  expect(flightScoreHits(cleanHtml)).toEqual([])
+  expect(flightScoreHits(flight({ similar: [{ id: 'stub-both-cats', score: 0.2 }] }))).toEqual(['score'])
+  expect(payloadScoreHits({ similar: [{ id: 'stub-both-cats', score: 0.2 }] })).toEqual(['score'])
 })
 
 test('stub client sentinels and future private Studio names still fail', () => {

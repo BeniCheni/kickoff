@@ -138,5 +138,11 @@
       "thumbnail_mime": "image/jpeg",
       "thumbnail_is_keyframe": false
     }
-  ]
+  ],
+  "similar": {
+    "stub-both-cats": ["stub-title-fenway", "stub-fenway-one", "stub-frankenstein-one"],
+    "stub-fenway-one": ["stub-title-fenway", "stub-both-cats"],
+    "stub-title-fenway": ["stub-frankenstein-one", "stub-both-cats"],
+    "stub-frankenstein-one": ["stub-fenway-one", "stub-title-fenway", "stub-both-cats"]
+  }
 }

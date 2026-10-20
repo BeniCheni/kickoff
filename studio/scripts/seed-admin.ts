@@ -8,10 +8,10 @@
 import { mkdirSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { PGlite } from '@electric-sql/pglite'
 import { eq, isNull } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/pglite'
 import { migrate } from 'drizzle-orm/pglite/migrator'
+import { openPglite } from '../db/pglite.ts'
 import { CHECKLIST_LINES, asset, generation, generationInput, job, ledger, session, studioTables, subject } from '../db/schema.ts'
 import { createStudio, type Studio, type StudioDatabase } from '../engine.ts'
 import { createFalStub, type ScriptName } from '../fal/stub.ts'
@@ -45,7 +45,7 @@ function video(seed: string, duration = 15) {
 }
 
 async function openDb(dataDir: string) {
-  const client = new PGlite(path.join(dataDir, 'pglite'))
+  const client = await openPglite(path.join(dataDir, 'pglite'))
   const db = drizzle(client, { schema: studioTables })
   await migrate(db, { migrationsFolder })
   return { client, db }
