@@ -115,7 +115,9 @@ export async function fetchModelFiles(input: {
         ? await input.fetchResponse(entry)
         : await fetch(modelFileUrl(manifest.model, manifest.revision, entry.path))
       if (!response.ok || !response.body) throw new Error(`could not download ${entry.path}`)
-      await pipeline(Readable.fromWeb(response.body), createWriteStream(partial))
+      // fetch's body is a DOM stream under the CI TypeScript, and that type is
+      // not assignable to Readable.fromWeb's Node stream. The bytes are the same.
+      await pipeline(Readable.fromWeb(response.body as never), createWriteStream(partial))
     }
     if (!(await matches(partial, entry))) {
       throw new Error(`manifest mismatch ${entry.path}`)
