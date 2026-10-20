@@ -141,6 +141,7 @@ test('the watch page has one video, no src, and no autoplay attribute', () => {
   expect(markup).toContain('aria-label="Autoplay next"')
   expect(markup).toContain('Stub Frankenstein one')
   expect(markup).not.toContain('Nothing after this one')
+  expect(markup).not.toContain('Similar moments')
 })
 
 test('the last video says nothing follows it in Beni’s order', () => {
@@ -149,6 +150,43 @@ test('the last video says nothing follows it in Beni’s order', () => {
   )
   expect(markup).toContain('Nothing after this one in Beni\u2019s order.')
   expect(markup).toContain('Earlier')
+})
+
+test('similar moments sit after Up next and Earlier, and a repeated title keeps its own name', () => {
+  const markup = renderToStaticMarkup(
+    <WatchPage
+      detail={detail('stub-fenway-one')}
+      list={several.list}
+      search="?tab=moments"
+      address={null}
+      similar={['stub-title-fenway', 'missing-clip', 'stub-fenway-one', 'stub-both-cats', 'stub-both-cats']}
+    />,
+  )
+  const up = markup.indexOf('>Up next<')
+  const earlier = markup.indexOf('>Earlier<')
+  const similar = markup.indexOf('>Similar moments<')
+  expect(up).toBeGreaterThan(-1)
+  expect(earlier).toBe(-1)
+  expect(similar).toBeGreaterThan(up)
+  expect(markup).toContain('Picked by how alike the opening frame, title and note are.')
+  const title = markup.indexOf('id="similar-stub-title-fenway"')
+  const both = markup.indexOf('id="similar-stub-both-cats"')
+  expect(title).toBeGreaterThan(similar)
+  expect(both).toBeGreaterThan(title)
+  expect(markup).not.toContain('id="similar-stub-fenway-one"')
+  expect(markup).not.toContain('id="similar-missing-clip"')
+  expect(markup).toContain('id="up-stub-title-fenway"')
+  expect(markup).toContain('aria-labelledby="similar-stub-title-fenway"')
+  expect(markup).toContain('aria-labelledby="up-stub-title-fenway"')
+  expect(markup.indexOf('id="up-stub-frankenstein-one"')).toBeLessThan(similar)
+  expect(markup).not.toContain('score')
+  const absent = renderToStaticMarkup(
+    <WatchPage detail={detail('stub-fenway-one')} list={several.list} search="?tab=moments" address={null} similar={[]} />,
+  )
+  expect(absent).not.toContain('Similar moments')
+  expect(absent).not.toContain('Picked by how alike')
+  const region = readFileSync(fileURLToPath(new URL('../app/moments/region.tsx', import.meta.url)), 'utf8')
+  expect(region).toContain('similar={moments.similar}')
 })
 
 test('a missing id stays a not-found page and a failed watch read uses the watch sentence', () => {

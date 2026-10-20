@@ -82,10 +82,35 @@ test('every fixture file carries the sentinel and the named sets parse', () => {
   expect(several.details.some(row => row.sha256 === 'not-a-digest')).toBe(true)
   expect(several.list.every(row => !('prompt' in row))).toBe(true)
   expect(Object.keys(several.list[0] ?? {}).sort()).toEqual([...publishedListColumns].sort())
+  expect(several.similarById).toEqual({
+    'stub-both-cats': ['stub-title-fenway', 'stub-fenway-one', 'stub-frankenstein-one'],
+    'stub-fenway-one': ['stub-title-fenway', 'stub-both-cats'],
+    'stub-title-fenway': ['stub-frankenstein-one', 'stub-both-cats'],
+    'stub-frankenstein-one': ['stub-fenway-one', 'stub-title-fenway', 'stub-both-cats'],
+  })
+  expect(one).not.toHaveProperty('similarById')
+  expect(empty).not.toHaveProperty('similarById')
+  expect(read('one.json')).not.toContain('"similar"')
+  expect(read('empty.json')).not.toContain('"similar"')
   const missing = readCatalog(env({ catalog: 'stub', stubFile: path.join(fixtureDir, 'missing-thumbnail.json') }), readText)
   expect(missing.details[0]?.thumbnail_bucket).toBeNull()
   expect(missing.details[0]?.thumbnail_object_path).toBeNull()
   expect(() => readCatalog(env({ catalog: 'stub', stubFile: path.join(fixtureDir, 'unavailable.json') }), readText)).toThrow(/unavailable/)
+})
+
+test('a stub similar map that is not known ids, without self or repeats, at most six, fails validation', () => {
+  const fail = (mutate: (body: { similar: Record<string, unknown> }) => void) => {
+    const next = JSON.parse(read('several.json')) as { similar: Record<string, unknown> }
+    mutate(next)
+    expect(() => readCatalog(env({ catalog: 'stub', stubFile: 'memory' }), () => JSON.stringify(next))).toThrow(/failed validation/)
+  }
+  fail(next => { next.similar['stub-fenway-one'] = ['withdrawn-clip'] })
+  fail(next => { next.similar['withdrawn-clip'] = ['stub-fenway-one'] })
+  fail(next => { next.similar['stub-fenway-one'] = ['stub-fenway-one'] })
+  fail(next => { next.similar['stub-fenway-one'] = ['stub-both-cats', 'stub-both-cats'] })
+  fail(next => { next.similar['stub-fenway-one'] = Array.from({ length: 7 }, () => 'stub-both-cats') })
+  fail(next => { next.similar['stub-fenway-one'] = [{ id: 'stub-both-cats', score: 0.9 }] })
+  fail(next => { (next as { similar: unknown }).similar = ['stub-fenway-one'] })
 })
 
 test('a video with an extra key fails the whole read', () => {

@@ -7,7 +7,9 @@ import { demoFromRows } from '../demo/rows'
 import { DemoReadError } from '../demo/read'
 import { connectionOptions } from './connection'
 import { asCatalogRows, catalogFromRows } from './hosted'
-import { catalogFailure, isCatalogTimeout } from './failure'
+import { catalogFailure, isCatalogTimeout, warnSimilarRead } from './failure'
+import { SIMILAR_MOMENTS } from '@kickoff/catalog'
+import { SIMILAR_PAGE_LIMIT, similarIdsFromRows } from './similar-rows'
 import { CatalogReadError, type CatalogSuccess } from './types'
 
 let client: ReturnType<typeof postgres> | undefined
@@ -35,6 +37,8 @@ export type HostedMoments = {
   catalog: CatalogSuccess
   demo: DemoSocial | null
   demoError: DemoReadError | null
+  /** Ids only. Absent when this request did not ask, or the similarity read kept nothing. */
+  similar?: string[]
 }
 
 const DEFAULT_READ_TIMEOUT_MS = 8000
@@ -96,12 +100,51 @@ export async function momentsTransactionSettings(): Promise<{ isolation: string,
   })
 }
 
-export async function loadHostedMoments(includeDemo: boolean): Promise<HostedMoments> {
+if (SIMILAR_MOMENTS !== 'catalog.similar_moments') {
+  throw new Error('SIMILAR_MOMENTS drifted from catalog.similar_moments')
+}
+
+function similarMomentsQuery(watchId: string) {
+  return sql`SELECT id, score FROM catalog.similar_moments(${watchId}, ${SIMILAR_PAGE_LIMIT})`
+}
+
+/**
+ * One similarity statement, inside a savepoint, after the list and the detail.
+ * A refused, failing, or invalid read leaves the catalog in place.
+ * A statement timeout is rethrown, the same way the demo savepoint rethrows one.
+ */
+async function readSimilar(tx: MomentsTx, catalog: CatalogSuccess, watchId: string | null): Promise<string[] | undefined> {
+  if (!watchId) return undefined
+  const listIds = new Set(catalog.list.map(row => row.id))
+  if (!listIds.has(watchId)) return undefined
+  try {
+    const ids = await tx.transaction(async (sp) => {
+      const rows = asCatalogRows(await sp.execute(similarMomentsQuery(watchId)))
+      const kept = similarIdsFromRows(rows, listIds, watchId)
+      return kept.length > 0 ? kept : undefined
+    })
+    return ids
+  } catch (error) {
+    if (isCatalogTimeout(error)) throw error
+    warnSimilarRead(error)
+    return undefined
+  }
+}
+
+function withSimilar<T extends { catalog: CatalogSuccess, demo: DemoSocial | null, demoError: DemoReadError | null }>(
+  bundle: T,
+  similar: string[] | undefined,
+): HostedMoments {
+  return similar ? { ...bundle, similar } : bundle
+}
+
+export async function loadHostedMoments(includeDemo: boolean, watchId: string | null = null): Promise<HostedMoments> {
   return withMomentsTransaction(async (tx) => {
     const list = asCatalogRows(await tx.execute(sql`SELECT * FROM catalog.videos ORDER BY position ASC, id ASC`))
     const detail = asCatalogRows(await tx.execute(sql`SELECT * FROM catalog.video ORDER BY position ASC, id ASC`))
     const catalog = catalogFromRows(list, detail)
-    if (!includeDemo) return { catalog, demo: null, demoError: null }
+    const similar = await readSimilar(tx, catalog, watchId)
+    if (!includeDemo) return withSimilar({ catalog, demo: null, demoError: null }, similar)
     try {
       const demo = await tx.transaction(async (sp) => {
         const users = asCatalogRows(await sp.execute(sql`SELECT * FROM demo.social_users ORDER BY id`))
@@ -113,13 +156,13 @@ export async function loadHostedMoments(includeDemo: boolean): Promise<HostedMom
           throw new DemoReadError('demo social failed validation', true)
         }
       })
-      return { catalog, demo, demoError: null }
+      return withSimilar({ catalog, demo, demoError: null }, similar)
     } catch (error) {
       if (isCatalogTimeout(error)) throw error
       const demoError = error instanceof DemoReadError
         ? error
         : new DemoReadError('demo social could not be read', true)
-      return { catalog, demo: null, demoError }
+      return withSimilar({ catalog, demo: null, demoError }, similar)
     }
   })
 }

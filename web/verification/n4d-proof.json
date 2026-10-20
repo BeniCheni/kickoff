@@ -1,0 +1,154 @@
+{
+  "shots": [
+    {
+      "name": "watch-390",
+      "sha256": "dadfbcb7d040ebaf9fb5a16bba80ac3f9e125fb841ccece736f78df91e5ee461"
+    },
+    {
+      "name": "watch-1000",
+      "sha256": "c4d54c4a7d4a5ec54b48d008a63e2df40b8b96557355a6a1b78e9930d23a9452"
+    }
+  ],
+  "orders": {
+    "n4d-a": [
+      "n4d-b",
+      "n4d-c"
+    ],
+    "n4d-b": [
+      "n4d-a",
+      "n4d-c"
+    ],
+    "n4d-c": [
+      "n4d-a",
+      "n4d-b"
+    ]
+  },
+  "checks": [
+    {
+      "name": "migrations 0000 through 0005 are applied",
+      "ok": true,
+      "detail": 6
+    },
+    {
+      "name": "the function returns neighbours and never the clip itself",
+      "ok": true,
+      "detail": {
+        "n4d-a": [
+          "n4d-b",
+          "n4d-c"
+        ],
+        "n4d-b": [
+          "n4d-a",
+          "n4d-c"
+        ],
+        "n4d-c": [
+          "n4d-a",
+          "n4d-b"
+        ]
+      }
+    },
+    {
+      "name": "the gallery makes no similarity call",
+      "ok": true,
+      "detail": {
+        "calls": 0
+      }
+    },
+    {
+      "name": "a watch request makes one similarity statement",
+      "ok": true,
+      "detail": {
+        "statements": 8,
+        "similar": 1
+      }
+    },
+    {
+      "name": "the list is the function order and carries no score",
+      "ok": true,
+      "detail": {
+        "watchIds": [
+          "n4d-b",
+          "n4d-c"
+        ],
+        "expected": [
+          "n4d-b",
+          "n4d-c"
+        ]
+      }
+    },
+    {
+      "name": "the watch page list matches the function",
+      "ok": true,
+      "detail": {
+        "watch": "n4d-a",
+        "similar": [
+          "n4d-b",
+          "n4d-c"
+        ]
+      }
+    },
+    {
+      "name": "an Up next click makes one request and one similarity statement",
+      "ok": true,
+      "detail": {
+        "rsc": 1,
+        "similar": 1,
+        "state": {
+          "watch": "n4d-b",
+          "similar": [
+            "n4d-a",
+            "n4d-c"
+          ]
+        }
+      }
+    },
+    {
+      "name": "a Similar click makes one request and one similarity statement",
+      "ok": true,
+      "detail": {
+        "moved": true,
+        "rsc": 1,
+        "similar": 1,
+        "nextSimilar": "n4d-a",
+        "state": {
+          "watch": "n4d-a",
+          "similar": [
+            "n4d-b",
+            "n4d-c"
+          ]
+        },
+        "orders": {
+          "n4d-a": [
+            "n4d-b",
+            "n4d-c"
+          ],
+          "n4d-b": [
+            "n4d-a",
+            "n4d-c"
+          ],
+          "n4d-c": [
+            "n4d-a",
+            "n4d-b"
+          ]
+        }
+      }
+    },
+    {
+      "name": "autoplay advances to the first Up next clip with one similarity statement",
+      "ok": true,
+      "detail": {
+        "advanced": true,
+        "rsc": 1,
+        "similar": 1,
+        "state": {
+          "watch": "n4d-b",
+          "similar": [
+            "n4d-a",
+            "n4d-c"
+          ]
+        }
+      }
+    }
+  ],
+  "failed": []
+}

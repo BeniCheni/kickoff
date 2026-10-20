@@ -33,6 +33,7 @@ const CANCELLED = 'Autoplay cancelled. Up next waits for a click.'
 const KEYBOARD = 'Keyboard: the player\u2019s own shortcuts apply while it has focus.'
 const AUTOPLAY_HELP = 'Videos start muted when you open them. When one ends, the next in Up next starts after a five-second countdown with Cancel. While this tab is hidden the countdown waits.'
 const NOTHING_AFTER = 'Nothing after this one in Beni\u2019s order.'
+const SIMILAR_LINE = 'Picked by how alike the opening frame, title and note are.'
 
 function clock(seconds: number): string | null {
   if (!Number.isFinite(seconds)) return null
@@ -54,6 +55,7 @@ export function WatchPage({
   address,
   thumbnail,
   social,
+  similar,
 }: {
   detail: CatalogDetailRow
   list: readonly CatalogListRow[]
@@ -61,6 +63,7 @@ export function WatchPage({
   address: string | null
   thumbnail?: ThumbnailSources
   social?: MomentSocial
+  similar?: readonly string[]
 }) {
   const navigate = useWatchNavigation()
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -87,6 +90,7 @@ export function WatchPage({
   const galleryHref = useWatchHref(search, null)
   const { earlier, next } = upNextSplit(list, detail.id)
   const nextRow = next[0] ?? null
+  const similarRows = rowsInOrder(list, similar, detail.id)
 
   function clearTimer() {
     if (timer.current !== null) window.clearInterval(timer.current)
@@ -457,10 +461,36 @@ export function WatchPage({
             </ol>
           </>
         ) : null}
+        {similarRows.length > 0 ? (
+          <>
+            <h2>Similar moments</h2>
+            <p>{SIMILAR_LINE}</p>
+            <ol>
+              {similarRows.map(row => (
+                <WatchRow key={row.id} row={row} search={search} prefix="similar" onSelect={go} />
+              ))}
+            </ol>
+          </>
+        ) : null}
       </aside>
       </div>
     </div>
   )
+}
+
+function rowsInOrder(list: readonly CatalogListRow[], ids: readonly string[] | undefined, current: string): CatalogListRow[] {
+  if (!ids || ids.length === 0) return []
+  const byId = new Map(list.map(row => [row.id, row]))
+  const rows: CatalogListRow[] = []
+  const seen = new Set<string>()
+  for (const id of ids) {
+    if (id === current || seen.has(id)) continue
+    const row = byId.get(id)
+    if (!row) continue
+    seen.add(id)
+    rows.push(row)
+  }
+  return rows
 }
 
 function WatchRow({ row, search, prefix, onSelect }: { row: CatalogListRow; search: string; prefix: string; onSelect(id: string): void }) {

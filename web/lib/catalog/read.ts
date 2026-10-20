@@ -57,7 +57,38 @@ function readStub(text: string): CatalogSuccess {
     seen.add(row.data.id)
     details.push(row.data)
   }
-  return { preview: true, details, list: details.map(projectList) }
+  const similarById = readSimilarMap(body, seen)
+  return {
+    preview: true,
+    details,
+    list: details.map(projectList),
+    ...(similarById ? { similarById } : {}),
+  }
+}
+
+function readSimilarMap(body: Record<string, unknown>, ids: ReadonlySet<string>): Record<string, string[]> | undefined {
+  if (!Object.prototype.hasOwnProperty.call(body, 'similar')) return undefined
+  const similar = body.similar
+  if (similar === null || typeof similar !== 'object' || Array.isArray(similar)) {
+    throw new CatalogReadError('stub catalog video failed validation', true)
+  }
+  const out: Record<string, string[]> = {}
+  for (const [key, value] of Object.entries(similar)) {
+    if (!ids.has(key) || !Array.isArray(value) || value.length > 6) {
+      throw new CatalogReadError('stub catalog video failed validation', true)
+    }
+    const seen = new Set<string>()
+    const list: string[] = []
+    for (const item of value) {
+      if (typeof item !== 'string' || !ids.has(item) || item === key || seen.has(item)) {
+        throw new CatalogReadError('stub catalog video failed validation', true)
+      }
+      seen.add(item)
+      list.push(item)
+    }
+    out[key] = list
+  }
+  return out
 }
 
 /**
