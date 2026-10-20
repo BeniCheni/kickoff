@@ -51,6 +51,12 @@ describe('secrets', () => {
     ]) expect(findSecrets(text)).toContain('vercel-bypass-literal')
   })
 
+  it.each(['no scheme', 'http scheme', 'JSON-escaped slashes'])('rejects a deploy hook with %s', form => {
+    const hook = ['api.vercel.com', '/v1/integrations/deploy/', 'prj_', randomUUID(), '/', randomUUID()].join('')
+    const text = form === 'no scheme' ? hook : form === 'http scheme' ? `http://${hook}` : `https://${hook}`.replaceAll('/', '\\/')
+    expect(findSecrets(text)).toContain('vercel-deploy-hook')
+  })
+
   it.each(['assignment', 'export assignment', 'YAML literal'])('rejects a literal bypass %s', form => {
     const name = ['VERCEL_AUTOMATION', 'BYPASS_SECRET'].join('_')
     const value = randomUUID()

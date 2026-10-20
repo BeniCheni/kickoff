@@ -16,7 +16,7 @@ export const SECRET_PATTERNS: { name: string; pattern: RegExp }[] = [
   { name: 'jwt', pattern: /\beyJ[A-Za-z0-9_-]{20,}\.[A-Za-z0-9_-]{10,}\./ },
   { name: 'supabase-publishable', pattern: /sb_publishable_[A-Za-z0-9]{8,}/ },
   { name: 'supabase-secret', pattern: /sb_secret_[A-Za-z0-9]{8,}/ },
-  { name: 'vercel-deploy-hook', pattern: /https:\/\/api\.vercel\.com\/v1\/integrations\/deploy\/[^\s'"`<>]+/i },
+  { name: 'vercel-deploy-hook', pattern: /(?:https?:\/\/)?api\.vercel\.com\\?\/v1\\?\/integrations\\?\/deploy\\?\/[^\s'"`<>]+/i },
   { name: 'vercel-bypass-assignment', pattern: /VERCEL_AUTOMATION_BYPASS_SECRET\s*=\s*\S+/ },
   // YAML/JS literal values count too; empty strings and environment/Actions
   // references do not. Keep this separate from the equals-assignment pattern.
