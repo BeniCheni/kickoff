@@ -90,6 +90,13 @@ describe('trusted-main Vercel smoke', () => {
     await expect(smoke(base, { fetchImpl: server({ index: 1, body: pages[1] + leak }) })).rejects.toThrow('Response leak: /?tab=table')
     await expect(smoke(base, { fetchImpl: server({ index: 3, headers: { 'x-test': leak } }) })).rejects.toThrow('Response leak: /api/snapshot')
   })
+  it('rejects a bypass echo in bodies and headers without printing response content', async () => {
+    const bypass = randomUUID()
+    await expect(smoke({ ...base, bypass }, { fetchImpl: server({ index: 1, body: pages[1] + `before-${bypass}-after` }) }))
+      .rejects.toMatchObject({ message: 'Response leak: /?tab=table' })
+    await expect(smoke({ ...base, bypass }, { fetchImpl: server({ index: 3, headers: { 'x-test': bypass } }) }))
+      .rejects.toMatchObject({ message: 'Response leak: /api/snapshot' })
+  })
   it('fails unavailable latest main, reports other branches and older main', async () => {
     const unavailable = () => server({ index: 2, body: pages[2] + '<h2 id="moments-unavailable-heading">The gallery is unavailable.</h2>' })
     await expect(smoke(base, { fetchImpl: unavailable() })).rejects.toThrow('Gallery unavailable')

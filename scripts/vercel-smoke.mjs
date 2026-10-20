@@ -43,10 +43,11 @@ export function digestAt(sha, cwd = root) {
   return hash.digest('hex')
 }
 
-function hasLeak(text) {
+function hasLeak(text, bypass) {
   const plain = text.replace(/\\u([a-f0-9]{4})/gi, (_, hex) => String.fromCharCode(parseInt(hex, 16))).replace(/\\\//g, '/')
   return /postgres(?:ql)?:\/\/|studio_reader\.|\bdb\.[a-z0-9-]+\.supabase\.co\b|\b[a-z0-9.-]+\.pooler\.supabase\.com\b/i.test(plain) ||
-    plain.includes(['KICKOFF', 'STUB', 'CATALOG'].join('-')) || plain.includes('Stub catalog · synthetic records')
+    plain.includes(['KICKOFF', 'STUB', 'CATALOG'].join('-')) || plain.includes('Stub catalog · synthetic records') ||
+    Boolean(bypass && plain.includes(bypass))
 }
 
 // The landmarks are the shell-matrix / n3-next-vite / n4b-regressions selectors.
@@ -75,7 +76,7 @@ export async function smoke({ url, sha, project, mainSha, ref = null, bypass }, 
       body = await response.text()
     } catch { throw new Error(`Request failed: ${route}`) }
     // Never print a body, header, URL from a redirect, or a transport error.
-    if (hasLeak(body + '\n' + [...response.headers].map(([key, value]) => `${key}: ${value}`).join('\n'))) throw new Error(`Response leak: ${route}`)
+    if (hasLeak(body + '\n' + [...response.headers].map(([key, value]) => `${key}: ${value}`).join('\n'), bypass)) throw new Error(`Response leak: ${route}`)
     if (response.status !== 200) throw new Error(`Expected HTTP 200: ${route}`)
     if (route === '/api/snapshot') {
       let snapshot
