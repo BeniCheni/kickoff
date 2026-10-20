@@ -325,10 +325,11 @@ export function createStudio(options: EngineOptions) {
     }
   }
 
-  async function embeddingsFor(clip: StoredClip): Promise<{ embedding: 'written' | 'missing'; embeddingReason?: EmbedReason }> {
+  async function embeddingsFor(clip: StoredClip): Promise<{ embedding: 'written' | 'stored' | 'missing'; embeddingReason?: EmbedReason }> {
     if (!options.embedder) return { embedding: 'missing', embeddingReason: 'model-absent' }
     const stored = await storeClipEmbeddings(db, options.embedder, clip)
     if (stored.status === 'missing') return { embedding: 'missing', embeddingReason: stored.reason ?? 'write-failed' }
+    if (stored.status === 'skipped') return { embedding: 'stored' }
     return { embedding: 'written' }
   }
 

@@ -17,6 +17,9 @@ export const DRAFT = {
   embeddingWritten: 'Published. The similarity vectors are stored.',
   embeddingMissing:
     'Published. The similarity vectors were not stored. From studio/, run npm run cli -- embed --backfill --live.',
+  embeddingWrittenBare: 'The similarity vectors are stored.',
+  embeddingMissingBare:
+    'The similarity vectors were not stored. From studio/, run npm run cli -- embed --backfill --live.',
   falKey: 'Unavailable: a live fal action needs FAL_KEY on this Mac, and none is set.',
   uploadFailed: 'Unavailable: the files were not stored. The clip stays listed.',
   deleteFailed: 'Unavailable: a stored file was not removed.',

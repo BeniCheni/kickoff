@@ -261,7 +261,7 @@ SELECT * FROM catalog.similar_moments('<a published id>', 6);
 RESET ROLE;
 ```
 
-The Publish screen uses two draft sentences. Written: "Published. The similarity vectors are stored." Missing: "Published. The similarity vectors were not stored. From studio/, run npm run cli -- embed --backfill --live."
+The Publish screen uses four draft sentences. On `published`: "Published. The similarity vectors are stored." and "Published. The similarity vectors were not stored. From studio/, run npm run cli -- embed --backfill --live." On `checks-failed`: "The similarity vectors are stored." and "The similarity vectors were not stored. From studio/, run npm run cli -- embed --backfill --live."
 
 An HNSW cosine index covers the keyframe rows. At a handful of clips the function call plans as a Function Scan, so that index is not what the similarity query is shown using.
 

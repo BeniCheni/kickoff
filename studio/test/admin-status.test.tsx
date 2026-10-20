@@ -112,9 +112,16 @@ describe('engine answers', () => {
 
   it('shows whether the similarity vectors were stored', () => {
     expect(embeddingNotice({ outcome: 'published', embedding: 'written' })).toBe(DRAFT.embeddingWritten)
+    expect(embeddingNotice({ outcome: 'published', embedding: 'stored' })).toBe(DRAFT.embeddingWritten)
+    expect(embeddingNotice({ outcome: 'checks-failed', embedding: 'written' })).toBe(DRAFT.embeddingWrittenBare)
+    expect(embeddingNotice({ outcome: 'checks-failed', embedding: 'stored' })).toBe(DRAFT.embeddingWrittenBare)
+    expect(embeddingNotice({ outcome: 'checks-failed', embedding: 'missing' })).toBe(DRAFT.embeddingMissingBare)
     expect(statusLine({ outcome: 'published', embedding: 'written' })).toBeNull()
     const html = renderToStaticMarkup(<StatusLine body={{ outcome: 'published', embedding: 'missing' }} />)
     expect(html).toContain(DRAFT.embeddingMissing)
     expect(html).toContain('npm run cli -- embed --backfill --live')
+    const failed = renderToStaticMarkup(<StatusLine body={{ outcome: 'checks-failed', embedding: 'missing' }} />)
+    expect(failed).toContain(DRAFT.embeddingMissingBare)
+    expect(failed).not.toContain('Published.')
   })
 })

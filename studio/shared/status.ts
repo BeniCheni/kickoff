@@ -144,9 +144,12 @@ export function statusLine(body: unknown): string | null {
 /** The Publish screen's sentence for the embedding outcome. Draft copy for Beni. */
 export function embeddingNotice(body: unknown): string | null {
   if (!body || typeof body !== 'object') return null
-  const embedding = (body as { embedding?: unknown }).embedding
-  if (embedding === 'written') return DRAFT.embeddingWritten
-  if (embedding === 'missing') return DRAFT.embeddingMissing
+  const record = body as { embedding?: unknown; outcome?: unknown }
+  const published = record.outcome === 'published'
+  if (record.embedding === 'written' || record.embedding === 'stored') {
+    return published ? DRAFT.embeddingWritten : DRAFT.embeddingWrittenBare
+  }
+  if (record.embedding === 'missing') return published ? DRAFT.embeddingMissing : DRAFT.embeddingMissingBare
   return null
 }
 

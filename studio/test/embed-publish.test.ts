@@ -22,6 +22,10 @@ function capture(): CliIo & { out: string[]; err: string[] } {
   }
 }
 
+function reasonFields(line: string): string[] {
+  return line.split(' ').filter((part) => part.startsWith('reason='))
+}
+
 describe('publish embeddings', () => {
   it('publishes when the embedding fails, then backfill writes and a second run skips', async () => {
     const data = mkdtempSync(path.join(tmpdir(), 'st4-embed-data-'))
@@ -60,6 +64,7 @@ describe('publish embeddings', () => {
       'publish', '--job', job, '--public-id', 'fenway-note', '--position', '1',
     ], env, failed)).toBe(0)
     expect(failed.out[0]).toBe('published live=true database=pglite storage=stub embedding=missing reason=read-failed')
+    expect(reasonFields(failed.out[0] ?? '')).toEqual(['reason=read-failed'])
 
     writeFileSync(storedPath, minimalJpeg)
     const filled = capture()
@@ -91,6 +96,46 @@ describe('publish embeddings', () => {
     const hidden = await after.query('SELECT id FROM catalog.similar_moments(\'fenway-note\', 6)')
     expect(hidden.rows).toEqual([])
     await after.close()
+  })
+
+  it('prints embedding=stored when the vectors already match, and keeps a single reason', async () => {
+    const data = mkdtempSync(path.join(tmpdir(), 'st4-stored-data-'))
+    const media = mkdtempSync(path.join(tmpdir(), 'st4-stored-media-'))
+    const videoPath = path.join(media, 'clip.mp4')
+    const stillPath = path.join(media, 'k0.jpg')
+    const promptPath = path.join(media, 'prompt.txt')
+    const created = Math.floor(Date.parse('2026-10-18T15:00:00.000Z') / 1000) + MAC_EPOCH_SECONDS + 4
+    writeFileSync(videoPath, syntheticMp4({ creationTime: created }))
+    writeFileSync(stillPath, minimalJpeg)
+    writeFileSync(promptPath, 'A cat scores\n')
+    const env = {
+      STUDIO_DATA_DIR: data,
+      STUDIO_MEDIA_DIR: media,
+      STUDIO_NOW: '2026-10-18T16:00:00.000Z',
+      STUDIO_EMBED: 'fake',
+    }
+    const imported = capture()
+    expect(await runCli([
+      'import', '--file', videoPath, '--keyframe', stillPath, '--source', 'grok-imagine',
+      '--prompt-file', promptPath, '--subjects', 'Fenway', '--title', 'Fenway',
+    ], env, imported)).toBe(0)
+    const job = /job=([0-9a-f-]{36})/.exec(imported.out[0] ?? '')?.[1] ?? ''
+    expect(await runCli(['keep', '--job', job, '--answers', CHECKLIST_LINES.map(() => 'clear').join(',')], env, capture())).toBe(0)
+    expect(await runCli([
+      'record-gate', '--answer', 'recorded', '--disclosure', 'pending', '--by', 'the test', '--source', 'A-06',
+    ], env, capture())).toBe(0)
+    const failedCopy = capture()
+    expect(await runCli([
+      'publish', '--job', job, '--public-id', 'stored-clip', '--position', '1',
+    ], { ...env, STUDIO_STORAGE_FAIL: 'fallback' }, failedCopy)).toBe(0)
+    expect(failedCopy.out[0]).toBe('checks-failed live=true retryable=true database=pglite storage=stub embedding=written')
+    expect(reasonFields(failedCopy.out[0] ?? '')).toEqual([])
+    const again = capture()
+    expect(await runCli([
+      'publish', '--job', job, '--public-id', 'stored-clip', '--position', '1',
+    ], env, again)).toBe(0)
+    expect(again.out[0]).toBe('published live=true database=pglite storage=stub embedding=stored')
+    expect(reasonFields(again.out[0] ?? '')).toEqual([])
   })
 
   const modelSource = '/Users/benicheni/kickoff-st4-models/Xenova/clip-vit-base-patch32'
