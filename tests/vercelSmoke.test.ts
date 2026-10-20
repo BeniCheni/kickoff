@@ -34,7 +34,7 @@ describe('trusted-main Vercel smoke', () => {
     expect(readDeployment('repository_dispatch', payload(), project)).toEqual({ url, sha, ref: 'main' })
     expect(readDeployment('workflow_dispatch', { inputs: { url, sha } }, project)).toEqual({ url, sha, ref: null })
     expect(deploymentUrl(url.slice(8), project)).toBe(url)
-    expect(() => readDeployment('repository_dispatch', payload(), 'other')).toThrow('project')
+    expect(() => readDeployment('repository_dispatch', payload(), 'other')).toThrow('Dispatch project')
     expect(() => readDeployment('workflow_dispatch', { inputs: { url, sha: '--help' } }, project)).toThrow('metadata')
   })
   it('accepts an interior double hyphen in the project prefix', () => {
