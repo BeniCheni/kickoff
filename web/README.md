@@ -294,8 +294,9 @@ ahead of the theme script. The favicons are the symbolic links named above.
 the committed bytes of `fixtures.json`, `meta.json` and `standings.json`, in
 that order. Each file is framed as `name`, a newline, the decimal byte length,
 a newline, the bytes, and a newline. `lastSyncAt` is `META.lastSyncAt`.
-`version` is the root package version. `sourceSha` is `KICKOFF_SOURCE_SHA` when
-that build-time value is set, otherwise `null`.
+`version` is the root package version. `sourceSha` is the non-empty
+`KICKOFF_SOURCE_SHA` override, then `VERCEL_GIT_COMMIT_SHA`, otherwise `null`.
+Vercel supplies the deployed Git SHA; no manual SHA variable is needed there.
 
 Parity receipts: `verification/shell-matrix.json` (72 cells, screenshots under
 `/tmp/kickoff-n2-matrix`) and `verification/theme-filmstrip.json`. To rerun them,

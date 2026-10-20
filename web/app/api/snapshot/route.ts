@@ -5,7 +5,7 @@ import pkg from '../../../../package.json'
 import { snapshotDigest } from '../../../lib/snapshotDigest'
 
 export function GET() {
-  const sha = process.env.KICKOFF_SOURCE_SHA
+  const sha = process.env.KICKOFF_SOURCE_SHA || process.env.VERCEL_GIT_COMMIT_SHA
   const body = {
     sourceSha: typeof sha === 'string' && sha.length > 0 ? sha : null,
     snapshotDigest: snapshotDigest([
