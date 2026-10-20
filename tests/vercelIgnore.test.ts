@@ -3,6 +3,7 @@ import { execFileSync, spawnSync } from 'node:child_process'
 import { cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
+import { pathToFileURL } from 'node:url'
 
 const roots: string[] = []
 afterEach(() => { for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true }) })
@@ -24,8 +25,8 @@ function history() {
   }
   git('add', '.'); git('commit', '-m', 'base')
   const previous = git('rev-parse', 'HEAD')
-  const run = (branch = 'feature', prior = previous) => spawnSync(process.execPath, ['scripts/vercel-ignore.mjs'], {
-    cwd: path.join(root, 'web'), encoding: 'utf8',
+  const run = (branch = 'feature', prior = previous, cwd = root) => spawnSync(process.execPath, ['scripts/vercel-ignore.mjs'], {
+    cwd: path.join(cwd, 'web'), encoding: 'utf8',
     env: { ...process.env, VERCEL_GIT_COMMIT_REF: branch, VERCEL_GIT_PREVIOUS_SHA: prior, VERCEL_GIT_COMMIT_SHA: git('rev-parse', 'HEAD') },
   }).status
   return { root, previous, commit, run }
@@ -48,7 +49,7 @@ describe('Vercel ignored build step', () => {
     const h = history(); h.commit('docs/note.md')
     expect(h.run('feature', prior)).toBe(1)
   })
-  it.each(['src/lib/time.ts', 'src/data/fixtures.json', 'scripts/themeBootstrap.ts', 'packages/new/input.ts', 'package-lock.json', 'public/favicon.svg'])(
+  it.each(['src/lib/time.ts', 'src/data/fixtures.json', 'scripts/themeBootstrap.ts', 'packages/new/input.ts', 'package-lock.json', 'public/favicon-32.png'])(
     'builds a changed shared input: %s', file => {
       const h = history(); h.commit(file)
       expect(h.run()).toBe(1)
@@ -58,5 +59,17 @@ describe('Vercel ignored build step', () => {
     const h = history(); h.commit('docs/note.md')
     rmSync(path.join(h.root, 'src/lib/time.ts'))
     expect(h.run()).toBe(1)
+  })
+  it.each(['src/App.tsx', 'public/favicon-512.png'])('skips a Vite-only input outside the web graph: %s', file => {
+    const h = history(); h.commit(file)
+    expect(h.run()).toBe(0)
+  })
+  it('builds when the real previous deployment is outside a ten-commit shallow clone', () => {
+    const h = history()
+    for (let index = 0; index < 11; index++) h.commit(`docs/${index}.md`)
+    const clone = mkdtempSync(path.join(tmpdir(), 'vercel-shallow-')); roots.push(clone)
+    execFileSync('git', ['clone', '--depth=10', pathToFileURL(h.root).href, clone], { stdio: 'ignore' })
+    expect(spawnSync('git', ['cat-file', '-e', `${h.previous}^{commit}`], { cwd: clone, stdio: 'ignore' }).status).not.toBe(0)
+    expect(h.run('feature', h.previous, clone)).toBe(1)
   })
 })

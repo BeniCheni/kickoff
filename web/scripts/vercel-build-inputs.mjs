@@ -10,7 +10,8 @@ const root = fileURLToPath(new URL('../..', import.meta.url))
 // The reader ceiling comes from the existing allowlist, including its relative
 // transitive imports. A new unresolved import makes the ignore step build.
 const INPUTS = [
-  'web/', 'packages/', 'public/',
+  'web/', 'packages/',
+  'public/favicon-32.png', 'public/favicon-64.png', 'public/favicon-192.png',
   'package.json', 'package-lock.json', '.npmrc', 'tsconfig.json',
   'src/data/', 'src/shell.css', 'src/themeBoot.ts',
   'scripts/write-theme-head.ts', 'scripts/themeBootstrap.ts',
