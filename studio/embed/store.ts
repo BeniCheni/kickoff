@@ -31,8 +31,29 @@ async function query(db: VectorDatabase, statement: ReturnType<typeof sql>): Pro
 }
 
 function vectorLiteral(values: readonly number[]): string {
-  if (values.length !== CLIP_DIMS) throw new EmbedError('embed-failed', 'the vector is not 512 numbers')
+  if (values.length !== CLIP_DIMS || values.some((value) => !Number.isFinite(value))) {
+    throw new EmbedError('embed-failed', 'the vector is not 512 numbers')
+  }
   return `[${values.join(',')}]`
+}
+
+const vectorSchemas = new WeakMap<VectorDatabase, string>()
+
+async function vectorSchema(db: VectorDatabase): Promise<string> {
+  const cached = vectorSchemas.get(db)
+  if (cached) return cached
+  const rows = await query(db, sql`
+    SELECT n.nspname AS schema
+    FROM pg_extension e
+    JOIN pg_namespace n ON n.oid = e.extnamespace
+    WHERE e.extname = 'vector'
+  `)
+  const schema = rows[0]?.schema
+  if (typeof schema !== 'string' || !/^[A-Za-z_][A-Za-z0-9_]*$/.test(schema)) {
+    throw new EmbedError('write-failed', 'the vector extension schema is missing')
+  }
+  vectorSchemas.set(db, schema)
+  return schema
 }
 
 async function sourceOf(
@@ -63,6 +84,8 @@ async function writeVector(
   identity: EmbedderIdentity,
 ) {
   const literal = vectorLiteral(values)
+  const schema = await vectorSchema(db)
+  const cast = `'${literal}'::${schema}.vector`
   await db.execute(sql`
     INSERT INTO studio.clip_embeddings (
       video_id, kind, model_id, revision, dtype, dims, embedding, source_sha256
@@ -73,7 +96,7 @@ async function writeVector(
       ${identity.revision},
       ${identity.dtype},
       ${CLIP_DIMS},
-      ${literal}::vector,
+      ${sql.raw(cast)},
       ${source}
     )
     ON CONFLICT (video_id, kind, model_id, revision, dtype)
