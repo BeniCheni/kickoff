@@ -479,8 +479,9 @@ failure is `catalog read: timed out`.
 | Class | What it most likely means |
 | --- | --- |
 | `similar read: permission denied` | `studio_reader` cannot execute the function. |
+| `similar read: function not found` | Migration `0005` is not applied. The function is not there yet. |
 | `similar read: failed validation` | A returned row was not exactly an id and a finite score. |
-| `similar read: read failed` | Anything else, including the function not being installed yet. |
+| `similar read: read failed` | Anything else. |
 | `catalog read: timed out` | The statement exceeded the read's bound. Reload once. |
 
 **How to check it on the preview.** Open a watch page while signed in.

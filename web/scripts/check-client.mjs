@@ -18,6 +18,30 @@ export const DATABASE_ADDRESS = /postgres(?:ql)?:\/\/\S+/i
 export const CLIENT_MARKERS = [...LEAK_MARKERS, /STUDIO_[A-Z0-9_]+/, STUB_SENTINEL, DEMO_SENTINEL, DATABASE_ADDRESS]
 export const SERVER_MARKERS = ['studio/', 'FAL_KEY', /STUDIO_[A-Z0-9_]+/]
 
+/** RSC flight text: every `self.__next_f.push([1,"…"])` string, unescaped and joined. */
+export function flightText(html) {
+  const chunks = []
+  const re = /self\.__next_f\.push\(\[1,"((?:[^"\\]|\\.)*)"\]\)/g
+  let match
+  while ((match = re.exec(html))) chunks.push(JSON.parse(`"${match[1]}"`))
+  return chunks.join('')
+}
+
+/**
+ * A score in the Moments payload. Raw HTML hides the key inside an escaped
+ * flight string, so this decodes that string and also looks for `\"score\"`.
+ */
+export function flightScoreHits(html) {
+  const decoded = flightText(html)
+  const hits = []
+  if (html.includes('\\"score\\"') || decoded.includes('"score"')) hits.push('score')
+  const similar = /"similar":(\[[^\]]*\])/.exec(decoded)
+  if (similar) {
+    try { hits.push(...payloadScoreHits(JSON.parse(`{"similar":${similar[1]}}`))) } catch { /* the key scan above already covers a broken fragment */ }
+  }
+  return [...new Set(hits)]
+}
+
 /** A Moments payload may list neighbour ids. It may not carry a score field. */
 export function payloadScoreHits(value) {
   const hits = []

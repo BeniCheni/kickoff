@@ -14,6 +14,7 @@ const CLASSES: Record<string, string> = {
   '42501': 'permission denied',
   '3D000': 'database not found',
   '42P01': 'relation not found',
+  '42883': 'function not found',
   '57014': 'timed out',
   '53300': 'too many connections',
   '57P01': 'connection failed',

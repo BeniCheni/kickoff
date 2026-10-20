@@ -2,7 +2,7 @@ import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { expect, test } from 'vitest'
-import { STUB_SENTINEL, DEMO_SENTINEL, DATABASE_ADDRESS, textLeakHits, leakHits, scanBuild, payloadScoreHits } from '../scripts/check-client.mjs'
+import { STUB_SENTINEL, DEMO_SENTINEL, DATABASE_ADDRESS, textLeakHits, leakHits, scanBuild, payloadScoreHits, flightText, flightScoreHits } from '../scripts/check-client.mjs'
 
 function tree() {
   const root = mkdtempSync(path.join(tmpdir(), 'kickoff-leak-'))
@@ -66,6 +66,18 @@ test('a score field in a Moments payload fails the leak scan', () => {
   expect(payloadScoreHits({ state: 'ready', similar: ['stub-fenway-one'] })).toEqual([])
   expect(payloadScoreHits({ state: 'ready', similar: ['stub-fenway-one'], score: 0.912345678 })).toEqual(['score'])
   expect(payloadScoreHits({ list: [{ id: 'stub-fenway-one', score: 0.2 }] })).toEqual(['score'])
+})
+
+test('a flight string hides a payload key until it is decoded, and a score turns the check red', () => {
+  const clean = `self.__next_f.push([1,"${JSON.stringify(JSON.stringify({ similar: ['stub-both-cats'] })).slice(1, -1)}"])`
+  expect(clean.includes('"similar"')).toBe(false)
+  expect(clean.includes('\\"similar\\"')).toBe(true)
+  expect(flightText(clean)).toContain('"similar"')
+  expect(flightScoreHits(clean)).toEqual([])
+  const scored = `self.__next_f.push([1,"${JSON.stringify(JSON.stringify({ similar: ['stub-both-cats'], score: 0.9 })).slice(1, -1)}"])`
+  expect(scored.includes('"score"')).toBe(false)
+  expect(scored.includes('\\"score\\"')).toBe(true)
+  expect(flightScoreHits(scored)).toEqual(['score'])
 })
 
 test('stub client sentinels and future private Studio names still fail', () => {

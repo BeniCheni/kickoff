@@ -8,8 +8,8 @@ import { DemoReadError } from '../demo/read'
 import { connectionOptions } from './connection'
 import { asCatalogRows, catalogFromRows } from './hosted'
 import { catalogFailure, isCatalogTimeout, warnSimilarRead } from './failure'
-import { SIMILAR_MOMENTS } from './similar'
-import { similarIdsFromRows } from './similar-rows'
+import { SIMILAR_MOMENTS } from '@kickoff/catalog'
+import { SIMILAR_PAGE_LIMIT, similarIdsFromRows } from './similar-rows'
 import { CatalogReadError, type CatalogSuccess } from './types'
 
 let client: ReturnType<typeof postgres> | undefined
@@ -100,13 +100,12 @@ export async function momentsTransactionSettings(): Promise<{ isolation: string,
   })
 }
 
-const SIMILAR_RELATION = `catalog.${SIMILAR_MOMENTS}`
+if (SIMILAR_MOMENTS !== 'catalog.similar_moments') {
+  throw new Error('SIMILAR_MOMENTS drifted from catalog.similar_moments')
+}
 
 function similarMomentsQuery(watchId: string) {
-  if (!/^catalog\.[a-z_]+$/.test(SIMILAR_RELATION)) {
-    throw new CatalogReadError('similar row failed validation', false, 'read failed')
-  }
-  return sql`SELECT id, score FROM ${sql.raw(SIMILAR_RELATION)}(${watchId}, 6)`
+  return sql`SELECT id, score FROM catalog.similar_moments(${watchId}, ${SIMILAR_PAGE_LIMIT})`
 }
 
 /**

@@ -188,7 +188,10 @@ test('the similarity statement runs once, keeps the function order, and drops th
   expect(payload.similar).toEqual(watch.similar)
   expect(payloadScoreHits(payload)).toEqual([])
   const source = readFileSync(fileURLToPath(new URL('../lib/catalog/database.ts', import.meta.url)), 'utf8')
-  expect(source).toContain('SELECT id, score FROM')
+  const similarQuery = source.slice(source.indexOf('function similarMomentsQuery'), source.indexOf('async function readSimilar'))
+  expect(similarQuery).toContain('SELECT id, score FROM catalog.similar_moments')
+  expect(similarQuery).toContain('SIMILAR_PAGE_LIMIT')
+  expect(similarQuery).not.toContain('sql.raw')
   expect(source).not.toContain('SELECT * FROM catalog.similar_moments')
 })
 

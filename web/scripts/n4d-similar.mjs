@@ -2,14 +2,15 @@
 import { createHash } from 'node:crypto'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { createServer } from 'node:net'
+import { homedir } from 'node:os'
 import { spawn } from 'node:child_process'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import puppeteer from 'puppeteer-core'
-import { payloadScoreHits } from './check-client.mjs'
+import { flightScoreHits } from './check-client.mjs'
 
 const webRoot = fileURLToPath(new URL('..', import.meta.url))
-const outDir = path.resolve(process.argv[2] ?? '/Users/benicheni/kickoff-n4d-proof')
+const outDir = path.resolve(process.argv[2] ?? path.join(homedir(), 'kickoff-n4d-proof'))
 const receiptPath = path.resolve(process.argv[3] ?? path.join(webRoot, 'verification/n4d-similar.json'))
 mkdirSync(outDir, { recursive: true })
 const chrome = process.env.CHROME_PATH ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
@@ -85,7 +86,7 @@ try {
   const withBody = await (await fetch(`${severalOrigin}/?${search('poster', 'stub-fenway-one')}`)).text()
   const withoutBody = await (await fetch(`${oneOrigin}/?${search('poster', 'stub-only-one')}`)).text()
   const galleryBody = await (await fetch(`${severalOrigin}/?tab=moments`)).text()
-  check('ssr with list has the heading and no score key', withBody.includes('Similar moments') && withBody.includes('Picked by how alike the opening frame and title are.') && !withBody.includes('"score"') && payloadScoreHits(JSON.parse('{}')).length === 0)
+  check('ssr with list has the heading and no score key', withBody.includes('Similar moments') && withBody.includes('Picked by how alike the opening frame and title are.') && flightScoreHits(withBody).length === 0 && !withBody.includes('\\"score\\"'))
   check('ssr without list has no heading', !withoutBody.includes('Similar moments') && !withoutBody.includes('Picked by how alike'))
   check('ssr gallery has no heading', !galleryBody.includes('Similar moments'))
   check('up next still leads', withBody.indexOf('id="up-stub-frankenstein-one"') > -1 && withBody.indexOf('id="up-stub-frankenstein-one"') < withBody.indexOf('Similar moments'))
@@ -184,7 +185,6 @@ try {
 const failed = checks.filter(item => !item.ok)
 const receipt = {
   checked: new Date().toISOString(),
-  pngDirectory: outDir,
   shots,
   checks,
   failed: failed.map(item => item.name),
