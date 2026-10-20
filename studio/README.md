@@ -306,7 +306,7 @@ STUDIO_LIVE=1 npm run studio -- --live
 
 The Publish screen uses four draft sentences. On `published`: "Published. The similarity vectors are stored." and "Published. The similarity vectors were not stored. From studio/, run npm run cli -- embed --backfill --live." On `checks-failed`: "The similarity vectors are stored." and "The similarity vectors were not stored. From studio/, run npm run cli -- embed --backfill --live."
 
-Those four sentences stay as approved. A `model-corrupt` result still uses the generic missing sentence. Whether that sentence should instead say to repair the model files, restart the Studio, and then backfill is Beni's open choice, Repair or Keep. Until he answers, the recovery above is the instruction.
+Those four sentences stay as approved. Beni ruled Keep for this PR on Tue 20 Oct 2026: a `model-corrupt` result still uses the generic missing sentence, and this PR adds no sentence of its own for that reason. Repair, a reason-specific sentence, is a follow-up after this PR merges. Until that follow-up, the recovery above is the instruction.
 
 An HNSW cosine index covers the keyframe rows. At a handful of clips the function call plans as a Function Scan, so that index is not what the similarity query is shown using.
 
