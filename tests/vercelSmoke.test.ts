@@ -123,6 +123,7 @@ describe('trusted-main Vercel smoke', () => {
     expect(workflow).toContain('VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}\n        run: node scripts/vercel-smoke.mjs')
     expect(workflow).not.toMatch(/npm |npx |pull_request|ref:.*(?:inputs|payload)/)
     expect(workflow).toContain('-f context=vercel-smoke')
+    expect(workflow).toContain('GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}')
     expect(workflow).toContain('-f "target_url=$DEPLOYMENT_URL"')
   })
   it.each(['success', 'failure', 'skipped'])('posts the real status shell for smoke outcome %s', outcome => {

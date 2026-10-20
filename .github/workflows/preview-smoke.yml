@@ -55,7 +55,7 @@ jobs:
       - name: Post informational commit status
         if: always() && steps.deployment.outcome == 'success'
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEPLOYED_SHA: ${{ steps.deployment.outputs.sha }}
           DEPLOYMENT_URL: ${{ steps.deployment.outputs.url }}
           SMOKE_OUTCOME: ${{ steps.smoke.outcome }}
