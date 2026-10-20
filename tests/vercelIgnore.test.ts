@@ -41,6 +41,10 @@ describe('Vercel ignored build step', () => {
     const h = history(); h.commit('docs/note.md')
     expect(h.run()).toBe(0)
   })
+  it('builds a dashboard Redeploy of the same non-main commit', () => {
+    const h = history()
+    expect(h.run()).toBe(1)
+  })
   it('builds a web change three commits back in one push', () => {
     const h = history(); h.commit('web/public/probe.txt'); h.commit('docs/one.md'); h.commit('docs/two.md'); h.commit('docs/three.md')
     expect(h.run()).toBe(1)

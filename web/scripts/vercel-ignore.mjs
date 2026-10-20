@@ -9,7 +9,7 @@ try {
   const branch = process.env.VERCEL_GIT_COMMIT_REF
   const previous = process.env.VERCEL_GIT_PREVIOUS_SHA
   const current = process.env.VERCEL_GIT_COMMIT_SHA
-  if (branch && branch !== 'main' && /^[a-f0-9]{40}$/.test(previous ?? '') && /^[a-f0-9]{40}$/.test(current ?? '')) {
+  if (branch && branch !== 'main' && previous !== current && /^[a-f0-9]{40}$/.test(previous ?? '') && /^[a-f0-9]{40}$/.test(current ?? '')) {
     const cwd = fileURLToPath(new URL('../..', import.meta.url))
     for (const sha of [previous, current]) execFileSync('git', ['cat-file', '-e', `${sha}^{commit}`], { cwd, stdio: 'ignore' })
     const result = spawnSync('git', ['diff', '--quiet', previous, current, '--', ...buildInputs()], { cwd, stdio: 'ignore' })
