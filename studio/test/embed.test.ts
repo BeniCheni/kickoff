@@ -55,6 +55,10 @@ describe('model directory', () => {
     expect(() => resolveModelDir({ STUDIO_MODEL_DIR: path.join(repoRoot, 'studio') }, repoRoot)).toThrow(/outside the worktree/)
     const outside = mkdtempSync(path.join(tmpdir(), 'st4-model-'))
     expect(resolveModelDir({ STUDIO_MODEL_DIR: outside }, repoRoot)).toBe(path.resolve(outside))
+    const home = process.env.HOME
+    if (!home) throw new Error('HOME is not set')
+    expect(resolveModelDir({ STUDIO_MODEL_DIR: '~/st4-model-home' }, repoRoot)).toBe(path.join(home, 'st4-model-home'))
+    expect(resolveModelDir({ STUDIO_MODEL_DIR: '$HOME/st4-model-home' }, repoRoot)).toBe(path.join(home, 'st4-model-home'))
   })
 
   it('pins the manifest to the fp32 CLIP revision', () => {
@@ -123,6 +127,33 @@ describe('model directory', () => {
       },
     })
     expect(again).toEqual({ downloaded: 0, skipped: 1 })
+  })
+
+  it('prints a line before a download and streams the body onto the partial file', async () => {
+    const dir = mkdtempSync(path.join(tmpdir(), 'st4-stream-'))
+    const bytes = Buffer.from('clip-bytes')
+    const lines: string[] = []
+    const wrote = await fetchModelFiles({
+      directory: dir,
+      manifest: {
+        model: CLIP_MODEL,
+        revision: CLIP_REVISION,
+        dtype: CLIP_DTYPE,
+        files: [{
+          path: 'onnx/vision_model.onnx',
+          bytes: bytes.length,
+          sha256: createHash('sha256').update(bytes).digest('hex'),
+        }],
+      },
+      log: (line) => lines.push(line),
+      fetchResponse: async () => new Response(bytes),
+    })
+    expect(wrote).toEqual({ downloaded: 1, skipped: 0 })
+    expect(lines).toEqual([
+      `fetching onnx/vision_model.onnx ${bytes.length} bytes`,
+      `landed onnx/vision_model.onnx ${bytes.length} bytes`,
+    ])
+    expect(readFileSync(path.join(dir, 'onnx/vision_model.onnx'))).toEqual(bytes)
   })
 
   it('reports the model absent without loading it when the files are not there', async () => {

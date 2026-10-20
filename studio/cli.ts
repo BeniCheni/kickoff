@@ -332,7 +332,7 @@ export async function runCli(
     }
     if (command === 'fetch-model') {
       const directory = resolveModelDir(loaded, repoRoot)
-      const fetched = await fetchModelFiles({ directory })
+      const fetched = await fetchModelFiles({ directory, log: (message) => io.stdout(message) })
       io.stdout(line('fetched', { database: 'none', downloaded: fetched.downloaded, skipped: fetched.skipped }))
       return 0
     }

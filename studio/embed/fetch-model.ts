@@ -1,6 +1,8 @@
 import { createHash } from 'node:crypto'
-import { createReadStream, existsSync, mkdirSync, readFileSync, renameSync, statSync, writeFileSync } from 'node:fs'
+import { createReadStream, createWriteStream, existsSync, mkdirSync, readFileSync, renameSync, statSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
+import { Readable } from 'node:stream'
+import { pipeline } from 'node:stream/promises'
 import { fileURLToPath } from 'node:url'
 import { CLIP_DTYPE, CLIP_MODEL, CLIP_REVISION } from './model.ts'
 
@@ -23,12 +25,22 @@ export function readManifest(): ModelManifest {
   return JSON.parse(readFileSync(path.join(here, 'manifest.json'), 'utf8')) as ModelManifest
 }
 
+function expandHome(raw: string): string {
+  const home = process.env.HOME
+  if (!home) return raw
+  if (raw === '~') return home
+  if (raw.startsWith('~/')) return path.join(home, raw.slice(2))
+  if (raw === '$HOME') return home
+  if (raw.startsWith('$HOME/')) return path.join(home, raw.slice('$HOME/'.length))
+  return raw
+}
+
 export function resolveModelDir(env: NodeJS.ProcessEnv, repoRoot: string): string {
-  const raw = env.STUDIO_MODEL_DIR
-  if (!raw?.trim()) {
+  const raw = env.STUDIO_MODEL_DIR?.trim()
+  if (!raw) {
     throw new Error('STUDIO_MODEL_DIR is not set. Point it at a directory outside the worktree.')
   }
-  const resolved = path.resolve(raw)
+  const resolved = path.resolve(expandHome(raw))
   const relative = path.relative(repoRoot, resolved)
   const inside = relative === '' || (!relative.startsWith('..') && !path.isAbsolute(relative))
   if (inside) throw new Error('model directory must sit outside the worktree')
@@ -68,6 +80,8 @@ export async function fetchModelFiles(input: {
   directory: string
   manifest?: ModelManifest
   fetchFile?: (entry: ManifestFile) => Promise<Uint8Array>
+  fetchResponse?: (entry: ManifestFile) => Promise<Response>
+  log?: (line: string) => void
 }): Promise<{ downloaded: number; skipped: number }> {
   const manifest = input.manifest ?? readManifest()
   if (manifest.model !== CLIP_MODEL || manifest.revision !== CLIP_REVISION || manifest.dtype !== CLIP_DTYPE) {
@@ -89,22 +103,26 @@ export async function fetchModelFiles(input: {
     }
     skipped += 1
   }
-  const fetchFile = input.fetchFile ?? (async (entry: ManifestFile) => {
-    const response = await fetch(modelFileUrl(manifest.model, manifest.revision, entry.path))
-    if (!response.ok) throw new Error(`could not download ${entry.path}`)
-    return new Uint8Array(await response.arrayBuffer())
-  })
   for (const entry of missing) {
     const destination = path.join(input.directory, entry.path)
     const partial = `${destination}.partial`
     mkdirSync(path.dirname(destination), { recursive: true })
-    const bytes = await fetchFile(entry)
-    writeFileSync(partial, bytes)
+    input.log?.(`fetching ${entry.path} ${entry.bytes} bytes`)
+    if (input.fetchFile) {
+      writeFileSync(partial, await input.fetchFile(entry))
+    } else {
+      const response = input.fetchResponse
+        ? await input.fetchResponse(entry)
+        : await fetch(modelFileUrl(manifest.model, manifest.revision, entry.path))
+      if (!response.ok || !response.body) throw new Error(`could not download ${entry.path}`)
+      await pipeline(Readable.fromWeb(response.body), createWriteStream(partial))
+    }
     if (!(await matches(partial, entry))) {
       throw new Error(`manifest mismatch ${entry.path}`)
     }
     renameSync(partial, destination)
     if (statSync(destination).size !== entry.bytes) throw new Error(`manifest mismatch ${entry.path}`)
+    input.log?.(`landed ${entry.path} ${entry.bytes} bytes`)
   }
   return { downloaded: missing.length, skipped }
 }
