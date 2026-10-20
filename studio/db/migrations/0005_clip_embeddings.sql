@@ -149,6 +149,7 @@ AS $body$
   WITH ordered AS (
     SELECT u.id, min(u.ordinality)::integer AS ord
     FROM unnest(p_ids) WITH ORDINALITY AS u(id, ordinality)
+    WHERE u.id IS NOT NULL
     GROUP BY u.id
   ),
   first50 AS (
@@ -219,7 +220,8 @@ AS $body$
    AND ct.revision = ck.revision
    AND ct.dtype = ck.dtype
   WHERE means.keyframe IS NOT NULL
-    AND c.public_id NOT IN (SELECT first50.id FROM first50)
+    -- Every distinct non-null input is excluded. The mean still uses the first 50.
+    AND NOT EXISTS (SELECT 1 FROM ordered excluded WHERE excluded.id = c.public_id)
     AND p_limit IS NOT NULL
     AND p_limit >= 1
   ORDER BY 2 DESC, c.public_id ASC

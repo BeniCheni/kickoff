@@ -28,8 +28,7 @@ One entry, the package root:
   `catalog.moments_like`: the list row's `id`, and a finite `score`. An extra
   key fails. The functions do not return a vector.
 - `SIMILAR_LIMIT_MAX` — `12`, the cap both functions apply.
-- `SIMILAR_MOMENTS` — `catalog.similar_moments`.
-- `MOMENTS_LIKE` — `catalog.moments_like`.
+- `SIMILAR_MOMENTS` and `MOMENTS_LIKE` are the qualified names `catalog.similar_moments` and `catalog.moments_like`. Import the constants. Do not add another `catalog.` prefix.
 
 `duration_s` is the stored numeric text (`15.084`), or null. It is not a JSON
 number. Instants are ISO-8601 strings with an offset, including `Z`. Integers

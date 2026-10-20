@@ -325,9 +325,19 @@ describe('similarity functions', () => {
     const early = Array.from({ length: 49 }, (_, index) => `missing-${index}`)
     const window = await rows<{ id: string }>(client, `
       SELECT id FROM catalog.moments_like($1::text[], 12)
-    `, [[...early, 'm-anchor', 'm-same']])
-    expect(window.map((row) => row.id)).toContain('m-same')
+    `, [[...early, 'm-anchor', 'm-same', 'm-same']])
+    expect(window.map((row) => row.id)).not.toContain('m-same')
     expect(window.map((row) => row.id)).not.toContain('m-anchor')
+    expect(window.map((row) => row.id)).toContain('m-keyonly')
+
+    const withNull = await rows<{ id: string; score: number }>(client, `
+      SELECT id, score FROM catalog.moments_like(ARRAY['m-anchor', NULL], 12)
+    `)
+    const withoutNull = await rows<{ id: string; score: number }>(client, `
+      SELECT id, score FROM catalog.moments_like(ARRAY['m-anchor'], 12)
+    `)
+    expect(withNull).toEqual(withoutNull)
+    expect(withNull.length).toBeGreaterThan(0)
 
     for (const call of [
       `SELECT id FROM catalog.moments_like(ARRAY['nope', 'm-withdrawn', 'm-novec'], 6)`,
