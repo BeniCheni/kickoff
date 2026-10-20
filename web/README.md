@@ -450,7 +450,7 @@ each selector-list member so nested at-rules cannot evade the scope check.
 
 The watch page can list other published clips under Up next and Earlier.
 The heading is `Similar moments`. The line under it is
-`Picked by how alike the opening frame and title are.`
+`Picked by how alike the opening frame, title and note are.`
 The section is absent, heading and line included, when the list is empty or missing.
 Up next, Earlier, the countdown, and autoplay-next are unchanged. Autoplay still
 follows the first clip in Up next, which is Beni's order. Nothing in the section

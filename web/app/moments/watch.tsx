@@ -33,7 +33,7 @@ const CANCELLED = 'Autoplay cancelled. Up next waits for a click.'
 const KEYBOARD = 'Keyboard: the player\u2019s own shortcuts apply while it has focus.'
 const AUTOPLAY_HELP = 'Videos start muted when you open them. When one ends, the next in Up next starts after a five-second countdown with Cancel. While this tab is hidden the countdown waits.'
 const NOTHING_AFTER = 'Nothing after this one in Beni\u2019s order.'
-const SIMILAR_LINE = 'Picked by how alike the opening frame and title are.'
+const SIMILAR_LINE = 'Picked by how alike the opening frame, title and note are.'
 
 function clock(seconds: number): string | null {
   if (!Number.isFinite(seconds)) return null

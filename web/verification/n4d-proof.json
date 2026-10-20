@@ -2,11 +2,11 @@
   "shots": [
     {
       "name": "watch-390",
-      "sha256": "e9b6eed5a6df2fc6707898027cd3d4c9c890e1b0b3aff9f0fe8f9ec2959618d3"
+      "sha256": "dadfbcb7d040ebaf9fb5a16bba80ac3f9e125fb841ccece736f78df91e5ee461"
     },
     {
       "name": "watch-1000",
-      "sha256": "2320a5027a771aef10abc8711c70a57fb1b440c70e544b849533168d1f1339b4"
+      "sha256": "c4d54c4a7d4a5ec54b48d008a63e2df40b8b96557355a6a1b78e9930d23a9452"
     }
   ],
   "orders": {

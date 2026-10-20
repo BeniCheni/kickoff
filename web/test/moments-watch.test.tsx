@@ -168,7 +168,7 @@ test('similar moments sit after Up next and Earlier, and a repeated title keeps 
   expect(up).toBeGreaterThan(-1)
   expect(earlier).toBe(-1)
   expect(similar).toBeGreaterThan(up)
-  expect(markup).toContain('Picked by how alike the opening frame and title are.')
+  expect(markup).toContain('Picked by how alike the opening frame, title and note are.')
   const title = markup.indexOf('id="similar-stub-title-fenway"')
   const both = markup.indexOf('id="similar-stub-both-cats"')
   expect(title).toBeGreaterThan(similar)
