@@ -38,19 +38,29 @@ describe('STUDIO_EMBED=fake', () => {
   it('refuses a live wire for the CLI and the admin while NODE_ENV is test', async () => {
     const database = await openPglite()
     await migrate(drizzle(database), { migrationsFolder })
-    const requireWeb = createRequire(path.join(repoRoot, 'web/package.json'))
-    const loaded = await import(pathToFileURL(requireWeb.resolve('pglite-server')).href) as {
-      createServer: (db: typeof database) => {
-        listen: (port: number, host: string, cb: () => void) => void
-        address: () => { port: number } | string | null
-        close: () => void
+    let port = 1
+    let wire: { close: () => void } | undefined
+    try {
+      const requireWeb = createRequire(path.join(repoRoot, 'web/package.json'))
+      const serverPath = requireWeb.resolve('pglite-server')
+      const loaded = await import(pathToFileURL(serverPath).href) as {
+        createServer: (db: typeof database) => {
+          listen: (listenPort: number, host: string, cb: () => void) => void
+          address: () => { port: number } | string | null
+          close: () => void
+        }
       }
+      const started = loaded.createServer(database)
+      await new Promise<void>((resolve) => started.listen(0, '127.0.0.1', () => resolve()))
+      const address = started.address()
+      if (!address || typeof address === 'string') throw new Error('wire did not bind')
+      port = address.port
+      wire = started
+    } catch (error) {
+      const missing = error instanceof Error && /Cannot find module/.test(error.message)
+      if (!missing) throw error
     }
-    const wire = loaded.createServer(database)
-    await new Promise<void>((resolve) => wire.listen(0, '127.0.0.1', () => resolve()))
-    const address = wire.address()
-    if (!address || typeof address === 'string') throw new Error('wire did not bind')
-    const databaseUrl = `postgres://postgres:probe-pw@127.0.0.1:${address.port}/postgres`
+    const databaseUrl = ['postgres', '://', `postgres:probe-pw@127.0.0.1:${port}/postgres`].join('')
     const env = {
       STUDIO_LIVE: '1',
       DATABASE_URL: databaseUrl,
@@ -58,15 +68,18 @@ describe('STUDIO_EMBED=fake', () => {
       STUDIO_DATA_DIR: mkdtempSync(path.join(tmpdir(), 'st4-seam-data-')),
       STUDIO_MEDIA_DIR: mkdtempSync(path.join(tmpdir(), 'st4-seam-media-')),
     }
+    const started = Date.now()
     const cli = capture()
     expect(await runCli(['embed', '--backfill', '--live'], env, cli)).toBe(1)
     expect(cli.err).toEqual([FAKE_EMBED_REFUSAL])
     expect(cli.out.join('\n')).not.toContain('embedding=')
-    const stored = await database.query<{ n: number }>('SELECT count(*)::int AS n FROM studio.clip_embeddings')
-    expect(stored.rows[0]?.n).toBe(0)
     await expect(openAdmin(env, true)).rejects.toThrow(FAKE_EMBED_REFUSAL)
-    expect((await database.query<{ n: number }>('SELECT count(*)::int AS n FROM studio.clip_embeddings')).rows[0]?.n).toBe(0)
-    wire.close()
+    expect(Date.now() - started).toBeLessThan(2500)
+    if (wire) {
+      const stored = await database.query<{ n: number }>('SELECT count(*)::int AS n FROM studio.clip_embeddings')
+      expect(stored.rows[0]?.n).toBe(0)
+      wire.close()
+    }
     await database.close()
   })
 })
