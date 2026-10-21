@@ -74,7 +74,9 @@ describe('trusted-main Vercel smoke', () => {
     }
     const hash = createHash('sha256')
     for (const name of ['fixtures.json', 'meta.json', 'standings.json']) {
-      const bytes = readFileSync(path.join('src/data', name))
+      // The committed bytes at `sha`, not the working tree: sync.yml runs this suite after it has written a new
+      // snapshot and before it commits one, so the files on disk then differ from HEAD by design.
+      const bytes = execFileSync('git', ['show', `${sha}:src/data/${name}`], { maxBuffer: 16 * 1024 * 1024 })
       hash.update(name); hash.update('\n'); hash.update(String(bytes.length)); hash.update('\n'); hash.update(bytes); hash.update('\n')
     }
     expect(digestAt(sha)).toBe(hash.digest('hex'))
