@@ -1,0 +1,68 @@
+name: Vercel preview smoke
+
+on:
+  repository_dispatch:
+    types: [vercel.deployment.success]
+  workflow_dispatch:
+    inputs:
+      url:
+        description: Generated deployment URL for this Vercel project
+        required: true
+        type: string
+      sha:
+        description: Full deployed Git SHA
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  statuses: write
+
+concurrency:
+  group: vercel-smoke-${{ github.event.client_payload.git.sha || inputs.sha || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  smoke:
+    # Manual runs must select main too. Never load workflow or script code from
+    # the deployed commit, even when that deployment belongs to a PR branch.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      VERCEL_PROJECT_NAME: ${{ vars.VERCEL_PROJECT_NAME }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - name: Validate dispatch without secrets
+        id: deployment
+        run: node scripts/vercel-smoke.mjs metadata
+      - name: Read deployed commit objects only
+        env:
+          DEPLOYED_SHA: ${{ steps.deployment.outputs.sha }}
+        run: git fetch --no-tags origin "$DEPLOYED_SHA"
+      - name: Smoke the deployment with main's script
+        id: smoke
+        env:
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: node scripts/vercel-smoke.mjs
+      - name: Post informational commit status
+        if: always() && steps.deployment.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEPLOYED_SHA: ${{ steps.deployment.outputs.sha }}
+          DEPLOYMENT_URL: ${{ steps.deployment.outputs.url }}
+          SMOKE_OUTCOME: ${{ steps.smoke.outcome }}
+        run: |
+          STATE=failure
+          if [ "$SMOKE_OUTCOME" = success ]; then STATE=success; fi
+          gh api --method POST "repos/$GITHUB_REPOSITORY/statuses/$DEPLOYED_SHA" \
+            -f "state=$STATE" -f context=vercel-smoke \
+            -f "target_url=$DEPLOYMENT_URL" \
+            -f 'description=Deployment HTTP, landmarks, snapshot and response leak smoke'

@@ -1,13 +1,19 @@
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { expect, test } from 'vitest'
+import { afterEach, beforeEach, expect, test, vi } from 'vitest'
 import { META } from '../../src/lib/fixtures'
 import pkg from '../../package.json'
 import { GET } from '../app/api/snapshot/route'
 import { SNAPSHOT_FILES, snapshotDigest } from '../lib/snapshotDigest'
 
 const dataDir = fileURLToPath(new URL('../../src/data/', import.meta.url))
+
+beforeEach(() => {
+  vi.stubEnv('KICKOFF_SOURCE_SHA', undefined)
+  vi.stubEnv('VERCEL_GIT_COMMIT_SHA', undefined)
+})
+afterEach(() => vi.unstubAllEnvs())
 
 test('a one-byte data change moves the digest and the response has nothing else', async () => {
   const files = SNAPSHOT_FILES.map(name => ({ name, bytes: readFileSync(path.join(dataDir, name)) }))
@@ -27,4 +33,15 @@ test('a one-byte data change moves the digest and the response has nothing else'
     version: pkg.version,
   })
   expect(body.version).toBe('0.5.2')
+})
+
+test.each([
+  [undefined, 'a'.repeat(40), 'a'.repeat(40)],
+  ['', 'a'.repeat(40), 'a'.repeat(40)],
+  ['b'.repeat(40), 'a'.repeat(40), 'b'.repeat(40)],
+  ['', '', null],
+])('source SHA uses the explicit override, then Vercel, then null', async (override, vercel, expected) => {
+  vi.stubEnv('KICKOFF_SOURCE_SHA', override)
+  vi.stubEnv('VERCEL_GIT_COMMIT_SHA', vercel)
+  expect((await GET().json()).sourceSha).toBe(expected)
 })

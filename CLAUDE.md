@@ -47,6 +47,9 @@ existing wrapped style.
 
 - `npm run typecheck` and `npm test` green at every commit; data-honesty test assertions are
   never weakened to make a redesign pass.
+- The web app ships on Vercel Hobby: request work must fit 300 s, 250 MB uncompressed and 2 GB;
+  generation and embedding run in the Studio
+  ([limits](https://vercel.com/docs/functions/limitations), read 19 Oct 2026).
 - Since v0.2.4 `npm test` runs two vitest projects (`vite.config.ts`, `test.projects`): `node`
   — the pure layer, `tests/**/*.test.ts` minus `tests/dom`, what always ran — and `dom` — the
   component wiring, everything under `tests/dom/` (`*.test.ts` or `.tsx`) under jsdom +
