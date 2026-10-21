@@ -232,7 +232,10 @@ The build needs the root install. The theme script is compiled with the root's
 
 - `generated/theme-boot.txt` and `generated/shell.css`, written by the build and gitignored
 - `../src/data/*.json`, per request
-- the four favicons, which are symbolic links to `../../public`
+- the four favicons, which are real copies of files in `../../public`. They were
+  symbolic links until 21 Oct 2026: Vercel's first build stopped on them, because it
+  cannot copy a link that points out of `web/`. `test/favicons.test.ts` fails if a
+  link returns or a copy drifts from the root file
 
 N6's brief must settle `outputFileTracingIncludes` for those reads, Vercel's
 setting to include files outside the root, and the symbolic links. N2 changes
@@ -319,7 +322,7 @@ The head script is `scripts/write-theme-head.ts`, which compiles `src/themeBoot.
 with the Vite bootstrap builder. The layout emits that script before any
 stylesheet. The reader's font tags are then written with `document.write`, the
 same Google stylesheet URL as `index.html`, so Next does not hoist that link
-ahead of the theme script. The favicons are the symbolic links named above.
+ahead of the theme script. The favicons are the copies named above.
 
 `GET /api/snapshot` returns `Cache-Control: no-store` and exactly
 `{sourceSha, snapshotDigest, lastSyncAt, version}`. The digest is SHA-256 over
