@@ -6,7 +6,7 @@ import { SRC_ALLOWLIST, importSpecifiers } from '../src-allowlist.mjs'
 const root = fileURLToPath(new URL('../..', import.meta.url))
 
 // The one build-input list: web/package.json's build/install, globals.css's
-// shared shell, next.config.ts's snapshot trace, and public/ favicon symlinks.
+// shared shell, next.config.ts's snapshot trace, and the root public/ favicons that web/public copies.
 // The reader ceiling comes from the existing allowlist, including its relative
 // transitive imports. A new unresolved import makes the ignore step build.
 const INPUTS = [
