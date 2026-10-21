@@ -60,8 +60,11 @@
   font-size: 12px;
 }
 .moments-gallery button:disabled { opacity: .55; }
-.moments-gallery .moments-check { display: flex; align-items: center; gap: 8px; min-height: 44px; }
+/* The row's label rule above has an element selector, so the check needs the parent in its selector to win. */
+.moments-gallery .moments-filter-fields .moments-check { display: flex; align-items: center; gap: 8px; min-height: 44px; }
+.moments-gallery .moments-check input { width: 18px; height: 18px; accent-color: var(--pitch); }
 .moments-gallery .moments-order-controls { display: flex; flex-wrap: wrap; gap: 8px; margin-block: 12px; }
+.moments-gallery .moments-order-controls p { flex-basis: 100%; }
 .moments-gallery .moments-cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
