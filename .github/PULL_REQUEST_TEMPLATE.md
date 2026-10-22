@@ -1,4 +1,4 @@
-<!-- Thanks. Short is fine; true is required. CONTRIBUTING.md has the rules this asks about. -->
+<!-- Thanks. Short is fine; true is required. CLAUDE.md has the rules this asks about. -->
 
 ## What this changes
 

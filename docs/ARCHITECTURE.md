@@ -1,8 +1,10 @@
 # Architecture — the map, and the data flow
 
-Kickoff is a Vite + React + TypeScript app with no backend. The data is a committed JSON
-snapshot; a script refreshes it; a workflow runs the script. That is the whole system, and
-the interesting part is where the boundaries sit.
+The public Kickoff app is a Vite + React + TypeScript app with no backend. The data is a
+committed JSON snapshot; a script refreshes it; a workflow runs the script. The interesting
+part is where the boundaries sit. Since October 2026 there is a second half, with a database
+and a video store, described in "The full-stack half" below; everything above that section is
+the public app.
 
 ## The data flow
 
@@ -74,6 +76,29 @@ tests/                     DST boundaries, the normalizer, lens plumbing, the di
                            the honesty guards — one case per audited bug class.
 ```
 
+## The full-stack half
+
+Unreleased, and not the public site: it runs as a login-protected preview on Vercel until the
+cutover in `docs/nextjs-migration-plan.md`. Four trees, one rule (generated video says what
+it is, and a person publishes it):
+
+```
+studio/                 The admin and CLI. Local only. Imports a clip, runs the Card gate,
+                        computes CLIP vectors, publishes to Supabase and Cloudflare R2.
+                        Tests and offline runs use PGlite; --live is the only path to
+                        Supabase.
+web/                    The reader. Next.js on Vercel. Reads the published catalog through
+                        Drizzle on a read-only Postgres role (server-side only).
+packages/               @kickoff/catalog (the strict public row contract) and
+                        @kickoff/demo (the labelled sample reactions and comments).
+.github/workflows/      ci.yml (the required `verify` check), studio.yml, sync.yml,
+                        pages.yml, preview-smoke.yml (a smoke after every Vercel deployment).
+```
+
+The database has three schemas that matter: `studio` (private tables), `catalog` (the two
+views the reader reads, plus the two similarity functions) and `demo` (the sample layer, read
+through three views). Setup is in `web/README.md` and `studio/README.md`.
+
 ## Where the pure layer ends
 
 Everything under `src/lib/` and `scripts/` takes its inputs as arguments — fixtures, `today`,
@@ -121,3 +146,39 @@ decoded by total functions: junk falls back to a default, never a crash. Two of 
 read by another repository — the betting pipeline's Step 0 uses `?only=` and `&date=` to pull
 fixtures from a running instance — so a codec change there is a breaking change, not a
 wording one.
+
+## Commands
+
+`npm run sync` writes to the repo, so read the conflict recipe below before you run it.
+
+```bash
+npm install
+npm run dev              # dev server with hot reload at localhost:5173
+npm test                 # vitest, two projects: node (tests/**/*.test.ts, minus tests/dom)
+                         # and dom (tests/dom/**, jsdom)
+npm run typecheck        # tsc -b --noEmit
+npm run build            # static bundle in dist/
+npm run build:single     # one self-contained dist-single/index.html, opens by double-click
+npm run build:offline    # one self-contained dist-offline/index.html, Fixtures and Table only
+npm run sync -- --check  # fetch and diff against the committed snapshot; write nothing
+npm run sync             # refresh src/data/*.json; exits 1 when an urgent change is reported
+```
+
+`sync` takes `--from=YYYY-MM-DD` and `--to=YYYY-MM-DD`; the default window is −30 to +150
+days. It needs no key and no account, because ESPN's scoreboard and standings endpoints are
+public. You'll want Node 24 (24.15 or a later 24.x); 22.22.2 or a later 22.x, or any 26+, also
+clear jsdom 30's engine floor (`^22.22.2 || ^24.15.0 || >=26.0.0`), mirrored in
+`package.json`'s `engines`, which npm warns about rather than enforces. The fixture snapshot
+is committed, so everything except `sync` works offline.
+
+For a generated-data merge conflict, export the pre-merge branch's `fixtures.json` and
+`standings.json` with `git show <commit>:src/data/<file>` into a temporary directory, then
+use `npm run sync -- --baseline-dir=/absolute/path/to/that/directory`. The baseline preserves
+first-seen rounds and notes and supplies the diff/shrink checks; it is schema-validated and
+missing explicit baseline files fail closed. It changes input reads only: the three
+conflict-marked files in `src/data/` are replaced exclusively by fresh, validated sync
+output. Never use `--ours`/`--theirs` or hand-edit a generated file to resolve it.
+
+The full-stack half has its own commands: `web/README.md` for the reader and the Vercel
+preview, `studio/README.md` for the Studio. The standing brief for any agent working in the
+repo is `CLAUDE.md`, which holds the verification discipline and the release rules.
