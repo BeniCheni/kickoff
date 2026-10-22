@@ -262,7 +262,8 @@ the cutover (N7), so `v0.5.2` stays the latest release and the version string do
 cutover is the next release, a **minor** (N0-Q10 ruled Minor and left the number to Beni), and on
 21 Oct 2026 Beni ruled that it is **planned as v0.6.0**. The fixes already merged since v0.5.2 and
 listed under `[Unreleased]` in `CHANGELOG.md` (the suspended and abandoned match handling is the
-one a reader sees) have no patch number yet.
+one a reader sees) ship first as **v0.5.3**, which Beni ruled on 22 Oct 2026 to cut after Demo Day
+(from Sun 25 Oct 2026), with a curated `[0.5.3]` section and fresh README screenshots.
 
 Beni ruled on 10 Sep 2026: **sync first as v0.4.0; European week second as v0.5.0**.
 v0.4.1 (rows 43–51) shipped 12 Sep 2026, before v0.5.0 (Beni, 11 Sep 2026).
