@@ -10,6 +10,16 @@ releases.
 
 ### Changed
 
+- The README leads with the full-stack work that has landed since v0.5.2 (the Studio, the
+  Next.js reader on a login-protected Vercel preview, CLIP similarity through pgvector, and
+  the deployment pipeline), says plainly that the public site and the latest release are
+  unchanged, and refreshes its numbers. `CONTRIBUTING.md` is gone: this is a one-owner repo
+  built in public with agents, and its run commands and the generated-data merge-conflict
+  recipe now live in `docs/ARCHITECTURE.md`. `web/README.md` corrects where Vercel's
+  "include source files outside the Root Directory" setting lives, records the
+  `repository_dispatch` switch the smoke test needs, and names migration `0005`. No code or
+  interface readers see changed.
+
 - The scheduled sync keeps a four-times-a-day backbone and adds an hourly check across the
   rest of the day, every day (11:00–23:00 UTC, skipping the two backbone hours inside it).
   A quiet check is published only once the snapshot on `main` is 20 hours old; under that it
