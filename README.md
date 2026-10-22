@@ -423,9 +423,9 @@ public site doesn't change until the cutover:
 - **The pipeline:** a Vercel preview that skips builds a change provably doesn't affect and
   smoke-tests itself after each successful deployment (#236).
 
-**Next, this week:** a Shorts feed whose next clip is a random pick among the nearest
+**Next, from the current sprint:** a Shorts feed whose next clip is a random pick among the nearest
 neighbours, and a like button whose likes live only in the visitor's browser and shape a "For
-you" shelf. Both come from this week's sprint and are not written up in `docs/` yet.
+you" shelf. Both come from the current sprint and are not written up in `docs/` yet.
 
 **Then, per the plan:** a privacy page, and the cutover that makes the Next app the public one,
 with the Pages address redirecting. Those steps are in
@@ -454,11 +454,12 @@ knowing about are in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 The full-stack half needs accounts and keys, so it is a runbook rather than a quick start:
 [`web/README.md`](web/README.md) for the reader and its Vercel preview, and
-[`studio/README.md`](studio/README.md) for the Studio. The Studio's commands and screens run
-against a stub and a local PGlite database until you pass `--live`; the exceptions are
-`npm run migrate` and `npm run seed:demo`, which open whatever database `DATABASE_URL` names.
-The reader has no `--live` switch: it reads the database in its environment, and a separate
-stub-catalog flag gives it synthetic data for local runs.
+[`studio/README.md`](studio/README.md) for the Studio. The Studio's generation, import and admin
+paths run against a stub and a local PGlite database until you pass `--live`. Three commands are
+different: `migrate` (as the npm script and as the CLI command) and `seed:demo` open whatever
+database `DATABASE_URL` names, and `fetch-model` downloads the CLIP model files from Hugging
+Face. The reader has no `--live` switch: it reads the database in its environment, and a
+separate stub-catalog flag gives it synthetic data for local runs.
 
 Lens, tab, week and filters all live in the URL — `?lens=broadcast&tab=table` means what it
 says — so any view survives a reload and can be sent to someone. Found a fixture the app gets
