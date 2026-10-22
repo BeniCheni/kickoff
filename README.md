@@ -399,9 +399,9 @@ pipeline was built by Codex, cold-reviewed twice by Claude Code, and merged on a
 **Design gets the same treatment.** The Moments gallery went through three rounds of
 functional prototypes (R1 to R3) and then the D-series design cycles (D1 to D9), each sealed
 with a checksum manifest and each cold-reviewed by a different agent than the one that drew it. One
-review measured 1,080 prototype cells and found a player column that would have been 353px
-wide on an iPad, below YouTube's stated minimum. That finding became a ruling, and the ruling
-became a line in the build spec.
+review of the prototypes found a player column that would have been 353px wide on an iPad. That
+finding became a ruling, and the ruling became a 480px minimum in the build spec
+([`docs/design-cycle-moments-d6-spec.md`](docs/design-cycle-moments-d6-spec.md)).
 
 **Verification is measured, never admired.** A review is not "it looks fine". It's 72 browser
 cells compared byte-for-byte against `main` to prove a dormant feature changed nothing
