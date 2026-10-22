@@ -3,7 +3,7 @@
 [![CI](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml/badge.svg)](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml)
 [![version](https://img.shields.io/badge/version-0.5.2-1d4ed8)](CHANGELOG.md)
 [![license](https://img.shields.io/badge/license-MIT-16a34a)](LICENSE)
-[![stack](https://img.shields.io/badge/stack-Next.js%20%C2%B7%20Supabase%20%C2%B7%20pgvector%20%C2%B7%20R2-0f172a)](#-new-kickoff-went-full-stack)
+[![stack](https://img.shields.io/badge/stack-Next.js%20%C2%B7%20Supabase%20%C2%B7%20pgvector%20%C2%B7%20R2-0f172a)](#-how-it-is-wired)
 [![built with](https://img.shields.io/badge/built%20with-Claude%20Code-D97757)](CLAUDE.md)
 [![built with](https://img.shields.io/badge/built%20with-Codex-000000)](https://openai.com/codex/)
 [![built with](https://img.shields.io/badge/built%20with-Cursor-7c3aed)](docs/moments-player-plan-review.md)
@@ -21,9 +21,10 @@
 ```
 
 **A football fixtures tracker that would rather admit what it doesn't know than tell you a
-confident lie. It has just grown a full-stack back end that publishes AI-generated cat
-footballers, and it's still an open notebook on how one person ships software with three AI
-vendors building, reviewing and rebutting each other's work.**
+confident lie. Then it grew a studio, a database and a video store, and learned to publish
+AI-generated cat footballers under the same rule: say what it is, never claim more, and let a
+human sign. It's also an open notebook on how one person ships software with three AI vendors
+building, reviewing and rebutting each other's work.**
 
 You don't need to follow football to read this repo. The football is the excuse. The
 interesting part is the workflow: every line of the app was written by an AI coding agent,
@@ -33,82 +34,29 @@ it is in this repo, PR by PR.
 
 | If you want | Go here |
 |---|---|
-| The football app, live | **[benicheni.github.io/kickoff](https://benicheni.github.io/kickoff/)** |
-| The full-stack milestone | [New: Kickoff went full-stack](#-new-kickoff-went-full-stack) |
+| Live GitHub demo page | **[benicheni.github.io/kickoff](https://benicheni.github.io/kickoff/)** |
+| Live full-stack milestone, the Vercel demo app *(Vercel sign-in required for now)* | **[kickoff-git-main-beni-von-chenis-projects.vercel.app](https://kickoff-git-main-beni-von-chenis-projects.vercel.app/?tab=moments)** |
 | How three AI vendors build one repo | [How it gets built](#-how-it-gets-built) |
 | Why a fixtures app has a motto | [Why this exists](#-why-this-exists) |
+| Architecture | [Architecture — the map, and the data flow](docs/ARCHITECTURE.md) |
 
-> **The straight answer on what's live.** The public demo is the Vite app on GitHub Pages:
+> **The straight answer on what's live.** The GitHub demo is the Vite app on GitHub Pages:
 > fixtures, standings and three lenses, redeployed on every merge. If the amber banner is up
-> when you get there, that's not a bug; that's the whole pitch. The full-stack version
-> described below runs today as a private, login-protected preview on Vercel. Its public
+> when you get there, that's not a bug; that's the whole pitch. The full-stack version is the
+> Next.js app on Vercel, and today it sits behind Vercel's own sign-in, which is why that link
+> asks you to log in first. The Moments pictures and the clip below were captured from it. Its public
 > cutover is a numbered plan, not a promise with a date, and `v0.5.2` is still the latest
 > release.
 
 <p align="center">
-  <img src="docs/screenshots/v0.5.2/poster-390-light.png" width="300" alt="Kickoff's Poster lens on a phone, light theme: the next matchday as a full-bleed hero, then the week">
-  &nbsp;&nbsp;
-  <img src="docs/screenshots/v0.5.2/poster-390-dark.png" width="300" alt="The same view in the dark theme">
+  <img src="docs/media/superhero-kitties.gif" width="320" alt="Superhero Kitties: fifteen seconds of generated video. Four cats in capes and bodysuits line up in a floodlit stadium, then play football, and end in a group hug around the ball.">
+  <br>
+  <sub><i>Superhero Kitties</i> · 15 s · made in Grok Imagine, published through the Studio, served from Cloudflare R2.<br>6 fps and 320 px here to keep the repo light; the real clip is 1920 × 1088.</sub>
 </p>
 
-## 🚀 New: Kickoff went full-stack
-
-The fixtures app is a static site that reads a committed snapshot. The new half is the
-opposite: a database, a video store, an admin, and a reader that asks Postgres what to show.
-It publishes a gallery of **generated** video (cats playing football, made in Grok Imagine)
-under the same rule as the rest of the repo: it says what it is, and it never claims more.
-
-```
- THE STUDIO  (your Mac only)
- import ▸ review ▸ sign-off
-        │ Publish
-        ▼
- ┌───────────┐ ┌───────────┐
- │ Supabase  │ │Cloudflare │
- │ Postgres  │ │    R2     │
- │+ pgvector │ │  (video)  │
- └─────┬─────┘ └─────┬─────┘
-       └──────┬──────┘
-              ▼
- THE READER  (Next.js, Vercel)
- read-only role, server-side
-```
-
-- **The Studio** (`studio/`) is a local-only admin on `127.0.0.1`. You import a clip, answer a
-  five-point checklist (extra players, text on boards, logo-like marks, subject identity,
-  soundtrack), and every answer must be `clear` before a clip can be kept. Publishing needs a
-  recorded EU AI Act Article 50 answer, and it then writes the catalog row to Supabase and the
-  files to Cloudflare R2. Nothing goes live without a human typing the sign-off.
-- **Similar moments** come from vectors. At publish time each clip gets CLIP embeddings, from
-  its keyframe and from its title and note, stored with pgvector. The model runs on the
-  Studio's machine and never in a web request. The reader asks Postgres for a clip's nearest
-  neighbours, and the vectors themselves never leave the database.
-- **The reader** (`web/`) is a Next.js app that reads published clips through Drizzle on a
-  Postgres role that can read the published views and call two similarity functions, and
-  nothing else. A published clip shows up on the next page load.
-- **Every clip says what it is.** The label is `Generated`, it's never filtered away, and a
-  clip is never presented as footage of a real match. The reactions and comments under a video
-  are made-up viewers, written by the database, labelled as such, and refused outright on a
-  Production deployment.
-- **The delivery pipeline** is boring on purpose. `verify` is the one required check, Vercel
-  builds only what a change can affect, and after every deployment a smoke test opens the
-  protected preview with an automation bypass, checks the deployed commit and the snapshot's
-  digest, and scans every response for a leaked secret.
-
-The first clip is *Superhero Kitties*: fifteen seconds, 1920 × 1088, made in Grok Imagine,
-published through the Studio, and playing muted from R2 on the preview. The setup, step by
-step, is in [`web/README.md`](web/README.md) (the Vercel preview) and
-[`studio/README.md`](studio/README.md) (the Studio and its commands).
-
-| Piece | What it is |
-|---|---|
-| `src/` | The public app: Vite + React 19, static, on GitHub Pages |
-| `web/` | The reader: Next.js 16, on Vercel, behind Vercel Authentication |
-| `studio/` | The admin and CLI: Node, Drizzle, `@huggingface/transformers`, PGlite for tests |
-| `packages/` | `@kickoff/catalog` (the public row contract) and `@kickoff/demo` (the sample layer) |
-| Supabase · R2 | Postgres with pgvector for metadata and vectors · Cloudflare R2 for video and thumbnails |
-
 ## 🎲 Why this exists
+
+### Act I · the bets
 
 This repo exists because **Claude and I bet on European football.** (Small stakes, a coin flip
 of a sample size, the variance undefeated. Let's not ruin a good story with statistics.)
@@ -143,24 +91,53 @@ and no model, however charming, can out-reason a fixture list that lies to it.
 
 So the fix got carved over the door: **fixture data is generated and diffed, never typed.**
 Nobody hand-edits a kickoff time in this repo. A script fetches, validates, snapshots and
-diffs; a human reads the diff. The rest of the app is built to make that rule unbreakable,
-and the full-stack half inherited it: generated video is labelled, and published only by a
-person.
+diffs; a human reads the diff.
 
-## ⏱️ What the football app does today
+### Act II · the second confident lie
+
+Then the repo got a second job, and the lie got better.
+
+A wrong kickoff time is a clumsy lie: somebody can check it against the league. Generated
+video is a fluent one. A cat in a cape, kicking a football under floodlights in a stadium that
+does not exist, looks like footage until something says otherwise. So the rule that guards
+kickoff times crossed the border into video, and it became a second line on the door:
+
+```
+┌────────────────────────────┐
+│ THE HOUSE RULES            │
+├────────────────────────────┤
+│ DATA IS GENERATED, DIFFED, │
+│ NEVER TYPED.               │
+│                            │
+│ VIDEO IS GENERATED,        │
+│ LABELLED, SIGNED FOR BY A  │
+│ HUMAN, AND NEVER PASSED    │
+│ OFF AS REAL.               │
+└────────────────────────────┘
+```
+
+That is why the video side of Kickoff has a checklist before a clip can be kept, a recorded
+EU AI Act Article 50 answer before it can be published, a `Generated` label that can't be
+filtered away, and made-up viewers that say they are made up. Both halves are built to hold
+their rule, and both are covered below.
+
+## ⏱️ What it does today
+
+### ⚽ The football app
 
 Fourteen competitions: the five big domestic leagues (La Liga, the Premier League, Serie A,
 Ligue 1, the Bundesliga), the three UEFA club competitions (Champions League, Europa League,
 Conference League) and the six super cups. 1,440 fixtures and six league tables as of 21
 October 2026, synced from ESPN's public scoreboard and read through three visual "lenses"
-over one fixture skeleton.
+over one fixture skeleton. The pictures below are the live GitHub demo, captured that day at
+a 390 px phone width.
 
 <p align="center">
-  <img src="docs/screenshots/v0.5.2/ledger-390-light.png" width="240" alt="The Ledger lens: a date-spine calendar with a four-card Next up strip">
+  <img src="docs/screenshots/2026-10-21/football-poster-light.jpg" width="230" alt="The Poster lens on a phone, light theme: the next matchday, Thursday 22 October, with 36 matches, as a full-bleed hero above the first kickoffs">
   &nbsp;
-  <img src="docs/screenshots/v0.5.2/broadcast-390-dark.png" width="240" alt="The Broadcast lens, dark: a marquee ticker and a floodlight glow on the next kickoff">
+  <img src="docs/screenshots/2026-10-21/football-ledger-light.jpg" width="230" alt="The Ledger lens: a date-spine calendar with a Next up strip">
   &nbsp;
-  <img src="docs/screenshots/v0.5.2/table-390-light.png" width="240" alt="La Liga's table on a phone, with the matchday banner and the European qualification bands">
+  <img src="docs/screenshots/2026-10-21/football-broadcast-dark.jpg" width="230" alt="The Broadcast lens, dark: a marquee ticker and a floodlight glow on the next kickoff">
 </p>
 
 What the app refuses to do is the feature:
@@ -177,16 +154,184 @@ What the app refuses to do is the feature:
 - **The table tells you what it can't compare.** "2 clubs have a game in hand — sort by PPG."
 
 <p align="center">
-  <img src="docs/screenshots/v0.5.2/table-ucl-1000-light.png" width="720" alt="La Liga's table at desktop width in the Ledger lens: played, won, drawn, lost, goals, points, points per game, form and next fixture, banded by European qualification zone">
+  <img src="docs/screenshots/2026-10-21/football-table-1000.jpg" width="720" alt="La Liga's table at desktop width in the Ledger lens: matchday banner, European qualification bands, points per game, form and next fixture">
 </p>
-
-The public app also keeps a **Moments** tab. It opens empty on purpose: the full-stack gallery
-above lives on the Vercel preview, and the earlier plan to link out to match footage was
-dropped on 12 October 2026 in favour of generated-only video. The old player is dormant code,
-scheduled for retirement after the cutover.
 
 The full argument — the UTC instant, the diff engine, the fail-loud guards, staleness as a
 state — is in **[docs/HONESTY.md](docs/HONESTY.md)**.
+
+### 🎬 Moments: the generated-video gallery
+
+Moments is the third tab, and it is where the video lives. It started as a plan to link out to
+match footage; on 12 October 2026 that plan was dropped for generated-only video, and the tab
+was rebuilt as a full-stack feature. Here is its team sheet, from both ends of the pipe:
+
+```
+╔════════════════════════════╗
+║ TEAM SHEET · MOMENTS       ║
+╠════════════════════════════╣
+║ AS A VIEWER I CAN          ║
+║  1 open a gallery where    ║
+║    every clip says it was  ║
+║    generated               ║
+║  2 watch one, muted first, ║
+║    and unmute when I like  ║
+║  3 find similar moments    ║
+║  4 poke the reactions and  ║
+║    read the comments       ║
+║    (made up, and it says)  ║
+╠════════════════════════════╣
+║ AS THE CURATOR I CAN       ║
+║  1 import a Grok Imagine   ║
+║    clip                    ║
+║  2 walk the five-point     ║
+║    check, line by line     ║
+║  3 sign the Article 50     ║
+║    answer in my own words  ║
+║  4 press Publish           ║
+╚════════════════════════════╝
+```
+
+**The viewer's side.** The gallery filters by subject (the two cats the whole gallery is built
+around, Fenway and Frankenstein), orders by Beni's order or newest generated, and keeps a saved
+list in your browser. Every card carries the `Generated` badge, the length, the date and the
+tool that made it. The watch page plays the clip muted from R2 with an Unmute button beside
+the player, a Theater mode, a copy-link button, and a cancellable countdown to the next clip
+when there is one. The first clip is *Superhero Kitties*: four cats, a stadium, a football.
+
+<p align="center">
+  <img src="docs/screenshots/2026-10-21/reader-gallery-390-dark.jpg" width="230" alt="The Moments gallery on a phone, dark: a card for Superhero Kitties with a stadium thumbnail of four cats in capes, the Generated badge, 0:15, made by Grok Imagine, and a Save reference button">
+  &nbsp;
+  <img src="docs/screenshots/2026-10-21/reader-watch-390-dark.jpg" width="230" alt="The watch page, dark: a cat in a red cape dribbling a football, 'Playing muted. Unmute beside the player.', and the five reaction buttons">
+  &nbsp;
+  <img src="docs/screenshots/2026-10-21/reader-watch-390-light.jpg" width="230" alt="The watch page, light, at the end of the clip: the four cats in a group hug around the ball, with the native player controls and a note that this was the last video, so nothing loops">
+</p>
+
+**The crowd is cardboard, on purpose.** The reactions, the view counts and the comments under
+a clip are synthetic. The database writes them, with `setseed()` and `generate_series`, from
+fictional viewers with kind, cat-and-football handles; every row is flagged `synthetic` by a
+database check, and the page carries a label wherever they show:
+
+```
+┌────────────────────────────┐
+│ SAMPLE REACTIONS AND       │
+│ COMMENTS · MADE-UP VIEWERS,│
+│ NOT REAL ONES              │
+└────────────────────────────┘
+```
+
+They exist to sketch the interface of social features Kickoff may grow one day, so there is
+something real to design and test against, and not to suggest an audience. Your own taps stay
+on the page ("Your reactions stay on this page and aren't saved"), and a Production deployment
+refuses the sample layer outright.
+
+<p align="center">
+  <img src="docs/screenshots/2026-10-21/reader-comments-390-dark.jpg" width="230" alt="The comment thread on the watch page, dark: made-up viewers such as stripedscarf and yarnball with short comments like 'A tiny celebration after a tiny goal', each with Like and Reply buttons">
+</p>
+
+**The curator's side.** None of that appears by itself. Every clip comes through the Studio,
+a local admin that runs on one Mac (the header says `127.0.0.1 · THIS MAC ONLY`) and shows,
+at the top, whether it is talking to a stub or to the real services. The three screens below
+come from the Studio's own proof run: stub transport, a local PGlite database and a fictional
+clip, so what you see is the interface and not the live catalog.
+
+<p align="center">
+  <img src="docs/screenshots/2026-10-21/studio-import-1280-light.jpg" width="720" alt="The Studio's Import screen: choose an MP4 and a JPEG keyframe, type the prompt, pick Fenway or Frankenstein, then 'Read the file' shows width, height, duration, frame rate, audio and that Strip will remove udta and meta">
+  <br>
+  <sub><b>1 · Import.</b> The Studio reads the file's own facts, says what Strip will remove, and keeps the prompt exactly as it was typed into Grok.</sub>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/2026-10-21/studio-review-1280-dark.jpg" width="720" alt="The Studio's Review screen, dark: the clip in a native player on the left; on the right, the review checklist: extra players or officials, text on boards, shirts or screens, logo-like or crest-like marks, the subject's identity and posture, and the soundtrack, each Clear, Present or Unsure, with Keep and Discard buttons">
+  <br>
+  <sub><b>2 · Keep.</b> Five questions, each answered Clear, Present or Unsure. Keep needs five Clear.</sub>
+</p>
+
+<p align="center">
+  <img src="docs/screenshots/2026-10-21/studio-publish-gate-1280-dark.jpg" width="720" alt="The Studio's Publish screen, dark: the Publication gate for Article 50 with an empty answer, disclosure, recorded-by and source form, and a disabled Publish button that says it is unavailable until the Article 50 answer is recorded">
+  <br>
+  <sub><b>3 · Sign, then Publish.</b> The Publish button stays disabled, and says why, until an Article 50 answer is on file.</sub>
+</p>
+
+Here is the same journey as a data flow, from the Grok Imagine tab to a phone:
+
+```
+   GROK IMAGINE  (by hand)
+          │ clip + keyframe
+          ▼
+┌────────────────────────────┐
+│ 1 · IMPORT                 │
+│ read the file's own facts, │
+│ strip metadata, hash it    │
+├────────────────────────────┤
+│ 2 · KEEP                   │
+│ five checks, all CLEAR     │
+├────────────────────────────┤
+│ 3 · SIGN                   │
+│ the Article 50 answer, in  │
+│ words, with a name on it   │
+├────────────────────────────┤
+│ 4 · PUBLISH                │
+│ gate re-checked in the DB  │
+└──────┬──────────────┬──────┘
+       ▼              ▼
+ ┌───────────┐  ┌───────────┐
+ │ Supabase  │  │Cloudflare │
+ │ Postgres  │  │    R2     │
+ │ catalog + │  │ video and │
+ │ CLIP      │  │ thumbnail │
+ │ vectors   │  │           │
+ └─────┬─────┘  └─────┬─────┘
+       └──────┬───────┘
+              ▼
+  READER · Next.js · Vercel
+  read-only role, server-side
+              ▼
+      you, on a phone
+```
+
+The Article 50 gate is enforced twice, in the Studio and in the database, so a bug in one
+cannot publish a clip the other would refuse. At the whistle the Studio prints one line, which
+is worth reading before you trust it:
+
+```
+┌────────────────────────────┐
+│ FULL TIME                  │
+│ published live=true        │
+│ database=postgres          │
+│ storage=r2                 │
+│ embedding=written          │
+└────────────────────────────┘
+```
+
+(One line in the terminal, wrapped here. It names where the clip went and whether its vectors
+were written, so a fallback can't pass for the real thing.)
+
+**Similar moments** are the last step. At publish time each clip gets CLIP embeddings, one
+from its keyframe and one from its title and note, stored with pgvector. The model runs on the
+Studio's machine, never in a web request. The reader asks Postgres for a clip's nearest
+neighbours, and the vectors never leave the database: the reader's role can read the published
+views and call two similarity functions, and nothing else. A published clip shows up on the
+next page load, and a clip whose vectors are missing is simply left out of the rail until
+`embed --backfill` heals it.
+
+## 🧱 How it is wired
+
+| Piece | What it is |
+|---|---|
+| `src/` | The GitHub demo: Vite + React 19, static, on GitHub Pages |
+| `web/` | The reader: Next.js 16, on Vercel, behind Vercel Authentication |
+| `studio/` | The admin and CLI: Node, Drizzle, `@huggingface/transformers`, PGlite for tests |
+| `packages/` | `@kickoff/catalog` (the public row contract) and `@kickoff/demo` (the sample layer) |
+| Supabase · R2 | Postgres with pgvector for the catalog and the vectors · Cloudflare R2 for video and thumbnails |
+
+The delivery pipeline is boring on purpose. `verify` is the one required check, Vercel builds
+only what a change can affect, and after every deployment a smoke test opens the protected
+preview with an automation bypass, checks the deployed commit and the snapshot's digest, and
+scans every response for a leaked secret. The setup, step by step, is in
+[`web/README.md`](web/README.md) (the Vercel preview) and [`studio/README.md`](studio/README.md)
+(the Studio and its commands); the map and the data flow are in
+[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ## 🤖 How it gets built
 
