@@ -124,9 +124,9 @@ EU AI Act Article 50 answer before it can be published, a `Generated` label that
 filtered away, and made-up viewers that say they are made up. Both halves are built to hold
 their rule, and both are covered below.
 
-## ⏱️ What it does today
+## ⏱️ What it does today (v0.5.2)
 
-### ⚽ The football app
+### ⚽ The football app (public, v0.5.2)
 
 Fourteen competitions: the five big domestic leagues (La Liga, the Premier League, Serie A,
 Ligue 1, the Bundesliga), the three UEFA club competitions (Champions League, Europa League,
@@ -140,7 +140,7 @@ a 390 px phone width.
   &nbsp;
   <img src="docs/screenshots/2026-10-21/football-ledger-light.jpg" width="230" alt="The Ledger lens: a date-spine calendar with a Next up strip">
   &nbsp;
-  <img src="docs/screenshots/2026-10-21/football-broadcast-dark.jpg" width="230" alt="The Broadcast lens, dark: a marquee ticker and a floodlight glow on the next kickoff">
+  <img src="docs/screenshots/2026-10-21/football-broadcast-dark.jpg" width="230" alt="The Broadcast lens, dark: a marquee ticker above Monday's completed results and the start of Tuesday's">
 </p>
 
 What the app refuses to do is the feature:
@@ -163,7 +163,7 @@ What the app refuses to do is the feature:
 The full argument — the UTC instant, the diff engine, the fail-loud guards, staleness as a
 state — is in **[docs/HONESTY.md](docs/HONESTY.md)**.
 
-### 🎬 Moments: the generated-video gallery
+### 🎬 Moments: the generated-video gallery (full-stack, unreleased)
 
 Moments is the third tab, and it is where the video lives. It started as a plan to link out to
 match footage; on 12 October 2026 that plan was dropped for generated-only video, and the tab
@@ -230,7 +230,7 @@ on the page ("Your reactions stay on this page and aren't saved"), and a Product
 refuses the sample layer outright.
 
 <p align="center">
-  <img src="docs/screenshots/2026-10-21/reader-comments-390-dark.jpg" width="230" alt="The comment thread on the watch page, dark: made-up viewers such as stripedscarf and yarnball with short comments like 'A tiny celebration after a tiny goal', each with Like and Reply buttons">
+  <img src="docs/screenshots/2026-10-21/reader-comments-390-dark.jpg" width="230" alt="The comment thread on the watch page, dark: made-up viewers such as stripedscarf and yarnball with short comments like 'A tiny celebration after a tiny goal', each with a Like button, and Reply buttons on the top-level comments">
 </p>
 
 **The curator's side.** None of that appears by itself. Every clip comes through the Studio,
@@ -423,11 +423,14 @@ public site doesn't change until the cutover:
 - **The pipeline:** a Vercel preview that skips builds a change provably doesn't affect and
   smoke-tests itself after each successful deployment (#236).
 
-**Next:** a Shorts feed whose next clip is a random pick among the nearest neighbours, and
-a like button whose likes live only in the visitor's browser and shape a "For you" shelf; a
-privacy page; then the cutover that makes the Next app the public one, with the Pages address
-redirecting. Each step is in [`docs/nextjs-migration-plan.md`](docs/nextjs-migration-plan.md)
-and its rulings in [`docs/moments-pivot-record.md`](docs/moments-pivot-record.md).
+**Next, this week:** a Shorts feed whose next clip is a random pick among the nearest
+neighbours, and a like button whose likes live only in the visitor's browser and shape a "For
+you" shelf. Both come from this week's sprint and are not written up in `docs/` yet.
+
+**Then, per the plan:** a privacy page, and the cutover that makes the Next app the public one,
+with the Pages address redirecting. Those steps are in
+[`docs/nextjs-migration-plan.md`](docs/nextjs-migration-plan.md), and the rulings so far are in
+[`docs/moments-pivot-record.md`](docs/moments-pivot-record.md).
 
 ## 🥅 Try it
 
@@ -451,8 +454,11 @@ knowing about are in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 The full-stack half needs accounts and keys, so it is a runbook rather than a quick start:
 [`web/README.md`](web/README.md) for the reader and its Vercel preview, and
-[`studio/README.md`](studio/README.md) for the Studio. Everything in them runs offline against
-a local PGlite database until you pass `--live`.
+[`studio/README.md`](studio/README.md) for the Studio. The Studio's commands and screens run
+against a stub and a local PGlite database until you pass `--live`; the exceptions are
+`npm run migrate` and `npm run seed:demo`, which open whatever database `DATABASE_URL` names.
+The reader has no `--live` switch: it reads the database in its environment, and a separate
+stub-catalog flag gives it synthetic data for local runs.
 
 Lens, tab, week and filters all live in the URL — `?lens=broadcast&tab=table` means what it
 says — so any view survives a reload and can be sent to someone. Found a fixture the app gets
