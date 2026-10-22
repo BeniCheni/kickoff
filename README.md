@@ -40,6 +40,7 @@ once CI is green.) The paper trail for all of that is in this repo, PR by PR.
 | How three AI vendors build one repo | [How it gets built](#-how-it-gets-built) |
 | Why a fixtures app has a motto | [Why this exists](#-why-this-exists) |
 | Architecture | [Architecture — the map, and the data flow](docs/ARCHITECTURE.md) |
+| The announcement | [The LinkedIn post about the full-stack milestone](https://www.linkedin.com/posts/benicheni_buildinpublic-fullstack-supabase-ugcPost-7518805278302232576-IAIO/) |
 
 > **The straight answer on what's live.** The GitHub demo is the Vite app on GitHub Pages:
 > fixtures, standings and three lenses, redeployed on every merge. If the amber banner is up
