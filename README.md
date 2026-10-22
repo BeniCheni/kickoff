@@ -52,11 +52,20 @@ proof run. Its public
 > cutover is a numbered plan, not a promise with a date, and `v0.5.2` is still the latest
 > release.
 
+https://github.com/user-attachments/assets/20449d7e-d1e4-451c-be29-e6a2b15baf38
+
+<p align="center">
+  <sub><i>Superhero Kitties</i> · 15 s · made in Grok Imagine, published through the Studio, served from Cloudflare R2.<br>A 720p copy with sound; the published clip is 1920 × 1088.</sub>
+</p>
+
+<details>
+<summary>Video not playing? Here is a GIF of it.</summary>
 <p align="center">
   <img src="docs/media/superhero-kitties.gif" width="320" alt="Superhero Kitties: fifteen seconds of generated video. Four cats in capes and bodysuits line up in a floodlit stadium, then play football, and end in a group hug around the ball.">
   <br>
-  <sub><i>Superhero Kitties</i> · 15 s · made in Grok Imagine, published through the Studio, served from Cloudflare R2.<br>6 fps and 320 px here to keep the repo light; the real clip is 1920 × 1088.</sub>
+  <sub>6 fps and 320 px, to keep the repo light.</sub>
 </p>
+</details>
 
 ## 🎲 Why this exists
 
