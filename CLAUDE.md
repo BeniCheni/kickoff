@@ -196,10 +196,11 @@ The prompt ladder above says how a version gets *built*. This section says how o
 because the roles are now explicit: Beni is CEO, Claude Design is the designer, a Claude Code
 session in this repo is the CTO, and the Cowork session running `/anthropic-skills:football-soccer-deity` is
 Product Manager / TPM. Since PR #24 (5 Sep 2026) implementation is routed per task shape between
-Claude Code and Codex — `README.md`'s "Two builders, one repo" table is the owning copy of that
-routing, and the six-pass 360 above is how a release built by one vendor is reviewed by the
-other. Beni has said plainly that he has not read the generated `docs/` logs in detail and is
-relying on those roles to have read them — so nothing here is answerable from recollection.
+Claude Code, Codex and (since the Moments work) Cursor — the seats table in `README.md`'s "How it
+gets built" section is the owning copy of that routing, and the six-pass 360 above is how a
+release built by one vendor is reviewed by the other. Beni has said plainly that he has not read
+the generated `docs/` logs in detail and is relying on those roles to have read them — so
+nothing here is answerable from recollection.
 
 **Ground truth for "what has shipped" is four things read together**, never one of them alone:
 `package.json`'s `version`, `git tag` (annotated tags start at v0.2.0 — v0.0.1 through v0.1.1
@@ -252,6 +253,17 @@ downstream.
 
 ## Roadmap pointers
 
+**The full-stack work, and what the next release is (current).** The Moments pivot of 12 Oct 2026
+made Kickoff a full-stack app — the Studio, a Supabase catalog, Cloudflare R2 video, CLIP
+similarity through pgvector, and a Next.js reader on Vercel — recorded in
+`docs/moments-pivot-record.md` and planned in `docs/nextjs-migration-plan.md`. It lands as
+**non-releases** (Beni's SP6 ruling, "None", 19 Oct 2026): the public site does not change until
+the cutover (N7), so `v0.5.2` stays the latest release and the version string does not move. The
+cutover is the next release, a **minor** (N0-Q10 ruled Minor and left the number to Beni), and on
+21 Oct 2026 Beni ruled that it is **planned as v0.6.0**. The fixes already merged since v0.5.2 and
+listed under `[Unreleased]` in `CHANGELOG.md` (the suspended and abandoned match handling is the
+one a reader sees) have no patch number yet.
+
 Beni ruled on 10 Sep 2026: **sync first as v0.4.0; European week second as v0.5.0**.
 v0.4.1 (rows 43–51) shipped 12 Sep 2026, before v0.5.0 (Beni, 11 Sep 2026).
 PR #39 keeps its readable competition chips; the designer re-mirrors them after release.
@@ -274,7 +286,8 @@ jsdom rig is v0.2.4, the resilience patch v0.2.5; **amended again by v0.3.0**
 the sync theme becomes v0.4.0, and the earlier proposals stay as historical records; `/kickoff-pr-review`
 (`.claude/skills/kickoff-pr-review/`, shipped in v0.2.1, renamed in v0.2.4, planned in
 `docs/v0.2.1-pr-review-skill-plan.md`) is ladder step 4 as a command.
-Separately, `README.md`'s "Beyond" section names the standing bridge to the betting track:
-fixtures carry stable ids so a later `positions.json` join — plus a token-expiry-vs-kickoff
-feature — can badge fixtures holding an open position or an expiring token. Not yet on the
-ranked list; blocked on defining those files in `../Sportsbooks/`.
+Separately, the standing bridge to the betting track (it was the README's "Beyond" section until
+the 28 Sep 2026 revamp dropped it, so this is now its owning copy): fixtures carry stable ids so a
+later `positions.json` join — plus a token-expiry-vs-kickoff feature — can badge fixtures holding
+an open position or an expiring token, and Moments reads the same identity through `fixtureId`.
+Not yet on the ranked list; blocked on defining those files in `../Sportsbooks/`.
