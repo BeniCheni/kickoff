@@ -28,9 +28,10 @@ building, reviewing and rebutting each other's work.**
 
 You don't need to follow football to read this repo. The football is the excuse. The
 interesting part is the workflow: every line of the app was written by an AI coding agent,
-every pull request is cold-reviewed by a *different* vendor's agent, the builder gets to argue
-back in writing, and a human rules on whatever is still contested. The paper trail for all of
-it is in this repo, PR by PR.
+every feature and fix goes through a pull request that a *different* vendor's agent reviews
+cold, the builder gets to argue back in writing, and a human rules on whatever is still
+contested. (The scheduled sync's own data PRs are the one exception: they merge themselves
+once CI is green.) The paper trail for all of that is in this repo, PR by PR.
 
 | If you want | Go here |
 |---|---|
@@ -44,7 +45,9 @@ it is in this repo, PR by PR.
 > fixtures, standings and three lenses, redeployed on every merge. If the amber banner is up
 > when you get there, that's not a bug; that's the whole pitch. The full-stack version is the
 > Next.js app on Vercel, and today it sits behind Vercel's own sign-in, which is why that link
-> asks you to log in first. The Moments pictures and the clip below were captured from it. Its public
+> asks you to log in first. The Moments pictures below were captured from it, the clip was made
+from the file it plays, and the three Studio pictures come from the Studio's own stub-mode
+proof run. Its public
 > cutover is a numbered plan, not a promise with a date, and `v0.5.2` is still the latest
 > release.
 
@@ -194,8 +197,9 @@ was rebuilt as a full-stack feature. Here is its team sheet, from both ends of t
 
 **The viewer's side.** The gallery filters by subject (the two cats the whole gallery is built
 around, Fenway and Frankenstein), orders by Beni's order or newest generated, and keeps a saved
-list in your browser. Every card carries the `Generated` badge, the length, the date and the
-tool that made it. The watch page plays the clip muted from R2 with an Unmute button beside
+list in your browser. Every card carries the `Generated` badge and the date it was generated,
+and shows the length and an editorial note (here, "Made by Grok Imagine") when the record has
+them. The watch page plays the clip muted from R2 with an Unmute button beside
 the player, a Theater mode, a copy-link button, and a cancellable countdown to the next clip
 when there is one. The first clip is *Superhero Kitties*: four cats, a stadium, a football.
 
@@ -310,8 +314,9 @@ were written, so a fallback can't pass for the real thing.)
 **Similar moments** are the last step. At publish time each clip gets CLIP embeddings, one
 from its keyframe and one from its title and note, stored with pgvector. The model runs on the
 Studio's machine, never in a web request. The reader asks Postgres for a clip's nearest
-neighbours, and the vectors never leave the database: the reader's role can read the published
-views and call two similarity functions, and nothing else. A published clip shows up on the
+neighbours, and the vectors never leave the database: the reader's role can read the two
+catalog views and the three sample-layer views and call two similarity functions, and nothing
+else. A published clip shows up on the
 next page load, and a clip whose vectors are missing is simply left out of the rail until
 `embed --backfill` heals it.
 
@@ -325,10 +330,11 @@ next page load, and a clip whose vectors are missing is simply left out of the r
 | `packages/` | `@kickoff/catalog` (the public row contract) and `@kickoff/demo` (the sample layer) |
 | Supabase · R2 | Postgres with pgvector for the catalog and the vectors · Cloudflare R2 for video and thumbnails |
 
-The delivery pipeline is boring on purpose. `verify` is the one required check, Vercel builds
-only what a change can affect, and after every deployment a smoke test opens the protected
-preview with an automation bypass, checks the deployed commit and the snapshot's digest, and
-scans every response for a leaked secret. The setup, step by step, is in
+The delivery pipeline is boring on purpose. `verify` is the one required check, Vercel skips
+the builds a change provably doesn't affect (it always builds `main`, and builds whenever it
+can't tell), and after each successful deployment a smoke test requests four fixed routes
+through the protected preview with an automation bypass, checks the deployed commit and the
+snapshot's digest, and scans those responses for a leaked secret. The setup, step by step, is in
 [`web/README.md`](web/README.md) (the Vercel preview) and [`studio/README.md`](studio/README.md)
 (the Studio and its commands); the map and the data flow are in
 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
@@ -344,13 +350,15 @@ a large share itself. Every line was written by a coding agent under a written s
 commits carry the author who wrote them, and recent squash-merge messages credit every agent
 that touched the PR.
 
-**Every version climbs a ladder of documents**, all archived in [`docs/`](docs/README.md):
+**Most versions climb a ladder of up to four documents**, all archived in [`docs/`](docs/README.md):
 a *proposal* (an audit of the repo plus directions), a *design brief* (run against the
 design system), a *build spec* (the prompt the coding agent executes) and a *review prompt*.
-Each is generated from a fresh read of the repo, never from anyone's recollection of it.
+Some versions skipped a rung, and the archive's index says which. Each document is generated
+from a fresh read of the repo, never from anyone's recollection of it.
 
-**Every PR gets a cross-vendor review.** A release built by one vendor's agent is reviewed
-cold by another vendor's agent, in six passes:
+**Every feature and fix gets a cross-vendor review.** (The scheduled sync's data PRs skip it
+and merge on a green `verify`.) A release built by one vendor's agent is reviewed cold by
+another vendor's agent, in six passes:
 
 | Pass | Who | What they leave behind |
 |---|---|---|
@@ -412,8 +420,8 @@ public site doesn't change until the cutover:
   compared cell by cell (#198, #203, #206), the shared catalog contract (#212), the Moments
   gallery and watch page (#217), sample reactions and comments (#225), the live read path
   from Supabase (#231) and the Similar moments rail (#237).
-- **The pipeline:** a Vercel preview that builds only what changed and smoke-tests itself after
-  every deployment (#236).
+- **The pipeline:** a Vercel preview that skips builds a change provably doesn't affect and
+  smoke-tests itself after each successful deployment (#236).
 
 **Next:** a Shorts feed whose next clip is a random pick among the nearest neighbours, and
 a like button whose likes live only in the visitor's browser and shape a "For you" shelf; a
