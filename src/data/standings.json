@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-10-24T16:41:17.776Z",
+  "fetchedAt": "2026-10-24T18:17:33.067Z",
   "provider": "espn",
   "season": 2026,
   "leagues": {
@@ -1187,13 +1187,13 @@
         "abbrev": "ROMA",
         "rank": 3,
         "rankChange": 0,
-        "played": 7,
+        "played": 8,
         "w": 5,
-        "d": 2,
+        "d": 3,
         "l": 0,
-        "gf": 16,
-        "ga": 3,
-        "pts": 17
+        "gf": 19,
+        "ga": 6,
+        "pts": 18
       },
       {
         "teamId": "2572",
@@ -1292,13 +1292,13 @@
         "abbrev": "NAP",
         "rank": 10,
         "rankChange": 0,
-        "played": 7,
+        "played": 8,
         "w": 3,
-        "d": 1,
+        "d": 2,
         "l": 3,
-        "gf": 10,
-        "ga": 7,
-        "pts": 10
+        "gf": 13,
+        "ga": 10,
+        "pts": 11
       },
       {
         "teamId": "105",
