@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-10-25T21:54:37.484Z",
+  "fetchedAt": "2026-10-25T22:42:39.832Z",
   "provider": "espn",
   "season": 2026,
   "leagues": {
@@ -553,12 +553,12 @@
         "abbrev": "BAR",
         "rank": 1,
         "rankChange": 0,
-        "played": 9,
+        "played": 10,
         "w": 9,
         "d": 0,
-        "l": 0,
-        "gf": 39,
-        "ga": 9,
+        "l": 1,
+        "gf": 40,
+        "ga": 11,
         "pts": 27
       },
       {
@@ -583,13 +583,13 @@
         "abbrev": "RMA",
         "rank": 3,
         "rankChange": 0,
-        "played": 9,
-        "w": 7,
+        "played": 10,
+        "w": 8,
         "d": 0,
         "l": 2,
-        "gf": 23,
-        "ga": 9,
-        "pts": 21
+        "gf": 25,
+        "ga": 10,
+        "pts": 24
       },
       {
         "teamId": "244",
