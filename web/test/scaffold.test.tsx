@@ -14,7 +14,7 @@ test('the shell header carries the root version and renders Fixtures', () => {
   expect(html).toContain('Brooklyn · ET')
   expect(html).toContain('Filters')
   expect(html).not.toContain('Not ported yet')
-  expect(html).toContain('v0.5.2')
+  expect(html).toContain('v0.5.3')
   expect(html).not.toContain('v0.0.0')
   expect(html).not.toMatch(/<video|<iframe|<img/)
 })

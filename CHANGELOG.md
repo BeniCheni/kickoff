@@ -8,7 +8,19 @@ releases.
 
 ## [Unreleased]
 
+## [0.5.3] — 2026-10-27
+
+The football app's last patch before the cutover: one suspended or abandoned match can no
+longer freeze every league's table, and the sync is scheduled to check for changes hourly
+through most of the day. Everything else in this build is groundwork readers don't see yet.
+
 ### Changed
+
+- The scheduled sync keeps a four-times-a-day backbone and adds an hourly check across the
+  rest of the day, every day (11:00–23:00 UTC, skipping the two backbone hours inside it).
+  A quiet check is published only once the snapshot on `main` is 20 hours old; under that it
+  fetches and stops. A real change still publishes through the same self-merging PR.
+  GitHub's scheduler can still deliver those slots late.
 
 - The README leads with the full-stack work that has landed since v0.5.2 (the Studio, the
   Next.js reader on a login-protected Vercel preview, CLIP similarity through pgvector, and
@@ -19,12 +31,6 @@ releases.
   "include source files outside the Root Directory" setting lives, records the
   `repository_dispatch` switch the smoke test needs, and names migration `0005`. No code or
   interface readers see changed.
-
-- The scheduled sync keeps a four-times-a-day backbone and adds an hourly check across the
-  rest of the day, every day (11:00–23:00 UTC, skipping the two backbone hours inside it).
-  A quiet check is published only once the snapshot on `main` is 20 hours old; under that it
-  fetches and stops. A real change still publishes through the same self-merging PR.
-  GitHub's scheduler can still deliver those slots late.
 
 - Cinema now puts the playing frame above its cover; readers cannot reach Cinema until a
   Moments edition is published.
@@ -59,19 +65,33 @@ releases.
   every other league's table — including Arsenal's — stayed on the last green sync.
 
 - The inactive Moments player carries a returning selection’s last-known position with its
-  load (including a repeated Play before it settles), shows resume feedback only after a sample greater than zero, and explicitly sets its embed
-  permissions and referrer policy. A player failure preserves the visit but clears active
-  playback and returns Cinema to the stage. The first persisted reference write after an
-  unreadable read explains replacement on every surface; stage keyboard return reaches
-  Enter Cinema. The empty production edition still exposes none of these player controls.
+  load (including a repeated Play before it settles), shows resume feedback only after a
+  sample greater than zero, and explicitly sets its embed permissions and referrer policy. A
+  player failure preserves the visit but clears active playback and returns Cinema to the
+  stage. The first persisted reference write after an unreadable read explains replacement
+  on every surface; stage keyboard return reaches Enter Cinema. The empty production edition
+  still exposes none of these player controls.
 
 - The authored Moments contract validates source identity, content, dated evidence,
   permissions, collection order and editorial cover choices, and rejects unknown authored
   fields while preserving the archived fixture projection. Production curation remains
   empty; the interface readers see is unchanged.
+
 - Confined the inactive Moments visit owner's failure fallback to the Moments route,
   preserving shared navigation and other tabs if that owner fails. This records latent
   error isolation for future curation; the empty production edition gains no visible feature.
+
+### Deliberately not done
+
+- The full-stack half is in the tree and not released: the Studio, the Supabase catalog,
+  Cloudflare R2 video, CLIP similarity through pgvector, and the Next.js reader on a
+  sign-in-protected Vercel preview. It ships with the public cutover, planned as v0.6.0;
+  until then the GitHub demo is the only public app.
+- The Vercel preview's header also reads v0.5.3, because both apps render the same
+  `package.json` version. None of the preview's Moments features is part of this release.
+- The inactive Moments player in this build is the YouTube-linking one. Moments went
+  generated-only on 12 Oct 2026 (`docs/moments-pivot-record.md`), so this player is never
+  switched on; it is retired after the cutover rather than shipped.
 
 ## [0.5.2] — 2026-09-17
 

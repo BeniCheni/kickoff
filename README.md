@@ -1,7 +1,7 @@
 # ⚽ Kickoff
 
 [![CI](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml/badge.svg)](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml)
-[![version](https://img.shields.io/badge/version-0.5.2-1d4ed8)](CHANGELOG.md)
+[![version](https://img.shields.io/badge/version-0.5.3-1d4ed8)](CHANGELOG.md)
 [![license](https://img.shields.io/badge/license-MIT-16a34a)](LICENSE)
 [![stack](https://img.shields.io/badge/stack-Next.js%20%C2%B7%20Supabase%20%C2%B7%20pgvector%20%C2%B7%20R2-0f172a)](#-how-it-is-wired)
 [![built with](https://img.shields.io/badge/built%20with-Claude%20Code-D97757)](CLAUDE.md)
@@ -47,10 +47,9 @@ once CI is green.) The paper trail for all of that is in this repo, PR by PR.
 > when you get there, that's not a bug; that's the whole pitch. The full-stack version is the
 > Next.js app on Vercel, and today it sits behind Vercel's own sign-in, which is why that link
 > asks you to log in first. The Moments pictures below were captured from it, the clip was made
-from the file it plays, and the three Studio pictures come from the Studio's own stub-mode
-proof run. Its public
-> cutover is a numbered plan, not a promise with a date, and `v0.5.2` is still the latest
-> release.
+> from the file it plays, and the three Studio pictures come from the Studio's own stub-mode
+> proof run. Its public cutover is a numbered plan, not a promise with a date, and `v0.5.3` is
+> the latest release.
 
 https://github.com/user-attachments/assets/20449d7e-d1e4-451c-be29-e6a2b15baf38
 
@@ -134,23 +133,23 @@ EU AI Act Article 50 answer before it can be published, a `Generated` label that
 filtered away, and made-up viewers that say they are made up. Both halves are built to hold
 their rule, and both are covered below.
 
-## ⏱️ What it does today (v0.5.2)
+## ⏱️ What it does today (v0.5.3)
 
-### ⚽ The football app (public, v0.5.2)
+### ⚽ The football app (public, v0.5.3)
 
 Fourteen competitions: the five big domestic leagues (La Liga, the Premier League, Serie A,
 Ligue 1, the Bundesliga), the three UEFA club competitions (Champions League, Europa League,
-Conference League) and the six super cups. 1,440 fixtures and six league tables as of 21
+Conference League) and the six super cups. 1,461 fixtures and six league tables as of 27
 October 2026, synced from ESPN's public scoreboard and read through three visual "lenses"
-over one fixture skeleton. The pictures below are the live GitHub demo, captured that day at
-a 390 px phone width.
+over one fixture skeleton. The pictures below are the v0.5.3 build of the GitHub demo,
+captured that day at a 390 px phone width.
 
 <p align="center">
-  <img src="docs/screenshots/2026-10-21/football-poster-light.jpg" width="230" alt="The Poster lens on a phone, light theme: the next matchday, Thursday 22 October, with 36 matches, as a full-bleed hero above the first kickoffs">
+  <img src="docs/screenshots/2026-10-27/football-poster-light.jpg" width="230" alt="The Poster lens on a phone, light theme: tonight's slate, Tuesday 27 October, with three Serie A kickoffs as a full-bleed hero above the week's fixtures">
   &nbsp;
-  <img src="docs/screenshots/2026-10-21/football-ledger-light.jpg" width="230" alt="The Ledger lens: a date-spine calendar with a Next up strip">
+  <img src="docs/screenshots/2026-10-27/football-ledger-light.jpg" width="230" alt="The Ledger lens: a date-spine calendar with a Next up strip">
   &nbsp;
-  <img src="docs/screenshots/2026-10-21/football-broadcast-dark.jpg" width="230" alt="The Broadcast lens, dark: a marquee ticker above Monday's completed results and the start of Tuesday's">
+  <img src="docs/screenshots/2026-10-27/football-broadcast-dark.jpg" width="230" alt="The Broadcast lens, dark: a marquee ticker above Monday's completed results and Tuesday's kickoffs">
 </p>
 
 What the app refuses to do is the feature:
@@ -167,7 +166,7 @@ What the app refuses to do is the feature:
 - **The table tells you what it can't compare.** "2 clubs have a game in hand — sort by PPG."
 
 <p align="center">
-  <img src="docs/screenshots/2026-10-21/football-table-1000.jpg" width="720" alt="La Liga's table at desktop width in the Ledger lens: matchday banner, European qualification bands, points per game, form and next fixture">
+  <img src="docs/screenshots/2026-10-27/football-table-1000.jpg" width="720" alt="La Liga's table at desktop width in the Ledger lens: matchday banner, European qualification bands, points per game, form and next fixture">
 </p>
 
 The full argument — the UTC instant, the diff engine, the fail-loud guards, staleness as a
@@ -416,7 +415,7 @@ runs the six-pass cycle; [`kickoff-design-studio`](.agents/skills/kickoff-design
 
 ## 📍 Where we are
 
-**Shipped, and public** (`v0.5.2`): fixtures, standings, the three lenses, the scheduled sync
+**Shipped, and public** (`v0.5.3`): fixtures, standings, the three lenses, the scheduled sync
 with its self-merging PRs and change digest, and the Champions League with computed matchday
 provenance and venue clocks (v0.5.0).
 
@@ -480,6 +479,7 @@ wrong? That's this repo's signature issue; there's a
 
 One subject line per release. The honours board:
 
+- **v0.5.3** *(27 Oct 2026)* — the last patch before the cutover: one suspended or abandoned match can no longer freeze every league's table.
 - **v0.5.2** *(17 Sep 2026)* — hotfix to the hotfix: the 30-day lookback restored so the app keeps its recent results.
 - **v0.5.1** *(17 Sep 2026)* — hotfix: ESPN's date-range API broke; the sync switched to day-by-day fetching.
 - **v0.5.0** *(12 Sep 2026)* — the Champions League joins the schedule: 144 league-phase fixtures, matchday provenance, venue clocks with honest unknowns, a 36-club table, and Moments as an empty-first third tab.
