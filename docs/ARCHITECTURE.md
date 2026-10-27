@@ -111,8 +111,8 @@ Components render what the pure layer decides. `useNow()` is the one place they 
 `useUrlState` is the one place they read the URL. Every browser-found bug in this repo's
 history — the `?date=` crash, the pinned-date rollover, the two heroes on two clocks — has
 lived exactly on this seam, in the wiring between a hook and a component, which is why a
-jsdom component-test rig is the next release and why "extract it to `lib/` and test it
-there" is the standing review instruction.
+jsdom component-test rig (v0.2.4) now sits beside the node suite and why "extract it to
+`lib/` and test it there" is the standing review instruction.
 
 ## One skeleton, three lenses
 
