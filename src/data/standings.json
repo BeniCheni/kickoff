@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-10-27T18:45:40.761Z",
+  "fetchedAt": "2026-10-27T21:26:09.691Z",
   "provider": "espn",
   "season": 2026,
   "leagues": {
@@ -1151,11 +1151,26 @@
     ],
     "seriea": [
       {
+        "teamId": "112",
+        "name": "Lazio",
+        "shortName": "Lazio",
+        "abbrev": "LAZ",
+        "rank": 1,
+        "rankChange": 0,
+        "played": 9,
+        "w": 8,
+        "d": 1,
+        "l": 0,
+        "gf": 22,
+        "ga": 7,
+        "pts": 25
+      },
+      {
         "teamId": "110",
         "name": "Internazionale",
         "shortName": "Inter Milan",
         "abbrev": "INT",
-        "rank": 1,
+        "rank": 2,
         "rankChange": 0,
         "played": 8,
         "w": 7,
@@ -1163,21 +1178,6 @@
         "l": 0,
         "gf": 23,
         "ga": 10,
-        "pts": 22
-      },
-      {
-        "teamId": "112",
-        "name": "Lazio",
-        "shortName": "Lazio",
-        "abbrev": "LAZ",
-        "rank": 2,
-        "rankChange": 0,
-        "played": 8,
-        "w": 7,
-        "d": 1,
-        "l": 0,
-        "gf": 16,
-        "ga": 5,
         "pts": 22
       },
       {
@@ -1352,12 +1352,12 @@
         "abbrev": "SAS",
         "rank": 14,
         "rankChange": 0,
-        "played": 8,
+        "played": 9,
         "w": 2,
         "d": 2,
-        "l": 4,
-        "gf": 12,
-        "ga": 16,
+        "l": 5,
+        "gf": 14,
+        "ga": 22,
         "pts": 8
       },
       {
