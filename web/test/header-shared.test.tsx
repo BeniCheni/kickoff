@@ -19,7 +19,7 @@ test('Next renders the header from the shared module', () => {
   )
   const fromModule = renderToStaticMarkup(
     <AppHeader
-      version="0.5.2"
+      version="0.5.3"
       onToggleTheme={() => {}}
       themeLabel={(
         <>

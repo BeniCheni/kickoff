@@ -12,7 +12,7 @@ describe('the header is one module', () => {
       render(<App />)
       const light = document.querySelector('header')!.outerHTML
       const lightSlot = render(
-        <AppHeader version="0.5.2" themeLabel="Dark mode" onToggleTheme={() => {}} />,
+        <AppHeader version="0.5.3" themeLabel="Dark mode" onToggleTheme={() => {}} />,
       )
       expect(lightSlot.container.querySelector('header')!.outerHTML).toBe(light)
       lightSlot.unmount()
@@ -20,7 +20,7 @@ describe('the header is one module', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Dark mode' }))
       const dark = document.querySelector('header')!.outerHTML
       const darkSlot = render(
-        <AppHeader version="0.5.2" themeLabel="Light mode" onToggleTheme={() => {}} />,
+        <AppHeader version="0.5.3" themeLabel="Light mode" onToggleTheme={() => {}} />,
       )
       expect(darkSlot.container.querySelector('header')!.outerHTML).toBe(dark)
       expect(dark).toContain('>Light mode</button>')

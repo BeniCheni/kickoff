@@ -4,7 +4,7 @@ Local, offline core for Kickoff's own generated videos. The reader in `src/` doe
 
 `studio/db/` is the schema module. It imports nothing from the rest of `studio/`. The public row contract lives in `@kickoff/catalog` (`packages/kickoff-catalog`), installed as a copy (`studio/.npmrc`, `install-links=true`). After editing the package, run `npm ci` in `studio/` to refresh the installed copy before `npm test` sees the edit. CI installs fresh. Drizzle stays in this package. The tables live in the Postgres schema `studio`, which Supabase's Data API does not expose. The public app's names are the views `catalog.videos` and `catalog.video` (`videos` where `published_at` is not null, ordered by `position` — the view does not apply the order; the app does).
 
-This package is not a release of Kickoff. v0.5.2 stays.
+This package is not a release of Kickoff. v0.5.3 is the latest release.
 
 ## What you run
 

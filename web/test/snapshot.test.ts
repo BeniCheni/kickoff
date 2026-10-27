@@ -32,7 +32,7 @@ test('a one-byte data change moves the digest and the response has nothing else'
     lastSyncAt: META.lastSyncAt,
     version: pkg.version,
   })
-  expect(body.version).toBe('0.5.2')
+  expect(body.version).toBe('0.5.3')
 })
 
 test.each([
