@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-10-29T17:30:15.692Z",
+  "fetchedAt": "2026-10-29T22:54:34.159Z",
   "provider": "espn",
   "season": 2026,
   "leagues": {
@@ -1232,13 +1232,13 @@
         "abbrev": "FRO",
         "rank": 6,
         "rankChange": 0,
-        "played": 8,
-        "w": 4,
+        "played": 9,
+        "w": 5,
         "d": 2,
         "l": 2,
-        "gf": 17,
-        "ga": 13,
-        "pts": 14
+        "gf": 22,
+        "ga": 14,
+        "pts": 17
       },
       {
         "teamId": "114",
@@ -1322,13 +1322,13 @@
         "abbrev": "ATA",
         "rank": 12,
         "rankChange": 0,
-        "played": 8,
+        "played": 9,
         "w": 3,
-        "d": 1,
+        "d": 2,
         "l": 4,
-        "gf": 14,
-        "ga": 15,
-        "pts": 10
+        "gf": 16,
+        "ga": 17,
+        "pts": 11
       },
       {
         "teamId": "3263",
@@ -1352,12 +1352,12 @@
         "abbrev": "LEC",
         "rank": 14,
         "rankChange": 0,
-        "played": 8,
+        "played": 9,
         "w": 3,
         "d": 0,
-        "l": 5,
-        "gf": 9,
-        "ga": 14,
+        "l": 6,
+        "gf": 10,
+        "ga": 19,
         "pts": 9
       },
       {
@@ -1406,11 +1406,26 @@
         "pts": 5
       },
       {
+        "teamId": "109",
+        "name": "Fiorentina",
+        "shortName": "Fiorentina",
+        "abbrev": "FIO",
+        "rank": 18,
+        "rankChange": 0,
+        "played": 9,
+        "w": 1,
+        "d": 2,
+        "l": 6,
+        "gf": 11,
+        "ga": 21,
+        "pts": 5
+      },
+      {
         "teamId": "115",
         "name": "Parma",
         "shortName": "Parma",
         "abbrev": "PAR",
-        "rank": 18,
+        "rank": 19,
         "rankChange": 0,
         "played": 9,
         "w": 1,
@@ -1419,21 +1434,6 @@
         "gf": 5,
         "ga": 15,
         "pts": 5
-      },
-      {
-        "teamId": "109",
-        "name": "Fiorentina",
-        "shortName": "Fiorentina",
-        "abbrev": "FIO",
-        "rank": 19,
-        "rankChange": 0,
-        "played": 8,
-        "w": 1,
-        "d": 1,
-        "l": 6,
-        "gf": 9,
-        "ga": 19,
-        "pts": 4
       },
       {
         "teamId": "17530",
