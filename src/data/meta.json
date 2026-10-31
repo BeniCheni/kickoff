@@ -1,9 +1,9 @@
 {
-  "lastSyncAt": "2026-10-30T23:02:24.865Z",
+  "lastSyncAt": "2026-10-31T13:45:29.709Z",
   "provider": "espn",
   "window": {
-    "from": "2026-09-30",
-    "to": "2027-03-29"
+    "from": "2026-10-01",
+    "to": "2027-03-30"
   },
   "counts": {
     "supercoppa": 1,
