@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-11-01T22:54:49.524Z",
+  "fetchedAt": "2026-11-02T20:52:25.281Z",
   "provider": "espn",
   "season": 2026,
   "leagues": {
@@ -1361,18 +1361,33 @@
         "pts": 9
       },
       {
+        "teamId": "109",
+        "name": "Fiorentina",
+        "shortName": "Fiorentina",
+        "abbrev": "FIO",
+        "rank": 15,
+        "rankChange": 0,
+        "played": 10,
+        "w": 2,
+        "d": 2,
+        "l": 6,
+        "gf": 15,
+        "ga": 23,
+        "pts": 8
+      },
+      {
         "teamId": "3997",
         "name": "Sassuolo",
         "shortName": "Sassuolo",
         "abbrev": "SAS",
-        "rank": 15,
+        "rank": 16,
         "rankChange": 0,
-        "played": 9,
+        "played": 10,
         "w": 2,
         "d": 2,
-        "l": 5,
-        "gf": 14,
-        "ga": 22,
+        "l": 6,
+        "gf": 16,
+        "ga": 26,
         "pts": 8
       },
       {
@@ -1380,7 +1395,7 @@
         "name": "Monza",
         "shortName": "Monza",
         "abbrev": "MON",
-        "rank": 16,
+        "rank": 17,
         "rankChange": 0,
         "played": 10,
         "w": 2,
@@ -1389,21 +1404,6 @@
         "gf": 17,
         "ga": 24,
         "pts": 7
-      },
-      {
-        "teamId": "109",
-        "name": "Fiorentina",
-        "shortName": "Fiorentina",
-        "abbrev": "FIO",
-        "rank": 17,
-        "rankChange": 0,
-        "played": 9,
-        "w": 1,
-        "d": 2,
-        "l": 6,
-        "gf": 11,
-        "ga": 21,
-        "pts": 5
       },
       {
         "teamId": "115",
