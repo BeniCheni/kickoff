@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-11-07T21:01:26.931Z",
+  "fetchedAt": "2026-11-07T22:51:12.429Z",
   "provider": "espn",
   "season": 2026,
   "leagues": {
@@ -562,11 +562,26 @@
         "pts": 30
       },
       {
+        "teamId": "86",
+        "name": "Real Madrid",
+        "shortName": "Real Madrid",
+        "abbrev": "RMA",
+        "rank": 2,
+        "rankChange": 0,
+        "played": 12,
+        "w": 10,
+        "d": 0,
+        "l": 2,
+        "gf": 31,
+        "ga": 10,
+        "pts": 30
+      },
+      {
         "teamId": "1068",
         "name": "Atlético Madrid",
         "shortName": "Atlético",
         "abbrev": "ATM",
-        "rank": 2,
+        "rank": 3,
         "rankChange": 0,
         "played": 11,
         "w": 9,
@@ -575,21 +590,6 @@
         "gf": 22,
         "ga": 8,
         "pts": 28
-      },
-      {
-        "teamId": "86",
-        "name": "Real Madrid",
-        "shortName": "Real Madrid",
-        "abbrev": "RMA",
-        "rank": 3,
-        "rankChange": 0,
-        "played": 11,
-        "w": 9,
-        "d": 0,
-        "l": 2,
-        "gf": 28,
-        "ga": 10,
-        "pts": 27
       },
       {
         "teamId": "244",
@@ -823,12 +823,12 @@
         "abbrev": "VAL",
         "rank": 19,
         "rankChange": 0,
-        "played": 11,
+        "played": 12,
         "w": 2,
         "d": 3,
-        "l": 6,
+        "l": 7,
         "gf": 8,
-        "ga": 17,
+        "ga": 20,
         "pts": 9
       },
       {
@@ -1166,11 +1166,26 @@
         "pts": 28
       },
       {
+        "teamId": "104",
+        "name": "AS Roma",
+        "shortName": "AS Roma",
+        "abbrev": "ROMA",
+        "rank": 2,
+        "rankChange": 0,
+        "played": 11,
+        "w": 8,
+        "d": 3,
+        "l": 0,
+        "gf": 31,
+        "ga": 10,
+        "pts": 27
+      },
+      {
         "teamId": "110",
         "name": "Internazionale",
         "shortName": "Inter Milan",
         "abbrev": "INT",
-        "rank": 2,
+        "rank": 3,
         "rankChange": 0,
         "played": 10,
         "w": 8,
@@ -1179,21 +1194,6 @@
         "gf": 26,
         "ga": 13,
         "pts": 25
-      },
-      {
-        "teamId": "104",
-        "name": "AS Roma",
-        "shortName": "AS Roma",
-        "abbrev": "ROMA",
-        "rank": 3,
-        "rankChange": 0,
-        "played": 10,
-        "w": 7,
-        "d": 3,
-        "l": 0,
-        "gf": 28,
-        "ga": 10,
-        "pts": 24
       },
       {
         "teamId": "2572",
@@ -1376,26 +1376,11 @@
         "pts": 8
       },
       {
-        "teamId": "3997",
-        "name": "Sassuolo",
-        "shortName": "Sassuolo",
-        "abbrev": "SAS",
-        "rank": 16,
-        "rankChange": 0,
-        "played": 10,
-        "w": 2,
-        "d": 2,
-        "l": 6,
-        "gf": 16,
-        "ga": 26,
-        "pts": 8
-      },
-      {
         "teamId": "115",
         "name": "Parma",
         "shortName": "Parma",
         "abbrev": "PAR",
-        "rank": 17,
+        "rank": 16,
         "rankChange": 0,
         "played": 11,
         "w": 2,
@@ -1403,6 +1388,21 @@
         "l": 7,
         "gf": 9,
         "ga": 17,
+        "pts": 8
+      },
+      {
+        "teamId": "3997",
+        "name": "Sassuolo",
+        "shortName": "Sassuolo",
+        "abbrev": "SAS",
+        "rank": 17,
+        "rankChange": 0,
+        "played": 11,
+        "w": 2,
+        "d": 2,
+        "l": 7,
+        "gf": 16,
+        "ga": 29,
         "pts": 8
       },
       {
@@ -1459,13 +1459,13 @@
         "abbrev": "PSG",
         "rank": 1,
         "rankChange": 0,
-        "played": 9,
-        "w": 6,
+        "played": 10,
+        "w": 7,
         "d": 2,
         "l": 1,
-        "gf": 21,
+        "gf": 22,
         "ga": 10,
-        "pts": 20
+        "pts": 23
       },
       {
         "teamId": "6851",
@@ -1684,12 +1684,12 @@
         "abbrev": "TRY",
         "rank": 16,
         "rankChange": 0,
-        "played": 9,
+        "played": 10,
         "w": 2,
         "d": 2,
-        "l": 5,
+        "l": 6,
         "gf": 7,
-        "ga": 16,
+        "ga": 17,
         "pts": 8
       },
       {
