@@ -128,8 +128,12 @@ questions and recommendations stay below as they were asked.
 ## 5. Scope, as ruled
 
 **Seats.** Cursor builds (Grok 4.7, Extra High): one PR for the whole slice. Pass 1 is Claude
-Code (Fable 5.1, Extra), the vendor that did not build it. As a release, it escalates at the
-Pass 2.5 gate, and Beni merges and tags it.
+Code (Fable 5.2, Extra), the vendor that did not build it. Fable 5.2 replaces the 5.1 that Q5
+and the README's seats name, by Beni's standing ruling of Wed 11 Nov 2026 at 17:39 EST, given
+in another PM session: "Fable 5.2 is the current latest version from Claude. We're using that
+for the Pass 1 prompt and future prompts when Fable is desired." He confirmed the same evening,
+in this PM seat's session, that it covers this slice. As a release, it escalates at the Pass
+2.5 gate, and Beni merges and tags it.
 
 **S1. Receipts.** Record single-day scoreboard responses with at least one `STATUS_FINAL_AET`,
 one penalties finish after extra time and one straight after 90 minutes, under
