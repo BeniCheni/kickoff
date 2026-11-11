@@ -12,23 +12,30 @@ the fix a patch, v0.5.4.
   `STATUS_SHOOTOUT` unmapped on purpose:
   storing ESPN's score as `full_time` would show a score the books do not settle a Match Result
   on as though it were the 90-minute result.
-- An unmapped status throws in `normalizeEvent` (`espn.ts:152`). `fetchWindow` collects every
-  such event and then refuses the whole fetch (`espn.ts:268–271`), so no league's fixtures or
-  table update. That is how one La Liga abandonment froze the snapshot on 10–12 Oct 2026.
+- Each of those three names throws in `normalizeEvent` (`espn.ts:150–152`). `fetchWindow`
+  collects every such event and then refuses the whole fetch (`espn.ts:268–271`), so no
+  league's fixtures or table update. That is how one La Liga abandonment froze the snapshot on
+  10–12 Oct 2026. (A string that resolves through the map object's prototype, such as
+  `constructor`, passes that lookup; the schema check in `scripts/sync.ts:128–134` refuses it
+  before any write.)
 - The scheduled run passes no `--from` or `--to` (`.github/workflows/sync.yml:111–113`), so it
   fetches every day from 30 days before today, in Brooklyn, to 150 days after
-  (`scripts/sync.ts:110–111`, `src/lib/time.ts:106`). A finished match stays in that window
-  for 30 days, and one unmapped final refuses every run while it is there.
+  (`scripts/sync.ts:110–111`, `src/lib/time.ts:106`). The snapshot on `main` records that window
+  as 2026-10-12 to 2027-04-10 (`src/data/meta.json`). A finished match stays in the window for
+  30 days, and an unmapped final refuses every run that fetches it while ESPN keeps returning
+  that status.
 - Today's snapshot holds three one-off knockouts: Supercoppa Italiana, Inter v Lazio, Tue 22 Dec
   2026; Supercopa de España, Barcelona v Atlético Madrid, Tue 2 Feb 2027, and Real Sociedad v
-  Real Madrid, Wed 3 Feb 2027. If Inter v Lazio is level after 90 minutes, every run from the
-  final whistle through Thu 21 Jan 2027 refuses to write, for every league.
+  Real Madrid, Wed 3 Feb 2027. If Inter v Lazio is level after 90 minutes and ESPN keeps
+  reporting its final as `STATUS_FINAL_PEN` or `STATUS_FINAL_AET`, every run from the final
+  whistle through Thu 21 Jan 2027 refuses to write, for every league.
 - The European competitions are listed only to the end of their league phase: the last
   Champions League kickoff in the snapshot is 27 Jan 2027, and no European fixture is on or
   after 31 Jan. Once ESPN lists the February knockout ties, a second leg can end the same way.
 
 ```bash
 git show origin/main:src/data/fixtures.json | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const f=JSON.parse(s);for(const x of f.filter(x=>/^super/.test(x.competition)))console.log(x.id,x.kickoffUtc,x.home.name,"v",x.away.name,x.status);console.log("European on or after 31 Jan:",f.filter(x=>["ucl","uel","uecl"].includes(x.competition)&&x.kickoffUtc>="2027-01-31").length)})'
+git show origin/main:src/data/meta.json | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>console.log(JSON.parse(s).window))'
 ```
 
 ## 2. What ESPN sends, observed 11 Nov 2026
@@ -109,6 +116,12 @@ question dialog: Q1 **A**, with the names `after_extra_time` and `after_penaltie
 Q3 **Patch, v0.5.4**; Q4 **Yes, as proposed**; Q5 **Cursor**, not the recommended Codex. The
 questions and recommendations stay below as they were asked.
 
+**Annotation after Codex's cold read of 11 Nov (its finding 6).** Q3's premise stretched
+README.md. Its cutover sentence (`README.md:422–423`) explains why the full-stack work lands as
+non-releases, and the public demo already redeploys on every merge (`:45–46`). The patch ruling
+and its number stand on `CLAUDE.md`'s patch rule (a fix, no new capability), as v0.5.3 did for
+a reader-visible fix.
+
 - **Q1. Stored shape: A or B?** A, because a missed consumer fails closed. If A, confirm the
   names `after_extra_time` and `after_penalties`, or give others.
 - **Q2. Contain an unknown status to its own competition in this slice? Yes or No.** No. It
@@ -138,58 +151,114 @@ in this PM seat's session, that it covers this slice. As a release, it escalates
 **S1. Receipts.** Record single-day scoreboard responses with at least one `STATUS_FINAL_AET`,
 one penalties finish after extra time and one straight after 90 minutes, under
 `tests/fixtures/espn/`, each URL named in its README, trimmed to the consumed fields as
-`uel-401915586.json` is. Note in that README that range requests now answer 400. Record a
-`STATUS_SHOOTOUT` receipt if ESPN serves one; otherwise it stays unmapped and the PR says so.
+`uel-401915586.json` is. Note in that README that the range requests tried on 11 Nov answered
+400. If ESPN serves `STATUS_SHOOTOUT`, its `status.type.state` decides: `in` maps to `in_play`
+like the other live names, and a completed `post` maps as `STATUS_FINAL_PEN` does, with the
+receipt named in the PR. Without a receipt it stays unmapped, and the PR says so.
+
+**S1b. Live statuses, before the build merges.** A run that lands during extra time or a
+shootout sees whatever in-progress name ESPN uses then, and an unmapped name refuses that run.
+Capture single-day scoreboard responses during the extra time or shootout of a cup match. By
+ESPN's calendars read on 11 Nov, the Copa del Rey's second round (16 Nov–15 Dec) and the FA
+Cup's (5 Dec) fall before 18 Dec; both competitions played extra time in their first rounds
+(§2). Each in-progress name a capture
+shows with `state` `in` maps to `in_play`, citing that receipt. The builder captures, or the PM
+seat if the builder cannot be online for a match. If no capture succeeds, those names stay
+unmapped, the PR says so, and the match-day check below carries the risk.
 
 **S2. Schema.** Add the two statuses to the enum (`src/lib/schema.ts:48`) and an optional
-`shootout: { home, away }` that is valid only on `after_penalties`. Today's snapshot still
-parses.
+`shootout: { home, away }`. A fixture with `after_extra_time` or `after_penalties` must carry
+`result`; `after_penalties` must also carry `shootout`; no other status may carry `shootout`.
+Each goal count in either field, for these two statuses, is a nonnegative whole number. Today's
+snapshot still parses.
 
-**S3. Mapper.** `STATUS_FINAL_AET` and `STATUS_FINAL_PEN` map to the new statuses, with
-`result` from `score` and `shootout` from `shootoutScore`. A missing or non-numeric score
-refuses the event; it never becomes zero (row 2's trap, `espn.ts:183–184`).
+**S3. Mapper.** `STATUS_FINAL_AET` maps to `after_extra_time`, and `STATUS_FINAL_PEN` to
+`after_penalties`. In every final read for §2, `score` came as a numeric string ("4") and
+`shootoutScore` as a number (3), on both sides. `result` comes from `score` and `shootout` from
+`shootoutScore`. For these two statuses, a value on either side that is missing, or is not a
+nonnegative whole number in that shape, refuses the event. `Number` turns `null`, `""`, `" "`,
+`false` and `[]` into 0 (row 2's trap, `espn.ts:183–184`), so the check reads the raw value,
+not `Number`'s result. A refused event refuses the whole fetch, as an unmapped status does, so
+the snapshot boundary is unchanged. The `full_time` path keeps its current parse on purpose;
+row 2 stays its own row. `tests/espn.test.ts:158–175` drops the two names from its rejection
+list, and receipt tests cover them instead.
 
-**S4. Consumers.** Labels and the bracketed shootout in the row; the ticker label; the form
-guide unchanged; `RESULT_CHANGED` also compares the shootout; the sync PR body names the new
-statuses. Both apps' edge tests cover both statuses.
+**S4. Consumers.** The row shows the `AET` or `PENS` pill and the bracketed shootout; the
+ticker prints these results under that label; the form guide is unchanged. In the diff, a first
+final (`scheduled` or `in_play` to a new status) is a `STATUS_CHANGED` line whose detail names
+both statuses (`scripts/diff.ts:173–178`), as now. `RESULT_CHANGED` also fires, urgent, when
+only the shootout changes. It compares the shootout the way it compares the score, home and
+away inversion included (`diff.ts:146–149`), and its detail prints the old and new shootout
+beside the score, for example `1-1 (3-2) -> 1-1 (2-3)`. Those details reach readers through
+the sync PR's log and the digest, which copies that log (`scripts/sync-digest.ts:24–29`). The
+PR summary keeps kinds and counts only (`scripts/sync-pr-body.ts:36`). The digest generator
+changes only if the log cannot carry that text. Both apps' edge tests cover both statuses.
 
 **S5. Docs and release.** The `espn.ts:44` comment; `CLAUDE.md`'s list of stored statuses, and
 its roadmap sentence that the version does not move after v0.5.3; a `CHANGELOG.md` `[0.5.4]`
 section; every other version place that `CLAUDE.md`'s "Release management" lists, moved
 together; README's "Shipped, and public" line; row 107 moved to the completed rows; and new
-rows for option C and per-competition containment, carrying the reasons in §3 and Q2.
+rows for option C and per-competition containment, carrying the reasons in §3 and Q2. Three
+tests compare against the version read from `package.json`:
+`tests/dom/momentsGallery.test.tsx:37`, `web/test/scaffold.test.tsx:17` and
+`web/test/snapshot.test.ts:35`. They move to 0.5.4 and still fail on a mismatch. The current-release copy at `README.md:51` and `:138` and at
+`studio/README.md:7` moves too. `README.md:144` captions v0.5.3 screenshots and stays.
 
-**Acceptance**, each with its command:
+**Acceptance.** Each item names its command, and each can fail.
 
 - `npm run typecheck` and `npm test` green at every commit, plus the `web/` and `studio/`
   steps in `.github/workflows/ci.yml`.
-- Each S1 receipt maps to its status, result and shootout in a test that reads the receipt.
-  The same receipt with `score` or `shootoutScore` removed is refused, not stored as 0–0.
-- A test fails if the form guide counts an `after_extra_time` 4–3 as a win, and another fails
-  if the ticker prints it under FT.
-- `git show origin/main:src/data/fixtures.json` parses under the new schema.
-- The browser matrix, since `src/` changes: every lens × theme × tab at 360, 375, 390 and about
-  1000 px, with one uncommitted stub row per new status, reverted after, and `git status`
-  clean, as PR #183 did.
+- `npm test -- tests/espn.test.ts tests/validate.test.ts tests/standings.test.ts
+  tests/lensSelectors.test.ts tests/diff.test.ts tests/syncPrBody.test.ts
+  tests/syncDigest.test.ts` and `npm --prefix web test -- test/fixture-edges.test.tsx` cover
+  at least these cases:
+  - each S1 and S1b receipt maps to its status, `result` and `shootout`;
+  - each malformed value S3 names, on each side, is refused, not stored;
+  - the form guide does not count an `after_extra_time` 4–3;
+  - a same-day `after_extra_time` or `after_penalties` result appears in the ticker under
+    `AET` or `PENS`, and no FT segment carries it;
+  - a first final's `STATUS_CHANGED` detail, and a shootout-only correction's urgent
+    `RESULT_CHANGED` detail with the old and new shootout, inversion included, appear in the
+    PR log and the digest;
+  - the row shows the `AET` and `PENS` pills and the bracketed shootout, in both apps.
+- The snapshot on `main` parses under the new schema, printing its count:
+  `git show origin/main:src/data/fixtures.json | npx tsx -e 'import { fixturesFileSchema } from "./src/lib/schema.ts"; let s = ""; process.stdin.on("data", (d) => (s += d)).on("end", () => console.log("parsed", fixturesFileSchema.parse(JSON.parse(s)).length))'`
+- The browser matrix, since `src/` changes. Run `npm run dev -- --host 127.0.0.1 --port 5173`
+  with one uncommitted stub row per new status in `src/data/fixtures.json`, as PR #183 did.
+  Check every lens × theme × tab at 360, 375, 390 and about 1000 px: each stub row shows its
+  pill, score and any shootout, and `document.documentElement.scrollWidth ===
+  window.innerWidth` holds before each capture. Revert the stub after, and
+  `git status --porcelain` prints nothing.
 
-**Deadline.** The sync runs the code on `main`, and the hourly cron's 22:23 UTC slot on 22 Dec
-(`sync.yml:39`) is the first likely to see the result. The PM seat proposes merging by Fri
-18 Dec 2026, which leaves Mon 21 Dec and the day itself spare. That is a target, not a
+**Deadline.** The sync runs the code on `main`. On 22 Dec the scheduled slots after the 20:00
+UTC kickoff are 21:23, 22:23 and 23:23 UTC (`sync.yml:39`), 83, 143 and 203 minutes in.
+21:23 falls in play, 22:23 can still fall in a shootout or a delayed finish, and 23:23 is the
+first slot likely to see the final. GitHub has delivered runs here up to about four hours late
+and skipped some slots (`sync.yml:29–30`), so no slot is certain. The PM seat proposes merging
+by Fri 18 Dec 2026, which leaves Mon 21 Dec and the day itself spare. That is a target, not a
 promise.
+
+**Match-day check.** After the final, the PM seat confirms three things and tells Beni that
+day if any fails:
+`gh run list --repo BeniCheni/kickoff --workflow sync.yml --branch main --limit 6` shows a
+green run that started after ESPN posted the final; `supercoppa:401928184` on `main` carries
+a new status and its result; and any red run between kickoff and that green run names only an
+in-progress status.
 
 ## 6. Deliberately not done
 
 - No 90-minute score (option C). It gets its own row.
 - No per-competition containment (Q2: No). It gets its own row.
 - No mapping for `STATUS_DELAYED`, `STATUS_FORFEIT`, `STATUS_RAIN_DELAY` or any other status
-  not observed here.
+  that no S1 or S1b receipt shows.
 - No "level at 90′" inference for any tie, and no aggregate or `advance` field.
 
 ## 7. Not verified
 
-- What ESPN sends while a match is in extra time or a shootout. If it is a status outside the
-  in-play map (`espn.ts:60–63`), a run that lands mid-match goes red once; the next run after
-  the final status recovers.
+- What ESPN sends while a match is in extra time or a shootout. Unless S1b maps it, every run
+  that lands then and sees a name outside the in-play map (`espn.ts:60–63`) refuses to write.
+  Recovery waits for the first run after ESPN posts the final, which the match-day check
+  confirms.
 - `STATUS_SHOOTOUT`: not seen in any of the 93 events.
 - ESPN's statuses and fields for two-legged European ties, which are not listed yet.
 - Whether ESPN ever moves a final status after publishing it, for example `STATUS_FULL_TIME` to
