@@ -32,7 +32,8 @@ result can no longer refuse the snapshot for every league.
 
 - `STATUS_FINAL_AET` and `STATUS_FINAL_PEN` no longer abort the fetch. They were left
   unmapped on purpose, and one of them inside the 30-day lookback refused every league,
-  tables included.
+  tables included. A final whose score or shootout is missing or malformed is still
+  refused, and that still refuses the whole snapshot.
 
 ### Deliberately not done
 
