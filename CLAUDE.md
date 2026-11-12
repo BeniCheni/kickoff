@@ -119,8 +119,9 @@ stays green; it opens no PR. The workflow never pushes straight to `main`.
 **Every sync PR this workflow opens, including a quiet refresh of a snapshot 20 hours old
 or older, merges after `verify` is green.** The
 `mergeVerdict` in `scripts/diff.ts` still reports `hold` when anything is urgent (inside
-−6 h..+72 h, or a postponement, cancellation, suspension, abandonment, or result/team correction at any horizon), or when any `DISAPPEARED` or
-`HOME_AWAY_INVERTED` line appears at any horizon; it reports `auto` otherwise. This is a
+−6 h..+72 h, or a postponement, cancellation, suspension, abandonment, or result/team
+correction at any horizon, a change from one final status to another included), or when any
+`DISAPPEARED` or `HOME_AWAY_INVERTED` line appears at any horizon; it reports `auto` otherwise. This is a
 reader-facing signal in the PR report, not a release gate. The legacy `standings=failed`
 report remains visible for compatibility, although current standings failures exit 2 before
 any report or PR update. The workflow uses `gh pr merge --squash --auto`, gated by the

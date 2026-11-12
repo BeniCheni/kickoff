@@ -23,6 +23,9 @@ result can no longer refuse the snapshot for every league.
 - A correction of the shootout alone is an urgent result change. The sync log and the
   change digest show the old and new shootout beside the score. The sync PR summary still
   gives kinds and counts only.
+- A change from one final status to another is urgent at any horizon, even when the score
+  holds: a full-time 2–1 that ESPN corrects to 2–1 after extra time was not the 90-minute
+  score. A first final keeps the usual 72-hour rule.
 - Pass 1 in the README's seats is Claude Code on Fable 5.2, by Beni's ruling of 11 Nov 2026.
 
 ### Fixed

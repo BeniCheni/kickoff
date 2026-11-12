@@ -556,6 +556,40 @@ describe('extra time and penalties', () => {
     })
   })
 
+  it('treats one final status corrected to another as urgent at any horizon', () => {
+    // NOW is 20 days after this kickoff, outside the -6 h..+72 h horizon, and the score does
+    // not move in any pair, so only the status correction can make these urgent.
+    const row = (over: Partial<Fixture>) => fx({ id: 'a', kickoffUtc: '2026-08-01T12:00:00.000Z', ...over })
+    const ft = row({ status: 'full_time', result: { home: 2, away: 1 } })
+    const aet = row({ status: 'after_extra_time', result: { home: 2, away: 1 } })
+    const level = row({ status: 'after_extra_time', result: { home: 1, away: 1 } })
+    const pens = row({ status: 'after_penalties', result: { home: 1, away: 1 }, shootout: { home: 4, away: 5 } })
+    for (const [before, after, detail] of [
+      [ft, aet, 'full_time -> after_extra_time'],
+      [aet, ft, 'after_extra_time -> full_time'],
+      [level, pens, 'after_extra_time -> after_penalties'],
+      [pens, level, 'after_penalties -> after_extra_time'],
+    ] as const) {
+      const changes = diffFixtures([before], [after], { now: NOW })
+      expect(changes, detail).toMatchObject([{ kind: 'STATUS_CHANGED', urgent: true, detail }])
+      expect(hasUrgentChanges(changes), detail).toBe(true)
+      expect(mergeVerdict(changes, 'unchanged').verdict, detail).toBe('hold')
+    }
+  })
+
+  it('keeps a first final outside the horizon quiet, whichever final it is', () => {
+    const before = fx({ id: 'a', kickoffUtc: '2026-08-01T12:00:00.000Z' })
+    for (const after of [
+      { ...before, status: 'full_time' as const, result: { home: 1, away: 0 } },
+      { ...before, status: 'after_extra_time' as const, result: { home: 2, away: 1 } },
+      { ...before, status: 'after_penalties' as const, result: { home: 1, away: 1 }, shootout: { home: 3, away: 2 } },
+    ]) {
+      expect(diffFixtures([before], [after], { now: NOW }), after.status).toMatchObject([
+        { kind: 'STATUS_CHANGED', urgent: false, detail: `scheduled -> ${after.status}` },
+      ])
+    }
+  })
+
   it('carries the first-final and shootout details in the sync log and the digest', () => {
     const first = diffFixtures(
       [fx({ id: 'a' })],

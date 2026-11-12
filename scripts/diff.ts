@@ -1,4 +1,4 @@
-import { unsettledStatus, type Fixture, type StandingRow, type StandingsFile } from '../src/lib/schema'
+import { unsettledStatus, type Fixture, type FixtureStatus, type StandingRow, type StandingsFile } from '../src/lib/schema'
 import { brooklynDate } from '../src/lib/time'
 
 /**
@@ -69,6 +69,15 @@ function inversionDetail(before: Fixture, after: Fixture): string {
       : ''
   return `was ${before.home.name} at home, now ${after.home.name} at home${venue}`
 }
+
+/**
+ * The three statuses that say a match ended and how. A move between two of them is a
+ * correction to a result a reader may already have settled on: `full_time` 2-1 becoming
+ * `after_extra_time` 2-1 means 2-1 was never the 90-minute score, and the score itself
+ * did not move, so RESULT_CHANGED stays silent. A shootout that appears or vanishes
+ * travels the same way, because only `after_penalties` may carry one.
+ */
+const FINAL_STATUSES = new Set<FixtureStatus>(['full_time', 'after_extra_time', 'after_penalties'])
 
 function goalsDiffer(
   before: { home: number; away: number },
@@ -204,9 +213,12 @@ export function diffFixtures(
     }
 
     if (before.status !== after.status) {
+      // One final corrected to another is urgent at any horizon, like a score correction.
+      // A first final (scheduled or in_play to any of the three) keeps the horizon rule.
+      const finalCorrected = FINAL_STATUSES.has(before.status) && FINAL_STATUSES.has(after.status)
       changes.push({
         kind: 'STATUS_CHANGED', id, label: label(after),
-        urgent: urgent || unsettledStatus(after.status),
+        urgent: urgent || unsettledStatus(after.status) || finalCorrected,
         detail: `${before.status} -> ${after.status}`,
       })
     }
@@ -376,8 +388,8 @@ export type MergeVerdict = 'auto' | 'hold'
  * pipeline's Step 0 or would hide a partial report:
  *
  *   - anything urgent — inside −6 h..+72 h of now, or a postponement, cancellation,
- *     suspension, abandonment, or a result/team correction at any horizon
- *     (the same rule as exit code 1);
+ *     suspension, abandonment, or a result/team correction at any horizon, a change from
+ *     one final status to another included (the same rule as exit code 1);
  *   - a DISAPPEARED or HOME_AWAY_INVERTED line at any horizon — a vanished fixture and an
  *     inverted moneyline are the two that cost money far out;
  *   - legacy standings=failed input — held defensively. Since v0.2.5, current standings
