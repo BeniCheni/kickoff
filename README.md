@@ -479,7 +479,7 @@ wrong? That's this repo's signature issue; there's a
 
 One subject line per release. The honours board:
 
-- **v0.5.4** *(Fri 18 Dec 2026)* — a match decided in extra time or on penalties is stored as its own final, so one such result can no longer refuse the snapshot for every league.
+- **v0.5.4** *(Mon 16 Nov 2026)* — a match decided in extra time or on penalties is stored as its own final, so one such result can no longer refuse the snapshot for every league.
 - **v0.5.3** *(27 Oct 2026)* — one suspended or abandoned match can no longer freeze every league's table.
 - **v0.5.2** *(17 Sep 2026)* — hotfix to the hotfix: the 30-day lookback restored so the app keeps its recent results.
 - **v0.5.1** *(17 Sep 2026)* — hotfix: ESPN's date-range API broke; the sync switched to day-by-day fetching.
