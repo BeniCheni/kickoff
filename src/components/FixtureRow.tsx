@@ -11,6 +11,8 @@ const STATUS_LABEL: Record<Fixture['status'], string | null> = {
   cancelled: 'CANCELLED',
   suspended: 'SUSPENDED',
   abandoned: 'ABANDONED',
+  after_extra_time: 'AET',
+  after_penalties: 'PENS',
 }
 
 /**
