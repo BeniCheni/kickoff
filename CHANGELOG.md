@@ -8,6 +8,42 @@ releases.
 
 ## [Unreleased]
 
+## [0.5.4] — 2026-12-18
+
+A match decided in extra time or on penalties is stored as its own final, so one such
+result can no longer refuse the snapshot for every league.
+
+### Changed
+
+- A finished match shows an `AET` or `PENS` pill. The score is the one ESPN reports, which
+  includes extra time and not the shootout. A penalty final follows that score with the
+  shootout in brackets, for example 3–3 (2–4). The Broadcast ticker prints those same-day
+  results under `AET` or `PENS`. It does not print them as `FT`. The form guide still
+  counts only a full-time result.
+- A correction of the shootout alone is an urgent result change. The sync log and the
+  change digest show the old and new shootout beside the score. The sync PR summary still
+  gives kinds and counts only.
+- Pass 1 in the README's seats is Claude Code on Fable 5.2, by Beni's ruling of 11 Nov 2026.
+
+### Fixed
+
+- `STATUS_FINAL_AET` and `STATUS_FINAL_PEN` no longer abort the fetch. They were left
+  unmapped on purpose, and one of them inside the 30-day lookback refused every league,
+  tables included.
+
+### Deliberately not done
+
+- A 90-minute score derived from ESPN's scoring plays. That is ideas row 118. v0.5.4
+  stores the score ESPN sends, which is the score when play ended.
+- Containing an unknown status to its own competition. That is ideas row 119. One unmapped
+  name still refuses the whole snapshot.
+- `STATUS_SHOOTOUT`, which the 11 Nov 2026 receipts did not contain, and the names ESPN
+  uses while a match is in extra time or a shootout, which were not captured.
+- `STATUS_DELAYED`, `STATUS_FORFEIT` and `STATUS_RAIN_DELAY`.
+- Inferring that a tie was level at 90 minutes, and any aggregate or advance field.
+- The full-stack half stays unreleased until the cutover, planned as v0.6.0. The GitHub
+  demo is the public app.
+
 ## [0.5.3] — 2026-10-27
 
 The football app's last patch before the cutover: one suspended or abandoned match can no
