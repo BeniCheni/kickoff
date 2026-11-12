@@ -449,6 +449,32 @@ describe('approximate NEXT uses days, never filler-time ordering', () => {
       { ...exact(), kickoffUtc: '2026-10-11T04:00:00.000Z' }]
     expect(tickerSegments(list, '2026-10-11', '2026-10-11T04:00:00.000Z', WINDOW_TO)).toEqual([EMPTY_NEXT])
   })
+  it('prints a same-day extra-time or penalty result under AET or PENS, never under FT', () => {
+    const aet = fx({
+      competition: 'pl', status: 'after_extra_time', kickoffUtc: '2026-10-10T13:00:00.000Z',
+      result: { home: 4, away: 3 }, home: { name: 'Sestao' }, away: { name: 'Espanyol' },
+    })
+    const pens = fx({
+      competition: 'pl', status: 'after_penalties', kickoffUtc: '2026-10-10T15:00:00.000Z',
+      result: { home: 3, away: 3 }, shootout: { home: 2, away: 4 },
+      home: { name: 'Bologna' }, away: { name: 'Inter' },
+    })
+    const ft = fx({
+      competition: 'pl', status: 'full_time', kickoffUtc: '2026-10-10T12:00:00.000Z',
+      result: { home: 1, away: 0 }, home: { name: 'Chelsea' }, away: { name: 'Brighton' },
+    })
+    const yesterday = fx({
+      competition: 'pl', status: 'after_extra_time', kickoffUtc: '2026-10-09T13:00:00.000Z',
+      result: { home: 2, away: 2 }, home: { name: 'Yesterday' }, away: { name: 'Side' },
+    })
+    const segments = tickerSegments([aet, pens, ft, yesterday], TODAY, NOW, WINDOW_TO)
+    expect(segments.find((s) => s.keyword === 'AET')?.text).toBe('Sestao 4–3 Espanyol')
+    expect(segments.find((s) => s.keyword === 'PENS')?.text).toBe('Bologna 3–3 (2–4) Inter')
+    const ftText = segments.filter((s) => s.keyword === 'FT').map((s) => s.text)
+    expect(ftText).toEqual(['Chelsea 1–0 Brighton'])
+    expect(segments.some((s) => s.text.includes('Yesterday'))).toBe(false)
+  })
+
   it('keeps today’s FT and believable LIVE when no NEXT exists, and yields just empty NEXT for an empty snapshot', () => {
     const live = { ...exact(), status: 'in_play' as const, kickoffUtc: NOW }
     const ft = { ...exact(), status: 'full_time' as const, kickoffUtc: NOW, result: { home: 1, away: 0 } }

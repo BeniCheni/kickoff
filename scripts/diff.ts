@@ -70,10 +70,41 @@ function inversionDetail(before: Fixture, after: Fixture): string {
   return `was ${before.home.name} at home, now ${after.home.name} at home${venue}`
 }
 
+function goalsDiffer(
+  before: { home: number; away: number },
+  after: { home: number; away: number },
+  inverted: boolean,
+): boolean {
+  return inverted
+    ? before.home !== after.away || before.away !== after.home
+    : before.home !== after.home || before.away !== after.away
+}
+
+function scoreText(
+  result: { home: number; away: number },
+  shootout?: { home: number; away: number },
+): string {
+  const base = `${result.home}-${result.away}`
+  return shootout ? `${base} (${shootout.home}-${shootout.away})` : base
+}
+
 function resultDetail(before: Fixture, after: Fixture): string {
   if (!before.result || !after.result) return ''
   if (isInversion(before, after)) {
+    if (before.shootout || after.shootout) {
+      const side = (
+        name: string,
+        goals: number,
+        pens: number | undefined,
+        nextGoals: number,
+        nextPens: number | undefined,
+      ) => `${name} ${goals}${pens === undefined ? '' : ` (${pens})`} -> ${nextGoals}${nextPens === undefined ? '' : ` (${nextPens})`}`
+      return `${side(before.home.name, before.result.home, before.shootout?.home, after.result.away, after.shootout?.away)}, ${side(before.away.name, before.result.away, before.shootout?.away, after.result.home, after.shootout?.home)}`
+    }
     return `${before.home.name} ${before.result.home} -> ${after.result.away}, ${before.away.name} ${before.result.away} -> ${after.result.home}`
+  }
+  if (before.shootout || after.shootout) {
+    return `${scoreText(before.result, before.shootout)} -> ${scoreText(after.result, after.shootout)}`
   }
   return `${before.result.home}-${before.result.away} -> ${after.result.home}-${after.result.away}`
 }
@@ -141,14 +172,16 @@ export function diffFixtures(
       }
     }
 
-    // Normal completion is already STATUS_CHANGED. A correction to two known scores
-    // remains urgent even weeks later, because it can change a settled result.
+    // Normal completion is already STATUS_CHANGED. A correction to two known scores,
+    // or to the shootout alone, remains urgent even weeks later.
+    const inverted = isInversion(before, after)
     const resultChanged = before.result && after.result
-      ? isInversion(before, after)
-        ? before.result.home !== after.result.away || before.result.away !== after.result.home
-        : before.result.home !== after.result.home || before.result.away !== after.result.away
+      ? goalsDiffer(before.result, after.result, inverted)
       : false
-    if (resultChanged) {
+    const shootoutChanged = before.shootout && after.shootout
+      ? goalsDiffer(before.shootout, after.shootout, inverted)
+      : false
+    if (resultChanged || shootoutChanged) {
       changes.push({
         kind: 'RESULT_CHANGED', id, label: label(after), urgent: true,
         detail: resultDetail(before, after),

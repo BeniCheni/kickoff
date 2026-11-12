@@ -68,6 +68,7 @@ export function FixtureRow({ fixture, hot = false, stale = false }: { fixture: F
           {fixture.result && (
             <span className="font-mono text-[13px] font-semibold text-pitch">
               {fixture.result.home}–{fixture.result.away}
+              {fixture.shootout ? ` (${fixture.shootout.home}–${fixture.shootout.away})` : ''}
             </span>
           )}
           {status && (

@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs'
 import {
   diffFixtures,
   diffStandings,
+  formatChanges,
   formatReportLine,
   hasUrgentChanges,
   implausibleShrink,
@@ -11,6 +12,7 @@ import {
   type Change,
   type SyncReport,
 } from '../scripts/diff'
+import { updateDigest } from '../scripts/sync-digest'
 import type { Fixture, StandingRow, StandingsFile } from '../src/lib/schema'
 
 /**
@@ -496,5 +498,92 @@ describe('diffStandings — rows move on every matchday, ranks only sometimes', 
     const prev = file({ pl: table(), laliga: [row('C')] })
     const next = file({ pl: [table()[0]!] })
     expect(diffStandings(prev, next).rowsChanged).toBe(2) // B gone from pl, laliga gone
+  })
+})
+
+describe('extra time and penalties', () => {
+  const decided = {
+    id: 'a',
+    status: 'after_penalties' as const,
+    kickoffUtc: '2026-08-01T12:00:00.000Z',
+    result: { home: 1, away: 1 },
+    shootout: { home: 3, away: 2 },
+    home: { name: 'Alpha', sourceId: '1' },
+    away: { name: 'Beta', sourceId: '2' },
+  }
+
+  it('names both statuses on a first final', () => {
+    const scheduled = diffFixtures(
+      [fx({ id: 'a' })],
+      [fx({ id: 'a', status: 'after_extra_time', result: { home: 4, away: 3 } })],
+      { now: NOW },
+    )
+    expect(scheduled.map((c) => c.kind)).toEqual(['STATUS_CHANGED'])
+    expect(scheduled[0]!.detail).toBe('scheduled -> after_extra_time')
+
+    const live = diffFixtures(
+      [fx({ id: 'b', status: 'in_play' })],
+      [fx({ id: 'b', status: 'after_penalties', result: { home: 1, away: 1 }, shootout: { home: 3, away: 2 } })],
+      { now: NOW },
+    )
+    expect(live.find((c) => c.kind === 'STATUS_CHANGED')!.detail).toBe('in_play -> after_penalties')
+  })
+
+  it('reports an urgent shootout-only correction, and treats an inverted shootout like the score', () => {
+    const before = fx(decided)
+    const corrected = fx({ ...decided, shootout: { home: 2, away: 3 } })
+    const changes = diffFixtures([before], [corrected], { now: NOW })
+    expect(changes).toMatchObject([{ kind: 'RESULT_CHANGED', urgent: true, detail: '1-1 (3-2) -> 1-1 (2-3)' }])
+
+    const followed = fx({
+      ...decided,
+      home: { name: 'Beta', sourceId: '2' },
+      away: { name: 'Alpha', sourceId: '1' },
+      shootout: { home: 2, away: 3 },
+    })
+    expect(diffFixtures([before], [followed], { now: NOW }).map((c) => c.kind)).toEqual(['HOME_AWAY_INVERTED'])
+
+    const changed = fx({
+      ...decided,
+      home: { name: 'Beta', sourceId: '2' },
+      away: { name: 'Alpha', sourceId: '1' },
+      shootout: { home: 3, away: 2 },
+    })
+    const inverted = diffFixtures([before], [changed], { now: NOW })
+    expect(inverted.find((c) => c.kind === 'RESULT_CHANGED')).toMatchObject({
+      urgent: true,
+      detail: 'Alpha 1 (3) -> 1 (2), Beta 1 (2) -> 1 (3)',
+    })
+  })
+
+  it('carries the first-final and shootout details in the sync log and the digest', () => {
+    const first = diffFixtures(
+      [fx({ id: 'a' })],
+      [fx({ id: 'a', status: 'after_extra_time', result: { home: 4, away: 3 } })],
+      { now: NOW },
+    )
+    const shootout = diffFixtures(
+      [fx(decided)],
+      [fx({ ...decided, shootout: { home: 2, away: 3 } })],
+      { now: NOW },
+    )
+    const inverted = diffFixtures(
+      [fx(decided)],
+      [fx({
+        ...decided,
+        home: { name: 'Beta', sourceId: '2' },
+        away: { name: 'Alpha', sourceId: '1' },
+        shootout: { home: 3, away: 2 },
+      })],
+      { now: NOW },
+    )
+    const log = [formatChanges(first), formatChanges(shootout), formatChanges(inverted)].join('\n')
+    expect(log).toContain('scheduled -> after_extra_time')
+    expect(log).toContain('1-1 (3-2) -> 1-1 (2-3)')
+    expect(log).toContain('Alpha 1 (3) -> 1 (2), Beta 1 (2) -> 1 (3)')
+    const digest = updateDigest('', log, '100', 'BeniCheni/kickoff', '12/22/2026 6:23 PM ET')
+    expect(digest).toContain('scheduled -> after_extra_time')
+    expect(digest).toContain('1-1 (3-2) -> 1-1 (2-3)')
+    expect(digest).toContain('Alpha 1 (3) -> 1 (2), Beta 1 (2) -> 1 (3)')
   })
 })
