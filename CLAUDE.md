@@ -265,7 +265,7 @@ similarity through pgvector, and a Next.js reader on Vercel — recorded in
 the cutover (N7). The fixes merged since v0.5.2 shipped as **v0.5.3** on 27 Oct 2026 (a suspended or abandoned
 match no longer freezes every table; Beni ruled on 22 Oct 2026 to cut after Demo Day) and
 **v0.5.4** on Fri 18 Dec 2026 (extra time and penalties, ruled a patch on 11 Nov 2026). The cutover is the
-next release, a **minor** (N0-Q10 ruled Minor and left the number to Beni), and on 21 Oct 2026
+next **minor**, planned as v0.6.0 (N0-Q10 ruled Minor and left the number to Beni), and on 21 Oct 2026
 Beni ruled that it is **planned as v0.6.0**.
 
 Beni ruled on 10 Sep 2026: **sync first as v0.4.0; European week second as v0.5.0**.
