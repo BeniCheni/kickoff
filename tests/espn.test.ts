@@ -158,10 +158,7 @@ describe('normalizeEvent — status mapping', () => {
   it('throws, naming the status and the event, on a name the map does not cover', () => {
     // Real ESPN statuses this app has never seen in a synced window — not a guess about
     // spelling, a guess that the map is complete.
-    for (const name of [
-      'STATUS_DELAYED', 'STATUS_FORFEIT',
-      'STATUS_FINAL_AET', 'STATUS_FINAL_PEN', 'STATUS_RAIN_DELAY',
-    ]) {
+    for (const name of ['STATUS_DELAYED', 'STATUS_FORFEIT', 'STATUS_RAIN_DELAY']) {
       let threw: unknown
       try {
         normalizeEvent(withStatus(name), 'ligue1', AT)
@@ -184,11 +181,136 @@ describe('normalizeEvent — status mapping', () => {
     }
   })
 
+  it('leaves STATUS_SHOOTOUT unmapped until a receipt shows it', () => {
+    let threw: unknown
+    try {
+      normalizeEvent(withStatus('STATUS_SHOOTOUT'), 'ligue1', AT)
+    } catch (err) {
+      threw = err
+    }
+    expect(threw).toBeInstanceOf(UnmappedStatusError)
+    expect((threw as UnmappedStatusError).statusName).toBe('STATUS_SHOOTOUT')
+  })
+
   it('throws on a missing status name rather than defaulting to scheduled', () => {
     const e = { ...template, status: {} }
     expect(() => normalizeEvent(e, 'ligue1', AT)).toThrow(UnmappedStatusError)
     const e2 = { ...template, status: undefined }
     expect(() => normalizeEvent(e2, 'ligue1', AT)).toThrow(UnmappedStatusError)
+  })
+})
+
+describe('extra-time and penalty receipts', () => {
+  // Copa del Rey is not a synced competition. The key is only the argument normalizeEvent requires.
+  const COPA = 'laliga' as const
+  const aet = load('espn/copa-del-rey-401928495.json').events[0]
+  const pensAfterExtra = load('espn/copa-del-rey-401928509.json').events[0]
+  const pensAfterNinety = load('espn/supercoppa-758976.json').events[0]
+
+  it('maps the Copa del Rey extra-time final, including a receipt with no shootoutScore', () => {
+    const fixture = normalizeEvent(aet, COPA, AT)!
+    expect(() => fixtureSchema.parse(fixture)).not.toThrow()
+    expect(fixture).toMatchObject({
+      status: 'after_extra_time',
+      result: { home: 4, away: 3 },
+      home: { name: 'Sestao' },
+      away: { name: 'Espanyol' },
+    })
+    expect(fixture.shootout).toBeUndefined()
+  })
+
+  it('does not read shootoutScore on an extra-time final', () => {
+    for (const junk of [null, '', ' ', false, [], 9, '2']) {
+      const event = structuredClone(aet)
+      for (const competitor of event.competitions[0].competitors) competitor.shootoutScore = junk
+      const fixture = normalizeEvent(event, COPA, AT)!
+      expect(fixture.shootout, JSON.stringify(junk)).toBeUndefined()
+      expect(fixture.result).toEqual({ home: 4, away: 3 })
+    }
+  })
+
+  it('maps the Copa del Rey penalty final after extra time', () => {
+    const fixture = normalizeEvent(pensAfterExtra, COPA, AT)!
+    expect(() => fixtureSchema.parse(fixture)).not.toThrow()
+    expect(fixture).toMatchObject({
+      status: 'after_penalties',
+      result: { home: 3, away: 3 },
+      shootout: { home: 2, away: 4 },
+      home: { name: 'Atlético Tordesillas' },
+      away: { name: 'Mirandés' },
+    })
+  })
+
+  it('maps the Supercoppa penalty final straight after 90 minutes', () => {
+    const fixture = normalizeEvent(pensAfterNinety, 'supercoppa', AT)!
+    expect(() => fixtureSchema.parse(fixture)).not.toThrow()
+    expect(fixture).toMatchObject({
+      status: 'after_penalties',
+      result: { home: 1, away: 1 },
+      shootout: { home: 3, away: 2 },
+      home: { name: 'Bologna' },
+      away: { name: 'Inter Milan' },
+    })
+    expect(fixture.venueTz).toBeUndefined()
+  })
+
+  it('accepts a zero score and a zero shootout', () => {
+    const event = structuredClone(pensAfterNinety)
+    for (const competitor of event.competitions[0].competitors) {
+      competitor.score = '0'
+      competitor.shootoutScore = 0
+    }
+    const fixture = normalizeEvent(event, 'supercoppa', AT)!
+    expect(fixture.result).toEqual({ home: 0, away: 0 })
+    expect(fixture.shootout).toEqual({ home: 0, away: 0 })
+    expect(() => fixtureSchema.parse(fixture)).not.toThrow()
+  })
+
+  const scoreTraps = [undefined, null, '', ' ', false, [], 4, '-1', '1.5', '9007199254740993']
+  const shootoutTraps = [undefined, null, '', ' ', false, [], '3', -1, 1.5]
+
+  function rewritten(event: any, side: 'home' | 'away', field: 'score' | 'shootoutScore', raw: unknown) {
+    const copy = structuredClone(event)
+    const competitor = copy.competitions[0].competitors.find((c: any) => c.homeAway === side)
+    if (raw === undefined) delete competitor[field]
+    else competitor[field] = raw
+    return copy
+  }
+
+  it.each(['home', 'away'] as const)('refuses a malformed %s score on an extra-time final and stores nothing', (side) => {
+    for (const raw of scoreTraps) {
+      const event = rewritten(aet, side, 'score', raw)
+      let stored: unknown = 'not stored'
+      try {
+        stored = normalizeEvent(event, COPA, AT)
+      } catch (err) {
+        expect(err, JSON.stringify(raw)).toBeInstanceOf(Error)
+        expect((err as Error).message).toContain(`invalid score for ${side}`)
+        expect((err as Error).message).not.toContain('(0)')
+      }
+      expect(stored, JSON.stringify(raw)).toBe('not stored')
+    }
+  })
+
+  it.each(['home', 'away'] as const)('refuses a malformed %s score or shootout on a penalty final and stores nothing', (side) => {
+    for (const raw of scoreTraps) {
+      let stored: unknown = 'not stored'
+      try {
+        stored = normalizeEvent(rewritten(pensAfterExtra, side, 'score', raw), COPA, AT)
+      } catch (err) {
+        expect((err as Error).message).toContain(`invalid score for ${side}`)
+      }
+      expect(stored, `score ${JSON.stringify(raw)}`).toBe('not stored')
+    }
+    for (const raw of shootoutTraps) {
+      let stored: unknown = 'not stored'
+      try {
+        stored = normalizeEvent(rewritten(pensAfterNinety, side, 'shootoutScore', raw), 'supercoppa', AT)
+      } catch (err) {
+        expect((err as Error).message).toContain(`invalid shootoutScore for ${side}`)
+      }
+      expect(stored, `shootout ${JSON.stringify(raw)}`).toBe('not stored')
+    }
   })
 })
 
@@ -252,6 +374,13 @@ describe('espnProvider.fetchWindow — unmapped statuses abort before any write'
   it('rejects a missing events array rather than interpreting a reshaped response as an empty schedule', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => ({}) })))
     await expect(espnProvider.fetchWindow('2026-08-21', '2026-08-21')).rejects.toThrow(/missing or invalid events array/)
+  })
+
+  it('refuses the whole fetch when a decided final has a malformed score, and stores nothing', async () => {
+    const event = structuredClone(load('espn/copa-del-rey-401928495.json').events[0])
+    event.competitions[0].competitors.find((c: any) => c.homeAway === 'home').score = null
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => ({ events: [event, ligue1[0]] }) })))
+    await expect(espnProvider.fetchWindow('2026-10-27', '2026-10-27')).rejects.toThrow(/invalid score for home \(null\)/)
   })
 
   it('reports invalid team ids even on an event already seen, with role and raw identity', async () => {

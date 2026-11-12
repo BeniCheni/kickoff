@@ -24,8 +24,9 @@ export type FixtureProvider = {
  * A status name ESPN sent that this map doesn't cover — including a missing one. Thrown by
  * `normalizeEvent` rather than falling back to `scheduled`, because a fallback here is exactly
  * the failure class this project exists to kill: inventing scheduledness for a fixture whose
- * real state (delayed, forfeited, gone to extra time or penalties) the sync simply doesn't
- * know. `fetchWindow` catches these, collects every offender across the whole run, and throws
+ * real state (delayed, forfeited, or an extra-time name this map does not list) the sync
+ * simply doesn't know. `fetchWindow` catches these, collects every offender across the whole
+ * run, and throws
  * once so a single sync reports everything it doesn't understand rather than dying on the
  * first. The price is deliberate and it is steep: one unknown name in one league refuses the
  * whole snapshot, every other league's table included — which is what froze 10–12 Oct 2026.
@@ -41,15 +42,34 @@ export class UnmappedStatusError extends Error {
 }
 
 /**
- * Deliberately NOT mapped: STATUS_FINAL_AET / STATUS_FINAL_PEN / STATUS_SHOOTOUT. ESPN's score
- * after extra time (or a penalty shootout) is not the 90-minute result the books settle a
- * Moneyline/Match Result market on — mapping either straight to `full_time` would render a
- * confident, wrong score — so this earns its own design the day a synced fixture actually
- * needs it, rather than a guess today. That day now has a date: the 10 Oct 2026 window
- * (2026-09-10 .. 2027-03-09) already holds three one-off knockouts that can reach extra time
- * or penalties — Supercoppa Italiana Inter v Lazio on 22 Dec 2026, and both Supercopa de
- * España semi-finals on 2 and 3 Feb 2027. Until then STATUS_DELAYED, STATUS_FORFEIT,
- * STATUS_RAIN_DELAY and any other unnamed value still abort, these three included.
+ * A required score or shootout on a decided final was missing, or was not a nonnegative
+ * whole number in the shape ESPN uses. `score` is a numeric string. `shootoutScore` is a
+ * number. Thrown like an unmapped status: `fetchWindow` collects it and refuses the fetch.
+ * The raw value is kept on the error so a caller can see it was not coerced to 0.
+ */
+export class InvalidFinalScoreError extends Error {
+  constructor(
+    public readonly field: 'score' | 'shootoutScore',
+    public readonly side: 'home' | 'away',
+    public readonly raw: unknown,
+    public readonly eventId: string,
+  ) {
+    const shown = raw === undefined ? '(missing)' : JSON.stringify(raw)
+    super(`invalid ${field} for ${side} (${shown}) on event ${eventId}`)
+    this.name = 'InvalidFinalScoreError'
+  }
+}
+
+/**
+ * `STATUS_FINAL_AET` and `STATUS_FINAL_PEN` are stored as `after_extra_time` and
+ * `after_penalties`, not `full_time`. ESPN's `score` on those finals includes extra time
+ * and never the shootout, so it is not the 90-minute result a Match Result market settles
+ * on. `shootoutScore` is read only for `after_penalties`.
+ *
+ * `STATUS_SHOOTOUT` stays unmapped: the 11 Nov 2026 receipts did not contain it. An
+ * in-progress extra-time or shootout name stays unmapped until a receipt shows it; adding
+ * one later is a single entry in the map below, plus a receipt test. `STATUS_DELAYED`,
+ * `STATUS_FORFEIT`, `STATUS_RAIN_DELAY` and any other unnamed value still abort.
  *
  * STATUS_SUSPENDED and STATUS_ABANDONED are mapped. ESPN sent both for La Liga event
  * 401882849 on 10 Oct 2026 (Rayo Vallecano v Athletic Club), and the unmapped name aborted
@@ -63,6 +83,8 @@ const STATUS: Record<string, FixtureStatus> = {
   STATUS_HALFTIME: 'in_play',
   STATUS_FULL_TIME: 'full_time',
   STATUS_FINAL: 'full_time',
+  STATUS_FINAL_AET: 'after_extra_time',
+  STATUS_FINAL_PEN: 'after_penalties',
   STATUS_POSTPONED: 'postponed',
   STATUS_CANCELED: 'cancelled',
   STATUS_CANCELLED: 'cancelled',
@@ -129,6 +151,35 @@ function eventProblem(event: any): string | null {
   return null
 }
 
+/**
+ * `score` is a numeric string ("4"). The shape is checked before `Number`, which turns
+ * null, "", " ", false and [] into 0. A string of digits that is not a safe integer is
+ * refused rather than rounded.
+ */
+function numericStringGoals(value: unknown): number | null {
+  if (typeof value !== 'string' || !/^\d+$/.test(value)) return null
+  const parsed = Number(value)
+  return Number.isSafeInteger(parsed) ? parsed : null
+}
+
+/** `shootoutScore` is a number (3). `Number.isSafeInteger` does not coerce. */
+function numericShootoutGoals(value: unknown): number | null {
+  if (typeof value !== 'number' || !Number.isSafeInteger(value) || value < 0) return null
+  return value
+}
+
+function requireNumericString(value: unknown, side: 'home' | 'away', eventId: string): number {
+  const parsed = numericStringGoals(value)
+  if (parsed === null) throw new InvalidFinalScoreError('score', side, value, eventId)
+  return parsed
+}
+
+function requireShootoutNumber(value: unknown, side: 'home' | 'away', eventId: string): number {
+  const parsed = numericShootoutGoals(value)
+  if (parsed === null) throw new InvalidFinalScoreError('shootoutScore', side, value, eventId)
+  return parsed
+}
+
 /** Pure transform: one ESPN event -> one Fixture. Exported so tests can pin it. */
 export function normalizeEvent(
   event: any,
@@ -178,11 +229,26 @@ export function normalizeEvent(
   if (venue) fixture.venue = venue
 
   // A suspension or abandonment can carry a score (often 0-0). That number is not a
-  // full-time result, so only `full_time` stores one.
+  // full-time result, so only `full_time` stores one, and it keeps this parse on purpose
+  // (ideas row 2). Decided finals below check the raw value, because `Number` turns
+  // null, "", " ", false and [] into 0.
   if (status === 'full_time') {
     const h = Number(homeC.score)
     const a = Number(awayC.score)
     if (Number.isFinite(h) && Number.isFinite(a)) fixture.result = { home: h, away: a }
+  } else if (status === 'after_extra_time' || status === 'after_penalties') {
+    const eventId = String(event?.id)
+    fixture.result = {
+      home: requireNumericString(homeC.score, 'home', eventId),
+      away: requireNumericString(awayC.score, 'away', eventId),
+    }
+    // An extra-time final does not read `shootoutScore`, even when the field is present.
+    if (status === 'after_penalties') {
+      fixture.shootout = {
+        home: requireShootoutNumber(homeC.shootoutScore, 'home', eventId),
+        away: requireShootoutNumber(awayC.shootoutScore, 'away', eventId),
+      }
+    }
   }
 
   // Only phase-window consumers need this evidence; domestic season slugs are unused.
