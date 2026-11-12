@@ -173,15 +173,17 @@ Each goal count in either field, for these two statuses, is a nonnegative whole 
 snapshot still parses.
 
 **S3. Mapper.** `STATUS_FINAL_AET` maps to `after_extra_time`, and `STATUS_FINAL_PEN` to
-`after_penalties`. In every final read for §2, `score` came as a numeric string ("4") and
-`shootoutScore` as a number (3), on both sides. `result` comes from `score` and `shootout` from
-`shootoutScore`. For these two statuses, a value on either side that is missing, or is not a
-nonnegative whole number in that shape, refuses the event. `Number` turns `null`, `""`, `" "`,
-`false` and `[]` into 0 (row 2's trap, `espn.ts:183–184`), so the check reads the raw value,
-not `Number`'s result. A refused event refuses the whole fetch, as an unmapped status does, so
-the snapshot boundary is unchanged. The `full_time` path keeps its current parse on purpose;
-row 2 stays its own row. `tests/espn.test.ts:158–175` drops the two names from its rejection
-list, and receipt tests cover them instead.
+`after_penalties`. In the §2 reads, `score` came as a numeric string ("4") on both sides of all
+23 extra-time and penalty finals. `shootoutScore` came as a number (3) on both sides of the 10
+penalty finals and was absent from the 13 extra-time finals. `result` comes from `score` on
+both new statuses, and `shootout` from `shootoutScore` on `after_penalties` only; an extra-time
+final does not read `shootoutScore`. A required value on either side that is missing, or is
+not a nonnegative whole number in that shape, refuses the event. `Number` turns `null`, `""`,
+`" "`, `false` and `[]` into 0 (row 2's trap, `espn.ts:183–184`), so the check reads the raw
+value, not `Number`'s result. A refused event refuses the whole fetch, as an unmapped status
+does, so the snapshot boundary is unchanged. The `full_time` path keeps its current parse on
+purpose; row 2 stays its own row. `tests/espn.test.ts:158–175` drops the two names from its
+rejection list, and receipt tests cover them instead.
 
 **S4. Consumers.** The row shows the `AET` or `PENS` pill and the bracketed shootout; the
 ticker prints these results under that label; the form guide is unchanged. In the diff, a first
@@ -190,7 +192,8 @@ both statuses (`scripts/diff.ts:173–178`), as now. `RESULT_CHANGED` also fires
 only the shootout changes. It compares the shootout the way it compares the score, home and
 away inversion included (`diff.ts:146–149`), and its detail prints the old and new shootout
 beside the score, for example `1-1 (3-2) -> 1-1 (2-3)`. Those details reach readers through
-the sync PR's log and the digest, which copies that log (`scripts/sync-digest.ts:24–29`). The
+the sync PR's log and the digest. The digest copies a bounded excerpt of that log, the first
+400 lines up to 32,000 characters, and links the full log (`scripts/sync-digest.ts:24–29`). The
 PR summary keeps kinds and counts only (`scripts/sync-pr-body.ts:36`). The digest generator
 changes only if the log cannot carry that text. Both apps' edge tests cover both statuses.
 
@@ -201,8 +204,11 @@ together; README's "Shipped, and public" line; row 107 moved to the completed ro
 rows for option C and per-competition containment, carrying the reasons in §3 and Q2. Three
 tests compare against the version read from `package.json`:
 `tests/dom/momentsGallery.test.tsx:37`, `web/test/scaffold.test.tsx:17` and
-`web/test/snapshot.test.ts:35`. They move to 0.5.4 and still fail on a mismatch. The current-release copy at `README.md:51` and `:138` and at
-`studio/README.md:7` moves too. `README.md:144` captions v0.5.3 screenshots and stays.
+`web/test/snapshot.test.ts:35`. They move to 0.5.4 and still fail on a mismatch. The
+current-release copy at `README.md:51` and `:138` and at `studio/README.md:7` moves too. The
+v0.5.3 Lineage entry at `README.md:482` calls it the last patch before the cutover, which
+v0.5.4 makes false, so that entry changes as well. `README.md:144` captions v0.5.3
+screenshots and stays.
 
 **Acceptance.** Each item names its command, and each can fail.
 
@@ -210,10 +216,11 @@ tests compare against the version read from `package.json`:
   steps in `.github/workflows/ci.yml`.
 - `npm test -- tests/espn.test.ts tests/validate.test.ts tests/standings.test.ts
   tests/lensSelectors.test.ts tests/diff.test.ts tests/syncPrBody.test.ts
-  tests/syncDigest.test.ts` and `npm --prefix web test -- test/fixture-edges.test.tsx` cover
-  at least these cases:
+  tests/syncDigest.test.ts tests/dom/fixtureEdges.test.tsx` and
+  `npm --prefix web test -- test/fixture-edges.test.tsx` cover at least these cases:
   - each S1 and S1b receipt maps to its status, `result` and `shootout`;
-  - each malformed value S3 names, on each side, is refused, not stored;
+  - an extra-time receipt with no `shootoutScore` is accepted;
+  - each malformed required value S3 names, on each side, is refused, not stored;
   - the form guide does not count an `after_extra_time` 4–3;
   - a same-day `after_extra_time` or `after_penalties` result appears in the ticker under
     `AET` or `PENS`, and no FT segment carries it;
@@ -225,10 +232,10 @@ tests compare against the version read from `package.json`:
   `git show origin/main:src/data/fixtures.json | npx tsx -e 'import { fixturesFileSchema } from "./src/lib/schema.ts"; let s = ""; process.stdin.on("data", (d) => (s += d)).on("end", () => console.log("parsed", fixturesFileSchema.parse(JSON.parse(s)).length))'`
 - The browser matrix, since `src/` changes. Run `npm run dev -- --host 127.0.0.1 --port 5173`
   with one uncommitted stub row per new status in `src/data/fixtures.json`, as PR #183 did.
-  Check every lens × theme × tab at 360, 375, 390 and about 1000 px: each stub row shows its
-  pill, score and any shootout, and `document.documentElement.scrollWidth ===
-  window.innerWidth` holds before each capture. Revert the stub after, and
-  `git status --porcelain` prints nothing.
+  Check every lens × theme × tab at 360, 375, 390 and about 1000 px, with
+  `document.documentElement.scrollWidth === window.innerWidth` holding before each capture.
+  On the Fixtures tab, where rows render (`src/App.tsx:86`), each stub row shows its pill,
+  score and any shootout. Revert the stub after, and `git status --porcelain` prints nothing.
 
 **Deadline.** The sync runs the code on `main`. On 22 Dec the scheduled slots after the 20:00
 UTC kickoff are 21:23, 22:23 and 23:23 UTC (`sync.yml:39`), 83, 143 and 203 minutes in.
