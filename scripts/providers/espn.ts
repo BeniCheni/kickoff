@@ -61,10 +61,28 @@ export class InvalidFinalScoreError extends Error {
 }
 
 /**
+ * A penalty final whose two shootout scores are equal. A shootout that decided a
+ * match cannot be level. Thrown like an unmapped status: `fetchWindow` collects it
+ * and refuses the fetch. The message names the event and both values.
+ */
+export class LevelShootoutError extends Error {
+  constructor(
+    public readonly eventId: string,
+    public readonly home: number,
+    public readonly away: number,
+  ) {
+    super(`level shootout ${home}-${away} on event ${eventId}`)
+    this.name = 'LevelShootoutError'
+  }
+}
+
+/**
  * `STATUS_FINAL_AET` and `STATUS_FINAL_PEN` are stored as `after_extra_time` and
  * `after_penalties`, not `full_time`. ESPN's `score` on those finals includes extra time
  * and never the shootout, so it is not the 90-minute result a Match Result market settles
- * on. `shootoutScore` is read only for `after_penalties`.
+ * on. `shootoutScore` is read only for `after_penalties`. A penalty final whose two
+ * `shootoutScore` values are equal is refused: a shootout that decided a match cannot
+ * be level, and that refusal refuses the whole fetch.
  *
  * `STATUS_SHOOTOUT` stays unmapped: the 11 Nov 2026 receipts did not contain it. An
  * in-progress extra-time or shootout name stays unmapped until a receipt shows it; adding
@@ -244,10 +262,10 @@ export function normalizeEvent(
     }
     // An extra-time final does not read `shootoutScore`, even when the field is present.
     if (status === 'after_penalties') {
-      fixture.shootout = {
-        home: requireShootoutNumber(homeC.shootoutScore, 'home', eventId),
-        away: requireShootoutNumber(awayC.shootoutScore, 'away', eventId),
-      }
+      const homePens = requireShootoutNumber(homeC.shootoutScore, 'home', eventId)
+      const awayPens = requireShootoutNumber(awayC.shootoutScore, 'away', eventId)
+      if (homePens === awayPens) throw new LevelShootoutError(eventId, homePens, awayPens)
+      fixture.shootout = { home: homePens, away: awayPens }
     }
   }
 

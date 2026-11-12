@@ -70,7 +70,7 @@ export const fixtureFields = z.object({
   result: z.object({ home: z.number().int(), away: z.number().int() }).optional(),
   /**
    * Shootout goals. ESPN's `score` never includes them. Only `after_penalties` may carry
-   * this; `fixtureSchema` refuses it on every other status.
+   * this; `fixtureSchema` refuses it on every other status, and refuses a level shootout.
    */
   shootout: z.object({
     home: z.number().int().nonnegative(),
@@ -106,6 +106,17 @@ export const fixtureSchema = fixtureFields.superRefine((fixture, ctx) => {
   }
   if (fixture.status === 'after_penalties' && !fixture.shootout) {
     ctx.addIssue({ code: 'custom', path: ['shootout'], message: 'a shootout is required' })
+  }
+  if (
+    fixture.status === 'after_penalties' &&
+    fixture.shootout !== undefined &&
+    fixture.shootout.home === fixture.shootout.away
+  ) {
+    ctx.addIssue({
+      code: 'custom',
+      path: ['shootout'],
+      message: 'a level shootout is refused',
+    })
   }
   if (fixture.status !== 'after_penalties' && fixture.shootout !== undefined) {
     ctx.addIssue({

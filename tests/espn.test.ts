@@ -254,16 +254,35 @@ describe('extra-time and penalty receipts', () => {
     expect(fixture.venueTz).toBeUndefined()
   })
 
-  it('accepts a zero score and a zero shootout', () => {
-    const event = structuredClone(pensAfterNinety)
-    for (const competitor of event.competitions[0].competitors) {
+  it('accepts a zero score with a decisive shootout and refuses a level one', () => {
+    const decisive = structuredClone(pensAfterNinety)
+    for (const competitor of decisive.competitions[0].competitors) {
       competitor.score = '0'
-      competitor.shootoutScore = 0
+      competitor.shootoutScore = competitor.homeAway === 'home' ? 0 : 1
     }
-    const fixture = normalizeEvent(event, 'supercoppa', AT)!
+    const fixture = normalizeEvent(decisive, 'supercoppa', AT)!
     expect(fixture.result).toEqual({ home: 0, away: 0 })
-    expect(fixture.shootout).toEqual({ home: 0, away: 0 })
+    expect(fixture.shootout).toEqual({ home: 0, away: 1 })
     expect(() => fixtureSchema.parse(fixture)).not.toThrow()
+
+    for (const goals of [0, 4]) {
+      const level = structuredClone(pensAfterNinety)
+      for (const competitor of level.competitions[0].competitors) {
+        competitor.score = '0'
+        competitor.shootoutScore = goals
+      }
+      let stored: unknown = 'not stored'
+      let message = ''
+      try {
+        stored = normalizeEvent(level, 'supercoppa', AT)
+      } catch (err) {
+        message = err instanceof Error ? err.message : String(err)
+      }
+      expect(stored, `shootout ${goals}-${goals}`).toBe('not stored')
+      expect(message, `shootout ${goals}-${goals}`).toContain(
+        `level shootout ${goals}-${goals} on event ${pensAfterNinety.id}`,
+      )
+    }
   })
 
   const scoreTraps = [undefined, null, '', ' ', false, [], 4, '-1', '1.5', '9007199254740993']
@@ -381,6 +400,15 @@ describe('espnProvider.fetchWindow — unmapped statuses abort before any write'
     event.competitions[0].competitors.find((c: any) => c.homeAway === 'home').score = null
     vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => ({ events: [event, ligue1[0]] }) })))
     await expect(espnProvider.fetchWindow('2026-10-27', '2026-10-27')).rejects.toThrow(/invalid score for home \(null\)/)
+  })
+
+  it('refuses the whole fetch when a penalty final has a level shootout, and stores nothing', async () => {
+    const event = structuredClone(load('espn/supercoppa-758976.json').events[0])
+    for (const competitor of event.competitions[0].competitors) competitor.shootoutScore = 4
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => ({ events: [event, ligue1[0]] }) })))
+    await expect(espnProvider.fetchWindow('2026-12-19', '2026-12-19')).rejects.toThrow(
+      /level shootout 4-4 on event 758976/,
+    )
   })
 
   it('reports invalid team ids even on an event already seen, with role and raw identity', async () => {

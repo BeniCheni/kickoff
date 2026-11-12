@@ -102,8 +102,17 @@ describe('extra-time and penalty finals', () => {
     }))
     expect(parsed.success, parsed.success ? '' : JSON.stringify(parsed.error.issues)).toBe(true)
     expect(fixtureSchema.safeParse(fx({
-      id: 'a', status: 'after_penalties', result: { home: 0, away: 0 }, shootout: { home: 0, away: 0 },
+      id: 'a', status: 'after_penalties', result: { home: 0, away: 0 }, shootout: { home: 0, away: 1 },
     })).success).toBe(true)
+  })
+
+  it('refuses a penalty final whose shootout is level', () => {
+    for (const shootout of [{ home: 0, away: 0 }, { home: 4, away: 4 }]) {
+      const row = fx({ id: 'level', status: 'after_penalties', result: { home: 1, away: 1 }, shootout })
+      const parsed = fixtureSchema.safeParse(row)
+      expect(parsed.success, JSON.stringify(shootout)).toBe(false)
+      expect(issues(row), JSON.stringify(shootout)).toContain('shootout')
+    }
   })
 
   it('refuses either new status when the result is missing', () => {
@@ -137,7 +146,7 @@ describe('extra-time and penalty finals', () => {
   it('refuses a negative goal count on either new status, on each side', () => {
     expect(issues(fx({ id: 'a', status: 'after_extra_time', result: { home: -1, away: 0 } }))).toContain('result.home')
     expect(issues(fx({ id: 'a', status: 'after_extra_time', result: { home: 0, away: -1 } }))).toContain('result.away')
-    const pens = { status: 'after_penalties' as const, result: { home: 1, away: 1 }, shootout: { home: 1, away: 1 } }
+    const pens = { status: 'after_penalties' as const, result: { home: 1, away: 1 }, shootout: { home: 3, away: 2 } }
     expect(issues(fx({ id: 'a', ...pens, result: { home: -1, away: 1 } }))).toContain('result.home')
     expect(issues(fx({ id: 'a', ...pens, result: { home: 1, away: -1 } }))).toContain('result.away')
     expect(issues(fx({ id: 'a', ...pens, shootout: { home: -1, away: 1 } }))).toContain('shootout.home')

@@ -34,6 +34,8 @@ result can no longer refuse the snapshot for every league.
   unmapped on purpose, and one of them inside the 30-day lookback refused every league,
   tables included. A final whose score or shootout is missing or malformed is still
   refused, and that still refuses the whole snapshot.
+- A penalty final whose shootout is level is refused. The error names the event and
+  both scores, and that refusal refuses the whole snapshot, as a malformed score does.
 
 ### Deliberately not done
 
