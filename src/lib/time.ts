@@ -120,11 +120,6 @@ export function startOfWeek(iso: string): string {
   return addDays(iso, dow === 0 ? -6 : 1 - dow)
 }
 
-export function addMonths(iso: string, n: number): string {
-  const [y, m] = iso.split('-').map(Number)
-  const d = new Date(Date.UTC(y!, m! - 1 + n, 1, 12))
-  return d.toISOString().slice(0, 10)
-}
 
 export function niceDate(iso: string): string {
   return formatter('UTC', { month: 'long', day: 'numeric', year: 'numeric' }).format(

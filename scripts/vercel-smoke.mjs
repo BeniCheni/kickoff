@@ -52,7 +52,7 @@ function hasLeak(text, bypass) {
 
 // The landmarks are the shell-matrix / n3-next-vite / n4b-regressions selectors.
 const ROUTES = [
-  ['/', /data-moments-background="route"/, /<button\b[^>]*>Weekly<\/button>/],
+  ['/', /data-moments-background="route"/, /<button\b[^>]*>\s*Jump to today\s*<\/button>/],
   ['/?tab=table', /data-moments-background="route"/, /\bdata-table-picker(?:=|[ >])/],
   ['/?tab=moments', /<main\b[^>]*aria-label="Moments"/],
 ]

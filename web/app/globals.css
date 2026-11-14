@@ -10,7 +10,6 @@
 @source "../../src/components/TablePage.tsx";
 @source "../../src/components/TickerStrip.tsx";
 @source "../../src/components/WeekView.tsx";
-@source "../../src/components/MonthView.tsx";
 @source "../../src/components/LedgerWeek.tsx";
 @source "../../src/components/PosterWeek.tsx";
 @source "../../src/components/FixtureRow.tsx";

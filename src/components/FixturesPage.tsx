@@ -1,27 +1,22 @@
 import { useCallback, useEffect, useRef } from 'react'
 import { COMPETITION_KEYS, COMPETITIONS, type CompetitionKey } from '../lib/competitions'
-import { addDays, addMonths, niceDate, shortDate, startOfWeek } from '../lib/time'
+import { addDays, niceDate, shortDate, startOfWeek } from '../lib/time'
 import { useUrlState } from '../lib/useUrlState'
-import { encodeDate, encodeOnly, encodeView, parseDateParam, parseOnlyParam, parseView } from '../lib/urlCodecs'
+import { encodeDate, encodeOnly, parseDateParam, parseOnlyParam } from '../lib/urlCodecs'
 import type { Lens } from '../lib/lens'
 import { NextUpStrip } from './NextUpStrip'
 import { TonightSlate } from './TonightSlate'
 import { FilterBar } from './FilterBar'
 import { WeekView } from './WeekView'
-import { MonthView } from './MonthView'
 
 const ALL = new Set(COMPETITION_KEYS)
 
 /**
  * The fixtures calendar — everything below the persistent header/tabs when the Fixtures
- * tab is active. Its view state (`view`, `date`, `only`) stays in the URL, so it survives
+ * tab is active. Its navigation state (`date`, `only`) stays in the URL, so it survives
  * a hop to the Table tab and back.
  */
 export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
-  const [view, setView] = useUrlState<'week' | 'month'>(
-    'view', 'week',
-    encodeView, parseView,
-  )
   const encodeAnchor = useCallback((v: string) => encodeDate(v, today), [today])
   const decodeAnchor = useCallback((s: string) => parseDateParam(s, today), [today])
   const [anchor, setAnchor] = useUrlState<string>(
@@ -68,14 +63,8 @@ export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
   )
 
   const weekStart = startOfWeek(anchor)
-  const monthStart = `${anchor.slice(0, 7)}-01`
-  const nav = (dir: number) =>
-    setAnchor(view === 'week' ? addDays(anchor, dir * 7) : addMonths(monthStart, dir))
-
-  const periodLabel =
-    view === 'week'
-      ? `${shortDate(weekStart)} – ${niceDate(addDays(weekStart, 6))}`
-      : niceDate(monthStart).replace(/ \d+,/, '')
+  const nav = (dir: number) => setAnchor(addDays(anchor, dir * 7))
+  const periodLabel = `${shortDate(weekStart)} – ${niceDate(addDays(weekStart, 6))}`
 
   return (
     <>
@@ -94,21 +83,6 @@ export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
         onSetAll={(on) => setActive(on ? ALL : new Set())}
       />
 
-      <div className="mb-3.5 flex gap-2">
-        {(['week', 'month'] as const).map((v) => (
-          <button
-            key={v}
-            onClick={() => setView(v)}
-            className={[
-              'label-caps flex-1 cursor-pointer rounded border-[1.5px] py-2.5 text-[13px]',
-              view === v ? 'border-pitch bg-pitch text-white' : 'border-line-strong bg-surface text-ink-secondary',
-            ].join(' ')}
-          >
-            {v === 'week' ? 'Weekly' : 'Monthly'}
-          </button>
-        ))}
-      </div>
-
       <div className="mb-4 flex items-center justify-between gap-2">
         <button onClick={() => nav(-1)} aria-label="Previous"
           className="size-9 shrink-0 cursor-pointer rounded border-[1.5px] border-line-strong bg-surface">‹</button>
@@ -123,11 +97,7 @@ export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
           className="size-9 shrink-0 cursor-pointer rounded border-[1.5px] border-line-strong bg-surface">›</button>
       </div>
 
-      {view === 'week' ? (
-        <WeekView weekStart={weekStart} active={active} today={today} lens={lens} />
-      ) : (
-        <MonthView key={monthStart} monthStart={monthStart} active={active} today={today} />
-      )}
+      <WeekView weekStart={weekStart} active={active} today={today} lens={lens} />
 
       <footer className="mt-8 border-t border-line pt-4 text-[11.5px] leading-relaxed text-ink-muted">
         <div className="label-caps mb-1 text-[10px] text-floodlight-strong">Data</div>

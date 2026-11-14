@@ -9,6 +9,9 @@ describe('canonicalSearch — normalize the address without changing decoder sem
     expect(canonicalSearch(`?lens=BROADCAST&date=${TODAY}&tab=fixtures&view=week&league=laliga`, TODAY)).toBe('')
     expect(canonicalSearch('?date=2026-02-30&tab=junk&view=junk&league=constructor', TODAY)).toBe('')
   })
+  it.each(['month', 'week', 'junk', ''])('removes retired view=%s and preserves Step 0 pins', (view) => {
+    expect(canonicalSearch(`?view=${view}&only=pl&date=2026-11-21&lens=ledger`, TODAY)).toBe('?only=pl&date=2026-11-21&lens=ledger')
+  })
   it('retains a real nondefault date and the cross-track competition filter', () => {
     expect(canonicalSearch('?only=pl,laliga&date=2026-09-15', TODAY)).toBe('?only=pl%2Claliga&date=2026-09-15')
   })
@@ -30,8 +33,8 @@ describe('canonicalSearch — normalize the address without changing decoder sem
       ['x', ['', '2']],
     ])
     expect(query.startsWith('?')).toBe(true)
-    expect(canonicalSearch(query, TODAY)).toBe('?tab=moments&lens=broadcast&view=month&date=2026-09-12&only=&league=pl&watch=clip-1&x=&x=2')
-    expect(canonicalSearch(query, TODAY) + '#note').toBe('?tab=moments&lens=broadcast&view=month&date=2026-09-12&only=&league=pl&watch=clip-1&x=&x=2#note')
+    expect(canonicalSearch(query, TODAY)).toBe('?tab=moments&lens=broadcast&date=2026-09-12&only=&league=pl&watch=clip-1&x=&x=2')
+    expect(canonicalSearch(query, TODAY) + '#note').toBe('?tab=moments&lens=broadcast&date=2026-09-12&only=&league=pl&watch=clip-1&x=&x=2#note')
   })
 
   it('keeps an old pinned date when today rolls onto a later day', () => {

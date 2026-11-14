@@ -16,7 +16,6 @@ export const SRC_ALLOWLIST = [
   'src/components/LensSwitcher.tsx',
   'src/components/MatchdayLines.tsx', // matchday labels under a competition's rows
   'src/components/MomentsEmpty.tsx',
-  'src/components/MonthView.tsx', // the month grid
   'src/components/NextUpStrip.tsx', // the next-kickoff strip
   'src/components/PosterWeek.tsx', // Poster week blocks
   'src/components/StalenessBanner.tsx',
