@@ -8,7 +8,7 @@ releases.
 
 ## [Unreleased]
 
-## [0.5.4] — 2026-11-16
+## [0.5.4] — 2026-11-14
 
 A match decided in extra time or on penalties is stored as its own final, so one such
 result can no longer refuse the snapshot for every league.
