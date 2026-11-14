@@ -14,6 +14,12 @@ function html(search: string) {
   )
 }
 
+function checkedLens(markup: string): string {
+  const match = markup.match(/aria-checked="true"[\s\S]*?>(Poster|Ledger)</)
+  if (!match?.[1]) throw new Error('server markup has no checked lens')
+  return match[1]
+}
+
 test('Fixtures and Table render from the shared pages', () => {
   const fixtures = html('')
   expect(fixtures).toContain('Filters')
@@ -40,7 +46,9 @@ test('Fixtures and Table render from the shared pages', () => {
     expect(cleared).not.toContain('Where to Watch')
     expect(cleared).not.toContain('📺')
     expect(cleared).not.toMatch(/>Weekly<|>Monthly</)
-    expect(cleared).not.toContain('data-lens="broadcast"')
+    // The shell sets no data-lens attribute in server markup. The checked radio is the
+    // decode a reader gets: the retired lens is Poster, and ledger stays Ledger.
+    expect(checkedLens(cleared)).toBe(search.includes('lens=ledger') ? 'Ledger' : 'Poster')
     expect(cleared.indexOf('>Poster<')).toBeLessThan(cleared.indexOf('>Ledger<'))
   }
 

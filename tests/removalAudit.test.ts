@@ -30,7 +30,7 @@ const allowed: { file: string; needle: string; count: number; reason: string }[]
   { file: 'tests/themeBootstrap.test.ts', needle: retired, count: 1, reason: 'The pre-paint script runs against the retired lens.' },
   { file: 'tests/dom/clearing.test.tsx', needle: retired, count: 1, reason: 'A cold load of the retired lens stays on Poster and does not touch its old theme key.' },
   { file: 'tests/dom/clearing.test.tsx', needle: glyph, count: 1, reason: 'The rendered page does not contain the retired TV glyph.' },
-  { file: 'web/test/fixtures-table.test.tsx', needle: retired, count: 2, reason: 'Server markup for the retired lens URL does not render its attribute.' },
+  { file: 'web/test/fixtures-table.test.tsx', needle: retired, count: 1, reason: 'Server markup is requested with the retired lens URL.' },
   { file: 'web/test/fixtures-table.test.tsx', needle: glyph, count: 1, reason: 'Server markup does not contain the retired TV glyph.' },
 ]
 
