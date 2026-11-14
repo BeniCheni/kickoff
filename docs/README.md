@@ -22,7 +22,7 @@ to here, filed by release. Two things a cold reader needs first:
 | File | What it is |
 |---|---|
 | 📜 [HONESTY.md](HONESTY.md) | The house rules — the UTC instant, the diff engine, fail-loud guards, staleness as a state — as a first-class argument. Start here. |
-| 🗺️ [ARCHITECTURE.md](ARCHITECTURE.md) | The data flow ESPN → app, the file map, where the pure layer ends, one skeleton and three lenses, the two ESPN traps. |
+| 🗺️ [ARCHITECTURE.md](ARCHITECTURE.md) | The data flow ESPN → app, the file map, where the pure layer ends, one skeleton and two lenses, the two ESPN traps. |
 
 The current release sequence is **v0.4.0 sync first, v0.5.0 European week second**, ruled
 by Beni on 10 Sep 2026. Historical European-week rows marked "open (item f)" below retain

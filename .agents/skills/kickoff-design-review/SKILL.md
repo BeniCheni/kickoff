@@ -39,7 +39,7 @@ Choose only the relevant classes:
 
 - **Visual hierarchy:** primary action, reading order, content density and actual text grounds.
 - **Responsive geometry:** wrapping, clipping, sticky boundaries, player dimensions and overflow.
-- **Lens/theme consistency:** Ledger, Poster, Broadcast; light/dark; shared facts and semantic tokens.
+- **Lens/theme consistency:** Poster, Ledger; light/dark; shared facts and semantic tokens.
 - **Interaction mechanics:** reachable states, queue/selection stability, exit and recovery.
 - **Accessibility:** keyboard paths, visible focus, focus return, names, contrast and reduced motion.
 - **Data honesty:** unknown/TBC states, clocks, recomputed counts and illustrative vs observed facts.

@@ -21,7 +21,7 @@ afterEach(() => {
 const html = () => document.documentElement
 
 describe('App under StrictMode — the lens → theme effect (affordance 3)', () => {
-  it('entering Broadcast paints dark on <html>; leaving restores the ordinary theme; nothing is left subscribed', () => {
+  it('switching lenses preserves the theme; nothing is left subscribed', () => {
     release = primeClock(edt('2026-09-05T12:00:00'))
     const idle = clock.subscriberCount()
     const { unmount } = render(
@@ -34,54 +34,47 @@ describe('App under StrictMode — the lens → theme effect (affordance 3)', ()
     const onPoster = clock.subscriberCount()
     expect(onPoster).toBeGreaterThan(idle)
 
-    fireEvent.click(screen.getByRole('radio', { name: 'Broadcast' }))
-    expect(html().dataset.lens).toBe('broadcast')
-    expect(html().dataset.theme).toBe('dark')
-    expect(window.location.search).toBe('?lens=broadcast')
-    expect(screen.getByRole('button', { name: 'Light mode' })).toBeTruthy()
+    fireEvent.click(screen.getByRole('radio', { name: 'Ledger' }))
+    expect(html().dataset.lens).toBe('ledger')
+    expect(html().dataset.theme).toBe('light')
+    expect(window.location.search).toBe('?lens=ledger')
+    expect(screen.getByRole('button', { name: 'Dark mode' })).toBeTruthy()
 
     fireEvent.click(screen.getByRole('radio', { name: 'Poster' }))
     expect(html().dataset.lens).toBe('poster')
     expect(html().dataset.theme).toBe('light')
     expect(window.location.search).toBe('')
-    // Broadcast mounts the ticker (one more useNow); back on Poster the count must be
-    // exactly what it was — StrictMode's double subscribe leaves nothing behind.
+    // Returning to Poster restores the subscriber count under StrictMode.
     expect(clock.subscriberCount()).toBe(onPoster)
 
     unmount()
     expect(clock.subscriberCount()).toBe(idle)
   })
 
-  it('a toggle made inside Broadcast is remembered under its own key and is not re-forced to dark', () => {
+  it('a toggle is remembered across both lenses under one key', () => {
     release = primeClock(edt('2026-09-05T12:00:00'))
-    render(
-      <StrictMode>
-        <App />
-      </StrictMode>,
-    )
-    fireEvent.click(screen.getByRole('radio', { name: 'Broadcast' }))
-    fireEvent.click(screen.getByRole('button', { name: 'Light mode' }))
-    expect(html().dataset.theme).toBe('light')
-    expect(window.localStorage.getItem('kickoff-theme-broadcast')).toBe('light')
-    expect(window.localStorage.getItem('kickoff-theme')).toBeNull()
-
+    render(<StrictMode><App /></StrictMode>)
     fireEvent.click(screen.getByRole('radio', { name: 'Ledger' }))
-    expect(html().dataset.theme).toBe('light')
-    fireEvent.click(screen.getByRole('radio', { name: 'Broadcast' }))
-    expect(html().dataset.theme).toBe('light')
+    fireEvent.click(screen.getByRole('button', { name: 'Dark mode' }))
+    expect(html().dataset.theme).toBe('dark')
+    expect(window.localStorage.getItem('kickoff-theme')).toBe('dark')
+    fireEvent.click(screen.getByRole('radio', { name: 'Poster' }))
+    expect(html().dataset.theme).toBe('dark')
+    fireEvent.click(screen.getByRole('radio', { name: 'Ledger' }))
+    expect(html().dataset.theme).toBe('dark')
   })
 
-  it('Back/Forward reaches the same effect: a popstate to ?lens=broadcast paints dark with no click', () => {
+  it('Back/Forward reaches the same effect: a popstate to ?lens=ledger preserves the theme with no click', () => {
     release = primeClock(edt('2026-09-05T12:00:00'))
     render(
       <StrictMode>
         <App />
       </StrictMode>,
     )
-    act(() => popTo('/?lens=broadcast'))
-    expect(html().dataset.lens).toBe('broadcast')
-    expect(html().dataset.theme).toBe('dark')
-    expect(screen.getByRole('radio', { name: 'Broadcast' }).getAttribute('aria-checked')).toBe('true')
+    act(() => popTo('/?lens=ledger'))
+    expect(html().dataset.lens).toBe('ledger')
+    expect(html().dataset.theme).toBe('light')
+    expect(screen.getByRole('radio', { name: 'Ledger' }).getAttribute('aria-checked')).toBe('true')
   })
 
   it('the 220 ms cross-fade class is transient, and never added under reduced motion', () => {
@@ -103,7 +96,9 @@ describe('App under StrictMode — the lens → theme effect (affordance 3)', ()
         <App />
       </StrictMode>,
     )
-    fireEvent.click(screen.getByRole('radio', { name: 'Broadcast' }))
+    expect(html().dataset.lens).toBe('ledger')
+    fireEvent.click(screen.getByRole('radio', { name: 'Poster' }))
+    expect(html().dataset.lens).toBe('poster')
     expect(html().classList.contains('lens-switching')).toBe(false)
   })
 })

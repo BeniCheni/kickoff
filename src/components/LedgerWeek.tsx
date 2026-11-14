@@ -9,8 +9,7 @@ const EMPTY: ReadonlySet<string> = new Set()
  * The Ledger date spine — the Table's quiet language extended to fixtures. A 56px margin
  * column carries the weekday cap and a 30px Oswald day numeral; rows sit on hairlines in
  * the second column. Empty days collapse to a single hairline with a mono em-dash (or a
- * "hidden by filters" note). Broadcast reuses this skeleton wholesale: its amber numerals,
- * tighter rows and glow are CSS-only (`broadcast:` variants and `data-hot`).
+ * "hidden by filters" note).
  */
 export function LedgerWeek({ days, hot = EMPTY, stale = EMPTY }: { days: DayInfo[]; hot?: ReadonlySet<string>; stale?: ReadonlySet<string> }) {
   return (
@@ -48,7 +47,7 @@ export function LedgerWeek({ days, hot = EMPTY, stale = EMPTY }: { days: DayInfo
               <div
                 className={[
                   'font-display mt-0.5 text-[30px] leading-none font-semibold',
-                  isToday ? 'text-accent-lead-strong' : 'text-ink broadcast:text-accent-lead-strong',
+                  isToday ? 'text-accent-lead-strong' : 'text-ink',
                 ].join(' ')}
               >
                 {numeral}

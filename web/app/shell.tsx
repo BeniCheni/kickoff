@@ -10,7 +10,6 @@ import { MomentsRegion } from './moments/region'
 import type { CatalogMode, MomentsPayload } from '../lib/catalog/types'
 import { FixturesPage } from '../../src/components/FixturesPage'
 import { TablePage } from '../../src/components/TablePage'
-import { TickerStrip } from '../../src/components/TickerStrip'
 import { DEFAULT_LENS, encodeLens, parseLens } from '../../src/lib/lens'
 import { useThemeController } from '../../src/lib/useThemeController'
 import { useNow } from '../../src/lib/useNow'
@@ -76,7 +75,6 @@ function ShellInner({ moments, catalogMode }: { moments: MomentsPayload; catalog
       </TabNav>
       {tab === 'moments' ? <ViewBoundary key={tab}><MomentsRegion moments={moments} catalogMode={catalogMode} search={liveSearch} /></ViewBoundary> : (
         <div data-moments-background="route"><ViewBoundary key={`${tab}:${lens}`}>
-          {lens === 'broadcast' && tab === 'fixtures' && <TickerStrip />}
           <StalenessBanner />
           {tab === 'table' ? <TablePage /> : <FixturesPage today={today} lens={lens} />}
         </ViewBoundary></div>

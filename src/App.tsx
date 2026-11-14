@@ -11,7 +11,6 @@ import { FixturesPage } from './components/FixturesPage'
 import { MomentsPage } from './components/MomentsPage'
 import { TablePage } from './components/TablePage'
 import { StalenessBanner } from './components/StalenessBanner'
-import { TickerStrip } from './components/TickerStrip'
 import { MOMENTS } from './lib/moments'
 import type { GalleryMoment } from './lib/momentsGallery'
 import type { StorageAccess } from './lib/momentsSaved'
@@ -79,7 +78,6 @@ export default function App({ momentsEdition = MOMENTS, momentsStorage, momentsR
       </MomentsSessionBoundary>
 
       {tab !== 'moments' && <div data-moments-background="route"><ViewBoundary key={`${tab}:${lens}`}>
-        {lens === 'broadcast' && tab === 'fixtures' && <TickerStrip />}
 
         <StalenessBanner />
 

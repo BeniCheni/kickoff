@@ -37,7 +37,7 @@ Leagues fix the date before the hour. When ESPN carries a placeholder time for s
 fixture, the normalizer marks it `timeConfidence: round_placeholder` (or `tbd`, when neither
 the date nor the time is settled) rather than `exact`, and the app renders "kickoff time not
 yet set by the league" in amber italic — never a number. No sub-line derives "FIRST 3:00 PM"
-from a filler; no hero counts a placeholder as the next kickoff; no ticker segment names it.
+from a filler; no hero counts a placeholder as the next kickoff or prints its filler time.
 A placeholder is trusted to the *day* and no further: it stays in tonight's slate until
 midnight, and is never evicted by arithmetic on an instant the league never set — and the
 slate's sub-line says how many of its count are TBC, so a count never quietly outruns the

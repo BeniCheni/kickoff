@@ -38,7 +38,7 @@ behavior, tradeoffs and feasibility questions. Make differences visible in a boa
 prototype; a collection of inspirational pictures alone is not a direction. Do not add a
 third direction or a full design round unless the request benefits from it.
 
-Preserve Fergie Time: Ledger, Poster and Broadcast, with light and dark themes. Read
+Preserve Fergie Time: Poster and Ledger, with light and dark themes. Read
 `src/index.css`, `src/lib/competitions.ts`, `src/lib/lens.ts` and the affected components.
 The local-only Fergie Time export beside the main checkout is a reference mirror; app tokens
 remain authoritative. Follow CLAUDE.md's spec precedence and record conflicts explicitly.

@@ -4,12 +4,11 @@ import { LENSES, type Lens } from '../lib/lens'
 const LABELS: Record<Lens, string> = {
   ledger: 'Ledger',
   poster: 'Poster',
-  broadcast: 'Broadcast',
 }
 
 /**
  * The lens control: a segmented pill on the tab-row line, right-aligned. The active
- * segment fills with the *current* lens's leading accent (pitch / ink / floodlight via
+ * segment fills with the *current* lens's leading accent (pitch / ink via
  * `--lens-accent`), so the control wears the atmosphere it has applied.
  * Radiogroup semantics — arrow keys move the selection, Home/End jump to the ends,
  * focus ring in the lens accent's on-background variant.

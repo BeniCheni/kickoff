@@ -17,15 +17,14 @@ export function useThemeController(lens: Lens) {
   const prevLens = useRef<Lens | null>(null)
   const fadeTimer = useRef<number | undefined>(undefined)
   // Explicit choices remain authoritative in this session even if storage is blocked.
-  const sessionThemes = useRef<Partial<Record<ReturnType<typeof themeStorageKey>, Theme>>>({})
+  const sessionTheme = useRef<Theme | null>(null)
 
   // The single lens → DOM sync point. Covers switcher clicks and Back/Forward alike
-  // (useUrlState's popstate handler re-renders us). Re-resolving the theme here is what
-  // makes Broadcast dark-by-default on entry and restores the prior choice on exit.
+  // (useUrlState's popstate handler re-renders us). Both lenses keep the same theme.
   useEffect(() => {
     const root = document.documentElement
     root.dataset.lens = lens
-    const next = sessionThemes.current[themeStorageKey(lens)] ?? resolveThemeFromEnvironment(lens)
+    const next = sessionTheme.current ?? resolveThemeFromEnvironment()
     root.dataset.theme = next
     setTheme(next)
     if (
@@ -50,10 +49,10 @@ export function useThemeController(lens: Lens) {
 
   useEffect(() => {
     const media = window.matchMedia('(prefers-color-scheme: dark)')
-    const key = themeStorageKey(lens)
+    const key = themeStorageKey()
     const onChange = () => {
-      if (sessionThemes.current[key] || readStoredTheme(key)) return
-      const next = resolveThemeFromEnvironment(lens)
+      if (sessionTheme.current || readStoredTheme(key)) return
+      const next = resolveThemeFromEnvironment()
       document.documentElement.dataset.theme = next
       setTheme(next)
     }
@@ -64,8 +63,8 @@ export function useThemeController(lens: Lens) {
   const toggle = () => {
     const next = theme === 'dark' ? 'light' : 'dark'
     document.documentElement.dataset.theme = next
-    sessionThemes.current[themeStorageKey(lens)] = next
-    writeStoredTheme(themeStorageKey(lens), next)
+    sessionTheme.current = next
+    writeStoredTheme(themeStorageKey(), next)
     setTheme(next)
   }
 

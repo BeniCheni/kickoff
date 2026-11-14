@@ -50,9 +50,10 @@ function hasLeak(text, bypass) {
     Boolean(bypass && plain.includes(bypass))
 }
 
-// The landmarks are the shell-matrix / n3-next-vite / n4b-regressions selectors.
+// The landmarks are the shell-matrix / n3-next-vite / n4b-regressions selectors, except on
+// Fixtures: those receipts looked for the Weekly button, which the app no longer renders.
 const ROUTES = [
-  ['/', /data-moments-background="route"/, /<button\b[^>]*>Weekly<\/button>/],
+  ['/', /data-moments-background="route"/, /<button\b[^>]*>\s*Jump to today\s*<\/button>/],
   ['/?tab=table', /data-moments-background="route"/, /\bdata-table-picker(?:=|[ >])/],
   ['/?tab=moments', /<main\b[^>]*aria-label="Moments"/],
 ]

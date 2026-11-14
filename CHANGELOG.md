@@ -8,6 +8,32 @@ releases.
 
 ## [Unreleased]
 
+## [0.5.5] — 2026-11-14
+
+The clearing: the Broadcast lens, Where to Watch and the Monthly view are retired, and the fixtures start higher on the page.
+
+### Changed
+
+- The preview smoke's Fixtures landmark is now "Jump to today".
+- The README's football pictures are from the v0.5.5 build.
+
+### Removed
+
+- The Broadcast lens and ticker. The lens switch now reads Poster, then Ledger, with one
+  shared theme preference. Old Broadcast links open Poster and lose the retired parameter.
+- Where to Watch, the expanded-row TV pill, and hand-maintained competition TV data.
+- The Monthly calendar and Weekly / Monthly control. Fixtures use the weekly view;
+  old `view` parameters are removed while competition filters and date pins keep working.
+
+### Deliberately not done
+
+- The Next.js cutover and the design overhaul. The clearing ships on its own, before both.
+- Where the lens switch sits at 360 and 375 waits for the overhaul (ideas row 125).
+- The second edition's look, tokens, type, photographs, motion, Rack, covers and NEXT pill.
+  The next-fixture selection and row data markers remain for that later work.
+- Step 0's move to Ledger, the Next.js cutover, and changes to Moments beyond retired lens
+  references. Generated snapshots, sync scripts and historical design/proof records stay as-is.
+
 ## [0.5.4] — 2026-11-14
 
 A match decided in extra time or on penalties is stored as its own final, so one such

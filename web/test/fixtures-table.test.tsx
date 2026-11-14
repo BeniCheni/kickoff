@@ -14,17 +14,24 @@ function html(search: string) {
   )
 }
 
-test('Fixtures, Table and the Broadcast ticker render from the shared pages', () => {
+function checkedLens(markup: string): string {
+  const match = markup.match(/aria-checked="true"[\s\S]*?>(Poster|Ledger)</)
+  if (!match?.[1]) throw new Error('server markup has no checked lens')
+  return match[1]
+}
+
+test('Fixtures and Table render from the shared pages', () => {
   const fixtures = html('')
   expect(fixtures).toContain('Filters')
   expect(fixtures).toContain('All ')
   expect(fixtures).not.toContain('data-ticker')
   expect(fixtures).not.toContain('data-table-picker')
 
-  const month = html('?view=month&only=pl&date=2026-09-20')
-  expect(month).toContain('Monday')
-  expect(month).toMatch(/1 of \d+ competitions shown/)
-  expect(month).toContain('Premier League')
+  const legacyView = html('?view=month&only=pl&date=2026-09-20')
+  expect(legacyView).not.toContain('Monthly')
+  expect(legacyView).toContain('Jump to today')
+  expect(legacyView).toMatch(/1 of \d+ competitions shown/)
+  expect(legacyView).toContain('Premier League')
 
   const table = html('?tab=table&league=bundesliga')
   expect(table).toContain('data-table-picker')
@@ -32,9 +39,18 @@ test('Fixtures, Table and the Broadcast ticker render from the shared pages', ()
   expect(table).toContain('Pts')
   expect(table).not.toContain('Filters')
 
-  const broadcast = html('?lens=broadcast')
-  expect(broadcast).toContain('data-ticker=')
-  expect(broadcast).toContain('Filters')
+  for (const search of ['', '?lens=ledger', '?lens=broadcast', '?view=month']) {
+    const cleared = html(search)
+    expect(cleared).toContain('Filters')
+    expect(cleared).not.toContain('data-ticker')
+    expect(cleared).not.toContain('Where to Watch')
+    expect(cleared).not.toContain('📺')
+    expect(cleared).not.toMatch(/>Weekly<|>Monthly</)
+    // The shell sets no data-lens attribute in server markup. The checked radio is the
+    // decode a reader gets: the retired lens is Poster, and ledger stays Ledger.
+    expect(checkedLens(cleared)).toBe(search.includes('lens=ledger') ? 'Ledger' : 'Poster')
+    expect(cleared.indexOf('>Poster<')).toBeLessThan(cleared.indexOf('>Ledger<'))
+  }
 
   // watch stays unknown: the shell still renders Fixtures and does not grow a watch page.
   const watch = html('?watch=abc&kept=1')

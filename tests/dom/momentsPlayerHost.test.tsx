@@ -126,7 +126,7 @@ it('D-14: tab away and back leaves once and never autoplays; a lens switch does 
   renderVisit(); openCard(archivalEdition[0]!.id); click('Play'); emitPlaying(6)
   const attempt = media().attempt
   const plays = player().reads.plays.length
-  fireEvent.click(screen.getByRole('radio', { name: 'Broadcast' }))
+  fireEvent.click(screen.getByRole('radio', { name: 'Ledger' }))
   expect(media()).toMatchObject({ status: 'playing', position: 6, attempt })
   act(() => popTo('/?tab=fixtures'))
   act(() => popTo('/?tab=moments'))
@@ -479,7 +479,7 @@ it('leaving Cinema hands focus to a control that survives, and never to one that
 
   // A lens change through history remounts the stage, so the stored opener is detached.
   renderVisit(); enterPlaying()
-  act(() => popTo('/?tab=moments&lens=broadcast'))
+  act(() => popTo('/?tab=moments&lens=ledger'))
   expect(state().surface).toBe('cinema')
   fireEvent.click(within(cinema()).getByRole('button', { name: 'Exit Cinema' }))
   expect(document.activeElement?.hasAttribute('data-cinema-enter')).toBe(true)

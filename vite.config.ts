@@ -40,8 +40,8 @@ export default defineConfig(({ mode }) => ({
   // the theme effect under StrictMode. `extends: true` hands each project the root config
   // above, so `__APP_VERSION__` and the React plugin reach the DOM tests too. Type-checked
   // separately: tsconfig.node.json (no DOM lib) excludes tests/dom, tsconfig.test-dom.json
-  // covers it. What jsdom does *not* do — layout, contrast, `scrollWidth`, a real engine's
-  // marquee — stays with the browser matrix in the review skill.
+  // covers it. What jsdom does *not* do — layout, contrast, `scrollWidth` — stays with the
+  // browser matrix in the review skill.
   test: {
     projects: [
       {

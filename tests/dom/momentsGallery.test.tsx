@@ -34,7 +34,7 @@ it('inert: the empty main DOM equals the pre-gallery banner and sentence with no
   expect(main.innerHTML).toBe('<div class="rounded-[5px] border border-line border-l-3 border-l-floodlight bg-floodlight-bg px-2.5 py-2"><p class="label-caps text-[9.5px] text-floodlight-strong">Hand-curated · linked to rights holders · never played here</p></div><p class="mt-5 text-[13px] text-ink-muted">No moments curated yet.</p>')
   expect(main.querySelectorAll('button,select,input,[role="status"],[aria-live],[data-moments-gallery],iframe,video,audio')).toHaveLength(0)
   expect(document.querySelector('dialog, [data-moments-player-host], [data-moments-player-dialog], iframe, video, audio, script[data-moments-youtube-api]')).toBeNull()
-  expect(screen.getByText(/v0.5.4/)).toBeTruthy()
+  expect(screen.getByText(/v0.5.5/)).toBeTruthy()
 })
 it('D-02: save and unsave preserve shuffled order and Undo through the actual control', () => {
   renderQueue(); openCard('1'); click('Shuffle remaining')
@@ -137,7 +137,7 @@ it('D-13: facts, source lines and messages are string-equal through every lens',
   const { container } = render(<App momentsEdition={archivalEdition} />)
   const text = () => container.querySelector('main')!.textContent
   const initial = text()
-  for (const name of ['Ledger', 'Broadcast', 'Poster']) {
+  for (const name of ['Ledger', 'Poster']) {
     fireEvent.click(screen.getByRole('radio', { name })); expect(text()).toBe(initial)
   }
 })
@@ -151,7 +151,8 @@ it('visit owner survives tab/lens URL remounts, leaves exactly once, and never m
   expect(state().media[before.active!]!.attempt).toBe(1)
   fireEvent.click(screen.getByRole('radio', { name: 'Ledger' }))
   expect(state().media[before.active!]!.attempt).toBe(1)
-  act(() => popTo('/?tab=moments&lens=broadcast&only=pl&date=2026-09-29'))
+  act(() => popTo('/?tab=moments&lens=poster&only=pl&date=2026-09-29'))
+  expect(document.documentElement.dataset.lens).toBe('poster')
   expect(state().history).toEqual(before.history); expect(state().saved).toEqual(before.saved)
 })
 it('a contained route throw and Retry preserve active item, history and saved references', () => {

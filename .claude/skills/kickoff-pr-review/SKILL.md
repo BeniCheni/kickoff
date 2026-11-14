@@ -141,7 +141,7 @@ Always, whatever the diff:
 
 - **Data honesty — the house religion.** Can a postponed or cancelled fixture surface anywhere
   wearing its dead kickoff time? Can a TBC placeholder leak a confident number into a sub-line,
-  ticker segment, hero card or bound? Is anything invented — minutes, matchday numbers,
+  hero card or bound? Is anything invented — minutes, matchday numbers,
   scheduledness? Can the sync write anything it doesn't understand?
 - **Absolute words.** Every "never", "always", "cannot", "exactly", "complete", "fits" in a
   comment or doc is a falsifiable assertion. Most of them have been false before. Test them.
@@ -176,12 +176,12 @@ touches none of them gets only the three above:
 - the cross-track contract — `?only=` and `&date=` are read by the betting pipeline's Step 0,
   so a codec change breaks another repo: a high finding, never a wording one.
 
-**Theme** — `theme.ts`, `index.css`, `main.tsx`: the Broadcast dark-default in all entry cases;
-storage that throws; pre-paint vs App's effect (can they disagree?); computed-style reads for
+**Theme** — `theme.ts`, `index.css`, `main.tsx`: the shared `kickoff-theme` preference
+in both lenses and all entry cases; storage that throws; pre-paint vs App's effect (can they disagree?); computed-style reads for
 every colour claim; a contrast check over every new pair in **both** themes.
 
-**Motion** — `index.css`, `TickerStrip`, App's lens effect: the motion budget (150/180/220 ms +
-the marquee, nothing else); reduced-motion paths; no permanently enabled global transitions.
+**Motion** — `index.css`, App's lens effect: the motion budget (150/180/220 ms);
+reduced-motion paths; no permanently enabled global transitions.
 
 **Scripts and workflows** — `scripts/`, `.github/workflows/`: every `console.warn`-and-continue
 (what would a reader who never sees the console want?); exit-code capture under `-eo pipefail`;

@@ -32,11 +32,8 @@ export function parseOnlyParam(raw: string): ReadonlySet<CompetitionKey> {
 }
 
 export type Tab = 'fixtures' | 'table' | 'moments'
-export type CalendarView = 'week' | 'month'
 export const encodeTab = (tab: Tab): string | null => tab === 'fixtures' ? null : tab
 export const parseTab = (raw: string): Tab => raw === 'table' || raw === 'moments' ? raw : 'fixtures'
-export const encodeView = (view: CalendarView): string | null => view === 'week' ? null : view
-export const parseView = (raw: string): CalendarView => raw === 'month' ? 'month' : 'week'
 export const encodeLeague = (league: CompetitionKey): string | null => league === 'laliga' ? null : league
 export const parseLeague = (raw: string): CompetitionKey => TABLE_LEAGUES.includes(raw as CompetitionKey) ? raw as CompetitionKey : 'laliga'
 export const encodeOnly = (active: ReadonlySet<CompetitionKey>): string | null =>
@@ -57,7 +54,8 @@ export function canonicalSearch(search: string, today: string): string {
   }
   normalize('tab', (s) => encodeTab(parseTab(s)))
   normalize('lens', (s) => encodeLens(parseLens(s)))
-  normalize('view', (s) => encodeView(parseView(s)))
+  // The calendar has one view; old links must not advertise a hidden view.
+  params.delete('view')
   normalize('date', (s) => encodeDate(parseDateParam(s, today), today))
   normalize('only', (s) => encodeOnly(parseOnlyParam(s)))
   normalize('league', (s) => encodeLeague(parseLeague(s)))

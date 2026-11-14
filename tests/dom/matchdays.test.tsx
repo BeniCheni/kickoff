@@ -33,7 +33,7 @@ describe('day-level matchday provenance', () => {
     expect(screen.getByText(/MATCHDAY 1 · RESCHEDULED/)).toBeTruthy()
     expect(screen.getByText(/MATCHDAY 2 · COMPUTED/)).toBeTruthy()
   })
-  it('keeps the provenance above Ledger/Broadcast rows and on both Poster headers', () => {
+  it('keeps the provenance above Ledger rows and on both Poster headers', () => {
     const { container } = render(<>
       <LedgerWeek days={[{ date: '2026-09-08', shown: [f], total: 1, isToday: false }]} />
       <PosterWeek blocks={[{ kind: 'big', date: '2026-09-08', fixtures: [f], isToday: false, dominant: 'ucl' }, { kind: 'small', date: '2026-09-09', fixtures: [f], isToday: false }]} />

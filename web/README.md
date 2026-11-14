@@ -257,10 +257,10 @@ exactly `web/app/` plus these shared files, named in `app/globals.css`:
 - `src/components/StalenessBanner.tsx`
 - `src/components/ViewBoundary.tsx`
 - `src/components/MomentsEmpty.tsx`
-- `src/components/FixturesPage.tsx`, `TablePage.tsx`, `TickerStrip.tsx`
-- `src/components/WeekView.tsx`, `MonthView.tsx`, `LedgerWeek.tsx`, `PosterWeek.tsx`
+- `src/components/FixturesPage.tsx`, `TablePage.tsx`
+- `src/components/WeekView.tsx`, `LedgerWeek.tsx`, `PosterWeek.tsx`
 - `src/components/FixtureRow.tsx`, `MatchdayLines.tsx`, `NextUpStrip.tsx`, `TonightSlate.tsx`
-- `src/components/FilterBar.tsx`, `CompetitionChip.tsx`, `WatchPanel.tsx`
+- `src/components/FilterBar.tsx`, `CompetitionChip.tsx`
 
 `app/globals.css` also imports `src/shell.css`, the token and base rules the
 reader imports too. It does not scan docs/, studio/, tests, or the rest of src/.
@@ -313,7 +313,7 @@ reproduce it. The file-tracer check is gone: it did not observe the renderer.
 
 web/ may import from `../src` only the modules in `src-allowlist.mjs`:
 
-- `src/components/AppHeader.tsx`, `CompetitionChip.tsx`, `FilterBar.tsx`, `FixtureRow.tsx`, `FixturesPage.tsx`, `LedgerWeek.tsx`, `LensSwitcher.tsx`, `MatchdayLines.tsx`, `MomentsEmpty.tsx`, `MonthView.tsx`, `NextUpStrip.tsx`, `PosterWeek.tsx`, `StalenessBanner.tsx`, `TabNav.tsx`, `TablePage.tsx`, `TickerStrip.tsx`, `TonightSlate.tsx`, `ViewBoundary.tsx`, `WatchPanel.tsx`, `WeekView.tsx`
+- `src/components/AppHeader.tsx`, `CompetitionChip.tsx`, `FilterBar.tsx`, `FixtureRow.tsx`, `FixturesPage.tsx`, `LedgerWeek.tsx`, `LensSwitcher.tsx`, `MatchdayLines.tsx`, `MomentsEmpty.tsx`, `NextUpStrip.tsx`, `PosterWeek.tsx`, `StalenessBanner.tsx`, `TabNav.tsx`, `TablePage.tsx`, `TonightSlate.tsx`, `ViewBoundary.tsx`, `WeekView.tsx`
 - `src/lib/RequestClock.tsx`, `chipInk.ts`, `clock.ts`, `competitions.ts`, `fixtures.ts`, `lens.ts`, `lensSelectors.ts`, `matchdays.ts`, `schema.ts`, `standings.ts`, `theme.ts`, `time.ts`, `urlCodecs.ts`, `useNow.ts`, `useThemeController.ts`, `useUrlState.ts`
 
 It does not include `src/main.tsx`, `src/App.tsx`, a Moments session, player or

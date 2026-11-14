@@ -13,11 +13,10 @@ export function europeanContrastCases() {
     const grounds: Record<string, ReturnType<typeof rgb>> = {
       bg: color('bg'), surface: color('surface'), 'surface-alt': color('surface-alt'),
       'floodlight-bg': composite(color('floodlight-bg'), color('bg'), parseColor(value('floodlight-bg')).alpha),
-      'Broadcast hot': color('surface'),
     }
     const pairs = [
-      ['matchday / unknown local', 'floodlight-strong', ['bg', 'surface', 'surface-alt', 'Broadcast hot']],
-      ['divider range / competition name', 'text-muted', ['bg', 'surface', 'Broadcast hot']],
+      ['matchday / unknown local', 'floodlight-strong', ['bg', 'surface', 'surface-alt']],
+      ['divider range / competition name', 'text-muted', ['bg', 'surface']],
       ['progress / Moments banner', 'floodlight-strong', ['floodlight-bg']],
       ['Moment title', 'text', ['surface']],
       ['Moment meta / credit', 'text-muted', ['surface']],

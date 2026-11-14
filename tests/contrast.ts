@@ -81,7 +81,6 @@ export function measureContrast(cssSource = css, componentSource = bannerSource)
         paint('border', color(ground)))
     }
     add('LIVE Ledger/Poster', theme === 'light' ? rgb('#ffffff') : color('bg'), theme === 'light' ? '#ffffff' : value('bg'), 'accent-strong fill', color('accent-strong'))
-    add('LIVE Broadcast (unchanged)', theme === 'light' ? color('text') : color('bg'), theme === 'light' ? value('text') : value('bg'), 'floodlight fill', color('floodlight'))
   }
   return contrastCases
 }

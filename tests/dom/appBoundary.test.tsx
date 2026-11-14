@@ -10,10 +10,6 @@ vi.mock('../../src/components/FixturesPage', () => ({ FixturesPage: ({ lens }: {
   return <p>Healthy fixtures</p>
 } }))
 vi.mock('../../src/components/TablePage', () => ({ TablePage: () => <p>Healthy table</p> }))
-vi.mock('../../src/components/TickerStrip', () => ({ TickerStrip: () => {
-  if (fault.target === 'ticker') throw new Error('deliberate ticker failure')
-  return null
-} }))
 vi.mock('../../src/components/StalenessBanner', () => ({ StalenessBanner: () => {
   if (fault.target === 'banner') throw new Error('deliberate banner failure')
   return null
@@ -23,10 +19,9 @@ let release: (() => void) | undefined
 afterEach(() => { release?.(); fault.target = ''; fault.lens = '' })
 
 describe('App keeps navigation outside the keyed boundary', () => {
-  it.each(['ledger', 'poster', 'broadcast'].flatMap((lens) => ['light', 'dark'].map((theme) => ({ lens, theme }))))('contains a page throw in $lens / $theme and recovers by navigation', ({ lens, theme }) => {
+  it.each(['poster', 'ledger'].flatMap((lens) => ['light', 'dark'].map((theme) => ({ lens, theme }))))('contains a page throw in $lens / $theme and recovers by navigation', ({ lens, theme }) => {
     release = primeClock(edt('2026-09-05T12:00:00'))
     window.localStorage.setItem('kickoff-theme', theme)
-    window.localStorage.setItem('kickoff-theme-broadcast', theme)
     window.history.replaceState(null, '', `/kickoff/?lens=${lens}&date=2026-10-07#keep`)
     fault.target = 'page'; fault.lens = lens
     const errors = vi.spyOn(console, 'error').mockImplementation(() => {})
@@ -48,9 +43,9 @@ describe('App keeps navigation outside the keyed boundary', () => {
     } finally { errors.mockRestore() }
   })
 
-  it.each(['ticker', 'banner'])('also contains a %s throw beneath the seam', (target) => {
+  it.each(['banner'])('also contains a %s throw beneath the seam', (target) => {
     release = primeClock(edt('2026-09-05T12:00:00'))
-    window.history.replaceState(null, '', '/?lens=broadcast')
+    window.history.replaceState(null, '', '/?lens=ledger')
     fault.target = target
     const errors = vi.spyOn(console, 'error').mockImplementation(() => {})
     try {

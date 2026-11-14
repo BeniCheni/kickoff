@@ -185,21 +185,13 @@
   padding-bottom: 16px;
 }
 [data-lens="poster"] .moments-gallery h1 { font-size: 48px; }
-[data-lens="broadcast"] .moments-gallery .moments-edition-head {
-  border-top: 3px solid var(--accent-lead-strong);
-  border-bottom: 0;
-  padding: 16px;
-  background: var(--surface-alt);
-}
-[data-lens="broadcast"] .moments-gallery h1 { font-size: 60px; }
 @media (max-width: 760px) {
   .moments-gallery { font-size: 13px; }
   .moments-gallery h1 { font-size: 32px; }
   .moments-gallery .moments-count,
   .moments-gallery .moments-edition-note { display: none; }
   .moments-gallery .moments-cards { grid-template-columns: minmax(0, 1fr); }
-  [data-lens="poster"] .moments-gallery h1,
-  [data-lens="broadcast"] .moments-gallery h1 { font-size: 39px; }
+  [data-lens="poster"] .moments-gallery h1 { font-size: 39px; }
 }
 @media (min-width: 888px) {
   .moments-gallery .moments-watch-layout {

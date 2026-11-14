@@ -17,6 +17,15 @@ function history() {
   const git = (...args: string[]) => execFileSync('git', args, { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim()
   git('init', '-b', 'feature')
   git('config', 'user.name', 'Fixture'); git('config', 'user.email', 'fixture@example.invalid')
+  // The fabricated repository starts no work of its own. `git commit` otherwise launches a
+  // detached `git maintenance run --auto`, and on Git 2.54 that run's geometric-repack task
+  // repacks when objects/17 holds two loose objects and does not when it holds one. gc.auto
+  // is not the switch: 0 and 6700 both still repack at two. The repack is still writing
+  // .git/objects when afterEach removes the directory, and rmSync throws ENOTEMPTY.
+  // maintenance.auto=false stops the run. gc.auto=0 only covers the older loose-object
+  // estimate (~6700/256). The copied tree held two such objects at 0faf606 and one at
+  // ddd9a37, f7775c9 and 89b8067 (PR #320 review).
+  git('config', 'maintenance.auto', 'false'); git('config', 'gc.auto', '0')
   const commit = (file: string) => {
     mkdirSync(path.dirname(path.join(root, file)), { recursive: true })
     writeFileSync(path.join(root, file), `${file} ${git('rev-list', '--count', '--all')}\n`)

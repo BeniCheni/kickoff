@@ -18,7 +18,6 @@ const surface = query.get('surface') ?? 'stage'
 const edition = scenario === 'empty' ? [] : scenario === 'fictional' ? fictionalEdition : archivalEdition
 const theme = query.get('theme') ?? 'light'
 localStorage.setItem('kickoff-theme', theme)
-localStorage.setItem('kickoff-theme-broadcast', theme)
 localStorage.removeItem(SAVED_MOMENTS_KEY)
 if (scenario === 'failed-unsave') localStorage.setItem(SAVED_MOMENTS_KEY, JSON.stringify([edition[0]!.id]))
 let refuseWrites = scenario === 'save-refused' || scenario === 'failed-unsave'
