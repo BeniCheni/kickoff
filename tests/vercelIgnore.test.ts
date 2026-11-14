@@ -17,6 +17,12 @@ function history() {
   const git = (...args: string[]) => execFileSync('git', args, { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim()
   git('init', '-b', 'feature')
   git('config', 'user.name', 'Fixture'); git('config', 'user.email', 'fixture@example.invalid')
+  // The fabricated repository starts no work of its own. `git commit` otherwise launches a
+  // detached `git maintenance run --auto`; when that decides to repack, it is still writing
+  // .git/objects while afterEach removes the directory, and rmSync throws ENOTEMPTY. Whether
+  // it repacks turns on how many loose objects hash into objects/17, so the failure came and
+  // went with the bytes under web/, src/, scripts/ and tests/fixtures (PR #320 review).
+  git('config', 'maintenance.auto', 'false'); git('config', 'gc.auto', '0')
   const commit = (file: string) => {
     mkdirSync(path.dirname(path.join(root, file)), { recursive: true })
     writeFileSync(path.join(root, file), `${file} ${git('rev-list', '--count', '--all')}\n`)
