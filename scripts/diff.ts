@@ -1,4 +1,4 @@
-import { unsettledStatus, type Fixture, type StandingRow, type StandingsFile } from '../src/lib/schema'
+import { unsettledStatus, type Fixture, type FixtureStatus, type StandingRow, type StandingsFile } from '../src/lib/schema'
 import { brooklynDate } from '../src/lib/time'
 
 /**
@@ -70,10 +70,50 @@ function inversionDetail(before: Fixture, after: Fixture): string {
   return `was ${before.home.name} at home, now ${after.home.name} at home${venue}`
 }
 
+/**
+ * The three statuses that say a match ended and how. A move between two of them is a
+ * correction to a result a reader may already have settled on: `full_time` 2-1 becoming
+ * `after_extra_time` 2-1 means 2-1 was never the 90-minute score, and the score itself
+ * did not move, so RESULT_CHANGED stays silent. A shootout that appears or vanishes
+ * travels the same way, because only `after_penalties` may carry one.
+ */
+const FINAL_STATUSES = new Set<FixtureStatus>(['full_time', 'after_extra_time', 'after_penalties'])
+
+function goalsDiffer(
+  before: { home: number; away: number },
+  after: { home: number; away: number },
+  inverted: boolean,
+): boolean {
+  return inverted
+    ? before.home !== after.away || before.away !== after.home
+    : before.home !== after.home || before.away !== after.away
+}
+
+function scoreText(
+  result: { home: number; away: number },
+  shootout?: { home: number; away: number },
+): string {
+  const base = `${result.home}-${result.away}`
+  return shootout ? `${base} (${shootout.home}-${shootout.away})` : base
+}
+
 function resultDetail(before: Fixture, after: Fixture): string {
   if (!before.result || !after.result) return ''
   if (isInversion(before, after)) {
+    if (before.shootout || after.shootout) {
+      const side = (
+        name: string,
+        goals: number,
+        pens: number | undefined,
+        nextGoals: number,
+        nextPens: number | undefined,
+      ) => `${name} ${goals}${pens === undefined ? '' : ` (${pens})`} -> ${nextGoals}${nextPens === undefined ? '' : ` (${nextPens})`}`
+      return `${side(before.home.name, before.result.home, before.shootout?.home, after.result.away, after.shootout?.away)}, ${side(before.away.name, before.result.away, before.shootout?.away, after.result.home, after.shootout?.home)}`
+    }
     return `${before.home.name} ${before.result.home} -> ${after.result.away}, ${before.away.name} ${before.result.away} -> ${after.result.home}`
+  }
+  if (before.shootout || after.shootout) {
+    return `${scoreText(before.result, before.shootout)} -> ${scoreText(after.result, after.shootout)}`
   }
   return `${before.result.home}-${before.result.away} -> ${after.result.home}-${after.result.away}`
 }
@@ -141,14 +181,16 @@ export function diffFixtures(
       }
     }
 
-    // Normal completion is already STATUS_CHANGED. A correction to two known scores
-    // remains urgent even weeks later, because it can change a settled result.
+    // Normal completion is already STATUS_CHANGED. A correction to two known scores,
+    // or to the shootout alone, remains urgent even weeks later.
+    const inverted = isInversion(before, after)
     const resultChanged = before.result && after.result
-      ? isInversion(before, after)
-        ? before.result.home !== after.result.away || before.result.away !== after.result.home
-        : before.result.home !== after.result.home || before.result.away !== after.result.away
+      ? goalsDiffer(before.result, after.result, inverted)
       : false
-    if (resultChanged) {
+    const shootoutChanged = before.shootout && after.shootout
+      ? goalsDiffer(before.shootout, after.shootout, inverted)
+      : false
+    if (resultChanged || shootoutChanged) {
       changes.push({
         kind: 'RESULT_CHANGED', id, label: label(after), urgent: true,
         detail: resultDetail(before, after),
@@ -171,9 +213,12 @@ export function diffFixtures(
     }
 
     if (before.status !== after.status) {
+      // One final corrected to another is urgent at any horizon, like a score correction.
+      // A first final (scheduled or in_play to any of the three) keeps the horizon rule.
+      const finalCorrected = FINAL_STATUSES.has(before.status) && FINAL_STATUSES.has(after.status)
       changes.push({
         kind: 'STATUS_CHANGED', id, label: label(after),
-        urgent: urgent || unsettledStatus(after.status),
+        urgent: urgent || unsettledStatus(after.status) || finalCorrected,
         detail: `${before.status} -> ${after.status}`,
       })
     }
@@ -343,8 +388,8 @@ export type MergeVerdict = 'auto' | 'hold'
  * pipeline's Step 0 or would hide a partial report:
  *
  *   - anything urgent — inside −6 h..+72 h of now, or a postponement, cancellation,
- *     suspension, abandonment, or a result/team correction at any horizon
- *     (the same rule as exit code 1);
+ *     suspension, abandonment, or a result/team correction at any horizon, a change from
+ *     one final status to another included (the same rule as exit code 1);
  *   - a DISAPPEARED or HOME_AWAY_INVERTED line at any horizon — a vanished fixture and an
  *     inverted moneyline are the two that cost money far out;
  *   - legacy standings=failed input — held defensively. Since v0.2.5, current standings

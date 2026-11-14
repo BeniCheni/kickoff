@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import rawMoments from '../curated/moments.json'
 import { FIXTURES } from './fixtures'
-import { fixtureSchema, type Fixture } from './schema'
+import { fixtureFields, type Fixture } from './schema'
 
 export const MOMENT_CATEGORIES = ['prematch', 'highlights', 'celebrations'] as const
 const webUrl = z.url({ protocol: /^https?$/ })
@@ -77,7 +77,7 @@ const sourceSchema = z.object({
 })
 // Curation owns these facts after a fixture leaves the rolling snapshot. The extra
 // clock fields prevent a lost zone or a placeholder becoming an invented local time.
-const momentFixtureSchema = fixtureSchema.pick({
+const momentFixtureSchema = fixtureFields.pick({
   home: true, away: true, kickoffUtc: true, competition: true,
   venueTz: true, timeConfidence: true, status: true,
 })
