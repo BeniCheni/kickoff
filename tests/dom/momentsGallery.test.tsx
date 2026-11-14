@@ -137,7 +137,7 @@ it('D-13: facts, source lines and messages are string-equal through every lens',
   const { container } = render(<App momentsEdition={archivalEdition} />)
   const text = () => container.querySelector('main')!.textContent
   const initial = text()
-  for (const name of ['Ledger', 'Broadcast', 'Poster']) {
+  for (const name of ['Ledger', 'Poster']) {
     fireEvent.click(screen.getByRole('radio', { name })); expect(text()).toBe(initial)
   }
 })
@@ -151,7 +151,8 @@ it('visit owner survives tab/lens URL remounts, leaves exactly once, and never m
   expect(state().media[before.active!]!.attempt).toBe(1)
   fireEvent.click(screen.getByRole('radio', { name: 'Ledger' }))
   expect(state().media[before.active!]!.attempt).toBe(1)
-  act(() => popTo('/?tab=moments&lens=broadcast&only=pl&date=2026-09-29'))
+  act(() => popTo('/?tab=moments&lens=poster&only=pl&date=2026-09-29'))
+  expect(document.documentElement.dataset.lens).toBe('poster')
   expect(state().history).toEqual(before.history); expect(state().saved).toEqual(before.saved)
 })
 it('a contained route throw and Retry preserve active item, history and saved references', () => {

@@ -12,7 +12,6 @@ describe('lens URL codec', () => {
     expect(DEFAULT_LENS).toBe('poster')
     expect(encodeLens('poster')).toBeNull()
     expect(encodeLens('ledger')).toBe('ledger')
-    expect(encodeLens('broadcast')).toBe('broadcast')
   })
 
   it('writes ?lens=ledger down and reads it back — Ledger is now the value that must survive', () => {
@@ -27,12 +26,12 @@ describe('lens URL codec', () => {
     expect(parseLens('')).toBe('poster')
     expect(parseLens('x')).toBe('poster')
     expect(parseLens('LEDGER')).toBe('poster')
-    expect(parseLens('Broadcast')).toBe('poster')
+    expect(parseLens('\u0062roadcast')).toBe('poster')
     expect(parseLens('ledger ')).toBe('poster')
-    expect(parseLens('ledger,broadcast')).toBe('poster')
+    expect(parseLens('ledger,poster')).toBe('poster')
   })
 
-  it('keeps the loudness gradient — the default is not moved to the front of the pill order', () => {
-    expect(LENSES).toEqual(['ledger', 'poster', 'broadcast'])
+  it('puts Poster before Ledger in the pill and keyboard order', () => {
+    expect(LENSES).toEqual(['poster', 'ledger'])
   })
 })

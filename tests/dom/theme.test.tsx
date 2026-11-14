@@ -28,26 +28,28 @@ describe('theme.ts in a browser-shaped environment (affordance 4)', () => {
     expect(screen.getByRole('button', { name: 'Light mode' })).toBeTruthy()
     media.setDark(false)
     expect(document.documentElement.dataset.theme).toBe('light')
-    fireEvent.click(screen.getByRole('radio', { name: 'Broadcast' }))
-    media.setDark(true)
-    media.setDark(false)
-    expect(document.documentElement.dataset.theme).toBe('dark')
-    expect(media.listenerCount()).toBe(1)
     fireEvent.click(screen.getByRole('radio', { name: 'Ledger' }))
+    media.setDark(true)
+    // Each step is read: ending on light alone would pass with a listener that stopped following.
+    expect(document.documentElement.dataset.theme).toBe('dark')
+    media.setDark(false)
+    expect(document.documentElement.dataset.theme).toBe('light')
+    expect(media.listenerCount()).toBe(1)
+    fireEvent.click(screen.getByRole('radio', { name: 'Poster' }))
+    expect(document.documentElement.dataset.lens).toBe('poster')
     expect(document.documentElement.dataset.theme).toBe('light')
     unmount()
     expect(media.listenerCount()).toBe(0)
   })
 
-  it('OS changes respect each lens family’s stored choice', () => {
+  it('OS changes respect the shared stored choice', () => {
     const media = installMatchMedia()
     window.localStorage.setItem('kickoff-theme', 'light')
-    window.localStorage.setItem('kickoff-theme-broadcast', 'light')
     release = primeClock(edt('2026-09-05T12:00:00'))
     render(<App />)
     media.setDark(true)
     expect(document.documentElement.dataset.theme).toBe('light')
-    fireEvent.click(screen.getByRole('radio', { name: 'Broadcast' }))
+    fireEvent.click(screen.getByRole('radio', { name: 'Ledger' }))
     media.setDark(false)
     media.setDark(true)
     expect(document.documentElement.dataset.theme).toBe('light')
@@ -63,30 +65,22 @@ describe('theme.ts in a browser-shaped environment (affordance 4)', () => {
       media.setDark(false)
       media.setDark(true)
       expect(document.documentElement.dataset.theme).toBe('light')
-      fireEvent.click(screen.getByRole('radio', { name: 'Broadcast' }))
-      expect(document.documentElement.dataset.theme).toBe('dark')
+      fireEvent.click(screen.getByRole('radio', { name: 'Ledger' }))
+      expect(document.documentElement.dataset.theme).toBe('light')
       fireEvent.click(screen.getByRole('radio', { name: 'Poster' }))
       expect(document.documentElement.dataset.theme).toBe('light')
     } finally { restore() }
   })
-  it('follows prefers-color-scheme when nothing is stored; Broadcast is dark regardless', () => {
+  it('follows prefers-color-scheme when nothing is stored', () => {
     installMatchMedia({ dark: true })
-    expect(resolveThemeFromEnvironment('poster')).toBe('dark')
-    expect(resolveThemeFromEnvironment('ledger')).toBe('dark')
-    expect(resolveThemeFromEnvironment('broadcast')).toBe('dark')
-
+    expect(resolveThemeFromEnvironment()).toBe('dark')
     installMatchMedia({ dark: false })
-    expect(resolveThemeFromEnvironment('poster')).toBe('light')
-    expect(resolveThemeFromEnvironment('broadcast')).toBe('dark')
+    expect(resolveThemeFromEnvironment()).toBe('light')
   })
-
-  it('a stored choice beats the system preference, and Broadcast reads only its own key', () => {
+  it('a stored choice beats the system preference', () => {
     installMatchMedia({ dark: true })
     window.localStorage.setItem('kickoff-theme', 'light')
-    expect(resolveThemeFromEnvironment('poster')).toBe('light')
-    expect(resolveThemeFromEnvironment('broadcast')).toBe('dark')
-    window.localStorage.setItem('kickoff-theme-broadcast', 'light')
-    expect(resolveThemeFromEnvironment('broadcast')).toBe('light')
+    expect(resolveThemeFromEnvironment()).toBe('light')
   })
 
   it('a localStorage that throws on access reads as "no stored choice"; writes give up silently', () => {
@@ -96,7 +90,7 @@ describe('theme.ts in a browser-shaped environment (affordance 4)', () => {
       expect(() => window.localStorage.getItem('kickoff-theme')).toThrow()
       expect(readStoredTheme('kickoff-theme')).toBeNull()
       expect(() => writeStoredTheme('kickoff-theme', 'dark')).not.toThrow()
-      expect(resolveThemeFromEnvironment('poster')).toBe('dark')
+      expect(resolveThemeFromEnvironment()).toBe('dark')
     } finally {
       restore()
     }

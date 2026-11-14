@@ -69,7 +69,7 @@ describe('useUrlState — the popstate handler (affordance 2)', () => {
     act(() => popTo('/'))
     expect(result.current[0]).toBe('fixtures')
 
-    act(() => popTo('/?lens=broadcast&tab=table'))
+    act(() => popTo('/?lens=ledger&tab=table'))
     expect(result.current[0]).toBe('table')
   })
 
@@ -105,7 +105,7 @@ describe('useUrlState — the popstate handler (affordance 2)', () => {
 describe('App normalizes once on load', () => {
   it('normalizes junk and inactive-page keys, preserving the hash and unknown query values without a push', () => {
     release = primeClock(edt('2026-09-05T12:00:00'))
-    window.history.replaceState(null, '', '/kickoff/?lens=BROADCAST&date=2026-13-45&league=bad&only=&ref=friend#fixtures')
+    window.history.replaceState(null, '', '/kickoff/?lens=INVALID&date=2026-13-45&league=bad&only=&ref=friend#fixtures')
     const before = window.history.length
     render(<StrictMode><App /></StrictMode>)
     expect(window.location.pathname + window.location.search + window.location.hash).toBe('/kickoff/?only=&ref=friend#fixtures')

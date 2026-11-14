@@ -58,7 +58,7 @@ existing wrapped style.
   catch-up, URL state by `replaceState` + a synthetic popstate, StrictMode's double subscribe,
   a stubbed `matchMedia`, a `localStorage` that throws, a contained throw under a boundary.
   Extend it; do not re-invent it. What it does *not* cover is the next bullet — jsdom knows
-  nothing of layout, contrast, `scrollWidth` or the marquee, so the browser matrix stands.
+  nothing of layout, contrast or `scrollWidth`, so the browser matrix stands.
   Node floor: jsdom 30 needs `^22.22.2 || ^24.15.0 || >=26.0.0`, mirrored in `package.json`
   `engines` (npm warns, it does not block); CI runs Node 24.
 - Browser-verify before declaring done: every lens × theme × tab at 360, 375, 390 and

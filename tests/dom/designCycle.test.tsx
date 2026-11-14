@@ -1,13 +1,13 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
-import { BY_DATE, FIXTURES, META } from '../../src/lib/fixtures'
+import { BY_DATE, FIXTURES } from '../../src/lib/fixtures'
 import type { Fixture } from '../../src/lib/schema'
 import { COMPETITION_KEYS } from '../../src/lib/competitions'
-import { brooklynDate, fixtureTimes, niceDate, posterDayTitle, startOfWeek } from '../../src/lib/time'
+import { brooklynDate, fixtureTimes, startOfWeek } from '../../src/lib/time'
 import { LIVE_WINDOW_MS } from '../../src/lib/lensSelectors'
 import { WeekView } from '../../src/components/WeekView'
-import { MonthView } from '../../src/components/MonthView'
-import { TickerStrip } from '../../src/components/TickerStrip'
+import { NextUpStrip } from '../../src/components/NextUpStrip'
+import { TonightSlate } from '../../src/components/TonightSlate'
 import { primeClock, wake } from './rig'
 
 let release: (() => void) | undefined
@@ -32,8 +32,7 @@ const active = new Set(COMPETITION_KEYS)
  * The row for one exact-time fixture, by its accessible name: a FixtureRow's button carries no
  * aria-label, so the name is its content in render order — the Brooklyn time first, then
  * "home vs away". Anchoring on both keeps a 12:30 PM row from answering for a 2:30 PM one
- * (`includes` alone would) and a venue string from answering for a pairing. The month grid's
- * day cells are buttons too, but their aria-label names a date and competitions, never a club.
+ * (`includes` alone would) and a venue string from answering for a pairing.
  * Placeholder rows render "—" in the time slot and are not this helper's job.
  */
 function fixtureRowFor(fixture: Fixture) {
@@ -44,41 +43,31 @@ function fixtureRowFor(fixture: Fixture) {
 }
 
 describe('synthetic frozen snapshot through the real selector and clock wiring', () => {
-  for (const lens of ['ledger', 'poster', 'broadcast'] as const) {
-    for (const view of ['week', 'month']) {
-      it(`${lens} ${view}: LIVE expires through parent selection, without changing the snapshot`, () => {
-        const fixture = FIXTURES.find((f) => f.timeConfidence === 'exact' && !f.result)!
-        fixture.status = 'in_play'
-        fixture.result = { home: 1, away: 0 } // ILLUSTRATIVE; in-memory only.
-        const kickoff = Date.parse(fixture.kickoffUtc)
-        const today = brooklynDate(fixture.kickoffUtc)
-        release = primeClock(new Date(kickoff + LIVE_WINDOW_MS))
-        if (view === 'week') {
-          render(<WeekView weekStart={startOfWeek(today)} active={active} today={today} lens={lens} />)
-        } else {
-          render(<MonthView monthStart={`${today.slice(0, 7)}-01`} active={active} today={today} />)
-          // The fixture's own day, by its aria-label — not the month's first match-day, which
-          // only coincides with it while the snapshot's first exact fixture opens the window.
-          const cell = screen.getByRole('button', { name: (n) => n.startsWith(`${niceDate(today)}, `) })
-          fireEvent.click(cell)
-        }
-        const row = fixtureRowFor(fixture)
-        const scope = within(row)
-        expect(scope.getByText('LIVE')).toBeTruthy()
-        wake(new Date(kickoff + LIVE_WINDOW_MS + 1))
-        // The app's existing clock floors to minutes; the pure selector tests pin +1ms.
-        expect(scope.getByText('LIVE')).toBeTruthy()
-        wake(new Date(kickoff + LIVE_WINDOW_MS + 60_000))
-        expect(scope.queryByText('LIVE')).toBeNull()
-        const pill = scope.getByText('KICKED OFF')
-        expect(pill.className).toContain('border-floodlight-strong')
-        expect(pill.closest('[data-hot]')).toBeNull()
-        expect(within(pill.closest('button')!).getByText('1–0').className).toContain('text-pitch')
-        expect(fixture.status).toBe('in_play')
-        fireEvent.click(pill.closest('button')!)
-        expect(pill.closest('button')?.getAttribute('aria-expanded')).toBe('true')
-      })
-    }
+  for (const lens of ['poster', 'ledger'] as const) {
+    it(`${lens} week: LIVE expires through parent selection, without changing the snapshot`, () => {
+      const fixture = FIXTURES.find((f) => f.timeConfidence === 'exact' && !f.result)!
+      fixture.status = 'in_play'
+      fixture.result = { home: 1, away: 0 } // ILLUSTRATIVE; in-memory only.
+      const kickoff = Date.parse(fixture.kickoffUtc)
+      const today = brooklynDate(fixture.kickoffUtc)
+      release = primeClock(new Date(kickoff + LIVE_WINDOW_MS))
+      render(<WeekView weekStart={startOfWeek(today)} active={active} today={today} lens={lens} />)
+      const row = fixtureRowFor(fixture)
+      const scope = within(row)
+      expect(scope.getByText('LIVE')).toBeTruthy()
+      wake(new Date(kickoff + LIVE_WINDOW_MS + 1))
+      // The app's existing clock floors to minutes; the pure selector tests pin +1ms.
+      expect(scope.getByText('LIVE')).toBeTruthy()
+      wake(new Date(kickoff + LIVE_WINDOW_MS + 60_000))
+      expect(scope.queryByText('LIVE')).toBeNull()
+      const pill = scope.getByText('KICKED OFF')
+      expect(pill.className).toContain('border-floodlight-strong')
+      expect(pill.closest('[data-hot]')).toBeNull()
+      expect(within(pill.closest('button')!).getByText('1–0').className).toContain('text-pitch')
+      expect(fixture.status).toBe('in_play')
+      fireEvent.click(pill.closest('button')!)
+      expect(pill.closest('button')?.getAttribute('aria-expanded')).toBe('true')
+    })
   }
 
   it('two in-play rows on one kickoff: the document-wide query throws, the row-scoped one resolves each row', () => {
@@ -116,51 +105,73 @@ describe('synthetic frozen snapshot through the real selector and clock wiring',
   })
 })
 
-describe('ticker mounted/static contract', () => {
-  it('preserves the strip node when the final exact kickoff expires; no duplicate or pause control', () => {
+// The ticker's DOM case was the only one that rendered a hero with a league-unset NEXT. With it
+// gone, a hero that printed the filler instant as a clock passed every test in both suites
+// (PR #320 review). The two surviving heroes carry the rule now, on the same real selectors
+// (`upcoming`, `planSlate`) and the same clock.
+describe('an unset kickoff is never a clock on a hero', () => {
+  const CLOCK = /\d{1,2}:\d{2}/
+
+  /** Only the snapshot's first `count` rows stay scheduled, all on one league-unset instant.
+   *  Picked by position and overridden in memory, never by `status` or `result`. */
+  function placeholderDay(count: number) {
     FIXTURES.forEach((f) => { f.status = 'cancelled' })
-    const fixture = FIXTURES[0]!
-    fixture.status = 'scheduled'
-    fixture.timeConfidence = 'exact'
-    const kickoff = Date.parse(fixture.kickoffUtc)
-    release = primeClock(new Date(kickoff - 1))
-    const { container } = render(<TickerStrip />)
-    const strip = container.firstElementChild
-    expect(screen.getByRole('button', { name: 'Pause ticker' })).toBeTruthy()
-    wake(new Date(kickoff))
-    expect(container.firstElementChild).toBe(strip)
-    expect(strip?.getAttribute('data-ticker')).toBe('empty')
-    expect(strip?.textContent).toBe(`NEXT — nothing scheduled in this snapshot · window ends ${posterDayTitle(META.window.to)}`)
-    expect(screen.queryByRole('button')).toBeNull()
-    expect(container.querySelector('.ticker-track')).toBeNull()
-    // The static line is a Tab stop: it must expose a role and a name, not a nameless generic.
-    expect(screen.getByRole('region', { name: 'Ticker' })).toBe(strip?.firstElementChild)
-    expect(strip?.firstElementChild?.getAttribute('tabindex')).toBe('0')
+    const day = FIXTURES.slice(0, count)
+    for (const f of day) {
+      f.status = 'scheduled'
+      f.timeConfidence = 'round_placeholder'
+      f.kickoffUtc = day[0]!.kickoffUtc // ILLUSTRATIVE; a filler instant, in memory only.
+      delete f.result
+    }
+    return day
+  }
+
+  it('Ledger: every Next-up card reads TBC, and the overflow line names no time', () => {
+    const day = placeholderDay(5)
+    const filler = day[0]!.kickoffUtc
+    // Primed on the filler instant itself: the day still holds, the minute means nothing.
+    release = primeClock(new Date(filler))
+    const { container } = render(<NextUpStrip today={brooklynDate(filler)} active={active} />)
+    const slots = screen.getAllByText('TBC')
+    expect(slots).toHaveLength(4)
+    for (const slot of slots) {
+      expect(slot.className).toContain('italic')
+      expect(slot.className).toContain('text-floodlight-strong')
+    }
+    expect(container.textContent).toContain(`+1 more today · ${day[4]!.home.name} v ${day[4]!.away.name}`)
+    expect(container.textContent).not.toMatch(CLOCK)
   })
-  it('renders one italic TBC time slot per track for a placeholder NEXT', () => {
-    FIXTURES.forEach((f) => { f.status = 'cancelled' })
-    const fixture = FIXTURES[0]!
-    fixture.status = 'scheduled'
-    fixture.timeConfidence = 'round_placeholder'
-    release = primeClock(new Date(fixture.kickoffUtc))
-    const { container } = render(<TickerStrip />)
-    expect(container.querySelector('[data-ticker="active"]')).toBeTruthy()
-    expect(container.querySelector('i')?.textContent).toBe('TBC')
-    expect(container.querySelector('i')?.className).toContain('text-floodlight-strong')
+
+  it('Poster: the slate row reads TBC, and the sub-line counts it without a FIRST or KICKOFF time', () => {
+    const [only] = placeholderDay(1)
+    release = primeClock(new Date(only!.kickoffUtc))
+    const { container } = render(<TonightSlate today={brooklynDate(only!.kickoffUtc)} active={active} />)
+    const slot = screen.getByText('TBC')
+    expect(slot.className).toContain('italic')
+    expect(slot.className).toContain('text-floodlight-strong')
+    expect(screen.getByText('1 REMAINING · 1 TBC')).toBeTruthy()
+    expect(container.textContent).toContain(`${only!.home.name} v ${only!.away.name}`)
+    expect(container.textContent).not.toMatch(CLOCK)
   })
 })
 
-it('renders empty NEXT provenance on the moving track alongside FT', () => {
+// The ticker's "NEXT carries its Brooklyn date" cases went with it. The same rule on the two
+// heroes that remain: a kickoff after Brooklyn midnight's UTC date is still tomorrow here.
+it('a later-day NEXT carries its Brooklyn day on both heroes, not the UTC or stadium date', () => {
   FIXTURES.forEach((f) => { f.status = 'cancelled' })
-  const fixture = FIXTURES[0]!
-  fixture.status = 'full_time'
-  fixture.result = { home: 1, away: 0 }
-  release = primeClock(new Date(fixture.kickoffUtc))
-  const { container } = render(<TickerStrip />)
-  expect(container.querySelector('[data-ticker="active"]')).toBeTruthy()
-  const track = container.querySelector('.ticker-track > span')!
-  expect(track.textContent).toContain(`window ends ${posterDayTitle(META.window.to)}`)
-  expect(track.textContent).toContain('FT')
-  expect(container.querySelector('.ticker-track > span:nth-child(2)')?.getAttribute('aria-hidden')).toBe('true')
-  expect(screen.getByRole('button', { name: 'Pause ticker' })).toBeTruthy()
+  const next = FIXTURES[0]!
+  next.status = 'scheduled'
+  next.timeConfidence = 'exact'
+  next.kickoffUtc = '2026-09-07T00:30:00.000Z' // ILLUSTRATIVE; Sun 6 Sep, 8:30 PM in Brooklyn.
+  delete next.result
+  release = primeClock(new Date('2026-09-05T23:00:00.000Z')) // Sat 5 Sep, 7:00 PM in Brooklyn.
+  const ledger = render(<NextUpStrip today="2026-09-05" active={active} />)
+  expect(screen.getByText('Tomorrow')).toBeTruthy()
+  expect(ledger.container.textContent).toContain('8:30')
+  expect(ledger.container.textContent).not.toMatch(/2 days|Today/)
+  ledger.unmount()
+  const poster = render(<TonightSlate today="2026-09-05" active={active} />)
+  expect(screen.getByText('Next matchday — nothing left today')).toBeTruthy()
+  expect(screen.getByText('Sun 6 Sep')).toBeTruthy()
+  expect(poster.container.textContent).toContain('KICKOFF 8:30 PM')
 })

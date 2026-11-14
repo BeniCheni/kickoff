@@ -6,19 +6,18 @@ Everything below was learned the expensive way in the v0.1.0 and v0.2.0 reviews.
 
 ## The cells
 
-3 lenses (`ledger`, `poster`, `broadcast`) × 2 themes × 2 tabs (`fixtures`, `table`) at
+2 lenses (`poster`, `ledger`) × 2 themes × 3 tabs (`fixtures`, `table`, `moments`) at
 **360, 375, 390 and ~1000 px** = 48 cells. Lens and tab are URL state (`?lens=poster&tab=table`);
-theme is the toggle (or storage: `kickoff-theme`, `kickoff-theme-broadcast`).
+theme is the toggle (or storage: `kickoff-theme`).
 
-Six 390 px captures (lens × theme, Fixtures tab) go in the PR when anything visual changed.
+Four 390 px captures (lens × theme, Fixtures tab) go in the PR when anything visual changed.
 Nothing is committed under `docs/screenshots/` unless the originals were wrong.
 
 ## One tab, your own
 
 Reviews that run in parallel share one pane and one origin: another session's `replaceState`
 lands in your tab and its theme toggle lands in your `localStorage`. Open your own tab,
-confirm which checkout port 5173 serves (worktrees share it), and clear `kickoff-theme` and
-`kickoff-theme-broadcast` before any theme claim.
+confirm which checkout port 5173 serves (worktrees share it), and clear `kickoff-theme` before any theme claim.
 
 ## Set the viewport before anything else
 
@@ -52,7 +51,7 @@ Flush before reading:
 document.getAnimations().forEach((a) => { if (a.effect?.getTiming?.().iterations !== Infinity) a.finish() })
 ```
 
-(skip the infinite ticker marquee), or measure on fresh loads. After a lens switch, wait ~450 ms
+Or measure on fresh loads. After a lens switch, wait ~450 ms
 before a capture or the 220 ms cross-fade is in the shot.
 
 ## Driving the clock
@@ -84,7 +83,7 @@ Date.__setOffset(25 * 3600 * 1000)
 window.dispatchEvent(new Event('focus'))
 ```
 
-Then settle (MessageChannel) and read the DOM. `subscriberCount()` on Ledger/Broadcast
+Then settle (MessageChannel) and read the DOM. `subscriberCount()` on Ledger
 fixtures has read 4, on Poster and the Table 3; it must return to the same number after lens
 switches and tab flips — StrictMode's double subscribe must leave nothing behind.
 
@@ -106,8 +105,8 @@ would not.
 - Colour claims: `getComputedStyle(el).color` / `backgroundColor` and a contrast computation
   over every new pair, in both themes. Amber is light in both themes; be suspicious of anything
   set on it.
-- Hot rows: `[data-hot='true']`; the ticker's NEXT: the `.ticker-track` text; the banner: its
-  presence and first bold word.
+- Hot rows: `[data-hot='true']` remains a data marker; the banner: its presence and first
+  bold word.
 - The header stamp: `v<version> · N fixtures · synced …` — the version comes from
   `package.json` through Vite's `define`.
 

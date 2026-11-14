@@ -8,6 +8,23 @@ releases.
 
 ## [Unreleased]
 
+### Removed
+
+- The Broadcast lens and ticker. The lens switch now reads Poster, then Ledger, with one
+  shared theme preference. Old Broadcast links open Poster and lose the retired parameter.
+- Where to Watch, the expanded-row TV pill, and hand-maintained competition TV data.
+- The Monthly calendar and Weekly / Monthly control. Fixtures use the weekly view;
+  old `view` parameters are removed while competition filters and date pins keep working.
+
+### Deliberately not done
+
+- A version number, merge, tag or release: Beni decides those. This clearing precedes N7
+  and the design overhaul as a standalone change.
+- The second edition's look, tokens, type, photographs, motion, Rack, covers and NEXT pill.
+  The next-fixture selection and row data markers remain for that later work.
+- Step 0's move to Ledger, the Next.js cutover, and changes to Moments beyond retired lens
+  references. Generated snapshots, sync scripts and historical design/proof records stay as-is.
+
 ## [0.5.3] — 2026-10-27
 
 The football app's last patch before the cutover: one suspended or abandoned match can no

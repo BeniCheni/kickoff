@@ -14,17 +14,18 @@ function html(search: string) {
   )
 }
 
-test('Fixtures, Table and the Broadcast ticker render from the shared pages', () => {
+test('Fixtures and Table render from the shared pages', () => {
   const fixtures = html('')
   expect(fixtures).toContain('Filters')
   expect(fixtures).toContain('All ')
   expect(fixtures).not.toContain('data-ticker')
   expect(fixtures).not.toContain('data-table-picker')
 
-  const month = html('?view=month&only=pl&date=2026-09-20')
-  expect(month).toContain('Monday')
-  expect(month).toMatch(/1 of \d+ competitions shown/)
-  expect(month).toContain('Premier League')
+  const legacyView = html('?view=month&only=pl&date=2026-09-20')
+  expect(legacyView).not.toContain('Monthly')
+  expect(legacyView).toContain('Jump to today')
+  expect(legacyView).toMatch(/1 of \d+ competitions shown/)
+  expect(legacyView).toContain('Premier League')
 
   const table = html('?tab=table&league=bundesliga')
   expect(table).toContain('data-table-picker')
@@ -32,9 +33,16 @@ test('Fixtures, Table and the Broadcast ticker render from the shared pages', ()
   expect(table).toContain('Pts')
   expect(table).not.toContain('Filters')
 
-  const broadcast = html('?lens=broadcast')
-  expect(broadcast).toContain('data-ticker=')
-  expect(broadcast).toContain('Filters')
+  for (const search of ['', '?lens=ledger', '?lens=\u0062roadcast', '?view=month']) {
+    const cleared = html(search)
+    expect(cleared).toContain('Filters')
+    expect(cleared).not.toContain('data-ticker')
+    expect(cleared).not.toContain('Where to Watch')
+    expect(cleared).not.toContain('\u{1f4fa}')
+    expect(cleared).not.toMatch(/>Weekly<|>Monthly</)
+    expect(cleared).not.toContain('data-lens="\u0062roadcast"')
+    expect(cleared.indexOf('>Poster<')).toBeLessThan(cleared.indexOf('>Ledger<'))
+  }
 
   // watch stays unknown: the shell still renders Fixtures and does not grow a watch page.
   const watch = html('?watch=abc&kept=1')

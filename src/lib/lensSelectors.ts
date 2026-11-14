@@ -1,6 +1,6 @@
 import { unsettledStatus, type Fixture } from './schema'
 import { COMPETITIONS, competitionRank, type CompetitionKey } from './competitions'
-import { brooklynDate, fixtureTimes, posterDayTitle } from './time'
+import { brooklynDate, fixtureTimes } from './time'
 
 /**
  * Pure per-lens data shaping. Everything here takes fixtures as arguments (never importing
@@ -146,7 +146,7 @@ export function nextKickoffId(fixtures: readonly Fixture[], nowUtcIso: string): 
   return best ? best.id : null
 }
 
-/** The marquee and glow share the earliest eligible Brooklyn date. An all-TBC day
+/** Select the earliest eligible Brooklyn date for the retained next-fixture marker. An all-TBC day
  * has no exact selection: a later day's known time must not silently outrank it. */
 export function nextMatchdaySelection(
   fixtures: readonly Fixture[], todayBrooklyn: string, nowUtcIso: string,
@@ -183,8 +183,8 @@ export function staleLiveIds(fixtures: readonly Fixture[], nowUtcIso: string): R
 }
 
 /**
- * Broadcast's hot rows: everything believably LIVE in the snapshot plus the exact NEXT
- * on the first eligible date. These are the only rows that glow — nothing else does.
+ * Hot rows: everything believably LIVE in the snapshot plus the exact NEXT
+ * on the first eligible date. Retained as data for the future next-fixture marker.
  */
 export function hotFixtureIds(
   fixtures: readonly Fixture[],
@@ -197,86 +197,6 @@ export function hotFixtureIds(
   const { exact } = nextMatchdaySelection(fixtures, brooklynDate(nowUtcIso), nowUtcIso)
   if (exact) hot.add(exact.id)
   return hot
-}
-
-/**
- * The Broadcast ticker's content, from the loaded snapshot: live fixtures, the next
- * kickoff, today's full-time scores. The snapshot carries no live match minute, so none
- * is rendered — inventing one would break the data-honesty rule.
- */
-export type TickerSegment = { keyword: 'LIVE' | 'NEXT' | 'FT'; text: string; tbc?: { date: string }; emptyNext?: true }
-
-export function tickerSegments(
-  fixtures: readonly Fixture[],
-  todayBrooklyn: string,
-  nowUtcIso: string,
-  windowTo: string,
-): TickerSegment[] {
-  const segments: TickerSegment[] = []
-  for (const f of fixtures) {
-    if (!believablyLive(f, nowUtcIso)) continue
-    segments.push({
-      keyword: 'LIVE',
-      text: f.result
-        ? `${f.home.name} ${f.result.home}–${f.result.away} ${f.away.name}`
-        : `${f.home.name} v ${f.away.name}`,
-    })
-  }
-  const { date, exact: next, placeholders } = nextMatchdaySelection(fixtures, todayBrooklyn, nowUtcIso)
-  if (next) {
-    const { time, isoDate } = fixtureTimes(next.kickoffUtc, next.venueTz).brooklyn
-    const when = isoDate === todayBrooklyn ? time : `${posterDayTitle(isoDate)} · ${time}`
-    segments.push({ keyword: 'NEXT', text: `${when} ${next.home.name} v ${next.away.name}${placeholders.length ? ` · +${placeholders.length} TBC` : ''}` })
-  } else if (date && placeholders.length) {
-    const only = placeholders[0]!
-    segments.push({
-      keyword: 'NEXT',
-      tbc: { date: posterDayTitle(date) },
-      text: placeholders.length === 1
-        ? `${only.home.name} v ${only.away.name}`
-        : `· ${placeholders.length} kickoffs, times not yet set by the league`,
-    })
-  } else {
-    segments.push({
-      keyword: 'NEXT', emptyNext: true,
-      text: `— nothing scheduled in this snapshot · window ends ${posterDayTitle(windowTo)}`,
-    })
-  }
-  for (const f of fixtures) {
-    if (f.status !== 'full_time' || !f.result) continue
-    if (brooklynDate(f.kickoffUtc) !== todayBrooklyn) continue
-    segments.push({
-      keyword: 'FT',
-      text: `${f.home.name} ${f.result.home}–${f.result.away} ${f.away.name}`,
-    })
-  }
-  return segments
-}
-
-/**
- * One month-grid cell: the match count, up to three competition bars (most fixtures
- * first, ties toward the marquee competition, then display rank), and whether the day
- * has a marquee fixture at all (the ⭐). Dots-aren't-data; counts and bars are.
- */
-export function monthCellSummary(list: readonly Fixture[]): {
-  count: number
-  bars: CompetitionKey[]
-  marquee: boolean
-} {
-  const counts = new Map<CompetitionKey, number>()
-  let marquee = false
-  for (const f of list) {
-    counts.set(f.competition, (counts.get(f.competition) ?? 0) + 1)
-    if (isMarquee(f.competition)) marquee = true
-  }
-  const bars = [...counts.keys()]
-    .sort((a, b) => {
-      const diff = (counts.get(b) ?? 0) - (counts.get(a) ?? 0)
-      if (diff !== 0) return diff
-      return beats(a, b) ? -1 : 1
-    })
-    .slice(0, 3)
-  return { count: list.length, bars, marquee }
 }
 
 /**

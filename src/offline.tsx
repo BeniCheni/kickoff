@@ -11,7 +11,6 @@ import { LensSwitcher } from './components/LensSwitcher'
 import { FixturesPage } from './components/FixturesPage'
 import { TablePage } from './components/TablePage'
 import { StalenessBanner } from './components/StalenessBanner'
-import { TickerStrip } from './components/TickerStrip'
 import { ViewBoundary } from './components/ViewBoundary'
 import './index.css'
 
@@ -46,7 +45,6 @@ export function OfflineApp() {
       </TabNav>
       <div data-moments-background="route">
         <ViewBoundary key={`${shown}:${lens}`}>
-          {lens === 'broadcast' && shown === 'fixtures' && <TickerStrip />}
           <StalenessBanner />
           {shown === 'table' ? <TablePage /> : <FixturesPage today={today} lens={lens} />}
         </ViewBoundary>

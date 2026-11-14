@@ -8,26 +8,13 @@ export function parseTheme(raw: string | null): Theme | null {
   return raw === 'light' || raw === 'dark' ? raw : null
 }
 
-/**
- * Broadcast keeps its own theme memory: entering it with no stored Broadcast choice
- * defaults to dark, but a toggle made while inside Broadcast is remembered under this
- * separate key and never re-forced back to dark. The other lenses share the original key.
- */
-export function themeStorageKey(lens: Lens): 'kickoff-theme' | 'kickoff-theme-broadcast' {
-  return lens === 'broadcast' ? 'kickoff-theme-broadcast' : 'kickoff-theme'
+/** Both lenses share the same stored preference. */
+export function themeStorageKey(): 'kickoff-theme' {
+  return 'kickoff-theme'
 }
 
-/**
- * The shared stored/default theme decision for the generated bootstrap and App.
- * App also retains explicit session choices when storage is unavailable.
- */
-export function resolveTheme(
-  lens: Lens,
-  storedTheme: Theme | null,
-  storedBroadcastTheme: Theme | null,
-  prefersDark: boolean,
-): Theme {
-  if (lens === 'broadcast') return storedBroadcastTheme ?? 'dark'
+/** Stored preference wins; otherwise follow the operating system. */
+export function resolveTheme(storedTheme: Theme | null, prefersDark: boolean): Theme {
   return storedTheme ?? (prefersDark ? 'dark' : 'light')
 }
 
@@ -69,36 +56,28 @@ export function writeStoredTheme(key: ThemeKey, theme: Theme): void {
 export function decideThemeAndLens(
   lensRaw: string | null,
   storedTheme: Theme | null,
-  storedBroadcastTheme: Theme | null,
   prefersDark: boolean,
 ): { lens: Lens; theme: Theme } {
   const lens = parseLens(lensRaw)
   return {
     lens,
-    theme: resolveTheme(lens, storedTheme, storedBroadcastTheme, prefersDark),
+    theme: resolveTheme(storedTheme, prefersDark),
   }
 }
 
-/**
- * resolveTheme fed from the live environment — the single call both the inline
- * bootstrap and App's lens effect use, with the storage keys coming from
- * themeStorageKey so no caller ever spells a key literal again.
- */
-export function resolveThemeFromEnvironment(lens: Lens): Theme {
-  return decideThemeAndLens(
-    lens,
-    readStoredTheme(themeStorageKey('ledger')),
-    readStoredTheme(themeStorageKey('broadcast')),
+/** The same live preference supplies both React and the pre-paint bootstrap. */
+export function resolveThemeFromEnvironment(): Theme {
+  return resolveTheme(
+    readStoredTheme(themeStorageKey()),
     env.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false,
-  ).theme
+  )
 }
 
 /** The bootstrap's read of the URL plus the live environment. */
 export function readBootTheme(search: string): { lens: Lens; theme: Theme } {
   return decideThemeAndLens(
     new URLSearchParams(search).get('lens'),
-    readStoredTheme(themeStorageKey('ledger')),
-    readStoredTheme(themeStorageKey('broadcast')),
+    readStoredTheme(themeStorageKey()),
     env.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false,
   )
 }

@@ -51,7 +51,7 @@ function Card({ fixture, today }: { fixture: Fixture; today: string }) {
 /**
  * The Ledger hero: the next four kickoffs as narrow cards that actually fit a 390px
  * viewport, each grounded by a 3px bottom border in its competition colour, with a muted
- * overflow line for the rest of today's slate. Replaces the old 200px ticker cards.
+ * overflow line for the rest of today's slate.
  */
 export function NextUpStrip({
   today,

@@ -43,7 +43,7 @@ once CI is green.) The paper trail for all of that is in this repo, PR by PR.
 | The announcement | [The LinkedIn post about the full-stack milestone](https://www.linkedin.com/posts/benicheni_buildinpublic-fullstack-supabase-ugcPost-7518805278302232576-IAIO/) |
 
 > **The straight answer on what's live.** The GitHub demo is the Vite app on GitHub Pages:
-> fixtures, standings and three lenses, redeployed on every merge. If the amber banner is up
+> fixtures, standings and two lenses, redeployed on every merge. If the amber banner is up
 > when you get there, that's not a bug; that's the whole pitch. The full-stack version is the
 > Next.js app on Vercel, and today it sits behind Vercel's own sign-in, which is why that link
 > asks you to log in first. The Moments pictures below were captured from it, the clip was made
@@ -140,7 +140,7 @@ their rule, and both are covered below.
 Fourteen competitions: the five big domestic leagues (La Liga, the Premier League, Serie A,
 Ligue 1, the Bundesliga), the three UEFA club competitions (Champions League, Europa League,
 Conference League) and the six super cups. 1,461 fixtures and six league tables as of 27
-October 2026, synced from ESPN's public scoreboard and read through three visual "lenses"
+October 2026, synced from ESPN's public scoreboard and read through two visual "lenses"
 over one fixture skeleton. The pictures below are the v0.5.3 build of the GitHub demo,
 captured that day at a 390 px phone width.
 
@@ -148,8 +148,6 @@ captured that day at a 390 px phone width.
   <img src="docs/screenshots/2026-10-27/football-poster-light.jpg" width="230" alt="The Poster lens on a phone, light theme: tonight's slate, Tuesday 27 October, with three Serie A kickoffs as a full-bleed hero above the week's fixtures">
   &nbsp;
   <img src="docs/screenshots/2026-10-27/football-ledger-light.jpg" width="230" alt="The Ledger lens: a date-spine calendar with a Next up strip">
-  &nbsp;
-  <img src="docs/screenshots/2026-10-27/football-broadcast-dark.jpg" width="230" alt="The Broadcast lens, dark: a marquee ticker above Monday's completed results and Tuesday's kickoffs">
 </p>
 
 What the app refuses to do is the feature:
@@ -415,7 +413,7 @@ runs the six-pass cycle; [`kickoff-design-studio`](.agents/skills/kickoff-design
 
 ## 📍 Where we are
 
-**Shipped, and public** (`v0.5.3`): fixtures, standings, the three lenses, the scheduled sync
+**Shipped, and public** (`v0.5.3`): fixtures, standings, the two lenses, the scheduled sync
 with its self-merging PRs and change digest, and the Champions League with computed matchday
 provenance and venue clocks (v0.5.0).
 
@@ -470,7 +468,7 @@ database `DATABASE_URL` names, and `fetch-model` downloads the CLIP model files 
 Face. The reader has no `--live` switch: it reads the database in its environment, and a
 separate stub-catalog flag gives it synthetic data for local runs.
 
-Lens, tab, week and filters all live in the URL — `?lens=broadcast&tab=table` means what it
+Lens, tab, week and filters all live in the URL — `?lens=ledger&tab=table` means what it
 says — so any view survives a reload and can be sent to someone. Found a fixture the app gets
 wrong? That's this repo's signature issue; there's a
 [template](.github/ISSUE_TEMPLATE/wrong-fixture-data.md).
