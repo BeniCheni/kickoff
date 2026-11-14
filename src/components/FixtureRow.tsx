@@ -17,7 +17,7 @@ const STATUS_LABEL: Record<Fixture['status'], string | null> = {
  * One fixture as a ledger row on hairlines: leading Brooklyn time in mono, teams, score,
  * status pill; competition + venue as a muted meta line. Tapping expands the detail line —
  * both clock pills (stadium-local and Brooklyn, derived from one UTC instant so they cannot
- * disagree), the note and the TV pill. A kickoff whose time the league has not actually set
+ * disagree) and the note. A kickoff whose time the league has not actually set
  * is rendered as "time not yet set" rather than as a confident number.
  *
  * Lens deltas (Poster's 20px time, Broadcast's tighter mono) are pure CSS variants — the
@@ -129,12 +129,6 @@ export function FixtureRow({ fixture, hot = false, stale = false }: { fixture: F
               <div className="mt-1.5 text-[10.5px] text-ink-muted">{fixture.note}</div>
             )}
 
-            <div className="mt-1.5 inline-flex items-center gap-1 rounded-full border border-dashed border-line-strong px-2 py-0.5 text-[10.5px] text-ink-secondary">
-              <span aria-hidden>📺</span> {comp.tv}
-              {comp.tvNew && (
-                <span className="rounded bg-pitch px-1 py-px text-[8.5px] font-bold text-white dark:text-bg">NEW</span>
-              )}
-            </div>
           </div>
         </div>
       </div>

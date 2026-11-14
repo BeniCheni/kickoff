@@ -9,7 +9,6 @@ import { TonightSlate } from './TonightSlate'
 import { FilterBar } from './FilterBar'
 import { WeekView } from './WeekView'
 import { MonthView } from './MonthView'
-import { WatchPanel } from './WatchPanel'
 
 const ALL = new Set(COMPETITION_KEYS)
 
@@ -88,7 +87,6 @@ export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
         <NextUpStrip today={today} active={active} />
       ) : null}
 
-      <WatchPanel />
       <FilterBar
         active={active}
         onToggle={onToggle}

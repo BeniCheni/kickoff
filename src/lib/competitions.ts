@@ -4,26 +4,26 @@
  * without an `espnCode` are reference-only: no fixture rows are hand-authored for them.
  */
 const RAW = {
-  supercup:     { name: 'UEFA Super Cup',        group: 'europe',   tz: 'Europe/Vienna', flag: '⭐', color: '#C4272F', tv: 'Paramount+ · CBS' },
-  shield:       { name: 'FA Community Shield',   group: 'supercup', tz: 'Europe/London', flag: '🏴', color: '#6B4226', tv: 'ESPN · ESPN+' },
-  tdc:          { name: 'Trophée des Champions', group: 'supercup', tz: 'Europe/Paris',  flag: '🇫🇷', color: '#C05780', tv: 'beIN Sports' },
-  dflsupercup:  { name: 'DFL-Supercup',          group: 'supercup', tz: 'Europe/Berlin', flag: '🇩🇪', color: '#2F4B7C', tv: 'USA Network · Fandango' },
-  supercoppa:   { name: 'Supercoppa Italiana',   group: 'supercup', tz: 'Asia/Riyadh',   flag: '🇮🇹', color: '#1B4B5A', tv: 'Paramount+ · CBS Sports Golazo', espnCode: 'ita.super_cup' },
-  supercopa:    { name: 'Supercopa de España',   group: 'supercup', tz: 'Asia/Riyadh',   flag: '🇪🇸', color: '#8B1E3F', tv: 'ESPN+',            espnCode: 'esp.super_cup' },
-  ucl:          { name: 'Champions League',      group: 'europe',   tz: 'Europe/Zurich', flag: '⭐', color: '#8B6FE8', tv: 'Disney+ · ABC (marquee)', tvNew: true, espnCode: 'uefa.champions' },
-  uel:          { name: 'Europa League',         group: 'europe',   tz: 'Europe/Zurich', flag: '⭐', color: '#FF7A00', tv: 'Disney+', tvNew: true, espnCode: 'uefa.europa' },
-  uecl:         { name: 'Conference League',     group: 'europe',   tz: 'Europe/Zurich', flag: '⭐', color: '#2FB8C4', tv: 'Disney+', tvNew: true, espnCode: 'uefa.europa.conf' },
-  laliga:       { name: 'La Liga',               group: 'domestic', tz: 'Europe/Madrid', flag: '🇪🇸', color: '#D85A30', tv: 'ESPN+',            espnCode: 'esp.1' },
-  pl:           { name: 'Premier League',        group: 'domestic', tz: 'Europe/London', flag: '🏴', color: '#7F77DD', tv: 'NBC · USA Network · Peacock', espnCode: 'eng.1' },
-  seriea:       { name: 'Serie A',               group: 'domestic', tz: 'Europe/Rome',   flag: '🇮🇹', color: '#1D9E75', tv: 'Paramount+ · CBS Sports Golazo', espnCode: 'ita.1' },
-  ligue1:       { name: 'Ligue 1',               group: 'domestic', tz: 'Europe/Paris',  flag: '🇫🇷', color: '#378ADD', tv: 'beIN Sports',      espnCode: 'fra.1' },
-  bundesliga:   { name: 'Bundesliga',            group: 'domestic', tz: 'Europe/Berlin', flag: '🇩🇪', color: '#BA7517', tv: 'USA Network · Fandango', espnCode: 'ger.1', tvNew: true },
+  supercup:     { name: 'UEFA Super Cup',        group: 'europe',   tz: 'Europe/Vienna', flag: '⭐', color: '#C4272F' },
+  shield:       { name: 'FA Community Shield',   group: 'supercup', tz: 'Europe/London', flag: '🏴', color: '#6B4226' },
+  tdc:          { name: 'Trophée des Champions', group: 'supercup', tz: 'Europe/Paris',  flag: '🇫🇷', color: '#C05780' },
+  dflsupercup:  { name: 'DFL-Supercup',          group: 'supercup', tz: 'Europe/Berlin', flag: '🇩🇪', color: '#2F4B7C' },
+  supercoppa:   { name: 'Supercoppa Italiana',   group: 'supercup', tz: 'Asia/Riyadh',   flag: '🇮🇹', color: '#1B4B5A', espnCode: 'ita.super_cup' },
+  supercopa:    { name: 'Supercopa de España',   group: 'supercup', tz: 'Asia/Riyadh',   flag: '🇪🇸', color: '#8B1E3F',            espnCode: 'esp.super_cup' },
+  ucl:          { name: 'Champions League',      group: 'europe',   tz: 'Europe/Zurich', flag: '⭐', color: '#8B6FE8', espnCode: 'uefa.champions' },
+  uel:          { name: 'Europa League',         group: 'europe',   tz: 'Europe/Zurich', flag: '⭐', color: '#FF7A00', espnCode: 'uefa.europa' },
+  uecl:         { name: 'Conference League',     group: 'europe',   tz: 'Europe/Zurich', flag: '⭐', color: '#2FB8C4', espnCode: 'uefa.europa.conf' },
+  laliga:       { name: 'La Liga',               group: 'domestic', tz: 'Europe/Madrid', flag: '🇪🇸', color: '#D85A30',            espnCode: 'esp.1' },
+  pl:           { name: 'Premier League',        group: 'domestic', tz: 'Europe/London', flag: '🏴', color: '#7F77DD', espnCode: 'eng.1' },
+  seriea:       { name: 'Serie A',               group: 'domestic', tz: 'Europe/Rome',   flag: '🇮🇹', color: '#1D9E75', espnCode: 'ita.1' },
+  ligue1:       { name: 'Ligue 1',               group: 'domestic', tz: 'Europe/Paris',  flag: '🇫🇷', color: '#378ADD',      espnCode: 'fra.1' },
+  bundesliga:   { name: 'Bundesliga',            group: 'domestic', tz: 'Europe/Berlin', flag: '🇩🇪', color: '#BA7517', espnCode: 'ger.1' },
 } as const satisfies Record<string, CompetitionMeta>
 
 export type CompetitionKey = keyof typeof RAW
 
 /**
- * Re-typed as a uniform Record so optional members (`espnCode`, `tvNew`) are visible on every
+ * Re-typed as a uniform Record so optional members (`espnCode`) are visible on every
  * entry. `RAW` keeps the literal keys; this view keeps the value type consistent.
  */
 export const COMPETITIONS = RAW as Record<CompetitionKey, CompetitionMeta>
@@ -34,9 +34,7 @@ type CompetitionMeta = {
   tz: string
   flag: string
   color: string
-  tv: string
   espnCode?: string
-  tvNew?: boolean
 }
 
 export const COMPETITION_KEYS = Object.keys(COMPETITIONS) as CompetitionKey[]
@@ -94,7 +92,7 @@ export function venueTimeZone(country?: string, venueId?: string): string | unde
 
 /**
  * Qualification/relegation zones and tie-break rules for the domestic league tables.
- * Hand-authored reference data, like `tv` above: allocation rules are not in the standings
+ * Hand-authored reference data: allocation rules are not in the standings
  * feed. Ranges are for 2026-27 — England and Spain hold a fifth Champions League berth via
  * the 2025-26 association coefficients (a European Performance Spot, not permanent).
  * Zone colours are looked up from the european competitions above, so a Champions League

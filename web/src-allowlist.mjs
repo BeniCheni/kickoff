@@ -25,7 +25,6 @@ export const SRC_ALLOWLIST = [
   'src/components/TickerStrip.tsx', // Broadcast Fixtures ticker; the shell mounts it, not FixturesPage
   'src/components/TonightSlate.tsx', // today's slate on the Fixtures tab
   'src/components/ViewBoundary.tsx',
-  'src/components/WatchPanel.tsx', // where each competition is shown
   'src/components/WeekView.tsx', // week dispatch into Ledger or Poster
   'src/lib/RequestClock.tsx',
   'src/lib/chipInk.ts', // readable text colour on a competition chip
