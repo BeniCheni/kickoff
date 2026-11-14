@@ -139,15 +139,15 @@ their rule, and both are covered below.
 
 Fourteen competitions: the five big domestic leagues (La Liga, the Premier League, Serie A,
 Ligue 1, the Bundesliga), the three UEFA club competitions (Champions League, Europa League,
-Conference League) and the six super cups. 1,461 fixtures and six league tables as of 27
-October 2026, synced from ESPN's public scoreboard and read through two visual "lenses"
-over one fixture skeleton. The pictures below are the v0.5.3 build of the GitHub demo,
-captured that day at a 390 px phone width.
+Conference League) and the six super cups. 1,482 fixtures and six league tables as of 14
+November 2026, synced from ESPN's public scoreboard and read through two visual "lenses"
+over one fixture skeleton. The pictures below are the v0.5.5 build, captured that day:
+the two phone pictures at a 390 px width, and La Liga's table at desktop width.
 
 <p align="center">
-  <img src="docs/screenshots/2026-10-27/football-poster-light.jpg" width="230" alt="The Poster lens on a phone, light theme: tonight's slate, Tuesday 27 October, with three Serie A kickoffs as a full-bleed hero above the week's fixtures">
+  <img src="docs/screenshots/2026-11-14/football-poster-light.jpg" width="230" alt="The Poster lens on a phone, light theme: next matchday Friday 20 November, Bayern Munich, Troyes and Athletic Club, above the empty week of 9–15 November. The switch reads Poster, then Ledger.">
   &nbsp;
-  <img src="docs/screenshots/2026-10-27/football-ledger-light.jpg" width="230" alt="The Ledger lens: a date-spine calendar with a Next up strip">
+  <img src="docs/screenshots/2026-11-14/football-ledger-light.jpg" width="230" alt="The Ledger lens on a phone, light theme: a Next up strip for 20 and 21 November above the empty week of 9–15 November. The switch reads Poster, then Ledger.">
 </p>
 
 What the app refuses to do is the feature:
@@ -164,7 +164,7 @@ What the app refuses to do is the feature:
 - **The table tells you what it can't compare.** "2 clubs have a game in hand — sort by PPG."
 
 <p align="center">
-  <img src="docs/screenshots/2026-10-27/football-table-1000.jpg" width="720" alt="La Liga's table at desktop width in the Ledger lens: matchday banner, European qualification bands, points per game, form and next fixture">
+  <img src="docs/screenshots/2026-11-14/football-table-1000.jpg" width="720" alt="La Liga's table at desktop width in the Ledger lens: matchday 12 of 38, European qualification bands, points per game, form and next fixture. The switch reads Poster, then Ledger.">
 </p>
 
 The full argument — the UTC instant, the diff engine, the fail-loud guards, staleness as a

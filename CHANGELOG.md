@@ -15,6 +15,7 @@ The clearing: the Broadcast lens, Where to Watch and the Monthly view are retire
 ### Changed
 
 - The preview smoke's Fixtures landmark is now "Jump to today".
+- The README's football pictures are from the v0.5.5 build.
 
 ### Removed
 
