@@ -12,7 +12,7 @@ const DEFAULT_TABS: ReadonlyArray<{ key: Tab; label: string }> = [
 /**
  * The persistent Fixtures / Table / Moments switcher, rendered identically on every page. Treatment
  * follows the standings design reference: Oswald caps on a shared hairline, the active tab
- * in ink with an underline in the lens's leading accent (pitch; floodlight in Broadcast).
+ * in ink with an underline in the lens's leading accent (pitch; floodlight in each lens).
  * `children` is the lens switcher,
  * right-aligned on the same hairline. wrap-reverse stacks overflow lines upward, so when
  * the switcher can't fit (all three phone widths with three tabs) it moves ABOVE the tabs and the tab row

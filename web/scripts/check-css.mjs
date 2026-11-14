@@ -31,7 +31,6 @@ assert.deepEqual(sources, [
   '../../src/components/MomentsEmpty.tsx',
   '../../src/components/FixturesPage.tsx',
   '../../src/components/TablePage.tsx',
-  '../../src/components/TickerStrip.tsx',
   '../../src/components/WeekView.tsx',
   '../../src/components/LedgerWeek.tsx',
   '../../src/components/PosterWeek.tsx',

@@ -10,8 +10,7 @@ import type { Lens } from '../lib/lens'
 
 /**
  * The weekly calendar. Computes the seven days' fixture lists once, then hands them to a
- * per-lens renderer — Poster gets its own; Ledger's date spine also serves Broadcast,
- * whose deltas are CSS-only.
+ * per-lens renderer — Poster gets its own; Ledger uses a date spine.
  */
 export function WeekView({
   weekStart,
@@ -29,7 +28,7 @@ export function WeekView({
     return { date, shown: fixturesOn(date, active), total: totalOn(date), isToday: date === today }
   })
 
-  // LIVE + next-kickoff rows carry data-hot; the glow itself only renders under Broadcast.
+  // Retain LIVE + next-kickoff data-hot markers for the next design iteration.
   const { nowUtcIso } = useNow()
   const stale = useMemo(() => staleLiveIds(FIXTURES, nowUtcIso), [nowUtcIso])
   const hot = useMemo(() => hotFixtureIds(FIXTURES, nowUtcIso), [nowUtcIso])

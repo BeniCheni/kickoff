@@ -20,9 +20,9 @@ const STATUS_LABEL: Record<Fixture['status'], string | null> = {
  * disagree) and the note. A kickoff whose time the league has not actually set
  * is rendered as "time not yet set" rather than as a confident number.
  *
- * Lens deltas (Poster's 20px time, Broadcast's tighter mono) are pure CSS variants — the
+ * Lens deltas (Poster's 20px time) are pure CSS variants — the
  * component takes no lens prop. `stale` is selected by the parent clock; `hot` marks the
- * LIVE/next-kickoff rows whose glow only renders under the Broadcast lens.
+ * LIVE/next-kickoff rows for the retained data marker.
  */
 export function FixtureRow({ fixture, hot = false, stale = false }: { fixture: Fixture; hot?: boolean; stale?: boolean }) {
   const comp = COMPETITIONS[fixture.competition]
@@ -37,7 +37,7 @@ export function FixtureRow({ fixture, hot = false, stale = false }: { fixture: F
   return (
     <div
       data-hot={hot ? 'true' : undefined}
-      className="relative border-b border-line py-2 pl-[9px] broadcast:rounded-[2px] broadcast:py-[7px] broadcast:pr-1 broadcast:pl-[6px]"
+      className="relative border-b border-line py-2 pl-[9px]"
     >
       {(marquee || unsettled) && (
         <span
@@ -55,10 +55,10 @@ export function FixtureRow({ fixture, hot = false, stale = false }: { fixture: F
       >
         {/* spans with block/flex display — a <button> must not contain <div>s */}
         <span className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-          <span className="font-mono min-w-[58px] text-[13px] font-medium text-ink-secondary poster:min-w-[82px] poster:text-[20px] poster:font-semibold poster:text-ink broadcast:font-semibold">
+          <span className="font-mono min-w-[58px] text-[13px] font-medium text-ink-secondary poster:min-w-[82px] poster:text-[20px] poster:font-semibold poster:text-ink">
             {placeholder ? '—' : t.brooklyn.time}
           </span>
-          <span className="text-[13.5px] font-semibold broadcast:text-[13px]">
+          <span className="text-[13.5px] font-semibold">
             {fixture.home.name}{' '}
             <span className="text-[12px] font-normal text-ink-muted">vs</span>{' '}
             {fixture.away.name}
@@ -76,7 +76,7 @@ export function FixtureRow({ fixture, hot = false, stale = false }: { fixture: F
                 isStale
                   ? 'border-floodlight-strong text-floodlight-strong'
                   : fixture.status === 'in_play'
-                    ? 'bg-accent-strong text-white dark:text-bg broadcast:bg-floodlight broadcast:text-on-accent-lead'
+                    ? 'bg-accent-strong text-white dark:text-bg'
                     : unsettled
                       ? 'border-accent-strong text-accent-strong'
                       : 'bg-line text-ink-secondary',
@@ -87,7 +87,7 @@ export function FixtureRow({ fixture, hot = false, stale = false }: { fixture: F
           )}
         </span>
 
-        <span className="mt-0.5 block pl-[66px] text-[11px] text-ink-muted poster:pl-[92px] broadcast:font-mono broadcast:text-[10.5px] broadcast:font-medium">
+        <span className="mt-0.5 block pl-[66px] text-[11px] text-ink-muted poster:pl-[92px]">
           <span className="text-ink-muted">
             <span aria-hidden style={{ color: comp.color }}>{comp.flag}</span> {comp.name}
           </span>

@@ -21,7 +21,6 @@ export const SRC_ALLOWLIST = [
   'src/components/StalenessBanner.tsx',
   'src/components/TabNav.tsx',
   'src/components/TablePage.tsx', // the Table tab
-  'src/components/TickerStrip.tsx', // Broadcast Fixtures ticker; the shell mounts it, not FixturesPage
   'src/components/TonightSlate.tsx', // today's slate on the Fixtures tab
   'src/components/ViewBoundary.tsx',
   'src/components/WeekView.tsx', // week dispatch into Ledger or Poster
@@ -31,7 +30,7 @@ export const SRC_ALLOWLIST = [
   'src/lib/competitions.ts', // competition names, colours, groups and table leagues
   'src/lib/fixtures.ts',
   'src/lib/lens.ts',
-  'src/lib/lensSelectors.ts', // week, month, slate and ticker selection
+  'src/lib/lensSelectors.ts', // week and slate selection
   'src/lib/matchdays.ts', // matchday windows for the row labels
   'src/lib/momentsReferences.ts', // a saved id is a non-empty untrimmed string; the gallery must not spell that check again
   'src/lib/momentsSaved.ts', // kickoff-moments-saved-v1, the visit-only refusal included

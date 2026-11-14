@@ -1,12 +1,11 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
-import { BY_DATE, FIXTURES, META } from '../../src/lib/fixtures'
+import { BY_DATE, FIXTURES } from '../../src/lib/fixtures'
 import type { Fixture } from '../../src/lib/schema'
 import { COMPETITION_KEYS } from '../../src/lib/competitions'
-import { brooklynDate, fixtureTimes, posterDayTitle, startOfWeek } from '../../src/lib/time'
+import { brooklynDate, fixtureTimes, startOfWeek } from '../../src/lib/time'
 import { LIVE_WINDOW_MS } from '../../src/lib/lensSelectors'
 import { WeekView } from '../../src/components/WeekView'
-import { TickerStrip } from '../../src/components/TickerStrip'
 import { primeClock, wake } from './rig'
 
 let release: (() => void) | undefined
@@ -42,31 +41,31 @@ function fixtureRowFor(fixture: Fixture) {
 }
 
 describe('synthetic frozen snapshot through the real selector and clock wiring', () => {
-  for (const lens of ['ledger', 'poster', 'broadcast'] as const) {
-      it(`${lens} week: LIVE expires through parent selection, without changing the snapshot`, () => {
-        const fixture = FIXTURES.find((f) => f.timeConfidence === 'exact' && !f.result)!
-        fixture.status = 'in_play'
-        fixture.result = { home: 1, away: 0 } // ILLUSTRATIVE; in-memory only.
-        const kickoff = Date.parse(fixture.kickoffUtc)
-        const today = brooklynDate(fixture.kickoffUtc)
-        release = primeClock(new Date(kickoff + LIVE_WINDOW_MS))
-        render(<WeekView weekStart={startOfWeek(today)} active={active} today={today} lens={lens} />)
-        const row = fixtureRowFor(fixture)
-        const scope = within(row)
-        expect(scope.getByText('LIVE')).toBeTruthy()
-        wake(new Date(kickoff + LIVE_WINDOW_MS + 1))
-        // The app's existing clock floors to minutes; the pure selector tests pin +1ms.
-        expect(scope.getByText('LIVE')).toBeTruthy()
-        wake(new Date(kickoff + LIVE_WINDOW_MS + 60_000))
-        expect(scope.queryByText('LIVE')).toBeNull()
-        const pill = scope.getByText('KICKED OFF')
-        expect(pill.className).toContain('border-floodlight-strong')
-        expect(pill.closest('[data-hot]')).toBeNull()
-        expect(within(pill.closest('button')!).getByText('1–0').className).toContain('text-pitch')
-        expect(fixture.status).toBe('in_play')
-        fireEvent.click(pill.closest('button')!)
-        expect(pill.closest('button')?.getAttribute('aria-expanded')).toBe('true')
-      })
+  for (const lens of ['poster', 'ledger'] as const) {
+    it(`${lens} week: LIVE expires through parent selection, without changing the snapshot`, () => {
+      const fixture = FIXTURES.find((f) => f.timeConfidence === 'exact' && !f.result)!
+      fixture.status = 'in_play'
+      fixture.result = { home: 1, away: 0 } // ILLUSTRATIVE; in-memory only.
+      const kickoff = Date.parse(fixture.kickoffUtc)
+      const today = brooklynDate(fixture.kickoffUtc)
+      release = primeClock(new Date(kickoff + LIVE_WINDOW_MS))
+      render(<WeekView weekStart={startOfWeek(today)} active={active} today={today} lens={lens} />)
+      const row = fixtureRowFor(fixture)
+      const scope = within(row)
+      expect(scope.getByText('LIVE')).toBeTruthy()
+      wake(new Date(kickoff + LIVE_WINDOW_MS + 1))
+      // The app's existing clock floors to minutes; the pure selector tests pin +1ms.
+      expect(scope.getByText('LIVE')).toBeTruthy()
+      wake(new Date(kickoff + LIVE_WINDOW_MS + 60_000))
+      expect(scope.queryByText('LIVE')).toBeNull()
+      const pill = scope.getByText('KICKED OFF')
+      expect(pill.className).toContain('border-floodlight-strong')
+      expect(pill.closest('[data-hot]')).toBeNull()
+      expect(within(pill.closest('button')!).getByText('1–0').className).toContain('text-pitch')
+      expect(fixture.status).toBe('in_play')
+      fireEvent.click(pill.closest('button')!)
+      expect(pill.closest('button')?.getAttribute('aria-expanded')).toBe('true')
+    })
   }
 
   it('two in-play rows on one kickoff: the document-wide query throws, the row-scoped one resolves each row', () => {
@@ -102,53 +101,4 @@ describe('synthetic frozen snapshot through the real selector and clock wiring',
     expect(scope.queryByText('LIVE')).toBeNull()
     expect(scope.getByText('KICKED OFF').className).toContain('border-floodlight-strong')
   })
-})
-
-describe('ticker mounted/static contract', () => {
-  it('preserves the strip node when the final exact kickoff expires; no duplicate or pause control', () => {
-    FIXTURES.forEach((f) => { f.status = 'cancelled' })
-    const fixture = FIXTURES[0]!
-    fixture.status = 'scheduled'
-    fixture.timeConfidence = 'exact'
-    const kickoff = Date.parse(fixture.kickoffUtc)
-    release = primeClock(new Date(kickoff - 1))
-    const { container } = render(<TickerStrip />)
-    const strip = container.firstElementChild
-    expect(screen.getByRole('button', { name: 'Pause ticker' })).toBeTruthy()
-    wake(new Date(kickoff))
-    expect(container.firstElementChild).toBe(strip)
-    expect(strip?.getAttribute('data-ticker')).toBe('empty')
-    expect(strip?.textContent).toBe(`NEXT — nothing scheduled in this snapshot · window ends ${posterDayTitle(META.window.to)}`)
-    expect(screen.queryByRole('button')).toBeNull()
-    expect(container.querySelector('.ticker-track')).toBeNull()
-    // The static line is a Tab stop: it must expose a role and a name, not a nameless generic.
-    expect(screen.getByRole('region', { name: 'Ticker' })).toBe(strip?.firstElementChild)
-    expect(strip?.firstElementChild?.getAttribute('tabindex')).toBe('0')
-  })
-  it('renders one italic TBC time slot per track for a placeholder NEXT', () => {
-    FIXTURES.forEach((f) => { f.status = 'cancelled' })
-    const fixture = FIXTURES[0]!
-    fixture.status = 'scheduled'
-    fixture.timeConfidence = 'round_placeholder'
-    release = primeClock(new Date(fixture.kickoffUtc))
-    const { container } = render(<TickerStrip />)
-    expect(container.querySelector('[data-ticker="active"]')).toBeTruthy()
-    expect(container.querySelector('i')?.textContent).toBe('TBC')
-    expect(container.querySelector('i')?.className).toContain('text-floodlight-strong')
-  })
-})
-
-it('renders empty NEXT provenance on the moving track alongside FT', () => {
-  FIXTURES.forEach((f) => { f.status = 'cancelled' })
-  const fixture = FIXTURES[0]!
-  fixture.status = 'full_time'
-  fixture.result = { home: 1, away: 0 }
-  release = primeClock(new Date(fixture.kickoffUtc))
-  const { container } = render(<TickerStrip />)
-  expect(container.querySelector('[data-ticker="active"]')).toBeTruthy()
-  const track = container.querySelector('.ticker-track > span')!
-  expect(track.textContent).toContain(`window ends ${posterDayTitle(META.window.to)}`)
-  expect(track.textContent).toContain('FT')
-  expect(container.querySelector('.ticker-track > span:nth-child(2)')?.getAttribute('aria-hidden')).toBe('true')
-  expect(screen.getByRole('button', { name: 'Pause ticker' })).toBeTruthy()
 })

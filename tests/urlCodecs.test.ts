@@ -6,11 +6,14 @@ const TODAY = '2026-08-30'
 
 describe('canonicalSearch — normalize the address without changing decoder semantics', () => {
   it('omits invalid and default values, including a date equal to today', () => {
-    expect(canonicalSearch(`?lens=BROADCAST&date=${TODAY}&tab=fixtures&view=week&league=laliga`, TODAY)).toBe('')
+    expect(canonicalSearch(`?lens=INVALID&date=${TODAY}&tab=fixtures&view=week&league=laliga`, TODAY)).toBe('')
     expect(canonicalSearch('?date=2026-02-30&tab=junk&view=junk&league=constructor', TODAY)).toBe('')
   })
   it.each(['month', 'week', 'junk', ''])('removes retired view=%s and preserves Step 0 pins', (view) => {
     expect(canonicalSearch(`?view=${view}&only=pl&date=2026-11-21&lens=ledger`, TODAY)).toBe('?only=pl&date=2026-11-21&lens=ledger')
+  })
+  it('canonicalizes the retired lens to Poster without disturbing Step 0 pins', () => {
+    expect(canonicalSearch('?lens=\u0062roadcast&only=pl&date=2026-11-21', TODAY)).toBe('?only=pl&date=2026-11-21')
   })
   it('retains a real nondefault date and the cross-track competition filter', () => {
     expect(canonicalSearch('?only=pl,laliga&date=2026-09-15', TODAY)).toBe('?only=pl%2Claliga&date=2026-09-15')
@@ -19,12 +22,12 @@ describe('canonicalSearch — normalize the address without changing decoder sem
     expect(canonicalSearch('?only=&campaign=friend&campaign=second&lens=poster', TODAY)).toBe('?only=&campaign=friend&campaign=second')
   })
   it('canonicalizes duplicate owned keys to the same first value the hook renders', () => {
-    expect(canonicalSearch('?lens=ledger&lens=broadcast&only=pl,pl', TODAY)).toBe('?lens=ledger&only=pl')
+    expect(canonicalSearch('?lens=ledger&lens=ledger&only=pl,pl', TODAY)).toBe('?lens=ledger&only=pl')
   })
-  it('keeps every owned key, watch, repeated unknowns, an empty only and would leave a fragment to the caller', () => {
+  it('keeps every surviving owned key, watch, repeated unknowns, an empty only and would leave a fragment to the caller', () => {
     const query = searchParamsToQuery([
       ['tab', 'moments'],
-      ['lens', 'broadcast'],
+      ['lens', 'ledger'],
       ['view', 'month'],
       ['date', '2026-09-12'],
       ['only', ''],
@@ -33,8 +36,8 @@ describe('canonicalSearch — normalize the address without changing decoder sem
       ['x', ['', '2']],
     ])
     expect(query.startsWith('?')).toBe(true)
-    expect(canonicalSearch(query, TODAY)).toBe('?tab=moments&lens=broadcast&date=2026-09-12&only=&league=pl&watch=clip-1&x=&x=2')
-    expect(canonicalSearch(query, TODAY) + '#note').toBe('?tab=moments&lens=broadcast&date=2026-09-12&only=&league=pl&watch=clip-1&x=&x=2#note')
+    expect(canonicalSearch(query, TODAY)).toBe('?tab=moments&lens=ledger&date=2026-09-12&only=&league=pl&watch=clip-1&x=&x=2')
+    expect(canonicalSearch(query, TODAY) + '#note').toBe('?tab=moments&lens=ledger&date=2026-09-12&only=&league=pl&watch=clip-1&x=&x=2#note')
   })
 
   it('keeps an old pinned date when today rolls onto a later day', () => {

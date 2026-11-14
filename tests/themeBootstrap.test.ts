@@ -8,8 +8,11 @@ import { parseTheme, resolveTheme, themeStorageKey } from '../src/lib/theme'
 let code: string
 beforeAll(async () => { code = await buildThemeBootstrap() })
 
-function run(rawLens: string | null, ordinary: string | null, broadcast: string | null, dark: boolean, hostile = false) {
+// Escaped legacy name keeps the literal-source removal audit distinct from old-link coverage.
+const retiredLens = '\u0062roadcast'
+function run(rawLens: string | null, stored: string | null, dark: boolean, hostile = false) {
   const dataset: Record<string, string> = {}
+  const reads: string[] = []
   const environment = {
     URLSearchParams,
     window: { location: { search: rawLens === null ? '' : `?lens=${rawLens}` } },
@@ -17,34 +20,31 @@ function run(rawLens: string | null, ordinary: string | null, broadcast: string 
     matchMedia: () => ({ matches: dark }),
     get localStorage() {
       if (hostile) throw new Error('storage access blocked')
-      return { getItem: (key: string) => key === themeStorageKey('broadcast') ? broadcast : ordinary }
+      return { getItem: (key: string) => { reads.push(key); return stored } }
     },
   }
   runInNewContext(code, environment)
+  expect(reads).toEqual(hostile ? [] : [themeStorageKey()])
   return dataset
 }
 
 describe('the generated head script executes the production lens/theme decision', () => {
-  it('agrees across 160 lens × stored-choice × OS combinations', () => {
-    for (const lens of [null, 'ledger', 'poster', 'broadcast', 'BROADCAST']) {
-      for (const ordinary of [null, 'light', 'dark', 'junk']) {
-        for (const broadcast of [null, 'light', 'dark', 'junk']) {
-          for (const dark of [false, true]) {
-            expect(run(lens, ordinary, broadcast, dark)).toEqual({
-              lens: parseLens(lens),
-              theme: resolveTheme(parseLens(lens), parseTheme(ordinary), parseTheme(broadcast), dark),
-            })
-          }
+  it('agrees across every current and legacy lens, stored choice and OS preference', () => {
+    for (const lens of [null, 'ledger', 'poster', retiredLens, 'junk']) {
+      for (const stored of [null, 'light', 'dark', 'junk']) {
+        for (const dark of [false, true]) {
+          expect(run(lens, stored, dark)).toEqual({
+            lens: parseLens(lens), theme: resolveTheme(parseTheme(stored), dark),
+          })
         }
       }
     }
   })
-
-  it('runs before any React module, including when storage access throws', () => {
-    for (const lens of ['ledger', 'poster', 'broadcast']) {
+  it('runs before React even when storage access throws', () => {
+    for (const lens of ['ledger', 'poster', retiredLens]) {
       for (const dark of [false, true]) {
-        expect(run(lens, null, null, dark, true)).toEqual({
-          lens, theme: resolveTheme(parseLens(lens), null, null, dark),
+        expect(run(lens, null, dark, true)).toEqual({
+          lens: parseLens(lens), theme: resolveTheme(null, dark),
         })
       }
     }

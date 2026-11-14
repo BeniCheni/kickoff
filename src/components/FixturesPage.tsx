@@ -69,7 +69,7 @@ export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
   return (
     <>
       {/* The hero is the one lens axis that changes the tree: Ledger's Next-up strip,
-          Poster's tonight's slate, Broadcast's ticker (mounted under the tab row in App). */}
+          and Poster's tonight's slate. */}
       {lens === 'poster' ? (
         <TonightSlate today={today} active={active} />
       ) : lens === 'ledger' ? (
