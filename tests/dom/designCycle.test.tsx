@@ -6,6 +6,8 @@ import { COMPETITION_KEYS } from '../../src/lib/competitions'
 import { brooklynDate, fixtureTimes, startOfWeek } from '../../src/lib/time'
 import { LIVE_WINDOW_MS } from '../../src/lib/lensSelectors'
 import { WeekView } from '../../src/components/WeekView'
+import { NextUpStrip } from '../../src/components/NextUpStrip'
+import { TonightSlate } from '../../src/components/TonightSlate'
 import { primeClock, wake } from './rig'
 
 let release: (() => void) | undefined
@@ -101,4 +103,75 @@ describe('synthetic frozen snapshot through the real selector and clock wiring',
     expect(scope.queryByText('LIVE')).toBeNull()
     expect(scope.getByText('KICKED OFF').className).toContain('border-floodlight-strong')
   })
+})
+
+// The ticker's DOM case was the only one that rendered a hero with a league-unset NEXT. With it
+// gone, a hero that printed the filler instant as a clock passed every test in both suites
+// (PR #320 review). The two surviving heroes carry the rule now, on the same real selectors
+// (`upcoming`, `planSlate`) and the same clock.
+describe('an unset kickoff is never a clock on a hero', () => {
+  const CLOCK = /\d{1,2}:\d{2}/
+
+  /** Only the snapshot's first `count` rows stay scheduled, all on one league-unset instant.
+   *  Picked by position and overridden in memory, never by `status` or `result`. */
+  function placeholderDay(count: number) {
+    FIXTURES.forEach((f) => { f.status = 'cancelled' })
+    const day = FIXTURES.slice(0, count)
+    for (const f of day) {
+      f.status = 'scheduled'
+      f.timeConfidence = 'round_placeholder'
+      f.kickoffUtc = day[0]!.kickoffUtc // ILLUSTRATIVE; a filler instant, in memory only.
+      delete f.result
+    }
+    return day
+  }
+
+  it('Ledger: every Next-up card reads TBC, and the overflow line names no time', () => {
+    const day = placeholderDay(5)
+    const filler = day[0]!.kickoffUtc
+    // Primed on the filler instant itself: the day still holds, the minute means nothing.
+    release = primeClock(new Date(filler))
+    const { container } = render(<NextUpStrip today={brooklynDate(filler)} active={active} />)
+    const slots = screen.getAllByText('TBC')
+    expect(slots).toHaveLength(4)
+    for (const slot of slots) {
+      expect(slot.className).toContain('italic')
+      expect(slot.className).toContain('text-floodlight-strong')
+    }
+    expect(container.textContent).toContain(`+1 more today · ${day[4]!.home.name} v ${day[4]!.away.name}`)
+    expect(container.textContent).not.toMatch(CLOCK)
+  })
+
+  it('Poster: the slate row reads TBC, and the sub-line counts it without a FIRST or KICKOFF time', () => {
+    const [only] = placeholderDay(1)
+    release = primeClock(new Date(only!.kickoffUtc))
+    const { container } = render(<TonightSlate today={brooklynDate(only!.kickoffUtc)} active={active} />)
+    const slot = screen.getByText('TBC')
+    expect(slot.className).toContain('italic')
+    expect(slot.className).toContain('text-floodlight-strong')
+    expect(screen.getByText('1 REMAINING · 1 TBC')).toBeTruthy()
+    expect(container.textContent).toContain(`${only!.home.name} v ${only!.away.name}`)
+    expect(container.textContent).not.toMatch(CLOCK)
+  })
+})
+
+// The ticker's "NEXT carries its Brooklyn date" cases went with it. The same rule on the two
+// heroes that remain: a kickoff after Brooklyn midnight's UTC date is still tomorrow here.
+it('a later-day NEXT carries its Brooklyn day on both heroes, not the UTC or stadium date', () => {
+  FIXTURES.forEach((f) => { f.status = 'cancelled' })
+  const next = FIXTURES[0]!
+  next.status = 'scheduled'
+  next.timeConfidence = 'exact'
+  next.kickoffUtc = '2026-09-07T00:30:00.000Z' // ILLUSTRATIVE; Sun 6 Sep, 8:30 PM in Brooklyn.
+  delete next.result
+  release = primeClock(new Date('2026-09-05T23:00:00.000Z')) // Sat 5 Sep, 7:00 PM in Brooklyn.
+  const ledger = render(<NextUpStrip today="2026-09-05" active={active} />)
+  expect(screen.getByText('Tomorrow')).toBeTruthy()
+  expect(ledger.container.textContent).toContain('8:30')
+  expect(ledger.container.textContent).not.toMatch(/2 days|Today/)
+  ledger.unmount()
+  const poster = render(<TonightSlate today="2026-09-05" active={active} />)
+  expect(screen.getByText('Next matchday — nothing left today')).toBeTruthy()
+  expect(screen.getByText('Sun 6 Sep')).toBeTruthy()
+  expect(poster.container.textContent).toContain('KICKOFF 8:30 PM')
 })
