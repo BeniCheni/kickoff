@@ -22,7 +22,9 @@ describe('canonicalSearch — normalize the address without changing decoder sem
     expect(canonicalSearch('?only=&campaign=friend&campaign=second&lens=poster', TODAY)).toBe('?only=&campaign=friend&campaign=second')
   })
   it('canonicalizes duplicate owned keys to the same first value the hook renders', () => {
-    expect(canonicalSearch('?lens=ledger&lens=ledger&only=pl,pl', TODAY)).toBe('?lens=ledger&only=pl')
+    // Two different values, or first-wins and last-wins give the same answer and this pins nothing.
+    expect(canonicalSearch('?lens=ledger&lens=poster&only=pl,pl', TODAY)).toBe('?lens=ledger&only=pl')
+    expect(canonicalSearch('?lens=poster&lens=ledger&only=pl,pl', TODAY)).toBe('?only=pl')
   })
   it('keeps every surviving owned key, watch, repeated unknowns, an empty only and would leave a fragment to the caller', () => {
     const query = searchParamsToQuery([

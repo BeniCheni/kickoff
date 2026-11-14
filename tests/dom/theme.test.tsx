@@ -30,6 +30,8 @@ describe('theme.ts in a browser-shaped environment (affordance 4)', () => {
     expect(document.documentElement.dataset.theme).toBe('light')
     fireEvent.click(screen.getByRole('radio', { name: 'Ledger' }))
     media.setDark(true)
+    // Each step is read: ending on light alone would pass with a listener that stopped following.
+    expect(document.documentElement.dataset.theme).toBe('dark')
     media.setDark(false)
     expect(document.documentElement.dataset.theme).toBe('light')
     expect(media.listenerCount()).toBe(1)
