@@ -140,7 +140,7 @@ their rule, and both are covered below.
 Fourteen competitions: the five big domestic leagues (La Liga, the Premier League, Serie A,
 Ligue 1, the Bundesliga), the three UEFA club competitions (Champions League, Europa League,
 Conference League) and the six super cups. 1,461 fixtures and six league tables as of 27
-October 2026, synced from ESPN's public scoreboard and read through three visual "lenses"
+October 2026, synced from ESPN's public scoreboard and read through two visual "lenses"
 over one fixture skeleton. The pictures below are the v0.5.3 build of the GitHub demo,
 captured that day at a 390 px phone width.
 

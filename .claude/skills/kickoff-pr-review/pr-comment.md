@@ -31,7 +31,7 @@ Diff against `origin/main`: <F> files, +<A> / −<B>.
 ### Matrix as run
 - Environment: port 5173 served by `<checkout path>` (`lsof`, then the process's cwd); own browser tab; `kickoff-theme` cleared before any theme claim.
 - Unit: <numbers>. Browser: <cells run, widths, scrollWidth === innerWidth on every one>, <scenarios re-run from the proposal's matrix>. Workflow: <dispatch run id and what its log showed>, or "changed, not dispatched — <why>", or "not applicable — no workflow changed".
-- Captures: the six 390 px captures (lens × theme, Fixtures tab) when anything visual changed, or "none — nothing visual changed".
+- Captures: the four 390 px captures (lens × theme, Fixtures tab) when anything visual changed, or "none — nothing visual changed".
 - Not verified: <what, and why>.
 ```
 
