@@ -8,8 +8,8 @@ import { parseTheme, resolveTheme, themeStorageKey } from '../src/lib/theme'
 let code: string
 beforeAll(async () => { code = await buildThemeBootstrap() })
 
-// Escaped legacy name keeps the literal-source removal audit distinct from old-link coverage.
-const retiredLens = '\u0062roadcast'
+// Spelled in full. tests/removalAudit.test.ts allows this file by name.
+const retiredLens = 'broadcast'
 function run(rawLens: string | null, stored: string | null, dark: boolean, hostile = false) {
   const dataset: Record<string, string> = {}
   const reads: string[] = []

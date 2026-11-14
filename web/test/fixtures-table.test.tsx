@@ -33,14 +33,14 @@ test('Fixtures and Table render from the shared pages', () => {
   expect(table).toContain('Pts')
   expect(table).not.toContain('Filters')
 
-  for (const search of ['', '?lens=ledger', '?lens=\u0062roadcast', '?view=month']) {
+  for (const search of ['', '?lens=ledger', '?lens=broadcast', '?view=month']) {
     const cleared = html(search)
     expect(cleared).toContain('Filters')
     expect(cleared).not.toContain('data-ticker')
     expect(cleared).not.toContain('Where to Watch')
-    expect(cleared).not.toContain('\u{1f4fa}')
+    expect(cleared).not.toContain('📺')
     expect(cleared).not.toMatch(/>Weekly<|>Monthly</)
-    expect(cleared).not.toContain('data-lens="\u0062roadcast"')
+    expect(cleared).not.toContain('data-lens="broadcast"')
     expect(cleared.indexOf('>Poster<')).toBeLessThan(cleared.indexOf('>Ledger<'))
   }
 

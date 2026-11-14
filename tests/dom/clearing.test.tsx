@@ -6,8 +6,8 @@ import { LensSwitcher } from '../../src/components/LensSwitcher'
 import type { Lens } from '../../src/lib/lens'
 import { edt, primeClock } from './rig'
 
-// Escaped legacy spelling permits a literal-source removal audit while testing real old links.
-const retiredLens = '\u0062roadcast'
+// Spelled in full. tests/removalAudit.test.ts allows this file by name.
+const retiredLens = 'broadcast'
 let release: (() => void) | undefined
 afterEach(() => { release?.(); release = undefined })
 
@@ -48,7 +48,7 @@ it.each([`lens=${retiredLens}`, 'view=month', 'view=junk'])('cold %s lands on Po
   expect(screen.getByText(/1 of \d+ competitions shown/)).toBeTruthy()
   expect(screen.queryByRole('button', { name: /^(Weekly|Monthly)$/ })).toBeNull()
   expect(screen.queryByText(/Where to Watch/)).toBeNull()
-  expect(document.body.textContent).not.toContain('\u{1f4fa}')
+  expect(document.body.textContent).not.toContain('📺')
   expect(document.querySelector('[data-ticker]')).toBeNull()
 })
 

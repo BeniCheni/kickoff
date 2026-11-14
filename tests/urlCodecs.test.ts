@@ -13,7 +13,7 @@ describe('canonicalSearch — normalize the address without changing decoder sem
     expect(canonicalSearch(`?view=${view}&only=pl&date=2026-11-21&lens=ledger`, TODAY)).toBe('?only=pl&date=2026-11-21&lens=ledger')
   })
   it('canonicalizes the retired lens to Poster without disturbing Step 0 pins', () => {
-    expect(canonicalSearch('?lens=\u0062roadcast&only=pl&date=2026-11-21', TODAY)).toBe('?only=pl&date=2026-11-21')
+    expect(canonicalSearch('?lens=broadcast&only=pl&date=2026-11-21', TODAY)).toBe('?only=pl&date=2026-11-21')
   })
   it('retains a real nondefault date and the cross-track competition filter', () => {
     expect(canonicalSearch('?only=pl,laliga&date=2026-09-15', TODAY)).toBe('?only=pl%2Claliga&date=2026-09-15')

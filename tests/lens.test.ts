@@ -26,7 +26,7 @@ describe('lens URL codec', () => {
     expect(parseLens('')).toBe('poster')
     expect(parseLens('x')).toBe('poster')
     expect(parseLens('LEDGER')).toBe('poster')
-    expect(parseLens('\u0062roadcast')).toBe('poster')
+    expect(parseLens('broadcast')).toBe('poster')
     expect(parseLens('ledger ')).toBe('poster')
     expect(parseLens('ledger,poster')).toBe('poster')
   })
