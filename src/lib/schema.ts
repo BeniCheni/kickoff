@@ -31,7 +31,12 @@ export const venueTzSchema = z.string().min(1).refine((zone) => {
   } catch { return false }
 }, 'a valid IANA time zone')
 
-export const fixtureSchema = z.object({
+/**
+ * Field shape only. `fixtureSchema` adds the rules for the two decided finals. The Moments
+ * archive picks from this object: Zod will not `.pick()` a schema that has a refinement,
+ * and that archive does not store `result` or `shootout`.
+ */
+export const fixtureFields = z.object({
   /** Stable across syncs. The join key for later betting overlays (positions, tokens). */
   id: z.string().min(1),
   competition: z.enum(COMPETITION_KEYS as [CompetitionKey, ...CompetitionKey[]]),
@@ -45,7 +50,10 @@ export const fixtureSchema = z.object({
   venueCountry: z.string().min(1).optional(),
   home: teamSchema,
   away: teamSchema,
-  status: z.enum(['scheduled', 'in_play', 'full_time', 'postponed', 'cancelled', 'suspended', 'abandoned']),
+  status: z.enum([
+    'scheduled', 'in_play', 'full_time', 'postponed', 'cancelled', 'suspended', 'abandoned',
+    'after_extra_time', 'after_penalties',
+  ]),
   /**
    * Whether the *time* (not the date) is settled.
    *  - `exact`             the league has set the kickoff time
@@ -60,6 +68,14 @@ export const fixtureSchema = z.object({
   phase: z.string().min(1).optional(),
   season: z.number().int().optional(),
   result: z.object({ home: z.number().int(), away: z.number().int() }).optional(),
+  /**
+   * Shootout goals. ESPN's `score` never includes them. Only `after_penalties` may carry
+   * this; `fixtureSchema` refuses it on every other status, and refuses a level shootout.
+   */
+  shootout: z.object({
+    home: z.number().int().nonnegative(),
+    away: z.number().int().nonnegative(),
+  }).optional(),
   /** Hand-authored context. Preserved across syncs by fixture id — the sync never clobbers it. */
   note: z.string().optional(),
   source: z.object({
@@ -70,6 +86,45 @@ export const fixtureSchema = z.object({
     ),
     fetchedAt: z.iso.datetime(),
   }),
+})
+
+export const fixtureSchema = fixtureFields.superRefine((fixture, ctx) => {
+  const decided = fixture.status === 'after_extra_time' || fixture.status === 'after_penalties'
+  if (decided && !fixture.result) {
+    ctx.addIssue({ code: 'custom', path: ['result'], message: 'a result is required' })
+  }
+  if (decided && fixture.result) {
+    for (const side of ['home', 'away'] as const) {
+      if (fixture.result[side] < 0) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['result', side],
+          message: 'a nonnegative whole number',
+        })
+      }
+    }
+  }
+  if (fixture.status === 'after_penalties' && !fixture.shootout) {
+    ctx.addIssue({ code: 'custom', path: ['shootout'], message: 'a shootout is required' })
+  }
+  if (
+    fixture.status === 'after_penalties' &&
+    fixture.shootout !== undefined &&
+    fixture.shootout.home === fixture.shootout.away
+  ) {
+    ctx.addIssue({
+      code: 'custom',
+      path: ['shootout'],
+      message: 'a level shootout is refused',
+    })
+  }
+  if (fixture.status !== 'after_penalties' && fixture.shootout !== undefined) {
+    ctx.addIssue({
+      code: 'custom',
+      path: ['shootout'],
+      message: 'only after_penalties may carry a shootout',
+    })
+  }
 })
 
 export const metaSchema = z.object({

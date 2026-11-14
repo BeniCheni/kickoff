@@ -1,0 +1,66 @@
+{
+  "events": [
+    {
+      "id": "758976",
+      "date": "2025-12-19T19:00Z",
+      "name": "Internazionale at Bologna",
+      "shortName": "INT @ BOL",
+      "season": {
+        "year": 2025,
+        "type": 13749,
+        "slug": "semifinals"
+      },
+      "competitions": [
+        {
+          "id": "758976",
+          "date": "2025-12-19T19:00Z",
+          "timeValid": true,
+          "venue": {
+            "id": "10675",
+            "fullName": "Al-Awwal Park",
+            "address": {
+              "city": "King Fahd International Stadium",
+              "country": "Saudi Arabia"
+            }
+          },
+          "competitors": [
+            {
+              "id": "107",
+              "homeAway": "home",
+              "team": {
+                "id": "107",
+                "displayName": "Bologna"
+              },
+              "score": "1",
+              "shootoutScore": 3
+            },
+            {
+              "id": "110",
+              "homeAway": "away",
+              "team": {
+                "id": "110",
+                "displayName": "Internazionale"
+              },
+              "score": "1",
+              "shootoutScore": 2
+            }
+          ]
+        }
+      ],
+      "status": {
+        "clock": 5760,
+        "displayClock": "96'",
+        "period": 5,
+        "type": {
+          "id": "47",
+          "name": "STATUS_FINAL_PEN",
+          "state": "post",
+          "completed": true,
+          "description": "Final Score - After Penalties",
+          "detail": "FT-Pens",
+          "shortDetail": "FT-Pens"
+        }
+      }
+    }
+  ]
+}

@@ -201,10 +201,15 @@ export function hotFixtureIds(
 
 /**
  * The Broadcast ticker's content, from the loaded snapshot: live fixtures, the next
- * kickoff, today's full-time scores. The snapshot carries no live match minute, so none
+ * kickoff, today's finished scores. The snapshot carries no live match minute, so none
  * is rendered — inventing one would break the data-honesty rule.
  */
-export type TickerSegment = { keyword: 'LIVE' | 'NEXT' | 'FT'; text: string; tbc?: { date: string }; emptyNext?: true }
+export type TickerSegment = {
+  keyword: 'LIVE' | 'NEXT' | 'FT' | 'AET' | 'PENS'
+  text: string
+  tbc?: { date: string }
+  emptyNext?: true
+}
 
 export function tickerSegments(
   fixtures: readonly Fixture[],
@@ -243,11 +248,16 @@ export function tickerSegments(
     })
   }
   for (const f of fixtures) {
-    if (f.status !== 'full_time' || !f.result) continue
+    const keyword = f.status === 'full_time' ? 'FT'
+      : f.status === 'after_extra_time' ? 'AET'
+      : f.status === 'after_penalties' ? 'PENS'
+      : null
+    if (!keyword || !f.result) continue
     if (brooklynDate(f.kickoffUtc) !== todayBrooklyn) continue
+    const shootout = f.shootout ? ` (${f.shootout.home}–${f.shootout.away})` : ''
     segments.push({
-      keyword: 'FT',
-      text: `${f.home.name} ${f.result.home}–${f.result.away} ${f.away.name}`,
+      keyword,
+      text: `${f.home.name} ${f.result.home}–${f.result.away}${shootout} ${f.away.name}`,
     })
   }
   return segments

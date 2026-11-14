@@ -119,8 +119,9 @@ stays green; it opens no PR. The workflow never pushes straight to `main`.
 **Every sync PR this workflow opens, including a quiet refresh of a snapshot 20 hours old
 or older, merges after `verify` is green.** The
 `mergeVerdict` in `scripts/diff.ts` still reports `hold` when anything is urgent (inside
-−6 h..+72 h, or a postponement, cancellation, suspension, abandonment, or result/team correction at any horizon), or when any `DISAPPEARED` or
-`HOME_AWAY_INVERTED` line appears at any horizon; it reports `auto` otherwise. This is a
+−6 h..+72 h, or a postponement, cancellation, suspension, abandonment, or result/team
+correction at any horizon, a change from one final status to another included), or when any
+`DISAPPEARED` or `HOME_AWAY_INVERTED` line appears at any horizon; it reports `auto` otherwise. This is a
 reader-facing signal in the PR report, not a release gate. The legacy `standings=failed`
 report remains visible for compatibility, although current standings failures exit 2 before
 any report or PR update. The workflow uses `gh pr merge --squash --auto`, gated by the
@@ -157,8 +158,11 @@ they do publish, say `sync: verified unchanged` and carry the full report line; 
 generated files move together to preserve the snapshot boundary and rolling-window counts.
 A failed or dry run publishes nothing. The header stamp advances after a publishing PR
 merges and Pages deploys, or a local checkout pulls. The schedule does not promise a
-delivery interval. `STATUS_SUSPENDED` and `STATUS_ABANDONED` are stored statuses; every
-other unmapped ESPN status still aborts the snapshot with exit 2 before any write.
+delivery interval. `STATUS_SUSPENDED`, `STATUS_ABANDONED`, `STATUS_FINAL_AET` and
+`STATUS_FINAL_PEN` are stored statuses (`suspended`, `abandoned`, `after_extra_time`,
+`after_penalties`). Every other unmapped ESPN status still aborts the snapshot with exit 2
+before any write. `STATUS_SHOOTOUT`, and any in-progress extra-time or shootout name, stay
+unmapped until a receipt shows them.
 
 `docs/sync-digest.md` keeps the latest 30 change-bearing reports on main, with bounded
 excerpts and full Actions-log links. It is generated in the snapshot PR, so proposed entries
@@ -258,10 +262,10 @@ made Kickoff a full-stack app — the Studio, a Supabase catalog, Cloudflare R2 
 similarity through pgvector, and a Next.js reader on Vercel — recorded in
 `docs/moments-pivot-record.md` and planned in `docs/nextjs-migration-plan.md`. It lands as
 **non-releases** (Beni's SP6 ruling, "None", 19 Oct 2026): the public site does not change until
-the cutover (N7). The fixes merged since v0.5.2 (the suspended and abandoned match handling is the
-one a reader sees) shipped as **v0.5.3** on 27 Oct 2026, which Beni ruled on 22 Oct 2026 to cut
-after Demo Day; after it the version string does not move until the cutover. The cutover is the
-next release, a **minor** (N0-Q10 ruled Minor and left the number to Beni), and on 21 Oct 2026
+the cutover (N7). The fixes merged since v0.5.2 shipped as **v0.5.3** on 27 Oct 2026 (a suspended or abandoned
+match no longer freezes every table; Beni ruled on 22 Oct 2026 to cut after Demo Day) and
+**v0.5.4** on Mon 16 Nov 2026 (extra time and penalties, ruled a patch on 11 Nov 2026). The cutover is the
+next **minor** (N0-Q10 ruled Minor and left the number to Beni), and on 21 Oct 2026
 Beni ruled that it is **planned as v0.6.0**.
 
 Beni ruled on 10 Sep 2026: **sync first as v0.4.0; European week second as v0.5.0**.

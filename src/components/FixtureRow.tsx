@@ -11,6 +11,8 @@ const STATUS_LABEL: Record<Fixture['status'], string | null> = {
   cancelled: 'CANCELLED',
   suspended: 'SUSPENDED',
   abandoned: 'ABANDONED',
+  after_extra_time: 'AET',
+  after_penalties: 'PENS',
 }
 
 /**
@@ -66,6 +68,7 @@ export function FixtureRow({ fixture, hot = false, stale = false }: { fixture: F
           {fixture.result && (
             <span className="font-mono text-[13px] font-semibold text-pitch">
               {fixture.result.home}–{fixture.result.away}
+              {fixture.shootout ? ` (${fixture.shootout.home}–${fixture.shootout.away})` : ''}
             </span>
           )}
           {status && (

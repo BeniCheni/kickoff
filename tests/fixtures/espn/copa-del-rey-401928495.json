@@ -1,0 +1,64 @@
+{
+  "events": [
+    {
+      "id": "401928495",
+      "date": "2026-10-27T18:00Z",
+      "name": "Espanyol at Sestao",
+      "shortName": "ESP @ SES",
+      "season": {
+        "year": 2026,
+        "type": 14558,
+        "slug": "first-round"
+      },
+      "competitions": [
+        {
+          "id": "401928495",
+          "date": "2026-10-27T18:00Z",
+          "timeValid": true,
+          "venue": {
+            "id": "6802",
+            "fullName": "Las Llanas",
+            "address": {
+              "city": "Sestao",
+              "country": "Spain"
+            }
+          },
+          "competitors": [
+            {
+              "id": "6856",
+              "homeAway": "home",
+              "team": {
+                "id": "6856",
+                "displayName": "Sestao"
+              },
+              "score": "4"
+            },
+            {
+              "id": "88",
+              "homeAway": "away",
+              "team": {
+                "id": "88",
+                "displayName": "Espanyol"
+              },
+              "score": "3"
+            }
+          ]
+        }
+      ],
+      "status": {
+        "clock": 7200,
+        "displayClock": "120'+3'",
+        "period": 4,
+        "type": {
+          "id": "45",
+          "name": "STATUS_FINAL_AET",
+          "state": "post",
+          "completed": true,
+          "description": "Final Score - After Extra Time",
+          "detail": "AET",
+          "shortDetail": "AET"
+        }
+      }
+    }
+  ]
+}
