@@ -1,0 +1,66 @@
+{
+  "events": [
+    {
+      "id": "401928509",
+      "date": "2026-10-27T19:00Z",
+      "name": "Mirandés at Atlético Tordesillas",
+      "shortName": "MIR @ TORD",
+      "season": {
+        "year": 2026,
+        "type": 14558,
+        "slug": "first-round"
+      },
+      "competitions": [
+        {
+          "id": "401928509",
+          "date": "2026-10-27T19:00Z",
+          "timeValid": true,
+          "venue": {
+            "id": "10560",
+            "fullName": "Las Salinas",
+            "address": {
+              "city": "Madrid",
+              "country": "Spain"
+            }
+          },
+          "competitors": [
+            {
+              "id": "131465",
+              "homeAway": "home",
+              "team": {
+                "id": "131465",
+                "displayName": "Atlético Tordesillas"
+              },
+              "score": "3",
+              "shootoutScore": 2
+            },
+            {
+              "id": "4515",
+              "homeAway": "away",
+              "team": {
+                "id": "4515",
+                "displayName": "Mirandés"
+              },
+              "score": "3",
+              "shootoutScore": 4
+            }
+          ]
+        }
+      ],
+      "status": {
+        "clock": 7200,
+        "displayClock": "120'",
+        "period": 5,
+        "type": {
+          "id": "47",
+          "name": "STATUS_FINAL_PEN",
+          "state": "post",
+          "completed": true,
+          "description": "Final Score - After Penalties",
+          "detail": "FT-Pens",
+          "shortDetail": "FT-Pens"
+        }
+      }
+    }
+  ]
+}

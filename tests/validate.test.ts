@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { validateFixtures } from '../scripts/validate'
 import { normalizeEvent } from '../scripts/providers/espn'
-import type { Fixture } from '../src/lib/schema'
+import { fixtureSchema, type Fixture } from '../src/lib/schema'
 
 const AT = '2026-08-21T10:00:00.000Z'
 
@@ -81,5 +81,84 @@ describe('validateFixtures — a rejected row is a reason to stop, not a line to
     const out = validateFixtures([fixture])
     expect(out.valid).toEqual([])
     expect(out.rejected[0]).toMatch(/result\.home/)
+  })
+})
+
+describe('extra-time and penalty finals', () => {
+  const issues = (row: Fixture) => {
+    const parsed = fixtureSchema.safeParse(row)
+    return parsed.success ? [] : parsed.error.issues.map((issue) => issue.path.join('.'))
+  }
+
+  it('accepts an extra-time final with a nonnegative result and no shootout', () => {
+    const parsed = fixtureSchema.safeParse(fx({ id: 'a', status: 'after_extra_time', result: { home: 4, away: 3 } }))
+    expect(parsed.success, parsed.success ? '' : JSON.stringify(parsed.error.issues)).toBe(true)
+    expect(fixtureSchema.safeParse(fx({ id: 'a', status: 'after_extra_time', result: { home: 0, away: 0 } })).success).toBe(true)
+  })
+
+  it('accepts a penalty final with a result and a nonnegative shootout', () => {
+    const parsed = fixtureSchema.safeParse(fx({
+      id: 'a', status: 'after_penalties', result: { home: 3, away: 3 }, shootout: { home: 2, away: 4 },
+    }))
+    expect(parsed.success, parsed.success ? '' : JSON.stringify(parsed.error.issues)).toBe(true)
+    expect(fixtureSchema.safeParse(fx({
+      id: 'a', status: 'after_penalties', result: { home: 0, away: 0 }, shootout: { home: 0, away: 1 },
+    })).success).toBe(true)
+  })
+
+  it('refuses a penalty final whose shootout is level', () => {
+    for (const shootout of [{ home: 0, away: 0 }, { home: 4, away: 4 }]) {
+      const row = fx({ id: 'level', status: 'after_penalties', result: { home: 1, away: 1 }, shootout })
+      const parsed = fixtureSchema.safeParse(row)
+      expect(parsed.success, JSON.stringify(shootout)).toBe(false)
+      expect(issues(row), JSON.stringify(shootout)).toContain('shootout')
+    }
+  })
+
+  it('refuses either new status when the result is missing', () => {
+    for (const status of ['after_extra_time', 'after_penalties'] as const) {
+      const row = fx({
+        id: status,
+        status,
+        ...(status === 'after_penalties' ? { shootout: { home: 1, away: 0 } } : {}),
+      })
+      expect(issues(row), status).toContain('result')
+    }
+  })
+
+  it('refuses a penalty final with no shootout', () => {
+    const row = fx({ id: 'pens', status: 'after_penalties', result: { home: 1, away: 1 } })
+    expect(issues(row)).toContain('shootout')
+  })
+
+  it('refuses a shootout on every status except after_penalties', () => {
+    for (const status of ['scheduled', 'in_play', 'full_time', 'postponed', 'cancelled', 'suspended', 'abandoned', 'after_extra_time'] as const) {
+      const row = fx({
+        id: status,
+        status,
+        result: status === 'full_time' || status === 'after_extra_time' ? { home: 1, away: 0 } : undefined,
+        shootout: { home: 1, away: 0 },
+      })
+      expect(issues(row), status).toContain('shootout')
+    }
+  })
+
+  it('refuses a negative goal count on either new status, on each side', () => {
+    expect(issues(fx({ id: 'a', status: 'after_extra_time', result: { home: -1, away: 0 } }))).toContain('result.home')
+    expect(issues(fx({ id: 'a', status: 'after_extra_time', result: { home: 0, away: -1 } }))).toContain('result.away')
+    const pens = { status: 'after_penalties' as const, result: { home: 1, away: 1 }, shootout: { home: 3, away: 2 } }
+    expect(issues(fx({ id: 'a', ...pens, result: { home: -1, away: 1 } }))).toContain('result.home')
+    expect(issues(fx({ id: 'a', ...pens, result: { home: 1, away: -1 } }))).toContain('result.away')
+    expect(issues(fx({ id: 'a', ...pens, shootout: { home: -1, away: 1 } }))).toContain('shootout.home')
+    expect(issues(fx({ id: 'a', ...pens, shootout: { home: 1, away: -1 } }))).toContain('shootout.away')
+  })
+
+  it('still parses a negative full_time result, which ideas row 2 owns', () => {
+    expect(fixtureSchema.safeParse(fx({ id: 'ft', status: 'full_time', result: { home: -1, away: 0 } })).success).toBe(true)
+  })
+
+  it('still parses the snapshot on main', () => {
+    const snapshot = JSON.parse(readFileSync(resolve(import.meta.dirname, '../src/data/fixtures.json'), 'utf8'))
+    expect(fixtureSchema.array().safeParse(snapshot).success).toBe(true)
   })
 })

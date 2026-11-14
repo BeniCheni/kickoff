@@ -4,7 +4,8 @@ import { tmpdir } from 'node:os'
 import { resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
 import { renderSyncPrBody, summarizeSync } from '../scripts/sync-pr-body'
-import { formatReportLine, type Change, type ChangeKind, type SyncReport } from '../scripts/diff'
+import { diffFixtures, formatChanges, formatReportLine, type Change, type ChangeKind, type SyncReport } from '../scripts/diff'
+import type { Fixture } from '../src/lib/schema'
 
 const quiet: SyncReport = { changes: 0, urgent: 0, standings: 'unchanged', rankMoves: 0, merge: 'auto' }
 const repository = 'BeniCheni/kickoff'
@@ -102,5 +103,29 @@ describe('generated sync PR narrative', () => {
     expect(() => render(summarizeSync(quiet, [], 0), formatReportLine({ ...quiet, changes: 1 }))).toThrow('disagrees')
     expect(() => render({ ...summarizeSync(quiet, [], 0), kinds: [{ kind: '## Human verified', count: 0 }] })).toThrow()
     expect(() => render(summarizeSync({ ...quiet, standings: 'failed' }, [], 0))).toThrow()
+  })
+
+  it('keeps a shootout correction in the log and only the kind and count in the summary', () => {
+    const row = (shootout: { home: number; away: number }): Fixture => ({
+      id: 'a', competition: 'ligue1', kickoffUtc: '2026-08-01T12:00:00.000Z', venueTz: 'Europe/Paris',
+      home: { name: 'Home' }, away: { name: 'Away' }, status: 'after_penalties', timeConfidence: 'exact',
+      result: { home: 1, away: 1 }, shootout,
+      source: { provider: 'espn', sourceId: 'a', fetchedAt: '2026-08-21T12:00:00.000Z' },
+    })
+    const changes = diffFixtures([row({ home: 3, away: 2 })], [row({ home: 2, away: 3 })], { now: new Date('2026-08-21T12:00:00.000Z') })
+    const report: SyncReport = {
+      changes: changes.length,
+      urgent: changes.filter((c) => c.urgent).length,
+      standings: 'unchanged',
+      rankMoves: 0,
+      merge: 'hold',
+    }
+    const log = formatChanges(changes)
+    const body = renderSyncPrBody(summarizeSync(report, changes, 0), formatReportLine(report), log, repository)
+    const narrative = body.split('<details>')[0] ?? ''
+    expect(narrative).toContain('score corrections (1)')
+    expect(narrative).not.toContain('1-1 (3-2)')
+    expect(log).toContain('1-1 (3-2) -> 1-1 (2-3)')
+    expect(body).toContain('1-1 (3-2) -> 1-1 (2-3)')
   })
 })

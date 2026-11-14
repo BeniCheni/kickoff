@@ -211,4 +211,22 @@ describe('tableFor — "next" tracks a caller-supplied today, not the system clo
   it('returns [] for a league with no standings rows, regardless of today', () => {
     expect(tableFor('laliga', '2026-09-05', '2026-09-05T00:00:00.000Z', [], [])).toEqual([])
   })
+
+  it('does not count an after_extra_time 4–3 in the form guide', () => {
+    const rows = [row('A'), row('B')]
+    const aet = fx({
+      competition: 'laliga',
+      status: 'after_extra_time',
+      result: { home: 4, away: 3 },
+      kickoffUtc: '2026-10-27T18:00:00.000Z',
+    })
+    const counted = fx({
+      competition: 'laliga',
+      status: 'full_time',
+      result: { home: 1, away: 0 },
+      kickoffUtc: '2026-10-20T18:00:00.000Z',
+    })
+    const teamA = tableFor('laliga', '2026-10-28', '2026-10-28T12:00:00.000Z', rows, [counted, aet]).find((r) => r.teamId === 'A')
+    expect(teamA?.form).toEqual(['W'])
+  })
 })

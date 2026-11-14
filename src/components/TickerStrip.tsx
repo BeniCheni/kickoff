@@ -21,7 +21,7 @@ function Track({ segments, decorative }: { segments: TickerSegment[]; decorative
 
 /**
  * Broadcast's hero: a full-bleed one-line marquee under the tab row — live fixtures, the
- * next kickoff and today's FT scores from the loaded snapshot, amber keywords in mono.
+ * next kickoff and today's finished scores from the loaded snapshot, amber keywords in mono.
  * Two identical spans scroll −50% over 36s so the loop is seamless. Mouse hover pauses
  * while it lasts; a touch tap and the ‖/› button toggle a pinned pause (the button is the
  * keyboard/AT mechanism WCAG 2.2.2 requires); reduced-motion renders it static. The

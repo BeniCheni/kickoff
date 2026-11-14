@@ -33,4 +33,26 @@ describe('FixtureRow on Next\'s compiled React', () => {
     }))
     expect(text).toContain(label)
   })
+
+  it('renders an extra-time final as AET with ESPN\'s score and no shootout', () => {
+    const text = html(edgeFixture({
+      status: 'after_extra_time',
+      result: { home: 4, away: 3 },
+    }))
+    expect(text).toContain('AET')
+    expect(text).toContain('4–3')
+    expect(text).not.toContain('(2–4)')
+    expect(text).not.toMatch(/\bFT\b/)
+  })
+
+  it('renders a penalty final as PENS with the shootout in brackets', () => {
+    const text = html(edgeFixture({
+      status: 'after_penalties',
+      result: { home: 3, away: 3 },
+      shootout: { home: 2, away: 4 },
+    }))
+    expect(text).toContain('PENS')
+    expect(text).toContain('3–3 (2–4)')
+    expect(text).not.toMatch(/\bFT\b/)
+  })
 })
