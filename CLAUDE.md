@@ -261,10 +261,12 @@ downstream.
 made Kickoff a full-stack app — the Studio, a Supabase catalog, Cloudflare R2 video, CLIP
 similarity through pgvector, and a Next.js reader on Vercel — recorded in
 `docs/moments-pivot-record.md` and planned in `docs/nextjs-migration-plan.md`. It lands as
-**non-releases** (Beni's SP6 ruling, "None", 19 Oct 2026): the public site does not change until
-the cutover (N7). The fixes merged since v0.5.2 shipped as **v0.5.3** on 27 Oct 2026 (a suspended or abandoned
+**non-releases** (Beni's SP6 ruling, "None", 19 Oct 2026). D3 (13 Nov 2026), confirmed by Beni
+on 14 Nov 2026, let the clearing change the public site before the cutover, and the full-stack
+work still lands as non-releases. The fixes merged since v0.5.2 shipped as **v0.5.3** on 27 Oct 2026 (a suspended or abandoned
 match no longer freezes every table; Beni ruled on 22 Oct 2026 to cut after Demo Day) and
-**v0.5.4** on Sat 14 Nov 2026 (extra time and penalties, ruled a patch on 11 Nov 2026). The cutover is the
+**v0.5.4** on Sat 14 Nov 2026 (extra time and penalties, ruled a patch on 11 Nov 2026) and
+**v0.5.5** on Sat 14 Nov 2026 (the clearing). The cutover is the
 next **minor** (N0-Q10 ruled Minor and left the number to Beni), and on 21 Oct 2026
 Beni ruled that it is **planned as v0.6.0**.
 

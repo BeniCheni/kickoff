@@ -1,7 +1,7 @@
 # ⚽ Kickoff
 
 [![CI](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml/badge.svg)](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml)
-[![version](https://img.shields.io/badge/version-0.5.4-1d4ed8)](CHANGELOG.md)
+[![version](https://img.shields.io/badge/version-0.5.5-1d4ed8)](CHANGELOG.md)
 [![license](https://img.shields.io/badge/license-MIT-16a34a)](LICENSE)
 [![stack](https://img.shields.io/badge/stack-Next.js%20%C2%B7%20Supabase%20%C2%B7%20pgvector%20%C2%B7%20R2-0f172a)](#-how-it-is-wired)
 [![built with](https://img.shields.io/badge/built%20with-Claude%20Code-D97757)](CLAUDE.md)
@@ -48,7 +48,7 @@ once CI is green.) The paper trail for all of that is in this repo, PR by PR.
 > Next.js app on Vercel, and today it sits behind Vercel's own sign-in, which is why that link
 > asks you to log in first. The Moments pictures below were captured from it, the clip was made
 > from the file it plays, and the three Studio pictures come from the Studio's own stub-mode
-> proof run. Its public cutover is a numbered plan, not a promise with a date, and `v0.5.4` is
+> proof run. Its public cutover is a numbered plan, not a promise with a date, and `v0.5.5` is
 > the latest release.
 
 https://github.com/user-attachments/assets/20449d7e-d1e4-451c-be29-e6a2b15baf38
@@ -133,9 +133,9 @@ EU AI Act Article 50 answer before it can be published, a `Generated` label that
 filtered away, and made-up viewers that say they are made up. Both halves are built to hold
 their rule, and both are covered below.
 
-## ⏱️ What it does today (v0.5.4)
+## ⏱️ What it does today (v0.5.5)
 
-### ⚽ The football app (public, v0.5.4)
+### ⚽ The football app (public, v0.5.5)
 
 Fourteen competitions: the five big domestic leagues (La Liga, the Premier League, Serie A,
 Ligue 1, the Bundesliga), the three UEFA club competitions (Champions League, Europa League,
@@ -477,6 +477,7 @@ wrong? That's this repo's signature issue; there's a
 
 One subject line per release. The honours board:
 
+- **v0.5.5** *(Sat 14 Nov 2026)* — the clearing: the Broadcast lens, Where to Watch and the Monthly view are retired, and the fixtures start higher on the page.
 - **v0.5.4** *(Sat 14 Nov 2026)* — a match decided in extra time or on penalties is stored as its own final, so one such result can no longer refuse the snapshot for every league.
 - **v0.5.3** *(27 Oct 2026)* — one suspended or abandoned match can no longer freeze every league's table.
 - **v0.5.2** *(17 Sep 2026)* — hotfix to the hotfix: the 30-day lookback restored so the app keeps its recent results.
