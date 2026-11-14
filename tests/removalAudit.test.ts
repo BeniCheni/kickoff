@@ -41,6 +41,9 @@ function filesUnder(rel: string): string[] {
       const abs = path.join(dir, name)
       const relPath = path.relative(root, abs)
       if (relPath === path.join('tests', 'fixtures') || relPath.startsWith(path.join('tests', 'fixtures') + path.sep)) continue
+      // src/data is generated provider text: team names, venues and notes. A venue can
+      // contain the retired word without being the lens, the same reason tests/fixtures is skipped.
+      if (relPath === path.join('src', 'data') || relPath.startsWith(path.join('src', 'data') + path.sep)) continue
       if (name === 'node_modules' || name === '.next' || name === 'generated') continue
       const info = statSync(abs)
       if (info.isDirectory()) walk(abs)
@@ -68,7 +71,7 @@ it('allows the retired names only where a test is the reason', () => {
   for (const rel of roots.flatMap(filesUnder)) {
     const text = readFileSync(path.join(root, rel), 'utf8')
     for (const needle of needles) {
-      const count = occurrences(text, needle)
+      const count = occurrences(needle === retired ? text.toLowerCase() : text, needle)
       if (count > 0) found.set(`${rel}\0${needle}`, count)
     }
   }
