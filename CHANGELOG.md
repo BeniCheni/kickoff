@@ -8,6 +8,10 @@ releases.
 
 ## [Unreleased]
 
+### Changed
+
+- The preview smoke's Fixtures landmark is now "Jump to today".
+
 ### Removed
 
 - The Broadcast lens and ticker. The lens switch now reads Poster, then Ledger, with one
