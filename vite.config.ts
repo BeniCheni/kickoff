@@ -7,6 +7,26 @@ import { viteSingleFile } from 'vite-plugin-singlefile'
 import pkg from './package.json' with { type: 'json' }
 import { themeBootstrap } from './scripts/themeBootstrap.ts'
 
+// Dev server only. tests/harness/states.tsx imports TablePage a second time, with
+// ?kickoff-specimen, and this rewrites that copy's tableFor call so the harness can
+// pass synthetic rows. The build never loads the hook, and the unqueried module the
+// app serves is untouched. A missing needle throws rather than silently showing the snapshot.
+function kickoffHarnessSpecimen() {
+  // The comma keeps a second pass from matching the rewritten call.
+  const needle = 'tableFor(league, today, nowUtcIso),'
+  const rewritten = 'tableFor(league, today, nowUtcIso, globalThis.__kickoffSpecimen.rows, globalThis.__kickoffSpecimen.fixtures),'
+  return {
+    name: 'kickoff-harness-specimen',
+    apply: 'serve' as const,
+    transform(code: string, id: string) {
+      const [file, query] = id.split('?')
+      if (!file?.includes('TablePage') || !query?.includes('kickoff-specimen')) return
+      if (!code.includes(needle)) throw new Error(`kickoff-harness-specimen: ${needle} was not found`)
+      return code.replaceAll(needle, rewritten)
+    },
+  }
+}
+
 // `--mode single` inlines every asset into one self-contained dist-single/index.html that opens
 // straight from the filesystem by double-click, the way the original prototype did.
 // `--mode offline` is the separate Fixtures-and-Table file (N0-Q2 Keep). It does not replace single.
@@ -17,6 +37,7 @@ export default defineConfig(({ mode }) => ({
   define: { __APP_VERSION__: JSON.stringify(pkg.version) },
   plugins: [
     themeBootstrap(),
+    kickoffHarnessSpecimen(),
     react(),
     tailwindcss(),
     ...(mode === 'single' || mode === 'offline' ? [viteSingleFile()] : []),
@@ -33,6 +54,11 @@ export default defineConfig(({ mode }) => ({
   build: {
     outDir: mode === 'offline' ? 'dist-offline' : mode === 'single' ? 'dist-single' : 'dist',
     ...(mode === 'offline' ? { rollupOptions: { input: 'offline.html' } } : {}),
+  },
+  // Dev only. The default scan was resolving react-dom/client from a nested checkout
+  // inside this repo; these entries are the app and the dev harnesses.
+  optimizeDeps: {
+    entries: ['index.html', 'offline.html', 'tests/harness/states.html', 'tests/harness/moments.html'],
   },
   // Two vitest projects under one `npm test` (v0.2.4). `node` is the pure layer — `lib/`,
   // `scripts/`, the diff engine — exactly what ran before. `dom` is the component wiring
