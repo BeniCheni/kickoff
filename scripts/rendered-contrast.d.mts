@@ -1,0 +1,31 @@
+export type Rgb = { r: number; g: number; b: number; a?: number }
+
+export function parseColor(value: string): { r: number; g: number; b: number; a: number } | null
+export function composite(ink: Rgb, ground: Rgb): { r: number; g: number; b: number; a: number }
+export function luminance(rgb: Rgb): number
+export function contrastRatio(a: Rgb, b: Rgb): number
+export function isLargeText(fontSizePx: number, fontWeight: number): boolean
+export function floorFor(large: boolean): number
+
+export type ContrastSample = {
+  text?: string
+  color: string
+  large?: boolean
+  rects?: { x: number; y: number; w: number; h: number }[]
+}
+
+export type ContrastMinimum = {
+  ink: string
+  ground: string
+  ratio: number
+  large: boolean
+  floor: number
+  text: string
+}
+
+export function sampleContrast(
+  samples: readonly ContrastSample[],
+  image: { width: number; height: number; data: Uint8Array },
+  scaleX?: number,
+  scaleY?: number,
+): ContrastMinimum[]
