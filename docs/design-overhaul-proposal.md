@@ -401,13 +401,16 @@ decision list; see "Rulings received". The list below is kept as it was put to B
     implementation prompt. The prompt will put Beni's rulings first, then the boards, then the
     handoff, and note every resolution in the PR.
   - **Where the build stands.** The overhaul's build follows N7 (D3). On 13 Nov 2026 `main` has
-    N1 to N4d, N6a and N6b merged, and only N7, the cutover, is left. The clearing has not
+    N1 to N4d, N6a and N6b merged. N5 (publication delivery, the fallback PR contract and
+    privacy) and N7, the cutover, are still to come. The clearing has not
     started (`WatchPanel`, `MonthView` and `TickerStrip` are still in `src/`). An implementation
     prompt written now against the Vite app would go stale before N7, so the overhaul's prompt
     waits for the cutover. The clearing, which ships first on its own, is the next prompt that
     can be written from the repo as it is. *(Corrected 14 Nov: the first version of this bullet
     said "N1 to N3 merged and N4 planned", from a commit-message grep that missed the N4 and N6
-    slices.)*
+    slices. Corrected again on 14 Nov, after the release: the second version said only N7 was
+    left, but no N5 commit is on `main`, and `docs/v0.2.6-ideas.md` row 131 names the privacy
+    copy N5 will write.)*
 - **The clearing's implementation prompt, 14 Nov 2026 (Beni: "Yes, write it").** Written from
   a fresh read of `origin/main` at `ddd9a37` and archived as
   `docs/design-overhaul-clearing-implementation-prompt.md`, for Codex per "Who fires what", with
