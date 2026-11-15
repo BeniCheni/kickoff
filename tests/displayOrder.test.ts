@@ -61,4 +61,19 @@ describe('sortForDisplay', () => {
     ])
     expect(input.map((fixture) => fixture.id)).not.toEqual(sorted.map((fixture) => fixture.id))
   })
+
+  it('keeps a tie in whatever order it arrived, for every arrival order', () => {
+    // One group, one instant, and every other field different. A tie-break on any field,
+    // in either direction, settles on one order, so it cannot agree with all six.
+    const tied = [
+      row('b-ucl', 'ucl', EARLY, 'Zebra', 'Madrid'),
+      row('c-uel', 'uel', EARLY, 'Alpha', 'Zurich'),
+      row('a-uecl', 'uecl', EARLY, 'Middle', 'Amsterdam'),
+    ]
+    for (const order of [[0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]]) {
+      const arrived = order.map((index) => tied[index]!.id)
+      const input = order.map((index) => tied[index]!)
+      expect(sortForDisplay(input).map((fixture) => fixture.id)).toEqual(arrived)
+    }
+  })
 })
