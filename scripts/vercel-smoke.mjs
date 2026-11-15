@@ -50,10 +50,17 @@ function hasLeak(text, bypass) {
     Boolean(bypass && plain.includes(bypass))
 }
 
-// The landmarks are the shell-matrix / n3-next-vite / n4b-regressions selectors, except on
-// Fixtures: those receipts looked for the Weekly button, which the app no longer renders.
+// Contract every later brief carries. The smoke depends on these attributes and no other
+// copy on the page:
+//   nav aria-label="Primary"         — every tab (checked below, not in ROUTES)
+//   data-moments-background="route"  — Fixtures and Table
+//   button aria-label="Previous"     — Fixtures only: the week stepper's previous chevron
+//   data-table-picker                — Table
+//   main aria-label="Moments"        — Moments
+// "Jump to today" is not in the contract. The second edition renames that button "Today"
+// (PR 3) and keeps the stepper through that week-row rebuild and the Poster books (PR 5).
 const ROUTES = [
-  ['/', /data-moments-background="route"/, /<button\b[^>]*>\s*Jump to today\s*<\/button>/],
+  ['/', /data-moments-background="route"/, /<button\b[^>]*\baria-label="Previous"/],
   ['/?tab=table', /data-moments-background="route"/, /\bdata-table-picker(?:=|[ >])/],
   ['/?tab=moments', /<main\b[^>]*aria-label="Moments"/],
 ]

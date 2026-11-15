@@ -12,7 +12,7 @@ const project = 'kickoff'
 const base = { url, sha, ref: 'main', project, mainSha: sha }
 const nav = '<nav aria-label="Primary"></nav>'
 const pages = [
-  `${nav}<div data-moments-background="route"><button>Jump to today</button></div>`,
+  `${nav}<div data-moments-background="route"><button aria-label="Previous">‹</button></div>`,
   `${nav}<div data-moments-background="route"><div data-table-picker></div></div>`,
   `${nav}<main class="moments-gallery" aria-label="Moments">Published videos</main>`,
 ]
@@ -71,6 +71,11 @@ describe('trusted-main Vercel smoke', () => {
   it('requires the surviving fixture navigation, not just the retired view control', async () => {
     const retired = `${nav}<div data-moments-background="route"><button>Weekly</button></div>`
     await expect(smoke(base, { fetchImpl: server({ index: 0, body: retired }) })).rejects.toThrow('landmark')
+  })
+  it('still passes when the jump control reads Today', async () => {
+    const renamed = `${nav}<div data-moments-background="route"><button>Today</button><button aria-label="Previous">‹</button></div>`
+    const result = await smoke(base, { fetchImpl: server({ index: 0, body: renamed }) })
+    expect(result.checks).toContain('/')
   })
   it('rejects wrong source SHA and wrong snapshot bytes', async () => {
     for (const snapshot of [{ sourceSha: 'b'.repeat(40), snapshotDigest: digestAt(sha) }, { sourceSha: sha, snapshotDigest: '0'.repeat(64) }]) {
