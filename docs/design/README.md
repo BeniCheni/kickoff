@@ -73,8 +73,8 @@ still for when motion is off.
 
 ## 4 · The photographs, Fri 13 Nov · [`4-photographs/`](4-photographs/)
 
-Ten photographs survived three rounds on fal: regraded cold, cleared of lettering, extended,
-upscaled, and each looked at by eye. The rules: evoke, never borrow; no real ground, club, crest,
+Nine photographs came through three rounds on fal. The tenth, the void, came straight from pen.dev.
+The picks were looked at by eye. The rules: evoke, never borrow; no real ground, club, crest,
 kit or person; and nothing warm, because amber is reserved for data you should check. Seven began
 in pen.dev's Generate, which does not record its model, so their record says "not recorded"
 (Beni's ruling, 14 Nov). Every request is in

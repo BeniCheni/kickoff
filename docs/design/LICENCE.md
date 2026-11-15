@@ -4,8 +4,8 @@ The images in this folder and its subfolders (every `.webp` file) are **not** co
 repository's [MIT licence](../../LICENSE).
 
 - **What they are.** Exports of design boards drawn in pen.dev, and photographs made with
-  generative tools: pen.dev's Generate, and models served through fal. The ten picked
-  photographs used `fal-ai/flux-pro/v1.1-ultra`, `fal-ai/flux-pro/kontext`,
+  generative tools: pen.dev's Generate, and models served through fal. Nine of the ten picked
+  photographs went through fal, using `fal-ai/flux-pro/v1.1-ultra`, `fal-ai/flux-pro/kontext`,
   `fal-ai/nano-banana-2` and `fal-ai/topaz/upscale/image`; the record also lists the depth,
   texture, upscale and video requests that were tried. Every photograph is ILLUSTRATIVE. None
   shows a real ground, club, crest or person.
