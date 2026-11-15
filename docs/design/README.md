@@ -110,5 +110,5 @@ Beni's nineteen answers are [`../design-overhaul-plan.md`](../design-overhaul-pl
 
 Fourteen WebGL 1 fragment shaders, as written on the canvas: `fog`, `fog-drift`, `rift`, `foil`,
 `blood-drip`, `blood-burst`, `blood-pool`, `crt-glitch`, `flashlight`, `rim-fire`, `smoke`,
-`scorch`, `rack-crossing`, and `slip-glow`, which belonged to the fenced pay-out board and leaves
-with it. The build will make its own; these are the sketches it starts from.
+`scorch`, `rack-crossing`, and `slip-glow`. The archive includes `slip-glow` as a sketch.
+Its use in the app remains fenced with the pay-out board. The build will make its own shaders.
