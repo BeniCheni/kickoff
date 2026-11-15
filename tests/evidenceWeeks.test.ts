@@ -51,6 +51,13 @@ describe('evidence week rules', () => {
     expect(chosen.quiet).toMatchObject({ monday: '2026-11-02', count: 0 })
     expect(wholeWeeks(window)[0]).toEqual({ monday: '2026-10-19', sunday: '2026-10-25' })
 
+    // Forty league fixtures do not make a week heavy while it also holds a Champions League one.
+    const crowded = chooseWeeks(
+      [...domestic.map((fixture) => ({ ...fixture, kickoffUtc: fixture.kickoffUtc.replace('2026-10-26', '2026-10-19') })), ...list],
+      window,
+    )
+    expect(crowded.heavy).toMatchObject({ monday: '2026-10-26', count: 40 })
+
     const none = chooseWeeks([], { from: '2026-11-02', to: '2026-11-08' })
     expect(none.heavy.monday).toBeNull()
     expect(none.heavy.missing).toMatch(/40 or more/)
