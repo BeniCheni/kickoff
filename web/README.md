@@ -267,7 +267,9 @@ reader imports too. It does not scan docs/, studio/, tests, or the rest of src/.
 `npm run check:css` reads `generated/shell.css` after `node scripts/write-shell-css.mjs`:
 the web probe must be present there and absent from the reader; the Studio probe
 reaches neither; archived-doc selectors stay out of the shared shell sheet.
-The new `.moments-gallery` rules belong only to `app/moments/gallery.css`. Shell utilities are shared on purpose. The reader keeps `@source not '../web'`.
+The new `.moments-gallery` rules belong only to `app/moments/gallery.css`.
+Shell utilities are shared on purpose. The reader's Tailwind scan is limited to
+`src/**/*.{ts,tsx}`.
 
 Versions checked 2026-10-15: Next 16.4.1 is the registry's stable release on the
 [16.x Active LTS line](https://nextjs.org/support-policy). React and React DOM are

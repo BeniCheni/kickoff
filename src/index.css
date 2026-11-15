@@ -1,11 +1,5 @@
-@import 'tailwindcss';
-
-/* Design-cycle archives quote class names; keep them out of the scan. Older docs still feed the live CSS, so this is not `@source not '../docs'`. */
-@source not '../docs/design-cycle-moments-*.md';
-/* Studio is its own package; keep its class names out of the reader CSS. */
-@source not '../studio';
-/* The unreleased Next app has its own Tailwind scan. */
-@source not '../web';
+@import 'tailwindcss' source(none);
+@source './**/*.{ts,tsx}';
 
 @import './shell.css';
 
