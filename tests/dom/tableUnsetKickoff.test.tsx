@@ -65,16 +65,27 @@ describe('Table next-fixture cell when the league has not set the kickoff', () =
     release = primeClock(new Date('2026-12-01T15:00:00.000Z'))
     render(<TablePage />)
 
-    const desktop = within(document.querySelector('[data-table="desktop"]') as HTMLElement)
-    const tbc = desktop.getByText('time TBC')
-    const cell = tbc.parentElement!.parentElement!
-    expect(cell.textContent).toContain('time TBC')
-    expect(cell.textContent ?? '').not.toMatch(CLOCK)
+    const desktop = holding('desktop', 'time TBC')
+    expect(desktop.textContent ?? '').not.toMatch(CLOCK)
 
     const row = screen.getByRole('button', { name: /Specimen Club/ })
+    expect(row.textContent ?? '').not.toMatch(CLOCK)
     fireEvent.click(row)
-    const card = within(row.nextElementSibling as HTMLElement)
-    const mobile = card.getByText(/kickoff time not yet set/)
+    const mobile = holding('mobile', /kickoff time not yet set/)
     expect(mobile.textContent ?? '').not.toMatch(CLOCK)
   })
 })
+
+/**
+ * The club's whole row or card in one layout: the smallest element that holds both the
+ * not-set words and the club's name. A clock anywhere in it is a clock for that fixture,
+ * whether it sits inside the words' own element or beside it.
+ */
+function holding(layout: 'desktop' | 'mobile', words: string | RegExp): HTMLElement {
+  const root = document.querySelector(`[data-table="${layout}"]`) as HTMLElement
+  let element = within(root).getByText(words)
+  while (element !== root && !(element.textContent ?? '').includes('Specimen Club')) {
+    element = element.parentElement!
+  }
+  return element
+}
