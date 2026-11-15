@@ -4,6 +4,7 @@ import { renderToString } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { FixtureRow } from '../../src/components/FixtureRow'
 import type { Fixture } from '../../src/lib/schema'
+import { fixtureTimes } from '../../src/lib/time'
 import { edgeFixture } from '../fixtures/edgeFixtures'
 
 /**
@@ -46,10 +47,19 @@ describe('shared fixture row, server render and hydration', () => {
     expect(host.textContent).toContain('local time not known')
   })
 
+  it('prints the stadium time and the word local from the same instant', async () => {
+    const row = fixture({ venueTz: 'Europe/Madrid' })
+    // Today's 12-hour form. PR 3 prints the 24-hour stadium clock and moves this assertion.
+    const { local } = fixtureTimes(row.kickoffUtc, 'Europe/Madrid')
+    const text = await serverAndClient(row)
+    expect(text).toContain(`${local.time} local`)
+  })
+
   it.each([
     ['full_time', 'FT'],
     ['in_play', 'LIVE'],
     ['postponed', 'POSTPONED'],
+    ['cancelled', 'CANCELLED'],
     ['suspended', 'SUSPENDED'],
     ['abandoned', 'ABANDONED'],
   ] as const)('renders %s as %s', async (status, label) => {

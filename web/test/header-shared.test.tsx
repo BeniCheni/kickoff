@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { expect, test } from 'vitest'
 import { AppHeader } from '../../src/components/AppHeader'
 import { clockSnapshotAt } from '../../src/lib/clock'
+import { META, SYNC_STAMP } from '../../src/lib/fixtures'
 import { RequestClock } from '../../src/lib/RequestClock'
 import { Shell } from '../app/shell'
 
@@ -32,4 +33,7 @@ test('Next renders the header from the shared module', () => {
   expect(headerHtml(html)).toBe(fromModule)
   expect(fromModule).toContain('Brooklyn · ET')
   expect(fromModule).toContain('dark:hidden')
+  const provenance = html.toLowerCase()
+  expect(provenance).toContain(`${META.total} fixtures`)
+  expect(provenance).toContain(SYNC_STAMP.toLowerCase())
 })
