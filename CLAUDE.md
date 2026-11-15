@@ -266,9 +266,18 @@ on 14 Nov 2026, let the clearing change the public site before the cutover, and 
 work still lands as non-releases. The fixes merged since v0.5.2 shipped as **v0.5.3** on 27 Oct 2026 (a suspended or abandoned
 match no longer freezes every table; Beni ruled on 22 Oct 2026 to cut after Demo Day) and
 **v0.5.4** on Sat 14 Nov 2026 (extra time and penalties, ruled a patch on 11 Nov 2026) and
-**v0.5.5** on Sat 14 Nov 2026 (the clearing). The cutover is the
-next **minor** (N0-Q10 ruled Minor and left the number to Beni), and on 21 Oct 2026
-Beni ruled that it is **planned as v0.6.0**.
+**v0.5.5** on Sat 14 Nov 2026 (the clearing). The cutover is a **minor** (N0-Q10 ruled
+Minor and left the number to Beni), and on 21 Oct 2026 Beni planned it as v0.6.0.
+
+**Amended Sat 14 Nov 2026 (Beni): revamp first, and it takes v0.6.0.** The design overhaul
+(Fergie Time's second edition) is built before the cutover, on Fixtures and Table only, and its
+release is **v0.6.0**; the cutover moves to the minor after it, numbered by Beni when it is
+scoped. N5 and the rest of the Moments and Studio work are parked while he rethinks the user
+journey. The overhaul is built as ten PRs: one tests-and-tooling PR on `main` that changes no
+rendered byte, eight reviewed into one integration branch, and one release PR, so `main` and
+Pages change once. Step 0 moves to `&lens=ledger` in the same sitting as that release, not
+before. Plan, scoring and all nineteen rulings: `docs/design-overhaul-plan.md` and
+`docs/design-overhaul-plan-review.md`.
 
 Beni ruled on 10 Sep 2026: **sync first as v0.4.0; European week second as v0.5.0**.
 v0.4.1 (rows 43–51) shipped 12 Sep 2026, before v0.5.0 (Beni, 11 Sep 2026).
