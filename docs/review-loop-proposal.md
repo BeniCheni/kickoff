@@ -692,5 +692,32 @@ for Cursor (S7).
     on Grok 4.7 Extra High, as builder and as Pass 2 (`design-overhaul-plan.md:217`). PR 0 is
     open as #327 (Cursor, last commit 15 Nov 2026 at 2:58 PM EST). When the subscription ends
     decides whether the overhaul is re-routed, which was put to Beni the same day.
+- **D7, amended the same day (Beni).** Cursor is not dropping to the free tier. Its "Super"
+  tier runs until Thu 19 Nov 2026, then a lower paid tier that still includes Cursor usage and
+  some models. And Sprint 8 is in: "definitely conduct Sprint 8". What that changes:
+  - **Sprint 8 is required again,** and D4 applies to it. Its T2 uses the effort-suffixed
+    Grok 4.7 IDs the lower tier lists. If it lists none, T2 records effort as fixed by the model,
+    and D4 comes back to Beni before the sprint starts.
+  - Cursor's optional seats in this track run on the lower tier, never ahead of the overhaul's
+    Cursor seats.
+  - The overhaul's routing around 19 Nov is planned in `design-overhaul-plan.md`, section 3,
+    "Amended Sun 15 Nov 2026". It is proposed and awaits Beni's word. Its one rule for this
+    track: while Codex builds an overhaul PR, this track's Codex builds wait.
+  - Today's Super-tier model list is the receipt
+    [`verification/review-loop/cursor-models-2026-11-15-super.txt`](verification/review-loop/cursor-models-2026-11-15-super.txt).
+    The lower tier's list is diffed against it on 19 Nov.
 
 D1 to D6 and D8 to D12 are not yet ruled.
+
+## Found after the spikes (15 Nov 2026, afternoon)
+
+- **The Cursor CLI updated itself during the session,** from `2026.11.11-b912975` (S4) to
+  `2026.11.13-eacade1` (`agent about`, "up to date"). Seat records carry `runtime_version`
+  for exactly this, and `loop` reads the observed fields per version.
+- **The Cursor CLI keeps the last `--model` as its default.** The S4 to S10 probes left
+  `~/.cursor/cli-config.json` (rewritten at 2:33 PM) with `selectedModel` set to `grok-4.7` and
+  `reasoning_effort: "low"`. The value before the probes was not recorded, so it was not
+  restored. A seat that omits `--model` inherits whatever ran last. `loop run` always passes
+  it, and a hand-run Cursor seat names its model at the start.
+- **`agent about` reports the subscription tier** ("Subscription Tier   Super"). A Cursor seat
+  record can carry it, so a run on a lower tier is visible in the record.

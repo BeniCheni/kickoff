@@ -246,6 +246,30 @@ Per PR, the evidence, and anything particular about rollback or seats:
 - **PR 8.** Evidence: the phone benchmark (gap 20); the flash gate's measured numbers; the motion control freezing every canvas; a hidden tab and an off-screen region both stopping the clock; WebGL refused, and the page still whole. **The seat question:** this is the one PR where a second opinion on the builder is worth asking for. Its risk is frame time on a phone, and none of the three vendors can hold a phone, so the choice between Cursor and Codex should follow quota, as `README.md:390` says, and the brief should give the builder the benchmark harness from PR 0 rather than ask for a new one.
 - **PR 9.** Evidence: the sum review, section 8. Rollback: revert the release merge on `main`; Pages redeploys the old look on that push; the tag stays as history; Step 0's new address still works on the old build, so the Sportsbooks edit need not be undone in a hurry.
 
+### Amended Sun 15 Nov 2026: Cursor's tier changes on Thu 19 Nov (proposed by the review-loop Planner, not yet ruled)
+
+Every seat above assumes Cursor on Grok 4.7 at Extra High. Beni's Cursor access is on the "Super" tier until Thu 19 Nov 2026 (`agent about` on 15 Nov: "Subscription Tier   Super"), then on a lower tier he has chosen that still includes Cursor usage and some models. On 15 Nov the Super tier listed `grok-4.7-low`, `-medium`, `-high` and `-xhigh`, each with a `-fast` twin (receipt: `docs/verification/review-loop/cursor-models-2026-11-15-super.txt`). Which of them the lower tier keeps cannot be known until it starts. PR 0 is open as #327: Cursor, five commits, `verify` green, no review yet.
+
+**Until Wed 18 Nov, spend the Super window on the seats only Cursor can sit.**
+- PR 0 (#327): Pass 0 and Pass 1 (a fresh Claude Code session on `claude-fable-5-2` at `xhigh`) by Mon 16 Nov, then Pass 1.5, then Cursor's Pass 2 on `grok-4.7-xhigh` by Wed 18 Nov. Codex's Pass 2.5 and Beni's merge need no Cursor, so they can fall after the change.
+- PR 1 (tokens and type, M): Cursor builds it on `grok-4.7-xhigh` only if PR 0 has merged and the integration branch exists by Tue 17 Nov. A build that would straddle 19 Nov waits instead, so each PR has one builder model on its record.
+
+**From Thu 19 Nov, route by what the lower tier lists.** The first session that day runs `agent about` and `agent --list-models`, diffs the list against the receipt, and records both here. Then:
+
+| The lower tier lists | Builder, PRs 1 to 9 | Pass 2 | Pass 2.5 |
+|---|---|---|---|
+| `grok-4.7-xhigh` | Cursor, as above | Cursor | Codex |
+| Grok 4.7, but nothing above `high` | **Beni's word, per PR.** Recommended: Cursor on `grok-4.7-high` for the M PRs (1, 4, 7) and the S release (9); Codex for the L PRs (2, 3, 5, 6, 8) | the builder | Codex when Cursor built; otherwise a fresh Claude Code session |
+| no Grok 4.7 | Codex | Codex, the builder rebutting, as `/kickoff-pr-review`'s table first had it | a fresh Claude Code session on `claude-fable-5-2` at `xhigh` that writes nothing, as on #320, because Codex cannot synthesise its own build |
+
+Rules that ride with the table:
+- A model the tier lists is not a model the tier will finish. Usage can stop a seat before it starts (PR #153's Codex brief could not start inside one Plus window) or partway through. A builder that is stopped pushes what is green and says so; the PR then waits, or is re-routed by Beni's word, and is never finished silently on another model.
+- `composer-2.5` (Cursor's own model) is on the Super list and may be on the lower one. It has no record in this repository, so it is not routed a build without a trial on a small PR first.
+- Cursor's CLI keeps the last `--model` it ran as its default. The review-loop spikes on 15 Nov left `~/.cursor/cli-config.json` at `grok-4.7` with `reasoning_effort: "low"`. Every Cursor seat names its model when it starts, in the app or the CLI, and its comment says which model ran.
+- When Codex builds an overhaul PR, the review-loop track's Codex builds wait. The overhaul is the product; that track is tooling, and its Sprints 1 to 3 are non-production, so their slip costs nothing a reader sees (`docs/review-loop-proposal.md`, D7).
+
+Unchanged: Pass 1 is a fresh Claude Code session; Beni's word merges; PR 8's seat still follows quota.
+
 ---
 
 ## 4. Assets and their licence
