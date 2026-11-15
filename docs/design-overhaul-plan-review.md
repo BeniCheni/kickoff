@@ -64,6 +64,28 @@ At about 9:30 PM Beni answered "all as recommended", which answers every questio
 | 18 | **Strict** | A book closes only when every match of its day is FT, AET or PENS |
 | 19 | **Repaint** | Moments' ground and inks take the second edition's tokens under `.moments-gallery`; its layout, motion and Inter are untouched. PR 2 carries the mapping and Moments' rendered contrast |
 
+## The design record goes public, Sat 14 Nov 2026
+
+Later that evening Beni asked to archive the design work itself in this PR, since the repository
+is built in public. That reverses, for the second edition's record only, the brief's "the Pen
+files, the Claude Design canvas and the handoff stay out of the repo". He answered three questions,
+all as recommended:
+
+- **What goes in: boards, prompts, shaders.** `docs/design/` holds the board exports of all five
+  stages as WebP previews (the first day's direction boards exported from pen.dev for the
+  purpose), the ten picked photographs as previews, the 14 shaders, Claude Design's handoff, the
+  rules note, the fal picks and Pen prompts, and the fal record with `cost_usd`, `cost_basis` and
+  every `source_url` removed. 5.6 MB in all. The four `.pen` files stay local: only pen.dev opens
+  them, they link to about 280 MB of images by path, and this seat could not inspect them for an
+  embedded token.
+- **The pay-out board stays out.** B7 shows an illustrative pay-out figure, and D6 fenced it.
+- **All ten photographs, as previews, now.** Question 16, Beni's full-size look at the Friday
+  cover and the fog plate, still gates PR 7, when they ship in the app.
+
+The images carry the notice question 8 asked for, in `docs/design/LICENCE.md`. A line in the root
+`LICENSE`, which question 8 also named, is left for PR 7: added text below the MIT terms can stop
+GitHub recognising the licence, so PR 7 checks the repository's licence badge after adding it.
+
 ## What comes next
 
 One docs PR that archives this file with the plan, its sources and its brief, and adds the revamp-first ruling to `CLAUDE.md`'s roadmap pointers. Two briefs can then run side by side: PR 0's build brief for Cursor, written against `main` on its day, and the Claude Design brief for question 14's board, which PR 3 waits on. PR 1's brief follows PR 0's merge, and PR 7's follows Beni's full-size look (question 6).
