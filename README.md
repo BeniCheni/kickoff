@@ -37,7 +37,7 @@ rules on whatever is still contested.
 |---|---|
 | The live demo | **[benicheni.github.io/kickoff](https://benicheni.github.io/kickoff/)** |
 | The full-stack app on Vercel *(sign-in required for now)* | **[kickoff-git-main-beni-von-chenis-projects.vercel.app](https://kickoff-git-main-beni-von-chenis-projects.vercel.app/?tab=moments)** |
-| The new look, and how it was designed | [The look](#%EF%B8%8F-the-look-a-horror-paperback-that-never-existed) and the [design record](docs/design/README.md) |
+| The new look *(work in progress)*, and how it was designed | [The look](#%EF%B8%8F-the-look-a-horror-paperback-that-never-existed) and the [design record](docs/design/README.md) |
 | How three AI vendors build one repo | [How it gets built](#-how-it-gets-built) |
 | Why a fixtures app has a motto | [Why this exists](#-why-this-exists) |
 | The map and the data flow | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
@@ -46,6 +46,87 @@ rules on whatever is still contested.
 > on every merge. If an amber banner is up when you get there, that's not a bug; that's the whole
 > pitch. The full-stack version is a Next.js app on Vercel, still behind Vercel's own sign-in.
 > `v0.5.5` is the latest release.
+
+## 🕯️ The look: a horror paperback that never existed
+
+> [!NOTE]
+> 🚧 **Work in progress, coming in v0.6.0.** Everything in this section is designed and
+> planned, not built yet. The live demo still wears v0.5.5's look until the release ships.
+
+In November I asked for something bigger than a reskin: fixtures and tables with a cosmic horror
+atmosphere, photoreal rather than drawn, carrying the pathos and the joy of a bet that comes in.
+Within a day the app had a publisher that never existed. By the end of the week it had a design
+system for it, and a plan to build it.
+
+```
+┌────────────────────────────┐
+│ FERGIE TIME BOOKS · FT-1120│
+├────────────────────────────┤
+│ THE FIFTH MINUTE           │
+│                            │
+│ The lights came back on in │
+│ the ninety-fifth minute.   │
+│ So did something else.     │
+├────────────────────────────┤
+│ FRI 20 NOV · 3 MATCHES     │
+│ FIRST 2:30 PM ET           │
+└────────────────────────────┘
+```
+
+**Fergie Time Books** is a 1980s horror paperback imprint. Every matchday is one of its books, and
+the horror is *added time*: the minutes a referee tacks on after the ninetieth, when anything can
+still happen. (*Fergie Time* is football slang for added time that seemed to last exactly as long
+as Sir Alex Ferguson's Manchester United needed to score. It's also the name of this repo's design
+system, so the joke was waiting.) The Poster is the published paperback and the fixtures are its
+contents page; the Ledger is the author's typescript; the dark theme is reading under the covers
+with a flashlight; the league table is *The Register*. The titles and taglines are fiction. The
+date line under them never is.
+
+<p align="center">
+  <img src="docs/design/1-night-fixture/a1-poster.webp" width="200" alt="Wednesday's first board, Night Fixture: the Poster under a fogged floodlit ground">
+  &nbsp;
+  <img src="docs/design/2-the-paperback/b1-the-fifth-minute.webp" width="200" alt="Thursday's paperback: The Fifth Minute, a lightning-struck floodlight on Friday's cover, with a cover-price sticker that was later retired">
+  &nbsp;
+  <img src="docs/design/5-handoff/03-B1t-friday-poster-390.webp" width="200" alt="Friday's board after the trim: the cover, the week row, then Part One, Friday, with every fixture on both clocks">
+  <br>
+  <sub>Wednesday's sketch, Thursday's paperback, Friday's trimmed board. Design boards, not the live app.</sub>
+</p>
+
+**How it was made, one tool per seat:**
+
+- 🖊️ **pen.dev was the sketchpad.** Its own AI chat built the boards from paste-ready prompts,
+  then I took the wheel, and it came back with five WebGL shaders nobody had asked for: a title
+  that bleeds, a day word that bursts, a pool of blood under a torn sky, neon spine titles and a
+  faster fog. All five made it into the motion spec.
+- 📸 **fal was the darkroom.** Ten photographs survived three rounds of regenerating, regrading
+  and upscaling, each looked at by eye and every request logged.
+- 🎨 **Claude Design wrote the second edition** of the *Fergie Time* design system from those
+  boards: black cover stock, blood as the alarm voice, three new typefaces, and a layer of
+  decorative motion with a single off switch.
+- 🔍 **Claude Code reviewed the boards cold** and turned the result into a build plan.
+- ✍️ **I edited.** "Develop B." "Trim it": the first match had drifted 1,241 px down the page.
+  Then nineteen one-word answers to the plan's questions.
+
+**The horror is allowed to touch everything except the facts:**
+
+- **Live type, never pixels.** Every date, score and clock is real text above the effects;
+  nothing burns, drips or glitches on a digit.
+- **Amber still means "check this number".** It has exactly eight jobs and none of them is
+  decoration, and no photograph is graded warm to borrow its glow.
+- **Money is a motif, never a figure.** The pay-out board was cut and fenced.
+- **One switch stops all motion,** and a device set to reduce motion starts none.
+- **Evoke, never borrow.** Nothing is lifted from the genre's famous novels, not a character,
+  town, title or object, and every photograph is captioned ILLUSTRATIVE.
+
+**The plan.** The second edition ships as **v0.6.0**, before the Next.js cutover, in ten pull
+requests. The first lands on `main` and changes nothing you can see: it pins the honesty tests the
+repaint is not allowed to break. The next eight are reviewed into one integration branch. The last
+is the release, so the public site changes once instead of wearing ten half-painted coats. The plan
+and its rulings are in [docs/design-overhaul-plan.md](docs/design-overhaul-plan.md); the whole
+design week, from the first sketch to Claude Design's handoff, is in
+**[docs/design/](docs/design/README.md)**.
+
+---
 
 https://github.com/user-attachments/assets/20449d7e-d1e4-451c-be29-e6a2b15baf38
 
@@ -222,81 +303,6 @@ whistle it prints where the clip went, so a fallback can't pass for the real thi
   <br>
   <sub>The Studio's own stub-mode proof run: a fictional clip and a local database, so this is the interface and not the live catalog.</sub>
 </p>
-
-## 🕯️ The look: a horror paperback that never existed
-
-In November I asked for something bigger than a reskin: fixtures and tables with a cosmic horror
-atmosphere, photoreal rather than drawn, carrying the pathos and the joy of a bet that comes in.
-Within a day the app had a publisher that never existed. By the end of the week it had a design
-system for it, and a plan to build it.
-
-```
-┌────────────────────────────┐
-│ FERGIE TIME BOOKS · FT-1120│
-├────────────────────────────┤
-│ THE FIFTH MINUTE           │
-│                            │
-│ The lights came back on in │
-│ the ninety-fifth minute.   │
-│ So did something else.     │
-├────────────────────────────┤
-│ FRI 20 NOV · 3 MATCHES     │
-│ FIRST 2:30 PM ET           │
-└────────────────────────────┘
-```
-
-**Fergie Time Books** is a 1980s horror paperback imprint. Every matchday is one of its books, and
-the horror is *added time*: the minutes a referee tacks on after the ninetieth, when anything can
-still happen. (*Fergie Time* is football slang for added time that seemed to last exactly as long
-as Sir Alex Ferguson's Manchester United needed to score. It's also the name of this repo's design
-system, so the joke was waiting.) The Poster is the published paperback and the fixtures are its
-contents page; the Ledger is the author's typescript; the dark theme is reading under the covers
-with a flashlight; the league table is *The Register*. The titles and taglines are fiction. The
-date line under them never is.
-
-<p align="center">
-  <img src="docs/design/1-night-fixture/a1-poster.webp" width="200" alt="Wednesday's first board, Night Fixture: the Poster under a fogged floodlit ground">
-  &nbsp;
-  <img src="docs/design/2-the-paperback/b1-the-fifth-minute.webp" width="200" alt="Thursday's paperback: The Fifth Minute, a lightning-struck floodlight on Friday's cover, with a cover-price sticker that was later retired">
-  &nbsp;
-  <img src="docs/design/5-handoff/03-B1t-friday-poster-390.webp" width="200" alt="Friday's board after the trim: the cover, the week row, then Part One, Friday, with every fixture on both clocks">
-  <br>
-  <sub>Wednesday's sketch, Thursday's paperback, Friday's trimmed board. Design boards, not the live app.</sub>
-</p>
-
-**How it was made, one tool per seat:**
-
-- 🖊️ **pen.dev was the sketchpad.** Its own AI chat built the boards from paste-ready prompts,
-  then I took the wheel, and it came back with five WebGL shaders nobody had asked for: a title
-  that bleeds, a day word that bursts, a pool of blood under a torn sky, neon spine titles and a
-  faster fog. All five made it into the motion spec.
-- 📸 **fal was the darkroom.** Ten photographs survived three rounds of regenerating, regrading
-  and upscaling, each looked at by eye and every request logged.
-- 🎨 **Claude Design wrote the second edition** of the *Fergie Time* design system from those
-  boards: black cover stock, blood as the alarm voice, three new typefaces, and a layer of
-  decorative motion with a single off switch.
-- 🔍 **Claude Code reviewed the boards cold** and turned the result into a build plan.
-- ✍️ **I edited.** "Develop B." "Trim it": the first match had drifted 1,241 px down the page.
-  Then nineteen one-word answers to the plan's questions.
-
-**The horror is allowed to touch everything except the facts:**
-
-- **Live type, never pixels.** Every date, score and clock is real text above the effects;
-  nothing burns, drips or glitches on a digit.
-- **Amber still means "check this number".** It has exactly eight jobs and none of them is
-  decoration, and no photograph is graded warm to borrow its glow.
-- **Money is a motif, never a figure.** The pay-out board was cut and fenced.
-- **One switch stops all motion,** and a device set to reduce motion starts none.
-- **Evoke, never borrow.** Nothing is lifted from the genre's famous novels, not a character,
-  town, title or object, and every photograph is captioned ILLUSTRATIVE.
-
-**The plan.** The second edition ships as **v0.6.0**, before the Next.js cutover, in ten pull
-requests. The first lands on `main` and changes nothing you can see: it pins the honesty tests the
-repaint is not allowed to break. The next eight are reviewed into one integration branch. The last
-is the release, so the public site changes once instead of wearing ten half-painted coats. The plan
-and its rulings are in [docs/design-overhaul-plan.md](docs/design-overhaul-plan.md); the whole
-design week, from the first sketch to Claude Design's handoff, is in
-**[docs/design/](docs/design/README.md)**.
 
 ## 🧱 How it is wired
 
