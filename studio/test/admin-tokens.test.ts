@@ -28,7 +28,7 @@ describe('studio tokens', () => {
     const index = readFileSync(path.join(repoRoot, 'src/index.css'), 'utf8')
     expect(index).toContain("@import './shell.css'")
     expect(index).toContain("@import 'tailwindcss' source(none);")
-    expect(index).toContain("@source './**/*.{ts,tsx}';")
+    expect(index.match(/@source\b[^;]*;/g)).toEqual(["@source './**/*.{ts,tsx}';"])
     expect(index).not.toContain('fa11e0')
     const reader = readFileSync(path.join(repoRoot, 'src/shell.css'), 'utf8')
     const studio = readFileSync(path.join(repoRoot, 'studio/ui/app/tokens.css'), 'utf8')
