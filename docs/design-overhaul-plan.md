@@ -246,7 +246,9 @@ Per PR, the evidence, and anything particular about rollback or seats:
 - **PR 8.** Evidence: the phone benchmark (gap 20); the flash gate's measured numbers; the motion control freezing every canvas; a hidden tab and an off-screen region both stopping the clock; WebGL refused, and the page still whole. **The seat question:** this is the one PR where a second opinion on the builder is worth asking for. Its risk is frame time on a phone, and none of the three vendors can hold a phone, so the choice between Cursor and Codex should follow quota, as `README.md:390` says, and the brief should give the builder the benchmark harness from PR 0 rather than ask for a new one.
 - **PR 9.** Evidence: the sum review, section 8. Rollback: revert the release merge on `main`; Pages redeploys the old look on that push; the tag stays as history; Step 0's new address still works on the old build, so the Sportsbooks edit need not be undone in a hurry.
 
-### Amended Sun 15 Nov 2026: Cursor's tier changes on Thu 19 Nov (proposed by the review-loop Planner, not yet ruled)
+### Amended Sun 15 Nov 2026: Cursor's tier changes on Thu 19 Nov (proposed by the review-loop Planner; approved by Beni the same day)
+
+**Ruling.** Beni approved this amendment as proposed on Sun 15 Nov 2026 ("Approve as proposed"). Where its table says "Beni's word, per PR", that call stays his for each PR; the recommendation in that row is the Planner's.
 
 Every seat above assumes Cursor on Grok 4.7 at Extra High. Beni's Cursor access is on the "Super" tier until Thu 19 Nov 2026 (`agent about` on 15 Nov: "Subscription Tier   Super"), then on a lower tier he has chosen that still includes Cursor usage and some models. On 15 Nov the Super tier listed `grok-4.7-low`, `-medium`, `-high` and `-xhigh`, each with a `-fast` twin (receipt: `docs/verification/review-loop/cursor-models-2026-11-15-super.txt`). Which of them the lower tier keeps cannot be known until it starts. PR 0 is open as #327: Cursor, five commits, `verify` green, no review yet.
 

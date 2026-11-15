@@ -701,7 +701,7 @@ for Cursor (S7).
   - Cursor's optional seats in this track run on the lower tier, never ahead of the overhaul's
     Cursor seats.
   - The overhaul's routing around 19 Nov is planned in `design-overhaul-plan.md`, section 3,
-    "Amended Sun 15 Nov 2026". It is proposed and awaits Beni's word. Its one rule for this
+    "Amended Sun 15 Nov 2026". Beni approved it as proposed the same day. Its one rule for this
     track: while Codex builds an overhaul PR, this track's Codex builds wait.
   - Today's Super-tier model list is the receipt
     [`verification/review-loop/cursor-models-2026-11-15-super.txt`](verification/review-loop/cursor-models-2026-11-15-super.txt).
