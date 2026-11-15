@@ -79,7 +79,7 @@ all as recommended:
   them, they link to about 280 MB of images by path, and this seat could not inspect them for an
   embedded token.
 - **The pay-out board stays out.** B7 shows an illustrative pay-out figure, and D6 fenced it.
-- **All ten photographs, as previews, now.** Question 16, Beni's full-size look at the Friday
+- **All ten photographs, as previews, now.** The handoff's question 16 (plan question 6), Beni's full-size look at the Friday
   cover and the fog plate, still gates PR 7, when they ship in the app.
 
 The images carry the notice question 8 asked for, in `docs/design/LICENCE.md`. A line in the root
