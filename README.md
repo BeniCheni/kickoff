@@ -98,8 +98,9 @@ date line under them never is.
   then I took the wheel, and it came back with five WebGL shaders nobody had asked for: a title
   that bleeds, a day word that bursts, a pool of blood under a torn sky, neon spine titles and a
   faster fog. All five made it into the motion spec.
-- 📸 **fal was the darkroom.** Ten photographs survived three rounds of regenerating, regrading
-  and upscaling, each looked at by eye and every request logged.
+- 📸 **fal was the darkroom.** Nine of the ten photographs came through three rounds of
+  regenerating, regrading and upscaling there, and the tenth came straight from pen.dev. Each
+  was looked at by eye, and every fal request was logged.
 - 🎨 **Claude Design wrote the second edition** of the *Fergie Time* design system from those
   boards: black cover stock, blood as the alarm voice, three new typefaces, and a layer of
   decorative motion with a single off switch.

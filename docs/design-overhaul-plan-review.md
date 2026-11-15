@@ -86,6 +86,33 @@ The images carry the notice question 8 asked for, in `docs/design/LICENCE.md`. A
 `LICENSE`, which question 8 also named, is left for PR 7: added text below the MIT terms can stop
 GitHub recognising the licence, so PR 7 checks the repository's licence badge after adding it.
 
+## The cold read, and two more rulings, Sat 14 Nov 2026
+
+Codex (GPT-6.1 Sol, High) read this PR cold from the brief
+[design-overhaul-plan-archive-review-prompt.md](design-overhaul-plan-archive-review-prompt.md),
+pushed seven fixes, and left it "not mergeable" at `6943afc` on one open point
+([its comment](https://github.com/BeniCheni/kickoff/pull/322#issuecomment-6888890668)). The PM
+seat checked each fix and found them right. It also found one Codex missed: the README's fal
+bullet credited all ten photographs to fal, when the void came straight from pen.dev. Beni then
+ruled on two points, both as recommended:
+
+- **Local paths stay word for word.** Three verbatim archives carry local paths that main did not
+  have: the Sportsbooks notes' path, the planning worktree's path and pen.dev's session-log
+  folder. None is a secret, and the home directory and the Sportsbooks folder are already named
+  in `docs/` and `CLAUDE.md`. The archives stay byte-identical, and Codex's redaction of the same
+  paths in the two prompt archives (`9540fa5`) is reverted, so each shows the prompt as it was
+  sent. The brief's own check ("no home-directory path that is not already in the repo's docs")
+  was stricter than the house needs, and is what made this a finding.
+- **The dead CSS merges, and its cause is fixed on its own.** The public app's Tailwind
+  (`src/index.css:1`, `@import 'tailwindcss'`) scans every file in the repository, `docs/`
+  included. This PR's "shadow" (a comment in `docs/design/shaders/crt-glitch.glsl`) and "blur" (a
+  row of `docs/design-overhaul-plan-sources.md`) emit `.shadow` and `.blur`, which no element
+  uses: the built CSS grows from 34,976 to 35,436 bytes, and the JavaScript is unchanged
+  (confirmed by both seats with a build of each head). So "changes no rendered byte" was wrong
+  for this PR, and any docs change can move the public app's CSS hash. Limiting the app's scan to
+  its own source, as the Next app's `web/app/globals.css` already does, is a small code change of
+  its own, proved by a build comparison.
+
 ## What comes next
 
 One docs PR that archives this file with the plan, its sources and its brief, and adds the revamp-first ruling to `CLAUDE.md`'s roadmap pointers. Two briefs can then run side by side: PR 0's build brief for Cursor, written against `main` on its day, and the Claude Design brief for question 14's board, which PR 3 waits on. PR 1's brief follows PR 0's merge, and PR 7's follows Beni's full-size look (question 6).
