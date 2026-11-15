@@ -19,9 +19,15 @@ opener did.
 A session titled "PR #327 honesty rules and evidence runner" was running in Beni's main
 checkout while this was written, beside two worktrees the PM seat did not make: `pr327-base`
 (detached at `ad4c5f3`) and `pr327-review` (branch `claude/pr327-review`, with uncommitted edits
-to two of the PR's tests). The PM seat does not know whose they are; the brief tells Pass 1 to
-leave them alone and to stop if a Pass 1 comment already exists. Delivered in chat in a fenced
-block, one line per paragraph; this copy is the archive.
+to two of the PR's tests). The PM seat flagged it on delivery, and at about 3:47 PM Beni
+confirmed that session *was* Pass 1, started before this brief existed. So the fresh-session
+brief below was **not used** as Pass 1's opener; it is kept as written, because its checks and
+its sealed appendix are the PM seat's record of what it asked for. The supplement at the end
+was delivered instead, for pasting into the running Pass 1. It drops the instructions that only
+fit a new session (make your own worktrees, leave `pr327-review` alone, stop if a Pass 1
+exists) and keeps the rest. At that point #327 was still at `98aff91` with no review comment,
+and Pass 1 had pushed nothing. Both blocks were delivered in chat, one line per paragraph; this
+copy is the archive.
 
 ---
 
@@ -92,6 +98,65 @@ THE MERGE. Run with --no-merge and stop at the comment. The PR is not a release,
 THE COMMENT. Exactly one, in pr-comment.md's shape: the verdict line, the tip and post-fix SHAs, the baseline, the findings table, killed leads, precedence resolutions, deliberately not done, the matrix as actually run with your origins and commands, and a "Not verified" list. Then end your turn with the comment's link and the verdict.
 
 SEALED APPENDIX — suspicions to re-derive independently, never conclusions. If one does not reproduce, say so.
+- B1 (builder): each of (a) to (e) failed on a deliberate break and passed once restored, as the body's receipts describe.
+- B2 (builder): the mobile half of (b) was not reached in its receipt, and the one DOM test still covers both layouts.
+- B3 (builder): no web/ twin for (b) is possible, because web/'s vitest is node and the mobile cell is not in the server HTML until its row opens.
+- B4 (builder): aria-label="Previous" is in today's Next server render of '/', is Fixtures-only, and survives PRs 3 and 5.
+- B5 (builder): check-reader-parity.mjs printed identical: true over 12 files against a preserved build of ad4c5f3, favicons included.
+- B6 (builder): at the tip, root npm test ran 76 files and 998 tests; web/ ran 25 files and 124 tests; both typechecks, check:client and check:css were green; build:offline and the offline scan passed (20 markers).
+- B7 (builder): 96 cells passed; ?lens=broadcast and ?view=month land on '/' in Poster; the first expanded row sits at 689 px (Poster) and 585 px (Ledger) at 390 in both apps.
+- B8 (builder): the window is 2026-10-16 to 2027-04-14; heavy is the week of 26 Oct (55 fixtures), quiet 9 Nov (none), UEFA 19 Oct (105); 72 week cells passed; the rule chose the brief's three weeks by itself.
+- B9 (builder): 1,904 contrast samples, 528 under the floors, the worst white "Show all" on white at ratio 1 in vite-poster-light-fixtures-360, and the muted ink near 2.4 to 3.4.
+- B10 (builder): the hosts are the app, fonts.googleapis.com (1,575 bytes) and fonts.gstatic.com; images 0; fonts 90,123 bytes on Fixtures and Table and 69,905 on Moments; Vite script 176,696 and style 9,575; Next script 253,231 and style 4,228.
+- B11 (builder): dist-offline/index.html is 1,001,779 bytes and dist-single/index.html 1,052,317; opened from disk offline, Fixtures and Table in both themes at 390 had scrollWidth 390, and the only network errors were the Google font stylesheet.
+- B12 (builder): four harness captures matched their viewport and reached statesReady with every needle, both Table cells included.
+- B13 (builder): the serve-only transform and optimizeDeps.entries never reach a reader, and the parity result shows it.
+- B14 (builder): the header receipts were taken before the rebase (1446 fixtures, stamp 2026-11-15 07:57 UTC), and the tip was re-verified after it.
+- P1 (PM seat): both ties in the node row-order test happen to sit in alphabetical key order, in COMPETITIONS' declaration order and in id order, so a tie-break on any of those may pass it; only the name and venue tie-breaks are reversed in its fixture.
+- P2 (PM seat): the mobile half of (b) checks only the element that holds the words, so a clock in a sibling element may pass.
+- P3 (PM seat): "Show all" at ratio 1 may be text inside the closed filter <details>, measured against the page behind it; if so the sampler counts invisible text, and the 528 are inflated.
+- P4 (PM seat): parseColor returns null for oklch, oklab and color() values and the sample is dropped without being counted, so the receipt cannot say how much text went unmeasured.
+````
+
+---
+
+## The supplement delivered instead, for the running Pass 1 (Sun 15 Nov 2026, about 3:50 PM EST)
+
+````text
+PR #327 — Pass 0 supplement for the Pass 1 already under way
+
+You are Pass 1 for PR #327 and you started before the PM seat's Pass 0 brief existed. This supplement carries what that brief would have given you. It does not change your method, your worktree or anything you have already decided: /kickoff-pr-review still outranks it on process. Skip any check you have already covered, and say in your comment which of these you ran. The PM seat (Claude Code, Opus 5.5) wrote it on Sun 15 Nov 2026 at about 3:50 PM EST, when #327 was still at 98aff91 with no review comment and you had pushed nothing.
+
+OUTPUT STYLE. If this session runs in the Learning output style, keep it out of the deliverable: no Learn-by-Doing request, no TODO(human), and no insight box in the PR comment or in any commit.
+
+THE DEADLINE. Beni's Cursor access moves from the "Super" tier to a lower one on Thu 19 Nov 2026, so Cursor's Pass 2 on grok-4.7-xhigh has to land by Wed 18 Nov, after your comment and a Pass 1.5 brief built from it. Post on Mon 16 Nov if you can. The schedule is a proposed amendment (branch docs/review-loop-plan, b1f9714, not on main) that Beni has not ruled on, so pace by it but do not buy the date with depth: what you could not run goes in "Not verified". Write each finding so Cursor can reproduce it cold: file and line, the command, expected and observed.
+
+WHAT BENI RULED, named as his. Sat 14 Nov 2026 (docs/design-overhaul-plan-review.md): Branch (PR 0 on main first; PRs 1 to 8 into an integration branch PR 1 creates); Ten PRs; Six (v0.6.0 at the release, so no version here); Release (Step 0 moves to &lens=ledger at the release, not here); Keep (tests/dom/designCycle.test.tsx:47 and :66 stand); Fold (ideas rows 126 and 129 go to PRs 3 and 5). The dead-CSS ruling, fixed in #323: the public app's Tailwind scans only src/**/*.{ts,tsx}. Standing in CLAUDE.md: no clock for an unset kickoff, nothing invented, both clocks from one instant, no honesty assertion weakened. Plan section 3: Beni's word merges every overhaul PR, after Cursor's Pass 2 and Codex's Pass 2.5, so run --no-merge and do not approve, auto-merge, bump or tag. Not ruled: the 19 Nov schedule.
+
+SPEC OF RECORD. docs/design-overhaul-plan.md section 3 (PR 0's row and evidence line), the "PR 0" cells of 6.1, 6.2, and 8.1 to 8.3 row 0; then docs/design-overhaul-pr0-implementation-prompt.md. Precedence: Beni's rulings, the plan, the build brief. The PR body cites an "addendum" that moved the base to 0fd5b98; none is archived in docs/, so judge against the brief and the head, and say so.
+
+FACTS FROM THE PM SEAT'S READ that are easy to miss.
+- vercel-smoke on #327 is green, but .github/workflows/preview-smoke.yml checks out main and runs main's scripts/vercel-smoke.mjs, so that status is the old "Jump to today" landmark passing against this PR's deployment. The plan wants the smoke green on the PR's own preview: run the PR's '/' check against the PR's deployment if reachable without a secret (the bypass secret is not yours to seek), else against a local Next production build's '/' server HTML, and say which.
+- web/scripts/check-reader-parity.mjs compares dist/ and dist-single/ only. The PR body gives dist-offline/ only a size. Hash dist-offline/ at the merge-base and the head too, and say whether the Next app's built client output is unchanged in any sense that matters.
+- The runner's defaults put KICKOFF_VITE_ORIGIN (the built preview) and KICKOFF_HARNESS_ORIGIN (the dev server) both on 127.0.0.1:5173, which Beni's checkout and other worktrees share. Set all three origins explicitly, confirm which checkout serves each port, and put the exact commands that reproduce your run in the comment; the PR body gives none.
+- CLAUDE.md wants typecheck and npm test green at every commit; there are five.
+
+QUESTIONS THE BRIEF ASKED, beyond redoing each mutation receipt yourself.
+- (a) Row order: which tie-breaks does the node test actually catch, among those the build brief named (name, league, venue) and any a later builder might reach for? Does the DOM test keep finding a day as the rolling window moves, and does it compare order in both lenses?
+- (b) The Table cell: the body says the mobile assertion "was not reached". Break the mobile cell alone, with a clock beside the words rather than inside their element. Is the desktop half's parentElement.parentElement the whole cell?
+- (c) CANCELLED: does a cancelled row anywhere still print its dead kickoff time, and is that pinned? Do not change src/ to answer it.
+- (d) "local": the expected time comes from fixtureTimes, the function the row calls; would a regression inside it pass, and what catches it instead?
+- (e) The header: expected values come from META and SYNC_STAMP, the module the header reads; say what that proves.
+- vite.config.ts: the kickoff-harness-specimen plugin is apply: 'serve'. Is it absent from every build mode, and does Vitest (serve mode, same config) load it? optimizeDeps.entries exists because a git-ignored nested checkout in Beni's main checkout (clearing.local/checkpoints/) confused the dep scan: is a repo-wide dev-config change the right fix, and does it change what the dev server pre-bundles for the app?
+- The landmark: aria-label="Previous" (src/components/FixturesPage.tsx:87) in the Next server HTML of '/' and not '/?tab=table'; Moments has its own "Previous" label (src/components/MomentsPage.tsx:177). The handoff's week row (docs/design/5-handoff/second-edition-handoff.md:234) keeps a previous chevron but names no accessible name and makes a chevron with no week beyond it "muted and inert". Is an exact aria-label sturdier than the visible label it replaces, and what must PR 3's brief carry? Do not touch the workflow or its trust boundary.
+- The contrast sampler sets the baseline every later --enforce inherits. Was the worst sample, white "Show all" at ratio 1, visible when it was measured? It is white on bg-pitch inside the filter panel's <details> (src/components/FilterBar.tsx:13, :28-32). What does collectText in web/scripts/evidence.mjs count as visible, and what does parseColor in scripts/rendered-contrast.mjs do with colour forms it cannot read? How many of the 528 are real? Hand-check two or three against tests/contrast.ts.
+- The weeks: count each candidate week from src/data/fixtures.json yourself; is the plain-JS copy of brooklynDate and MATCHDAY_WINDOWS.ucl pinned well enough?
+- The harness: its Table specimen is a Vite-rewritten second copy of TablePage keyed to the exact text at src/components/TablePage.tsx:149, pinned by tests/harnessSpecimen.test.ts. Is that "today's real components"? What does it cost PR 4? tableFor already takes rows and fixtures (src/lib/standings.ts:79-85); is there a simpler route that changes no src/ byte? Is it honest that NextUpStrip and TonightSlate read the real snapshot with every filter off?
+- web/scripts/clearing.mjs: openPage now waits at most 3 s for document.fonts.ready, where the clearing waited for it outright. Can a capture land before the fonts?
+
+FIX SCOPE. Inside PR 0's scope only: its tests, the runner, the harness and their scripts. Nothing under src/, index.html, offline.html, public/, web/app/, src/data/, .github/ or studio/; no package, lockfile, version, tag or CHANGELOG release section; never weaken an assertion. Contested design choices (the landmark, the harness's rewrite, optimizeDeps) go in the comment, not a commit. If you push, list your commit SHAs at the top of the comment: the branch moves under Cursor's Pass 2.
+
+SEALED APPENDIX — suspicions to re-derive independently, never conclusions. Some may overlap with what you have already found; reach your own result either way, and say so if one does not reproduce.
 - B1 (builder): each of (a) to (e) failed on a deliberate break and passed once restored, as the body's receipts describe.
 - B2 (builder): the mobile half of (b) was not reached in its receipt, and the one DOM test still covers both layouts.
 - B3 (builder): no web/ twin for (b) is possible, because web/'s vitest is node and the mobile cell is not in the server HTML until its row opens.
