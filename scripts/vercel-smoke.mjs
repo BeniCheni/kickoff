@@ -50,13 +50,16 @@ function hasLeak(text, bypass) {
     Boolean(bypass && plain.includes(bypass))
 }
 
-// Contract every later brief carries. The smoke depends on these attributes and no other
-// copy on the page:
+// Contract every later brief carries. A route fails without these, in the server HTML:
 //   nav aria-label="Primary"         — every tab (checked below, not in ROUTES)
 //   data-moments-background="route"  — Fixtures and Table
-//   button aria-label="Previous"     — Fixtures only: the week stepper's previous chevron
+//   button aria-label="Previous"     — Fixtures only: the week stepper's previous chevron.
+//                                      A button, and that exact name: "Previous week" fails.
 //   data-table-picker                — Table
 //   main aria-label="Moments"        — Moments
+// Two more readings are of Moments' words, and they go quiet, not red, if the words change:
+//   id="moments-unavailable-heading" or "The gallery is unavailable."  — the latest-main gallery gate
+//   "Stub catalog · synthetic records"                                 — the stub-catalog leak check
 // "Jump to today" is not in the contract. The second edition renames that button "Today"
 // (PR 3) and keeps the stepper through that week-row rebuild and the Poster books (PR 5).
 const ROUTES = [

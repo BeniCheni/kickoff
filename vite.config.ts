@@ -7,10 +7,11 @@ import { viteSingleFile } from 'vite-plugin-singlefile'
 import pkg from './package.json' with { type: 'json' }
 import { themeBootstrap } from './scripts/themeBootstrap.ts'
 
-// Dev server only. tests/harness/states.tsx imports TablePage a second time, with
-// ?kickoff-specimen, and this rewrites that copy's tableFor call so the harness can
-// pass synthetic rows. The build never loads the hook, and the unqueried module the
-// app serves is untouched. A missing needle throws rather than silently showing the snapshot.
+// Serve only: the dev server, and vitest, which runs this config in serve mode. Nothing
+// there imports the query but tests/harness/states.tsx, which imports TablePage a second
+// time, with ?kickoff-specimen; this rewrites that copy's tableFor call so the harness can
+// pass synthetic rows. No build mode loads the hook, and the unqueried module the app
+// serves is untouched. A missing needle throws rather than silently showing the snapshot.
 function kickoffHarnessSpecimen() {
   // The comma keeps a second pass from matching the rewritten call.
   const needle = 'tableFor(league, today, nowUtcIso),'
