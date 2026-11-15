@@ -12,6 +12,10 @@ releases.
 
 - Writing about the app outside its source no longer changes its stylesheet.
 
+### Changed
+
+- The preview smoke's Fixtures landmark is now the week stepper's Previous button.
+
 ## [0.5.5] — 2026-11-14
 
 The clearing: the Broadcast lens, Where to Watch and the Monthly view are retired, and the fixtures start higher on the page.
