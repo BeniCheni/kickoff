@@ -3,11 +3,6 @@
 
 @import './shell.css';
 
-/* Keep Tailwind's existing computed token when its unused utility drops out. */
-@theme static {
-  --aspect-video: 16 / 9;
-}
-
 /* Moments is the only region that outdents the persistent 780px shell.
    1160 includes the same 20px page gutters; no viewport-width overflow band. */
 .moments-gallery {
