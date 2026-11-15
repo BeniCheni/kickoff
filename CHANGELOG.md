@@ -10,7 +10,7 @@ releases.
 
 ### Fixed
 
-- Writing about the app no longer changes its stylesheet.
+- Writing about the app outside its source no longer changes its stylesheet.
 
 ## [0.5.5] — 2026-11-14
 
