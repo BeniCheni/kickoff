@@ -676,4 +676,21 @@ for Cursor (S7).
 
 ## Rulings received
 
-None yet.
+- **D7 — Yes (Beni, Sun 15 Nov 2026).** The roster stands as written: Codex builds, Claude Code
+  reviews and synthesises, the Planner briefs, Beni rules. Beni gave the reason with the ruling:
+  it lets him drop the xAI subscription he uses for Grok in Cursor. Cursor stays in the track as
+  an **optional seat on Cursor's free tier**, in the POC and in the implementation. What that
+  changes:
+  - No sprint needs a Cursor seat. Where one is used, its model comes from `agent --list-models`
+    on the day, and the record shows what ran. Which models and efforts the free tier offers was
+    not checked: this Mac was on the paid plan when S4 ran.
+  - Sprint 8, Cursor's headless runner, becomes optional, and D4 applies only if a Cursor seat
+    is used. Sprint 2 still probes Cursor in T4; a trivial probe fits any tier.
+  - Flag (a)'s alternative, Cursor as Pass 1 for Sprints 3 and 5, remains an optional seat,
+    subject to the free tier's models.
+  - Outside this track, and still open: the v0.6.0 overhaul routes all ten PRs through Cursor
+    on Grok 4.7 Extra High, as builder and as Pass 2 (`design-overhaul-plan.md:217`). PR 0 is
+    open as #327 (Cursor, last commit 15 Nov 2026 at 2:58 PM EST). When the subscription ends
+    decides whether the overhaul is re-routed, which was put to Beni the same day.
+
+D1 to D6 and D8 to D12 are not yet ruled.
