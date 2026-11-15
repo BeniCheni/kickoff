@@ -62,15 +62,17 @@ const matchdays = [
   row('md-absent', { competition: 'ucl', phase: 'league-phase', season: 2026, kickoffUtc: '2026-09-30T18:00:00.000Z' }),
 ]
 
-function standing(teamId: string, name: string, abbrev: string, rank: number, pts: number): StandingRow {
-  return { teamId, name, shortName: name, abbrev, rank, rankChange: 0, played: 3, w: 1, d: 0, l: 2, gf: 4, ga: 3, pts }
+// A two-club table plays two rounds. The record gives the points and the goals, so the
+// header's "matchday 2 of 2" and each row's sums are ones a table could hold.
+function standing(teamId: string, name: string, abbrev: string, rank: number, w: number, d: number, l: number): StandingRow {
+  return { teamId, name, shortName: name, abbrev, rank, rankChange: 0, played: w + d + l, w, d, l, gf: 2 * w + d, ga: 2 * l + d, pts: 3 * w + d }
 }
 
 const now = Date.now()
 globalThis.__kickoffSpecimen = {
   rows: [
-    standing('synth-unset', 'Specimen Unset', 'UNS', 1, 7),
-    standing('synth-kicked', 'Specimen Kicked', 'KCK', 2, 4),
+    standing('synth-unset', 'Specimen Unset', 'UNS', 1, 2, 0, 0),
+    standing('synth-kicked', 'Specimen Kicked', 'KCK', 2, 1, 0, 1),
   ],
   fixtures: [
     row('table-unset', {
@@ -142,27 +144,33 @@ const NEEDLES = [
   'Data is stale.',
   'No upcoming fixtures match your filters.',
   'hidden by filters',
-  'Specimen Unset',
-  'Specimen Kicked',
-  'time TBC',
 ]
+
+// Read inside the Table specimen alone: a fixture row above prints "kickoff time not yet
+// set by the league", which would answer for the Table's cell if the whole page were read.
+const TABLE_NEEDLES = ['Specimen Unset', 'Specimen Kicked', 'kickoff time not yet set', 'time TBC', 'KICKED OFF']
 
 function Harness() {
   const today = todayIso()
   const none = new Set<CompetitionKey>()
   useEffect(() => {
     const outer = window.setTimeout(() => {
-      for (const specimen of ['rows', 'table']) {
-        const root = document.querySelector(`[data-specimen="${specimen}"]`)
-        if (!root) continue
-        for (const button of root.querySelectorAll<HTMLButtonElement>('button[aria-expanded="false"]')) {
-          if ((button.textContent ?? '').includes('Zones')) continue
-          button.click()
+      for (const button of document.querySelectorAll<HTMLButtonElement>('[data-specimen="rows"] button[aria-expanded="false"]')) {
+        button.click()
+      }
+      // The Table opens one row at a time, so each copy opens the one club it is there for.
+      for (const table of document.querySelectorAll<HTMLElement>('[data-specimen="table"] [data-open]')) {
+        for (const button of table.querySelectorAll<HTMLButtonElement>('button[aria-expanded="false"]')) {
+          if ((button.textContent ?? '').includes(table.dataset.open ?? '')) button.click()
         }
       }
       window.setTimeout(() => {
         const text = document.body.textContent ?? ''
-        const missing = NEEDLES.filter((needle) => !text.includes(needle))
+        const table = document.querySelector('[data-specimen="table"]')?.textContent ?? ''
+        const missing = [
+          ...NEEDLES.filter((needle) => !text.includes(needle)),
+          ...TABLE_NEEDLES.filter((needle) => !table.includes(needle)).map((needle) => `Table: ${needle}`),
+        ]
         if (missing.length) document.documentElement.dataset.statesError = missing.join(' | ')
         else document.documentElement.dataset.statesReady = 'true'
       }, 300)
@@ -194,10 +202,14 @@ function Harness() {
         <TonightSlate today={today} active={none} />
         <LedgerWeek days={[{ date: '2026-11-22', shown: [], total: 1, isToday: false }]} />
       </Section>
+      {/* The query is a second module instance. The serve-only plugin passes the specimen into
+          tableFor. Two copies, because a phone's Table shows one club's card at a time. */}
       <div data-specimen="table">
-        <Section title="Table, unset and kicked off">
-          {/* The query is a second module instance. The serve-only plugin passes the specimen into tableFor. */}
-          <SpecimenTable />
+        <Section title="Table, kickoff not set">
+          <div data-open="Specimen Unset"><SpecimenTable /></div>
+        </Section>
+        <Section title="Table, kicked off">
+          <div data-open="Specimen Kicked"><SpecimenTable /></div>
         </Section>
       </div>
     </>
