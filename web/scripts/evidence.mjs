@@ -7,10 +7,13 @@
 //
 //   node web/scripts/evidence.mjs [outDir] [--enforce]
 //
-// KICKOFF_VITE_ORIGIN   built Vite preview (default http://127.0.0.1:5173)
-// KICKOFF_NEXT_ORIGIN   Next production     (default http://127.0.0.1:5174)
-// KICKOFF_HARNESS_ORIGIN  dev server only   (default http://127.0.0.1:5173)
-// CHROME_PATH           Chrome executable
+// Three servers, each from the checkout under test:
+// KICKOFF_VITE_ORIGIN     built Vite preview  (default http://127.0.0.1:5173)
+// KICKOFF_NEXT_ORIGIN     Next production     (default http://127.0.0.1:5174)
+// KICKOFF_HARNESS_ORIGIN  Vite dev server     (default http://127.0.0.1:5175)
+// CHROME_PATH             Chrome executable
+// The harness is a dev-server page. A preview server answers its path with index.html,
+// so the harness cannot share the preview's port.
 //
 // Contrast records today's ratios and fails nothing. --enforce fails below 4.5, or 3
 // for large text, and on text whose colour could not be read, after the receipt is written.
@@ -37,22 +40,36 @@ export function launchBrowser() {
   return puppeteer.launch({ executablePath: chrome, headless: true })
 }
 
-const NETWORK_NOISE = /net::|ERR_|Failed to load resource|fonts\.googleapis|fonts\.gstatic/i
+// The hosts today's pages ask for besides their own. An offline page may try them and
+// fail; a request to any other host has left the file.
+const FONT_HOSTS = new Set(['fonts.googleapis.com', 'fonts.gstatic.com'])
+
+function hostOf(url) {
+  try { return new URL(url).host } catch { return '' }
+}
+
+// puppeteer names console.warn 'warn'; 'warning' is the protocol's word for the same level.
+const CONSOLE_FAILS = new Set(['error', 'warn', 'warning', 'assert'])
 
 export async function openPage(browser, url, theme, width, { waitUntil = 'networkidle0', offline = false } = {}) {
   const context = await browser.createBrowserContext()
   const page = await context.newPage()
   const errors = []
   const network = []
+  const escaped = []
   page.on('pageerror', (error) => errors.push(String(error)))
   page.on('console', (message) => {
-    if (!['error', 'warning'].includes(message.type())) return
+    if (!CONSOLE_FAILS.has(message.type())) return
     const text = message.text()
-    if (offline && NETWORK_NOISE.test(text)) network.push(text)
+    // Offline, the one expected complaint is a font request that could not leave.
+    if (offline && /Failed to load resource/.test(text) && FONT_HOSTS.has(hostOf(message.location()?.url ?? ''))) network.push(text)
     else errors.push(text)
   })
-  page.on('requestfailed', (request) => {
-    if (offline) network.push(`${request.failure()?.errorText ?? 'failed'} ${request.url()}`)
+  page.on('request', (request) => {
+    if (!offline || !/^https?:/.test(request.url())) return
+    const line = `${request.method()} ${request.url()}`
+    if (FONT_HOSTS.has(hostOf(request.url()))) network.push(line)
+    else escaped.push(line)
   })
   await page.setViewport({ width, height: 844, deviceScaleFactor: 1 })
   await page.evaluateOnNewDocument((chosen) => {
@@ -62,13 +79,16 @@ export async function openPage(browser, url, theme, width, { waitUntil = 'networ
   }, theme)
   if (offline) await page.setOfflineMode(true)
   const response = await page.goto(url, { waitUntil, timeout: 30_000 })
-  // An offline file's font CSS never finishes; don't wait it out.
-  await Promise.race([
-    page.evaluate(() => document.fonts.ready),
-    new Promise((resolve) => setTimeout(resolve, 3000)),
-  ])
+  // An offline file's font CSS never finishes, so only that load stops waiting for it.
+  // Online, a capture never lands before the fonts, as in the clearing.
+  if (offline) {
+    await Promise.race([
+      page.evaluate(() => document.fonts.ready),
+      new Promise((resolve) => setTimeout(resolve, 3000)),
+    ])
+  } else await page.evaluate(() => document.fonts.ready)
   await page.waitForFunction((chosen) => document.documentElement.dataset.theme === chosen, { timeout: 15_000 }, theme)
-  return { context, page, errors, network, status: response?.status() ?? 0 }
+  return { context, page, errors, network, escaped, status: response?.status() ?? 0 }
 }
 
 async function inspect(page) {
@@ -356,7 +376,7 @@ export async function captureOffline(browser, out) {
   for (const tab of ['fixtures', 'table']) for (const theme of ['light', 'dark']) {
     const id = `offline-${tab}-${theme}-390`
     const search = tab === 'fixtures' ? '' : '?tab=table'
-    const { context, page, errors, network } = await openPage(
+    const { context, page, errors, network, escaped } = await openPage(
       browser, `${pathToFileURL(files.offline).href}${search}`, theme, 390,
       { waitUntil: 'domcontentloaded', offline: true },
     )
@@ -366,6 +386,10 @@ export async function captureOffline(browser, out) {
       const state = await inspect(page)
       assert.equal(state.scrollWidth, state.innerWidth, id)
       assert.equal(state.theme, theme, id)
+      // The font stylesheet is the one request the file is known to try. Anything else
+      // means the file is not whole without the network. Checked first, so the failure
+      // names the address rather than the console's complaint about it.
+      assert.deepEqual(escaped, [], `${id} asked for a host other than the font hosts`)
       assert.deepEqual(errors, [], id)
       await shoot(page, path.join(out, `${id}.png`), 390)
       cells.push({ id, theme, tab, scrollWidth: state.scrollWidth, network })
@@ -375,9 +399,11 @@ export async function captureOffline(browser, out) {
 }
 
 export async function captureHarness(browser, out) {
-  const origin = process.env.KICKOFF_HARNESS_ORIGIN ?? 'http://127.0.0.1:5173'
+  const origin = process.env.KICKOFF_HARNESS_ORIGIN ?? 'http://127.0.0.1:5175'
   const cells = []
-  for (const theme of ['light', 'dark']) for (const width of [360, 390]) {
+  // 1000 is here for the Table: its desktop cell is display:none below 768, so at 360
+  // and 390 the page holds its words without showing them.
+  for (const theme of ['light', 'dark']) for (const width of [360, 390, 1000]) {
     const id = `harness-${theme}-${width}`
     // The dev server's HMR socket never goes idle, so this load waits for the page's own flag.
     const { context, page, errors, status } = await openPage(
@@ -386,6 +412,9 @@ export async function captureHarness(browser, out) {
     )
     try {
       if (status >= 400) throw new Error(`${id} HTTP ${status}`)
+      if (await page.title() !== 'States harness') {
+        throw new Error(`${id}: ${origin} did not serve the states harness. It needs the Vite dev server (KICKOFF_HARNESS_ORIGIN), not the built preview.`)
+      }
       await page.waitForFunction(
         () => document.documentElement.dataset.statesReady === 'true' || document.documentElement.dataset.statesError,
         { timeout: 15_000 },
@@ -400,6 +429,13 @@ export async function captureHarness(browser, out) {
       for (const needle of ['ILLUSTRATIVE', 'Specimen Unset', 'Specimen Kicked', 'kickoff time not yet set', 'time TBC', 'KICKED OFF']) {
         assert.ok(text.includes(needle), `${id} missing ${needle}`)
       }
+      // The same two cells, as a reader would see them: innerText leaves out what is not drawn.
+      const table = await page.evaluate(
+        (layout) => [...document.querySelectorAll(`[data-specimen="table"] [data-table="${layout}"]`)].map((el) => el.innerText).join('\n'),
+        width >= 768 ? 'desktop' : 'mobile',
+      )
+      assert.match(table, width >= 768 ? /time TBC/i : /kickoff time not yet set/i, `${id} does not show the unset cell`)
+      assert.match(table, /kicked off/i, `${id} does not show the kicked-off cell`)
       await shoot(page, path.join(out, `${id}.png`), width)
       cells.push({ id, theme, width, scrollWidth: state.scrollWidth })
     } finally { await context.close() }
