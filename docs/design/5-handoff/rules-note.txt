@@ -1,0 +1,31 @@
+FERGIE TIME BOOKS · RULES THAT DO NOT BEND (B0's rules note, node bYeE3, exported 13 Nov 2026 from kickoff-revamp-b2.pen)
+
+1. Evoke, never borrow. No character, town, title, logo, catchphrase or iconic object from Stephen King's or Joe Hill's books or their films. No clowns, red balloons, haunted cars, hotel corridors, twins, hedge animals, rabid dogs or cornfields.
+
+2. Every fixture, time and table figure supplied by Beni is real and copied exactly. Anything invented other than taglines and margin asides is captioned ILLUSTRATIVE.
+
+3. Every kickoff shows the Brooklyn time and, smaller, the stadium-local time. A day summary (the date line of a cover, part opener, rack face or spine) shows the first kickoff in Brooklyn time only, because one day spans several stadium clocks; every fixture still shows both clocks.
+
+4. Amber means "check this number's provenance". It has three uses and no others: the sync line; a kickoff the league has not set (rule 9); and a match that has kicked off but whose result the snapshot does not have yet (KICKED OFF, the live app's floodlight voice: #6E4B00 on pulp, #F7C948 on black stock). Pitch green means confirmed, the opposite. Amber is never foil, glow or decoration.
+
+5. Numbers never move, distort, glow or sit under a shader effect. Only photographs, fog, sky and display titles move.
+
+6. Generated images contain no lettering, digits, real people, real clubs, crests, kits or stadiums.
+
+7. Text over a photograph sits on a scrim. Body text is at least 4.5:1 against what is behind it.
+
+8. Blood and glitch effects touch words only, never a digit, and every word they touch stays readable in every frame and with motion off.
+
+9. Cover date lines use one format on every matchday book, with no year: DAY D MON · N MATCHES · FIRST H:MM AM/PM ET, for example SAT 21 NOV · 26 MATCHES · FIRST 7:30 AM ET. The line is set at 11 px and stays on one line where it fits; where it does not (at 360 px, or under text resize) it wraps to a second line and never overflows or shrinks. When a day's first kickoff is not yet set by the league, the line ends FIRST KICKOFF NOT SET in the provenance amber, and no time is invented. When every match of the day is full time, the line ends FULL TIME, for example SUN 8 NOV · 24 MATCHES · FULL TIME, and the book is closed. Nothing else goes on that line.
+
+10. The Rack never changes the contents below it; only a tap opens a book. It makes one pass and rests on the next matchday's book. It stops on touch, focus, hover and a hidden tab; it never starts with motion off; its stop/start control is always visible and first in reading order.
+
+11. The world shifts; the record does not. Fire, smoke, vapour, shimmer, shake, RGB split, lens bulge, shockwave and shrinking touch photographs, rims, gutters, the wire and the void only, never the imprint band, a title, a date line, the imprint foot, a marker, a caption or any digit. At a face's outer rim, fire chars no more than 4 px inward and smoke curls no more than 24 px in, over the top and sides only. During a crossing, fire and smoke may cover the burning photograph but stop at least 8 px short of the title block's scrim. No large area flashes: any change in brightness across most of a face takes at least a third of a second, flicker lives only in thin tongues, and saturated red never flickers. A change in brightness means a change of 10% or more in relative luminance, as WCAG 2.3.1 measures it. Shake lasts at most 0.5 s per crossing, including at most one 80 ms hit-stop, and never runs continuously. With motion off there is no moving fire, smoke, shake, void or recede: the rim is a still scorch under a still haze, and books change instantly.
+
+SECOND EDITION · rulings of 13 Nov 2026, binding with the rules above. Inks (D9): provenance amber on pulp #6E4B00, muted pulp ink #4E4538, the NEXT pill's ground #1E5636. Text sits on a flat plane: no paper texture under any band of text, the cover's wear scan lies below the title block and the imprint band's text, every caption scrim over a photograph is at least 90% opaque, and no text is under 10 px. Motion (D7): one persisted Motion control in the imprint band, first in reading order after the wordmark, stops every decorative playhead on the page; the Rack's Stop is its local mirror. The Rack (D11) holds the week's matchday books in order, then The Register. Titles (D8) are live type: the foil is drawn in CSS on the live glyphs; the drip, burst and glitch play around the letters, never on them. No row numbers beside fixtures (D12). The cover's lower band names its book's first fixtures with both clocks (D13). Money is a motif, never a real figure (D6).
+
+WORLD · 1980s mass-market horror imprint that never existed. Logo: a fourth official's added-time board held up in fog, reading +5. Every matchday is a paperback; catalog number FT-MMDD from the date (Fri 20 Nov → FT-1120). The horror is added time. Taglines and asides speak in that register, original lines only. Hyper-photoreal, never illustrated.
+
+TOKENS · variables prefixed fb- (the A-board tokens are untouched). fb-pitch and fb-amber are themed on the axis stock = paper | black. fb-pulp, fb-pulp-ink and fb-pulp-muted are themed on the axis mode = light | dark (dark: #0E1420 paper, #E9E4D4 ink, #A9A493 muted); a dark page sets mode = dark and stock = black.
+
+SHADERS · see the shader files beside the .pen file and B9 · Motion for each effect's periods, controls and budgets. fog.glsl and fog-drift.glsl are the same shader. Every effect is decorative and stops with the Motion control.
