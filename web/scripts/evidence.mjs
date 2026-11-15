@@ -13,7 +13,7 @@
 // CHROME_PATH           Chrome executable
 //
 // Contrast records today's ratios and fails nothing. --enforce fails below 4.5, or 3
-// for large text, after the receipt is written.
+// for large text, and on text whose colour could not be read, after the receipt is written.
 import assert from 'node:assert/strict'
 import { mkdirSync, statSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
@@ -21,7 +21,7 @@ import { pathToFileURL, fileURLToPath } from 'node:url'
 import puppeteer from 'puppeteer-core'
 import { decodePng } from '../../scripts/decode-png.mjs'
 import { chooseWeeks, matrixAnchor, readSnapshot } from '../../scripts/evidence-weeks.mjs'
-import { isLargeText, sampleContrast } from '../../scripts/rendered-contrast.mjs'
+import { isLargeText, sampleContrast, unreadColors } from '../../scripts/rendered-contrast.mjs'
 
 const root = fileURLToPath(new URL('../..', import.meta.url))
 const chrome = process.env.CHROME_PATH ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
@@ -88,7 +88,7 @@ async function inspect(page) {
 
 async function shoot(page, file, width) {
   await page.setViewport({ width, height: 844, deviceScaleFactor: 1 })
-  await page.screenshot({ path: file, fullPage: true })
+  return page.screenshot({ path: file, fullPage: true })
 }
 
 function assertCell(state, errors, { id, lens, theme, tab }) {
@@ -103,70 +103,88 @@ function assertCell(state, errors, { id, lens, theme, tab }) {
   assert.deepEqual(errors, [], id)
 }
 
+// What a reader can see. checkVisibility covers display:none, visibility:hidden, zero
+// opacity and content the browser skips: a closed <details> keeps its children's boxes,
+// so their computed display is no evidence. Each box is cut to every clipping ancestor
+// on both axes. Not sampled: pseudo-element text, form values, SVG text, images of text.
+// A text node of pictographs alone (a flag, a star) is counted and set aside: the glyph is
+// a colour bitmap, so the element's colour is not the ink a reader sees.
 async function collectText(page) {
   return page.evaluate(() => {
     window.scrollTo(0, 0)
     const samples = []
+    // Computed colours are rgb() or rgba() unless the author used a wider space. One
+    // canvas pixel gives those back in sRGB, so the sampler reads every ink.
+    const canvas = document.createElement('canvas').getContext('2d', { willReadFrequently: true })
+    const srgb = (value) => {
+      if (/^rgba?\(/.test(value) || !canvas) return value
+      canvas.clearRect(0, 0, 1, 1)
+      canvas.fillStyle = value
+      canvas.fillRect(0, 0, 1, 1)
+      const [r, g, b, a] = canvas.getImageData(0, 0, 1, 1).data
+      return `rgba(${r}, ${g}, ${b}, ${Number((a / 255).toFixed(3))})`
+    }
+    const pictographsOnly = /^[\p{Extended_Pictographic}\p{Regional_Indicator}\u{E0020}-\u{E007F}\uFE0F\u200D\s]+$/u
+    let pictographs = 0
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT)
     let node = walker.nextNode()
     while (node) {
       const raw = node.textContent ?? ''
       const text = raw.replace(/\s+/g, ' ').trim()
       const parent = node.parentElement
-      if (text && parent && parent.tagName !== 'SCRIPT' && parent.tagName !== 'STYLE') {
-        let shown = true
+      const seen = text && parent && parent.tagName !== 'SCRIPT' && parent.tagName !== 'STYLE'
+        && parent.checkVisibility({ opacityProperty: true, visibilityProperty: true, contentVisibilityAuto: true })
+      if (seen && pictographsOnly.test(text)) pictographs += 1
+      else if (seen) {
+        const range = document.createRange()
+        range.selectNodeContents(node)
+        const style = getComputedStyle(parent)
+        const weight = Number.parseInt(style.fontWeight, 10) || 400
+        let opacity = 1
+        const clips = []
         for (let el = parent; el && el !== document.documentElement; el = el.parentElement) {
-          const style = getComputedStyle(el)
-          if (style.display === 'none' || style.visibility === 'hidden' || Number(style.opacity) === 0) {
-            shown = false
-            break
+          const own = getComputedStyle(el)
+          opacity *= Number(own.opacity)
+          if (el !== document.body && (own.overflowX !== 'visible' || own.overflowY !== 'visible')) {
+            clips.push({ box: el.getBoundingClientRect(), x: own.overflowX !== 'visible', y: own.overflowY !== 'visible' })
           }
         }
-        if (shown) {
-          const range = document.createRange()
-          range.selectNodeContents(node)
-          const style = getComputedStyle(parent)
-          const weight = Number.parseInt(style.fontWeight, 10) || 400
-          const rects = [...range.getClientRects()].filter((rect) => {
-            if (rect.width < 1 || rect.height < 1) return false
-            for (let el = parent; el && el !== document.body; el = el.parentElement) {
-              const clip = getComputedStyle(el)
-              if (clip.overflow === 'visible' && clip.overflowX === 'visible' && clip.overflowY === 'visible') continue
-              const box = el.getBoundingClientRect()
-              if (rect.bottom <= box.top + 0.5 || rect.top >= box.bottom - 0.5) return false
-            }
-            return true
-          }).map((rect) => ({
-            x: rect.x,
-            y: rect.y + window.scrollY,
-            w: rect.width,
-            h: rect.height,
-          }))
-          if (rects.length) samples.push({
-            text: text.slice(0, 40),
-            color: style.color,
-            fontSize: Number.parseFloat(style.fontSize),
-            fontWeight: weight,
-            rects,
-          })
-        }
+        const rects = [...range.getClientRects()].map((rect) => {
+          let { left, top, right, bottom } = rect
+          for (const clip of clips) {
+            if (clip.x) { left = Math.max(left, clip.box.left); right = Math.min(right, clip.box.right) }
+            if (clip.y) { top = Math.max(top, clip.box.top); bottom = Math.min(bottom, clip.box.bottom) }
+          }
+          return { x: left, y: top + window.scrollY, w: right - left, h: bottom - top }
+        }).filter((rect) => rect.w >= 1 && rect.h >= 1)
+        if (rects.length) samples.push({
+          text: text.slice(0, 40),
+          color: srgb(style.color),
+          opacity,
+          fontSize: Number.parseFloat(style.fontSize),
+          fontWeight: weight,
+          rects,
+        })
       }
       node = walker.nextNode()
     }
     return {
       samples,
+      pictographs,
       scrollHeight: document.documentElement.scrollHeight,
       innerWidth: window.innerWidth,
     }
   })
 }
 
-async function measureContrast(page, id, width) {
+// `shown` is the capture just taken of this page with its text drawn. Transitions and
+// animations stop with the text, so the second capture never catches an ink mid-fade.
+async function measureContrast(page, id, width, shown) {
   const collected = await collectText(page)
   await page.evaluate(() => {
     const style = document.createElement('style')
     style.setAttribute('data-contrast-hide', '')
-    style.textContent = '*{color:transparent!important;-webkit-text-fill-color:transparent!important;text-shadow:none!important}'
+    style.textContent = '*{color:transparent!important;-webkit-text-fill-color:transparent!important;text-shadow:none!important;transition:none!important;animation:none!important}'
     document.documentElement.appendChild(style)
   })
   await page.setViewport({ width, height: 844, deviceScaleFactor: 1 })
@@ -181,7 +199,9 @@ async function measureContrast(page, id, width) {
   return {
     id,
     image: { width: image.width, height: image.height },
-    minimums: sampleContrast(samples, image, scaleX, scaleY),
+    minimums: sampleContrast(samples, image, scaleX, scaleY, shown ? decodePng(shown) : null),
+    unread: unreadColors(samples),
+    pictographs: collected.pictographs,
   }
 }
 
@@ -190,11 +210,13 @@ function cellReceipt(id, state, errors) {
   return { id, ...rest, errors }
 }
 
-export async function runMatrix(browser, { origins, out, anchor, contrast = false }) {
-  const cells = []
-  const legacy = []
-  const measurements = []
-  const contrastCells = []
+/** `result` is filled as cells pass, so the caller's receipt keeps them if a later cell throws. */
+export function emptyMatrix() {
+  return { cells: [], legacy: [], measurements: [], contrast: [] }
+}
+
+export async function runMatrix(browser, { origins, out, anchor, contrast = false }, result = emptyMatrix()) {
+  const { cells, legacy, measurements, contrast: contrastCells } = result
   for (const [app, origin] of Object.entries(origins)) {
     for (const lens of ['poster', 'ledger']) for (const theme of ['light', 'dark']) {
       for (const tab of ['fixtures', 'table', 'moments']) for (const width of [360, 375, 390, 1000]) {
@@ -209,8 +231,8 @@ export async function runMatrix(browser, { origins, out, anchor, contrast = fals
             assert.ok(row, id)
             measurements.push({ app, lens, top: await row.evaluate((el) => el.parentElement.getBoundingClientRect().top) })
           }
-          await shoot(page, path.join(out, `${id}.png`), width)
-          if (contrast) contrastCells.push(await measureContrast(page, id, width))
+          const shown = await shoot(page, path.join(out, `${id}.png`), width)
+          if (contrast) contrastCells.push(await measureContrast(page, id, width, shown))
           cells.push(cellReceipt(id, state, errors))
         } finally { await context.close() }
       }
@@ -232,14 +254,13 @@ export async function runMatrix(browser, { origins, out, anchor, contrast = fals
       } finally { await context.close() }
     }
   }
-  return { cells, legacy, measurements, contrast: contrastCells }
+  return result
 }
 
 const WEEK_WIDTHS = [360, 390, 1000]
 
-export async function captureWeeks(browser, { origins, out, weeks, contrast }) {
-  const cells = []
-  const contrastCells = []
+export async function captureWeeks(browser, { origins, out, weeks, contrast }, result = { cells: [], contrast: [] }) {
+  const { cells, contrast: contrastCells } = result
   for (const kind of ['heavy', 'quiet', 'uefa']) {
     const week = weeks[kind]
     if (!week?.monday) continue
@@ -253,8 +274,8 @@ export async function captureWeeks(browser, { origins, out, weeks, contrast }) {
           try {
             const state = await inspect(page)
             assertCell(state, errors, { id, lens, theme, tab: 'fixtures' })
-            await shoot(page, path.join(out, `${id}.png`), width)
-            if (contrast) contrastCells.push(await measureContrast(page, id, width))
+            const shown = await shoot(page, path.join(out, `${id}.png`), width)
+            if (contrast) contrastCells.push(await measureContrast(page, id, width, shown))
             cells.push({ ...cellReceipt(id, state, errors), week: week.monday, kind })
           } finally { await context.close() }
         }
@@ -262,7 +283,7 @@ export async function captureWeeks(browser, { origins, out, weeks, contrast }) {
     }
     console.log(`week ${kind} ${week.monday}: ${Object.keys(origins).length * 12} cells passed`)
   }
-  return { cells, contrast: contrastCells }
+  return result
 }
 
 function resourceBucket(type) {
@@ -386,16 +407,31 @@ export async function captureHarness(browser, out) {
   return cells
 }
 
+// One row is one ink at one size in one cell, so an ink that fails in every cell is
+// counted once per cell. `pairs` is the same failures with the cells folded together.
 function contrastSummary(cells) {
   let worst = null
   let belowFloor = 0
   let measured = 0
-  for (const cell of cells) for (const row of cell.minimums) {
-    measured += 1
-    if (row.ratio < row.floor) belowFloor += 1
-    if (!worst || row.ratio < worst.ratio) worst = { ...row, cell: cell.id }
+  let unread = 0
+  let pictographs = 0
+  const pairs = new Map()
+  for (const cell of cells) {
+    unread += cell.unread.length
+    pictographs += cell.pictographs
+    for (const row of cell.minimums) {
+      measured += 1
+      if (!worst || row.ratio < worst.ratio) worst = { ...row, cell: cell.id }
+      if (row.ratio >= row.floor) continue
+      belowFloor += 1
+      const key = `${row.ink}|${row.ground}|${row.large}`
+      const pair = pairs.get(key) ?? { ink: row.ink, ground: row.ground, large: row.large, floor: row.floor, ratio: row.ratio, text: row.text, cells: 0 }
+      pair.cells += 1
+      if (row.ratio < pair.ratio) { pair.ratio = row.ratio; pair.text = row.text }
+      pairs.set(key, pair)
+    }
   }
-  return { measured, belowFloor, worst }
+  return { measured, belowFloor, unread, pictographs, worst, pairs: [...pairs.values()].sort((a, b) => a.ratio - b.ratio) }
 }
 
 export async function runClearing({ out = '/tmp/kickoff-clearing' } = {}) {
@@ -406,11 +442,10 @@ export async function runClearing({ out = '/tmp/kickoff-clearing' } = {}) {
   const weeks = chooseWeeks(fixtures, window)
   const anchor = matrixAnchor(window, weeks)
   const browser = await launchBrowser()
-  let cells = []
-  let legacy = []
-  let measurements = []
+  // Filled as cells pass: a failed run's receipt holds every cell before the one that threw.
+  const { cells, legacy, measurements } = emptyMatrix()
   try {
-    ;({ cells, legacy, measurements } = await runMatrix(browser, { origins, out: dir, anchor, contrast: false }))
+    await runMatrix(browser, { origins, out: dir, anchor, contrast: false }, { cells, legacy, measurements, contrast: [] })
   } finally {
     writeFileSync(path.join(dir, 'receipt.json'), JSON.stringify({ origins, cells, legacy, measurements }, null, 2))
     await browser.close()
@@ -435,43 +470,49 @@ async function main() {
   const anchor = matrixAnchor(window, weeks)
   console.log(JSON.stringify({ anchor, weeks, enforce }))
   const browser = await launchBrowser()
-  let receipt = { origins, anchor, window, weeks, enforce }
-  try {
-    const matrix = await runMatrix(browser, { origins, out, anchor, contrast: true })
-    assert.equal(matrix.cells.length, 96)
-    const weekRun = await captureWeeks(browser, { origins, out, weeks, contrast: true })
-    const requests = await captureRequests(browser, origins, anchor)
-    const offline = await captureOffline(browser, out)
-    const harness = await captureHarness(browser, out)
+  // Each step's results are filled in place, so the receipt of a run that threw still
+  // holds every step and cell that passed before it.
+  const matrix = emptyMatrix()
+  const weekRun = { cells: [], contrast: [] }
+  const steps = { requests: null, offline: null, harness: null }
+  const receipt = () => {
     const contrastCells = [...matrix.contrast, ...weekRun.contrast]
-    receipt = {
-      ...receipt,
+    return {
+      origins, anchor, window, weeks, enforce,
       matrix: { cells: matrix.cells.length, legacy: matrix.legacy, measurements: matrix.measurements },
       weeksCaptured: weekRun.cells.length,
       contrast: { mode: enforce ? 'enforce' : 'report', summary: contrastSummary(contrastCells), cells: contrastCells },
-      requests,
-      offline,
-      harness,
+      ...steps,
     }
-    writeFileSync(path.join(out, 'receipt.json'), JSON.stringify(receipt, null, 2))
-    const failing = belowFloor(contrastCells)
+  }
+  try {
+    await runMatrix(browser, { origins, out, anchor, contrast: true }, matrix)
+    assert.equal(matrix.cells.length, 96)
+    await captureWeeks(browser, { origins, out, weeks, contrast: true }, weekRun)
+    steps.requests = await captureRequests(browser, origins, anchor)
+    steps.offline = await captureOffline(browser, out)
+    steps.harness = await captureHarness(browser, out)
+    const done = receipt()
+    writeFileSync(path.join(out, 'receipt.json'), JSON.stringify(done, null, 2))
+    const failing = belowFloor(done.contrast.cells)
     console.log(JSON.stringify({
       cells: matrix.cells.length,
       weeks,
       weeksCaptured: weekRun.cells.length,
-      contrast: receipt.contrast.summary,
-      requests: requests.map((row) => ({ id: row.id, bytes: row.bytes, hosts: row.hosts.map((host) => host.host) })),
-      offline: offline.sizes,
-      harness: harness.map((cell) => cell.id),
+      contrast: done.contrast.summary,
+      requests: steps.requests.map((row) => ({ id: row.id, bytes: row.bytes, hosts: row.hosts.map((host) => host.host) })),
+      offline: steps.offline.sizes,
+      harness: steps.harness.map((cell) => cell.id),
       belowFloor: failing.length,
     }, null, 2))
-    if (enforce && failing.length) {
-      console.error(`${failing.length} contrast pairs below the floor`)
+    // Text whose colour could not be read was not measured, so it cannot pass either.
+    const unread = done.contrast.summary.unread
+    if (enforce && (failing.length || unread)) {
+      console.error(`${failing.length} contrast pairs below the floor, ${unread} samples in a colour the sampler could not read`)
       process.exitCode = 1
     }
   } catch (error) {
-    receipt = { ...receipt, error: String(error?.stack ?? error) }
-    writeFileSync(path.join(out, 'receipt.json'), JSON.stringify(receipt, null, 2))
+    writeFileSync(path.join(out, 'receipt.json'), JSON.stringify({ ...receipt(), error: String(error?.stack ?? error) }, null, 2))
     throw error
   } finally {
     await browser.close()

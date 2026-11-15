@@ -11,6 +11,7 @@ export type ContrastSample = {
   text?: string
   color: string
   large?: boolean
+  opacity?: number
   rects?: { x: number; y: number; w: number; h: number }[]
 }
 
@@ -28,4 +29,7 @@ export function sampleContrast(
   image: { width: number; height: number; data: Uint8Array },
   scaleX?: number,
   scaleY?: number,
+  shown?: { width: number; height: number; data: Uint8Array } | null,
 ): ContrastMinimum[]
+
+export function unreadColors(samples: readonly ContrastSample[]): { color: string; text: string }[]

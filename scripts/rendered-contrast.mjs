@@ -49,49 +49,66 @@ function canonical(ink) {
 }
 
 /**
- * Worst ground pixel inside each sample's boxes. `scaleX` / `scaleY` map CSS pixels of
- * the document onto the screenshot. Returns the minimum per ink and size.
+ * Worst ground pixel under each sample's text. `image` is the page with its text hidden;
+ * `shown` is the same page with the text drawn. Where the two differ inside a sample's
+ * boxes, the text painted there, and only those pixels are its ground: a box is the
+ * line's box, which can reach past a tight pill's own background or past a clip edge.
+ * A sample that painted nothing is measured over its whole boxes, so text set in its
+ * ground's own colour still reads as ratio 1 rather than going unmeasured. Without
+ * `shown`, every sample is measured over its whole boxes.
+ *
+ * `scaleX` / `scaleY` map CSS pixels of the document onto the screenshot. A sample's
+ * `opacity` is the product of its ancestors' opacity and thins the ink. Returns the
+ * minimum per ink and size.
  */
-export function sampleContrast(samples, image, scaleX = 1, scaleY = scaleX) {
+export function sampleContrast(samples, image, scaleX = 1, scaleY = scaleX, shown = null) {
+  const drawn = shown && shown.width === image.width && shown.height === image.height ? shown.data : null
   const worst = new Map()
   for (const sample of samples) {
-    const ink = parseColor(sample.color)
-    if (!ink || ink.a === 0) continue
+    const parsed = parseColor(sample.color)
+    if (!parsed) continue
+    const ink = { ...parsed, a: Number((parsed.a * (sample.opacity ?? 1)).toFixed(3)) }
+    if (ink.a === 0) continue
     const large = Boolean(sample.large)
-    let min = Infinity
-    let ground = null
-    for (const rect of sample.rects ?? []) {
-      const x0 = Math.max(0, Math.floor(rect.x * scaleX))
-      const y0 = Math.max(0, Math.floor(rect.y * scaleY))
-      const x1 = Math.min(image.width, Math.ceil((rect.x + rect.w) * scaleX))
-      const y1 = Math.min(image.height, Math.ceil((rect.y + rect.h) * scaleY))
-      for (let y = y0; y < y1; y++) {
-        const row = y * image.width
-        for (let x = x0; x < x1; x++) {
-          const i = (row + x) * 4
-          const pixel = {
-            r: image.data[i] ?? 0,
-            g: image.data[i + 1] ?? 0,
-            b: image.data[i + 2] ?? 0,
-            a: (image.data[i + 3] ?? 255) / 255,
-          }
-          const seen = pixel.a < 1 ? composite(pixel, { r: 255, g: 255, b: 255, a: 1 }) : pixel
-          const ratio = contrastRatio(composite(ink, seen), seen)
-          if (ratio < min) {
-            min = ratio
-            ground = seen
+    const scan = (paintedOnly) => {
+      let min = Infinity
+      let ground = null
+      for (const rect of sample.rects ?? []) {
+        const x0 = Math.max(0, Math.floor(rect.x * scaleX))
+        const y0 = Math.max(0, Math.floor(rect.y * scaleY))
+        const x1 = Math.min(image.width, Math.ceil((rect.x + rect.w) * scaleX))
+        const y1 = Math.min(image.height, Math.ceil((rect.y + rect.h) * scaleY))
+        for (let y = y0; y < y1; y++) {
+          const row = y * image.width
+          for (let x = x0; x < x1; x++) {
+            const i = (row + x) * 4
+            if (paintedOnly && drawn[i] === image.data[i] && drawn[i + 1] === image.data[i + 1] && drawn[i + 2] === image.data[i + 2]) continue
+            const pixel = {
+              r: image.data[i] ?? 0,
+              g: image.data[i + 1] ?? 0,
+              b: image.data[i + 2] ?? 0,
+              a: (image.data[i + 3] ?? 255) / 255,
+            }
+            const seen = pixel.a < 1 ? composite(pixel, { r: 255, g: 255, b: 255, a: 1 }) : pixel
+            const ratio = contrastRatio(composite(ink, seen), seen)
+            if (ratio < min) {
+              min = ratio
+              ground = seen
+            }
           }
         }
       }
+      return ground && Number.isFinite(min) ? { min, ground } : null
     }
-    if (!ground || !Number.isFinite(min)) continue
+    const found = (drawn && scan(true)) || scan(false)
+    if (!found) continue
     const key = `${canonical(ink)}|${large}`
     const prev = worst.get(key)
-    if (!prev || min < prev.ratio) {
+    if (!prev || found.min < prev.ratio) {
       worst.set(key, {
         ink: canonical(ink),
-        ground: `rgb(${Math.round(ground.r)}, ${Math.round(ground.g)}, ${Math.round(ground.b)})`,
-        ratio: min,
+        ground: `rgb(${Math.round(found.ground.r)}, ${Math.round(found.ground.g)}, ${Math.round(found.ground.b)})`,
+        ratio: found.min,
         large,
         floor: floorFor(large),
         text: String(sample.text ?? '').slice(0, 40),
@@ -99,4 +116,11 @@ export function sampleContrast(samples, image, scaleX = 1, scaleY = scaleX) {
     }
   }
   return [...worst.values()]
+}
+
+/** Samples whose colour `parseColor` cannot read. They are not measured, so they are named. */
+export function unreadColors(samples) {
+  return samples
+    .filter((sample) => !parseColor(sample.color))
+    .map((sample) => ({ color: String(sample.color), text: String(sample.text ?? '').slice(0, 40) }))
 }
