@@ -27,7 +27,7 @@ import { pathToFileURL, fileURLToPath } from 'node:url'
 import puppeteer from 'puppeteer-core'
 import { decodePng } from '../../scripts/decode-png.mjs'
 import { chooseWeeks, matrixAnchor, readSnapshot } from '../../scripts/evidence-weeks.mjs'
-import { BITMAP_GLYPH, FONT_HOSTS, isLargeText, sampleContrast, unexpectedHost, unreadColors } from '../../scripts/rendered-contrast.mjs'
+import { BITMAP_GLYPH, FONT_HOSTS, createColdLoad, isLargeText, sampleContrast, unexpectedHost, unreadColors } from '../../scripts/rendered-contrast.mjs'
 
 const root = fileURLToPath(new URL('../..', import.meta.url))
 const chrome = process.env.CHROME_PATH ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
@@ -311,16 +311,7 @@ export async function captureWeeks(browser, { origins, out, weeks, contrast }, r
   return result
 }
 
-function resourceBucket(type) {
-  if (type === 'Font') return 'fonts'
-  if (type === 'Image' || type === 'Media') return 'images'
-  if (type === 'Script') return 'script'
-  if (type === 'Stylesheet') return 'style'
-  return 'other'
-}
-
-export async function captureRequests(browser, origins, anchor) {
-  const rows = []
+export async function captureRequests(browser, origins, anchor, rows = []) {
   for (const [app, origin] of Object.entries(origins)) {
     for (const tab of ['fixtures', 'table', 'moments']) for (const width of [390, 1000]) {
       const context = await browser.createBrowserContext()
@@ -328,41 +319,20 @@ export async function captureRequests(browser, origins, anchor) {
       const client = await page.createCDPSession()
       await client.send('Network.enable')
       await client.send('Network.setCacheDisabled', { cacheDisabled: true })
-      const byId = new Map()
-      client.on('Network.requestWillBeSent', (event) => {
-        byId.set(event.requestId, { url: event.request.url, type: event.type, encoded: 0 })
-      })
-      client.on('Network.responseReceived', (event) => {
-        const row = byId.get(event.requestId)
-        if (row) row.type = event.type
-      })
-      client.on('Network.loadingFinished', (event) => {
-        const row = byId.get(event.requestId)
-        if (row) row.encoded = event.encodedDataLength
-      })
+      const log = createColdLoad()
+      client.on('Network.requestWillBeSent', (event) => log.requestWillBeSent(event))
+      client.on('Network.responseReceived', (event) => log.responseReceived(event))
+      client.on('Network.loadingFinished', (event) => log.loadingFinished(event))
       await page.setViewport({ width, height: 844, deviceScaleFactor: 1 })
       await page.evaluateOnNewDocument(() => localStorage.setItem('kickoff-theme', 'light'))
       await page.goto(`${origin}/?lens=poster&tab=${tab}&date=${anchor}`, { waitUntil: 'networkidle0', timeout: 30_000 })
       await context.close()
-      const bytes = { fonts: 0, images: 0, script: 0, style: 0, other: 0 }
-      const hosts = new Map()
-      for (const request of byId.values()) {
-        const bucket = resourceBucket(request.type)
-        bytes[bucket] += request.encoded
-        let host = ''
-        try { host = new URL(request.url).host } catch { host = '' }
-        if (!host) continue
-        const prev = hosts.get(host) ?? { host, bytes: 0, count: 0 }
-        prev.bytes += request.encoded
-        prev.count += 1
-        hosts.set(host, prev)
-      }
-      const foreign = [...hosts.keys()].filter((host) => unexpectedHost(`https://${host}/`, origin))
-      if (foreign.length) throw new Error(`cold load ${app} ${tab} ${width} asked for ${foreign.join(', ')}`)
+      const tally = log.tally(origin)
+      if (tally.foreign.length) throw new Error(`cold load ${app} ${tab} ${width} asked for ${tally.foreign.join(', ')}`)
       rows.push({
         id: `${app}-${tab}-${width}`,
-        bytes,
-        hosts: [...hosts.values()].sort((a, b) => a.host.localeCompare(b.host)),
+        bytes: tally.bytes,
+        hosts: tally.hosts,
       })
     }
   }

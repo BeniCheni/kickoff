@@ -122,6 +122,80 @@ export function sampleContrast(samples, image, scaleX = 1, scaleY = scaleX, show
 // allows these and the page's host. An offline page has no host of its own.
 export const FONT_HOSTS = new Set(['fonts.googleapis.com', 'fonts.gstatic.com'])
 
+function hopHost(url) {
+  try { return new URL(url).host } catch { return '' }
+}
+
+function resourceBucket(type) {
+  if (type === 'Font') return 'fonts'
+  if (type === 'Image' || type === 'Media') return 'images'
+  if (type === 'Script') return 'script'
+  if (type === 'Stylesheet') return 'style'
+  return 'other'
+}
+
+// Chrome reuses one requestId across a redirect chain. The log keeps every hop, checks
+// each host, and counts encodedDataLength once, on the last hop.
+export function createColdLoad() {
+  const chains = new Map()
+  const hops = (requestId) => {
+    let chain = chains.get(requestId)
+    if (!chain) {
+      chain = []
+      chains.set(requestId, chain)
+    }
+    return chain
+  }
+  return {
+    requestWillBeSent(event) {
+      hops(event.requestId).push({ url: event.request?.url ?? '', type: event.type || 'Other', encoded: 0 })
+    },
+    responseReceived(event) {
+      const hop = chains.get(event.requestId)?.at(-1)
+      if (hop && event.type) hop.type = event.type
+    },
+    loadingFinished(event) {
+      const hop = chains.get(event.requestId)?.at(-1)
+      if (hop) hop.encoded = event.encodedDataLength ?? 0
+    },
+    tally(pageUrl) {
+      const bytes = { fonts: 0, images: 0, script: 0, style: 0, other: 0 }
+      const hosts = new Map()
+      const foreign = []
+      for (const chain of chains.values()) {
+        if (!chain.length) continue
+        const seen = new Set()
+        for (const hop of chain) {
+          if (unexpectedHost(hop.url, pageUrl)) {
+            const host = hopHost(hop.url)
+            if (host && !foreign.includes(host)) foreign.push(host)
+          }
+          const host = hopHost(hop.url)
+          if (host) seen.add(host)
+        }
+        const last = chain[chain.length - 1]
+        bytes[resourceBucket(last.type)] += last.encoded
+        const lastHost = hopHost(last.url)
+        if (lastHost) {
+          const row = hosts.get(lastHost) ?? { host: lastHost, bytes: 0, count: 0 }
+          row.bytes += last.encoded
+          hosts.set(lastHost, row)
+        }
+        for (const host of seen) {
+          const row = hosts.get(host) ?? { host, bytes: 0, count: 0 }
+          row.count += 1
+          hosts.set(host, row)
+        }
+      }
+      return {
+        bytes,
+        hosts: [...hosts.values()].sort((a, b) => a.host.localeCompare(b.host)),
+        foreign,
+      }
+    },
+  }
+}
+
 /** The request URL when it leaves the allowed hosts, otherwise null. ws and wss count. */
 export function unexpectedHost(requestUrl, pageUrl, { offline = false } = {}) {
   let request

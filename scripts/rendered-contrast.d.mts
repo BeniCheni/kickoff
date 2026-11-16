@@ -42,6 +42,26 @@ export function unexpectedHost(
   options?: { offline?: boolean },
 ): string | null
 
+export type ColdLoadTally = {
+  bytes: { fonts: number; images: number; script: number; style: number; other: number }
+  hosts: { host: string; bytes: number; count: number }[]
+  foreign: string[]
+}
+
+export interface ColdLoadLog {
+  requestWillBeSent(event: {
+    requestId: string
+    type?: string
+    request?: { url?: string }
+    redirectResponse?: { url?: string; status?: number }
+  }): void
+  responseReceived(event: { requestId: string; type?: string }): void
+  loadingFinished(event: { requestId: string; encodedDataLength?: number }): void
+  tally(pageUrl: string): ColdLoadTally
+}
+
+export function createColdLoad(): ColdLoadLog
+
 export const BITMAP_GLYPH: RegExp
 
 export function isBitmapGlyph(text: string): boolean
