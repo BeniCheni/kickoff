@@ -79,9 +79,10 @@
   --color-accent-lead-strong: var(--accent-lead-strong);
   --color-on-accent-lead: var(--on-accent-lead);
 
-  --font-display: 'Oswald', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Oswald', 'Oswald Fallback', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', monospace;
+  /* Kickoff Mono is IBM Plex Mono, renamed. The OFL reserves "Plex". */
+  --font-mono: 'Kickoff Mono', ui-monospace, 'SF Mono', monospace;
 }
 
 @layer base {
@@ -159,11 +160,12 @@
   --fb-foil-3: #C9A2FF;
   --fb-foil-4: #7FE0FF;
   --fb-foil-5: #B8F5A0;
-  --fb-display: 'Abril Fatface', Georgia, serif;
+  --fb-display: 'Kickoff Display', Georgia, serif;
   --fb-book: 'Libre Caslon Text', Palatino, serif;
   --fb-neon: 'Chakra Petch', ui-sans-serif, sans-serif;
   --fb-label: 'Oswald', ui-sans-serif, sans-serif;
-  --fb-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', monospace;
+  /* 400 and 400 italic live here. Kickoff Mono itself is 500 and 600. */
+  --fb-mono: 'Kickoff Mono Text', ui-monospace, 'SF Mono', monospace;
   --fb-gutter: 16px;
   --fb-measure: 640px;
   --fb-measure-register: 780px;

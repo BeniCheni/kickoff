@@ -116,3 +116,11 @@ The subset then used the same command as the others, with
 - `inter/Inter.woff2`, 111,548 bytes. Weight axis 100–900, default 400.
 - The name table's family was `Inter Variable`. It is now `Inter`, which this site already asks for. Inter reserves no name, so the subset may keep it.
 - The advances at weights 400, 500 and 600 match the Inter file Google was serving.
+
+## Names the pages use
+
+`public/faces.css` is the stylesheet. `Kickoff Mono` is the renamed Plex at
+weights 500 and 600, which is what the page renders. `Kickoff Mono Text` adds
+400 and 400 italic on the same files. `Kickoff Display` is the renamed Abril
+Fatface. The Next app copies this directory and rewrites the stylesheet's
+`./fonts/` urls to `/fonts/`.

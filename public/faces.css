@@ -1,0 +1,140 @@
+/*
+ * One stylesheet, linked from the document root, so a preload href can equal
+ * the @font-face src character for character. The Next app rewrites ./fonts/
+ * to /fonts/ when it copies this file; the file names stay the same.
+ *
+ * Kickoff Mono is the renamed IBM Plex Mono, at the two weights the page
+ * renders today (500 and 600). Kickoff Mono Text carries 400 and 400 italic
+ * as well. Those two faces stay off Kickoff Mono: an italic face there would
+ * be the one today's italic mono matches, and a real 400 would replace the
+ * 500 the page currently gets as the nearest weight. Nothing renders
+ * Kickoff Mono Text, Kickoff Display, Libre Caslon Text or Chakra Petch yet,
+ * so the browser does not fetch them.
+ *
+ * Oswald Fallback is Arial, narrowed to Oswald's advance at weight 600
+ * (75.2%). It is what the page draws until Oswald arrives, and it is unused
+ * once Oswald has loaded.
+ */
+@font-face {
+  font-family: "Oswald Fallback";
+  font-style: normal;
+  font-weight: 500 700;
+  font-display: swap;
+  src: local("Arial");
+  size-adjust: 75.2%;
+  ascent-override: 158.6%;
+  descent-override: 38.4%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Oswald";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("./fonts/oswald/Oswald.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Oswald";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("./fonts/oswald/Oswald.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Oswald";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("./fonts/oswald/Oswald.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./fonts/inter/Inter.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("./fonts/inter/Inter.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("./fonts/inter/Inter.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Kickoff Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("./fonts/kickoff-mono/KickoffMono-Medium.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Kickoff Mono";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("./fonts/kickoff-mono/KickoffMono-SemiBold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Kickoff Display";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./fonts/kickoff-display/KickoffDisplay-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Libre Caslon Text";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./fonts/libre-caslon-text/LibreCaslonText-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Libre Caslon Text";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./fonts/libre-caslon-text/LibreCaslonText-Italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Chakra Petch";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("./fonts/chakra-petch/ChakraPetch-Bold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Kickoff Mono Text";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./fonts/kickoff-mono/KickoffMono-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Kickoff Mono Text";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("./fonts/kickoff-mono/KickoffMono-Italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Kickoff Mono Text";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("./fonts/kickoff-mono/KickoffMono-Medium.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Kickoff Mono Text";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("./fonts/kickoff-mono/KickoffMono-SemiBold.woff2") format("woff2");
+}

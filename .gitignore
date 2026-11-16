@@ -14,6 +14,9 @@ studio/output/
 # The unreleased sibling Next.js package owns these generated/local files.
 web/.next/
 web/generated/
+# Copied from public/fonts and public/faces.css by web/scripts/copy-faces.mjs.
+web/public/fonts/
+web/public/faces.css
 web/out/
 web/next-env.d.ts
 web/.env*

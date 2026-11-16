@@ -12,6 +12,7 @@ const root = fileURLToPath(new URL('../..', import.meta.url))
 const INPUTS = [
   'web/', 'packages/',
   'public/favicon-32.png', 'public/favicon-64.png', 'public/favicon-192.png',
+  'public/faces.css', 'public/fonts/',
   'package.json', 'package-lock.json', '.npmrc', 'tsconfig.json',
   'tsconfig.app.json', 'tsconfig.node.json', 'tsconfig.test-dom.json',
   'src/data/', 'src/shell.css', 'src/themeBoot.ts',
