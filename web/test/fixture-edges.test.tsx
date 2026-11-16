@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { FixtureRow } from '../../src/components/FixtureRow'
+import { fixtureTimes } from '../../src/lib/time'
 import { edgeFixture } from '../../tests/fixtures/edgeFixtures'
 
 /** Server markup only. Hydration stays on the root suite; web/ has no jsdom. */
@@ -20,10 +21,18 @@ describe('FixtureRow on Next\'s compiled React', () => {
     expect(text).toContain('local time not known')
   })
 
+  it('prints the stadium time and the word local from the same instant', () => {
+    const row = edgeFixture({ venueTz: 'Europe/Madrid' })
+    // Today's 12-hour form. PR 3 prints the 24-hour stadium clock and moves this assertion.
+    const { local } = fixtureTimes(row.kickoffUtc, 'Europe/Madrid')
+    expect(html(row)).toContain(`${local.time} local`)
+  })
+
   it.each([
     ['full_time', 'FT'],
     ['in_play', 'LIVE'],
     ['postponed', 'POSTPONED'],
+    ['cancelled', 'CANCELLED'],
     ['suspended', 'SUSPENDED'],
     ['abandoned', 'ABANDONED'],
   ] as const)('renders %s as %s', (status, label) => {
