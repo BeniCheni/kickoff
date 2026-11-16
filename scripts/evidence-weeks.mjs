@@ -20,11 +20,15 @@ export const UCL_WINDOWS = [
   { md: 8, from: '2027-01-27', to: '2027-01-27' },
 ]
 
+// Built once. chooseWeeks asks for a Brooklyn date per fixture per week, and building a
+// formatter costs far more than formatting with one.
+const BROOKLYN_DAY = new Intl.DateTimeFormat('en-US', {
+  timeZone: BROOKLYN, year: 'numeric', month: '2-digit', day: '2-digit',
+})
+
 export function brooklynDate(kickoffUtc) {
   const parts = Object.fromEntries(
-    new Intl.DateTimeFormat('en-US', {
-      timeZone: BROOKLYN, year: 'numeric', month: '2-digit', day: '2-digit',
-    }).formatToParts(new Date(kickoffUtc)).map((part) => [part.type, part.value]),
+    BROOKLYN_DAY.formatToParts(new Date(kickoffUtc)).map((part) => [part.type, part.value]),
   )
   return `${parts.year}-${parts.month}-${parts.day}`
 }
