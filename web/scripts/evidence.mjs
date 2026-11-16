@@ -27,7 +27,7 @@ import { pathToFileURL, fileURLToPath } from 'node:url'
 import puppeteer from 'puppeteer-core'
 import { decodePng } from '../../scripts/decode-png.mjs'
 import { chooseWeeks, matrixAnchor, readSnapshot } from '../../scripts/evidence-weeks.mjs'
-import { BITMAP_GLYPH, FONT_HOSTS, createColdLoad, isLargeText, sampleContrast, unexpectedHost, unreadColors } from '../../scripts/rendered-contrast.mjs'
+import { BITMAP_GLYPH, FONT_HOSTS, createColdLoad, isLargeText, paintedColor, sampleContrast, unexpectedHost, unreadColors } from '../../scripts/rendered-contrast.mjs'
 
 const root = fileURLToPath(new URL('../..', import.meta.url))
 const chrome = process.env.CHROME_PATH ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
@@ -185,6 +185,7 @@ async function collectText(page) {
         if (rects.length) samples.push({
           text: text.slice(0, 40),
           color: srgb(style.color),
+          fill: srgb(style.getPropertyValue('-webkit-text-fill-color')),
           opacity,
           fontSize: Number.parseFloat(style.fontSize),
           fontWeight: weight,
@@ -217,6 +218,7 @@ async function measureContrast(page, id, width, shown) {
   const image = decodePng(buffer)
   const samples = collected.samples.map((sample) => ({
     ...sample,
+    color: paintedColor(sample.color, sample.fill),
     large: isLargeText(sample.fontSize, sample.fontWeight),
   }))
   const scaleX = collected.innerWidth ? image.width / collected.innerWidth : 1

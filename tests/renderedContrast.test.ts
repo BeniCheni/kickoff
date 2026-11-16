@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { contrastRatio, floorFor, isLargeText, parseColor, sampleContrast, unreadColors } from '../scripts/rendered-contrast.mjs'
+import { contrastRatio, floorFor, isLargeText, paintedColor, parseColor, sampleContrast, unreadColors } from '../scripts/rendered-contrast.mjs'
 
 function image(pixels: number[][]) {
   const width = pixels[0]!.length
@@ -71,6 +71,22 @@ describe('rendered contrast', () => {
     expect(faded!.ratio).toBeGreaterThan(3.9)
     expect(faded!.ratio).toBeLessThan(4.05)
     expect(sampleContrast([{ ...black, opacity: 0 }], image([[255, 255, 255]]))).toEqual([])
+  })
+
+  it('measures a visible text fill, and the fallback colour under a transparent fill', () => {
+    const black = 'rgb(0, 0, 0)'
+    const aaa = 'rgb(170, 170, 170)'
+    const white = image([[255]])
+    const box = { text: 'Painted', large: false, rects: [{ x: 0, y: 0, w: 1, h: 1 }] }
+    // #aaa on white is the painted pair. Black `color` behind that fill is not.
+    expect(paintedColor(black, aaa)).toBe(aaa)
+    const [filled] = sampleContrast([{ ...box, color: paintedColor(black, aaa) }], white)
+    expect(filled!.ratio).toBeCloseTo(2.323, 3)
+    // Foil sets the fill transparent and keeps a fallback colour underneath.
+    expect(paintedColor(black, 'rgba(0, 0, 0, 0)')).toBe(black)
+    expect(paintedColor(black, 'transparent')).toBe(black)
+    const [foil] = sampleContrast([{ ...box, text: 'Foil', color: paintedColor(black, 'rgba(0, 0, 0, 0)') }], white)
+    expect(foil!.ratio).toBe(21)
   })
 
   it('names a sample whose colour it cannot read instead of dropping it', () => {

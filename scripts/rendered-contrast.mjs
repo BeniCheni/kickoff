@@ -218,6 +218,17 @@ export function isBitmapGlyph(text) {
   return BITMAP_GLYPH.test(String(text))
 }
 
+/** The colour that was painted. A visible `-webkit-text-fill-color` is the ink.
+ * A transparent fill is foil's unpainted layer, so the fallback `color` is measured. */
+export function paintedColor(color, fill) {
+  const fallback = String(color ?? '')
+  const text = String(fill ?? '').trim()
+  if (!text || text.toLowerCase() === 'transparent') return fallback
+  const parsed = parseColor(text)
+  if (parsed && parsed.a === 0) return fallback
+  return text
+}
+
 /** Samples whose colour `parseColor` cannot read. They are not measured, so they are named. */
 export function unreadColors(samples) {
   return samples
