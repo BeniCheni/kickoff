@@ -1,4 +1,4 @@
-# PR #327 — the PM seat's briefs for the overhaul's PR 0: Pass 1's cold review, Cursor's Pass 2, Codex's Pass 2.5 in three sittings, and Cursor's two fix rounds (archived Sun 15 Nov 2026, TZ=America/New_York)
+# PR #327 — the PM seat's briefs for the overhaul's PR 0: Pass 1's cold review, Cursor's Pass 2, Codex's Pass 2.5 in three sittings, Cursor's two fix rounds, and Beni's ruling (archived Sun 15 Nov 2026, TZ=America/New_York)
 
 Written by the PM seat (Claude Code, Opus 5.5), a side session started from the review-loop
 planning session, after Cursor opened PR #327 from
@@ -864,3 +864,56 @@ SEALED APPENDIX — the PM seat's reading of b6d66bd. Re-derive each one indepen
 - S7: attribute values are compared without decoding entities. aria-label="Previ&#111;us" is named "Previous" by a browser but fails the scan. That can only fail safe.
 - S8: the PM seat found nothing in today's React 19.2.8 server output that reaches S5 or S6.
 ````
+
+---
+
+## Pass 3: Beni's ruling (Mon 16 Nov 2026, about 11:43 AM EST)
+
+**Codex's third sitting.** It posted at 11:39 AM EST:
+https://github.com/BeniCheni/kickoff/pull/327#issuecomment-6922676307. It recommended Hold at
+`ae927d7` on a medium finding. The landmark scan passes a Previous button wrapped in
+`<template>` or `<noscript>`, and a `<button.x aria-label="Previous">`. This is the PM seat's
+sealed S5 and S6, reproduced. Its other results:
+- `b6d66bd` rejected every earlier bypass;
+- `ae927d7` recorded 343 bytes across both hops;
+- the root suites passed: 1,029 tests at `b6d66bd` and 1,031 at `ae927d7`;
+- the builds, parity, the offline hash and n6b all passed;
+- `--enforce` failed only on the 16 loss-pip samples.
+
+**Why the PM seat recommended Merge instead:**
+- None of the three bypasses can come from the app as written. Neither `<template>` nor
+  `<noscript>` appears in `src/` or `web/app/`. JSX reads `<button.x>` as a member
+  expression, not a tag. The only raw HTML is the theme and font `<script>`/`<style>` in
+  `web/app/layout.tsx`, whose contents the scan skips, and the Moments player host, which is
+  on another route.
+- This was the third round in the same class: each parser fix exposed the next HTML edge. Only
+  a real parser closes the class, and adding one would be a dependency, which PR 0's scope
+  rules out.
+- `ae927d7` is strictly better than `ff815e9`, the head the time box would have merged.
+- A merge by Tue 17 Nov keeps PR 1 on Cursor at `grok-4.7-xhigh`.
+
+**Ruled: "Merge at ae927d7."** Beni runs Codex's handoff block from `main`:
+- the squash merge with `--match-head-commit ae927d76ad35f5fc0ce36cf40f3b1e1a0a980ce2`;
+- `git pull --ff-only` and the three green commands;
+- the production smoke for the merge commit, read from the `vercel-smoke` status on that SHA;
+- the revert if that smoke is red. This is the hosted proof, by his "Yes, with revert".
+
+When this was recorded, #327 was still open at `ae927d7`.
+
+**Carried forward, for the briefs that follow:**
+- **PR 1's brief:**
+  - the landmark scan skips the contents of `<template>` and `<noscript>`;
+  - tag names run to whitespace, `/` or `>`;
+  - the contract comment above `ROUTES` states the threat model: the scan trusts React's escaping, and a PR that adds raw HTML to a smoke route hardens the scan first.
+  All three reach `main` at the release.
+- **The first PR that renders foil text:** clear the clipped foil from the ground capture
+  before `--enforce` counts foil (Codex's second sitting: black foil read 1:1 where the plan's
+  fallback reads 21:1).
+- **PR 2 and PR 3's briefs:** R2's `--enforce` scoping, or the 16 loss-pip samples carried as
+  the known failure.
+- **PR 3 and PR 5's briefs:** R1 (PR 3) and R3 (PRs 3 and 5).
+- **The lineage docs PR:**
+  - this file;
+  - the Cosmic Horror Kickoff Planner's Pass 1 brief, untracked at this path in Beni's main checkout, merged in first;
+  - R1–R3 and this ruling added to `docs/design-overhaul-plan-review.md`;
+  - ideas rows for anything not owned by a PR above.
