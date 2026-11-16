@@ -85,3 +85,114 @@ export function measureContrast(cssSource = css, componentSource = bannerSource)
   return contrastCases
 }
 export const contrastCases = measureContrast()
+
+function props(block: string): Record<string, string> {
+  return Object.fromEntries([...block.matchAll(/--([\w-]+):\s*([^;]+);/g)].map((match) => [match[1]!, match[2]!.trim()]))
+}
+
+/** Paper stock is every :root block, in order. Black stock starts there and overlays the one black-stock rule. */
+export function secondEditionTokens(cssSource = css): { paper: Record<string, string>; black: Record<string, string>; stockSelector: string } {
+  const paper: Record<string, string> = {}
+  for (const match of cssSource.matchAll(/:root\s*\{([^}]+)\}/g)) Object.assign(paper, props(match[1]!))
+  // The comma is the rule. A comment may name the attribute without being the selector.
+  const stock = cssSource.match(/\[data-stock='black'\],\s*:root\[data-theme='dark'\][^{]*\{([^}]+)\}/)
+  if (!stock) throw new Error('Missing the black-stock rule')
+  const stockSelector = cssSource.slice(stock.index!, cssSource.indexOf('{', stock.index!))
+  return { paper, black: { ...paper, ...props(stock[1]!) }, stockSelector }
+}
+
+function opaqueToken(tokens: Record<string, string>, name: string): RGB {
+  const value = tokens[name]
+  if (!value) throw new Error(`Missing token ${name}`)
+  const parsed = parseColor(value)
+  if (parsed.alpha !== 1) throw new Error(`Expected an opaque token: ${name} is ${value}`)
+  return parsed.color
+}
+
+/** The handoff's ratios for the scrim are the 8-bit composite, the #1E1E1F it names. Fractions stay above the floor either way. */
+function scrimGround(tokens: Record<string, string>): RGB {
+  const scrim = parseColor(tokens['fb-scrim']!)
+  return composite(scrim.color, [255, 255, 255], scrim.alpha).map((channel) => Math.round(channel)) as RGB
+}
+
+function darkestFoil(tokens: Record<string, string>): RGB {
+  let best: RGB | null = null
+  let bestLuminance = Infinity
+  for (let stop = 1; stop <= 5; stop += 1) {
+    const color = opaqueToken(tokens, `fb-foil-${stop}`)
+    const lum = luminance(color)
+    if (lum < bestLuminance) {
+      bestLuminance = lum
+      best = color
+    }
+  }
+  if (!best) throw new Error('Missing foil stops')
+  return best
+}
+
+export type SecondEditionPair = {
+  name: string
+  ratio: number
+  expected: number
+  minimum: number
+  allowed: boolean
+}
+
+// RGB measured at the spike's lit-paper centre. It is not a token.
+const TORCH_POOL: RGB = [57, 50, 43]
+
+export function secondEditionPairs(cssSource = css): SecondEditionPair[] {
+  const { paper, black } = secondEditionTokens(cssSource)
+  const light = palette(cssSource, 'light')
+  const foil = darkestFoil(black)
+  const scrim = scrimGround(black)
+  const read = (tokens: Record<string, string>, name: string): RGB => opaqueToken(tokens, name)
+  const measured: Array<[string, RGB, RGB, number, number, boolean]> = [
+    ['pulp-ink on pulp', read(paper, 'fb-pulp-ink'), read(paper, 'fb-pulp'), 13.32, 4.5, true],
+    ['pulp-ink on typescript', read(paper, 'fb-pulp-ink'), read(paper, 'fb-typescript'), 14.76, 4.5, true],
+    ['pulp-muted on pulp', read(paper, 'fb-pulp-muted'), read(paper, 'fb-pulp'), 7, 4.5, true],
+    ['pulp-muted on typescript', read(paper, 'fb-pulp-muted'), read(paper, 'fb-typescript'), 7.75, 4.5, true],
+    ['pitch on pulp', read(paper, 'fb-pitch'), read(paper, 'fb-pulp'), 6.4, 4.5, true],
+    ['pitch on typescript', read(paper, 'fb-pitch'), read(paper, 'fb-typescript'), 7.09, 4.5, true],
+    ['amber on pulp', read(paper, 'fb-amber'), read(paper, 'fb-pulp'), 5.85, 4.5, true],
+    ['amber on typescript', read(paper, 'fb-amber'), read(paper, 'fb-typescript'), 6.48, 4.5, true],
+    ['alarm on pulp', read(paper, 'fb-alarm'), read(paper, 'fb-pulp'), 5.17, 4.5, true],
+    ['alarm on typescript', read(paper, 'fb-alarm'), read(paper, 'fb-typescript'), 5.73, 4.5, true],
+    ['cover-ink on paper pitch', read(paper, 'fb-cover-ink'), read(paper, 'fb-pitch'), 7.26, 4.5, true],
+    ['cover-ink on blood', read(paper, 'fb-cover-ink'), read(paper, 'fb-blood'), 5.86, 4.5, true],
+    ['cover-ink on cover-black', read(black, 'fb-cover-ink'), read(black, 'fb-cover-black'), 16.68, 4.5, true],
+    ['cover-ink on scrim', read(black, 'fb-cover-ink'), scrim, 14.04, 4.5, true],
+    ['cover-muted on cover-black', read(black, 'fb-cover-muted'), read(black, 'fb-cover-black'), 7.45, 4.5, true],
+    ['cover-muted on scrim', read(black, 'fb-cover-muted'), scrim, 6.27, 4.5, true],
+    ['pitch on cover-black', read(black, 'fb-pitch'), read(black, 'fb-cover-black'), 8.73, 4.5, true],
+    ['pitch on scrim', read(black, 'fb-pitch'), scrim, 7.35, 4.5, true],
+    ['pitch on dark pulp', read(black, 'fb-pitch'), read(black, 'fb-pulp'), 8.13, 4.5, true],
+    ['amber on cover-black', read(black, 'fb-amber'), read(black, 'fb-cover-black'), 12.62, 4.5, true],
+    ['amber on scrim', read(black, 'fb-amber'), scrim, 10.63, 4.5, true],
+    ['amber on dark pulp', read(black, 'fb-amber'), read(black, 'fb-pulp'), 11.76, 4.5, true],
+    ['alarm on cover-black', read(black, 'fb-alarm'), read(black, 'fb-cover-black'), 7.37, 4.5, true],
+    ['alarm on dark pulp', read(black, 'fb-alarm'), read(black, 'fb-pulp'), 6.86, 4.5, true],
+    ['cover-black on pitch', read(black, 'fb-cover-black'), read(black, 'fb-pitch'), 8.73, 4.5, true],
+    ['pulp-ink on dark pulp', read(black, 'fb-pulp-ink'), read(black, 'fb-pulp'), 14.49, 4.5, true],
+    ['pulp-muted on dark pulp', read(black, 'fb-pulp-muted'), read(black, 'fb-pulp'), 7.39, 4.5, true],
+    ['pulp-ink on torch pool', read(black, 'fb-pulp-ink'), TORCH_POOL, 9.92, 4.5, true],
+    ['pulp-muted on torch pool', read(black, 'fb-pulp-muted'), TORCH_POOL, 5.06, 4.5, true],
+    ['pitch on torch pool', read(black, 'fb-pitch'), TORCH_POOL, 5.56, 4.5, true],
+    ['amber on torch pool', read(black, 'fb-amber'), TORCH_POOL, 8.05, 4.5, true],
+    ['alarm on torch pool', read(black, 'fb-alarm'), TORCH_POOL, 4.7, 4.5, true],
+    ['foil darkest on cover-black', foil, read(black, 'fb-cover-black'), 8.22, 3, true],
+    ['foil darkest on scrim', foil, scrim, 6.92, 4.5, true],
+    ['blood on cover-black', read(black, 'fb-blood'), read(black, 'fb-cover-black'), 2.84, 4.5, false],
+    ['first-edition accent on pulp', opaqueToken(light, 'accent'), read(paper, 'fb-pulp'), 2.88, 4.5, false],
+    ['first-edition floodlight on pulp', opaqueToken(light, 'floodlight'), read(paper, 'fb-pulp'), 2.19, 4.5, false],
+    ['first-edition pitch on pulp', opaqueToken(light, 'pitch'), read(paper, 'fb-pulp'), 3.91, 4.5, false],
+    ['first-edition floodlight-strong on pulp', opaqueToken(light, 'floodlight-strong'), read(paper, 'fb-pulp'), 4.2, 4.5, false],
+  ]
+  return measured.map(([name, foreground, ground, expected, minimum, allowed]) => ({
+    name, ratio: ratio(foreground, ground), expected, minimum, allowed,
+  }))
+}
+
+export function scrimComposite(cssSource = css): RGB {
+  return scrimGround(secondEditionTokens(cssSource).black)
+}
