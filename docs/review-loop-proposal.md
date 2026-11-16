@@ -757,6 +757,10 @@ for Cursor (S7).
   are by one vendor each, the build's four by Codex, Pass 1's six by Claude, Pass 2's four and
   the release step's five by Cursor), so the records' SHAs stay true. The Sprint 1 build
   prompt is [`review-loop-sprint-1-build-prompt.md`](review-loop-sprint-1-build-prompt.md).
+- **The replay restores `sync.yml` and `pages.yml` (Beni, Mon 16 Nov 2026),** amending the first
+  condition above. Its second guard broke the third condition, because Kickoff's tests read
+  `sync.yml`. Cursor restores both files in Sprint 1's fix round; the reasons and the timing are
+  under "Sprint 1's build".
 
 D1 to D4 and D8 to D12 are not yet ruled.
 
@@ -817,8 +821,8 @@ appendix carries the four items below to the reviewer.
   the new base, closes and reopens #1 to get a fresh `pull_request` run (a push to the base starts
   none, and a re-run reuses the old merge commit), and watches `verify` and Studio to their
   conclusion. If Pass 1 orders no fix round, the restore goes out in a brief of its own. The
-  ruling moves to "Rulings received" once Pass 1 has posted; it waits here because the Pass 1
-  brief seals this section and has the reviewer read that one.
+  ruling waited here until Pass 1 posted, because the Pass 1 brief sealed this section and had
+  the reviewer read "Rulings received"; it is now recorded there too.
 - **Kickoff's timeline gained two cross-references.** Sprint 1's brief titled the replay "Fixture:
   replay of BeniCheni/kickoff#320", and #2's body links #320, so GitHub added two events to
   #320's public timeline (18:34Z and 18:45Z). That is not a write to Kickoff's content, but it is
@@ -831,3 +835,21 @@ appendix carries the four items below to the reviewer.
   `base.sha` from the pull-request object.
 - **The live T3 left its trace.** The replay's Pass 2 comment shows two edits, at 18:41:28Z and
   18:41:51Z, so the delete-and-restore can be checked without repeating it.
+- **Pass 1 posted at 19:50Z**
+  ([comment](https://github.com/BeniCheni/elenchus/pull/2#issuecomment-6927342519)), on
+  `claude-fable-5-2` in Claude Code 2.1.325: *merge after a fix round.* It made 23 findings: one
+  blocking (the record extractor matches from the comment's first json fence, so a valid record
+  that follows an earlier json block is rejected as invalid JSON), twelve should-fix and ten
+  notes. It reproduced T9 byte for byte (27 GET calls, 3.0 MB), checked the replay's 19 SHAs and
+  the seed's three paths, and confirmed all four sealed items. A deletion test found 17 of 31
+  single-rule removals that leave the 20 tests green, the five SHA-chain conditions among them.
+  Finding 13's "15-commit pull request" is 17 commits across the three ranges; the reviewer
+  corrected that in chat and left the comment unedited.
+- **The seal did not hold, and could not.** The appendix came in the same paste as the brief, so
+  the reviewer had it in context from the first minute. It kept this section unread until its
+  findings were on disk, and said so. From now on a sealed appendix is a second paste, sent
+  only after the reviewer says its findings are written. Sprint 4's port of the review skill
+  needs the same, and `pr-comment.md` has no slot for the appendix either.
+- **Two items outside the code.** #1 is a public pull request and the tool reads any account's
+  comment as a record (finding 5), so #1's conversation should be locked. And #2's merge message
+  is written by hand without Kickoff links, or a third cross-reference lands on Kickoff's #320.
