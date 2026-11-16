@@ -62,8 +62,9 @@ const matchdays = [
   row('md-absent', { competition: 'ucl', phase: 'league-phase', season: 2026, kickoffUtc: '2026-09-30T18:00:00.000Z' }),
 ]
 
-// A two-club table plays two rounds. The record gives the points and the goals, so the
-// header's "matchday 2 of 2" and each row's sums are ones a table could hold.
+// A two-club table plays two rounds, and the clubs play only each other. One club's
+// wins are the other's losses, and the goals match. Both have played 2, so the header
+// stays "matchday 2 of 2" and each row's sums are ones a table could hold.
 function standing(teamId: string, name: string, abbrev: string, rank: number, w: number, d: number, l: number): StandingRow {
   return { teamId, name, shortName: name, abbrev, rank, rankChange: 0, played: w + d + l, w, d, l, gf: 2 * w + d, ga: 2 * l + d, pts: 3 * w + d }
 }
@@ -72,7 +73,7 @@ const now = Date.now()
 globalThis.__kickoffSpecimen = {
   rows: [
     standing('synth-unset', 'Specimen Unset', 'UNS', 1, 2, 0, 0),
-    standing('synth-kicked', 'Specimen Kicked', 'KCK', 2, 1, 0, 1),
+    standing('synth-kicked', 'Specimen Kicked', 'KCK', 2, 0, 0, 2),
   ],
   fixtures: [
     row('table-unset', {
