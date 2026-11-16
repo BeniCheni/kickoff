@@ -1,4 +1,4 @@
-# PR #327 — the PM seat's briefs for the overhaul's PR 0: Pass 1's cold review, Cursor's Pass 2, Codex's Pass 2.5 and Cursor's fix round (archived Sun 15 Nov 2026, TZ=America/New_York)
+# PR #327 — the PM seat's briefs for the overhaul's PR 0: Pass 1's cold review, Cursor's Pass 2, Codex's Pass 2.5 in two sittings, and Cursor's fix round (archived Sun 15 Nov 2026, TZ=America/New_York)
 
 Written by the PM seat (Claude Code, Opus 5.5), a side session started from the review-loop
 planning session, after Cursor opened PR #327 from
@@ -605,4 +605,90 @@ REPLY. Post one PR comment on #327, headed "Fix round — Cursor — <model and 
 - parity;
 - anything you could not do.
 Then reply in this chat with the comment's link. Codex re-checks your commits, and Beni merges.
+````
+
+---
+
+## Pass 2.5, second sitting: Codex re-checks the fix round (Mon 16 Nov 2026, about 8:55 AM EST)
+
+Cursor's fix round finished overnight. Comment:
+https://github.com/BeniCheni/kickoff/pull/327#issuecomment-6907572956, posted at 11:45 PM EST on
+15 Nov and headed `grok-4.7-xhigh`.
+- The head is `ff815e9`: five Cursor commits past `9226140`, fast-forward only.
+- `verify` is green at `ff815e9` (run 43805954859).
+
+At about 8:50 AM the PM seat read the comment and the five diffs:
+- the smoke patterns now require whitespace inside the tag, and reject `aria-labelledby` on the
+  Previous button;
+- a `createColdLoad` log keeps every redirect hop;
+- `paintedColor` measures a visible fill and falls back to `color` when the fill is transparent
+  (the foil rule);
+- the three remaining capture steps fill a result the caller owns;
+- the specimen's records are complementary.
+
+One gap: Cursor checked the landmark patterns by hand against local Next HTML. It did not run
+the smoke checker end to end through `scripts/n6b-proof.mjs`, as Passes 1 and 2 did. The opener
+asks Codex to run it.
+
+The hosted-preview evidence is still Beni's to settle. The opener has Codex record his answer if
+he has given it, and otherwise ask for it in one word. If he accepts the smoke on `main`'s
+production deployment, the handoff block watches that run and gives the revert. Delivered in chat
+in a four-backtick fenced block, one line per paragraph; this copy is the archive.
+
+````text
+PR #327 — Pass 2.5, second sitting (Codex): re-check Cursor's fix round, then hand the merge to Beni
+
+You are Codex, on GPT-6.1 Sol at xhigh, continuing your Pass 2.5 of PR #327 in github.com/BeniCheni/kickoff. Your first sitting escalated at 9226140 with four new findings (https://github.com/BeniCheni/kickoff/pull/327#issuecomment-6906796843), and Beni held the PR for a Cursor fix round. That round is done: https://github.com/BeniCheni/kickoff/pull/327#issuecomment-6907572956. Read it whole. The method is still /kickoff-pr-review --pass 2.5 --no-merge; read .claude/skills/kickoff-pr-review/ at the head. This sitting re-runs the delta and the whole-tree checks, then updates your Executive Summary Brief. Push nothing. The PM seat (Claude Code, Opus 5.5) wrote this note on Mon 16 Nov 2026 at about 8:55 AM EST. Run TZ=America/New_York date before writing any date. If the head is no longer ff815e9 when you start, stop and say so.
+
+STATE (re-check all of it).
+- Head ff815e9c5f97535d444ca86f508eced62f3d08c4 on cursor/overhaul-pr0-pin: open, CLEAN, auto-merge off, no review.
+- It is five Cursor commits past 9226140, fast-forward only:
+  - 3dc3f23: the smoke's contract attributes;
+  - 63080e4: redirect hops on a cold load;
+  - c47e35b: the painted text fill;
+  - ad37449: receipts that keep cells which already passed;
+  - ff815e9: complementary specimen records.
+- verify is green at ff815e9 (run 43805954859), and so are the Vercel deployment and vercel-smoke. vercel-smoke is still main's checker.
+- Against ad4c5f3 the PR is now 30 files, +2161/−110. main is still ad4c5f3.
+
+RULED BY BENI, named as his: everything in your first sitting's brief stands, together with three later rulings.
+- Sun 15 Nov 2026: Pass 2 ran at xhigh, and R1 to R3 stand as relayed.
+- Sun 15 Nov 2026: "Hold, brief Cursor", which held the PR at 9226140 for this round.
+- Mon 16 Nov 2026 target: merge on Tue 17 Nov, so that PR 1 can still be built by Cursor at grok-4.7-xhigh under the routing amendment (PR #328, approved, not yet on main).
+Not yet ruled: the hosted-preview evidence. The plan asks for the smoke green on the PR's own preview. No seat can produce that, because .github/workflows/preview-smoke.yml always runs main's script and the bypass secret is Beni's. The PM seat recommended accepting the smoke that preview-smoke.yml runs on main's production deployment after the merge, with a revert if it fails. The other choice is for Beni to run the head's checker against #327's preview with his own secret. If he has answered by the time you post, record his answer; otherwise ask for it in one word.
+
+WHERE TO WORK. Your worktree /Users/benicheni/code/kickoff-pr327-pass25 is detached at 9226140. Run git fetch origin, then git checkout --detach ff815e9, and confirm HEAD. Your ad4c5f3 build in /Users/benicheni/code/kickoff-pr327-pass25-base is yours, so it stands as the parity baseline. Cursor's servers may hold 5173 to 5175: keep using 5273 to 5275, confirm each cwd with lsof, and do not stop a process you did not start. Never run npm run sync.
+
+WHAT THIS SITTING MUST SHOW.
+1. Each of your four findings, re-run against the fix, plus the PM seat's widening of the first:
+  - Smoke (3dc3f23). Re-run your data-aria-label and aria-labelledby edits on a real local production response; both must now fail. Then try a prefixed stand-in for each of the other three contract attributes; each must fail too. Read PREVIOUS_BUTTON's lookahead and say whether any spelling of a conflicting name still gets through.
+  - Hops (63080e4). Re-run your third-host stylesheet that redirects back to the origin; the cold load must now fail and name that host. Check tests/coldLoad.test.ts against what Chrome actually sends.
+  - Fill (c47e35b). Re-run your black color with a #aaa fill (2.323:1), plus a transparent-fill foil case. Say whether the foil fallback matches the plan's foil row (docs/design-overhaul-plan.md, near line 354).
+  - Receipts and specimen (ad37449, ff815e9). Force a late failure in each of the three capture steps, and read the cells that passed in the failed receipt. Check that the two clubs' records sum to a table that could exist.
+2. The smoke checker end to end. Cursor applied the patterns by hand to local Next HTML and did not run smoke() through scripts/n6b-proof.mjs. Run n6b-proof at ff815e9 against a local Next production build, and report every route.
+3. Whole-tree checks at ff815e9:
+  - root typecheck and npm test, plus typecheck and npm test at each of the five commits;
+  - build, build:single, build:offline and the offline-bundle scan;
+  - in web/: typecheck, test, build, check:client and check:css;
+  - reader parity against your preserved ad4c5f3 build, including the dist-offline/index.html hash;
+  - the runner in report mode (exit 0) and with --enforce (exit 1, on the 16 loss-pip samples and nothing else), with the 1,224-sample baseline unchanged.
+4. Cursor left tests/evidenceWeeks.test.ts alone, reporting 1,181 ms alone and 2,199 to 3,214 ms inside npm test against the 5-second default. Time it once yourself, and say whether it still belongs on the sync path's effective gate as it stands.
+5. Anything new in the five commits. Read each on its own. Placement matters: createColdLoad and paintedColor now live in scripts/rendered-contrast.mjs beside the contrast code. Say whether that is a defect or a note.
+
+THE BRIEF AND THE COMMENT. Post one short PR comment with gh pr comment 327 --body-file <file>. Its first line names the pass, the sitting, the model and effort that ran, and ff815e9. Then update your Executive Summary Brief, in executive-brief.md's shape:
+- Decision: still escalated, because plan section 3 gives the merge to Beni's word. Give your recommendation, Merge or Hold, in one word.
+- What the 360 found: your four findings with their fix commits and your re-run result.
+- Verification as re-run: numbers from this sitting only.
+- Questions for Beni, each answerable in one word: the hosted-preview evidence (unless he has answered), and Merge or Hold at ff815e9.
+- The handoff block, for ff815e9:
+  - gh pr merge 327 --repo BeniCheni/kickoff --squash --match-head-commit ff815e9c5f97535d444ca86f508eced62f3d08c4, with a subject and body in the repo's voice that name who ran which pass (Cursor built PR 0 and ran Pass 2 and the fix round at grok-4.7-xhigh; Claude Code ran Pass 1 on Fable 5.2; Codex ran Pass 2.5 on GPT-6.1 Sol at xhigh) and carry Co-authored-by trailers for Cursor <cursoragent@cursor.com> and Claude <noreply@anthropic.com>;
+  - then git pull --ff-only, npm run typecheck, npm test and npm run build;
+  - then, if Beni accepted the production smoke as the hosted proof: the gh commands that show preview-smoke.yml's run and the vercel-smoke status for the merge commit on main, and the git revert of that merge commit, with its push, to use if that smoke is red.
+  No tag and no version: this is not a release.
+
+WHAT YOU MUST NOT DO. Your gh is Beni's account, an Admin who can bypass the verify gate; this note is what stops you.
+- No gh pr merge in any form, no approval and no --auto.
+- No push of any kind, no tag and no npm version.
+- No change to rulesets, repo settings, workflows or any other PR.
+If you find a blocker, do not fix it: give the minimal reproduction, its severity and the follow-up for the builder, and recommend Hold.
 ````
