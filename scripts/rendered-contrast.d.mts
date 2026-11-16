@@ -36,8 +36,6 @@ export function unreadColors(samples: readonly ContrastSample[]): { color: strin
 
 export function paintedColor(color: string, fill?: string | null): string
 
-export const FONT_HOSTS: ReadonlySet<string>
-
 export function unexpectedHost(
   requestUrl: string,
   pageUrl: string,

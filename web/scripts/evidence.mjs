@@ -83,8 +83,8 @@ export async function openPage(browser, url, theme, width, { waitUntil = 'networ
   await page.waitForFunction((chosen) => document.documentElement.dataset.theme === chosen, { timeout: 15_000 }, theme)
   if (escaped.length) {
     await context.close()
-    const scope = offline ? 'the two font hosts' : 'this page and the two font hosts'
-    throw new Error(`asked for a host other than ${scope}: ${escaped.join(' | ')}`)
+    const scope = offline ? 'the offline file asked for a host' : "asked for a host other than this page's own"
+    throw new Error(`${scope}: ${escaped.join(' | ')}`)
   }
   return { context, page, errors, network, escaped, status: response?.status() ?? 0 }
 }
@@ -359,7 +359,7 @@ export async function captureOffline(browser, out, result = { sizes: {}, cells: 
       const state = await inspect(page)
       assert.equal(state.scrollWidth, state.innerWidth, id)
       assert.equal(state.theme, theme, id)
-      // The font stylesheet is the one request the file is known to try. Anything else
+      // The file carries its faces, so it is known to try no request at all. Any request
       // means the file is not whole without the network. Checked first, so the failure
       // names the address rather than the console's complaint about it.
       assert.deepEqual(escaped, [], `${id} asked for a host`)
