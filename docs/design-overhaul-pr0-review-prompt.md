@@ -1,4 +1,4 @@
-# PR #327 — the PM seat's briefs for the overhaul's PR 0: Pass 1's cold review and Cursor's Pass 2 (archived Sun 15 Nov 2026, TZ=America/New_York)
+# PR #327 — the PM seat's briefs for the overhaul's PR 0: Pass 1's cold review, Cursor's Pass 2 and Codex's Pass 2.5 (archived Sun 15 Nov 2026, TZ=America/New_York)
 
 Written by the PM seat (Claude Code, Opus 5.5), a side session started from the review-loop
 planning session, after Cursor opened PR #327 from
@@ -350,4 +350,133 @@ New, from the PM seat's reading of the eight commits (code read only, nothing ru
 - P8: the escape gate listens only to the page's http(s) requests. A WebSocket, or a request from a worker or service worker, may not appear as one.
 - P9: b80e1af's synthetic Saturday is 2026-11-21, six days after it was written, and WeekView reads the real clock (useNow, then staleLiveIds and hotFixtureIds), so from that date its scheduled rows render as kicked off. The order is probably unaffected; run the test with the system time set past that date.
 - P10: at 5c53710, src/components/FixtureRow.tsx:61 reads {placeholder ? '—' : t.brooklyn.time}, with no status check. This bears on F12.
+````
+
+---
+
+## Pass 2.5: the synthesis opener for Codex, with Beni's three rulings (Sun 15 Nov 2026, about 10:35 PM EST)
+
+Cursor's Pass 2 posted at 03:20 UTC on 16 Nov (10:20 PM EST on 15 Nov):
+https://github.com/BeniCheni/kickoff/pull/327#issuecomment-6906350168. It reached the PM seat as
+Beni's paste. Its verdict was "mergeable", and it moved the branch to `9226140` with four
+Cursor commits. It left Beni three questions. The PM seat checked the comment and the commits
+against GitHub and recommended an answer to each. At about 10:28 PM EST Beni answered "As
+recommended". His rulings, recorded here first:
+
+- **R1 (finding 12).** A postponed, cancelled, suspended or abandoned row prints no kickoff
+  clock, neither in the row's leading slot nor when the row is opened. This is the app's
+  `unsettledStatus` set in `src/lib/schema.ts`. PR 3 does it, pinned by a test, and readers
+  see it at the release.
+- **R2 (finding 13).** PR 4 repaints the Table's loss pip; its scope already holds the form
+  pips. Until then, the PR 2 and PR 3 briefs either scope `--enforce` to the surfaces they
+  change or carry the 16 loss-pip samples as the one known failure.
+- **R3 (the smoke landmark).** The landmark stays a `<button>` whose accessible name is exactly
+  "Previous", in the server HTML of `/` only. It stays a button when the chevron is muted and
+  inert. The PR 3 and PR 5 briefs carry this.
+
+The lineage docs PR should add R1 to R3 to `docs/design-overhaul-plan-review.md` beside the
+14 Nov rulings. With these rulings, findings 12 and 13 are plan work, not ideas rows.
+
+One question Beni has not answered: what model and effort Pass 2 ran on. Its comment names
+"Grok 4.7" without an effort, and `agent about` read the CLI's stored "Grok 4.7 256K Low".
+The opener has Codex put it to him rather than infer it.
+
+The seat is Codex on GPT-6.1 Sol at xhigh. That follows plan section 3 and `README.md:359`
+(Codex built nothing here), and the seat defaults the review-loop spikes recorded. Codex reads
+the tracked skill rather than invoking it. The opener asks Codex to post on Mon 16 Nov if it
+can, so Beni can merge by Tue 17 Nov. Under the approved amendment, that date keeps PR 1's
+Cursor build on `grok-4.7-xhigh` possible. Delivered in chat in a four-backtick fenced block,
+one line per paragraph; this copy is the archive.
+
+````text
+PR #327 — Pass 2.5 (synthesis): overhaul PR 0, pin the honesty rules and build the evidence runner
+
+You are Pass 2.5 of the 360 cycle for PR #327 in github.com/BeniCheni/kickoff, running in Codex on GPT-6.1 Sol at xhigh. The method is /kickoff-pr-review with --pass 2.5 and --no-merge. Read .claude/skills/kickoff-pr-review/SKILL.md, executive-brief.md and pr-comment.md at the PR's head and follow them as written; they outrank this note on process. Ignore the untracked .agents/skills/kickoff-pr-review/ copy in Beni's main checkout. This note gives you the state, where the record lives, Beni's rulings and what is unusual about this cycle; it holds no conclusions. The PM seat (Claude Code, Opus 5.5) wrote it on Sun 15 Nov 2026 at about 10:35 PM EST. Your deliverables are the Executive Summary Brief, in your reply to Beni and ending with the handoff block, and one short PR comment. Push nothing.
+
+YOUR SEAT. Codex built nothing in this PR and reviewed none of it: Cursor built it, Claude Code's Pass 1 reviewed it, and Cursor's Pass 2 rebutted. So where the merge gate asks whether anything is still contested between the vendors, it means Cursor and Claude Code. Pass 2.5 is a re-run, not a read. Every number in your brief comes from a command you ran, and anything you could not re-run is listed as not verified. Name the model and effort that ran in your comment's first line, from Codex's own session file (turn_context.model), not from --json output. Every seat's gh is Beni's account, an Admin who can bypass the verify gate, so this note is the only thing that stops a merge:
+- no gh pr merge in any form, no approval and no --auto;
+- no push of any kind, no tag and no npm version;
+- no change to rulesets, repo settings, workflows or any other PR.
+
+TIMING. Your pass needs no Cursor, so it may fall after Cursor's tier changes on Thu 19 Nov 2026. But Beni approved a routing amendment on Sun 15 Nov 2026: section 3 of docs/design-overhaul-plan.md, on branch docs/review-loop-plan in PR #328, approved but not yet on main. Under it, Cursor builds PR 1 on grok-4.7-xhigh only if PR 0 has merged and the integration branch exists by Tue 17 Nov. Post on Mon 16 Nov if you can, so Beni can merge by Tue 17 Nov. Do not trade depth for the date.
+
+THE CYCLE SO FAR (re-check all of it).
+- Cursor built the PR: five commits, d123d30 to 98aff91, authored Cursor <cursoragent@cursor.com>.
+- Pass 1, Claude Code on Fable 5.2, posted https://github.com/BeniCheni/kickoff/pull/327#issuecomment-6901527617, verdict "mergeable after fixes", with thirteen findings. It pushed eight commits, fe114c2 to 5c53710, authored Claude <noreply@anthropic.com>.
+- Pass 2, Cursor, posted https://github.com/BeniCheni/kickoff/pull/327#issuecomment-6906350168, verdict "mergeable". It accepts findings 1 to 11 and their fixes, accepts 12 and 13 as observations, and adds four new findings, N1 to N4. It pushed four commits, d8d85ba, f361122, 188e518 and 9226140, authored Cursor.
+- At the PM seat's last read (10:30 PM EST), the head was 9226140eae9f4a447d7d61cb1691d048071b7a10: open, not a draft, CLEAN, auto-merge off, no review. verify (run 43797582721), the Vercel deployment and vercel-smoke were green there. origin/main and the merge-base are both ad4c5f3. Against it the PR is 28 files, +1947/−107.
+- The green vercel-smoke status is main's checker: .github/workflows/preview-smoke.yml checks out main and runs main's scripts/vercel-smoke.mjs. The PR's new Previous landmark has run only against local Next servers, never against a Vercel preview. A preview deployment answers 302 without a bypass secret, and no seat is to seek one.
+
+WHAT IS UNUSUAL.
+- Nobody has confirmed what model Pass 2 ran on. The routing ruling asks for grok-4.7-xhigh. Pass 2's comment opens "Pass 2, Cursor, Grok 4.7" and says `agent about` reported the CLI's stored model as "Grok 4.7 256K Low". It saw no stream-json init event, so it names no effort. Only Beni knows what the session ran. If he has not told you, ask him in one word; do not infer it.
+- Pass 2 ran npm test once, on the tree of its first three commits (1,010 tests in 79 files), not at each commit, and did not re-run it after 9226140. CLAUDE.md wants typecheck and npm test green at every commit.
+- Merging this PR changes no rendered byte, but it changes two things every later PR meets. Main's preview smoke will demand the Previous button of every deployment, open PRs included (#114 and #328 are open). And verify gains tests/metaTotal.test.ts (f361122), which reads src/data on every sync PR. Judge both against the skill's merge-gate clauses, including the clause on sync.yml's gates.
+- Beni's main checkout, /Users/benicheni/code/kickoff-pm, holds a local cursor/overhaul-pr0-pin at 98aff91 and some untracked files. Other seats' worktrees also exist: .claude/worktrees/pr327-review (Pass 1's), .claude/worktrees/pr327-base, /Users/benicheni/code/kickoff-pr327-pass2 (Pass 2's, at 9226140) and /Users/benicheni/code/kickoff-pr327-base (Pass 2's build of ad4c5f3). Do not edit, build in or remove any of them, and do not reuse their builds as evidence.
+
+WHERE TO WORK.
+- From the main checkout, run git fetch origin, then git worktree add --detach /Users/benicheni/code/kickoff-pr327-pass25 9226140 and git worktree add --detach /Users/benicheni/code/kickoff-pr327-pass25-base ad4c5f3. Confirm each HEAD before you build, and run npm ci at the root and in web/ in both.
+- gh, git fetch and git worktree add may need your approval to run outside Codex's sandbox. Approve them one command at a time; do not switch the session to a mode that skips approvals.
+- Pass 2's servers may still hold ports 5173 to 5175 from kickoff-pr327-pass2. Do not stop a process you did not start. Run your three servers on 5273, 5274 and 5275 and set the runner's three origins to match. Before you trust a server, confirm its cwd with lsof.
+- Never run npm run sync.
+
+WHERE THE RECORD LIVES.
+- docs/design-overhaul-plan.md, section 3: PR 0's row and its evidence line. The evidence line asks for typecheck and npm test green in root and web/, each new test failing when its rule is broken and passing once restored, the bundle manifest identical, and the smoke green on the PR's own preview. Also read the "PR 0" cells of 6.1, 6.2 and 8.1 to 8.3 row 0.
+- Then docs/design-overhaul-plan-review.md, for Beni's 14 Nov rulings, and docs/design-overhaul-pr0-implementation-prompt.md, the build brief.
+- The build brief's addendum, the Pass 0 briefs and the Pass 1.5 brief are not on main. Pass 2 was given the addendum's three points in full:
+  - branch off 0fd5b98 or later, and add the ### Changed line beside #323's ### Fixed line in [Unreleased];
+  - the harness takes no Tailwind class, because the reader's Tailwind reads only src/**/*.{ts,tsx};
+  - the runner chooses its weeks by rule and hard-codes none of the brief's dates.
+- Precedence: Beni's rulings, then the plan, then the build brief with its addendum.
+
+WHAT BENI RULED, named as his.
+- Sat 14 Nov 2026, in docs/design-overhaul-plan-review.md: an integration branch, with this one PR on main first; ten PRs in section 3's order; v0.6.0 at the release, not here; Step 0 moves to &lens=ledger at the release; tests/dom/designCycle.test.tsx:47 and :66 stand; ideas rows 126 and 129 fold into PRs 3 and 5.
+- The dead-CSS ruling, carried out in #323: the public app's Tailwind scans only src/**/*.{ts,tsx}.
+- Sun 15 Nov 2026: the routing amendment, as proposed.
+- Sun 15 Nov 2026, to the PM seat ("As recommended"), on the three questions Pass 2 left him:
+  - R1, finding 12: a postponed, cancelled, suspended or abandoned row prints no kickoff clock, neither in the row's leading slot nor when the row is opened. These four statuses are the app's unsettledStatus set in src/lib/schema.ts. PR 3 does it, pinned by a test; readers see it at the release.
+  - R2, finding 13: PR 4 repaints the loss pip, since its scope already holds the form pips. Until then, the PR 2 and PR 3 briefs either scope --enforce to the surfaces they change or carry the 16 loss-pip samples as the one known failure.
+  - R3, the smoke landmark: it stays a <button> whose accessible name is exactly "Previous", in the server HTML of "/" only, and stays a button when the chevron is muted and inert. The PR 3 and PR 5 briefs carry it.
+- Plan section 3: Beni's word merges every overhaul PR, after Cursor's Pass 2 and your Pass 2.5.
+He has ruled on nothing else in this PR. R1 to R3 reached you through the PM seat, so ask Beni to confirm them in one word among your brief's questions.
+
+WHAT YOUR PASS MUST SHOW.
+1. Green, and the reader unchanged.
+  - At 9226140, at the root: typecheck, npm test (both vitest projects), build, build:single, build:offline and the offline-bundle scan. In web/: typecheck, test, build, check:client and check:css.
+  - Typecheck and npm test at each of d8d85ba, f361122, 188e518 and 9226140.
+  - Reader parity: build ad4c5f3 yourself and keep its dist/ and dist-single/. Run web/scripts/check-reader-parity.mjs against that copy from the head's build (usage in web/verification/README.md:27); it must print identical: true.
+  - Hash dist-offline/index.html at both builds.
+  - Say whether the Next app's built client output, and the server HTML of /, /?tab=table and /?tab=moments, are unchanged.
+2. Every fixed finding, red then green. This covers findings 1 to 11, Pass 2's N1 and N2, and f361122's test. For each, break the rule or gate the fix claims to hold, show it fail at the head, restore it, and show it pass. Where Pass 1 and Pass 2 broke the same thing, break something different where you can. Findings 12 and 13 are accepted observations, now ruled (R1, R2): confirm both observations at the head and change nothing.
+3. Pass 2's four commits, each on its own.
+  - d8d85ba: the online host gate (the page's own host plus fonts.googleapis.com and fonts.gstatic.com), and isBitmapGlyph.
+  - f361122: tests/metaTotal.test.ts, and whether any path in scripts/sync.ts could write a total that differs from the fixtures it writes.
+  - 188e518: Changed now comes before Fixed in [Unreleased], with the text unchanged.
+  - 9226140: comments only.
+4. The runner, run whole at the head on your own servers and origins, in report mode and with --enforce.
+  - Compare it with both vendors' summaries: 96 matrix cells, 72 week cells, six harness cells, four offline cells, the three weeks it chose, 1,224 contrast samples with 16 under the floor (all the loss pip) and 0 unread, 16,032 pictograph nodes, and the hosts. Pass 2 reports that --enforce exits 1 on those 16.
+  - Pass 2 also saw font bytes change between two runs (N4). Say whether that makes the weight report unfit as a baseline.
+  - Break three gates on purpose and show each fail: overflow at 360, a console warning, and a third host on an online load.
+5. The smoke. Run the head's scripts/vercel-smoke.mjs checker against a local Next production server, and say that is what you ran. Say whether merging would turn red the next preview of any open PR, once main's checker demands the Previous button.
+6. The three design choices Pass 2 decided: keep the harness's source-line rewrite, with its pin in tests/harnessSpecimen.test.ts; keep the exact aria-label landmark, now R3; keep optimizeDeps.entries. Say whether anything is still contested between the two vendors on each of these. Do the same for P5 and P6, which Pass 2 recorded as limits, not defects.
+7. The merge gate, clause by clause, in your brief. It ends in escalation whatever it finds, because plan section 3 gives the merge to Beni's word.
+
+THE COMMENT AND THE BRIEF.
+- Post one short PR comment with gh pr comment 327 --body-file <file>. Its first line names the pass, the seat, and the model and effort that ran. Then give the corroboration, one line per finding; what you could not re-run; and the escalation.
+- The Executive Summary Brief follows executive-brief.md. Every question for Beni must be answerable in one word, and they must include the effort Pass 2 ran at and confirmation of R1 to R3.
+- Its handoff block is the squash merge of #327. The squash message is in the repo's voice, names who ran which pass, and carries Co-authored-by trailers for Cursor <cursoragent@cursor.com> and Claude <noreply@anthropic.com>. Then git pull, and the three commands that must come back green: npm run typecheck, npm test and npm run build. No tag and no version: this is not a release.
+
+IF YOU FIND A BLOCKER. Do not fix it. Give the minimal reproduction, its severity and the follow-up for the builder, and escalate. A synthesis that finds nothing in a real diff is itself a finding about the synthesis.
+
+SEALED APPENDIX — the PM seat's checks and the vendors' claims. Re-derive each one independently and never cite it. If one does not reproduce, say so.
+- S1 (PM seat): scripts/sync.ts writes meta.total as valid.length (:213), and writes fixtures.json from the same valid array (:220).
+- S2 (PM seat): white on #D85A30 computes to 3.871:1.
+- S3 (PM seat): plan section 8.3 assigns contrast to PR 2 (band, banner, feet), PR 3 (rows on pulp and typescript), PR 4 (Table) and PR 5 (covers), and section 3's PR 4 row names the form pips.
+- S4 (PM seat): src/components/FixtureRow.tsx:36 sets placeholder from timeConfidence alone, and :61 prints {placeholder ? '—' : t.brooklyn.time} with no status check. src/lib/schema.ts calls the four unsettled statuses "a stored kickoff that is no longer a promise".
+- C1 (Pass 2): with an <img> pointing at escape.invalid added to dist/index.html, d8d85ba's gate threw "asked for a host other than this page and the two font hosts". tests/requestHosts.test.ts failed when the function returned null for every URL.
+- C2 (Pass 2): a WebSocket the page creates never reaches page.on('request'). A failed socket still fails the console gate; a connected one would not.
+- C3 (Pass 2): with Date frozen at 2026-11-22 and at 2027-06-01, tests/dom/displayOrder.test.tsx stays green (the PM seat's P9, killed).
+- C4 (Pass 2): setting meta.json's total to 1447 fails tests/metaTotal.test.ts.
+- C5 (Pass 2): in a checkout with no nested checkout, npx vite optimize --force pre-bundles the same six dependencies with and without optimizeDeps.entries.
+- C6 (Pass 2): P5 was measured on one cell, Ledger fixtures, light, 390: 131,381 changed pixels with both the full and a fill-only hide stylesheet, 462 of them outside the text boxes. P6: 20 of 124 in-viewport sample points hit another element, and none of them lies behind a reported ratio.
+- C7 (Pass 1): the Next client output (.next/static, 19 files) is byte-identical once the build id is normalised, and the server HTML of the three routes is byte-identical.
 ````
