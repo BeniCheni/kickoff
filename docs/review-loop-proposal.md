@@ -472,6 +472,19 @@ Cursor's hands this track seats no Cursor.
 - *Scope:* `loop authorize`; the scratch repo's rulesets mirroring Kickoff's two, plus a third
   for `kickoff/360` alone; the credentials D1 and D9 choose; the sync path D2 chooses.
 - *Acceptance:* T5, T6, T7 (with forgery), T10.
+- *Carried from Sprint 1's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are that
+  comment's findings): 6, sequence by the order records were posted, not their presence; 7, every
+  pass's `input_sha` is the previous recorded pass's `output_sha`, writing or not, and a head
+  past the last `output_sha` fails here (T6) after Sprint 1's fix round starts reporting it; 8, a
+  merged pull request is named in one line and its range rules skipped; 10, the pass that opens
+  findings, the passes that carry them and the escalation's addressee move into the
+  configuration, beside the pass D3's re-read needs; 13, one paginated compare per writing pass
+  instead of one per commit; 14, the replay's records carry `pr: 1`, the pull request they sit on,
+  and a rule checks it; 17, schema v1.2 requires a `source` beside a null observed value; 18, the
+  configuration Kickoff adopts carries CLI values only, the replay's prose stays in the replay's;
+  20, refs are encoded and the base is read as `heads/<ref>`; 21, `authorize` reads `status` and
+  `check` together; 22, actions pinned by SHA; and 23 (a) to (d), the replay's transcription
+  corrections.
 - *Review:* **all six passes.** This is the gate code Sprint 5 ports. Reviewing it at full depth
   where it is written means the port is a copy of reviewed code.
 - *Rollback:* archive.
@@ -481,6 +494,9 @@ Cursor's hands this track seats no Cursor.
   fixed in the same PR); `loop status` and `loop check` ported to their home (D5);
   `tests/loop/` joins the root `node` project.
 - *Acceptance:* T1, T3, T9 and T13 against a real Kickoff PR's records, read-only.
+- *Carried from Sprint 1:* a release artefact Kickoff can pin (finding 15: no `dist/`, no
+  `prepare`, `private: true`), and a slot in `pr-comment.md` for the sealed appendix, delivered as
+  a second paste after the reviewer's findings are written.
 - *Review:* all six passes. It changes the method every later review reads.
 - *Rollback:* revert the merge; seats stop posting the block.
 - *Number:* D8.
@@ -761,6 +777,26 @@ for Cursor (S7).
   condition above. Its second guard broke the third condition, because Kickoff's tests read
   `sync.yml`. Cursor restores both files in Sprint 1's fix round; the reasons and the timing are
   under "Sprint 1's build".
+- **Sprint 1's fix round (Beni, Mon 16 Nov 2026, "Approve as proposed").** The finding numbers
+  are Pass 1's on [elenchus#2](https://github.com/BeniCheni/elenchus/pull/2#issuecomment-6927342519).
+  *Fixed now, by Cursor on `sprint-1`:* 1 and 2 (extraction, CRLF, and a notice for a json fence
+  not read as a record); 3 (attribution by the top-level `pass` only, and an invalid block never
+  displaces a pass's valid record: it is reported and the record kept); 4 (a block whose pass
+  cannot be read is listed with its URL and reason, and counts against the first pass that had
+  no valid record when it was posted); 5 (`.elenchus.json` lists the accounts whose comments may
+  carry records, and `posted_by` must equal the comment's author); 7's status line only (once
+  every pass is recorded, status says whether the head equals the last `output_sha`; reported,
+  not failed); 9; 11 (the `gh` guard becomes an allowlist); 12's failing-case tests with a CLI test of the exit codes; and notes 16, 19 and
+  22's first two. The restore above rides in the same round. The Planner locked #1's
+  conversation the same afternoon. *Deferred:* 6, 7's chain rule, 8, 10, 13, 14, 17, 18, 20, 21,
+  22's third and 23 (a) to (d) to Sprint 3, and 15 to Sprint 4; each is written into that sprint above.
+  23 (e) needs no transcription: #320's "killed as unreproducible" items are Pass 1's verdicts on
+  its sealed appendix, not findings, so the fix round adds an offline test of a killed finding
+  instead. One detail the table left open: the proposal kept the P9 fixtures as a historical
+  capture at `8cb964c`, but finding 5's new field makes their `.elenchus.json` invalid, so the fix
+  round re-captures them at the new base, and Git keeps the old capture. After the fix round the
+  Planner re-reads each fix against this list, read-only, and Beni merges with a merge message
+  written by hand, without Kickoff links.
 
 D1 to D4 and D8 to D12 are not yet ruled.
 
