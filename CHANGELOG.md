@@ -8,13 +8,13 @@ releases.
 
 ## [Unreleased]
 
-### Fixed
-
-- Writing about the app outside its source no longer changes its stylesheet.
-
 ### Changed
 
 - The preview smoke's Fixtures landmark is now the week stepper's Previous button.
+
+### Fixed
+
+- Writing about the app outside its source no longer changes its stylesheet.
 
 ## [0.5.5] — 2026-11-14
 
