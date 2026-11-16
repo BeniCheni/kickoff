@@ -55,7 +55,7 @@ export interface ColdLoadLog {
     requestId: string
     type?: string
     request?: { url?: string }
-    redirectResponse?: { url?: string; status?: number }
+    redirectResponse?: { url?: string; status?: number; encodedDataLength?: number }
   }): void
   responseReceived(event: { requestId: string; type?: string }): void
   loadingFinished(event: { requestId: string; encodedDataLength?: number }): void

@@ -134,8 +134,9 @@ function resourceBucket(type) {
   return 'other'
 }
 
-// Chrome reuses one requestId across a redirect chain. The log keeps every hop, checks
-// each host, and counts encodedDataLength once, on the last hop.
+// Chrome reuses one requestId across a redirect chain. The log keeps every hop and checks
+// each host. loadingFinished's encodedDataLength is the last hop. Each earlier hop's own
+// bytes are redirectResponse.encodedDataLength on the next requestWillBeSent.
 export function createColdLoad() {
   const chains = new Map()
   const hops = (requestId) => {
@@ -148,7 +149,10 @@ export function createColdLoad() {
   }
   return {
     requestWillBeSent(event) {
-      hops(event.requestId).push({ url: event.request?.url ?? '', type: event.type || 'Other', encoded: 0 })
+      const chain = hops(event.requestId)
+      const redirectLength = event.redirectResponse?.encodedDataLength
+      if (chain.length && Number.isFinite(redirectLength)) chain[chain.length - 1].encoded = redirectLength
+      chain.push({ url: event.request?.url ?? '', type: event.type || 'Other', encoded: 0 })
     },
     responseReceived(event) {
       const hop = chains.get(event.requestId)?.at(-1)
@@ -172,14 +176,11 @@ export function createColdLoad() {
           }
           const host = hopHost(hop.url)
           if (host) seen.add(host)
-        }
-        const last = chain[chain.length - 1]
-        bytes[resourceBucket(last.type)] += last.encoded
-        const lastHost = hopHost(last.url)
-        if (lastHost) {
-          const row = hosts.get(lastHost) ?? { host: lastHost, bytes: 0, count: 0 }
-          row.bytes += last.encoded
-          hosts.set(lastHost, row)
+          bytes[resourceBucket(hop.type)] += hop.encoded
+          if (!host) continue
+          const row = hosts.get(host) ?? { host, bytes: 0, count: 0 }
+          row.bytes += hop.encoded
+          hosts.set(host, row)
         }
         for (const host of seen) {
           const row = hosts.get(host) ?? { host, bytes: 0, count: 0 }
