@@ -79,7 +79,7 @@
   --color-accent-lead-strong: var(--accent-lead-strong);
   --color-on-accent-lead: var(--on-accent-lead);
 
-  --font-display: 'Oswald', 'Oswald Fallback', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Oswald', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   /* Kickoff Mono is IBM Plex Mono, renamed. The OFL reserves "Plex". */
   --font-mono: 'Kickoff Mono', ui-monospace, 'SF Mono', monospace;

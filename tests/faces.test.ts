@@ -44,7 +44,6 @@ it('both apps declare the same faces, and every face swaps', () => {
   expect(left.map(({ display, ...face }) => face)).toEqual(right.map(({ display, ...face }) => face))
   expect(left.map(face => face.display)).toEqual(left.map(() => 'swap'))
   expect(left.map(face => `${face.family} ${face.style} ${face.weight} ${face.file}`)).toEqual([
-    'Oswald Fallback normal 500 700 local("Arial")',
     'Oswald normal 500 oswald/Oswald.woff2',
     'Oswald normal 600 oswald/Oswald.woff2',
     'Oswald normal 700 oswald/Oswald.woff2',
@@ -96,14 +95,13 @@ it('the single-file build inlines the four rendered faces and nothing else', () 
   expect(html).toContain('data:font/woff2;base64,')
   const inlined = facesOf(html.slice(html.indexOf('data-kickoff-faces')))
   expect(inlined.map(face => `${face.family} ${face.weight}`)).toEqual([
-    'Oswald Fallback 500 700',
     'Oswald 500 700',
     'Inter 400 600',
     'Kickoff Mono 500',
     'Kickoff Mono 600',
   ])
   expect(html.match(/url\("data:font\/woff2;base64,/g)).toHaveLength(4)
-  expect(html).toContain('size-adjust: 75.2%;')
+  expect(html).not.toMatch(/size-adjust|Oswald Fallback/)
   expect(html).not.toMatch(/Caslon|Chakra|Kickoff Display|Kickoff Mono Text/)
 })
 

@@ -11,21 +11,11 @@
  * Kickoff Mono Text, Kickoff Display, Libre Caslon Text or Chakra Petch yet,
  * so the browser does not fetch them.
  *
- * Oswald Fallback is Arial, narrowed to Oswald's advance at weight 600
- * (75.2%). It is what the page draws until Oswald arrives, and it is unused
- * once Oswald has loaded.
+ * A size-adjusted Arial was measured as a stand-in for Oswald and not shipped.
+ * Oswald has no U+2192, so the stand-in drew the table's "Form →" arrow, and
+ * the loaded page changed. The stack falls through to the system face for that
+ * glyph, which is what it did when Google served Oswald.
  */
-@font-face {
-  font-family: "Oswald Fallback";
-  font-style: normal;
-  font-weight: 500 700;
-  font-display: swap;
-  src: local("Arial");
-  size-adjust: 75.2%;
-  ascent-override: 158.6%;
-  descent-override: 38.4%;
-  line-gap-override: 0%;
-}
 @font-face {
   font-family: "Oswald";
   font-style: normal;
