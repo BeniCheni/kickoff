@@ -1,8 +1,9 @@
 # Self-hosted fonts
 
 The faces for the second edition, plus Inter, which the first edition and Moments
-already set. Nothing in the app asks for these files yet. The tool that subset them is fontTools 4.60.2 (`fonttools subset`), run from a
-temporary environment. `package.json` is unchanged.
+already set. Today's pages load four of the ten files: Oswald, Inter, and Kickoff Mono at
+500 and 600. Nothing renders the other six yet. The tool that subset them is fontTools
+4.60.2 (`fonttools subset`), run from a temporary environment. `package.json` is unchanged.
 
 Every file below is a WOFF2 subset to the union of the latin and latin-ext ranges in
 the Google stylesheet this site loaded before this change:
