@@ -118,10 +118,6 @@ export function sampleContrast(samples, image, scaleX = 1, scaleY = scaleX, show
   return [...worst.values()]
 }
 
-// The two hosts today's pages ask for besides their own. The plan's same-origin check
-// allows these and the page's host. An offline page has no host of its own.
-export const FONT_HOSTS = new Set(['fonts.googleapis.com', 'fonts.gstatic.com'])
-
 function hopHost(url) {
   try { return new URL(url).host } catch { return '' }
 }
@@ -197,12 +193,11 @@ export function createColdLoad() {
   }
 }
 
-/** The request URL when it leaves the allowed hosts, otherwise null. ws and wss count. */
+/** The request URL when it leaves the page's own host, otherwise null. ws and wss count. */
 export function unexpectedHost(requestUrl, pageUrl, { offline = false } = {}) {
   let request
   try { request = new URL(requestUrl) } catch { return null }
   if (request.protocol !== 'http:' && request.protocol !== 'https:' && request.protocol !== 'ws:' && request.protocol !== 'wss:') return null
-  if (FONT_HOSTS.has(request.host)) return null
   if (offline) return requestUrl
   let page
   try { page = new URL(pageUrl) } catch { return requestUrl }

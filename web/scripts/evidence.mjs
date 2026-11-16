@@ -17,9 +17,9 @@
 //
 // Contrast records today's ratios and fails nothing. --enforce fails below 4.5, or 3
 // for large text, and on text whose colour could not be read, after the receipt is written.
-// A cold load may ask for its own host and the two font hosts. Any other http(s)
-// request the page emits fails the run. That is the plan's same-origin check on
-// today's look. A WebSocket the page opens is not one of those requests.
+// A cold load may ask for its own host. A font host is foreign, online and on the
+// offline file. Any other http(s) request the page emits fails the run. A WebSocket
+// the page opens is not one of those requests.
 import assert from 'node:assert/strict'
 import { mkdirSync, statSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
@@ -27,7 +27,7 @@ import { pathToFileURL, fileURLToPath } from 'node:url'
 import puppeteer from 'puppeteer-core'
 import { decodePng } from '../../scripts/decode-png.mjs'
 import { chooseWeeks, matrixAnchor, readSnapshot } from '../../scripts/evidence-weeks.mjs'
-import { BITMAP_GLYPH, FONT_HOSTS, createColdLoad, isLargeText, paintedColor, sampleContrast, unexpectedHost, unreadColors } from '../../scripts/rendered-contrast.mjs'
+import { BITMAP_GLYPH, createColdLoad, isLargeText, paintedColor, sampleContrast, unexpectedHost, unreadColors } from '../../scripts/rendered-contrast.mjs'
 
 const root = fileURLToPath(new URL('../..', import.meta.url))
 const chrome = process.env.CHROME_PATH ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
@@ -43,10 +43,6 @@ export function launchBrowser() {
   return puppeteer.launch({ executablePath: chrome, headless: true })
 }
 
-function hostOf(url) {
-  try { return new URL(url).host } catch { return '' }
-}
-
 // puppeteer names console.warn 'warn'; 'warning' is the protocol's word for the same level.
 const CONSOLE_FAILS = new Set(['error', 'warn', 'warning', 'assert'])
 
@@ -54,22 +50,19 @@ export async function openPage(browser, url, theme, width, { waitUntil = 'networ
   const context = await browser.createBrowserContext()
   const page = await context.newPage()
   const errors = []
+  // Kept on the offline receipt. A font host used to be written here; it is foreign now.
   const network = []
   const escaped = []
   page.on('pageerror', (error) => errors.push(String(error)))
   page.on('console', (message) => {
     if (!CONSOLE_FAILS.has(message.type())) return
-    const text = message.text()
-    // Offline, the one expected complaint is a font request that could not leave.
-    if (offline && /Failed to load resource/.test(text) && FONT_HOSTS.has(hostOf(message.location()?.url ?? ''))) network.push(text)
-    else errors.push(text)
+    errors.push(message.text())
   })
   // The page target's own http(s) requests. A WebSocket, or a worker or service-worker
   // fetch, may not arrive here. A failed socket can still fail the console gate.
   page.on('request', (request) => {
     const target = unexpectedHost(request.url(), url, { offline })
     if (target) escaped.push(`${request.method()} ${target}`)
-    else if (offline && FONT_HOSTS.has(hostOf(request.url()))) network.push(`${request.method()} ${request.url()}`)
   })
   await page.setViewport({ width, height: 844, deviceScaleFactor: 1 })
   await page.evaluateOnNewDocument((chosen) => {
@@ -79,8 +72,8 @@ export async function openPage(browser, url, theme, width, { waitUntil = 'networ
   }, theme)
   if (offline) await page.setOfflineMode(true)
   const response = await page.goto(url, { waitUntil, timeout: 30_000 })
-  // An offline file's font CSS never finishes, so only that load stops waiting for it.
-  // Online, a capture never lands before the fonts, as in the clearing.
+  // The offline file carries its faces. The bound stays so a face that never
+  // arrives cannot hold the capture. Online, a capture waits for the fonts.
   if (offline) {
     await Promise.race([
       page.evaluate(() => document.fonts.ready),
@@ -369,7 +362,7 @@ export async function captureOffline(browser, out, result = { sizes: {}, cells: 
       // The font stylesheet is the one request the file is known to try. Anything else
       // means the file is not whole without the network. Checked first, so the failure
       // names the address rather than the console's complaint about it.
-      assert.deepEqual(escaped, [], `${id} asked for a host other than the font hosts`)
+      assert.deepEqual(escaped, [], `${id} asked for a host`)
       assert.deepEqual(errors, [], id)
       await shoot(page, path.join(out, `${id}.png`), 390)
       cells.push({ id, theme, tab, scrollWidth: state.scrollWidth, network })
