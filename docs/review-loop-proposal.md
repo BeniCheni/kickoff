@@ -799,6 +799,19 @@ for Cursor (S7).
   round re-captures them at the new base, and Git keeps the old capture. After the fix round the
   Planner re-reads each fix against this list, read-only, and Beni merges with a merge message
   written by hand, without Kickoff links.
+- **Sprint 2's builder is Cursor (Beni, Mon 16 Nov 2026),** replacing Codex in the roster (D7)
+  for Sprint 2's build and its fix round; the Planner picked `grok-4.7-high`, as for Sprint 1.
+  Codex now holds no seat in Sprints 1 and 2. Sprint 2 starts once Kickoff #330's Pass 2, an
+  overhaul Cursor seat, has run and no other overhaul Cursor seat waits. The roster's rule
+  stands: the builder is never switched mid-sprint, so if the tier change on 19 Nov removes
+  Grok 4.7 High, the seat stops and Beni re-routes. The brief is
+  [`review-loop-sprint-2-build-prompt.md`](review-loop-sprint-2-build-prompt.md). Three things the
+  plan left open are settled there, each marked as the Planner's: a seat's route reaches `prep`
+  as flags with a named confirmer, because schema v1.1 has no field for the next pass's route;
+  seat worktrees live under a root outside every checkout, and one counts as open while its pass
+  has no record; and T4's probes run in scratch repositories where `gh` cannot act as Beni, so a
+  forbidden command that gets through harms nothing. A second fixture pull request, #3 at
+  `0faf606`, gives `prep` a live pass to prepare, which #1, recorded to the end, cannot.
 
 D1 to D4 and D8 to D12 are not yet ruled.
 
