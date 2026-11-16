@@ -733,8 +733,26 @@ for Cursor (S7).
     record names the model that ran.
   - Codex is free of Sprint 1, so "this track's Codex builds wait" touches Sprints 2 and 3
     onward.
-- **Asked on 16 Nov, not yet ruled:** whether the tool's repository and the POC replay are one
-  repository or two.
+- **One repository, `BeniCheni/elenchus` (Beni, Mon 16 Nov 2026).** The tool and the POC
+  replay share it, under four conditions the Planner set out and Beni accepted with the name:
+  1. The tool owns `main`, the default branch, and the replay of Kickoff lives only on
+     `replay/*` branches. GitHub runs scheduled workflows only from the default branch, and
+     `pages.yml` fires only on a push to `main`, so the replay's sync and Pages cannot fire.
+     The replay's seed commit still deletes both files, as a second guard.
+  2. Every ruleset Sprint 3 creates targets `replay/main` only.
+  3. Kickoff's `ci.yml` runs `verify` on replay PRs unchanged: its `pull_request` trigger has
+     no branch filter.
+  4. The POC ends by deleting the `replay/*` branches.
+
+  The accepted cost: GitHub never deletes a pull request, so the replay PRs stay in the tool's
+  history, as drafts labelled `fixture`. Repository-wide settings are shared by the experiment
+  and the tool. This replaces the sprint plan's separate scratch repository, D6's "archive it
+  when the POC ends", and the "archive" rollback of Sprints 1 to 3; rollback is now reverting
+  on `elenchus`'s `main` and deleting the replay branches. The replay keeps Kickoff's original
+  SHAs on `replay/pr320` (checked 16 Nov: each range descends from the last, and its commits
+  are by one vendor each, the build's four by Codex, Pass 1's six by Claude, Pass 2's four and
+  the release step's five by Cursor), so the records' SHAs stay true. The Sprint 1 build
+  prompt is [`review-loop-sprint-1-build-prompt.md`](review-loop-sprint-1-build-prompt.md).
 
 D1 to D4 and D8 to D12 are not yet ruled.
 
@@ -750,3 +768,16 @@ D1 to D4 and D8 to D12 are not yet ruled.
   it, and a hand-run Cursor seat names its model at the start.
 - **`agent about` reports the subscription tier** ("Subscription Tier   Super"). A Cursor seat
   record can carry it, so a run on a lower tier is visible in the record.
+
+## Found while writing Sprint 1's prompt (16 Nov 2026)
+
+- **Schema v1.1 has no pass value for D3's re-read.** #320's last comment (`6884640961`) is the
+  PM seat's re-read at `dcb914e`, after the release step. It is neither Pass 3 (Beni's
+  adjudication) nor `exec`. The replay posts no record for it, and Sprint 3 must give the
+  re-read a place in the record before `loop authorize` can rely on D3.
+- **#320's executor called itself "Pass 3"** (comment `6884589607`). In schema v1.1 that work is
+  `exec`, and Pass 3 is Beni's adjudication. The replay transcribes it as `exec`.
+- **The sticky Cursor default caught a real seat.** On 16 Nov, Cursor stopped overhaul PR 1's
+  build when its model check read the CLI's stored Low default. That brief now starts Cursor
+  with `--model grok-4.7-xhigh` and requires `agent about` to confirm it, and Sprint 1's prompt
+  does the same at `grok-4.7-high`.
