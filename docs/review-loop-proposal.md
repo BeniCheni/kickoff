@@ -785,3 +785,40 @@ D1 to D4 and D8 to D12 are not yet ruled.
   build when its model check read the CLI's stored Low default. That brief now starts Cursor
   with `--model grok-4.7-xhigh` and requires `agent about` to confirm it, and Sprint 1's prompt
   does the same at `grok-4.7-high`.
+
+## Sprint 1's build (16 Nov 2026)
+
+Cursor (Grok 4.7 256K High, Super tier, CLI `2026.11.13-eacade1`) opened
+[elenchus#2](https://github.com/BeniCheni/elenchus/pull/2), `sprint-1` → `main` at `f02a644`
+(56 files, 20 tests), and the replay [elenchus#1](https://github.com/BeniCheni/elenchus/pull/1)
+at `dcb914e`, a draft labelled `fixture` on `replay/main` at `8cb964c`: the seed `b599caf` on
+`ddd9a37`, then a merge of Kickoff's `34d078b`. `main` is still Beni's `11d9e53`. The Planner
+checked the report with read calls before writing the fast-track Pass 1 brief,
+[review-loop-sprint-1-review-prompt.md](review-loop-sprint-1-review-prompt.md), whose sealed
+appendix carries the four items below to the reviewer.
+
+- **The replay's `verify` is red by construction.** Kickoff tests open
+  `.github/workflows/sync.yml` (`tests/diff.test.ts`, `tests/syncPrBody.test.ts`,
+  `tests/syncPublication.test.ts`, `tests/venueTz.test.ts`, `studio/test/secrets.test.ts`), and
+  the layout's first condition deletes it, so its third condition, `verify` running unchanged,
+  runs red at every head of #1. Sprint 1 reads no CI, but Sprint 3's ruleset on `replay/main`
+  and its gate do. **Needs Beni's ruling before Sprint 3.** The Planner recommends a new commit
+  on `replay/main` that restores both files byte for byte, with no force-push: the deletion was
+  a second guard, and three others hold without it. Schedules run only from the default branch,
+  whose tree has no Kickoff workflow; `pages.yml` fires only on a push to `main`; and `sync.yml`'s
+  own rule stops a real run dispatched on any branch but `main` with an error. Elenchus
+  also has "Allow GitHub Actions to create and approve pull requests" off. The alternative keeps
+  the deletion and leaves `verify` out of Sprint 3's required checks, which makes the replay
+  unlike Kickoff at the one check the gate exists to read.
+- **Kickoff's timeline gained two cross-references.** Sprint 1's brief titled the replay "Fixture:
+  replay of BeniCheni/kickoff#320", and #2's body links #320, so GitHub added two events to
+  #320's public timeline (18:34Z and 18:45Z). That is not a write to Kickoff's content, but it is
+  a visible effect on a pull request the brief meant to leave untouched. Later briefs name a
+  Kickoff pull request in plain text ("Kickoff PR 320"); the two events stay, because editing the
+  title would be a write and would not remove them.
+- **GitHub kept a stale pull-request object.** After `replay/main` moved, `pulls/1` still gives
+  `base.sha` `b599caf`, and #1's commit list still shows `34d078b` and `f7775c9`, both reachable
+  from the base. `f02a644` reads the base branch tip instead. Sprint 3's gate must never trust
+  `base.sha` from the pull-request object.
+- **The live T3 left its trace.** The replay's Pass 2 comment shows two edits, at 18:41:28Z and
+  18:41:51Z, so the delete-and-restore can be checked without repeating it.
