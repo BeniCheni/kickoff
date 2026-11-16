@@ -457,6 +457,8 @@ Cursor's hands this track seats no Cursor.
 - *Review:* fast-track, Pass 1 then Beni. Nothing here can merge anything that matters; a miss
   costs a sprint, and Sprints 3 and 4 review the same code at full depth before production.
 - *Rollback:* archive the scratch repository. Kickoff is untouched.
+- *Done (Mon 16 Nov 2026):* merged by Beni as elenchus `84764ff`, a squash of #2; see "Sprint 1's
+  build". The rulings since then changed its home (D5, D6, one repository) and its rollback.
 
 **Sprint 2 — preparing a seat (non-production).**
 - *Scope:* `loop prep` makes a fresh worktree at the expected SHA with its own `npm ci`, never a
@@ -907,3 +909,8 @@ appendix carries the four items below to the reviewer.
   as the fix brief asked, every comment by an account outside `record_authors` gets a NOTICE,
   json or not, which on a Kickoff pull request with bot comments is noise; limit it to comments
   that hold a json fence.
+- **Merged (Beni, 21:06Z).** Beni squash-merged #2 with the Planner's message, guarded by
+  `--match-head-commit 970e2cb`. `main` is `84764ff`, one parent `11d9e53`, and its tree
+  (`47deaa0`) is `970e2cb`'s exactly. The message carries no Kickoff link, and Kickoff's #320
+  gained no third cross-reference. `test` on the push to `main` is green (run `43956628420`).
+  #1 stays open and locked as the fixture; `sprint-1` is left in place.
