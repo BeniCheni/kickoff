@@ -1,4 +1,4 @@
-# PR #327 — the PM seat's briefs for the overhaul's PR 0: Pass 1's cold review, Cursor's Pass 2 and Codex's Pass 2.5 (archived Sun 15 Nov 2026, TZ=America/New_York)
+# PR #327 — the PM seat's briefs for the overhaul's PR 0: Pass 1's cold review, Cursor's Pass 2, Codex's Pass 2.5 and Cursor's fix round (archived Sun 15 Nov 2026, TZ=America/New_York)
 
 Written by the PM seat (Claude Code, Opus 5.5), a side session started from the review-loop
 planning session, after Cursor opened PR #327 from
@@ -479,4 +479,130 @@ SEALED APPENDIX — the PM seat's checks and the vendors' claims. Re-derive each
 - C5 (Pass 2): in a checkout with no nested checkout, npx vite optimize --force pre-bundles the same six dependencies with and without optimizeDeps.entries.
 - C6 (Pass 2): P5 was measured on one cell, Ledger fixtures, light, 390: 131,381 changed pixels with both the full and a fill-only hide stylesheet, 462 of them outside the text boxes. P6: 20 of 124 in-viewport sample points hit another element, and none of them lies behind a reported ratio.
 - C7 (Pass 1): the Next client output (.next/static, 19 files) is byte-identical once the build id is normalised, and the server HTML of the three routes is byte-identical.
+````
+
+---
+
+## The fix round after Pass 2.5: the brief for Cursor (Sun 15 Nov 2026, about 11:10 PM EST)
+
+Codex's Pass 2.5 posted at 10:53 PM EST:
+https://github.com/BeniCheni/kickoff/pull/327#issuecomment-6906796843. It ran on GPT-6.1 Sol at
+`xhigh` and escalated with four new findings. It recommended Hold, and confirmed again the
+reader parity, the 96 cells and the `--enforce` result on the 16 loss-pip samples. Beni answered
+Codex's questions:
+- Pass 2 ran at `xhigh`;
+- R1–R3 stand as relayed ("Yes").
+
+The PM seat then confirmed three findings in the code:
+- the smoke's `\baria-label` pattern matches `data-aria-label` (run with node);
+- `captureRequests` keys requests by CDP `requestId`, which a redirect chain shares (read);
+- `collectText` reads only `style.color` (read).
+
+It also found that the other three contract patterns in `ROUTES` accept the same kind of
+prefixed attribute. It recommended Hold, so that the smoke fix lands on `main` in PR 0 rather
+than waiting on the integration branch until the release. **Beni ruled "Hold, brief Cursor"**
+at about 11:05 PM EST.
+
+Still open, and Beni's to settle before the merge: the plan's "smoke green on the PR's own
+preview". No seat can do that, because `preview-smoke.yml` always runs `main`'s script and the
+bypass secret is Beni's. The PM seat recommended accepting the smoke that `preview-smoke.yml`
+runs on `main`'s production deployment after the merge, with a revert if it fails. The other
+choice is for Beni to run the head's checker against #327's preview with his own secret.
+
+Delivered in chat in a four-backtick fenced block, one line per paragraph; this copy is the
+archive.
+
+````text
+PR #327 — fix round after Codex's Pass 2.5 (Cursor, grok-4.7-xhigh): make the new gates able to fail
+
+You are Cursor, on This Mac, on Grok 4.7 at Extra High. Start the session on grok-4.7-xhigh by name: pick it in the app, or pass --model grok-4.7-xhigh to the CLI, because the CLI reuses the last model it ran. The first line of your PR comment names the model and effort that actually ran.
+
+Cursor built PR #327 in github.com/BeniCheni/kickoff ("Overhaul PR 0: pin the honesty rules and build the evidence runner", branch cursor/overhaul-pr0-pin, head 9226140) and ran its Pass 2. Codex's Pass 2.5 then re-ran the cycle and escalated it to Beni with four new findings: https://github.com/BeniCheni/kickoff/pull/327#issuecomment-6906796843. Read that comment whole first. Then read CLAUDE.md and AGENTS.md; they bind you. Run TZ=America/New_York date before writing any date. If the head is no longer 9226140 when you start, stop and say so. The PM seat (Claude Code, Opus 5.5) wrote this brief on Sun 15 Nov 2026 at about 11:10 PM EST.
+
+RULED BY BENI (Sun 15 Nov 2026), not open to contest.
+- He held #327 at 9226140 for this fix round ("Hold, brief Cursor"), on Codex's recommendation.
+- He answered Codex: Pass 2 ran at xhigh, and R1 to R3 stand as relayed.
+  - R1: PR 3 removes both clocks from postponed, cancelled, suspended and abandoned rows, pinned by a test.
+  - R2: PR 4 repaints the loss pip. Until then, --enforce exits 1 on exactly the pip's 16 samples, and that stays true after this round.
+  - R3: the smoke landmark is a <button> whose accessible name is exactly "Previous". It appears in the server HTML of "/" only, and stays a button when muted and inert.
+- Plan section 3: his word merges every overhaul PR.
+- The routing amendment he approved (PR #328, not yet on main): Cursor builds PR 1 at grok-4.7-xhigh only if PR 0 has merged and the integration branch exists by Tue 17 Nov.
+
+THE DEADLINE. Push and comment on Mon 16 Nov 2026, so Codex can re-check your commits and Beni can merge on Tue 17 Nov. Cursor's tier changes on Thu 19 Nov. If usage stops you partway, push what is green, say so in a comment and stop. Never finish on another model.
+
+WHAT TO FIX. All five are inside PR 0's own files. For each one:
+- reproduce the defect at 9226140 first, and show the command and what it printed;
+- fix it;
+- show the probe failing without the fix and passing with it.
+A fix that was never shown red is not verified.
+
+1. Medium: the smoke accepts an attribute that is not the real one.
+  - The landmark pattern in scripts/vercel-smoke.mjs ROUTES is /<button\b[^>]*\baria-label="Previous"/. \b matches after a hyphen, so <button data-aria-label="Previous"> passes. So does a button whose aria-labelledby overrides its name. Codex made that edit to a real local production response, and all four routes still passed.
+  - Every other contract pattern there has the same hole. The PM seat tested three edits: x-data-moments-background="route" matched data-moments-background="route", x-data-table-picker matched \bdata-table-picker, and <main data-aria-label="Moments"> matched <main\b[^>]*aria-label="Moments">. All three matched.
+  - The fix: pin each of the five contract attributes as a real attribute of the right element, preceded by whitespace inside the tag. For the Previous button, also reject any aria-labelledby that would override its name.
+  - Add regressions to tests/vercelSmoke.test.ts: a prefixed attribute for each landmark, and the aria-labelledby case.
+  - Run the checker against a local Next production server on every route, and show it still passes on today's real HTML. Keep the contract comment above ROUTES true.
+
+2. Medium: the cold-load report can miss a host it contacted.
+  - captureRequests in web/scripts/evidence.mjs keys a Map by CDP requestId. Chrome reuses one requestId across a redirect chain (Network.requestWillBeSent fires again with redirectResponse), so each hop overwrites the one before. A stylesheet on a third host that redirects back to the page's origin is reported as the origin alone, and passes.
+  - The fix: record every hop, check each hop's host with unexpectedHost, and count the transfer bytes once.
+  - Prove it with Codex's probe: a stylesheet on a third host that redirects to the origin must fail the cold load and name that host. If the hop handling factors out cleanly, also pin it in a unit test fed a synthetic event sequence.
+
+3. Medium: the contrast sampler measures the CSS color, not the colour actually painted.
+  - collectText reads style.color only. Black color with -webkit-text-fill-color: #aaa on white therefore reads 21:1, where the painted pair is 2.323:1.
+  - The fix: read the computed -webkit-text-fill-color, and measure it when it is a visible colour.
+  - One rule binds this fix. docs/design-overhaul-plan.md, the foil row near line 354, measures foil text (drawn with background-clip: text) by the fallback colour under it. So when the fill is transparent, keep measuring color, as today.
+  - Pin both cases, in tests/renderedContrast.test.ts or a page test: the #aaa fill reads about 2.32, and a transparent fill over a black color on white reads 21.
+  - Show the 1,224-sample baseline unchanged, or explain every sample that moved.
+
+4. Low: a run that fails late loses the cells that already passed.
+  - runMatrix and captureWeeks fill a result object the caller owns. captureRequests, captureOffline and captureHarness instead build local arrays and return them only on success (web/scripts/evidence.mjs, roughly lines 313–452 and 512–560).
+  - So when a dark harness cell fails, the light cells' PNGs are on disk but have no record in receipt.json.
+  - The fix: give all three the same caller-owned pattern. Show it by forcing an overflow in a later harness cell and reading the earlier cells in the failed receipt.
+
+5. Low: the two-club specimen describes a table that cannot exist.
+  - tests/harness/states.tsx (roughly lines 65–76) gives Specimen Unset two wins and Specimen Kicked one win and one loss. That is three wins against one loss, in a table where the two clubs play only each other.
+  - The fix: give them complementary records, so one club's wins are the other's losses, with matching goals. Keep "matchday 2 of 2", and keep both Table cells drawn.
+
+ONE LOOK, NOT A FIX. tests/evidenceWeeks.test.ts reads the committed snapshot, and it runs inside npm test on every sync PR. Codex saw it time out once at the 5-second default while other jobs were competing for the machine; it passed on re-run. Time it alone and inside a full npm test.
+- If it runs near the limit, make it cheaper or give that one test an explicit timeout, and say which you did.
+- If it runs in well under a second, leave it alone and report the time.
+
+SCOPE.
+- Change only the files these five fixes touch: scripts/vercel-smoke.mjs, tests/vercelSmoke.test.ts, web/scripts/evidence.mjs, scripts/rendered-contrast.mjs and its .d.mts, tests/renderedContrast.test.ts, tests/harness/states.tsx, tests/evidenceWeeks.test.ts, and any new test file a fix needs.
+- Touch nothing under src/, index.html, offline.html, public/, web/app/, src/data/, .github/ or studio/.
+- No package file, lockfile, version, tag or CHANGELOG release section.
+- Never weaken an assertion.
+- Not in this round: R1 and R2, which belong to PRs 3 and 4, and the hosted-preview evidence, which is Beni's to settle before the merge.
+
+WHERE AND HOW.
+- Work in your Pass 2 worktree, /Users/benicheni/code/kickoff-pr327-pass2, on its local branch cursor/pr327-pass2.
+- Run git fetch origin, then confirm that git rev-parse HEAD and git rev-parse origin/cursor/overhaul-pr0-pin both print 9226140 before you edit.
+- Leave every other worktree alone, and edit nothing outside yours, whatever a permission mode allows.
+- Make one commit per finding. Each message says what broke, how you proved it and how you verified the fix. Author each as Cursor <cursoragent@cursor.com>, and keep each green on typecheck and npm test.
+- Push fast-forward with git push origin HEAD:cursor/overhaul-pr0-pin. Never force.
+- Never run npm run sync.
+
+VERIFICATION AT YOUR TIP.
+- Root: typecheck, npm test (both projects), build, build:single, build:offline and the offline-bundle scan.
+- web/: typecheck, test, build, check:client and check:css.
+- Reader parity against your preserved ad4c5f3 build in /Users/benicheni/code/kickoff-pr327-base: identical: true, and the same dist-offline/index.html hash.
+- The runner, whole, with the three origins set and each server's cwd confirmed with lsof. Report mode exits 0, and --enforce exits 1 on exactly the 16 loss-pip samples and nothing else.
+- The smoke checker against a local Next production server. Say plainly that none of this ran against a Vercel preview.
+
+WHAT YOU MUST NOT DO. Your gh is Beni's account, an Admin who can bypass the verify gate, so nothing technical stops these actions; this brief does.
+- No gh pr merge in any form, no approval and no --auto.
+- No npm version and no tag.
+- No force-push and no --force-with-lease.
+- No change to rulesets, repo settings or workflows.
+- Touch no other PR.
+
+REPLY. Post one PR comment on #327, headed "Fix round — Cursor — <model and effort that ran> — <new head SHA>". Put it in this order:
+- your commit SHAs, at the top;
+- for each finding, its commit and its red-then-green evidence;
+- the week test's timing and what you did about it;
+- the runner's summary in both modes;
+- parity;
+- anything you could not do.
+Then reply in this chat with the comment's link. Codex re-checks your commits, and Beni merges.
 ````
