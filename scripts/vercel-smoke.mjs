@@ -51,10 +51,13 @@ function hasLeak(text, bypass) {
 }
 
 // Contract every later brief carries. A route fails without these, in the server HTML.
+// The scan trusts React's escaping, so a PR that adds raw HTML to a smoke route
+// hardens the scan first.
 // Each name is a real attribute of its element: whitespace inside the tag precedes it,
 // so a prefixed stand-in (data-aria-label, x-data-moments-background, x-data-table-picker) does not count.
-// The tag name is the whole name, so button-probe is not a button. Attribute names are
-// read case-insensitively, and a quoted > stays inside its value.
+// A tag name ends at whitespace, / or >, so button-probe and button.x are not buttons.
+// template and noscript are skipped whole, with script, style, textarea and title.
+// Attribute names are read case-insensitively, and a quoted > stays inside its value.
 //   nav aria-label="Primary"         — every tab (checked below, not in ROUTES)
 //   data-moments-background="route"  — Fixtures and Table
 //   button aria-label="Previous"     — Fixtures only: the week stepper's previous chevron.
@@ -77,7 +80,7 @@ function isAsciiLetter(code) {
   return (code >= 65 && code <= 90) || (code >= 97 && code <= 122)
 }
 
-const RAW_TEXT = new Set(['script', 'style', 'textarea', 'title'])
+const RAW_TEXT = new Set(['script', 'style', 'textarea', 'title', 'template', 'noscript'])
 
 // One pass over start tags. The tag name and attribute names are lowercased.
 // Quoted values are taken whole, so a > inside quotes cannot end the tag.
@@ -103,6 +106,8 @@ function startTags(html) {
       i += 1
     }
     const name = html.slice(nameStart, i).toLowerCase()
+    // <button.x …> is not a button. The name has to end at whitespace, / or >.
+    if (i >= html.length || !(isHtmlSpace(html[i]) || html[i] === '/' || html[i] === '>')) continue
     const attrs = new Map()
     let closed = false
     while (i < html.length) {

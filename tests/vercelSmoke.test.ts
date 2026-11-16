@@ -192,6 +192,18 @@ describe('trusted-main Vercel smoke', () => {
   ])('rejects Previous when the control is %s', async (_name, body) => {
     await expect(smoke(base, { fetchImpl: server({ index: 0, body }) })).rejects.toThrow('landmark')
   })
+  it.each([
+    ['a button.x tag', fixturesPage('<button.x aria-label="Previous">‹</button.x>')],
+    ['a button inside template', fixturesPage('<template><button aria-label="Previous">‹</button></template>')],
+    ['a button inside noscript', fixturesPage('<noscript><button aria-label="Previous">‹</button></noscript>')],
+  ])('rejects Previous when it is only %s', async (_name, body) => {
+    await expect(smoke(base, { fetchImpl: server({ index: 0, body }) })).rejects.toThrow('landmark')
+  })
+  it('keeps the page Previous when a template holds another', async () => {
+    const body = fixturesPage('<template><button aria-label="Previous">‹</button></template><button aria-label="Previous">‹</button>')
+    const result = await smoke(base, { fetchImpl: server({ index: 0, body }) })
+    expect(result.checks).toContain('/')
+  })
   it('keeps Previous when an earlier attribute quotes a >', async () => {
     const body = fixturesPage('<button title="a>b" aria-label="Previous">‹</button>')
     const result = await smoke(base, { fetchImpl: server({ index: 0, body }) })
