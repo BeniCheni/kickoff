@@ -1,12 +1,13 @@
 import { createRequire } from 'node:module'
-import { readFileSync } from 'node:fs'
+import { existsSync, mkdtempSync, readFileSync, rmSync, statSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import path from 'node:path'
 import { expect, it } from 'vitest'
-import { inlineBundledFaces } from '../scripts/inline-faces.ts'
+import { inlineBundledFaces, inlineFaceCss } from '../scripts/inline-faces.ts'
 
-const { copyFaces } = createRequire(import.meta.url)('../web/scripts/copy-faces.mjs') as { copyFaces: () => void }
-
-function nextFacesCss(css: string) {
-  return css.replaceAll('url("./fonts/', 'url("/fonts/')
+const { copyFaces, nextFacesCss } = createRequire(import.meta.url)('../web/scripts/copy-faces.mjs') as {
+  copyFaces: (targetDir?: string) => void
+  nextFacesCss: (css: string) => string
 }
 
 const pages = ['index.html', 'offline.html', 'web/app/layout.tsx', 'tests/harness/states.html', 'tests/harness/moments.html']
@@ -36,12 +37,9 @@ function facesOf(css: string): Face[] {
 }
 
 const vite = readFileSync('public/faces.css', 'utf8')
-const next = nextFacesCss(vite)
 
-it('both apps declare the same faces, and every face swaps', () => {
+it('the stylesheet names the fifteen faces, and every face swaps', () => {
   const left = facesOf(vite)
-  const right = facesOf(next)
-  expect(left.map(({ display, ...face }) => face)).toEqual(right.map(({ display, ...face }) => face))
   expect(left.map(face => face.display)).toEqual(left.map(() => 'swap'))
   expect(left.map(face => `${face.family} ${face.style} ${face.weight} ${face.file}`)).toEqual([
     'Oswald normal 500 oswald/Oswald.woff2',
@@ -77,7 +75,7 @@ it('preloads the two first-paint faces, and the href equals the src', () => {
     '/fonts/kickoff-mono/KickoffMono-Medium.woff2',
   ])
   for (const href of vitePreloads) expect(vite).toContain(`url("${href}")`)
-  for (const href of nextPreloads) expect(next).toContain(`url("${href}")`)
+  for (const href of nextPreloads) expect(nextFacesCss(vite)).toContain(`url("${href}")`)
   expect(readFileSync('offline.html', 'utf8')).toContain(readFileSync('index.html', 'utf8').match(/<link rel="preload"[\s\S]*?<link rel="stylesheet" href="\.\/faces.css" \/>/)?.[0])
 })
 
@@ -105,10 +103,37 @@ it('the single-file build inlines the four rendered faces and nothing else', () 
   expect(html).not.toMatch(/Caslon|Chakra|Kickoff Display|Kickoff Mono Text/)
 })
 
-it('the Next copy is the same bytes with root urls', () => {
-  copyFaces()
-  expect(readFileSync('web/public/faces.css', 'utf8')).toBe(next)
-  for (const file of ['oswald/Oswald.woff2', 'inter/Inter.woff2', 'kickoff-mono/KickoffMono-Medium.woff2']) {
-    expect(readFileSync(`web/public/fonts/${file}`).equals(readFileSync(`public/fonts/${file}`))).toBe(true)
+it('refuses to inline a local() face', () => {
+  const css = '@font-face { font-family: "Oswald Fallback"; font-style: normal; font-weight: 500; font-display: swap; src: local("Arial"); }'
+  expect(() => inlineFaceCss(css, () => Buffer.from(''))).toThrow(/unicode-range/)
+})
+
+it('the Next copy is the same bytes with root urls, and the suite does not rewrite the checkout', () => {
+  const sentinel = 'web/public/fonts/oswald/Oswald.woff2'
+  const before = existsSync(sentinel) ? statSync(sentinel) : null
+  const dir = mkdtempSync(path.join(tmpdir(), 'kickoff-faces-'))
+  try {
+    copyFaces(dir)
+    const written = readFileSync(path.join(dir, 'faces.css'), 'utf8')
+    const sourceFiles = [...vite.matchAll(/url\("\.\/fonts\/([^"]+)"\)/g)].map(match => match[1])
+    const writtenFiles = [...written.matchAll(/url\("\/fonts\/([^"]+)"\)/g)].map(match => match[1])
+    expect(writtenFiles).toEqual(sourceFiles)
+    expect(written).not.toMatch(/url\("\.\//)
+    expect(written).toBe(nextFacesCss(vite))
+    expect(facesOf(written).map(face => `${face.family} ${face.style} ${face.weight} ${face.file}`)).toEqual(
+      facesOf(vite).map(face => `${face.family} ${face.style} ${face.weight} ${face.file}`),
+    )
+    for (const file of ['oswald/Oswald.woff2', 'inter/Inter.woff2', 'kickoff-mono/KickoffMono-Medium.woff2']) {
+      expect(readFileSync(path.join(dir, 'fonts', file)).equals(readFileSync(`public/fonts/${file}`))).toBe(true)
+    }
+  } finally {
+    rmSync(dir, { recursive: true, force: true })
+  }
+  if (before) {
+    const after = statSync(sentinel)
+    expect(after.ino).toBe(before.ino)
+    expect(after.mtimeMs).toBe(before.mtimeMs)
+  } else {
+    expect(existsSync(sentinel)).toBe(false)
   }
 })

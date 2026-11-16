@@ -22,7 +22,6 @@ interface Face {
   style: string
   weight: string
   src: string
-  adjustments: string[]
 }
 
 function faces(css: string): Face[] {
@@ -35,12 +34,7 @@ function faces(css: string): Face[] {
     const declared = value('src') ?? ''
     const src = declared.match(/url\("([^"]+)"\)/)?.[1]
     if (!family || !style || !weight || !declared) throw new Error('A face is missing family, style, weight or src')
-    const adjustments = ['size-adjust', 'ascent-override', 'descent-override', 'line-gap-override']
-      .flatMap(name => {
-        const found = value(name)
-        return found ? [`  ${name}: ${found};`] : []
-      })
-    return { family, style, weight, src: src ?? declared, adjustments }
+    return { family, style, weight, src: src ?? declared }
   })
 }
 
@@ -57,10 +51,16 @@ function rule(face: Face, weights: number[], data: string): string {
   ].join('\n')
 }
 
-export function inlineBundledFaces(html: string): string {
-  if (html.includes('data-kickoff-faces')) return html
-  if (!html.includes('href="./faces.css"')) throw new Error('The bundled page does not link ./faces.css')
-  const parsed = faces(readFileSync(path.join(root, 'public/faces.css'), 'utf8'))
+// The bytes are read by the caller so a test can refuse a local() face without the
+// files. A local() fallback is not copied: the one that was measured drew U+2192,
+// which Oswald does not contain, and changed the loaded page (e34e032). A later
+// fallback has to carry its unicode-range into this function before it can ship.
+export function inlineFaceCss(css: string, read: (src: string) => Buffer): string {
+  const parsed = faces(css)
+  const local = parsed.filter(face => face.src.startsWith('local('))
+  if (local.length) {
+    throw new Error(`A local() face is not inlined (${local.map(face => face.family).join(', ')}). Carry its unicode-range into the offline file before shipping one.`)
+  }
   const rendered = new Set(RENDERED)
   const bySrc = new Map<string, { face: Face, weights: number[] }>()
   for (const face of parsed) {
@@ -74,23 +74,17 @@ export function inlineBundledFaces(html: string): string {
   for (const src of RENDERED) {
     if (!bySrc.has(src)) throw new Error(`${src} is not declared`)
   }
-  const local = parsed
-    .filter(face => face.src.startsWith('local('))
-    .map(face => [
-      '@font-face {',
-      `  font-family: ${face.family};`,
-      `  font-style: ${face.style};`,
-      `  font-weight: ${face.weight};`,
-      '  font-display: swap;',
-      `  src: ${face.src};`,
-      ...face.adjustments,
-      '}',
-    ].join('\n'))
-  const blocks = [...local, ...[...bySrc.entries()].map(([src, entry]) => {
-    const bytes = readFileSync(path.join(root, 'public', src.slice(2)))
-    return rule(entry.face, entry.weights, `data:font/woff2;base64,${bytes.toString('base64')}`)
-  })]
-  const style = `<style data-kickoff-faces="">\n${blocks.join('\n')}\n</style>`
+  return [...bySrc.entries()].map(([src, entry]) => {
+    return rule(entry.face, entry.weights, `data:font/woff2;base64,${read(src).toString('base64')}`)
+  }).join('\n')
+}
+
+export function inlineBundledFaces(html: string): string {
+  if (html.includes('data-kickoff-faces')) return html
+  if (!html.includes('href="./faces.css"')) throw new Error('The bundled page does not link ./faces.css')
+  const css = readFileSync(path.join(root, 'public/faces.css'), 'utf8')
+  const blocks = inlineFaceCss(css, src => readFileSync(path.join(root, 'public', src.slice(2))))
+  const style = `<style data-kickoff-faces="">\n${blocks}\n</style>`
   return html
     .replace(/^[ \t]*<link rel="preload" href="\.\/fonts\/[^"]+" as="font"[^>]*>\n?/gm, '')
     .replace(/^[ \t]*<link rel="stylesheet" href="\.\/faces\.css" \/>\n?/m, `${style}\n`)

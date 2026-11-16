@@ -12,11 +12,14 @@ export function nextFacesCss(css) {
   return css.replaceAll('url("./fonts/', 'url("/fonts/')
 }
 
-export function copyFaces() {
-  const targetFonts = path.join(webRoot, 'public/fonts')
+// `targetDir` defaults to the Next app's public directory. Tests pass a temporary
+// directory: the root suite must not delete web/public/fonts out from under a server
+// that is running from this checkout.
+export function copyFaces(targetDir = path.join(webRoot, 'public')) {
+  const targetFonts = path.join(targetDir, 'fonts')
   rmSync(targetFonts, { recursive: true, force: true })
-  mkdirSync(path.join(webRoot, 'public'), { recursive: true })
+  mkdirSync(targetDir, { recursive: true })
   cpSync(path.join(repoRoot, 'public/fonts'), targetFonts, { recursive: true })
   const faces = readFileSync(path.join(repoRoot, 'public/faces.css'), 'utf8')
-  writeFileSync(path.join(webRoot, 'public/faces.css'), nextFacesCss(faces))
+  writeFileSync(path.join(targetDir, 'faces.css'), nextFacesCss(faces))
 }
