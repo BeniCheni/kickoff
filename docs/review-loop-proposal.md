@@ -889,3 +889,21 @@ appendix carries the four items below to the reviewer.
 - **Two items outside the code.** #1 is a public pull request and the tool reads any account's
   comment as a record (finding 5), so #1's conversation should be locked. And #2's merge message
   is written by hand without Kickoff links, or a third cross-reference lands on Kickoff's #320.
+- **The fix round, and the Planner's re-read of it (Mon 16 Nov 2026).** Cursor (Grok 4.7 256K
+  High, Super) moved `sprint-1` to `970e2cb`, with eleven commits by Cursor on `f02a644` and no
+  force-push, and `replay/main` to `b216e81`, one commit whose tree differs from Kickoff's
+  `34d078b` only in `.elenchus.json`. With the files restored, `verify` and Studio on #1 are
+  green (runs `43950246148` and `43950246712`), so Sprint 3's ruleset can require `verify`. The
+  Planner's re-read, read-only, in a fresh clone: a clean `npm ci`, the typecheck and 59 tests in
+  7 files pass; the packed tarball installed alone prints a live `status` on #1 byte-identical to
+  Cursor's receipt (sha256 `492045c1…`) and to the committed fixture, now with "head equals last
+  output_sha dcb914e"; live `check` exits 0 with the four unverified lines. Each ruled fix is in
+  the code with a test named for it. `ed61530`, whose title reads like finding 6, only changes a
+  test, which pins that the later valid record stands. Comments are sorted by creation before
+  anything is counted, so finding 4's "when it was posted" holds. Only GitHub's "Not Found" and
+  "No common ancestor" become `FAIL … cannot resolve`, and a network failure still exits 2,
+  which a timeout during the re-read showed live. Seven deletions, repeated by the Planner, all
+  fail a test, three of them Pass 1's survivors. Nothing in Kickoff moved. One note for Sprint 3:
+  as the fix brief asked, every comment by an account outside `record_authors` gets a NOTICE,
+  json or not, which on a Kickoff pull request with bot comments is noise; limit it to comments
+  that hold a json fence.
