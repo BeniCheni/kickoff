@@ -17,6 +17,8 @@
 //
 // Contrast records today's ratios and fails nothing. --enforce fails below 4.5, or 3
 // for large text, and on text whose colour could not be read, after the receipt is written.
+// A cold load may ask for its own host and the two font hosts. Any other http(s) or
+// ws(s) host fails the run. That is the plan's same-origin check on today's look.
 import assert from 'node:assert/strict'
 import { mkdirSync, statSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
@@ -24,7 +26,7 @@ import { pathToFileURL, fileURLToPath } from 'node:url'
 import puppeteer from 'puppeteer-core'
 import { decodePng } from '../../scripts/decode-png.mjs'
 import { chooseWeeks, matrixAnchor, readSnapshot } from '../../scripts/evidence-weeks.mjs'
-import { isLargeText, sampleContrast, unreadColors } from '../../scripts/rendered-contrast.mjs'
+import { BITMAP_GLYPH, FONT_HOSTS, isLargeText, sampleContrast, unexpectedHost, unreadColors } from '../../scripts/rendered-contrast.mjs'
 
 const root = fileURLToPath(new URL('../..', import.meta.url))
 const chrome = process.env.CHROME_PATH ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
@@ -39,10 +41,6 @@ export function originsFromEnv() {
 export function launchBrowser() {
   return puppeteer.launch({ executablePath: chrome, headless: true })
 }
-
-// The hosts today's pages ask for besides their own. An offline page may try them and
-// fail; a request to any other host has left the file.
-const FONT_HOSTS = new Set(['fonts.googleapis.com', 'fonts.gstatic.com'])
 
 function hostOf(url) {
   try { return new URL(url).host } catch { return '' }
@@ -65,11 +63,11 @@ export async function openPage(browser, url, theme, width, { waitUntil = 'networ
     if (offline && /Failed to load resource/.test(text) && FONT_HOSTS.has(hostOf(message.location()?.url ?? ''))) network.push(text)
     else errors.push(text)
   })
+  // The page target's own requests. A worker or service-worker fetch may not arrive here.
   page.on('request', (request) => {
-    if (!offline || !/^https?:/.test(request.url())) return
-    const line = `${request.method()} ${request.url()}`
-    if (FONT_HOSTS.has(hostOf(request.url()))) network.push(line)
-    else escaped.push(line)
+    const target = unexpectedHost(request.url(), url, { offline })
+    if (target) escaped.push(`${request.method()} ${target}`)
+    else if (offline && FONT_HOSTS.has(hostOf(request.url()))) network.push(`${request.method()} ${request.url()}`)
   })
   await page.setViewport({ width, height: 844, deviceScaleFactor: 1 })
   await page.evaluateOnNewDocument((chosen) => {
@@ -88,6 +86,11 @@ export async function openPage(browser, url, theme, width, { waitUntil = 'networ
     ])
   } else await page.evaluate(() => document.fonts.ready)
   await page.waitForFunction((chosen) => document.documentElement.dataset.theme === chosen, { timeout: 15_000 }, theme)
+  if (escaped.length) {
+    await context.close()
+    const scope = offline ? 'the two font hosts' : 'this page and the two font hosts'
+    throw new Error(`asked for a host other than ${scope}: ${escaped.join(' | ')}`)
+  }
   return { context, page, errors, network, escaped, status: response?.status() ?? 0 }
 }
 
@@ -127,10 +130,11 @@ function assertCell(state, errors, { id, lens, theme, tab }) {
 // opacity and content the browser skips: a closed <details> keeps its children's boxes,
 // so their computed display is no evidence. Each box is cut to every clipping ancestor
 // on both axes. Not sampled: pseudo-element text, form values, SVG text, images of text.
-// A text node of pictographs alone (a flag, a star) is counted and set aside: the glyph is
-// a colour bitmap, so the element's colour is not the ink a reader sees.
+// A text node of colour-bitmap glyphs alone (a flag, an emoji star) is counted and set
+// aside. isBitmapGlyph is that rule; the page uses the same expression.
 async function collectText(page) {
-  return page.evaluate(() => {
+  return page.evaluate((pattern, flags) => {
+    const pictographsOnly = new RegExp(pattern, flags)
     window.scrollTo(0, 0)
     const samples = []
     // Computed colours are rgb() or rgba() unless the author used a wider space. One
@@ -144,7 +148,6 @@ async function collectText(page) {
       const [r, g, b, a] = canvas.getImageData(0, 0, 1, 1).data
       return `rgba(${r}, ${g}, ${b}, ${Number((a / 255).toFixed(3))})`
     }
-    const pictographsOnly = /^[\p{Extended_Pictographic}\p{Regional_Indicator}\u{E0020}-\u{E007F}\uFE0F\u200D\s]+$/u
     let pictographs = 0
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT)
     let node = walker.nextNode()
@@ -194,7 +197,7 @@ async function collectText(page) {
       scrollHeight: document.documentElement.scrollHeight,
       innerWidth: window.innerWidth,
     }
-  })
+  }, BITMAP_GLYPH.source, BITMAP_GLYPH.flags)
 }
 
 // `shown` is the capture just taken of this page with its text drawn. Transitions and
@@ -352,6 +355,8 @@ export async function captureRequests(browser, origins, anchor) {
         prev.count += 1
         hosts.set(host, prev)
       }
+      const foreign = [...hosts.keys()].filter((host) => unexpectedHost(`https://${host}/`, origin))
+      if (foreign.length) throw new Error(`cold load ${app} ${tab} ${width} asked for ${foreign.join(', ')}`)
       rows.push({
         id: `${app}-${tab}-${width}`,
         bytes,

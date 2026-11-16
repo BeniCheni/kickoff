@@ -118,6 +118,32 @@ export function sampleContrast(samples, image, scaleX = 1, scaleY = scaleX, show
   return [...worst.values()]
 }
 
+// The two hosts today's pages ask for besides their own. The plan's same-origin check
+// allows these and the page's host. An offline page has no host of its own.
+export const FONT_HOSTS = new Set(['fonts.googleapis.com', 'fonts.gstatic.com'])
+
+/** The request URL when it leaves the allowed hosts, otherwise null. ws and wss count. */
+export function unexpectedHost(requestUrl, pageUrl, { offline = false } = {}) {
+  let request
+  try { request = new URL(requestUrl) } catch { return null }
+  if (request.protocol !== 'http:' && request.protocol !== 'https:' && request.protocol !== 'ws:' && request.protocol !== 'wss:') return null
+  if (FONT_HOSTS.has(request.host)) return null
+  if (offline) return requestUrl
+  let page
+  try { page = new URL(pageUrl) } catch { return requestUrl }
+  if (request.host === page.host) return null
+  return requestUrl
+}
+
+// Colour-bitmap text: default emoji presentation, flag indicators, a pictograph that
+// explicitly asks for emoji presentation (U+FE0F), and the joiners that build them.
+// A text-presentation mark (↗, ©, ®, ™, ▶) is drawn in the element's own colour.
+export const BITMAP_GLYPH = /^(?:\p{Emoji_Presentation}|\p{Regional_Indicator}|\p{Extended_Pictographic}\uFE0F|[\u{E0020}-\u{E007F}\uFE0F\u200D\s])+$/u
+
+export function isBitmapGlyph(text) {
+  return BITMAP_GLYPH.test(String(text))
+}
+
 /** Samples whose colour `parseColor` cannot read. They are not measured, so they are named. */
 export function unreadColors(samples) {
   return samples

@@ -33,3 +33,15 @@ export function sampleContrast(
 ): ContrastMinimum[]
 
 export function unreadColors(samples: readonly ContrastSample[]): { color: string; text: string }[]
+
+export const FONT_HOSTS: ReadonlySet<string>
+
+export function unexpectedHost(
+  requestUrl: string,
+  pageUrl: string,
+  options?: { offline?: boolean },
+): string | null
+
+export const BITMAP_GLYPH: RegExp
+
+export function isBitmapGlyph(text: string): boolean
