@@ -40,17 +40,28 @@ Four things this brief adds to the plan, each with the reason:
 Delivered in chat in a four-backtick fenced block, one line per paragraph. This copy is the
 archive.
 
+**Amended at about 12:00 PM EST the same day.** The first attempt (Cursor, 11:55 AM) stopped
+before building, on two checks:
+- #327 was still open;
+- `agent about` reported "Grok 4.7 256K Low".
+
+That model line is the CLI's stored default, which the review-loop spikes had left at low
+effort (`docs/review-loop-proposal.md`, S4, on PR #328's branch). It is not necessarily the
+running session's model. The brief now has the session started in the CLI with
+`agent --model grok-4.7-xhigh`, which also stores that model, and requires `agent about` to read
+Extra High. Nothing else changed. The version below is the one re-sent.
+
 ---
 
 ````text
 Kickoff design overhaul — PR 1: tokens and type (Cursor build brief; the first PR into the integration branch)
 
-You are building one PR in github.com/BeniCheni/kickoff: the second of ten that build Fergie Time's second edition into Fixtures and Table, and the first that goes into the integration branch. Start the session on grok-4.7-xhigh by name: pick Grok 4.7 at Extra High in the app, or pass --model grok-4.7-xhigh to the CLI, because the CLI reuses the last model it ran. Your PR body names the model and effort that actually ran. Read CLAUDE.md and AGENTS.md first; they bind you. Then read docs/design-overhaul-plan.md (sections 2(a), 3, 4.2, 7.4, 8.2, 8.3 and 10.1 above all), docs/design-overhaul-plan-review.md (Beni's rulings) and docs/design/5-handoff/second-edition-handoff.md (sections 2 and 4). The PM seat (Claude Code, Opus 5.5) wrote this brief on Mon 16 Nov 2026 at about 11:55 AM EST, from origin/main at ad4c5f3 and PR 0's head at ae927d7. Treat the repository as ground truth and this brief as a map of it. Where they disagree, the repository wins: say so in the PR and carry on. Run TZ=America/New_York date before writing any date.
+You are building one PR in github.com/BeniCheni/kickoff: the second of ten that build Fergie Time's second edition into Fixtures and Table, and the first that goes into the integration branch. This session must run on grok-4.7-xhigh. Start it in the Cursor CLI with agent --model grok-4.7-xhigh. The CLI stores the last --model it ran, and agent about reports that stored model. In the app, agent about may show the stored default rather than the session's own model, which is what stopped the first attempt at this brief. Your PR body names the model and effort that actually ran. Read CLAUDE.md and AGENTS.md first; they bind you. Then read docs/design-overhaul-plan.md (sections 2(a), 3, 4.2, 7.4, 8.2, 8.3 and 10.1 above all), docs/design-overhaul-plan-review.md (Beni's rulings) and docs/design/5-handoff/second-edition-handoff.md (sections 2 and 4). The PM seat (Claude Code, Opus 5.5) wrote this brief on Mon 16 Nov 2026 at about 11:55 AM EST, from origin/main at ad4c5f3 and PR 0's head at ae927d7. Treat the repository as ground truth and this brief as a map of it. Where they disagree, the repository wins: say so in the PR and carry on. Run TZ=America/New_York date before writing any date.
 
 BEFORE YOU START. Any of these stops you.
 - PR 0 (#327) must have merged. Check with gh pr view 327 --repo BeniCheni/kickoff --json state,mergeCommit. Beni ruled "Merge at ae927d7" on Mon 16 Nov 2026 and runs that merge himself. If the PR is still open, stop and say so.
 - The routing Beni approved on Sun 15 Nov 2026 (the amendment to section 3 of docs/design-overhaul-plan.md, on branch docs/review-loop-plan in PR #328): Cursor builds PR 1 on grok-4.7-xhigh only if PR 0 has merged and the integration branch exists by Tue 17 Nov. A build that would run past Thu 19 Nov, when Beni's Cursor tier changes, waits instead, so that each PR has one builder model on its record. If you are starting after Tue 17 Nov, or cannot open the PR with its evidence by Wed 18 Nov, stop: PR 1 is then routed by the amendment's table, and that is Beni's call.
-- Run `agent about`. The tier should read Super.
+- Run `agent about`. The tier must read Super, and the model must read Grok 4.7 at Extra High. If it shows another effort, stop and say so: never build on another model.
 If usage stops you partway, push what is green, say so in the PR and stop. Never finish on another model.
 
 THE INTEGRATION BRANCH. PR 1 creates it.
