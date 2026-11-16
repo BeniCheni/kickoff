@@ -59,6 +59,10 @@ function hasLeak(text, bypass) {
 // elements of their own, and a tag quoted inside one of their attributes stays an attribute.
 // noscript is skipped whole, with script, style, textarea and title. A template's contents
 // are not in the document either, and templates nest, so the scan counts them open and closed.
+// A template that carries shadowrootmode is not inert: Chrome attaches a declarative
+// shadow root and renders its children. This scan still does not report a landmark
+// inside one, so the route fails, which is the safe direction. The local Next
+// production HTML for "/" has neither shadowrootmode nor a template.
 // Attribute names are read case-insensitively, and a quoted > stays inside its value.
 //   nav aria-label="Primary"         — every tab (checked below, not in ROUTES)
 //   data-moments-background="route"  — Fixtures and Table
