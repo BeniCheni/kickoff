@@ -17,8 +17,9 @@
 //
 // Contrast records today's ratios and fails nothing. --enforce fails below 4.5, or 3
 // for large text, and on text whose colour could not be read, after the receipt is written.
-// A cold load may ask for its own host and the two font hosts. Any other http(s) or
-// ws(s) host fails the run. That is the plan's same-origin check on today's look.
+// A cold load may ask for its own host and the two font hosts. Any other http(s)
+// request the page emits fails the run. That is the plan's same-origin check on
+// today's look. A WebSocket the page opens is not one of those requests.
 import assert from 'node:assert/strict'
 import { mkdirSync, statSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
@@ -63,7 +64,8 @@ export async function openPage(browser, url, theme, width, { waitUntil = 'networ
     if (offline && /Failed to load resource/.test(text) && FONT_HOSTS.has(hostOf(message.location()?.url ?? ''))) network.push(text)
     else errors.push(text)
   })
-  // The page target's own requests. A worker or service-worker fetch may not arrive here.
+  // The page target's own http(s) requests. A WebSocket, or a worker or service-worker
+  // fetch, may not arrive here. A failed socket can still fail the console gate.
   page.on('request', (request) => {
     const target = unexpectedHost(request.url(), url, { offline })
     if (target) escaped.push(`${request.method()} ${target}`)
