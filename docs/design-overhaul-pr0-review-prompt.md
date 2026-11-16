@@ -1,4 +1,4 @@
-# PR #327 — the PM seat's briefs for the overhaul's PR 0: Pass 1's cold review, Cursor's Pass 2, Codex's Pass 2.5 in two sittings, and Cursor's fix round (archived Sun 15 Nov 2026, TZ=America/New_York)
+# PR #327 — the PM seat's briefs for the overhaul's PR 0: Pass 1's cold review, Cursor's Pass 2, Codex's Pass 2.5 in two sittings, and Cursor's two fix rounds (archived Sun 15 Nov 2026, TZ=America/New_York)
 
 Written by the PM seat (Claude Code, Opus 5.5), a side session started from the review-loop
 planning session, after Cursor opened PR #327 from
@@ -703,3 +703,82 @@ block carries the production-smoke check and the revert.
 ```text
 Beni ruled the hosted-preview evidence on Mon 16 Nov 2026 at about 9:45 AM EST: "Yes, with revert". The smoke that preview-smoke.yml runs on main's production deployment after the merge is the hosted proof. Record it as his ruling, drop that question from your brief, and end the handoff block with the gh commands that show that run and the merge commit's vercel-smoke status, followed by the git revert of the merge commit, and its push, to use if that smoke is red.
 ```
+
+---
+
+## The second fix round: the brief for Cursor, after Codex's second sitting (Mon 16 Nov 2026, about 10:20 AM EST)
+
+Codex's second sitting posted at 9:58 AM EST:
+https://github.com/BeniCheni/kickoff/pull/327#issuecomment-6920004701. It recommended Hold at
+`ff815e9` on one medium finding: the smoke's Previous-button pattern reads attribute names case
+by case, and HTML does not.
+
+The PM seat tested Codex's four bypasses with the repo's React 19.2.8 `renderToString` and the
+head's `PREVIOUS_BUTTON` pattern:
+- **A quoted `>` in an attribute, and a fake button in attribute text:** React escapes both
+  (`&gt;`, `&lt;`), so neither can come from React's server HTML.
+- **`ARIA-LABELLEDBY`:** React renders it as written, with only a development warning, and the
+  pattern passes it. A browser reads attribute names without regard to case, so the name
+  really is overridden.
+- **`ariaLabelledby`:** harmless, because a browser lowercases it to `arialabelledby`.
+
+The PM seat recommended one narrow round, time-boxed so that PR 1's window survives either way,
+and **Beni ruled "Yes, one round"** at about 10:18 AM EST.
+
+The time box: Cursor's commit and Codex's re-check must both land by Tue 17 Nov at 6 PM EST.
+If they do not, he merges at `ff815e9` and the smoke fix moves to PR 1's brief.
+
+Codex's two low findings are assigned as follows:
+- **The redirect response's own bytes** (156 of 343 in its probe) go in this round only if
+  small.
+- **The foil ground capture** (black foil measured at 1:1 where the plan's fallback should
+  read 21:1) goes to the brief of the first PR that renders foil text, which must fix it before
+  `--enforce` counts foil.
+
+Delivered in chat in a four-backtick fenced block, one line per paragraph; this copy is the
+archive.
+
+````text
+PR #327 — second fix round (Cursor, grok-4.7-xhigh): the Previous landmark checks real start tags
+
+You are Cursor, on This Mac, on Grok 4.7 at Extra High. Start on grok-4.7-xhigh by name, and name the model and effort that actually ran in your comment's first line. Codex's second Pass 2.5 sitting held PR #327 at ff815e9 on one medium finding: https://github.com/BeniCheni/kickoff/pull/327#issuecomment-6920004701. Read it whole, then CLAUDE.md and AGENTS.md. Run TZ=America/New_York date before writing any date. If the head is no longer ff815e9, stop and say so. The PM seat (Claude Code, Opus 5.5) wrote this on Mon 16 Nov 2026 at about 10:20 AM EST.
+
+RULED BY BENI. Everything in the last fix brief stands: R1 to R3, and the hosted proof ("Yes, with revert", Mon 16 Nov 2026), which is main's production smoke after the merge, reverted if it is red. He held #327 at ff815e9 for this one round, time-boxed. Your commit and Codex's re-check must both land by Tue 17 Nov at 6 PM EST. If they do not, he merges at ff815e9 and this work moves to PR 1's brief.
+
+THE FIX. scripts/vercel-smoke.mjs matches its landmarks with regexes over raw HTML, but HTML attribute names are case-insensitive.
+- Codex's evidence: a Previous button carrying ARIA-LABELLEDBY="other" passed all four routes, although Chrome named it "Wrong week". A <button-probe> element also counts as a button.
+- The PM seat rendered the cases with the repo's React 19.2.8 renderToString. React escapes > and < inside attribute values, so the quoted-> and attribute-text bypasses cannot come from React's server HTML. It does render ARIA-LABELLEDBY exactly as written, with only a development warning, and the current pattern passes it.
+- Replace the five landmark regexes with one small start-tag scan, with no new dependency. Find each start tag by its exact name (button, nav or main; any element for the two data attributes). Read its attributes with the names lowercased and quoted values honoured.
+- Then check the contract on those attributes:
+  - the button's aria-label is exactly "Previous" (the value stays case-sensitive), and the button has no aria-labelledby in any casing;
+  - nav has aria-label="Primary";
+  - main has aria-label="Moments";
+  - some element has data-moments-background="route";
+  - some element has data-table-picker.
+- Keep the contract comment above ROUTES true.
+
+PIN. In tests/vercelSmoke.test.ts, add each of these, and show each one red at ff815e9 and green after your fix:
+- ARIA-LABELLEDBY and Aria-LabelledBy on the Previous button: fail.
+- <button-probe aria-label="Previous">: fail.
+- A quoted > in an earlier attribute, with a lowercase aria-labelledby after it: fail.
+- "Previous week" and "previous" as the button's name: fail.
+- Today's real server HTML of all three routes: pass.
+
+ALSO, IF IT IS SMALL. Codex found that an allowed same-origin redirect drops the redirect response's own bytes from the cold-load receipt (156 of 343 bytes in its probe). If counting requestWillBeSent's redirectResponse.encodedDataLength per hop fits in one function and tests/coldLoad.test.ts, do it in its own commit. Otherwise leave it and say so.
+
+NOT IN THIS ROUND.
+- The foil ground capture, where black foil reads 1:1 but its fallback should read 21:1. That goes to the brief of the first PR that renders foil text, which must fix it before the strict contrast check counts foil.
+- R1 and R2.
+
+VERIFY.
+- Make one commit per fix, each green on typecheck and npm test, authored Cursor <cursoragent@cursor.com>.
+- Push fast-forward from /Users/benicheni/code/kickoff-pr327-pass2 with git push origin HEAD:cursor/overhaul-pr0-pin.
+- At the tip: root typecheck, npm test, build, build:offline and the offline-bundle scan; web/ typecheck and test; node scripts/n6b-proof.mjs against a local Next production build, every route; and reader parity, which must print identical.
+
+SCOPE.
+- Change only scripts/vercel-smoke.mjs and tests/vercelSmoke.test.ts, plus scripts/rendered-contrast.mjs and tests/coldLoad.test.ts for the bytes.
+- Touch nothing under src/, web/app/, .github/ or src/data/. No package, version or tag. Never weaken an assertion.
+- No gh pr merge, no approval, no --auto and no force-push. No change to rulesets, repo settings, workflows or any other PR.
+
+REPLY. Post one PR comment headed "Fix round 2 — Cursor — <model and effort> — <new head SHA>". Give your SHAs, each fix's red-then-green evidence, n6b-proof's routes, and anything you could not do. Then reply in this chat with the comment's link. Codex re-checks only these commits, and Beni merges.
+````
