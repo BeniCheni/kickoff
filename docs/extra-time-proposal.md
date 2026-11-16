@@ -270,3 +270,57 @@ in-progress status.
 - ESPN's statuses and fields for two-legged European ties, which are not listed yet.
 - Whether ESPN ever moves a final status after publishing it, for example `STATUS_FULL_TIME` to
   `STATUS_FINAL_AET`.
+
+## 8. Record (added Mon 16 Nov 2026 by the PM seat)
+
+v0.5.4 shipped as PR #316, squash `34d078b`, on Sat 14 Nov 2026, 38 days before the Supercoppa
+final. Each pass, with its comment on the PR (times EST):
+
+| Pass | Seat | When | Outcome |
+|---|---|---|---|
+| Build | Cursor (Grok 4.7 Extra High) | Wed 11 Nov | Five commits, `90eb38a` to `8498576`. Prompt: `extra-time-implementation-prompt.md` |
+| 0 | PM seat (Claude Code, Opus 5.5) | Wed 11 Nov | `extra-time-review-prompt.md` |
+| 1 | Claude Code (Fable 5.2 Extra) | Thu 12 Nov, 8:58 AM | Eight findings, no high, all thirteen claims held; `183dcfd`, `d1e983e`, `be7f12c` ([comment](https://github.com/BeniCheni/kickoff/pull/316#issuecomment-6825606266)) |
+| 1.5 | PM seat | Thu 12 Nov, 9:45 AM | Beni's R1 to R5. `extra-time-rebuttal-prompt.md` |
+| 2 | Cursor | Thu 12 Nov, 10:19 AM | All eight accepted, finding 8's characterisation contested; `c71ec16` (R3), `48744e4` (R5), `5a2eeda` (R4) ([comment](https://github.com/BeniCheni/kickoff/pull/316#issuecomment-6827640263)) |
+| 2.5 | Codex (GPT-6.1 Sol High, in a sub-agent) | Thu 12 Nov, 11:23 AM | Mergeable after fixes, escalated as a release, two new lows ([comment](https://github.com/BeniCheni/kickoff/pull/316#issuecomment-6829309842)). `extra-time-synthesis-prompt.md` |
+| Rework | Cursor | Thu 12 Nov, 12:35 PM | `7f7746f`: the first-final horizon, Pass 1's process note, the doubled cutover sentence, and the date to Mon 16 Nov ([comment](https://github.com/BeniCheni/kickoff/pull/316#issuecomment-6831114133)). `extra-time-rework-prompt.md` |
+| Re-read | Codex | Thu 12 Nov, 1:10 PM | All three lows closed ([comment](https://github.com/BeniCheni/kickoff/pull/316#issuecomment-6831931810)). `extra-time-reread-prompt.md` |
+| Date | Cursor, re-read by the PR #320 Pass 2.5 seat (Claude Code, Fable 5.2 Extra) | Sat 14 Nov, 3:51 and 3:56 PM | `8e955ad`, the four dates to Sat 14 Nov ([comment](https://github.com/BeniCheni/kickoff/pull/316#issuecomment-6884025329), [re-read](https://github.com/BeniCheni/kickoff/pull/316#issuecomment-6884081078)). `extra-time-date-prompt.md` |
+| 3 | Beni | Sat 14 Nov, 4:00 PM | Merged, pinned to `8e955ad`. Cursor tagged `v0.5.4` (`d68e2b0`) at 4:08 PM on Beni's word |
+
+**Beni's rulings.** Wed 11 Nov: Q1 to Q5 (§4). Thu 12 Nov, in the PM seat's question dialog: R1
+ship before 22 Dec without the S1b capture and still try it; R2 keep `183dcfd`; R3 refuse a
+level shootout; R4 the cutover is the next minor, planned as v0.6.0; R5 strike row 107 in place
+only; then "Yes, confirmed", "Fix before merge" and "Mon 16 Nov". Sat 14 Nov: the merge day
+moved to that day, so that #316 could merge before the clearing (#320). Mon 16 Nov, in the PM
+seat's question dialog: "Cursor, on my word", for the tag.
+
+**Post-merge checks, PM seat, Mon 16 Nov 2026, in a fresh clone.**
+
+- `git rev-parse 'v0.5.4^{commit}'` prints `34d078bb4a12ab56f464cfc8e7cfbd947cc7dca3`, and
+  `git cat-file -p v0.5.4` shows an annotated tag with Cursor as tagger. The squash's one parent
+  (`git rev-parse '34d078b^@'`) is `f7775c9`, the base GitHub recorded.
+- `git merge-tree --write-tree f7775c9 8e955ad` and `git rev-parse '34d078b^{tree}'` both print
+  `901a65f1d8b63df18dc4326ddd5edb23f9661666`: the squash is the reviewed head merged onto that
+  base, and nothing else.
+- On the merge push, CI (run 43640472562), Studio (43640472561) and Pages (43640472551)
+  succeeded (`gh api 'repos/BeniCheni/kickoff/actions/runs?head_sha=<squash>'`). The scheduled
+  sync on `34d078b` succeeded (43643653460), as has every sync on `main` since
+  (`gh run list --workflow sync.yml --branch main`).
+- At the tag, `npm ci`, `npm run typecheck` and `npm run build` exited 0. `npm test` was red once,
+  only on the `ENOTEMPTY` failure in `tests/vercelIgnore.test.ts` (995 of 996; row 120, since
+  fixed in v0.5.5 by `961d320`), and green on the next run (996 of 996 in 66 files).
+- One preview smoke on `34d078b` (run 43643874552, 4:38 PM) failed with "Missing page landmark:
+  /". The run 37 minutes earlier (43640541435) and every later run succeeded
+  (`gh run list --workflow preview-smoke.yml`). Its cause was not investigated.
+
+**Record gaps,** kept here because `main` is append-only (row 134):
+
+- The squash message names Codex's passes but carries no `Co-authored-by: Codex
+  <noreply@openai.com>` trailer.
+- `.claude/skills/kickoff-pr-review/SKILL.md` §7 says Beni tags every release and the tag record
+  says so. This tag record names Cursor, which tagged on Beni's word.
+
+**Still open.** The S1b capture (R1) would now ship after v0.5.5. The match-day check (§5) runs
+on Tue 22 Dec 2026.
