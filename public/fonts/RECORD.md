@@ -1,8 +1,9 @@
 # Self-hosted fonts
 
 The faces for the second edition, plus Inter, which the first edition and Moments
-already set. Today's pages load four of the ten files: Oswald, Inter, and Kickoff Mono at
-500 and 600. Nothing renders the other six yet. The tool that subset them is fontTools
+already set. Fixtures and Table load four of the ten files: Oswald, Inter, and Kickoff
+Mono at 500 and 600. Moments loads Oswald, Inter, and the preloaded Mono 500 file, which
+no text on that tab selects. Nothing renders the other six yet. The tool that subset them is fontTools
 4.60.2 (`fonttools subset`), run from a temporary environment. `package.json` is unchanged.
 
 Every file below is a WOFF2 subset to the union of the latin and latin-ext ranges in
