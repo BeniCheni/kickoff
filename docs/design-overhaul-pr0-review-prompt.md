@@ -1,4 +1,4 @@
-# PR #327 — Pass 1: the cold-review brief for the overhaul's PR 0 (archived Sun 15 Nov 2026, TZ=America/New_York)
+# PR #327 — the PM seat's briefs for the overhaul's PR 0: Pass 1's cold review and Cursor's Pass 2 (archived Sun 15 Nov 2026, TZ=America/New_York)
 
 Written by the PM seat (Claude Code, Opus 5.5), a side session started from the review-loop
 planning session, after Cursor opened PR #327 from
@@ -28,6 +28,14 @@ fit a new session (make your own worktrees, leave `pr327-review` alone, stop if 
 exists) and keeps the rest. At that point #327 was still at `98aff91` with no review comment,
 and Pass 1 had pushed nothing. Both blocks were delivered in chat, one line per paragraph; this
 copy is the archive.
+
+Corrected at about 9:30 PM the same day: Pass 1 did not start without a brief. Another PM-seat
+session, the "Cosmic Horror Kickoff Planner", wrote the brief the review started from at about
+3:27 PM, with appendix A1–A12 and the build brief's addendum in full. That copy is untracked in
+Beni's main checkout at this same path. The lineage docs PR should merge both into this file,
+with that brief first, since Pass 1 ran from it. Until then, checking this branch out in the
+main checkout fails on that untracked file. The Pass 1.5 brief for Cursor's Pass 2 is the last
+section below.
 
 ---
 
@@ -175,4 +183,171 @@ SEALED APPENDIX — suspicions to re-derive independently, never conclusions. So
 - P2 (PM seat): the mobile half of (b) checks only the element that holds the words, so a clock in a sibling element may pass.
 - P3 (PM seat): "Show all" at ratio 1 may be text inside the closed filter <details>, measured against the page behind it; if so the sampler counts invisible text, and the 528 are inflated.
 - P4 (PM seat): parseColor returns null for oklch, oklab and color() values and the sample is dropped without being counted, so the receipt cannot say how much text went unmeasured.
+````
+
+---
+
+## Pass 1.5: the rebuttal brief for Cursor's Pass 2 (Sun 15 Nov 2026, about 9:30 PM EST)
+
+Written by the same PM seat. Beni chose this seat for it ("Pass 0 session", as relayed by the
+Cosmic Horror Kickoff Planner session), and the review-loop planning session relayed the request.
+The seat read everything fresh at about 9:20 PM:
+- Pass 1's comment, whole, from GitHub;
+- each of Pass 1's eight commits on its own;
+- the PR at `5c53710`;
+- the routing amendment Beni approved, on `docs/review-loop-plan` (PR #328, not merged);
+- the seat facts in `docs/review-loop-proposal.md` on that branch.
+
+It read code and ran no test, build or browser. It did run one contrast calculation: white on
+`#D85A30` gives 3.871:1, which agrees with Pass 1's finding 13. Pass 1's findings and fixes go
+to Cursor only as claims in the sealed appendix. P5 to P10 are the PM seat's new suspicions
+from reading the eight commits. Delivered in chat in a four-backtick fenced block, one line per
+paragraph; this copy is the archive.
+
+````text
+PR #327 — Pass 1.5: the rebuttal brief for Cursor (Pass 2), overhaul PR 0
+
+You are Pass 2 of the 360 cycle for PR #327 in github.com/BeniCheni/kickoff, running in Cursor on This Mac on Grok 4.7 at Extra High (grok-4.7-xhigh), not in Plan mode. Cursor built this PR: five commits ending at 98aff91. Claude Code's Pass 1 cold review then posted its comment (https://github.com/BeniCheni/kickoff/pull/327#issuecomment-6901527617, verdict "mergeable after fixes", thirteen findings) and pushed eight commits of its own, so cursor/overhaul-pr0-pin is now at 5c53710. This brief is Pass 1.5, written by the PM seat (Claude Code, Opus 5.5) on Sun 15 Nov 2026 at about 9:30 PM EST. Your Pass 2 has two jobs: answer every Pass 1 finding, and review Pass 1's eight commits cold, because nobody has reviewed them. Your deliverables are fix commits for what you accept and one PR comment. Stop at the comment.
+
+WHO YOU ARE IN THIS CYCLE. Pass 2 is the builder's seat, and Cursor built PR 0, but you are a fresh session and hold none of the build session's reasons. Its account is the PR body and its five commit messages: treat that as evidence to test, not a position to defend. Where a finding turns on what the build meant and the record is silent, say so and do not supply a reason. Pass 1's commits are on your branch now, and you answer for them too.
+
+THE MODEL AND THE TIER. Start on grok-4.7-xhigh by name. In the app, pick Grok 4.7 at Extra High. In the CLI, pass --model grok-4.7-xhigh explicitly, because the CLI reuses the last --model it ran, stored in ~/.cursor/cli-config.json (the review-loop spikes left it at grok-4.7 with low effort). Run `agent about` first and note the tier; it should read Super. The first line of your comment names the model that actually ran, as the model picker or the stream-json init event reports it, not the model you asked for. If usage stops you partway, push what is green, say so in a comment and stop. Never finish the pass on another model.
+
+THE DEADLINE. Beni's Cursor access moves from the Super tier to a lower one on Thu 19 Nov 2026, so this pass must land by Wed 18 Nov. Beni approved that schedule on Sun 15 Nov 2026 ("Approve as proposed"). It is the amendment to section 3 of docs/design-overhaul-plan.md, on branch docs/review-loop-plan in PR #328, approved but not yet on main. Pace by it, but do not trade depth for the date: anything you could not run goes in "Not verified".
+
+STATE AT PASS 1.5 (re-check all of it).
+- PR #327 is open, not a draft, mergeable (CLEAN), auto-merge off. Head 5c537100c09726e602199ee9bb12fde351a25fad. Against origin/main (ad4c5f3, still the merge-base) it is 25 files, +1855/−107.
+- Commits, oldest first. Cursor's: d123d30 rule tests, 2b683e4 smoke landmark, 0f7a8f2 runner, 1923a6c harness, 98aff91 changelog. Pass 1's, all authored Claude <noreply@anthropic.com> and pushed fast-forward: fe114c2, b80e1af, 1a0c963, 491771f, e9d2d72, 0490bc0, e8a3330, 5c53710.
+- At 5c53710, verify (run 43762778411), the Vercel deployment and vercel-smoke are green. That vercel-smoke is main's checker: .github/workflows/preview-smoke.yml checks out main and runs main's scripts/vercel-smoke.mjs, so the PR's new landmark has never run against a Vercel deployment. The deployment answers 302 without a bypass secret, and that secret is not yours to seek.
+- Pass 1's eight commits touch nothing under src/, index.html, offline.html, public/, web/app/, src/data/, .github/ or studio/, and no package file (PM seat: git diff --name-only 98aff91 5c53710).
+- There is no review or approval, and nothing is merged or tagged. Pass 1's comment is posted under Beni's GitHub account, and yours will be too, because every seat's gh is Beni.
+
+WHERE TO WORK. Beni's main checkout, /Users/benicheni/code/kickoff-pm, has a local cursor/overhaul-pr0-pin at 98aff91, eight commits behind the PR, plus untracked files and a git-ignored nested checkout in clearing.local/. Do not work, build or push there.
+- Make your own worktree. From the main checkout, run git fetch origin, then git worktree add -b cursor/pr327-pass2 /Users/benicheni/code/kickoff-pr327-pass2 origin/cursor/overhaul-pr0-pin.
+- Before you edit anything, confirm that git rev-parse HEAD prints 5c53710.
+- Run npm ci at the root and again in web/.
+- Push with git push origin HEAD:cursor/overhaul-pr0-pin, fast-forward only.
+- Leave the other worktrees alone, especially .claude/worktrees/pr327-review (Pass 1's) and pr327-base.
+- Treat Cursor's permission modes as seatbelts, not walls: in the review-loop spike, --mode ask wrote one file inside its worktree and one outside it. Edit nothing outside your worktree, whatever the mode allows.
+- Never run npm run sync.
+
+THE METHOD. Read AGENTS.md and CLAUDE.md first; they outrank everything below on process. Then read the tracked review skill at the head, .claude/skills/kickoff-pr-review/: SKILL.md's 360 table, its Pass 2 row and its rules, and pr-comment.md for the comment's shape. Run TZ=America/New_York date before you write any date.
+
+WHAT BENI RULED, named as his.
+- Sat 14 Nov 2026, in docs/design-overhaul-plan-review.md:
+  - an integration branch, with this one PR on main first;
+  - ten PRs, in the order of the plan's section 3;
+  - the overhaul is numbered v0.6.0 at its release, not here;
+  - Step 0 moves to &lens=ledger at the release, not here;
+  - tests/dom/designCycle.test.tsx:47 and :66 stand;
+  - ideas rows 126 and 129 fold into PRs 3 and 5.
+- The dead-CSS ruling, carried out in #323: the public app's Tailwind scans only src/**/*.{ts,tsx}.
+- Sun 15 Nov 2026: the routing amendment above, as proposed.
+- Standing, in CLAUDE.md: no clock for a kickoff the league has not set; nothing invented; both clocks from one UTC instant; no data-honesty assertion ever weakened.
+- Plan section 3: Beni's word merges every overhaul PR, after your Pass 2 and Codex's Pass 2.5.
+He has ruled on nothing else in this PR. Findings 12 and 13 are his to rule on for later PRs, and so is anything still contested after your pass.
+
+SPEC OF RECORD. First, docs/design-overhaul-plan.md: section 3's PR 0 row ("A general matrix runner … with a contrast sampler, a weight report and a same-origin check"), and the "PR 0" cells of 6.1, 6.2 and 8.1 to 8.3 row 0. Then docs/design-overhaul-pr0-implementation-prompt.md, with the addendum the PM seat sent beside it. The addendum is not in docs/, as Pass 1 noted, so here are its three points in full.
+- (1) Branch off origin/main at 0fd5b98 or later, and add the ### Changed line beside the ### Fixed line #323 left in [Unreleased].
+- (2) Since #323, the reader's Tailwind reads only src/**/*.{ts,tsx}, pinned by tests/tailwind-scan.test.ts and studio/test/admin-tokens.test.ts. So a utility class written in tests/harness/states.tsx gets no CSS, and widening the scan to reach it fails both guards and changes src/. The harness therefore styles itself with inline styles or a plain stylesheet that does not import tailwindcss.
+- (3) The snapshot window moves forward a day with each sync, so the runner chooses its weeks by rule, names them in the receipt, and hard-codes none of the brief's dates.
+Precedence: Beni's rulings, then the plan, then the build brief with its addendum. Note every precedence resolution in your comment.
+
+HOW TO ANSWER. Give each of Pass 1's thirteen findings one disposition:
+- Accept: name your commit, or say no change is needed.
+- Contest: give a probe someone else can run (the command, the file and line, what you expected and what you saw) or a primary source.
+- Accept the observation but contest how it is characterised or its severity: give the same kind of evidence.
+For findings 1 to 11, Pass 1's fix commit is part of the finding, so accept or contest the fix as well as the defect. A contest without a probe or a source goes to Beni as unresolved. Write each answer so Codex's Pass 2.5 can reproduce it cold. Pass 1's claims are in its comment, and the sealed appendix below restates them as claims, not conclusions. Reach your own result on each.
+
+PASS 1'S COMMITS, REVIEWED COLD. Read fe114c2, b80e1af, 1a0c963, 491771f, e9d2d72, 0490bc0, e8a3330 and 5c53710 each on its own. For each new or changed test, break the rule it claims to pin, show the test red, then restore; a test you have not seen fail is not verified. For each runner gate, break the gate on purpose against the head and show the run fail. Report any defect as a new finding with a probe. Report any defect in Cursor's own five commits that Pass 1 missed the same way.
+
+THE THREE DESIGN CHOICES PASS 1 LEFT TO YOU. Decide each on the merits in your comment. Commit a change only if you judge the current form wrong, and keep it inside the fix scope.
+- The harness's Table specimen. vite.config.ts rewrites the source text tableFor(league, today, nowUtcIso), in a ?kickoff-specimen copy of TablePage, and tests/harnessSpecimen.test.ts pins that text at src/components/TablePage.tsx:149. Pass 1 suggested a serve-only resolveId that hands that copy a harness shim for ../lib/standings, which pins a module boundary instead of a line, and committed nothing. Choose one, and say what PR 4 pays either way.
+- The smoke landmark: <button … aria-label="Previous"> (src/components/FixturesPage.tsx:87), now named in the contract comment above ROUTES in scripts/vercel-smoke.mjs. An exact accessible name is no sturdier than the exact visible label it replaced. The handoff's week row (docs/design/5-handoff/second-edition-handoff.md:234) keeps a previous chevron but names no accessible name, and makes a chevron with no week beyond it "muted and inert". Say what the briefs for PR 3 and PR 5 must carry for the landmark to survive, or propose a sturdier one. Do not touch the workflow or its trust boundary.
+- optimizeDeps.entries in vite.config.ts. It is a repo-wide dev-config change, made because a git-ignored nested checkout in Beni's main checkout (clearing.local/checkpoints/lens) confused the dependency scan. In a checkout without the nested one, Pass 1 found the same six dependencies pre-bundled with and without it. Keep it, narrow it or drop it, and say what it costs to add a new HTML entry.
+
+OTHER OPEN ITEMS.
+- Same-origin. For online loads, Pass 1 resolved the plan's "same-origin check" to the build brief's request report, and added a host gate to the offline file only. The plan outranks the brief. Say whether the runner now meets the plan. If it does not, say whether an online check that allows exactly today's two font hosts, and fails on any third, would meet it without failing today's look.
+- Pass 1 named two items and did not do them: a test that meta.json's total equals the fixture count, and the CHANGELOG's ### Changed line sitting after ### Fixed, where released sections put Changed first. Do or decline each, with a reason.
+- Findings 12 and 13 are defects in the shipped app: an unsettled row prints its retired kickoff time (src/components/FixtureRow.tsx:61), and the Table's loss pip is 3.87:1 (src/components/TablePage.tsx:96). Nothing under src/ changes here, so accept or contest only the observation and its severity. Their ideas rows land later in a docs PR, and finding 12 needs Beni's ruling before PR 3.
+
+VERIFICATION.
+- Keep every commit you add green. At the root: typecheck, npm test (both vitest projects), build, build:single, build:offline and the offline-bundle scan. In web/: typecheck, test, build, check:client and check:css.
+- Reader parity. Build ad4c5f3 in a separate detached worktree and keep its dist/ and dist-single/. Build your tip, then run web/scripts/check-reader-parity.mjs (usage in web/verification/README.md:27); it must print identical: true. The script does not cover dist-offline/index.html, so hash it at both builds too.
+- The runner, run whole at your tip, with all three origins set explicitly. Port 5173 is shared with Beni's checkout and other worktrees, so before you trust any server, confirm it serves your worktree (lsof -iTCP:<port> -sTCP:LISTEN, then that process's cwd). Start three servers: npx vite preview --host 127.0.0.1 --port 5173 --strictPort; npm --prefix web run start -- --hostname 127.0.0.1 --port 5174; and npx vite --host 127.0.0.1 --port 5175 --strictPort. Then run KICKOFF_VITE_ORIGIN=http://127.0.0.1:5173 KICKOFF_NEXT_ORIGIN=http://127.0.0.1:5174 KICKOFF_HARNESS_ORIGIN=http://127.0.0.1:5175 node web/scripts/evidence.mjs <an outDir outside the repo>, adding CHROME_PATH only if Chrome is not at the runner's default. Put the commands and the summary in your comment.
+- The diff touches no src/, so the runner's 96 cells stand as the browser pass. Set the viewport before any capture you attach. If you cannot drive a browser, say so plainly and claim no matrix.
+- Without the bypass secret, the new smoke checker cannot run against a real Vercel preview. Run it against a local Next production server, and say that is what you did.
+
+FIX SCOPE. Change only PR 0's own files:
+- its tests, and tests/harness/;
+- the runner and its scripts: web/scripts/evidence.mjs, web/scripts/clearing.mjs, scripts/rendered-contrast.mjs, scripts/decode-png.mjs, scripts/evidence-weeks.mjs and their .d.mts files;
+- the comments and checks in scripts/vercel-smoke.mjs;
+- the two dev-only changes in vite.config.ts;
+- the one CHANGELOG line.
+Do not change anything under src/, index.html, offline.html, public/, web/app/, src/data/, .github/ or studio/, and touch no package file, lockfile, version, tag or CHANGELOG release section. Never weaken an assertion. To undo a Pass 1 commit you contest, add a revert commit and say why; never rewrite history. Commit as Cursor <cursoragent@cursor.com>, in small commits that each stay green.
+
+WHAT YOU MUST NOT DO. Your gh is Beni's account, an Admin who can bypass the verify gate. Nothing technical stops these actions; this brief does.
+- No gh pr merge in any form, no approval and no --auto.
+- No npm version and no tag.
+- No force-push and no --force-with-lease.
+- No change to rulesets, repo settings or workflows.
+- Leave the bot's sync/scheduled PR and every other PR alone.
+
+YOUR COMMENT. Post one PR comment with gh pr comment 327 --body-file <file>, in pr-comment.md's table shape.
+- Its first line names the pass, the seat and the model that ran: "Pass 2, Cursor, <observed model>".
+- If you pushed, put your commit SHAs and the new head at the top, because the branch then moves under Codex's Pass 2.5.
+- For each finding, give Pass 1's number and severity, your disposition, the evidence (the command and its result, with file and line) and the commit.
+Then cover, in this order:
+- what you found in Pass 1's eight commits;
+- any new findings;
+- the three design choices and the other open items;
+- your precedence resolutions;
+- what you did not verify;
+- anything still contested between you and Pass 1;
+- any question only Beni can answer, one line each, for Pass 2.5 to carry to him.
+
+THE MERGE. Stop at your comment. Codex's Pass 2.5 re-runs your claims against the head, and Beni's word merges, per plan section 3.
+
+SEALED APPENDIX — claims and suspicions to re-derive independently, never conclusions. If one does not reproduce, say so. Pass 1's comment also cites items from two earlier appendices: A1 to A12, from the brief it started from, which another PM session wrote and which is not yet in docs/; and B1 to B14 and P1 to P4, from the PM seat's supplement, archived on a branch not yet pushed. You need neither file: the items that still bear on this pass are restated below.
+
+Pass 1's claims, at 98aff91 unless a commit is named:
+- F1 (high): tests/dom/displayOrder.test.tsx took its day from the committed snapshot and failed when no such day was left. The snapshot held two such days, which leave the window on 21 Nov and 9 Jan, so a data-only sync would turn verify red. b80e1af mocks the data module with one synthetic Saturday.
+- F2: the mobile half of the Table pin read only the element holding "kickoff time not yet set", so a clock beside it passed. 1a0c963 reads the club's whole row or card.
+- F3: the node row-order test could not fail a tie-break by competition key, by id or by name descending. fe114c2 feeds three tied rows in all six orders.
+- F4: 528 of 1,904 contrast samples were under the floors, and all but 16 of them were text nobody sees. The causes: a closed <details>, a line box reaching past its pill, clipped text, an ancestor's opacity ignored, and an oklch ink left unread. 491771f's baseline:
+  - 1,224 samples, 16 under, all one ink-and-ground pair (F13);
+  - 0 colours unread;
+  - 16,032 pictograph-only text nodes set aside;
+  - the muted ink lowest at 4.52:1 in light and 4.68:1 in dark.
+- F5: a console warning passed the empty-console gate, because puppeteer names it 'warn'. Fixed in 0490bc0.
+- F6: an offline file that asked for another host passed. 0490bc0 fails any host but the two font hosts.
+- F7: the documented harness default (5173) could not pass, and a failed run lost its receipt. Fixed in 0490bc0 and 491771f.
+- F8: the harness never showed the Table's unset cell on a phone, and a fixture row's sentence satisfied its needle. Fixed in e9d2d72 and 0490bc0.
+- F9: the harness's clubs printed "matchday 3 of 2", and a club with one win and two defeats had seven points. Fixed in e9d2d72.
+- F10: the decoder test had no Average row and only one Paeth byte, and the weeks' "no Champions League fixture" clause was held only by the snapshot. Fixed in e8a3330.
+- F11: two comments overclaimed ("Dev server only", and "and no other copy on the page"). Fixed in 5c53710, comments only.
+- F12: an unsettled row prints its retired kickoff, and nothing pins the time either way. Not fixed.
+- F13: the Table's loss pip, white on bg-accent, is 3.87:1 in light. Not fixed.
+- Further claims:
+  - each of the five pins failed on a break in src/ and passed once restored;
+  - reader parity printed identical: true at 98aff91 and at 5c53710;
+  - dist-offline/ is byte-identical;
+  - the Next client output is identical once the build id is normalised;
+  - typecheck and npm test are green at each of the thirteen commits;
+  - the plugin is absent from every build mode, and present but inert under vitest;
+  - the landmark is in the Next server HTML of "/" only;
+  - the weeks are 26 Oct (55), 9 Nov (0) and 19 Oct (105), and from Thu 19 Nov the UEFA week becomes 2 Nov (107).
+
+Earlier items still open at 5c53710:
+- A7 and B4 (builder): the landmark survives PRs 3 and 5. Pass 1 could not verify it.
+- B10 (builder): the request report's hosts and weights: fonts 90,123 bytes on Fixtures and Table, Vite script 176,696, Next script 253,231.
+- P4 (PM seat): a colour parseColor cannot read is dropped unmeasured. Pass 1 says it is now converted through one canvas pixel, and anything still unread is named and fails --enforce.
+
+New, from the PM seat's reading of the eight commits (code read only, nothing run):
+- P5: the second capture differs from the first by more than the text. The hide stylesheet also stops every animation and transition and turns every currentColor border, fill and background transparent. sampleContrast then counts every changed pixel inside a text's box as painted by that text (the paintedOnly scan in scripts/rendered-contrast.mjs, and measureContrast in web/scripts/evidence.mjs).
+- P6: text covered by another element paints the same pixels in both captures, so the sampler falls back to its whole box and measures it against whatever covers it. checkVisibility does not see occlusion.
+- P7: the pictograph rule (\p{Extended_Pictographic}, in collectText in evidence.mjs) also matches glyphs drawn in the element's own colour. Today that is ↗ (U+2197) at src/components/MomentsPlayback.tsx:25. If a later PR prints ©, ®, ™, ▶ or the arrows as text, those would go unmeasured too.
+- P8: the escape gate listens only to the page's http(s) requests. A WebSocket, or a request from a worker or service worker, may not appear as one.
+- P9: b80e1af's synthetic Saturday is 2026-11-21, six days after it was written, and WeekView reads the real clock (useNow, then staleLiveIds and hotFixtureIds), so from that date its scheduled rows render as kicked off. The order is probably unaffected; run the test with the system time set past that date.
+- P10: at 5c53710, src/components/FixtureRow.tsx:61 reads {placeholder ? '—' : t.brooklyn.time}, with no status check. This bears on F12.
 ````
