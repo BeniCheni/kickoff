@@ -1,4 +1,4 @@
-# PR #327 — the PM seat's briefs for the overhaul's PR 0: Pass 1's cold review, Cursor's Pass 2, Codex's Pass 2.5 in two sittings, and Cursor's two fix rounds (archived Sun 15 Nov 2026, TZ=America/New_York)
+# PR #327 — the PM seat's briefs for the overhaul's PR 0: Pass 1's cold review, Cursor's Pass 2, Codex's Pass 2.5 in three sittings, and Cursor's two fix rounds (archived Sun 15 Nov 2026, TZ=America/New_York)
 
 Written by the PM seat (Claude Code, Opus 5.5), a side session started from the review-loop
 planning session, after Cursor opened PR #327 from
@@ -781,4 +781,86 @@ SCOPE.
 - No gh pr merge, no approval, no --auto and no force-push. No change to rulesets, repo settings, workflows or any other PR.
 
 REPLY. Post one PR comment headed "Fix round 2 — Cursor — <model and effort> — <new head SHA>". Give your SHAs, each fix's red-then-green evidence, n6b-proof's routes, and anything you could not do. Then reply in this chat with the comment's link. Codex re-checks only these commits, and Beni merges.
+````
+
+---
+
+## Pass 2.5, third sitting: Codex re-checks the second fix round (Mon 16 Nov 2026, about 11:20 AM EST)
+
+Cursor's second fix round posted at 11:04 AM EST:
+https://github.com/BeniCheni/kickoff/pull/327#issuecomment-6921724097. It moved the head to
+`ae927d7` with two Cursor commits:
+- `b6d66bd` replaces the five landmark regexes with a start-tag scan;
+- `ae927d7` counts each redirect hop's own bytes, and adds the `encodedDataLength` field to
+  `scripts/rendered-contrast.d.mts` so that it typechecks.
+
+`verify` is green at `ae927d7` (run 43903296055).
+
+The PM seat read the scan. Three edge cases go to Codex as suspicions to re-derive:
+- it reads a button inside `<template>` or `<noscript>`, which a browser with scripting on
+  does not render;
+- its tag name stops at the first character outside `[A-Za-z0-9:_-]`, so `<button.x …>` reads
+  as a button;
+- it compares attribute values without decoding entities, which can only fail safe.
+None of them can come from today's React output.
+
+The time box still runs to Tue 17 Nov at 6 PM EST. Delivered in chat in a four-backtick fenced
+block, one line per paragraph; this copy is the archive.
+
+````text
+PR #327 — Pass 2.5, third sitting (Codex): re-check the second fix round, then hand the merge to Beni
+
+You are Codex, on GPT-6.1 Sol at xhigh, continuing your Pass 2.5 of PR #327 in github.com/BeniCheni/kickoff. Your second sitting (https://github.com/BeniCheni/kickoff/pull/327#issuecomment-6920004701) recommended Hold at ff815e9 on the smoke's case-sensitive attribute matching. Beni allowed one round, time-boxed: Cursor's fix and your re-check must both land by Tue 17 Nov 2026 at 6 PM EST, or he merges at ff815e9 and the smoke fix moves to PR 1's brief. Cursor's round is done: https://github.com/BeniCheni/kickoff/pull/327#issuecomment-6921724097. Read it whole. The method is still /kickoff-pr-review --pass 2.5 --no-merge. Push nothing. The PM seat (Claude Code, Opus 5.5) wrote this note on Mon 16 Nov 2026 at about 11:20 AM EST. Run TZ=America/New_York date before writing any date. If the head is no longer ae927d7, stop and say so. Post today if you can.
+
+STATE (re-check all of it).
+- Head ae927d76ad35f5fc0ce36cf40f3b1e1a0a980ce2 on cursor/overhaul-pr0-pin: open, CLEAN, auto-merge off, no review.
+- It is two Cursor commits past ff815e9, fast-forward:
+  - b6d66bd: a start-tag scan replaces the five landmark regexes in scripts/vercel-smoke.mjs, pinned in tests/vercelSmoke.test.ts;
+  - ae927d7: each redirect hop's own bytes, in scripts/rendered-contrast.mjs and tests/coldLoad.test.ts, plus encodedDataLength on redirectResponse in scripts/rendered-contrast.d.mts so that it typechecks.
+- verify is green at ae927d7 (run 43903296055). Against ad4c5f3 the PR is 30 files, +2440/−110. main is still ad4c5f3.
+
+RULED BY BENI, unchanged since your second sitting.
+- Everything in your earlier briefs stands: R1 to R3; Pass 2 at xhigh; the hosted proof, which is main's production smoke after the merge, reverted if it is red ("Yes, with revert").
+- The one-round hold above, with its time box.
+- The foil ground capture goes to the brief of the first PR that renders foil text, so it is not a finding here.
+
+WHERE TO WORK. Run git fetch origin in /Users/benicheni/code/kickoff-pr327-pass25, then git checkout --detach ae927d7, and confirm HEAD. Keep your ports at 5273 to 5275 and confirm each cwd with lsof. Never run npm run sync.
+
+WHAT THIS SITTING MUST SHOW.
+1. The landmark scan (b6d66bd).
+  - Re-run your own probe on a real local production response of "/": add ARIA-LABELLEDBY="other" to the Previous button and <span id="other">Wrong week</span> to the body. smoke() must now fail.
+  - Do the same for Aria-LabelledBy, for a quoted > before a lowercase aria-labelledby, for <button-probe aria-label="Previous">, and for each prefixed stand-in from your second sitting.
+  - Run scripts/n6b-proof.mjs at ae927d7 against a local Next production build, and report every route.
+  - Read startTags and pageLandmarks, and say whether any spelling that a browser would name differently still passes, or whether any real button would now be missed. Then say whether the contract comment above ROUTES describes the scan.
+2. The hop bytes (ae927d7). Re-run your same-origin redirect probe (156 + 187 bytes): the receipt must now hold 343. Check tests/coldLoad.test.ts against what Chrome actually sends, and confirm that the foreign-host check from 63080e4 still fails a third-host hop. Say whether the .d.mts change is only the type it claims to be.
+3. Whole-tree checks at ae927d7:
+  - root typecheck and npm test, plus typecheck and npm test at b6d66bd;
+  - build, build:single, build:offline and the offline-bundle scan;
+  - in web/: typecheck, test and build;
+  - reader parity against your preserved ad4c5f3 build, including the dist-offline/index.html hash;
+  - the runner once in report mode (exit 0), with the cold-load weights compared to your second sitting's, and --enforce once (exit 1, on the 16 loss-pip samples only).
+
+THE BRIEF AND THE COMMENT. Post one short PR comment with gh pr comment 327 --body-file <file>. Its first line names the pass, the sitting, the model and effort that ran, and ae927d7. Then update your Executive Summary Brief:
+- Decision: escalated under plan section 3, with your one-word recommendation, Merge or Hold.
+- The two commits, each with your re-run result.
+- Verification: numbers from this sitting only.
+- One question for Beni: Merge or Hold at ae927d7.
+- The handoff block for ae927d7, in the shape of your second sitting's:
+  - gh pr merge 327 --squash --match-head-commit ae927d76ad35f5fc0ce36cf40f3b1e1a0a980ce2, with the same subject and body, the follow-up fixes now counting two rounds, and both trailers;
+  - then git pull --ff-only, npm run typecheck, npm test and npm run build;
+  - then the production-smoke check, matched by the deployed SHA;
+  - then the revert, with its push, to use if that smoke is red.
+  No tag and no version.
+
+WHAT YOU MUST NOT DO. Your gh is Beni's account, an Admin who can bypass the verify gate; this note is what stops you.
+- No gh pr merge in any form, no approval and no --auto.
+- No push of any kind, no tag and no npm version.
+- No change to rulesets, repo settings, workflows or any other PR.
+If you find a blocker, do not fix it: give the minimal reproduction and its severity, and recommend Hold. Beni's time box then decides.
+
+SEALED APPENDIX — the PM seat's reading of b6d66bd. Re-derive each one independently and never cite it. If one does not reproduce, say so.
+- S5: startTags skips the contents of script, style, textarea and title. It does not skip <template> or <noscript>, so a Previous button inside either would count, although a browser with scripting on renders neither.
+- S6: a tag name stops at the first character outside [A-Za-z0-9:_-], where a browser's tag name runs to whitespace, / or >. So <button.x aria-label="Previous"> reads as a button.
+- S7: attribute values are compared without decoding entities. aria-label="Previ&#111;us" is named "Previous" by a browser but fails the scan. That can only fail safe.
+- S8: the PM seat found nothing in today's React 19.2.8 server output that reaches S5 or S6.
 ````
