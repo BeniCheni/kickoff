@@ -917,3 +917,12 @@ When this was recorded, #327 was still open at `ae927d7`.
   - the Cosmic Horror Kickoff Planner's Pass 1 brief, untracked at this path in Beni's main checkout, merged in first;
   - R1–R3 and this ruling added to `docs/design-overhaul-plan-review.md`;
   - ideas rows for anything not owned by a PR above.
+
+**Merged, with the hosted proof in hand (checked at about 12:40 PM EST, Mon 16 Nov 2026).**
+- Beni merged #327 at 12:04 PM EST as `2fd2466`.
+- The `vercel-smoke` status on `2fd2466` is green, from preview-smoke run 43914651335. That is
+  `main`'s new checker against `main`'s own deployment: the hosted proof he accepted ("Yes,
+  with revert"). No revert was needed.
+- `verify`, the Pages build and its deploy are green on that commit too.
+- `main` then took #329, a docs-only change, as `e6fe22f`, and its smoke is green as well.
+- `overhaul/second-edition` exists at `2fd2466`, so PR 1 has begun.
