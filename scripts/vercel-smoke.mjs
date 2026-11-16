@@ -55,8 +55,10 @@ function hasLeak(text, bypass) {
 // hardens the scan first.
 // Each name is a real attribute of its element: whitespace inside the tag precedes it,
 // so a prefixed stand-in (data-aria-label, x-data-moments-background, x-data-table-picker) does not count.
-// A tag name ends at whitespace, / or >, so button-probe and button.x are not buttons.
-// template and noscript are skipped whole, with script, style, textarea and title.
+// A tag name ends at whitespace, / or >, as HTML ends it, so button-probe and button.x are
+// elements of their own, and a tag quoted inside one of their attributes stays an attribute.
+// noscript is skipped whole, with script, style, textarea and title. A template's contents
+// are not in the document either, and templates nest, so the scan counts them open and closed.
 // Attribute names are read case-insensitively, and a quoted > stays inside its value.
 //   nav aria-label="Primary"         — every tab (checked below, not in ROUTES)
 //   data-moments-background="route"  — Fixtures and Table
@@ -80,13 +82,16 @@ function isAsciiLetter(code) {
   return (code >= 65 && code <= 90) || (code >= 97 && code <= 122)
 }
 
-const RAW_TEXT = new Set(['script', 'style', 'textarea', 'title', 'template', 'noscript'])
+const RAW_TEXT = new Set(['script', 'style', 'textarea', 'title', 'noscript'])
 
 // One pass over start tags. The tag name and attribute names are lowercased.
 // Quoted values are taken whole, so a > inside quotes cannot end the tag.
 function startTags(html) {
   const tags = []
   let i = 0
+  // Templates open at this point in the text. A start tag inside one is read, so its quoted
+  // values cannot end the template early, and it is not reported.
+  let templates = 0
   while (i < html.length) {
     const open = html.indexOf('<', i)
     if (open === -1) break
@@ -96,18 +101,15 @@ function startTags(html) {
       i = end === -1 ? html.length : end + 3
       continue
     }
+    // The one end tag the scan reads. A stray </template> closes nothing.
+    if (/^\/template[ \n\r\t\f/>]/i.test(html.slice(i, i + 10))) {
+      templates = Math.max(0, templates - 1)
+      continue
+    }
     if (!isAsciiLetter(html.charCodeAt(i))) continue
     const nameStart = i
-    i += 1
-    while (i < html.length) {
-      const code = html.charCodeAt(i)
-      const nameChar = isAsciiLetter(code) || (code >= 48 && code <= 57) || code === 45 || code === 58 || code === 95
-      if (!nameChar) break
-      i += 1
-    }
+    while (i < html.length && !isHtmlSpace(html[i]) && html[i] !== '/' && html[i] !== '>') i += 1
     const name = html.slice(nameStart, i).toLowerCase()
-    // <button.x …> is not a button. The name has to end at whitespace, / or >.
-    if (i >= html.length || !(isHtmlSpace(html[i]) || html[i] === '/' || html[i] === '>')) continue
     const attrs = new Map()
     let closed = false
     while (i < html.length) {
@@ -158,7 +160,8 @@ function startTags(html) {
       }
       if (!attrs.has(attr)) attrs.set(attr, value)
     }
-    if (closed) tags.push({ name, attrs })
+    if (closed && templates === 0) tags.push({ name, attrs })
+    if (closed && name === 'template') templates += 1
     if (closed && RAW_TEXT.has(name)) {
       const closer = new RegExp(`</${name}\\s*>`, 'ig')
       closer.lastIndex = i
