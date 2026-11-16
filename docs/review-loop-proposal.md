@@ -733,6 +733,10 @@ for Cursor (S7).
     record names the model that ran.
   - Codex is free of Sprint 1, so "this track's Codex builds wait" touches Sprints 2 and 3
     onward.
+  - Beni created `BeniCheni/elenchus` himself at 12:40 PM the same day (one commit, a README
+    holding its name). Cursor's seat stopped before any write, as its brief required, and a
+    continuation adopts the repository: nothing is pushed to `main`, and what the brief's
+    first commit would have held goes on `sprint-1` for review.
 - **One repository, `BeniCheni/elenchus` (Beni, Mon 16 Nov 2026).** The tool and the POC
   replay share it, under four conditions the Planner set out and Beni accepted with the name:
   1. The tool owns `main`, the default branch, and the replay of Kickoff lives only on
