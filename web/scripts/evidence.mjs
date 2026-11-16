@@ -354,6 +354,23 @@ export function unusedFontPreloads({ preloads, faces, used }) {
   })
 }
 
+// A shared head preloads a face some tabs do not render. The cold load fails
+// when no measured page selects the file, which is the Caslon case. A file one
+// tab leaves unused is recorded on that page and does not abort the run.
+export function preloadsUnusedOnEveryPage(pages) {
+  const seen = new Map()
+  for (const page of pages) {
+    const unused = new Set(page.unused)
+    for (const href of page.preloads) {
+      const file = fontFile(href) ?? href
+      const row = seen.get(file) ?? { href, used: false }
+      if (!unused.has(href)) row.used = true
+      seen.set(file, row)
+    }
+  }
+  return [...seen.values()].filter((row) => !row.used).map((row) => row.href)
+}
+
 /** `rows` is filled as loads pass, so the caller's receipt keeps them if a later load throws. */
 export async function captureRequests(browser, origins, anchor, rows = []) {
   for (const [app, origin] of Object.entries(origins)) {
@@ -408,16 +425,19 @@ export async function captureRequests(browser, origins, anchor, rows = []) {
       })
       const unused = unusedFontPreloads(usage)
       await context.close()
-      if (unused.length) throw new Error(`unused font preload on ${app} ${tab} ${width}: ${unused.join(', ')}`)
       const tally = log.tally(origin)
       if (tally.foreign.length) throw new Error(`cold load ${app} ${tab} ${width} asked for ${tally.foreign.join(', ')}`)
       rows.push({
         id: `${app}-${tab}-${width}`,
         bytes: tally.bytes,
         hosts: tally.hosts,
+        preloads: usage.preloads,
+        unused,
       })
     }
   }
+  const never = preloadsUnusedOnEveryPage(rows)
+  if (never.length) throw new Error(`font preload no measured page uses: ${never.join(', ')}`)
   return rows
 }
 

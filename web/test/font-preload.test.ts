@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { unusedFontPreloads } from '../scripts/evidence.mjs'
+import { preloadsUnusedOnEveryPage, unusedFontPreloads } from '../scripts/evidence.mjs'
 
 const faces = [
   { family: 'Oswald', weight: '500', src: 'url("./fonts/oswald/Oswald.woff2")' },
@@ -31,5 +31,14 @@ describe('an unused font preload', () => {
     expect(unusedFontPreloads({ preloads: [caslon], faces, used })).toEqual([caslon])
     const semibold = './fonts/kickoff-mono/KickoffMono-SemiBold.woff2'
     expect(unusedFontPreloads({ preloads: [semibold], faces, used })).toEqual([semibold])
+  })
+
+  it('fails a preload no measured page selects, and keeps one a single tab leaves unused', () => {
+    const caslon = 'https://page.example/fonts/libre-caslon-text/LibreCaslonText-Regular.woff2'
+    const mono = 'https://page.example/fonts/kickoff-mono/KickoffMono-Medium.woff2'
+    expect(preloadsUnusedOnEveryPage([
+      { preloads: [caslon, mono], unused: [caslon] },
+      { preloads: [caslon, mono], unused: [caslon, mono] },
+    ])).toEqual([caslon])
   })
 })
