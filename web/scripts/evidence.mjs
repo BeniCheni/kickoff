@@ -50,8 +50,8 @@ export async function openPage(browser, url, theme, width, { waitUntil = 'networ
   const context = await browser.createBrowserContext()
   const page = await context.newPage()
   const errors = []
-  // Kept on the offline receipt. A font host used to be written here; it is foreign now.
-  const network = []
+  // A request to any host but this page's own is recorded in `escaped` and fails the
+  // open. There is no second list: nothing was writing one.
   const escaped = []
   page.on('pageerror', (error) => errors.push(String(error)))
   page.on('console', (message) => {
@@ -86,7 +86,7 @@ export async function openPage(browser, url, theme, width, { waitUntil = 'networ
     const scope = offline ? 'the offline file asked for a host' : "asked for a host other than this page's own"
     throw new Error(`${scope}: ${escaped.join(' | ')}`)
   }
-  return { context, page, errors, network, escaped, status: response?.status() ?? 0 }
+  return { context, page, errors, escaped, status: response?.status() ?? 0 }
 }
 
 async function inspect(page) {
@@ -306,6 +306,54 @@ export async function captureWeeks(browser, { origins, out, weeks, contrast }, r
   return result
 }
 
+// The path after `fonts/`, so a relative stylesheet url and an absolute preload href
+// name the same file.
+export function fontFile(href) {
+  const match = String(href).match(/fonts\/[^?#")\s]+/)
+  return match ? match[0] : null
+}
+
+// CSS Fonts' weight match, for the single weights this stylesheet declares.
+// A range face covers every weight inside it and wins over a nearest neighbour.
+function faceChosen(faces, family, weight) {
+  const numeric = weight === 'normal' ? 400 : weight === 'bold' ? 700 : Number(weight)
+  const same = faces.filter((face) => face.family === family)
+  if (!same.length || !Number.isFinite(numeric)) return null
+  const range = same.find((face) => {
+    const parts = String(face.weight).trim().split(/\s+/).map(Number)
+    return parts.length === 2 && parts.every(Number.isFinite) && numeric >= parts[0] && numeric <= parts[1]
+  })
+  if (range) return range
+  const exact = same.find((face) => Number(face.weight) === numeric)
+  if (exact) return exact
+  const closer = (list) => list.slice().sort((a, b) => Math.abs(Number(a.weight) - numeric) - Math.abs(Number(b.weight) - numeric) || Number(a.weight) - Number(b.weight))
+  const heavier = same.filter((face) => Number(face.weight) > numeric)
+  const lighter = same.filter((face) => Number(face.weight) < numeric)
+  if (numeric >= 400 && numeric <= 500) {
+    const between = same.filter((face) => Number(face.weight) >= numeric && Number(face.weight) <= 500)
+    if (between.length) return closer(between)[0]
+    if (lighter.length) return closer(lighter)[0]
+    return heavier.length ? closer(heavier)[0] : null
+  }
+  if (numeric < 400) return (lighter.length ? closer(lighter) : closer(heavier))[0] ?? null
+  return (heavier.length ? closer(heavier) : closer(lighter))[0] ?? null
+}
+
+// Chrome fetches a preload it never applies and, headless, logs nothing. A preload
+// is unused when no rendered text selects a face that points at its file.
+export function unusedFontPreloads({ preloads, faces, used }) {
+  const chosen = new Set()
+  for (const row of used) {
+    const face = faceChosen(faces, row.family, row.weight)
+    const file = face && fontFile(face.src)
+    if (file) chosen.add(file)
+  }
+  return preloads.filter((href) => {
+    const file = fontFile(href)
+    return !file || !chosen.has(file)
+  })
+}
+
 /** `rows` is filled as loads pass, so the caller's receipt keeps them if a later load throws. */
 export async function captureRequests(browser, origins, anchor, rows = []) {
   for (const [app, origin] of Object.entries(origins)) {
@@ -322,7 +370,45 @@ export async function captureRequests(browser, origins, anchor, rows = []) {
       await page.setViewport({ width, height: 844, deviceScaleFactor: 1 })
       await page.evaluateOnNewDocument(() => localStorage.setItem('kickoff-theme', 'light'))
       await page.goto(`${origin}/?lens=poster&tab=${tab}&date=${anchor}`, { waitUntil: 'networkidle0', timeout: 30_000 })
+      const usage = await page.evaluate(() => {
+        const faces = []
+        for (const sheet of document.styleSheets) {
+          let rules
+          try { rules = [...sheet.cssRules] } catch { continue }
+          for (const rule of rules) {
+            if (rule.type !== CSSRule.FONT_FACE_RULE) continue
+            const family = rule.style.getPropertyValue('font-family').replaceAll(/['"]/g, '').trim()
+            const weight = rule.style.getPropertyValue('font-weight').trim()
+            const src = rule.style.getPropertyValue('src')
+            const url = src.match(/url\((?:"|')?([^"')]+)/)?.[1] ?? ''
+            faces.push({ family, weight, src: url })
+          }
+        }
+        const used = []
+        const seen = new Set()
+        const take = (style) => {
+          const family = style.fontFamily.split(',')[0].replaceAll(/['"]/g, '').trim()
+          const key = `${family}\n${style.fontWeight}`
+          if (seen.has(key)) return
+          seen.add(key)
+          used.push({ family, weight: style.fontWeight })
+        }
+        for (const el of document.querySelectorAll('*')) {
+          if ([...el.childNodes].some((node) => node.nodeType === Node.TEXT_NODE && node.textContent.trim())) take(getComputedStyle(el))
+          for (const pseudo of ['::before', '::after']) {
+            const style = getComputedStyle(el, pseudo)
+            if (style.content && style.content !== 'none' && style.content !== 'normal') take(style)
+          }
+        }
+        return {
+          preloads: [...document.querySelectorAll('link[rel="preload"][as="font"]')].map((link) => link.href),
+          faces,
+          used,
+        }
+      })
+      const unused = unusedFontPreloads(usage)
       await context.close()
+      if (unused.length) throw new Error(`unused font preload on ${app} ${tab} ${width}: ${unused.join(', ')}`)
       const tally = log.tally(origin)
       if (tally.foreign.length) throw new Error(`cold load ${app} ${tab} ${width} asked for ${tally.foreign.join(', ')}`)
       rows.push({
@@ -349,7 +435,7 @@ export async function captureOffline(browser, out, result = { sizes: {}, cells: 
   for (const tab of ['fixtures', 'table']) for (const theme of ['light', 'dark']) {
     const id = `offline-${tab}-${theme}-390`
     const search = tab === 'fixtures' ? '' : '?tab=table'
-    const { context, page, errors, network, escaped } = await openPage(
+    const { context, page, errors, escaped } = await openPage(
       browser, `${pathToFileURL(files.offline).href}${search}`, theme, 390,
       { waitUntil: 'domcontentloaded', offline: true },
     )
@@ -365,7 +451,7 @@ export async function captureOffline(browser, out, result = { sizes: {}, cells: 
       assert.deepEqual(escaped, [], `${id} asked for a host`)
       assert.deepEqual(errors, [], id)
       await shoot(page, path.join(out, `${id}.png`), 390)
-      cells.push({ id, theme, tab, scrollWidth: state.scrollWidth, network })
+      cells.push({ id, theme, tab, scrollWidth: state.scrollWidth })
     } finally { await context.close() }
   }
   return result
