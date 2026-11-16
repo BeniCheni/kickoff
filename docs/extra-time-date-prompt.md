@@ -4,7 +4,7 @@ Written at about 3:30 PM EST by the Pass 2.5 seat for PR #320 (Claude Code, Fabl
 Extra), after Beni moved v0.5.4's merge day from Mon 16 Nov to Sat 14 Nov 2026 so that PR #316
 could merge before the clearing (R2). For Cursor as #316's builder. Cursor's one commit,
 `8e955ad`, changed the four dated places; the same seat re-read it on #316, and Beni merged
-#316 at `34d078b`. Cursor tagged `v0.5.4` on his word, as he confirmed on Mon 16 Nov 2026
+#316 at `34d078b`. Cursor tagged `v0.5.4` on Beni's word, as Beni confirmed on Mon 16 Nov 2026
 (see the spec's §8). Delivered in chat in a fenced block, one line per
 paragraph; recovered verbatim from that session's transcript, and this copy is the archive.
 `docs/extra-time-proposal.md` is the spec of record for v0.5.4.

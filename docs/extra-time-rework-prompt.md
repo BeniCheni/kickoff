@@ -8,6 +8,8 @@ times in `src/data/fixtures.json`; that was the PM seat's error, and Cursor repo
 Delivered in chat in a fenced block, one line per paragraph; recovered verbatim from that
 session's transcript, and this copy is the archive. `docs/extra-time-proposal.md` is the spec
 of record for v0.5.4, and its §8 records the whole cycle.
+Cursor's chat stored this prompt without the blank lines between its paragraphs; the PR #329
+cold read found the words otherwise identical.
 
 ```text
 PR #316 — rework after Pass 2.5: correct three wordings and date v0.5.4 for Mon 16 Nov 2026

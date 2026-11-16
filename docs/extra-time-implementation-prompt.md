@@ -6,6 +6,8 @@ Extra High), which built PR #316 in five commits, `90eb38a` to `8498576`.
 Delivered in chat in a fenced block, one line per paragraph; recovered verbatim from that
 session's transcript, and this copy is the archive. `docs/extra-time-proposal.md` is the spec
 of record for v0.5.4, and its §8 records the whole cycle.
+Cursor's chat stored this prompt without the blank lines between its paragraphs; the PR #329
+cold read found the words otherwise identical.
 
 ```text
 You are Cursor, running Grok 4.7 Extra High in Agent mode with terminal access, and you are the builder of one release PR in BeniCheni/kickoff: v0.5.4, which closes docs/v0.2.6-ideas.md row 107. Objective, in one line: the sync must store ESPN's extra-time and penalty finals as two new statuses instead of refusing the whole snapshot, the app must show them honestly, and the release must ship before the Supercoppa match on Tue 22 Dec 2026. The spec of record is docs/extra-time-proposal.md on main at 3125493 (merged as PR #315); read all of it before writing code, because it carries the evidence, Beni's rulings and the acceptance commands. Where this prompt and the spec disagree, the spec wins, and you note the disagreement in the PR body. The builder reviews nothing it built: other seats review this PR before Beni merges it.
