@@ -802,14 +802,23 @@ appendix carries the four items below to the reviewer.
   `tests/syncPublication.test.ts`, `tests/venueTz.test.ts`, `studio/test/secrets.test.ts`), and
   the layout's first condition deletes it, so its third condition, `verify` running unchanged,
   runs red at every head of #1. Sprint 1 reads no CI, but Sprint 3's ruleset on `replay/main`
-  and its gate do. **Needs Beni's ruling before Sprint 3.** The Planner recommends a new commit
-  on `replay/main` that restores both files byte for byte, with no force-push: the deletion was
-  a second guard, and three others hold without it. Schedules run only from the default branch,
+  and its gate do. **Beni ruled the same day: restore them**, amending the layout's first
+  condition. A new commit on `replay/main` restores both files byte for byte from `34d078b`, with
+  no force-push, so the base's tree is Kickoff's `34d078b` plus `.elenchus.json`. The deletion
+  was a second guard, and three others hold without it. Schedules run only from the default branch,
   whose tree has no Kickoff workflow; `pages.yml` fires only on a push to `main`; and `sync.yml`'s
   own rule stops a real run dispatched on any branch but `main` with an error. Elenchus
-  also has "Allow GitHub Actions to create and approve pull requests" off. The alternative keeps
-  the deletion and leaves `verify` out of Sprint 3's required checks, which makes the replay
-  unlike Kickoff at the one check the gate exists to read.
+  also has "Allow GitHub Actions to create and approve pull requests" off. The alternative, not
+  taken, kept the deletion and left `verify` out of Sprint 3's required checks, which would have
+  made the replay unlike Kickoff at the one check the gate exists to read.
+  *When:* Cursor makes the commit in Sprint 1's fix round, after Pass 1 posts, never under a
+  running review: moving `replay/main` changes the `base:` line of the live status that Pass 1
+  compares byte for byte with the P9 receipt (T9). The fix round then re-captures that receipt at
+  the new base, closes and reopens #1 to get a fresh `pull_request` run (a push to the base starts
+  none, and a re-run reuses the old merge commit), and watches `verify` and Studio to their
+  conclusion. If Pass 1 orders no fix round, the restore goes out in a brief of its own. The
+  ruling moves to "Rulings received" once Pass 1 has posted; it waits here because the Pass 1
+  brief seals this section and has the reviewer read that one.
 - **Kickoff's timeline gained two cross-references.** Sprint 1's brief titled the replay "Fixture:
   replay of BeniCheni/kickoff#320", and #2's body links #320, so GitHub added two events to
   #320's public timeline (18:34Z and 18:45Z). That is not a write to Kickoff's content, but it is
