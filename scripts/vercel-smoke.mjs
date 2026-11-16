@@ -50,11 +50,14 @@ function hasLeak(text, bypass) {
     Boolean(bypass && plain.includes(bypass))
 }
 
-// Contract every later brief carries. A route fails without these, in the server HTML:
+// Contract every later brief carries. A route fails without these, in the server HTML.
+// Each name is a real attribute of its element: whitespace inside the tag precedes it,
+// so a prefixed stand-in (data-aria-label, x-data-moments-background, x-data-table-picker) does not count.
 //   nav aria-label="Primary"         — every tab (checked below, not in ROUTES)
 //   data-moments-background="route"  — Fixtures and Table
 //   button aria-label="Previous"     — Fixtures only: the week stepper's previous chevron.
 //                                      A button, and that exact name: "Previous week" fails.
+//                                      aria-labelledby on that button fails too: it overrides the name.
 //   data-table-picker                — Table
 //   main aria-label="Moments"        — Moments
 // Two more readings are of Moments' words, and they go quiet, not red, if the words change:
@@ -62,10 +65,16 @@ function hasLeak(text, bypass) {
 //   "Stub catalog · synthetic records"                                 — the stub-catalog leak check
 // "Jump to today" is not in the contract. The second edition renames that button "Today"
 // (PR 3) and keeps the stepper through that week-row rebuild and the Poster books (PR 5).
+const PRIMARY_NAV = /<nav\b[^>]*\saria-label="Primary"/
+const MOMENTS_BACKGROUND = /<[a-zA-Z][\w:-]*\b[^>]*\sdata-moments-background="route"/
+// aria-labelledby anywhere in the same tag overrides aria-label, whichever comes first.
+const PREVIOUS_BUTTON = /<button\b(?![^>]*\saria-labelledby(?:=|[\s>/]))[^>]*\saria-label="Previous"/
+const TABLE_PICKER = /<[a-zA-Z][\w:-]*\b[^>]*\sdata-table-picker(?:=|[\s>/])/
+const MOMENTS_MAIN = /<main\b[^>]*\saria-label="Moments"/
 const ROUTES = [
-  ['/', /data-moments-background="route"/, /<button\b[^>]*\baria-label="Previous"/],
-  ['/?tab=table', /data-moments-background="route"/, /\bdata-table-picker(?:=|[ >])/],
-  ['/?tab=moments', /<main\b[^>]*aria-label="Moments"/],
+  ['/', MOMENTS_BACKGROUND, PREVIOUS_BUTTON],
+  ['/?tab=table', MOMENTS_BACKGROUND, TABLE_PICKER],
+  ['/?tab=moments', MOMENTS_MAIN],
 ]
 
 export async function smoke({ url, sha, project, mainSha, ref = null, bypass }, { fetchImpl = fetch, cwd = root } = {}) {
@@ -95,7 +104,7 @@ export async function smoke({ url, sha, project, mainSha, ref = null, bypass }, 
       if (snapshot?.sourceSha !== sha) throw new Error('Snapshot source SHA does not match deployment')
       if (snapshot?.snapshotDigest !== expectedDigest) throw new Error('Snapshot digest does not match committed data')
     } else {
-      if (!/<nav\b[^>]*aria-label="Primary"/.test(body) || !landmarks.every(marker => marker.test(body))) throw new Error(`Missing page landmark: ${route}`)
+      if (!PRIMARY_NAV.test(body) || !landmarks.every(marker => marker.test(body))) throw new Error(`Missing page landmark: ${route}`)
       if (route === '/?tab=moments') galleryUnavailable = /id="moments-unavailable-heading"|The gallery is unavailable\./.test(body)
     }
     checks.push(route)

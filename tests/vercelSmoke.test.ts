@@ -77,6 +77,25 @@ describe('trusted-main Vercel smoke', () => {
     const result = await smoke(base, { fetchImpl: server({ index: 0, body: renamed }) })
     expect(result.checks).toContain('/')
   })
+  it.each([
+    ['nav', 0, `<nav data-aria-label="Primary"></nav><div data-moments-background="route"><button aria-label="Previous">‹</button></div>`],
+    ['moments background', 0, `${nav}<div x-data-moments-background="route"><button aria-label="Previous">‹</button></div>`],
+    ['previous button', 0, `${nav}<div data-moments-background="route"><button data-aria-label="Previous">‹</button></div>`],
+    ['table picker', 1, `${nav}<div data-moments-background="route"><div x-data-table-picker></div></div>`],
+    ['moments main', 2, `${nav}<main data-aria-label="Moments">Published videos</main>`],
+  ])('rejects a prefixed stand-in for the %s landmark', async (_name, index, body) => {
+    await expect(smoke(base, { fetchImpl: server({ index, body }) })).rejects.toThrow('landmark')
+  })
+  it('rejects a Previous button whose accessible name is overridden', async () => {
+    const bodies = [
+      `${nav}<div data-moments-background="route"><button aria-label="Previous" aria-labelledby="week">‹</button></div>`,
+      `${nav}<div data-moments-background="route"><button aria-labelledby="week" aria-label="Previous">‹</button></div>`,
+      `${nav}<div data-moments-background="route"><button aria-label="Previous week">‹</button></div>`,
+    ]
+    for (const body of bodies) {
+      await expect(smoke(base, { fetchImpl: server({ index: 0, body }) })).rejects.toThrow('landmark')
+    }
+  })
   it('rejects wrong source SHA and wrong snapshot bytes', async () => {
     for (const snapshot of [{ sourceSha: 'b'.repeat(40), snapshotDigest: digestAt(sha) }, { sourceSha: sha, snapshotDigest: '0'.repeat(64) }]) {
       await expect(smoke(base, { fetchImpl: server({ index: 3, body: JSON.stringify(snapshot) }) })).rejects.toThrow('Snapshot')
