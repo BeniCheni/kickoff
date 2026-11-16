@@ -706,8 +706,37 @@ for Cursor (S7).
   - Today's Super-tier model list is the receipt
     [`verification/review-loop/cursor-models-2026-11-15-super.txt`](verification/review-loop/cursor-models-2026-11-15-super.txt).
     The lower tier's list is diffed against it on 19 Nov.
+- **D5 — Separate (Beni, Mon 16 Nov 2026),** against the recommendation. `loop` gets a
+  repository of its own instead of `scripts/loop/` in Kickoff. What that changes:
+  - Sprints 1 to 3 build the tool in its own repository from the start, not in a Kickoff-shaped
+    layout to be ported in Sprint 4.
+  - Kickoff's rules (the seven version places, D3's set, the skill's pass names) become
+    configuration the tool reads from the repository it checks, not code inside the tool.
+  - Kickoff's `verify` no longer runs `loop`'s tests; the tool's own CI does, and Kickoff runs
+    a pinned release of it.
+  - Sprint 4's Kickoff PR shrinks to the seat-record block in `pr-comment.md` and `SKILL.md`,
+    drift items 3 and 4, and how Kickoff calls the pinned tool. D8 still numbers Kickoff's
+    Sprint 4 and 5 PRs. The tool repository's own version numbers are a separate question, put
+    to Beni before its first tag.
+- **D6 — Public (Beni, Mon 16 Nov 2026).**
+- **Sprint 1's seats, an edit to D7 (Beni, Mon 16 Nov 2026).** Cursor on Grok 4.7 creates the
+  POC repository and builds Sprint 1, and Beni asked the Planner to suggest the effort. The
+  Planner recommends `grok-4.7-high` for both. The Super window's `xhigh` goes to the overhaul's
+  seats first, and the setup's one irreversible step, the first public push, is guarded by
+  checks written into its prompt rather than by depth. If the lower tier keeps
+  `grok-4.7-high`, a fix round after 19 Nov runs on the same model. Pass 1 stays a fresh Claude
+  Code session on `claude-fable-5-2` at `xhigh`. What that changes:
+  - Sprint 1 starts once no overhaul Cursor seat is waiting: after Cursor's #327 fix round is
+    pushed, and after PR 1's build if PR 1 runs in the Super window. For Sprint 1 this
+    replaces "run on the lower tier" above.
+  - A Sprint 1 fix round after Thu 19 Nov runs on whatever the lower tier lists, and its
+    record names the model that ran.
+  - Codex is free of Sprint 1, so "this track's Codex builds wait" touches Sprints 2 and 3
+    onward.
+- **Asked on 16 Nov, not yet ruled:** whether the tool's repository and the POC replay are one
+  repository or two.
 
-D1 to D6 and D8 to D12 are not yet ruled.
+D1 to D4 and D8 to D12 are not yet ruled.
 
 ## Found after the spikes (15 Nov 2026, afternoon)
 
