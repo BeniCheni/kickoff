@@ -692,3 +692,14 @@ WHAT YOU MUST NOT DO. Your gh is Beni's account, an Admin who can bypass the ver
 - No change to rulesets, repo settings, workflows or any other PR.
 If you find a blocker, do not fix it: give the minimal reproduction, its severity and the follow-up for the builder, and recommend Hold.
 ````
+
+**Ruled at about 9:45 AM EST on Mon 16 Nov 2026 (Beni): "Yes, with revert."** The plan's "smoke
+green on the PR's own preview" is met by the smoke that `preview-smoke.yml` runs on `main`'s
+production deployment after the merge. If that run is red, the merge is reverted. As this was
+recorded, Codex had not yet posted its second sitting (#327 was still at `ff815e9`, with no
+comment after Cursor's fix round). The line below went to Codex in chat, so that the handoff
+block carries the production-smoke check and the revert.
+
+```text
+Beni ruled the hosted-preview evidence on Mon 16 Nov 2026 at about 9:45 AM EST: "Yes, with revert". The smoke that preview-smoke.yml runs on main's production deployment after the merge is the hosted proof. Record it as his ruling, drop that question from your brief, and end the handoff block with the gh commands that show that run and the merge commit's vercel-smoke status, followed by the git revert of the merge commit, and its push, to use if that smoke is red.
+```
