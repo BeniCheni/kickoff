@@ -313,6 +313,7 @@ export async function captureWeeks(browser, { origins, out, weeks, contrast }, r
   return result
 }
 
+/** `rows` is filled as loads pass, so the caller's receipt keeps them if a later load throws. */
 export async function captureRequests(browser, origins, anchor, rows = []) {
   for (const [app, origin] of Object.entries(origins)) {
     for (const tab of ['fixtures', 'table', 'moments']) for (const width of [390, 1000]) {
@@ -341,17 +342,17 @@ export async function captureRequests(browser, origins, anchor, rows = []) {
   return rows
 }
 
-export async function captureOffline(browser, out) {
+/** `result` is filled as cells pass, so the caller's receipt keeps them if a later cell throws. */
+export async function captureOffline(browser, out, result = { sizes: {}, cells: [] }) {
   const files = {
     offline: path.join(root, 'dist-offline/index.html'),
     single: path.join(root, 'dist-single/index.html'),
   }
-  const sizes = {}
   for (const [name, file] of Object.entries(files)) {
     const stat = statSync(file)
-    sizes[name] = { file: path.relative(root, file), bytes: stat.size }
+    result.sizes[name] = { file: path.relative(root, file), bytes: stat.size }
   }
-  const cells = []
+  const { cells } = result
   for (const tab of ['fixtures', 'table']) for (const theme of ['light', 'dark']) {
     const id = `offline-${tab}-${theme}-390`
     const search = tab === 'fixtures' ? '' : '?tab=table'
@@ -374,12 +375,12 @@ export async function captureOffline(browser, out) {
       cells.push({ id, theme, tab, scrollWidth: state.scrollWidth, network })
     } finally { await context.close() }
   }
-  return { sizes, cells }
+  return result
 }
 
-export async function captureHarness(browser, out) {
+/** `cells` is filled as cells pass, so the caller's receipt keeps them if a later cell throws. */
+export async function captureHarness(browser, out, cells = []) {
   const origin = process.env.KICKOFF_HARNESS_ORIGIN ?? 'http://127.0.0.1:5175'
-  const cells = []
   // 1000 is here for the Table: its desktop cell is display:none below 768, so at 360
   // and 390 the page holds its words without showing them.
   for (const theme of ['light', 'dark']) for (const width of [360, 390, 1000]) {
@@ -504,9 +505,12 @@ async function main() {
     await runMatrix(browser, { origins, out, anchor, contrast: true }, matrix)
     assert.equal(matrix.cells.length, 96)
     await captureWeeks(browser, { origins, out, weeks, contrast: true }, weekRun)
-    steps.requests = await captureRequests(browser, origins, anchor)
-    steps.offline = await captureOffline(browser, out)
-    steps.harness = await captureHarness(browser, out)
+    steps.requests = []
+    await captureRequests(browser, origins, anchor, steps.requests)
+    steps.offline = { sizes: {}, cells: [] }
+    await captureOffline(browser, out, steps.offline)
+    steps.harness = []
+    await captureHarness(browser, out, steps.harness)
     const done = receipt()
     writeFileSync(path.join(out, 'receipt.json'), JSON.stringify(done, null, 2))
     const failing = belowFloor(done.contrast.cells)
