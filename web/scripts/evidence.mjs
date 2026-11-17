@@ -313,53 +313,49 @@ export function fontFile(href) {
   return match ? match[0] : null
 }
 
-// CSS Fonts' weight match, for the single weights this stylesheet declares.
-// A range face covers every weight inside it and wins over a nearest neighbour.
-function faceChosen(faces, family, weight) {
-  const numeric = weight === 'normal' ? 400 : weight === 'bold' ? 700 : Number(weight)
-  const same = faces.filter((face) => face.family === family)
-  if (!same.length || !Number.isFinite(numeric)) return null
-  const range = same.find((face) => {
-    const parts = String(face.weight).trim().split(/\s+/).map(Number)
-    return parts.length === 2 && parts.every(Number.isFinite) && numeric >= parts[0] && numeric <= parts[1]
-  })
-  if (range) return range
-  const exact = same.find((face) => Number(face.weight) === numeric)
-  if (exact) return exact
-  const closer = (list) => list.slice().sort((a, b) => Math.abs(Number(a.weight) - numeric) - Math.abs(Number(b.weight) - numeric) || Number(a.weight) - Number(b.weight))
-  const heavier = same.filter((face) => Number(face.weight) > numeric)
-  const lighter = same.filter((face) => Number(face.weight) < numeric)
-  if (numeric >= 400 && numeric <= 500) {
-    const between = same.filter((face) => Number(face.weight) >= numeric && Number(face.weight) <= 500)
-    if (between.length) return closer(between)[0]
-    if (lighter.length) return closer(lighter)[0]
-    return heavier.length ? closer(heavier)[0] : null
+// Chrome fetches a preload it never applies and, headless, logs nothing.
+// "Used" is a document.fonts entry whose status is "loaded" once the page has
+// settled. The browser does not load a face for text it does not render — the
+// hidden attribute, display:none, a closed details — so those do not count.
+// The loaded face already carries the weight the browser applied (Kickoff Mono
+// at 500 for a 400 request), so the gate matches that face to the @font-face
+// rule and does not choose a nearest weight itself. document.fonts does not
+// expose the file, which is why the stylesheet is still read.
+function filesForLoadedFaces(faces, loaded) {
+  const chosen = new Set()
+  for (const entry of loaded ?? []) {
+    if (entry.status !== 'loaded') continue
+    const family = String(entry.family).replaceAll(/['"]/g, '').trim()
+    const style = String(entry.style || 'normal').trim()
+    const weight = String(entry.weight).trim()
+    for (const face of faces) {
+      const faceStyle = String(face.style || 'normal').trim()
+      if (face.family !== family || faceStyle !== style || String(face.weight).trim() !== weight) continue
+      const file = fontFile(face.src)
+      if (file) chosen.add(file)
+    }
   }
-  if (numeric < 400) return (lighter.length ? closer(lighter) : closer(heavier))[0] ?? null
-  return (heavier.length ? closer(heavier) : closer(lighter))[0] ?? null
+  return chosen
 }
 
-// Chrome fetches a preload it never applies and, headless, logs nothing. A preload
-// is unused when no rendered text selects a face that points at its file.
-export function unusedFontPreloads({ preloads, faces, used }) {
-  const chosen = new Set()
-  for (const row of used) {
-    const face = faceChosen(faces, row.family, row.weight)
-    const file = face && fontFile(face.src)
-    if (file) chosen.add(file)
-  }
+export function unusedFontPreloads({ preloads, faces, loaded }) {
+  const chosen = filesForLoadedFaces(faces, loaded)
   return preloads.filter((href) => {
     const file = fontFile(href)
     return !file || !chosen.has(file)
   })
 }
 
-// A shared head preloads a face some tabs do not render. The cold load fails
-// when no measured page selects the file, which is the Caslon case. A file one
-// tab leaves unused is recorded on that page and does not abort the run.
+// One app's pages are one decision. A file Vite renders does not excuse the
+// same path on Next. Within an app, a file one tab leaves unused is recorded
+// on that page and does not abort the run; the cold load fails when no measured
+// page of that app loaded the face. Pages with no app share one group, which
+// is the shape of the unit cases.
 export function preloadsUnusedOnEveryPage(pages) {
-  const seen = new Map()
+  const byApp = new Map()
   for (const page of pages) {
+    const app = page.app ?? ''
+    const seen = byApp.get(app) ?? new Map()
     const unused = new Set(page.unused)
     for (const href of page.preloads) {
       const file = fontFile(href) ?? href
@@ -367,74 +363,93 @@ export function preloadsUnusedOnEveryPage(pages) {
       if (!unused.has(href)) row.used = true
       seen.set(file, row)
     }
+    byApp.set(app, seen)
   }
-  return [...seen.values()].filter((row) => !row.used).map((row) => row.href)
+  const missed = []
+  for (const [app, seen] of byApp) {
+    for (const row of seen.values()) {
+      if (!row.used) missed.push(app ? `${app} ${row.href}` : row.href)
+    }
+  }
+  return missed
+}
+
+// Poster and ledger, for each tab the cold load covers. 2 apps × 3 tabs ×
+// 2 lenses × 2 widths = 24 loads. A face only the ledger lens renders has to
+// be in this list, or the preload fails on the poster pages alone.
+export function coldLoadTargets(apps) {
+  const targets = []
+  for (const app of apps) {
+    for (const tab of ['fixtures', 'table', 'moments']) {
+      for (const lens of ['poster', 'ledger']) {
+        for (const width of [390, 1000]) targets.push({ app, tab, lens, width })
+      }
+    }
+  }
+  return targets
 }
 
 /** `rows` is filled as loads pass, so the caller's receipt keeps them if a later load throws. */
 export async function captureRequests(browser, origins, anchor, rows = []) {
-  for (const [app, origin] of Object.entries(origins)) {
-    for (const tab of ['fixtures', 'table', 'moments']) for (const width of [390, 1000]) {
-      const context = await browser.createBrowserContext()
-      const page = await context.newPage()
-      const client = await page.createCDPSession()
-      await client.send('Network.enable')
-      await client.send('Network.setCacheDisabled', { cacheDisabled: true })
-      const log = createColdLoad()
-      client.on('Network.requestWillBeSent', (event) => log.requestWillBeSent(event))
-      client.on('Network.responseReceived', (event) => log.responseReceived(event))
-      client.on('Network.loadingFinished', (event) => log.loadingFinished(event))
-      await page.setViewport({ width, height: 844, deviceScaleFactor: 1 })
-      await page.evaluateOnNewDocument(() => localStorage.setItem('kickoff-theme', 'light'))
-      await page.goto(`${origin}/?lens=poster&tab=${tab}&date=${anchor}`, { waitUntil: 'networkidle0', timeout: 30_000 })
-      const usage = await page.evaluate(() => {
-        const faces = []
-        for (const sheet of document.styleSheets) {
-          let rules
-          try { rules = [...sheet.cssRules] } catch { continue }
-          for (const rule of rules) {
-            if (rule.type !== CSSRule.FONT_FACE_RULE) continue
-            const family = rule.style.getPropertyValue('font-family').replaceAll(/['"]/g, '').trim()
-            const weight = rule.style.getPropertyValue('font-weight').trim()
-            const src = rule.style.getPropertyValue('src')
-            const url = src.match(/url\((?:"|')?([^"')]+)/)?.[1] ?? ''
-            faces.push({ family, weight, src: url })
-          }
+  for (const target of coldLoadTargets(Object.keys(origins))) {
+    const { app, tab, lens, width } = target
+    const origin = origins[app]
+    const context = await browser.createBrowserContext()
+    const page = await context.newPage()
+    const client = await page.createCDPSession()
+    await client.send('Network.enable')
+    await client.send('Network.setCacheDisabled', { cacheDisabled: true })
+    const log = createColdLoad()
+    client.on('Network.requestWillBeSent', (event) => log.requestWillBeSent(event))
+    client.on('Network.responseReceived', (event) => log.responseReceived(event))
+    client.on('Network.loadingFinished', (event) => log.loadingFinished(event))
+    await page.setViewport({ width, height: 844, deviceScaleFactor: 1 })
+    await page.evaluateOnNewDocument(() => localStorage.setItem('kickoff-theme', 'light'))
+    await page.goto(`${origin}/?lens=${lens}&tab=${tab}&date=${anchor}`, { waitUntil: 'networkidle0', timeout: 30_000 })
+    const usage = await page.evaluate(async () => {
+      await document.fonts.ready
+      const faces = []
+      for (const sheet of document.styleSheets) {
+        let rules
+        try { rules = [...sheet.cssRules] } catch { continue }
+        for (const rule of rules) {
+          if (rule.type !== CSSRule.FONT_FACE_RULE) continue
+          const family = rule.style.getPropertyValue('font-family').replaceAll(/['"]/g, '').trim()
+          const style = rule.style.getPropertyValue('font-style').trim() || 'normal'
+          const weight = rule.style.getPropertyValue('font-weight').trim()
+          const src = rule.style.getPropertyValue('src')
+          const url = src.match(/url\((?:"|')?([^"')]+)/)?.[1] ?? ''
+          faces.push({ family, style, weight, src: url })
         }
-        const used = []
-        const seen = new Set()
-        const take = (style) => {
-          const family = style.fontFamily.split(',')[0].replaceAll(/['"]/g, '').trim()
-          const key = `${family}\n${style.fontWeight}`
-          if (seen.has(key)) return
-          seen.add(key)
-          used.push({ family, weight: style.fontWeight })
-        }
-        for (const el of document.querySelectorAll('*')) {
-          if ([...el.childNodes].some((node) => node.nodeType === Node.TEXT_NODE && node.textContent.trim())) take(getComputedStyle(el))
-          for (const pseudo of ['::before', '::after']) {
-            const style = getComputedStyle(el, pseudo)
-            if (style.content && style.content !== 'none' && style.content !== 'normal') take(style)
-          }
-        }
-        return {
-          preloads: [...document.querySelectorAll('link[rel="preload"][as="font"]')].map((link) => link.href),
-          faces,
-          used,
-        }
-      })
-      const unused = unusedFontPreloads(usage)
-      await context.close()
-      const tally = log.tally(origin)
-      if (tally.foreign.length) throw new Error(`cold load ${app} ${tab} ${width} asked for ${tally.foreign.join(', ')}`)
-      rows.push({
-        id: `${app}-${tab}-${width}`,
-        bytes: tally.bytes,
-        hosts: tally.hosts,
-        preloads: usage.preloads,
-        unused,
-      })
-    }
+      }
+      const loaded = []
+      for (const face of document.fonts) {
+        if (face.status !== 'loaded') continue
+        loaded.push({
+          family: face.family.replaceAll(/['"]/g, '').trim(),
+          style: String(face.style || 'normal').trim(),
+          weight: String(face.weight).trim(),
+          status: face.status,
+        })
+      }
+      return {
+        preloads: [...document.querySelectorAll('link[rel="preload"][as="font"]')].map((link) => link.href),
+        faces,
+        loaded,
+      }
+    })
+    const unused = unusedFontPreloads(usage)
+    await context.close()
+    const tally = log.tally(origin)
+    if (tally.foreign.length) throw new Error(`cold load ${app} ${tab} ${lens} ${width} asked for ${tally.foreign.join(', ')}`)
+    rows.push({
+      id: `${app}-${tab}-${lens}-${width}`,
+      app,
+      bytes: tally.bytes,
+      hosts: tally.hosts,
+      preloads: usage.preloads,
+      unused,
+    })
   }
   const never = preloadsUnusedOnEveryPage(rows)
   if (never.length) throw new Error(`font preload no measured page uses: ${never.join(', ')}`)
