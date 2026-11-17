@@ -545,7 +545,8 @@ Cursor's hands this track seats no Cursor.
 
 **Sprint 6 onward — headless dispatch, one vendor per sprint.**
 - Claude Code first: it has the best observability (S2), and S1 proves it can start the skill.
-  Codex second. Cursor third, per D4, for writing seats only.
+  Codex second. Sprint 8, Cursor's runner, was dropped on 17 Nov with the move to two vendors
+  (see "Rulings received").
 - *Scope:* `loop run` launches the confirmed flags, reads `observed` back before the seat
   pushes, and stops on a mismatch. The manual path stays.
 - *Acceptance:* T2 and T4 for that vendor.
@@ -563,9 +564,13 @@ size (57 files or 1,500 changed lines in its own diff, the one size this record 
 runs as two fresh sub-agents, Spec and Standards, each covering the manifest. Findings and quota
 are compared with a normal Pass 1 before anything is adopted.
 
-**Deferred:** any GUI viewer (Paradev included), any Gemini or Antigravity seat.
+**Deferred:** any GUI viewer (Paradev included), any Gemini or Antigravity seat. A Gemini model
+may serve as one of S12's judges, which is not a seat.
 
 ## The seat roster (D7)
+
+*Amended Tue 17 Nov 2026 for two vendors.* The rule, the two orientations and each sprint's seats
+are under "Rulings received". The table below is the roster of 15 Nov.
 
 Model IDs are each CLI's own; effort labels are never mapped across vendors. Every model named
 was selectable on 15 Nov 2026: Opus 5.5 (this session), `claude-fable-5-2` (S2), `gpt-6.1-sol`
@@ -990,7 +995,82 @@ for Cursor (S7).
   - **Sprint 3 adds no App-to-login binding.** One would have needed a change to `replay/main`
     with its review gate turned off. It is a candidate for Sprint 5 instead (see there).
 
-D4, D8 and D10 to D12 are not yet ruled.
+- **Two vendors, each at its deepest (Beni, Tue 17 Nov 2026).** Beni moved to Claude Max and
+  ChatGPT Pro, and is ending the xAI and Cursor paid tiers. He asked for the review cycle to be
+  fitted to the two vendors at the deepest each subscription allows. He approved four proposals
+  as written, after confirming that GPT-6.2 Sol is available and having it folded in.
+  - **D7, amended: one rule, two orientations.**
+    - **The rule.** The vendor that builds a pull request never holds its Pass 1 or Pass 2.5.
+      The other vendor holds both, each in a fresh session, and Pass 2.5 writes nothing.
+    - **Review briefs.** The reviewing vendor also writes the review briefs (Passes 0 and 1.5),
+      so the side that built never steers its own reviewer.
+    - **Two models.** Pass 1 and Pass 2.5 run on different models of the reviewing vendor, so
+      the synthesis never judges findings written by its own model.
+    - **The Claude Planner** keeps the plan of record and writes every build brief.
+
+    | Seat | Codex builds (Sprints 3, 5, 7) | Claude builds (Sprints 4, 6) |
+    |---|---|---|
+    | Plan of record and build brief | Claude Planner | Claude Planner |
+    | Passes 0 and 1.5 | Claude Planner | Codex, `gpt-6.2-astra`, as review lead |
+    | Build, Pass 2, executor | Sprint 5: `gpt-6.2-astra`, `max`. Sprint 7: `gpt-6.2-sol`, `xhigh`. Sprint 3 stays on `gpt-6.1-sol`. | Claude Code, `claude-fable-5-2`, `xhigh` |
+    | Pass 1 | Claude Code, `claude-fable-5-2`, `max` | Codex, `gpt-6.2-astra`, `max`, fresh |
+    | Pass 2.5 | Claude Code, `claude-opus-5-5`, `max`, a fresh session that writes nothing | Codex, `gpt-6.2-sol`, `max`, `--sandbox read-only` (read-only on disk, S7) |
+
+    - **Sprint 3** is Codex's and already building; a sprint never switches mid-build. Its
+      Pass 1 rises to `max`, and its Pass 2.5 becomes Opus 5.5 at `max`. The review paragraph
+      of its build brief is superseded on those two points, and Sprint 3's Pass 0 brief carries
+      the new seats.
+    - **Sprint 4 is Claude's.** It is Kickoff's skill text, in Claude's own skill format, and a
+      Codex review clears flag (a) for it.
+    - **Sprint 5 is Codex's.** It ports Sprint 3's reviewed gate code, so the port stays a copy.
+    - **Sprints 6 and 7 cross,** so that no vendor reviews its own launcher: Claude builds the
+      Claude runner and Codex reviews it, and the reverse for the Codex runner.
+  - **The models, as Codex's catalog listed them on 17 Nov** (`codex debug models`, codex-cli
+    0.169.0-alpha.11.1):
+    - **`gpt-6.2-astra`** is "our most capable model for complex coding and professional work".
+      It takes the gate build, the cold review and the review briefs.
+    - **`gpt-6.2-sol`** is the "fast, go-to model for coding and everyday work". It takes the
+      other builds and the synthesis.
+    - **`gpt-6-astra`** is now "previous generation".
+    - **Efforts.** Every GPT-6.x model offers `low` to `max` plus `ultra`, which is "maximum
+      reasoning with automatic task delegation". `ultra` stays off seats until a probe shows a
+      record can see the delegated work's model. Claude Code 2.1.325 offers `low` to `max`.
+      Effort labels are still never mapped across vendors.
+    - **Configuration.** Sprint 4's brief adds both 6.2 models to the model tables in Kickoff's
+      configuration.
+  - **The wait rule stands:** this track's Codex builds still wait while an overhaul Codex build
+    runs, until Beni lifts the rule.
+  - **Sprint 8 is dropped and D4 withdrawn.** Both concerned Cursor seats.
+    - **elenchus stays vendor-neutral.** An adopter such as keel may still configure Cursor,
+      and nothing in `src/` changes.
+    - **The 19 Nov check of Cursor's models is dropped.**
+    - **Outside this track, still open:** the v0.6.0 overhaul routes its builder and Pass 2
+      through Cursor on Grok (`design-overhaul-plan.md`). That plan needs re-routing before
+      Cursor's paid tier ends.
+  - **D12 — Pilot, with S12 widened to compare judges.**
+    - **The blocker is gone.** D12 waited for a structured evidence field, and schema v1.2's
+      findings carry `evidence`.
+    - **The judges.** S12 asks O3's two questions, the evidence screen and the missed-high
+      screen, of each of these:
+      - **Jev:** `jev-1.14.0` pinned, `@typesafe-ai/sdk` 0.7.0, Node 22 or later.
+      - **Claude:** Haiku 5.5, Sonnet 5.5 and Opus 5.5 through the API credits, with structured
+        outputs and the Batches API.
+      - **GPT:** `gpt-6.2-sol` through `codex exec --output-schema --ephemeral --json` on Pro
+        quota, with no key.
+      - **Optionally Gemini,** through fal's OpenRouter route.
+    - **The answer key** is Beni's rulings on about 70 findings: Kickoff PR 320's Pass 1, and
+      elenchus Sprints 1 and 2's Pass 1 with Sprint 2's appendix.
+    - **The cost** is about $3–6 in all.
+    - **The keys.** Beni sets `TYPESAFE_API_KEY` and `ANTHROPIC_API_KEY` in his own shell and
+      runs the script, which a seat writes. The Planner never sees a key.
+    - **What a calibrated judge becomes:** an advisory signal in `check` under O3's rules,
+      adding NOTICE lines only and never passing or blocking anything.
+    - **One caveat.** Claude and GPT state a confidence, while Jev reports a calibrated
+      probability. S12 scores all of them the same way.
+  - **The App's avatar and the repository's social preview** were generated on fal: Nano Banana
+    Pro, four images, about $0.60. Beni chooses which to use and uploads them himself.
+
+D8, D10 and D11 are not yet ruled. D4 is withdrawn, and D12 is Pilot (17 Nov).
 
 ## Found after the spikes (15 Nov 2026, afternoon)
 
