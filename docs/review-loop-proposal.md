@@ -469,6 +469,8 @@ Cursor's hands this track seats no Cursor.
   per S7), T8, T11.
 - *Review:* fast-track, for the same reason as Sprint 1.
 - *Rollback:* archive.
+- *Built (Mon 16 Nov 2026):* by Cursor as elenchus #4 (`sprint-2`, head `c4497cb`), with the
+  fixture #3 for `prep`; awaiting its fast-track Pass 1. See "Sprint 2's build" below.
 
 **Sprint 3 — the gate, on the scratch repo (non-production, after D1, D2, D3 and D9).**
 - *Scope:* `loop authorize`; the scratch repo's rulesets mirroring Kickoff's two, plus a third
@@ -927,3 +929,31 @@ appendix carries the four items below to the reviewer.
   (`47deaa0`) is `970e2cb`'s exactly. The message carries no Kickoff link, and Kickoff's #320
   gained no third cross-reference. `test` on the push to `main` is green (run `43956628420`).
   #1 stays open and locked as the fixture; `sprint-1` is left in place.
+
+## Sprint 2's build (16 Nov 2026)
+
+- **What landed.** Cursor (Grok 4.7 256K High, Super, CLI `2026.11.13-eacade1`) opened elenchus
+  #4, `sprint-2` → `main`, head `c4497cb`: six commits by Cursor on `84764ff`, 62 paths by
+  `git diff --name-status --no-renames` (30 A, 17 D, 15 M; 17 of the deletions and 17 of the
+  additions are the re-captured replay fixtures). `replay/main` moved by one fast-forward commit
+  to `956af47`, changing only `.elenchus.json`. The new fixture #3 is `replay/pr320-p1` at
+  Kickoff's `0faf606`, a draft labelled `fixture`, locked (with the reason "resolved"; #1 has
+  none), holding one comment, `6930818158`, whose body is byte-identical to #1's Pass 0 comment.
+- **The Planner's check, read-only, in a fresh clone.** Every one of the six commits passes the
+  typecheck and its 83 tests on its own. Live, at `c4497cb`: `status` and `check` on #1 are
+  byte-identical to the re-captured fixture, and `check` adds exactly the two `UNVERIFIED
+  coverage` lines for passes 1 and 2.5; `status 3` reads Pass 0 recorded and next 1; `handoff 1`
+  prints the v0.5.5 block and exits 0; `handoff 3` refuses with "no valid record for pass 1". The
+  tag list is empty. `~/.elenchus/seats` holds the bare clone T1 left and no worktree or tag.
+  Nothing in Sprint 2's commits or pull-request text names a Kickoff pull request, and Kickoff's
+  #320 and #330 gained no cross-reference from elenchus.
+- **T4's results need reading, not counting.** The pull request reports Claude's writing profile
+  as not refusing `git tag`, Codex's `exec` as not loading its rules file, and the read-only
+  seats as declining. What the Planner found behind those lines is the second paste of the Pass
+  1 brief ([review-loop-sprint-2-review-prompt.md](review-loop-sprint-2-review-prompt.md)), kept
+  from the reviewer until its findings are written, so the reviewer should not read this section
+  first.
+- **One consequence outside the code.** The T4 probe passed `--model grok-4.7-low` to Cursor,
+  so the Cursor CLI's stored default is now Grok 4.7 256K Low (read from its config, not edited).
+  A Cursor seat started without an explicit `--model` would now run at Low; every Cursor brief
+  already names its model.
