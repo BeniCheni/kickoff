@@ -782,3 +782,16 @@ That note has been run once already, in a Cursor session on grok-4.7. It posted 
 
 That session worked in your worktrees. /Users/benicheni/code/kickoff-pr330-pass25 is now at b421e13 with a build from about 10:31 PM, and kickoff-pr330-pass25-b9 is at d1a7ec0 with a build from 8:08 PM, which predates that checkout. It also wrote /private/tmp/pr330-pass25* and /private/tmp/pr330-old-faces. Reuse none of those builds or files as evidence. Confirm each HEAD with git status, then rebuild the head and the d1a7ec0 baseline yourself, or make fresh detached worktrees at both SHAs. Do not delete what that session left.
 ```
+
+**Ruled: "Hold, re-run in Codex."** Recorded on Tue 17 Nov 2026 at about 9:10 AM EST. #330 is
+held at `b421e13`. Codex runs the second sitting again: the preface above, then the
+second-sitting note, then Beni's effort addendum, delivered to Beni as one paste in that order.
+The Cursor-run comment stays on the PR as the builder's claims.
+
+Checked before delivery, at about 9:05 AM:
+- #330 is still open at `b421e13`, CLEAN, with no comment after 6938154606;
+- `main` is still `ad82611`, and #332 is still open;
+- `overhaul/second-edition` is still at `2fd2466`, protected;
+- both Codex worktrees are clean, `kickoff-pr330-pass25` at `b421e13` and
+  `kickoff-pr330-pass25-b9` at `d1a7ec0`;
+- nothing listens on ports 5673 to 5675, 5773 to 5775, 5873 to 5875 or 5973 to 5975.
