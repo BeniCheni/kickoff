@@ -126,10 +126,12 @@
  *
  * Stock is a local attribute, not a second theme. :root is paper stock on a
  * light page. [data-stock='black'] is a cover, band or plate on that page.
- * A dark page is [data-theme='dark'] on :root, which outranks [data-stock] on
- * the page itself. A descendant that named its own stock would otherwise
- * repaint only itself, so the black-stock rule is also written on either
- * stock inside a dark page. One declaration block, so the two cannot drift.
+ * Custom properties inherit, so a paper surface inside black sets the paper
+ * voices itself: the nearest [data-stock] wins, at any depth. A dark page is
+ * [data-theme='dark'] on :root, which outranks [data-stock] on the page
+ * itself. A descendant that named its own stock would otherwise repaint only
+ * itself, so the black-stock rule is also written on either stock inside a
+ * dark page. One declaration block, so the two cannot drift.
  *
  * Hairline alphas are the handoff's paper figure (22%) and the middle of each
  * range it leaves open: 19% of 18–20, 52% of 50–55. The black-stock hairline
@@ -169,6 +171,20 @@
   --fb-gutter: 16px;
   --fb-measure: 640px;
   --fb-measure-register: 780px;
+}
+
+[data-stock='paper'] {
+  --fb-pulp: #EBDDBE;
+  --fb-typescript: #EDE9DD;
+  --fb-pulp-ink: #1C1611;
+  --fb-pulp-muted: #4E4538;
+  --fb-pitch: #1E5636;
+  --fb-amber: #6E4B00;
+  --fb-alarm: #B3121B;
+  --fb-on-pitch: #F2EBDD;
+  --fb-rule: rgb(28 22 17 / 0.22);
+  --fb-rule-strong: rgb(28 22 17 / 0.52);
+  --fb-torch: rgb(232 179 111 / 0);
 }
 
 [data-stock='black'],

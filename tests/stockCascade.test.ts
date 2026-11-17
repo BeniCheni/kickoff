@@ -14,9 +14,8 @@ import { describe, expect, it } from 'vitest'
  * Hairline alphas and the torch are the build's figures inside the ranges the handoff
  * leaves open (19% of 18–20, 52% of 50–55, torch at 20%, paper torch at zero).
  *
- * Not asserted: a paper surface inside a black one on a light page. It is given the black
- * voices today, because nothing restores the paper ones below a black surface. Whether it
- * should is open (the review of PR #330), so no cell here decides it.
+ * On a light page the nearest [data-stock], at any depth, supplies the voices. Paper
+ * inside black is the paper column. On a dark page every surface is the black column.
  *
  * It runs in the node project with jsdom as a library. vitest empties a stylesheet import,
  * `?raw` included, so a test under tests/dom cannot read this file's text, and jsdom ships
@@ -37,8 +36,8 @@ const names = [...new Set([...css.matchAll(/--(fb-[\w-]+):/g)].map((match) => ma
 function page(theme: 'light' | 'dark') {
   const { window } = new JSDOM(`<!doctype html><html data-theme="${theme}"><head><style>${css}</style></head><body>
     <div id="plain"></div>
-    <div data-stock="paper" id="paper"><div id="in-paper"></div><div data-stock="black" id="black-in-paper"></div></div>
-    <div data-stock="black" id="black"><div id="in-black"></div><div data-stock="paper" id="paper-in-black"></div></div>
+    <div data-stock="paper" id="paper"><div id="in-paper"></div><div data-stock="black" id="black-in-paper"><div data-stock="paper" id="paper-in-black-in-paper"></div></div></div>
+    <div data-stock="black" id="black"><div id="in-black"></div><div data-stock="paper" id="paper-in-black"><div data-stock="black" id="black-in-paper-in-black"></div></div></div>
   </body></html>`)
   return (id: string | null) => {
     const element = id ? window.document.getElementById(id) : window.document.documentElement
@@ -114,4 +113,18 @@ describe('the stock axis, as the stylesheet resolves it', () => {
       expect(dark(id)).toEqual(black)
     },
   )
+
+  it('a light page gives paper inside black the paper column', () => {
+    expect(shown(light('paper-in-black'))).toMatchObject(shown(paperVoices))
+  })
+
+  it('a light page alternates the stock three deep', () => {
+    expect(shown(light('paper-in-black-in-paper'))).toMatchObject(shown(paperVoices))
+    expect(shown(light('black-in-paper-in-black'))).toMatchObject(shown(blackVoices))
+  })
+
+  it('a dark page keeps the black column three deep', () => {
+    expect(shown(dark('paper-in-black-in-paper'))).toMatchObject(shown(blackVoices))
+    expect(shown(dark('black-in-paper-in-black'))).toMatchObject(shown(blackVoices))
+  })
 })
