@@ -430,3 +430,16 @@ From the PM seat, read only:
 - P13: inlineFaceCss refuses every local() face, ranged or not, and only on the offline and single builds. A local() face in public/faces.css would still reach both online apps unchecked.
 - P14: the faces test's "does not rewrite the checkout" half checks one font file's inode and mtime, and passes without checking anything when web/public/fonts does not exist. Say whether CI's verify ever has that folder when the root suite runs.
 ````
+
+### Beni's answer on Pass 2's effort, and the addendum for Codex (Mon 16 Nov 2026, about 8:05 PM EST)
+
+Asked what effort Cursor's Pass 2 actually ran at, Beni answered "Extra High". So Pass 2 ran on
+`grok-4.7-xhigh`, the model and effort the routing amendment asks for. Pass 2's comment says
+"effort not observed", and `agent about` printed a stored "High", so this answer is the only
+record of the effort. The addendum below goes with the opener, pasted after it or sent to the
+Codex session as a follow-up. It replaces the opener's first bullet under WHAT IS UNUSUAL and
+the effort question under THE COMMENT AND THE BRIEF.
+
+```text
+ADDENDUM from Beni (Mon 16 Nov 2026, about 8:05 PM EST): Cursor's Pass 2 ran on Grok 4.7 at Extra High, that is grok-4.7-xhigh, the model and effort the routing amendment asks for. Beni gave this answer to the PM seat in one word ("Extra High") and is pasting it to you himself, so record it in your comment and your brief as his answer, named as his, and do not ask him again. It replaces the first bullet under WHAT IS UNUSUAL and the effort question under THE COMMENT AND THE BRIEF. Pass 2's own comment still says "effort not observed": say that the effort comes from Beni, not from Cursor's logs or `agent about`.
+```
