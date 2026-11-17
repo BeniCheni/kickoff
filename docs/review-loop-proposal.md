@@ -485,6 +485,18 @@ Cursor's hands this track seats no Cursor.
   not let Actions open pull requests.
 - *Brief:* [`review-loop-sprint-3-build-prompt.md`](review-loop-sprint-3-build-prompt.md), for
   Codex.
+- *Built (Tue 17 Nov 2026):* by Codex on `gpt-6.1-sol`, as elenchus #8 (`sprint-3`, head
+  `91aa3dc`), with the gate fixture #6 and the forge pull request #7, now closed. The Planner
+  checked the report against GitHub before briefing the review:
+  - the rulesets mirror Kickoff's two exactly, apart from the ref;
+  - the review gate pins the App's integration, `5804709`, with no bypass;
+  - `replay/main` gained one commit, touching only `.elenchus.json`.
+  T7's fourth forge path counts as a finding for Kickoff: GitHub treated a `verify` job added by
+  the pull request's own workflow as the required check. The review gate held on every forge
+  path.
+- *Review brief:* [`review-loop-sprint-3-review-prompt.md`](review-loop-sprint-3-review-prompt.md),
+  Pass 0's brief for Pass 1 (Claude Code, `claude-fable-5-2`, `max`), with its sealed appendix as
+  a second paste.
 - *Carried from Sprint 1's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are that
   comment's findings): 6, sequence by the order records were posted, not their presence; 7, every
   pass's `input_sha` is the previous recorded pass's `output_sha`, writing or not, and a head
