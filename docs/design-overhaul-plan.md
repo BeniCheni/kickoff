@@ -326,6 +326,49 @@ The cutover plan calls self-hosting "a separately approved" change (`docs/nextjs
 
 **One set of files, two apps.** The files live once, under `public/fonts/`. The two apps resolve URLs differently (Vite builds with `base: './'`, `vite.config.ts:15`; Next serves from the root), so there are two `@font-face` lists. A test asserts they name the same families, weights and files.
 
+### Proposed Mon 16 Nov 2026: where the font split lands (the Track A Planner; awaiting Beni's word)
+
+**Why there is a question.** On Mon 16 Nov 2026 Beni ruled that the rendered faces are to be split into latin and latin-ext files, but not in PR 1 (PR #330's cycle, ruling 2, `docs/design-overhaul-pr1-review-prompt.md`). PR 1 self-hosts each face as one file subset to the union of the two ranges Google's stylesheet served (`public/fonts/RECORD.md`). So a cold load of Fixtures or Table fetches 205,174 bytes of fonts where `main` fetches 90,123, and Moments 179,294 where `main` fetches 69,905. All three of #330's review seats measured those figures. Subsetting the four rendered files to the latin range alone gives 107,536 bytes (Pass 1, re-run by Pass 2.5). Four of the 1,446 fixtures hold a character outside that range, all in one venue's name.
+
+**Proposed: a PR 1b, "The font split", into the integration branch.**
+- **Its number.** It is 1b, so PRs 2 to 9 keep the numbers every brief, table and ruling cites. It is still an eleventh review cycle, which amends Beni's ruling 2 ("Ten"), so it needs his word.
+- **All ten files, not only the four rendered.** The pipeline has to exist anyway. By the handoff's scale (§4), PR 2 first renders Caslon and Kickoff Mono 400 (the provenance line, the footer and the banner), and later PRs render the rest. With every file split once, no later PR touches a font binary. A file no page renders costs a reader nothing. Ruling 2 named the four rendered faces, so this widens it, and that is Beni's call.
+- **File names.** The latin half keeps today's name, and the latin-ext half adds `-ext`. Every preload `href` stays as it is, so 1b touches no page head, and PR 2 can add the Caslon preload without a conflict.
+- **Re-runnable.** One script, outside the build and the lockfile, with fontTools pinned. It fetches each upstream source at the commit `RECORD.md` names and checks its SHA-256. It subsets each half to Google's range for that half. It renames the two reserved families in code, not by hand. `RECORD.md` gives the command, every source hash and every output hash, and a test compares the output hashes with the files on disk. This also closes #330's finding 9: the rename is prose today, so two files cannot be re-derived.
+- **Coverage.** Each face gets a `unicode-range` per half in `public/faces.css`, and the Next copy follows it. The offline and single files inline both halves of the four faces ruling 4 keeps, so they still draw every character the snapshot holds, and their size barely moves. Online, a page fetches a latin-ext half only when it shows such a character.
+- **Evidence.**
+  - Font bytes per cold load, per app, tab and lens, for the runner's three weeks, against PR 1's merge head.
+  - The 96 cells and the four offline cells pixel-identical to PR 1's merge head once the fonts have loaded. Subsetting must not change an outline or an advance. If the upstream source differs from the one PR 1 used, the PR says so.
+  - The venue's two characters drawn from the latin-ext half on a week that holds them.
+  - The layout shift at 360, 375 and 390, because a second file per face can arrive later than the first.
+  - The unused-preload gate from #330's fix round green.
+  - Each family's `OFL.txt`, and the reserved-name rule above, kept.
+- **Not in it.**
+  - Cache headers: #330's finding 6, a cutover decision.
+  - A fallback: ruling 3, Leave.
+  - Any preload change.
+  - Trimming Inter's weight axis to 400 to 600, unless it is measured on its own.
+- **Size and seats.** M. The seats follow the routing amendment's table for an M PR, read on Thu 19 Nov. The session that builds it does not review it.
+- **When.** After PR 1 merges, beside PR 2's build. The two briefs keep their files apart:
+  - 1b owns `public/fonts/`, `public/faces.css`, `scripts/inline-faces.ts` and the font tests;
+  - PR 2 owns the shells, the components and the page heads;
+  - the line in `RECORD.md` that says which pages load which files belongs to 1b, so PR 2 reports its loads in its PR comment and whichever merges second makes that line true.
+
+  If only one builder seat is free, 1b waits until PR 2 merges. PR 2's weight evidence is then measured on the union files, and says so.
+
+**The alternatives.**
+
+| Instead | What it saves | What it costs |
+|---|---|---|
+| Fold the split into PR 2 | One review cycle | An L chrome PR also carries font binaries and a font pipeline: the "too large to review cold" cost section 3 gives as the reason for ten PRs |
+| Leave it to the release (PR 9) | One review cycle | PRs 2 to 8 measure weight on the union files, and the S release takes a binary change it was not sized for |
+| Split only the four rendered faces | Six files' work now | Each later PR that first renders a face splits it then, reopening the pipeline up to three more times |
+
+**Questions for Beni, each answerable in one word.**
+1. Where does the split land? **1b** · PR 2 · Release. Recommended: 1b.
+2. Which files? **All** · Four. Recommended: All.
+3. When? **Beside** PR 2 · After PR 2. Recommended: Beside, when two builder seats are free.
+
 ### 4.3 The new browser-storage key
 
 - **One key,** for the motion control. Working name `kickoff-motion`; values `off` and `on`; absent means "follow the operating system".
