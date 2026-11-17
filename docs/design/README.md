@@ -99,7 +99,9 @@ live type above every effect, amber has exactly eight uses, and every stadium cl
 local". The rules the boards were drawn under are in [`rules-note.txt`](5-handoff/rules-note.txt).
 On Tue 17 Nov Claude Design drew gap 18 (the filter panel, and Zones & key, opened), Beni ruled
 its questions 22 to 26, and the folded addendum is in [`gap-18-addendum.md`](5-handoff/gap-18-addendum.md).
-It is the later word on every section it names.
+It is the later word on every section it names. Later that day a rows pass redrew KICKED OFF and the
+unsettled row, Beni ruled 27 to 29, and the same file closes with the handoff's changed lines and its
+final section 11.
 
 ## 6 · The plan, Sat 14 Nov
 
