@@ -515,7 +515,9 @@ Cursor's hands this track seats no Cursor.
   a second paste after the reviewer's findings are written.
 - *Carried from Sprint 2:* the squash body the skill's step 4 asks for, naming who ran which
   pass with each vendor's Co-authored-by trailer, rendered by `handoff` from the records (note
-  21 of Sprint 2's Pass 1).
+  21 of Sprint 2's Pass 1). From the Planner's re-read of the fix round: the block takes the
+  base branch from the pull request instead of naming `main`, and tags the pull request's own
+  merge commit (`gh pr view --json mergeCommit`) instead of `origin/main`'s tip.
 - *Review:* all six passes. It changes the method every later review reads.
 - *Rollback:* revert the merge; seats stop posting the block.
 - *Number:* D8.
@@ -535,6 +537,11 @@ Cursor's hands this track seats no Cursor.
 - *Scope:* `loop run` launches the confirmed flags, reads `observed` back before the seat
   pushes, and stops on a mismatch. The manual path stays.
 - *Acceptance:* T2 and T4 for that vendor.
+- *Carried from Sprint 2's fix round:* T4's harness counts only files the seat wrote. It does not
+  count the vendor CLI's own start-up paths (Claude's `.claude/.cc-writes` and `.git/worktrees`),
+  or a directory whose timestamp moved. The limits either allow each CLI's own state writes,
+  listed, or point `CLAUDE_CONFIG_DIR` and `CODEX_HOME` at the scratch root. Codex seats have no
+  deny profile until Codex can trust a project for one run without writing `~/.codex`.
 - *Review:* all six passes for Sprint 6, because the first runner can start a pass that pushes;
   fast-track for the later vendors, which reuse its shape behind Sprint 5's gate.
 - *Rollback:* run that vendor by hand again.
@@ -1062,3 +1069,55 @@ appendix carries the four items below to the reviewer.
   worktree) in `~/.elenchus/seats/BeniCheni__elenchus.git`. The Planner deleted it on Beni's yes
   the same night. The clone now holds no seat branch, no `branch.*` config, no worktree and no
   tag.
+- **The fix round, and the Planner's re-read of it (Tue 17 Nov 2026).** Cursor ran it in the
+  Cursor app on Grok 4.7 High, Super. `agent about` showed the CLI's own stored default, still Grok 4.7 Low,
+  which an app session does not change. It moved `sprint-2` to `fd4c88a`, nine commits on
+  `c4497cb` with no force-push, and `replay/main` to `e0a2aa6`, one commit whose tree differs
+  from Kickoff's `34d078b` only in `.elenchus.json`. The Planner's re-read was read-only, in a
+  fresh clone:
+  - **Each commit stands alone.** Each of the nine typechecks and passes on its own, from 99
+    tests to 108; the lockfile and the dependencies are unchanged, and CI's `test` is green at
+    `fd4c88a`.
+  - **Live receipts.** The tarball installed alone prints `status` and `check` on #1
+    byte-identical to the re-captured fixtures. `handoff 1` prints the chained block with
+    `--repo` and `--match-head-commit dcb914e`, `handoff 3` refuses, and the tag list is still
+    empty.
+  - **The code matches the rulings.** The git wrapper is now an allowlist of `prep`'s exact calls,
+    with no `config` and no `worktree`, and `-C` only for the cache or the seat being made. Each
+    seat is its own clone, on the head branch's name; a seat is open while its directory exists
+    and its pass has no record; `prep`'s git runs with hooks off, set through the environment;
+    a fork is refused; Pass 0 takes the head; and a Codex seat is reported as having no profile
+    known to load.
+  - **Deletions.** Ten new rules deleted one at a time each fail a test.
+  - **T4's denials.** Claude's writing transcript shows the four direct forms denied, one
+    `permission_denials` entry each, and the two evasions ran.
+
+  Four things did not go as briefed. None blocks the merge:
+  - **Two commits carry Beni's identity, not Cursor's.** `8046835` and `cfaf8e4` were authored
+    and committed under Beni's global git identity, because the app session fell back to it.
+    The squash merge folds them, and Sprint 1's squash on `main` already carries that identity,
+    so nothing new is exposed. Later briefs for a Cursor app session set the commit identity
+    explicitly.
+  - **One receipt is wrong.** #4's body gives the read-only Claude probe as "seat files changed
+    (5), from the tool calls". Its transcript shows two tool calls: `command -v gh`, and a
+    `Write` of a plan file under `~/.claude/plans` that the profile refused. The five paths
+    (`.claude`, `.claude/.cc-writes`, `.git`, `.git/objects/info`, `.git/worktrees`) are the
+    Claude CLI's own start-up writes and the parent directories they touched. The harness's
+    list of CLI paths misses them, and it counts a directory whose timestamp moved as a write.
+    The merge message carries the correction; the harness fix goes to Sprint 6, where T4 is
+    acceptance again.
+  - **The vendor CLIs wrote their own state.** Beyond the Claude transcripts the brief allowed,
+    the Claude CLI wrote a config backup and plugin files under `~/.claude`, and the Codex CLI
+    updated its state, logs and plugin stamps under `~/.codex`. The harness listed each. The
+    brief's limit was the Planner's mistake: no vendor CLI runs without its own housekeeping.
+    Sprint 6 either allows those writes, listed, or points `CLAUDE_CONFIG_DIR` and `CODEX_HOME`
+    at the scratch root if login survives it.
+  - **The release block names `main` and tags its tip.** It fetches `main` by name, which is
+    Kickoff's base but not the replay's (`replay/main`), and so not configuration (D5). It tags
+    `origin/main`'s tip after the fetch rather than the pull request's own merge commit, so a
+    sync PR that merges in those seconds would be tagged instead. Sprint 4, where the block
+    first serves a Kickoff release, takes the base from the pull request and the tag's commit
+    from `gh pr view --json mergeCommit`.
+
+  The stamp is written after the clone's checkout and head check, not straight after the clone.
+  That is immaterial now that a seat directory, not its stamp, decides whether the seat is open.
