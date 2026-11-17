@@ -1,4 +1,4 @@
-# PR #330 — the PM seat's briefs for the overhaul's PR 1, tokens and type: Pass 1's cold review, Cursor's Pass 2, Codex's Pass 2.5, Beni's rulings and the fix round (archived Mon 16 Nov 2026, TZ=America/New_York)
+# PR #330 — the PM seat's briefs for the overhaul's PR 1, tokens and type: Pass 1's cold review, Cursor's Pass 2, Codex's Pass 2.5, Beni's rulings, the fix round and Codex's second sitting (archived Mon 16 Nov 2026, TZ=America/New_York)
 
 Written by the PM seat (Claude Code, Opus 5.5) in the Track A planning session, after Cursor
 opened PR #330 from
@@ -619,4 +619,113 @@ SEALED APPENDIX — Pass 2.5's claims, to re-derive, never to cite. If one does 
 - E5: all four Moments misses of the Mono 500 preload appear in receipt.json under requests[].unused.
 - E6: `local(), url()` and uppercase `LOCAL()` passed the inliner's refusal, and a plain local() face passed through the Next copy.
 - E7: at d1a7ec0, Chrome on both built apps and jsdom agree that paper inside black on a light page resolves --fb-pulp to #0E1420.
+````
+
+---
+
+## Pass 2.5, second sitting: Codex re-checks the fix round (Mon 16 Nov 2026, about 10:25 PM EST)
+
+Cursor's fix round landed the same evening. Its comment was posted at 10:19 PM EST:
+https://github.com/BeniCheni/kickoff/pull/330#issuecomment-6937058297. The head is `b421e13`,
+three Cursor commits past `d1a7ec0`, fast-forward only. `verify`, the Vercel deployment and
+`vercel-smoke` are green there. By then Beni had created the ruleset for ruling 6
+("overhaul/second-edition — CI gate", id 27424595), and the branches API reported
+`protected: true`.
+
+At about 10:20 PM the PM seat read the comment and the diffs of `f27d16c` and `7e00af7`, and
+checked the stash stack the worktrees share, which held nothing. It found five things to send
+Codex after:
+- **The effort, again.** The picker recorded `grok-4.7` with `maxMode=false` and no effort
+  field, and `agent about` printed a stored "Low". The opener has Codex record Beni's answer, or
+  ask for it in one word.
+- **The gate cannot tell the two halves of a split face apart.** It maps a loaded `FontFace`
+  to a file by matching family, style and weight. PR 1b will create two rules per face that
+  differ only in `unicode-range`, so a preload of the `-ext` half would pass whenever the latin
+  half loaded. This is a requirement for PR 1b's brief, not a defect at this head; Codex is to
+  say which.
+- **The paper voices are written twice.** They are now in `:root`'s block and in the new
+  `[data-stock='paper']` block, while the file's own comment says "One declaration block, so the
+  two cannot drift". Codex checks whether the tests catch a drift between the two.
+- **The per-commit checks were not run on the commits.** Cursor ran them on a working tree "with
+  B and C stashed". The opener has Codex run them on each commit by its SHA.
+- **Some faces load only after a click.** The gate reads `document.fonts` once, after load, so
+  it never sees them. Codex is to say whether any page renders a preloaded face only that way
+  today.
+
+Delivered in chat in a four-backtick fenced block, one line per paragraph. This copy is the
+archive.
+
+````text
+PR #330 — Pass 2.5, second sitting (Codex): re-check Cursor's fix round, then hand the merge to Beni
+
+You are Codex, on GPT-6.1 Sol at xhigh, continuing your Pass 2.5 of PR #330 in github.com/BeniCheni/kickoff ("Overhaul PR 1: tokens and type", into overhaul/second-edition). Your first sitting recommended Hold at d1a7ec0 on two Medium findings (https://github.com/BeniCheni/kickoff/pull/330#issuecomment-6934911839). Beni ruled on your seven questions and held the PR for one Cursor fix round. That round is done: https://github.com/BeniCheni/kickoff/pull/330#issuecomment-6937058297. Read it whole. The method is still /kickoff-pr-review --pass 2.5 --no-merge; read .claude/skills/kickoff-pr-review/ at the head. This sitting re-runs the delta and the whole-tree checks, then updates your Executive Summary Brief. Push nothing. The PM seat (Claude Code, Opus 5.5) wrote this note on Mon 16 Nov 2026 at about 10:25 PM EST. Run TZ=America/New_York date before you write any date. If the head is no longer b421e13 when you start, stop and say so.
+
+STATE (re-check all of it).
+- Head b421e132dc2a279bc22a96eb59dc2184a3d046f9 on cursor/overhaul-pr1-tokens: open, CLEAN, auto-merge off, no review. It is three Cursor commits past d1a7ec0, fast-forward only:
+  - f27d16c: the preload gate reads document.fonts, the cold loads cover both lenses (24), and a miss is decided per app;
+  - 7e00af7: [data-stock='paper'] re-declares the eleven paper voices, so paper inside black on a light page gets the paper voices;
+  - b421e13: any local( in a face's src, in any letter case, is refused on the inline path and in the Next copy.
+- git diff d1a7ec0 b421e13 is 7 files, +228/−116. It touches nothing under .github/, studio/ or src/data/ and no package file, and under src/ only src/shell.css.
+- verify, the Vercel deployment and vercel-smoke are green at b421e13. vercel-smoke is still main's checker.
+- overhaul/second-edition now has a ruleset, "overhaul/second-edition — CI gate", which requires verify. Beni made it himself, under his ruling 6, and the branches API reports protected: true. main is still at ad82611, and #332 is still open.
+
+RULED BY BENI, named as his. Everything your first sitting's brief carried stands, and these are added:
+- Mon 16 Nov 2026, about 8:05 PM EST: Pass 2 ran on Grok 4.7 at Extra High.
+- Mon 16 Nov 2026, about 8:55 PM EST: "As recommended", on your seven questions. Before they went to him, the PM seat showed that your second Medium finding, the Previous-button check, is main's code: scripts/vercel-smoke.mjs:179 (pageLandmarks) reads the same on main and at the head, and PR 1 changed only the tag reader. It shipped with #327 and goes to PR 3's brief, which carries R3. It is not this PR's to fix, and the fix round did not touch it. The rulings:
+  1. Restore the stock nest; 7e00af7 does it.
+  2. Split the fonts, but not in PR 1.
+  3. Leave the fallback.
+  4. Keep the offline set.
+  5. No Caslon preload before text uses Caslon.
+  6. Require verify on the integration branch; this is done.
+  7. Hold for one Cursor fix round by Wed 18 Nov. You re-check only those commits, and Beni merges; had the round missed the date, he would have merged at d1a7ec0. The round landed on Mon 16 Nov at 10:17 PM EST.
+- Mon 16 Nov 2026, about 9:25 PM EST: the split lands in a PR 1b of its own, after PR 1, and covers all ten font files. This is amended into docs/design-overhaul-plan.md section 4.2, not yet on main.
+Not yet answered: the fix round's effort. Its comment says the picker recorded grok-4.7 with maxMode=false and no effort field, and that agent about printed the CLI's stored "Grok 4.7 256K Low". If Beni has answered by the time you post, record his answer; otherwise ask him in one word.
+
+WHERE TO WORK. Your worktree /Users/benicheni/code/kickoff-pr330-pass25 is detached at d1a7ec0.
+- This sitting's baseline is a d1a7ec0 build. Keep the one you have: copy its built output to a folder outside every worktree before you move, or check out d1a7ec0 in kickoff-pr330-pass25-b9 and build it there.
+- Then run git fetch origin, then git checkout --detach b421e13 in kickoff-pr330-pass25, and confirm HEAD.
+- Cursor's servers may hold 5873 to 5875 and 5973 to 5975. Keep using 5673 to 5675 and 5773 to 5775, confirm each cwd with lsof, and do not stop a process you did not start.
+- Cursor's worktrees, kickoff-pr330-fix1 and kickoff-pr330-fix1-base, are not yours to touch or to reuse as evidence.
+- Never run npm run sync.
+
+WHAT THIS SITTING MUST SHOW.
+1. Fix A, the gate (f27d16c), tested against your own first finding:
+  - Re-run your hidden-span probe at the head. With Caslon preloaded and only hidden Caslon text, the gate must fail and Chrome must report the face unloaded. Then run the two cases your probe did not cover: display:none text, and text inside a closed details. For the closed details, Cursor reports one client rect and the face unloaded.
+  - Re-run your Ledger-only probe. Visible Caslon text in the Ledger lens alone must now pass.
+  - Re-run your Vite-clears-Next probe. A preload that only one app misses must fail, and the failure must name that app.
+  - The gate maps a loaded FontFace to a file by matching family, style and weight against the @font-face rules. Say what happens when two rules share family, style and weight and differ only in unicode-range, which is the shape PR 1b will create. Read the code, probe it with a two-rule stylesheet, and say whether this is a defect today or a requirement for PR 1b's brief.
+  - Say whether anything other than rendered text can mark a face loaded on these pages, such as document.fonts.load or a FontFace built in code in src/ or web/app/. That would let an unused preload pass.
+  - The gate reads document.fonts once, after load, so a face that loads only after an interaction (an opened row, a tab change) is never counted. Say whether any page today renders a preloaded face only after an interaction.
+  - receipt.json: 24 cold-load rows, each with its page's unused preloads, and Moments' Mono 500 on all eight Moments rows and on no other row.
+2. Fix B, the stock nest (7e00af7):
+  - Mutations: delete the new [data-stock='paper'] block; change one value in it; and change the same voice in :root's block only. Say which tests fail for each. The paper voices now live in two blocks, while the file's comment says "One declaration block, so the two cannot drift". Say whether the tests catch a drift between the two, and whether the shape should change.
+  - In Chrome, on both built apps' stylesheets, check paper in black, paper in black in paper, and black in paper in black, on a light page and a dark one, against the handoff's two columns.
+  - No pixel changes. Capture the 96 cells, the week cells, the harness cells and the four offline cells at the head and at d1a7ec0, back to back inside one clock bucket, and diff each tree against itself first. Cursor reports 182 of 182 identical between its tip and d1a7ec0. It also gives a rule for the bucket: the stamp floors the clock to the minute, so start the run on the minute after the hour's boundary.
+3. Fix C (b421e13): the forms you found are each refused now: an uppercase LOCAL(, a local(...), url(...) source, and a plain local() face through the Next copy. Show each red on d1a7ec0's code and green at the head.
+4. Whole-tree checks at b421e13:
+  - Root typecheck and npm test at the head, and both again at each of f27d16c, 7e00af7 and b421e13, each checked out by its SHA. Cursor ran its per-commit checks on a working tree "with B and C stashed", not on the commits themselves.
+  - At the root: build, build:single, build:offline and the offline-bundle scan. In web/: typecheck, test, build (count the tries), check:client and check:css.
+  - The built output against d1a7ec0. Cursor reports that the CSS differs only by the paper rule (254 bytes in dist-single and dist-offline), the JS and web/public are identical, and the normalised Next client output matches.
+  - The runner in report mode (exit 0) and with --enforce (exit 1, on the 16 loss-pip samples only), with 1,224 samples, 0 unread, 24 cold loads, and the font bytes for each app, tab and lens.
+5. Anything new in the three commits, each read on its own.
+
+THE BRIEF AND THE COMMENT. Post one short PR comment with gh pr comment 330 --body-file <file>. Its first line names the pass, the sitting, the model and effort that ran (from turn_context), and b421e13. Then update your Executive Summary Brief, in executive-brief.md's shape:
+- Decision: still escalated, because plan section 3 gives the merge to Beni's word. Give your recommendation, Merge or Hold, in one word.
+- What the 360 found: your first finding, with its fix commit and your re-run; the stock Restore; the local() refusal; and your second finding, marked as moved to PR 3, not fixed here.
+- Verification as re-run: numbers from this sitting only.
+- Questions for Beni, each answerable in one word: the fix round's effort (unless he has answered), Merge or Hold at b421e13, and anything new.
+- Carried forward: anything PR 1b's brief or PR 2's brief must carry.
+- The handoff block, for b421e13:
+  - gh pr merge 330 --repo BeniCheni/kickoff --squash --match-head-commit b421e132dc2a279bc22a96eb59dc2184a3d046f9, into overhaul/second-edition;
+  - a subject and body in the repo's voice that name who ran which pass, with the efforts as recorded: Cursor built PR 1 and ran Pass 2 and the fix round; Claude Code ran Pass 1 on Fable 5.2 at xhigh; Codex ran Pass 2.5 on GPT-6.1 Sol at xhigh; Beni adjudicated;
+  - Co-authored-by trailers for Cursor <cursoragent@cursor.com> and Claude <noreply@anthropic.com>;
+  - then, in a worktree on overhaul/second-edition and never in Beni's main checkout: git pull --ff-only, npm ci, npm run typecheck, npm test and npm run build.
+  There is no tag, no version and no CHANGELOG section. main and Pages do not change, so no production smoke follows.
+
+WHAT YOU MUST NOT DO. Your gh is Beni's account, an Admin who can bypass the verify gate the new ruleset sets; this note is what stops you.
+- No gh pr merge in any form, no approval and no --auto.
+- No push of any kind, no tag and no npm version.
+- No change to rulesets, repo settings, workflows or any other PR.
+If you find a blocker, do not fix it. Give the minimal reproduction, its severity and the follow-up for the builder, and recommend Hold.
 ````
