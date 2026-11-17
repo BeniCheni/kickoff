@@ -897,3 +897,54 @@ recorded, #330 was still open at `b421e13`, and the integration branch was at `2
   - the sync stamp floors the clock to the minute, so a one-bucket capture starts on the minute
     after the hour's boundary;
   - text inside a closed `details` keeps a client rect while its face stays unloaded.
+
+### After the merge: the root lockfile's audit advisories, folded into #332 (Tue 17 Nov 2026, about 11:50 AM EST)
+
+#330 merged at 11:23 AM EST as `3733fd9`, the new tip of `overhaul/second-edition`. Beni ran
+the handoff from a new worktree, `/Users/benicheni/code/kickoff-second-edition`, and the chain
+ran through to `npm run build`. Its `npm ci` reported six vulnerabilities, two moderate and four
+high. The PM seat traced them to the root lockfile, which `main` shares, because #330 changed no
+package file:
+
+| Package | Was | Where it runs |
+|---|---|---|
+| `vite` | 8.2.2 | build and dev server |
+| `vitest`, `@vitest/mocker` | 4.1.11 | tests |
+| `undici`, through `jsdom` | 8.10.2 | tests |
+| `source-map-js`, through Tailwind and PostCSS | 1.2.1 | build |
+| `zod` | 4.4.3 | bundled into the reader |
+
+On a scratch copy of `main`, `npm audit fix` without `--force` changed only `package-lock.json`
+(21 packages) and cleared all six. Typecheck, the suite, the three builds and the offline scan
+stayed green. The reader's JavaScript bundle changed, because `zod` is bundled; its CSS did not.
+
+The PM seat recommended folding the fix into #332, the open PR on `main`, rather than into an
+overhaul PR. `main` has the same six. PR 1b has to show it is pixel-identical to PR 1, and an
+unrelated bundle change would cloud that. A fix on the integration branch would also leave
+`main` exposed until v0.6.0.
+
+**Ruled: "Fold into #332."** The PM seat committed `d88a81c` on #332's branch as Claude: the
+lockfile only, with `npm audit` clean and typecheck, the 1,031 tests, the three builds and the
+offline scan green. It pushed fast-forward from `3ab9120`, and updated #332's title and body to
+cover both changes. The merge stays Beni's.
+
+**Left for a later PR on `main`:**
+- `web/` pins `next` 16.4.1 and `vitest` exactly, so `npm audit fix` changes nothing there.
+  `next` 16.4.6 closes its moderate advisory, and would probably also stop the
+  `SecurityFatalError` notice that fails the first agent build;
+- `zod` through `packages/kickoff-catalog` and `packages/kickoff-demo`;
+- the `puppeteer-core` chain, which needs a major version;
+- `studio/`'s `drizzle-kit`, for which npm only suggests a downgrade.
+
+**Housekeeping found on the way:**
+- The checkout moved from `kickoff-pm` to `/Users/benicheni/code/kickoff`, and the review
+  worktrees under `.claude/worktrees/` are no longer registered.
+- This checkout's git identity is set to Cursor, so the PM seat's archive commits from
+  `3b7520c` to `1bdffd4` had been authored as Cursor. None of them had been pushed. They were
+  re-authored as Claude, with the tree and the dates unchanged, and the branch now ends at
+  `e68ab8d` before this section.
+- Re-linking the PM seat's old worktree with `git worktree repair` failed. As a side effect, it
+  rewrote the `.git` pointer file of each of the six Codex worktrees under `~/.codex/worktrees/`
+  to the moved repository, where the old pointers no longer led. Nothing in those working trees
+  changed. The archive branch now lives in
+  `/Users/benicheni/code/kickoff/.claude/worktrees/track-a-archive`.
