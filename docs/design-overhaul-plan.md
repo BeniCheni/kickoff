@@ -212,7 +212,7 @@ The cost accepted is drift and one large final diff. The release PR's review is 
 
 ## 3. The split into PRs
 
-Ten PRs: one on `main`, eight into the integration branch, one release. The order differs from the brief's example in two places, and both are deliberate. **The rows and their states come before the books**, because a book's contents are rows and the rows carry the honesty rules. **States are not a PR of their own**: each state is built with the surface it lives on, and a states harness grows with them.
+Ten PRs: one on `main`, eight into the integration branch, one release. (Amended Mon 16 Nov 2026: PR 1b, the font split, makes it eleven review cycles. PRs 2 to 9 keep their numbers; see section 4.2.) The order differs from the brief's example in two places, and both are deliberate. **The rows and their states come before the books**, because a book's contents are rows and the rows carry the honesty rules. **States are not a PR of their own**: each state is built with the surface it lives on, and a states harness grows with them.
 
 Seats for every PR, unless a row says otherwise: **Cursor builds** (Grok 4.7, Extra High); **Pass 1** is a fresh Claude Code session that is not this one; **Pass 2** is Cursor's rebuttal; **Pass 2.5** is Codex's synthesis; **Beni's word** merges. That matches the seats table at `README.md:387-392`, where the synthesis seat is one that "wrote neither the build nor the fixes" (`README.md:376`).
 
@@ -224,6 +224,7 @@ Two rules ride with every PR that adds a file under `src/components/`: add it to
 |---|---|---|---|---|
 | **0 · Pin, then repaint** | `main` | Tests for the four unpinned rules (section 6). The smoke landmark moves to something both looks render (`scripts/vercel-smoke.mjs:56`). A general matrix runner beside `web/scripts/clearing.mjs`, with a contrast sampler, a weight report and a same-origin check. A states harness page under `tests/harness/`. | All of `src/`. The built bundles are identical: prove it with `web/scripts/check-reader-parity.mjs`. | M |
 | **1 · Tokens and type** | branch | The `fb-` tokens beside the first edition's in `src/shell.css`, on the two axes mode and stock. The five families and the weight budget; `@font-face` and files if fonts are self-hosted (question 9). The handoff's measured pairs added to `tests/contrast.ts`. | Every component. First-edition tokens stay defined: Moments' CSS reads them (`src/index.css:12-175`, `web/app/moments/gallery.css`). | M |
+| **1b · The font split** (amended 16 Nov, section 4.2) | branch | Each of the ten self-hosted files split into a latin half, under today's name, and a latin-ext half, named `-ext`, each with its `unicode-range`. One re-runnable script makes every half. `RECORD.md` records each source and output hash, and a test checks them. The offline and single files inline both halves of the four faces they carry. | Every page head and preload `href`. Every component. The cache headers. | M |
 | **2 · Chrome and the motion control** | branch | The imprint band, provenance line, feet, page measures and the staleness banner, in all three shells (`App.tsx`, `offline.tsx`, `web/app/shell.tsx`). The motion control with its key, its pre-paint read and its tests. The +5 badge and the six glyphs. | The bodies of Fixtures and Table. Moments below the band (D5). | L |
 | **3 · The Ledger: rows, states and the week** | branch | Contents and Ledger rows, StatusPill, both clocks on the row, the day note, "local time not known", the matchday line's ink and amber forms, the week row, "hidden by filters", NEXT UP with both clocks, merged empty days, the end-of-week count. AET, PENS and the other undrawn states by the rules of 1.7. | The Ledger's list of every fixture. `?only=` and `&date=`. The Table. No photograph, no decorative motion. | L |
 | **4 · The Table's skin** | branch | The short cover without its photograph, league tabs, the two-clock cell, form pips, the games-in-hand note, the fifteen columns, the scorch, the black foot. | The Table's structure, sort, zones and data (D4). | M |
@@ -237,6 +238,15 @@ Per PR, the evidence, and anything particular about rollback or seats:
 
 - **PR 0.** Evidence: `typecheck` and `npm test` green in root and `web/`; each new test shown to fail when its rule is broken on purpose, then restored; the bundle manifest identical before and after; the smoke green on the PR's own preview. Rollback: revert; no reader notices. Seats: as above. It is bounded tooling, which this repo has also given to Codex (`docs/nextjs-migration-plan.md:310`), but Codex holds the synthesis seat here, so it should not build.
 - **PR 1.** Evidence: every pair in handoff §2's table reproduced by `tests/contrast.test.ts`, including the five pairs that must fail; the font files' sizes; the network log at first load; the layout-shift score at 360, 375 and 390 against ideas row 125's numbers. Nothing renders differently yet, so the matrix is a smoke pass.
+- **PR 1b.** Evidence:
+  - font bytes per cold load, per app, tab and lens, for the runner's three weeks, against PR 1's merge head;
+  - the 96 cells and the four offline cells pixel-identical to that head once the fonts have loaded;
+  - the latin-ext half drawing the venue's two characters on a week that holds them;
+  - the layout shift at 360, 375 and 390;
+  - the unused-preload gate green;
+  - each output hash re-derived by the script.
+
+  Seats: the routing amendment's table for an M PR. It is built beside PR 2, with the two PRs' files kept apart as section 4.2 says, or after PR 2 when only one builder seat is free.
 - **PR 2.** Evidence: the 96 cells; hit areas of at least 44 × 44 px with no overlap, measured; the motion control's state before first paint after a reload; the whole-header tests updated in both apps (`tests/dom/appHeader.test.tsx:8`, `web/test/header-shared.test.tsx:14`, `tests/dom/offline.test.tsx:15`); Moments' pixels below the band unchanged.
 - **PR 3.** Evidence: the 96 cells plus the states harness, the quiet week and the UEFA week; contrast sampled on the rendered page; every honesty test of section 6 green, with the list of assertions whose selector changed; a count check that the Ledger's rows equal the snapshot's fixtures for the week under three `?only=` sets. This PR is the one a reviewer should break on purpose most.
 - **PR 4.** Evidence: the Table's cells for all six leagues; `tests/dom/uclTable.test.tsx` and `tests/dom/tableUnderway.test.tsx` green; the fifteen columns at 1000 without overflow; the two-clock cell at 360.
@@ -326,7 +336,14 @@ The cutover plan calls self-hosting "a separately approved" change (`docs/nextjs
 
 **One set of files, two apps.** The files live once, under `public/fonts/`. The two apps resolve URLs differently (Vite builds with `base: './'`, `vite.config.ts:15`; Next serves from the root), so there are two `@font-face` lists. A test asserts they name the same families, weights and files.
 
-### Proposed Mon 16 Nov 2026: where the font split lands (the Track A Planner; awaiting Beni's word)
+### Amended Mon 16 Nov 2026: the font split is a PR 1b (proposed by the Track A Planner; approved by Beni the same day)
+
+**Ruling.** Beni approved this amendment as proposed on Mon 16 Nov 2026 at about 9:25 PM EST ("As recommended"). His answers to the three questions at the end of this section:
+- **1b.** The split lands in a PR of its own.
+- **All.** It covers all ten files.
+- **Beside.** It is built beside PR 2 when two builder seats are free, and after PR 2 when only one is.
+
+The rows for PR 1b in section 3's table, its evidence list, and section 8.3 follow from this ruling.
 
 **Why there is a question.** On Mon 16 Nov 2026 Beni ruled that the rendered faces are to be split into latin and latin-ext files, but not in PR 1 (PR #330's cycle, ruling 2, `docs/design-overhaul-pr1-review-prompt.md`). PR 1 self-hosts each face as one file subset to the union of the two ranges Google's stylesheet served (`public/fonts/RECORD.md`). So a cold load of Fixtures or Table fetches 205,174 bytes of fonts where `main` fetches 90,123, and Moments 179,294 where `main` fetches 69,905. All three of #330's review seats measured those figures. Subsetting the four rendered files to the latin range alone gives 107,536 bytes (Pass 1, re-run by Pass 2.5). Four of the 1,446 fixtures hold a character outside that range, all in one venue's name.
 
@@ -567,6 +584,7 @@ The runner is an extension of `web/scripts/clearing.mjs`, not a new start: same 
 |---|---|---|---|---|---|---|
 | 0 | 96, unchanged from `main` | harness exists, old look | the sampler runs | — | baseline recorded | baseline |
 | 1 | smoke | — | token pairs by test | — | fonts | — |
+| 1b | 96, pixel-identical to PR 1 | weeks that hold a latin-ext character | — | — | fonts, per half | yes, both halves |
 | 2 | 96 | — | band, banner, feet | the control | fonts | yes |
 | 3 | 96 | all rows' states; three weeks | rows on pulp and typescript, both themes | reduced motion | — | yes |
 | 4 | Table's 32, six leagues | Table states | Table | — | — | yes |
