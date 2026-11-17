@@ -22,6 +22,7 @@ interface Face {
   style: string
   weight: string
   src: string
+  declared: string
 }
 
 function faces(css: string): Face[] {
@@ -34,7 +35,7 @@ function faces(css: string): Face[] {
     const declared = value('src') ?? ''
     const src = declared.match(/url\("([^"]+)"\)/)?.[1]
     if (!family || !style || !weight || !declared) throw new Error('A face is missing family, style, weight or src')
-    return { family, style, weight, src: src ?? declared }
+    return { family, style, weight, src: src ?? declared, declared }
   })
 }
 
@@ -57,7 +58,7 @@ function rule(face: Face, weights: number[], data: string): string {
 // fallback has to carry its unicode-range into this function before it can ship.
 export function inlineFaceCss(css: string, read: (src: string) => Buffer): string {
   const parsed = faces(css)
-  const local = parsed.filter(face => face.src.startsWith('local('))
+  const local = parsed.filter(face => /local\(/i.test(face.declared))
   if (local.length) {
     throw new Error(`A local() face is not inlined (${local.map(face => face.family).join(', ')}). Carry its unicode-range into the offline file before shipping one.`)
   }

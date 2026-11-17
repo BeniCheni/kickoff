@@ -108,6 +108,20 @@ it('refuses to inline a local() face', () => {
   expect(() => inlineFaceCss(css, () => Buffer.from(''))).toThrow(/unicode-range/)
 })
 
+it('refuses to inline LOCAL() and a source that mixes local() with a url', () => {
+  const upper = `${vite}\n@font-face { font-family: "Oswald Fallback"; font-style: normal; font-weight: 500; font-display: swap; src: LOCAL("Arial"); }`
+  const mixed = `${vite}\n@font-face { font-family: "Oswald"; font-style: normal; font-weight: 500; font-display: swap; src: local("Arial"), url("./fonts/oswald/Oswald.woff2"); }`
+  expect(() => inlineFaceCss(upper, () => Buffer.from(''))).toThrow(/local\(/i)
+  expect(() => inlineFaceCss(mixed, () => Buffer.from('x'))).toThrow(/local\(/i)
+})
+
+it('the Next copy refuses local(), LOCAL(), and a mixed source', () => {
+  for (const src of ['local("Arial")', 'LOCAL("Arial")', 'local("Arial"), url("./fonts/oswald/Oswald.woff2")']) {
+    const css = `@font-face { font-family: "Oswald"; font-style: normal; font-weight: 500; font-display: swap; src: ${src}; }`
+    expect(() => nextFacesCss(css), src).toThrow(/local\(/i)
+  }
+})
+
 it('the Next copy is the same bytes with root urls, and the suite does not rewrite the checkout', () => {
   const sentinel = 'web/public/fonts/oswald/Oswald.woff2'
   const before = existsSync(sentinel) ? statSync(sentinel) : null
