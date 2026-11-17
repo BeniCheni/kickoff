@@ -79,3 +79,72 @@ Report back, in chat:
 - the handoff's changed lines, as a diff or as the new text of each;
 - anything you could not do.
 ````
+
+---
+
+## The result, the PM seat's check and Beni's rulings 27 to 29 (Tue 17 Nov 2026, about 4:00 PM EST)
+
+Claude Design redrew both rulings on the rows board and the States sheet. It also brought the
+voice map's SUSPENDED row in line, and it made the handoff's earlier sections agree with
+section 11. It reported the handoff's changed lines as a diff. That diff is folded into the
+handoff on the canvas and in its folder, and it is archived with the final addendum after the
+follow-up below.
+
+**What the PM seat checked at `2aea6c8`.**
+- The kept score's amber pairs are existing pairs, and all three match `tests/contrast.ts`'s
+  `ratio()`: 5.85 on pulp, 6.48 on typescript and 11.76 on the dark page.
+- No unsettled row keeps a clock on any board Claude Design names.
+- **The Table needs no redraw for R1.** `src/lib/standings.ts` picks a club's next fixture with
+  `stillToKickOff`, which accepts only a scheduled match, so an unsettled match is never a
+  club's next.
+- **A yes on 27 amends part of a kept test.** `tests/dom/designCycle.test.tsx:66` asserts that
+  the kept score's class contains `text-pitch`. The plan review's ruling 13 ("Keep") said that
+  line stands.
+
+**Ruled: "As recommended"** (Beni, about 3:58 PM EST).
+- **27:** the kept score under KICKED OFF is set in amber, inside rule 4's third use. This is
+  the named ruling that changes the class half of `tests/dom/designCycle.test.tsx:66` from
+  pitch to the amber voice. The half that requires the score to be kept still stands, and so
+  does `:47`.
+- **28:** nothing takes the clock's place on an unsettled row. On the Poster, the names stand
+  alone on line one, and the pill, the competition and the venue are on line two. On the
+  Ledger, the 62 px leading slot stays empty, so the clock column holds. The row keeps its
+  place in its day by its stored kickoff, as `sortForDisplay` orders it today. NEXT UP and the
+  NEXT pill never name such a match, a cover band's kickoff list passes over it, and a day's
+  first kickoff is the first among the matches that still have one.
+- **29:** a scheduled match past its kickoff reads KICKED OFF in amber on the rows, with no
+  score and both clocks kept. That is rule 4's third use as written, and the same case the
+  Table marks through `hasKickedOff`.
+
+**Carried forward, for PR 3's brief:**
+- The kept score moves from pitch to amber, and `:66`'s class assertion moves with it. In the
+  PR's assertion table it is the kind "changed by a named ruling", namely 27.
+- An unsettled row prints neither clock in either lens. The Ledger keeps its empty 62 px slot,
+  and the order stays as `sortForDisplay` has it. Pin this with a test (R1).
+- The rows newly mark a scheduled match past its kickoff, as KICKED OFF in amber with no score.
+  This is new behaviour on the rows, so it needs a test of its own.
+
+The follow-up below was delivered in chat for Claude Design.
+
+````text
+Fergie Time second edition — the rows, the follow-up: Beni's rulings 27 to 29, and one line in section 5
+
+The PM seat checked the rows pass against the repository: the kept score's amber pairs (5.85, 6.48, 11.76) match the repository's ratio function, and no unsettled row keeps a clock. The Table needs nothing for R1. The app picks a club's next fixture only from scheduled matches, so an unsettled match is never a club's next, and its next-fixture cell stays as drawn.
+
+BENI'S RULINGS, Tue 17 Nov 2026 ("As recommended"). Record each on the Questions board as ruled, and move 27 to 29 out of "Still open":
+- 27, the kept score's voice: yes, amber, inside rule 4's third use. Today's app sets it in pitch; the build changes it.
+- 28, the clockless row: yes, nothing takes the clock's place. The Ledger's 62 px leading slot stays empty, so the clock column holds. The row keeps its place in its day by its stored kickoff, as the app orders it today. NEXT UP and the NEXT pill never name such a match, a cover band's kickoff list passes over it, and a day's first kickoff is the first among the matches that still have one.
+- 29, the scheduled match past its kickoff: yes, KICKED OFF in amber on the rows, with no score and both clocks kept. Move States E's "proposed" block to drawn.
+
+ONE LINE IN SECTION 5. The rows section opens with "Both clocks are always on the row", which now reads against R1. Add the exception there, as one clause: an unsettled row (postponed, cancelled, suspended or abandoned) prints neither clock. Change nothing else in that paragraph.
+
+Update section 11's opening counts and the StatusPill table's KICKED OFF and unsettled lines so they read as ruled, not proposed.
+
+Fences, unchanged: no code; no change to the repository or to the Fergie Time design system; no version number; no money figure; no change to the Table's structure; no photograph.
+
+Report back, in chat:
+- the boards you changed;
+- the handoff's changed lines from this follow-up, as a diff;
+- the whole of section 11 as it now reads;
+- anything you could not do.
+````
