@@ -851,3 +851,49 @@ Neither finding can arise from the repo as it stands. There is no Caslon preload
 
 The integration branch has no worktree and no local branch in Beni's checkout. If Beni rules
 Merge, Codex's handoff block runs from a new worktree on `overhaul/second-edition`.
+
+---
+
+## Pass 3: Beni's ruling (Tue 17 Nov 2026, about 10:25 AM EST)
+
+**Ruled: "Merge at b421e13."** Beni runs Codex's handoff block himself:
+- from a new worktree on `overhaul/second-edition`, since his checkout had none;
+- the squash merge into `overhaul/second-edition` with
+  `--match-head-commit b421e132dc2a279bc22a96eb59dc2184a3d046f9`;
+- then `git pull --ff-only`, `npm ci`, `npm run typecheck`, `npm test` and `npm run build`.
+
+No tag, version or CHANGELOG section follows, and `main` and Pages do not change. When this was
+recorded, #330 was still open at `b421e13`, and the integration branch was at `2fd2466`.
+
+**Carried forward, for the briefs that follow:**
+- **PR 1b, the font split** (plan section 4.2, amended):
+  - the preload gate defines "used" as "the browser applied the face", and says so;
+    invisible text that is laid out counts as use;
+  - the gate maps each loaded face to the file it actually came from, including two halves that
+    share a family, style and weight;
+  - the `local(` refusal checks the whole stylesheet, in any letter case, on the inline path and
+    the Next copy;
+  - and everything the amendment lists.
+- **PR 2:**
+  - the nested stock contract: the nearest stock wins on a light page, and black wins on a dark
+    one;
+  - Caslon's preload arrives with Caslon's first rendered text;
+  - the offline set stays Oswald, Inter, and Kickoff Mono 500 and 600;
+  - with 1b alongside, the line in `RECORD.md` on which pages load which files is reconciled by
+    whichever PR merges second.
+- **PR 3:**
+  - R1 and R3;
+  - the Previous-button check in `main`'s `scripts/vercel-smoke.mjs`, which passes a `hidden`
+    button and fails a button named by its text.
+- **PR 4:** R2, the loss pip.
+- **On `main`, outside the overhaul:**
+  - #332, the slow test's cause, Beni's to merge;
+  - the `next` 16.4.1 and `zod` advisories;
+  - Pass 1's hand-over rows and process notes, for the ideas file.
+- **Process notes for the ideas file's tail:**
+  - read the model line that opens every seat's comment before anything else; the second
+    sitting once ran in the builder's vendor;
+  - Cursor records no effort, so each Cursor pass needs Beni's word on it;
+  - the sync stamp floors the clock to the minute, so a one-bucket capture starts on the minute
+    after the hour's boundary;
+  - text inside a closed `details` keeps a client rect while its face stays unloaded.
