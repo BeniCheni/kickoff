@@ -476,8 +476,15 @@ Cursor's hands this track seats no Cursor.
 
 **Sprint 3 — the gate, on the scratch repo (non-production; D1, D2, D3 and D9 ruled 17 Nov).**
 - *Scope:* `loop authorize`; the scratch repo's rulesets mirroring Kickoff's two, plus a third
-  for `kickoff/360` alone; the credentials D1 and D9 choose; the sync path D2 chooses.
-- *Acceptance:* T5, T6, T7 (with forgery), T10.
+  for `kickoff/360` alone; the credentials D1 and D9 choose. Seat record schema v1.2, which lets
+  a repository name its own passes (Beni, 17 Nov). D2's real change, to Kickoff's `sync.yml`,
+  lands in Sprint 5.
+- *Acceptance:* T5 (offline), T6 and T7 (with forgery) live on a gate fixture pull request.
+  T10 moved to Sprint 5 (Beni, 17 Nov): the replay cannot run a sync, because its `sync.yml`
+  refuses any branch but `main`, schedules run only on the default branch, and `elenchus` does
+  not let Actions open pull requests.
+- *Brief:* [`review-loop-sprint-3-build-prompt.md`](review-loop-sprint-3-build-prompt.md), for
+  Codex.
 - *Carried from Sprint 1's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are that
   comment's findings): 6, sequence by the order records were posted, not their presence; 7, every
   pass's `input_sha` is the previous recorded pass's `output_sha`, writing or not, and a head
@@ -927,6 +934,36 @@ for Cursor (S7).
   - **What Sprint 3 needs from Beni before its live tests:** the App, installed on `elenchus`,
     and the seats' token. The build brief names their exact settings.
 
+- **Sprint 3's builder, and four rulings for its brief (Beni, Tue 17 Nov 2026).** Codex builds
+  Sprint 3, as the roster has it ("Codex, per roster"). Asked before the brief was written, Beni
+  took each recommendation:
+  - **A record's `pr` is the pull request it sits on.** The replay's records are edited to carry
+    1 and 3, with Sprint 1's transcription fixes 23 (a) to (d); a new rule checks the number.
+  - **`sequence` checks posting order,** not presence (Sprint 1's finding 6). Re-reads are
+    excepted.
+  - **T10 moves to Sprint 5,** where D2's change to Kickoff's `sync.yml` lands. Sprint 3 proves
+    what D2 rests on instead: the App's status is the only one the review gate counts, and a
+    workflow a pull request adds can neither post it nor read a secret kept in an environment
+    restricted to the base branch.
+  - **Schema v1.2 lets a repository name its own passes, in Sprint 3.** It joins v1.2's other
+    changes: a source beside every null observed value, a re-read that can be recorded, the
+    route of the next pass, and the paths a record read.
+
+  The brief is [`review-loop-sprint-3-build-prompt.md`](review-loop-sprint-3-build-prompt.md).
+  Eight resolutions in it are the Planner's, each named there:
+  - `authorize` blocks on unverified coverage, configured per adopter;
+  - a manifest past the compare API's 300 files comes from two tree reads;
+  - `authorize`'s refusal of a red head makes "a review status on a red head" unreachable by
+    construction;
+  - a gate fixture with constructed records keeps #1's receipts T9's;
+  - the rulesets mirror Kickoff's two exactly, plus a review gate with no bypass;
+  - D2's environment rule is tested with a dummy secret;
+  - T5 runs offline;
+  - D9's token reaches a seat through the clone's own credential configuration.
+
+  Beni starts the build only when no overhaul Codex build is running, and its live part only
+  after he has created the App and the seats' token.
+
 D4, D8 and D10 to D12 are not yet ruled.
 
 ## Found after the spikes (15 Nov 2026, afternoon)
@@ -1179,4 +1216,4 @@ appendix carries the four items below to the reviewer.
   `134125548701`). The tag list is empty; `sprint-2`, `replay/main` and `replay/pr320-p1` are
   unmoved; #1 and #3 stay open and locked as fixtures. The README PR, elenchus #5, was then
   retargeted from `sprint-2` to `main` with `main` merged in. It changes `README.md` and
-  `package.json` only, and is ready for Beni's merge.
+  `package.json` only. Beni merged it the same day as `7affd47`.
