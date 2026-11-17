@@ -474,7 +474,7 @@ Cursor's hands this track seats no Cursor.
   first amendment makes each seat a clone of its own rather than a worktree of a shared clone.
   Merged on Tue 17 Nov 2026 as elenchus `71c8d1c`. See "Sprint 2's build" below.
 
-**Sprint 3 — the gate, on the scratch repo (non-production, after D1, D2, D3 and D9).**
+**Sprint 3 — the gate, on the scratch repo (non-production; D1, D2, D3 and D9 ruled 17 Nov).**
 - *Scope:* `loop authorize`; the scratch repo's rulesets mirroring Kickoff's two, plus a third
   for `kickoff/360` alone; the credentials D1 and D9 choose; the sync path D2 chooses.
 - *Acceptance:* T5, T6, T7 (with forgery), T10.
@@ -899,8 +899,35 @@ for Cursor (S7).
   - **D5 reads more strictly from now on.** Anything that names an adopter, a person or a branch
     belongs in configuration, and a review of elenchus treats a Kickoff value in `src/` as a
     finding.
+- **D1, D2, D3 and D9 — as recommended (Beni, Tue 17 Nov 2026, "Approve as proposed").** They
+  were put to Beni after Sprint 2 merged, reframed for elenchus as a general controller. The
+  recommendations stood, and the generality made three of them stronger.
+  - **D1 — App.** One elenchus GitHub App, created by Beni, installed on each adopter repository
+    in turn, starting with `BeniCheni/elenchus` for the replay. Each adopter's ruleset requires
+    the review status from that App alone. Only the App's key can post it, and the key sits behind
+    a prompt that asks Beni on each use. The status's name is configuration, so Kickoff keeps
+    `kickoff/360` and keel names its own.
+  - **D2 — Workflow.** An adopter's bot workflow posts the review status on its own head, as the
+    App. The key is a secret in an Actions environment restricted to the default branch, so
+    workflows a pull request adds cannot read it. For Kickoff this is `sync.yml`: its first
+    secret, and a change to its gates, which escalates that PR by rule. The question applies
+    only to adopters whose bots open pull requests. How T10 runs on the replay is left to
+    Sprint 3's brief, because two things constrain it: the replay's `sync.yml` is Kickoff's
+    byte for byte, and Actions may not create pull requests in `elenchus`.
+  - **D3 — Allowed-set.** A commit after the Pass 2.5 head needs no re-read only when CI is green
+    and the commit is one of the packet's three shapes. The set is configuration in
+    `.elenchus.json`, with Kickoff's values as the packet lists them.
+  - **D9 — Seat.** Each adopter repository gets a fine-grained token for that repository only,
+    created by Beni. It has Contents and Pull requests write, and no Administration, Workflows
+    or Commit-statuses write. Seats push over HTTPS with it, never through the operator's own
+    credentials; T1's live `git push --dry-run` showed a seat authenticating through Beni's
+    global credential store as the admin account. T7 settles whether an admin's fine-grained
+    token keeps the admin bypass; if it does, a machine account with the Write role follows.
+    The Planner never creates, reads or prints the token or the App's key.
+  - **What Sprint 3 needs from Beni before its live tests:** the App, installed on `elenchus`,
+    and the seats' token. The build brief names their exact settings.
 
-D1 to D4 and D8 to D12 are not yet ruled.
+D4, D8 and D10 to D12 are not yet ruled.
 
 ## Found after the spikes (15 Nov 2026, afternoon)
 
