@@ -66,8 +66,8 @@ RULINGS THAT BIND IT (Beni's, named as his).
 - Mon 16 Nov 2026, in PR 1's review:
   - the fallback stays unshipped, so no local() face ships (ruling 3);
   - the offline and single files carry Oswald, Inter, and Kickoff Mono 500 and 600 (ruling 4);
-- Tue 17 Nov 2026 ("Yes, extend it"): PR 2 makes the offline page render Caslon 400 (the footer and the banner) and Kickoff Mono 400 (the provenance line), so the offline set grows by those two faces. That makes six: Oswald, Inter, Kickoff Mono 400, 500 and 600, and Caslon 400. This PR makes the change, because it owns scripts/inline-faces.ts;
   - no Caslon preload before text uses Caslon (ruling 5).
+- Tue 17 Nov 2026 ("Yes, extend it"): PR 2 makes the offline page render Caslon 400 (the footer and the banner) and Kickoff Mono 400 (the provenance line), so the offline set grows by those two faces. That makes six: Oswald, Inter, Kickoff Mono 400, 500 and 600, and Caslon 400. This PR makes the change, because it owns scripts/inline-faces.ts;
 - Sat 14 Nov 2026:
   - 1 Branch and 2 Ten: main and Pages do not change until the release;
   - 9 Self: the fonts are self-hosted, each family with its OFL.txt, and no page contacts a font host;
