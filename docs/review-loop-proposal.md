@@ -535,6 +535,11 @@ Cursor's hands this track seats no Cursor.
   Pass 2.5 gate by rule.
 - *Acceptance:* T6 and T7 on a docs-only canary PR, and T10 observed on the next two scheduled
   syncs.
+- *Candidate, from Sprint 3's T7* (Beni, 17 Nov, under "Rulings received"): a configured binding
+  of the App's id to its bot login, so that `status` can name the App's own status. `authorize`
+  checks the binding each time it posts, against the `app_slug` its first allowed request
+  already returns. Kickoff's configuration is written here from scratch, so adding the binding
+  needs no exception to a ruleset.
 - *Review:* all six passes.
 - *Rollback:* disable the ruleset (a settings act, Beni's).
 
@@ -963,6 +968,27 @@ for Cursor (S7).
 
   Beni starts the build only when no overhaul Codex build is running, and its live part only
   after he has created the App and the seats' token.
+
+  A ninth went to Codex before part F. `security find-generic-password -w` prints a value as hex
+  whenever any byte is not printable (Apple's `keychain_find.c`), and a PEM always has newlines,
+  so `authorize` decodes the App key from that hex form. The README says how to store each item
+  so that it reads back this way.
+
+- **What `status` says about a status's source (Beni, Tue 17 Nov 2026).** Codex asked during
+  T7. GitHub's status API names a status's creator only by login, id and account type
+  (`elenchus-gate[bot]`, `Bot`), never by App id. `GET /apps/<slug>` returns 404 for a private App
+  to the operator's `gh` login. So `status` cannot tell the configured App's status from another,
+  as Part C of the brief assumed it could. Beni took the recommendation, to document the limit:
+  - **`status` names each status on the configured context at the head** by its state and its
+    creator's login and account type. It says the source is UNVERIFIED, and that the review
+    gate's ruleset decides whether the status counts.
+  - **The wording is the same for every creator,** an App's bot or a person. A person's status
+    can carry an App's integration when it is posted with that App's user token, and only GitHub
+    sees the integration.
+  - **It is display only:** no `check` rule, and nothing `authorize` reads or blocks on. The README
+    and the pull request state the limit.
+  - **Sprint 3 adds no App-to-login binding.** One would have needed a change to `replay/main`
+    with its review gate turned off. It is a candidate for Sprint 5 instead (see there).
 
 D4, D8 and D10 to D12 are not yet ruled.
 
