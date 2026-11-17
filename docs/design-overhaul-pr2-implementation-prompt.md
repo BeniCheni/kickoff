@@ -4,8 +4,12 @@ Written by the PM seat (Claude Code, Opus 5.5) on Tue 17 Nov 2026 at about 1:00 
 `overhaul/second-edition` at `49f2e28`. This is rung 3 of the ladder for PR 2, the first PR that
 renders the second edition.
 
-**It is a draft until its seat line is filled.** Thursday's routing check names the builder,
-under the amendment of Sun 15 Nov 2026 in PR #328.
+**Seat: Cursor, on Beni's word of Tue 17 Nov 2026 ("Cursor is the builder for each PR").** The
+model line names `grok-4.7-xhigh`. Beni's Cursor tier changes on Thu 19 Nov. The routing
+amendment, in PR #328 (approved, not yet on `main`), has that morning's check read what the new
+tier lists. If it no longer lists `grok-4.7-xhigh`, the PM seat changes the model line before the
+brief is pasted. The brief is held until then, so that the build, Pass 2 and any fix round all
+run on one model.
 
 **The offline set, ruled Tue 17 Nov 2026 at about 1:00 PM EST (Beni): "Yes, extend it."** PR 2
 is where the offline page first renders Caslon (in the footer and the banner) and Kickoff Mono
@@ -48,7 +52,7 @@ archive.
 ````text
 Kickoff design overhaul — PR 2: chrome and the motion control (build brief; into overhaul/second-edition)
 
-[SEAT — the PM seat fills this line after Thursday's routing check on Thu 19 Nov 2026: the vendor, the model and the effort this session runs on. Do not start until it is filled.]
+SEAT: Cursor builds this PR. Beni ruled on Tue 17 Nov 2026: "Cursor is the builder for each PR." Run on Grok 4.7 at Extra High (grok-4.7-xhigh), not in Plan mode: pick Grok 4.7 Extra High in the app's model picker, or start the CLI with agent --model grok-4.7-xhigh. Beni's Cursor tier changes on Thu 19 Nov 2026, and that morning's routing check reads what the new tier lists. If it no longer lists grok-4.7-xhigh, the PM seat changes this line before the brief is pasted. Do not start before that check.
 
 You are building one PR in github.com/BeniCheni/kickoff: PR 2 of the overhaul that builds Fergie Time's second edition into Fixtures and Table, and the first PR that renders it. It goes into the integration branch overhaul/second-edition, not main. Your PR body names the model and the effort that actually ran, and where you read them. Read CLAUDE.md and AGENTS.md first; they bind you. Then read:
 - docs/design-overhaul-plan.md: sections 1.1 and 1.7; 3 (PR 2's row and evidence entry); 4.3; 5.1 and 5.2; 6.1 and 6.2; 7.1 to 7.4; 8.2; 8.3, row 2; 10.1, rows 1 and 5; 10.4; and 10.5;
@@ -59,7 +63,7 @@ The PM seat (Claude Code, Opus 5.5) wrote this brief on Tue 17 Nov 2026 at about
 
 BEFORE YOU START. Any of these stops you.
 - origin/overhaul/second-edition contains 49f2e28. Check with git merge-base --is-ancestor 49f2e28 origin/overhaul/second-edition.
-- The seat line above is filled, and this session runs on the model and effort it names. If you cannot confirm the effort, stop and say so. If usage stops you partway, push what is green, say so in the PR and stop. Never finish on another model.
+- This session runs on the model and effort the seat line names. Your logs may not record the effort; in this overhaul's earlier passes they did not, and Beni confirmed it. If you cannot confirm it, say so in the PR and ask Beni in one word. If usage stops you partway, push what is green, say so in the PR and stop. Never finish on another model.
 - If PR 1b is being built at the same time, its brief owns the font files and the font tooling. Read FILES YOU OWN below, and stay inside them.
 - Merge origin/main into your branch and run the suite before your evidence run (the plan review's adjustment 1). The daily sync moves main.
 
@@ -85,7 +89,7 @@ RULINGS THAT BIND IT (Beni's, named as his). Where a ruling and the plan disagre
   - R2: --enforce fails on the 16 loss-pip samples until PR 4.
   - R3: the smoke's Previous-button contract, carried by PRs 3 and 5. This PR leaves the week stepper alone.
 - Standing, in CLAUDE.md: never render a kickoff time the league has not set; nothing invented; both clocks from one UTC instant; no data-honesty assertion is weakened.
-- Seats: as the routing amendment's table gives them for an L PR. That table is in PR #328, approved and not yet on main; read it with git show origin/docs/review-loop-plan:docs/design-overhaul-plan.md. Beni's word merges.
+- Seats, by the routing amendment's table for a Cursor build (PR #328, approved and not yet on main; read it with git show origin/docs/review-loop-plan:docs/design-overhaul-plan.md): you build, and you answer Pass 2's rebuttal; Pass 1 is a fresh Claude Code session; Pass 2.5 is Codex's synthesis. Beni's word merges.
 
 1. THE IMPRINT BAND (handoff section 5, "Page chrome"; plan 1.1).
 - One band replaces the composition of AppHeader, TabNav and LensSwitcher in all three shells. It has a 44 px control row, a 44 px tab row and the provenance line. It is 118 px tall at 390, and full width at 1000. It is black stock on Poster, Table and Moments, and typescript stock on the Ledger. It never moves, and never sits under an effect.
@@ -207,9 +211,9 @@ Not yours:
 If you change what a page loads, say so in the PR. PR 1b owns RECORD.md's line on which pages load which files. Whichever of the two PRs merges second merges the integration branch into its own branch, makes that line true and re-runs its evidence.
 
 THE PR.
-- Branch <your vendor>/overhaul-pr2-chrome off origin/overhaul/second-edition, and open the PR into overhaul/second-edition.
+- Branch cursor/overhaul-pr2-chrome off origin/overhaul/second-edition, and open the PR into overhaul/second-edition.
 - Title: "Overhaul PR 2: chrome and the motion control".
-- Commit under your vendor's identity on every commit: Cursor <cursoragent@cursor.com>, or Codex <noreply@openai.com>. The git config in Beni's checkout says Cursor, so any other vendor sets its own name and email on each commit.
+- Commit as Cursor <cursoragent@cursor.com> on every commit.
 - Make small commits, each green, in this order:
   1. the glyphs, and the band's tokens in use;
   2. the band, in the three shells;

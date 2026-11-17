@@ -5,10 +5,12 @@ Written by the PM seat (Claude Code, Opus 5.5) on Tue 17 Nov 2026 at about 12:50
 after #330 (PR 1) landed. This is rung 3 of the ladder for PR 1b, the PR that Beni's amendment
 of Mon 16 Nov 2026 added to the plan (section 4.2).
 
-**It is a draft until Thursday's routing check.** The amendment of Sun 15 Nov 2026 routes PR 1b
-on Thu 19 Nov, by what Cursor's lower tier lists. That amendment is in PR #328, approved and not
-yet on `main`. So the brief's first line is a seat placeholder, which the PM seat fills before
-the brief is pasted.
+**Seat: Cursor, on Beni's word of Tue 17 Nov 2026 ("Cursor is the builder for each PR").** The
+model line names `grok-4.7-xhigh`. Beni's Cursor tier changes on Thu 19 Nov. The routing
+amendment, in PR #328 (approved, not yet on `main`), has that morning's check read what the new
+tier lists. If it no longer lists `grok-4.7-xhigh`, the PM seat changes the model line before the
+brief is pasted. The brief is held until then, so that the build, Pass 2 and any fix round all
+run on one model.
 
 Read fresh for it:
 - the plan's section 4.2 amendment, section 3's PR 1b row and evidence entry, and section 8.3's
@@ -42,7 +44,7 @@ archive.
 ````text
 Kickoff design overhaul — PR 1b: the font split (build brief; into overhaul/second-edition)
 
-[SEAT — the PM seat fills this line after Thursday's routing check on Thu 19 Nov 2026: the vendor, the model and the effort this session runs on. Do not start until it is filled.]
+SEAT: Cursor builds this PR. Beni ruled on Tue 17 Nov 2026: "Cursor is the builder for each PR." Run on Grok 4.7 at Extra High (grok-4.7-xhigh), not in Plan mode: pick Grok 4.7 Extra High in the app's model picker, or start the CLI with agent --model grok-4.7-xhigh. Beni's Cursor tier changes on Thu 19 Nov 2026, and that morning's routing check reads what the new tier lists. If it no longer lists grok-4.7-xhigh, the PM seat changes this line before the brief is pasted. Do not start before that check.
 
 You are building one PR in github.com/BeniCheni/kickoff: PR 1b of the overhaul that builds Fergie Time's second edition into Fixtures and Table. It goes into the integration branch overhaul/second-edition, not main. Your PR body names the model and the effort that actually ran, and where you read them. Read CLAUDE.md and AGENTS.md first; they bind you. Then read:
 - docs/design-overhaul-plan.md: section 4.2 and its amendment of Mon 16 Nov 2026 ("the font split is a PR 1b"), section 3's PR 1b row and evidence entry, and section 8.3's row 1b;
@@ -53,7 +55,7 @@ The PM seat (Claude Code, Opus 5.5) wrote this brief on Tue 17 Nov 2026 at about
 
 BEFORE YOU START. Any of these stops you.
 - origin/overhaul/second-edition contains 49f2e28 (#334, which merged main into it). Check with git merge-base --is-ancestor 49f2e28 origin/overhaul/second-edition.
-- The seat line above is filled, and this session runs on the model and effort it names. If you cannot confirm the effort, stop and say so. If usage stops you partway, push what is green, say so in the PR and stop. Never finish on another model.
+- This session runs on the model and effort the seat line names. Your logs may not record the effort; in this overhaul's earlier passes they did not, and Beni confirmed it. If you cannot confirm it, say so in the PR and ask Beni in one word. If usage stops you partway, push what is green, say so in the PR and stop. Never finish on another model.
 - If PR 2 is being built at the same time, its brief owns the page heads, the shells and the components. Read FILES YOU OWN below, and stay inside them.
 
 WHAT THIS PR IS. Today each of the ten self-hosted font files is one subset of the union of the latin and latin-ext ranges that Google's stylesheet served (public/fonts/RECORD.md). So a cold load of Fixtures or Table fetches about 205 kB of fonts, where main fetched about 90 kB before PR 1. This PR splits every file into two halves, each with its unicode-range: a latin half under today's file name, and a latin-ext half with -ext in its name. A page then fetches a latin-ext half only when it shows a character in that range. Once the fonts have loaded, nothing a reader sees changes.
@@ -73,7 +75,7 @@ RULINGS THAT BIND IT (Beni's, named as his).
   - 9 Self: the fonts are self-hosted, each family with its OFL.txt, and no page contacts a font host;
   - 12 Six: no version, no tag and no CHANGELOG section here.
 - Standing, in CLAUDE.md: no data-honesty assertion is ever weakened.
-- Seats: as the routing amendment's table gives them for an M PR. That table is in PR #328, approved and not yet on main; read it with git show origin/docs/review-loop-plan:docs/design-overhaul-plan.md. Beni's word merges.
+- Seats, by the routing amendment's table for a Cursor build (PR #328, approved and not yet on main; read it with git show origin/docs/review-loop-plan:docs/design-overhaul-plan.md): you build, and you answer Pass 2's rebuttal; Pass 1 is a fresh Claude Code session; Pass 2.5 is Codex's synthesis. Beni's word merges.
 
 1. ONE SCRIPT THAT MAKES EVERY FILE.
 - Write one script that turns each family's upstream source into its two halves, and commit it under scripts/; the name is yours. It runs outside the build, package.json and the lockfile, with fontTools pinned to an exact version. RECORD.md names 4.60.2: keep it, or say why not. Record the exact command that runs the script.
@@ -125,9 +127,9 @@ FILES YOU OWN.
 Nothing else is yours. PR 2 owns the page heads, the shells and the components. PR 2 also changes one case of tests/faces.test.ts, the one that pins the preload list, when it adds Caslon's preload; whichever PR merges second keeps both changes. RECORD.md's line on which pages load which files is yours. If PR 2 changes what a page loads, PR 2 says so in its PR. Whichever of the two merges second then merges the integration branch into its own branch, makes that line true and re-runs its evidence.
 
 THE PR.
-- Branch <your vendor>/overhaul-pr1b-font-split off origin/overhaul/second-edition, and open the PR into overhaul/second-edition.
+- Branch cursor/overhaul-pr1b-font-split off origin/overhaul/second-edition, and open the PR into overhaul/second-edition.
 - Title: "Overhaul PR 1b: the font split".
-- Commit under your vendor's identity on every commit: Cursor <cursoragent@cursor.com>, or Codex <noreply@openai.com>. The git config in Beni's checkout says Cursor, so any other vendor sets its own name and email on each commit.
+- Commit as Cursor <cursoragent@cursor.com> on every commit.
 - Make small commits, each green, in this order: the script and the record; the binaries; the stylesheet and both copies; the preload gate; the local( refusal.
 - No CHANGELOG edit, no version and no tag.
 - Rollback is a revert of the merge commit on the integration branch, and no reader notices it.
