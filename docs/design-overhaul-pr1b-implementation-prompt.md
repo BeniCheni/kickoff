@@ -66,6 +66,7 @@ RULINGS THAT BIND IT (Beni's, named as his).
 - Mon 16 Nov 2026, in PR 1's review:
   - the fallback stays unshipped, so no local() face ships (ruling 3);
   - the offline and single files carry Oswald, Inter, and Kickoff Mono 500 and 600 (ruling 4);
+- Tue 17 Nov 2026 ("Yes, extend it"): PR 2 makes the offline page render Caslon 400 (the footer and the banner) and Kickoff Mono 400 (the provenance line), so the offline set grows by those two faces. That makes six: Oswald, Inter, Kickoff Mono 400, 500 and 600, and Caslon 400. This PR makes the change, because it owns scripts/inline-faces.ts;
   - no Caslon preload before text uses Caslon (ruling 5).
 - Sat 14 Nov 2026:
   - 1 Branch and 2 Ten: main and Pages do not change until the release;
@@ -86,7 +87,7 @@ RULINGS THAT BIND IT (Beni's, named as his).
 2. THE STYLESHEET AND BOTH APPS.
 - public/faces.css gets two @font-face rules for each face, one per half, each with its unicode-range and its own url(). The latin halves keep today's file names, so every preload href and every page head stays as it is. Do not touch index.html, offline.html, web/app/layout.tsx or the harness pages.
 - web/scripts/copy-faces.mjs copies both halves, and the Next copy keeps the unicode-range lines. The test that both apps declare the same faces also compares each rule's unicode-range.
-- scripts/inline-faces.ts inlines both halves of each face ruling 4 keeps, and each inlined rule carries its unicode-range. Today rule() writes none. In PR 1, a fallback with no range drew an arrow that Oswald does not have. The offline and single files must still draw every character the snapshot holds.
+- scripts/inline-faces.ts inlines both halves of each of the six faces in the extended offline set, and each inlined rule carries its unicode-range. Today rule() writes none. The test that the single-file build inlines "the four rendered faces and nothing else" becomes six. If PR 2 has not merged when you build, the offline page does not use Caslon 400 or Kickoff Mono 400 yet, so the files simply carry them unused until it does. Say which order happened. In PR 1, a fallback with no range drew an arrow that Oswald does not have. The offline and single files must still draw every character the snapshot holds.
 - Every name check stays: the two renamed families hold no "Abril" or "Plex" in name IDs 1, 4, 6, 16 and 17, and each family's OFL.txt stays beside its files.
 
 3. WHAT PR 1'S REVIEW HANDED THIS PR (docs/design-overhaul-pr1-review-prompt.md, the sections "Codex's second sitting of record" and "Pass 3").

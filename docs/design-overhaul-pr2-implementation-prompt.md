@@ -4,12 +4,15 @@ Written by the PM seat (Claude Code, Opus 5.5) on Tue 17 Nov 2026 at about 1:00 
 `overhaul/second-edition` at `49f2e28`. This is rung 3 of the ladder for PR 2, the first PR that
 renders the second edition.
 
-**It is a draft, with two lines still to fill.**
-- **The seat.** Thursday's routing check names the builder, under the amendment of Sun 15 Nov
-  2026 in PR #328.
-- **The offline set.** That needs Beni's word. PR 2 is where the offline page first renders
-  Caslon (in the footer and the banner) and Kickoff Mono 400 (in the provenance line). Ruling 4
-  of PR 1's review kept the offline set at the four faces the page rendered then.
+**It is a draft until its seat line is filled.** Thursday's routing check names the builder,
+under the amendment of Sun 15 Nov 2026 in PR #328.
+
+**The offline set, ruled Tue 17 Nov 2026 at about 1:00 PM EST (Beni): "Yes, extend it."** PR 2
+is where the offline page first renders Caslon (in the footer and the banner) and Kickoff Mono
+400 (in the provenance line). Ruling 4 of PR 1's review kept the offline set at the four faces
+the page rendered then, because "the page renders those". The same reason now adds Caslon 400
+and Kickoff Mono 400. The change goes in PR 1b, which owns `scripts/inline-faces.ts`, so the
+two PRs still share only the one test case.
 
 Read fresh for it:
 - the plan's sections 1.1, 1.7, 3, 4.3, 5.1, 5.2, 6.1, 6.2, 7.1 to 7.4, 8.2, 8.3, 10.1, 10.4
@@ -77,7 +80,7 @@ RULINGS THAT BIND IT (Beni's, named as his). Where a ruling and the plan disagre
 - Mon 16 Nov 2026, in PR 1's review (docs/design-overhaul-pr1-review-prompt.md):
   - Stock nests. On a light page an element takes the voices of the nearest [data-stock] among itself and its ancestors; on a dark page every surface takes the black voices. That rule is in src/shell.css, pinned by tests/stockCascade.test.ts. Use it as it is.
   - No Caslon preload before text uses Caslon (ruling 5). Caslon's first text arrives in this PR, in the footer and the banner (handoff section 4's scale). So add Caslon 400's preload in the commit that first renders Caslon, in every head that preloads today.
-  - [OFFLINE SET — the PM seat fills this line from Beni's ruling before delivery.]
+- Tue 17 Nov 2026 ("Yes, extend it"): from this PR the offline page renders Caslon 400 and Kickoff Mono 400, so the offline and single files carry those two faces as well as Oswald, Inter, and Kickoff Mono 500 and 600. PR 1b makes that change in scripts/inline-faces.ts, which it owns; you do not touch that file. If PR 2 merges first, the offline page shows those two faces as system fallbacks until PR 1b lands. Say which order happened.
 - From PR 0's cycle (docs/design-overhaul-pr0-review-prompt.md):
   - R2: --enforce fails on the 16 loss-pip samples until PR 4.
   - R3: the smoke's Previous-button contract, carried by PRs 3 and 5. This PR leaves the week stepper alone.
