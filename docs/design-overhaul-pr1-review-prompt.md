@@ -795,3 +795,59 @@ Checked before delivery, at about 9:05 AM:
 - both Codex worktrees are clean, `kickoff-pr330-pass25` at `b421e13` and
   `kickoff-pr330-pass25-b9` at `d1a7ec0`;
 - nothing listens on ports 5673 to 5675, 5773 to 5775, 5873 to 5875 or 5973 to 5975.
+
+---
+
+## Codex's second sitting of record, and the PM seat's recommendation (Tue 17 Nov 2026, about 9:50 AM EST)
+
+Codex posted at 9:32 AM EST:
+https://github.com/BeniCheni/kickoff/pull/330#issuecomment-6951039025. Its first line names
+`gpt-6.1-sol` at `xhigh` from `turn_context`. It marks comment 6938154606 as run by the builder's
+vendor, and it built both SHAs in fresh detached worktrees. It confirms all three fixes against
+its first sitting's cases, and the stock tests catch a drift between the two paper blocks in both
+directions. Its numbers:
+- 182 of 182 captures identical, both self-comparisons and all four cross-tree comparisons;
+- the root suites at 1,109, 1,112 and 1,114 tests at the three SHAs;
+- 24 cold loads, with Mono 500 unused on exactly the eight Moments rows;
+- `--enforce` failing on the 16 loss-pip samples only.
+
+It recommends **Hold** on two new Medium findings:
+1. **Invisible text clears the preload gate.** Text with `visibility:hidden` or `opacity:0`
+   makes Chrome load the face, so the gate passes. `document.fonts.load()` also clears it with
+   no text at all.
+2. **A second `src` gets past both `local()` guards.** A second `src` declaration in a rule
+   bypasses the inliner and the Next copy, and so does a sole `local()` source with no final
+   semicolon on the Next copy.
+
+The PM seat read both guards at `b421e13`. Each reads the first `src:` of a rule with a regex
+that needs a semicolon: `scripts/inline-faces.ts` through `value('src')`, and
+`web/scripts/copy-faces.mjs` through `localFaceSources`. `public/faces.css` has 16 rules, 16
+`src` lines and no `local(`.
+
+**The PM seat recommended Merge at `b421e13`, carrying both findings into PR 1b's brief.**
+- **Finding 1 asks for a different rule, not a fix.** Chrome lays out invisible text and loads
+  its face, so a preload for that face is used. The gate exists to catch a file the browser
+  downloads and never applies, which is Pass 1's finding 4. A rule that requires visible text
+  would fail text that starts at `opacity:0` and fades in, and PR 6's Rack and PR 8's decorative
+  layer will have such text. Nothing in `src/` or `web/app/` calls `document.fonts.load`.
+- **Finding 2 is the same kind of gap as #327's third round.** That was a string scan, and each
+  fix exposed its next edge. A check of the whole stylesheet for `local(` in any letter case
+  closes every form whatever the declarations look like. It takes two lines.
+- **Both belong in PR 1b.** PR 1b rewrites `public/faces.css` with a `unicode-range` per half,
+  and both copy paths with it. It already has to rework the gate, so that the gate identifies
+  the file each half actually uses.
+- **A Hold is expensive.** It needs a Cursor round by the end of Wed 18 Nov, the last Super day,
+  and a third Codex sitting. It would also be the fourth round on these two guards.
+
+Neither finding can arise from the repo as it stands. There is no Caslon preload (ruling 5), no
+`document.fonts.load` in the app, and no `local(` in the stylesheet.
+
+**PR 1b's brief must carry:**
+- the gate decides "used" as "the browser applied the face", and says so, with
+  invisible-but-laid-out text counted as use;
+- the gate maps each loaded face to the file it actually came from, including two halves that
+  share a family, style and weight;
+- the `local(` refusal checks the whole stylesheet, and every `src` in it, on both paths.
+
+The integration branch has no worktree and no local branch in Beni's checkout. If Beni rules
+Merge, Codex's handoff block runs from a new worktree on `overhaul/second-edition`.
