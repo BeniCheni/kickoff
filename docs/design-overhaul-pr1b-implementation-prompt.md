@@ -121,7 +121,7 @@ FILES YOU OWN.
 - the preload gate in web/scripts/evidence.mjs;
 - your new script under scripts/;
 - the font tests: tests/faces.test.ts, web/test/font-preload.test.ts and your hash test.
-Nothing else is yours. PR 2 owns the page heads, the shells and the components. RECORD.md's line on which pages load which files is yours. If PR 2 changes what a page loads, PR 2 says so in its PR. Whichever of the two merges second then merges the integration branch into its own branch, makes that line true and re-runs its evidence.
+Nothing else is yours. PR 2 owns the page heads, the shells and the components. PR 2 also changes one case of tests/faces.test.ts, the one that pins the preload list, when it adds Caslon's preload; whichever PR merges second keeps both changes. RECORD.md's line on which pages load which files is yours. If PR 2 changes what a page loads, PR 2 says so in its PR. Whichever of the two merges second then merges the integration branch into its own branch, makes that line true and re-runs its evidence.
 
 THE PR.
 - Branch <your vendor>/overhaul-pr1b-font-split off origin/overhaul/second-edition, and open the PR into overhaul/second-edition.
