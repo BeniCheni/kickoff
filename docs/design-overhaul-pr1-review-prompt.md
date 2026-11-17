@@ -1,4 +1,4 @@
-# PR #330 — the PM seat's briefs for the overhaul's PR 1, tokens and type: Pass 1's cold review, Cursor's Pass 2, Codex's Pass 2.5, Beni's rulings, the fix round and Codex's second sitting (archived Mon 16 Nov 2026, TZ=America/New_York)
+# PR #330 — the PM seat's briefs for the overhaul's PR 1, tokens and type: Pass 1's cold review, Cursor's Pass 2, Codex's Pass 2.5, Beni's rulings, the fix round and its re-check (archived Mon 16 Nov 2026, TZ=America/New_York)
 
 Written by the PM seat (Claude Code, Opus 5.5) in the Track A planning session, after Cursor
 opened PR #330 from
@@ -741,4 +741,44 @@ the opener's "Not yet answered" paragraph and the effort question in its brief s
 
 ```text
 ADDENDUM from Beni (Mon 16 Nov 2026, about 10:30 PM EST): Cursor's fix round ran on Grok 4.7 at Extra High, that is grok-4.7-xhigh, the same model and effort as the build and Pass 2. Beni gave this answer to the PM seat in one word ("Extra High") and is pasting it to you himself, so record it in your comment and your brief as his answer, named as his, and do not ask him again. It replaces the "Not yet answered" paragraph and the effort question under THE BRIEF AND THE COMMENT. The fix round's own comment still says "effort not observed": say that the effort comes from Beni, not from Cursor's logs or `agent about`.
+```
+
+---
+
+## The second sitting ran in Cursor, and the PM seat recommends a Codex re-run (Mon 16 Nov 2026, about 11:30 PM EST)
+
+A second-sitting comment posted at 11:17 PM EST:
+https://github.com/BeniCheni/kickoff/pull/330#issuecomment-6938154606. Its first line is "Pass 2.5,
+second sitting, grok-4.7, effort not observed", and it recommends Merge at `b421e13`. It was
+edited at 11:19 PM to carry Beni's answer on the fix round's effort. The head is unchanged, and
+`verify` run 44009179379 is green at `b421e13`.
+
+Grok 4.7 is Cursor's model. That session's own brief names its picker, and it reports GPT-6.1 Sol
+only for the first sitting. Cursor built PR 1, ran Pass 2 and ran the fix round, so this is the
+builder's vendor re-checking its own fix round. Ruling 7 gave that re-check to Codex, and the
+skill's first rule of the 360 is that the builder reviews nothing it built.
+
+That session also worked in Codex's worktrees:
+- `kickoff-pr330-pass25` is at `b421e13`, with a build from about 10:31 PM;
+- `kickoff-pr330-pass25-b9` is at `d1a7ec0`, with a build from 8:08 PM, which predates that
+  checkout;
+- it wrote files under `/private/tmp/pr330-pass25*` and `/private/tmp/pr330-old-faces`.
+
+Its summary to Beni ended by offering to run Next's security upgrade. That is the
+`SecurityFatalError` notice's request passed on to Beni, which every brief in this cycle said
+not to act on.
+
+The comment's numbers are consistent with Cursor's fix-round comment and with the PM seat's
+reading of the three diffs. But they come from the builder's vendor, so the PM seat recommended
+**Hold for a Codex re-run** of the same second-sitting note, with Beni's effort addendum and the
+preface below. If Codex cannot take the sitting, the routing amendment's fallback for a synthesis
+seat applies: a fresh Claude Code session on `claude-fable-5-2` at `xhigh` that writes nothing.
+Delivered in chat in a fenced block; this copy is the archive.
+
+```text
+PREFACE from the PM seat (Mon 16 Nov 2026, about 11:30 PM EST). Read it before the second-sitting note and the effort addendum that follow, which both still stand.
+
+That note has been run once already, in a Cursor session on grok-4.7. It posted https://github.com/BeniCheni/kickoff/pull/330#issuecomment-6938154606 at 11:17 PM EST, headed "Pass 2.5, second sitting, grok-4.7". Cursor built PR 1 and ran Pass 2 and the fix round, so that comment is the builder's vendor re-checking its own fix round. It is not the Pass 2.5 the cycle counts, and Beni's ruling 7 gave this re-check to you. Treat every number in it as a claim to re-derive, and never cite it. Where your result differs from it, say so. The first lines of your comment say that yours is the second sitting of record, and that 6938154606 was run by the builder's vendor.
+
+That session worked in your worktrees. /Users/benicheni/code/kickoff-pr330-pass25 is now at b421e13 with a build from about 10:31 PM, and kickoff-pr330-pass25-b9 is at d1a7ec0 with a build from 8:08 PM, which predates that checkout. It also wrote /private/tmp/pr330-pass25* and /private/tmp/pr330-old-faces. Reuse none of those builds or files as evidence. Confirm each HEAD with git status, then rebuild the head and the d1a7ec0 baseline yourself, or make fresh detached worktrees at both SHAs. Do not delete what that session left.
 ```
