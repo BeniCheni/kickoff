@@ -883,9 +883,16 @@ for Cursor (S7).
     is still fixed in code (the seven pass ids, the finding-carry passes, the escalation's
     addressee, the base branch in the release block), and puts each on the roadmap. The minimal
     configuration and the example record in it pass elenchus's own parser and validator.
-  - **The repository's About line now reads:** "A read-only controller for multi-pass,
-    cross-vendor AI code review on GitHub. Each agent seat posts a record; elenchus checks them
-    and says what the review needs next."
+  - **The repository's About line now reads:** "A controller for multi-pass, cross-vendor AI code
+    review on GitHub. Each agent seat posts a record; elenchus checks them and says what the
+    review needs next." Its topics are `code-review`, `ai-agents`, `claude-code`, `codex`,
+    `cursor` and `github-cli`.
+  - **The description says nothing that is true only for now (Beni, the same day).** Phrases
+    like "read-only" or "never writes to GitHub" come out of the About line, the README and
+    `package.json`, because the gate will post a status, and every such phrase would need a
+    cleanup later. The README's boundaries name the file that enforces each one (`src/gh.ts`,
+    `src/git.ts`), so they change with that code. `read-only` stays only as a seat kind, a
+    configuration value.
   - **A new roadmap item, not yet scheduled:** schema v1.2 lets a repository name its own
     passes, in place of v1.1's fixed seven. It joins the v1.2 gaps already listed: the next
     pass's route, and the paths a record read rather than their count.
