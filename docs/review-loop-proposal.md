@@ -470,7 +470,9 @@ Cursor's hands this track seats no Cursor.
 - *Review:* fast-track, for the same reason as Sprint 1.
 - *Rollback:* archive.
 - *Built (Mon 16 Nov 2026):* by Cursor as elenchus #4 (`sprint-2`, head `c4497cb`), with the
-  fixture #3 for `prep`; awaiting its fast-track Pass 1. See "Sprint 2's build" below.
+  fixture #3 for `prep`. Pass 1 asked for a fix round, which Beni ordered the same night; its
+  first amendment makes each seat a clone of its own rather than a worktree of a shared clone.
+  See "Sprint 2's build" below.
 
 **Sprint 3 — the gate, on the scratch repo (non-production, after D1, D2, D3 and D9).**
 - *Scope:* `loop authorize`; the scratch repo's rulesets mirroring Kickoff's two, plus a third
@@ -489,6 +491,16 @@ Cursor's hands this track seats no Cursor.
   20, refs are encoded and the base is read as `heads/<ref>`; 21, `authorize` reads `status` and
   `check` together; 22, actions pinned by SHA; and 23 (a) to (d), the replay's transcription
   corrections.
+- *Carried from Sprint 2's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are
+  [that comment's](https://github.com/BeniCheni/elenchus/pull/4#issuecomment-6936683164)):
+  16 and A10, the coverage floor. Today a marked record with no `coverage` is only UNVERIFIED, so
+  a seat does better by leaving the block out than by reporting it. And because GitHub's compare
+  lists at most 300 files, a pull request of 300 or more can never pass a coverage check
+  (Kickoff's `v0.5.0...main` already returns exactly 300). `authorize` decides whether UNVERIFIED
+  coverage blocks it, and whether the configuration can require coverage on real pull requests
+  while the replay stays exempt. A pull request too large for the compare API needs another
+  source for its manifest before Kickoff's overhaul release PR reaches a coverage pass. 25: prep
+  fetches the pull request twice.
 - *Review:* **all six passes.** This is the gate code Sprint 5 ports. Reviewing it at full depth
   where it is written means the port is a copy of reviewed code.
 - *Rollback:* archive.
@@ -501,6 +513,9 @@ Cursor's hands this track seats no Cursor.
 - *Carried from Sprint 1:* a release artefact Kickoff can pin (finding 15: no `dist/`, no
   `prepare`, `private: true`), and a slot in `pr-comment.md` for the sealed appendix, delivered as
   a second paste after the reviewer's findings are written.
+- *Carried from Sprint 2:* the squash body the skill's step 4 asks for, naming who ran which
+  pass with each vendor's Co-authored-by trailer, rendered by `handoff` from the records (note
+  21 of Sprint 2's Pass 1).
 - *Review:* all six passes. It changes the method every later review reads.
 - *Rollback:* revert the merge; seats stop posting the block.
 - *Number:* D8.
@@ -814,6 +829,45 @@ for Cursor (S7).
   has no record; and T4's probes run in scratch repositories where `gh` cannot act as Beni, so a
   forbidden command that gets through harms nothing. A second fixture pull request, #3 at
   `0faf606`, gives `prep` a live pass to prepare, which #1, recorded to the end, cannot.
+- **Sprint 2's fix round (Beni, Mon 16 Nov 2026, "Approve as proposed").** The numbers are
+  Pass 1's on [elenchus#4](https://github.com/BeniCheni/elenchus/pull/4#issuecomment-6936683164),
+  findings by number and the sealed appendix's items as A1 to A12. *Fixed now, by Cursor on
+  `sprint-2`, in four amendments to the build brief and a list:*
+  - **One clone per seat** (2, 4 and 9; A5, A8, A11). Each seat is a clone of its own,
+    made with `--reference` to the shared clone and `--dissociate`, about 30 MiB for Kickoff. A
+    worktree shares config, hooks and the exclude file with every other worktree of its clone.
+    That sharing is the common cause of three findings: a seat's identity leaking into the next
+    seat's commits, a hook one seat drops running inside the next `prep`, and the leftover
+    branch that stopped a second `prep`. The seat's branch takes the head branch's name, so a
+    plain `git push` under git's default reaches the pull request. A seat is open while its
+    directory exists and its pass has no record, so deleting the stamp no longer frees it. A
+    pull request from a fork is refused.
+  - **The release block** (1, 10 and 26; A6, A7, note 21's smaller edges). It refuses a head past
+    the last recorded `output_sha`. Kickoff's merge line gains `--repo` and
+    `--match-head-commit`, its subject `v{version} — `. The block pulls before it tags, tags the
+    squash commit by an explicit SHA, and chains its lines.
+  - **Codex's profile** (6). It moves to `.codex/rules/`, trusted only by a `-c` override and
+    never by writing `~/.codex`; if that does not load it, `prep` says the profile is not known
+    to load.
+  - **T4** (7 and 8; A1, A2, A11). Each verdict comes from the vendor's own record, the probe
+    environment is built from an allowlist, and Codex runs outside `$TMPDIR`. T4 is re-run for
+    Claude and Codex only: Cursor's profile result stands, and a re-run would move its stored
+    default again.
+  - **The list.** 3 (the git wrapper becomes an allowlist of `prep`'s exact calls); 5 (Pass
+    0's expected SHA is the head); 11 to 15; 17's section labels; 18; 19; 22; and 23 with the
+    corrected receipts in #4's body.
+
+  *Deferred:* 16 and A10, and 25, to Sprint 3; note 21's squash body to Sprint 4; 20 as an accepted
+  risk (`npm ci` runs the head's install scripts as the operator, as the build brief asked); and
+  17's fixed `npm ci`, which stays because `prep`'s runner admits only git and npm and a
+  configurable install command would widen that. *Beni's other calls, the same night:* the record
+  keeps the effort Pass 1 observed, with its source named, in place of the null the review brief
+  asked for, because the session transcript records it. Kickoff's SKILL.md section 7 step 8,
+  which lists the tag before the pull as this block did, is fixed in a small Kickoff docs PR
+  before v0.6.0 rather than in Sprint 4. The stray seat branch was deleted. The brief is
+  [`review-loop-sprint-2-fix-prompt.md`](review-loop-sprint-2-fix-prompt.md). After the round the
+  Planner re-reads each fix against this list, read-only, and Beni merges with a message written
+  by hand, guarded by `--match-head-commit`.
 
 D1 to D4 and D8 to D12 are not yet ruled.
 
@@ -957,3 +1011,54 @@ appendix carries the four items below to the reviewer.
   so the Cursor CLI's stored default is now Grok 4.7 256K Low (read from its config, not edited).
   A Cursor seat started without an explicit `--model` would now run at Low; every Cursor brief
   already names its model.
+- **Pass 1 posted at 02:59Z on 17 Nov** (Mon 16 Nov, 9:59 PM in Brooklyn;
+  [comment](https://github.com/BeniCheni/elenchus/pull/4#issuecomment-6936683164)), on
+  `claude-fable-5-2` at xhigh in Claude Code 2.1.325: *merge after a fix round.* It made 26
+  findings, 3 blocking, 12 should-fix and 11 notes. The blocking three:
+  - The release block tags the commit before the merge, and pushes that tag. Reproduced on a
+    local origin.
+  - A seat's plain `git push` is refused, because the seat branch's name differs from the head
+    branch's. The obvious retry creates a stray branch on the remote.
+  - The git wrapper refuses subcommands, not writes. Through it the reviewer created a tag with
+    `fetch`, moved a branch backwards, wrote the global config and ran an arbitrary command; none
+    of `prep`'s own calls does this.
+
+  Every acceptance receipt it repeated reproduces, with two exceptions:
+  - **T4's Claude verdict.** The build's probe ran all six commands in one `for` loop through
+    `eval`, so no direct form reached the profile. The reviewer's two single-command probes were
+    both denied.
+  - **The deletion claim.** 13 of 30 single-rule deletions leave the 83 tests green, among them
+    the only line that binds `prep` to the git wrapper.
+
+  It found what the Planner's appendix had not: `prep` refuses Pass 0, so the first seat of every
+  review cannot be made; and one clone shared by every seat is writable state between them. Its
+  record validates with the pull request's own code. Coverage is 62 paths: 45 read, and the 17
+  deleted fixtures skipped, each with a reason.
+- **The seal held, though a paste went astray.** The reviewer saved its findings before seeing
+  anything of the Planner's, and it had reached ten of the twelve appendix items on its own. Beni
+  then pasted the Planner's provisional rulings by mistake before the appendix. The reviewer
+  checked them without posting, and corrected four points that went into the rulings:
+  - finding 18 fails Sprint 1's author rule today;
+  - the stray branch came from T1, not T4;
+  - finding 17 was half assigned;
+  - a per-seat clone must clone the GitHub URL, not the shared clone.
+
+  Its comment states that order of events. It marks note 26 as written after the rulings arrived,
+  and note 25's correction as written after the appendix. Two appendix items were confirmed only
+  in part:
+  - **A8.** A deleted stamp does free a seat, but at this head the leftover branch still stops the
+    next `prep`.
+  - **A10.** The 300-file cap is confirmed live. The overhaul's size cannot be read yet.
+
+  A11 found a second writer: the Claude CLI creates four empty directories in a seat's clone when
+  it starts. Since the brief to the reviewer, the Planner has a lesson: Beni starts review seats
+  from the desktop app in a Kickoff checkout, and Claude's transcripts record effort. Briefs now
+  say so.
+- **Kickoff's own tags were checked.** v0.5.0 to v0.5.5 each name the commit carrying their own
+  version, tagged within eight minutes of it, so Beni has always pulled before tagging. The
+  skill's step 8 is wrong on paper only, which is why its fix waits for a small docs PR before
+  v0.6.0 rather than an emergency.
+- **The stray seat branch is gone.** T1 had left `elenchus-pr-3-pass-1` (at `0faf606`, held by no
+  worktree) in `~/.elenchus/seats/BeniCheni__elenchus.git`. The Planner deleted it on Beni's yes
+  the same night. The clone now holds no seat branch, no `branch.*` config, no worktree and no
+  tag.
