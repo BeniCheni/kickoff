@@ -156,3 +156,112 @@ Report back, in chat:
 - a handoff addendum in the handoff's own format: a "Filter panel" entry under §5's Page controls, a "Zones & key" entry under §5's The Table, and §11 with gap 18 closed;
 - any new words, and anything you could not do.
 ````
+
+---
+
+## The result, the PM seat's check and Beni's rulings (Tue 17 Nov 2026, about 3:10 PM EST)
+
+Claude Design drew gap 18 that afternoon and reported in its chat. Beni pasted the reply. It
+added 26 artboards on the Components page:
+- the filter panel, opened, with its four states, on Poster and on the Ledger;
+- Zones & key, opened, for the Premier League, the Champions League's league phase and the
+  Bundesliga.
+It also wrote a handoff addendum for §5 and §11 in chat, leaving the handoff file unchanged. It
+had no repository access, so it hatched the words it was not given and assembled two Columns
+paragraphs.
+
+Its band proposal:
+- **A play-off for a place:** the destination's hue, broken 4 px on and 3 px off.
+- **A relegation play-off:** blood, broken the same way.
+- **Eliminated:** solid muted ink.
+It adds no new token, no tint and no ninth amber use. The filter toggle is either "shown" (a
+solid ink frame, with the competition's dot filled) or "hidden" (a broken muted frame, with a
+hollow ring and no hue).
+
+**What the PM seat checked against the repository.**
+- **Every contrast figure matches.** All 14 that Claude Design gave match `tests/contrast.ts`'s
+  `ratio()` (through `parseColor()`) to two decimals: ink 13.32 on pulp, 14.76 on typescript
+  and 14.49 on the dark page; muted ink 7.00, 7.75 and 7.39; blood 5.17 and 2.65; the Champions
+  League hue 2.82 and 4.86; and the four Supercup dots on dark pulp, 1.93 to 2.13.
+- **"15, not 19" is right, and the brief was wrong.** The snapshot holds 26 matches on Sat 21
+  Nov: Premier League 7, La Liga 4, Serie A 4, Bundesliga 6 and Ligue 1 5. So the 3-of-14
+  filter shows 11 and hides 15, and "19 hidden" belongs to the Premier League alone.
+- **The group control** matches `FilterBar.tsx`, which reads `allOn ? 'Hide all' : 'Show all'`.
+- **Two Columns paragraphs.** Claude Design assembled the Champions League's from the brief's
+  clauses and reused the Premier League's for the Bundesliga. Both match `TablePage.tsx`'s
+  template. The app sets "*league*" in italics.
+- **Two departures from the app.**
+  - The spec gave each toggle both `aria-pressed` and a spoken name that changes ("Premier
+    League, shown"), which announces the state twice. The brief had asked for that name.
+    Today's `CompetitionChip` uses a fixed name with `aria-pressed`, the W3C pattern that plan
+    5.2 follows.
+  - The top "Show all" became "inert" when all fourteen are shown, which would take it out of
+    the accessibility tree.
+- **The season note** ends with "Update `LEAGUE_TABLES`.", which is an instruction to
+  maintainers, shown on a page readers see.
+
+**Ruled: "As recommended"** (Beni, about 3:05 PM EST).
+- **22:** the play-off band is the destination's hue, broken 4 px on and 3 px off.
+- **23:** the Eliminated band is solid muted ink.
+- **24:** the toggle's two states and the panel's controls, with two corrections:
+  - a toggle's spoken name is the competition's name alone, with `aria-pressed`;
+  - the top "Show all" is muted and disabled, not inert, when all fourteen are shown.
+- **25:** the new words and figures are approved: "0 of 14", "Show all / Hide all *group*"
+  spoken, and Saturday's 11, 15, 0 and 26. The spoken suffixes ", shown" and ", hidden" are not.
+- **26:** the season note drops "Update `LEAGUE_TABLES`." and keeps its first sentence.
+
+**Carried forward, for the PR 3 and PR 4 briefs:**
+- `CompetitionChip` serves both the filter panel and the Table's league picker today. The
+  second edition draws them apart: the filter toggle in PR 3, the league tabs in PR 4. So the
+  shared component splits, and its comment ("so the on/off treatment ... can never drift")
+  stops being true.
+- The four Supercup dots read at 1.93 to 2.13 on the dark page. The toggle's name carries the
+  competition, so no rule is reopened.
+- The first edition's `PLAYOFF` colour (`var(--floodlight)`) has three jobs in
+  `LEAGUE_TABLES`: the Champions League's knockout play-offs, Ligue 1's "UCL Qualifying", and
+  the two relegation play-offs. Under rulings 22 and 23 they split by destination. The
+  Champions League's Eliminated band moves off `REL` to muted ink.
+
+The follow-up below was delivered in chat for Claude Design. The final addendum, once folded, is
+to be archived with the design record.
+
+````text
+Fergie Time second edition — gap 18, the follow-up: Beni's rulings, two corrections and the app's own words
+
+Thank you for the gap-18 pass. The PM seat checked it against the repository:
+- every contrast figure you gave matches the repository's own ratio function to two decimals;
+- your Saturday counts are right. The snapshot holds 26 matches on Sat 21 Nov: Premier League 7, La Liga 4, Serie A 4, Bundesliga 6 and Ligue 1 5. So the 3-of-14 filter shows 11 and hides 15, and 19 belongs to the Premier League alone. Keep 11 and 15;
+- your reading of the group control matches the app, which shows "Hide all" only while every competition in the group is shown.
+
+BENI'S RULINGS, Tue 17 Nov 2026 ("As recommended"). Record each on the Questions board, as ruled:
+- 22, the play-off band: yes. The destination's hue, broken 4 px on and 3 px off.
+- 23, the Eliminated band: yes. Solid muted ink.
+- 24, the filter toggle's two states and the panel's controls: yes, with the two corrections below.
+- 25, the new words and derived figures: yes. That covers "0 of 14" and its spoken form; "Show all <group>" and "Hide all <group>" spoken; and Saturday's 11, 15, 0 and 26. It does not cover the ", shown" and ", hidden" spoken suffixes.
+- 26, new: the season note drops its last sentence (below).
+
+TWO CORRECTIONS.
+1. A toggle's spoken name is the competition's name alone, "Premier League", and its state is aria-pressed: true when shown, false when hidden. Today's app does exactly this. A name that also says "shown" or "hidden" would make a screen reader announce the state twice. The W3C button pattern allows a fixed name with aria-pressed, or a changing name without it, but not both. The PM seat's brief asked for "Premier League, shown"; that was the brief's mistake, not yours. The group controls keep their changing names ("Hide all Big 5 Leagues") and take no aria-pressed: they are actions, not toggles.
+2. When all fourteen are shown, the top "Show all" is muted and disabled, not inert. Inert would take it out of the accessibility tree; a disabled button is still announced, as unavailable.
+
+THE APP'S OWN WORDS, for the places you hatched or assembled. They come from src/lib/competitions.ts and src/components/TablePage.tsx on main at 2aea6c8.
+- The Bundesliga's zone notes:
+  - Champions League, 1–4: "League phase."
+  - Europa League, 5: "League phase. Shifts down a place when the DFB-Pokal winner has already qualified through the league."
+  - Conference League, 6: "Play-off round, not the league phase directly."
+  - The Relegation play-off and Relegation entries are as you drew them.
+- How ties are broken, Bundesliga: "The Bundesliga separates level clubs on goal difference first, then goals scored, then head-to-head."
+- How ties are broken, the Champions League's league phase: "The Champions League league phase separates level clubs on goal difference first, then goals scored, then away goals, then wins and away wins; only after that do the opponents' collective records, disciplinary points and the club coefficient come into it (Article 18, UEFA Champions League regulations 2026/27)."
+- Columns: your assembly is right for both. The Champions League's reads as you built it. The Bundesliga's is the league paragraph, the same as the Premier League's. One detail: in the league paragraph, the word "league" in "the club's next league match" is set in italics.
+- The season note (ruling 26): "Zone bands are hidden: the snapshot is the 2026-27 season but the zone metadata describes 2025-26." The app fills in the two seasons; draw them as shown. The app's last sentence, "Update LEAGUE_TABLES.", is an instruction to the repository's maintainers, and it does not ship.
+
+WHAT TO DO.
+- Replace the hatched bars with these words. Correct the toggle's spoken name and the top "Show all"'s state, on the doc board and in the addendum.
+- Fold the addendum into the handoff, on the canvas and in its folder: §5's Page controls ("Filter panel"), §5's The Table ("Zones & key, opened"), and §11, with 22 to 26 recorded as ruled.
+- Change nothing else. The fences are the same as before: no code; no change to the repository or to the Fergie Time design system; no version number; no money figure; no change to the Table's structure; no photograph.
+
+Report back, in chat:
+- the boards you changed;
+- the final addendum, in the handoff's format, as you folded it;
+- anything you could not do.
+````
