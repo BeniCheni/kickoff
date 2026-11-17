@@ -472,7 +472,7 @@ Cursor's hands this track seats no Cursor.
 - *Built (Mon 16 Nov 2026):* by Cursor as elenchus #4 (`sprint-2`, head `c4497cb`), with the
   fixture #3 for `prep`. Pass 1 asked for a fix round, which Beni ordered the same night; its
   first amendment makes each seat a clone of its own rather than a worktree of a shared clone.
-  See "Sprint 2's build" below.
+  Merged on Tue 17 Nov 2026 as elenchus `71c8d1c`. See "Sprint 2's build" below.
 
 **Sprint 3 — the gate, on the scratch repo (non-production, after D1, D2, D3 and D9).**
 - *Scope:* `loop authorize`; the scratch repo's rulesets mirroring Kickoff's two, plus a third
@@ -1145,3 +1145,11 @@ appendix carries the four items below to the reviewer.
 
   The stamp is written after the clone's checkout and head check, not straight after the clone.
   That is immaterial now that a seat directory, not its stamp, decides whether the seat is open.
+- **Merged (Beni, Tue 17 Nov 2026, 14:53Z).** Beni squash-merged #4 with the Planner's message,
+  guarded by `--match-head-commit fd4c88a`. `main` is `71c8d1c`, one parent `84764ff`, and its
+  tree is `fd4c88a`'s exactly. The message carries the correction to the T4 receipt and Cursor's
+  Co-authored-by line, and no Kickoff link. CI's `test` on `main` is green (run
+  `134125548701`). The tag list is empty; `sprint-2`, `replay/main` and `replay/pr320-p1` are
+  unmoved; #1 and #3 stay open and locked as fixtures. The README PR, elenchus #5, was then
+  retargeted from `sprint-2` to `main` with `main` merged in. It changes `README.md` and
+  `package.json` only, and is ready for Beni's merge.
