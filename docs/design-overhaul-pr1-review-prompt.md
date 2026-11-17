@@ -729,3 +729,16 @@ WHAT YOU MUST NOT DO. Your gh is Beni's account, an Admin who can bypass the ver
 - No change to rulesets, repo settings, workflows or any other PR.
 If you find a blocker, do not fix it. Give the minimal reproduction, its severity and the follow-up for the builder, and recommend Hold.
 ````
+
+### Beni's answer on the fix round's effort, and the addendum for Codex (Mon 16 Nov 2026, about 10:30 PM EST)
+
+Asked what effort Cursor's fix round actually ran at, Beni answered "Extra High". So the round
+ran on `grok-4.7-xhigh`, as the build and Pass 2 did, and PR 1 has one builder model and effort
+on its record. The fix round's comment says "effort not observed", and `agent about` printed a
+stored "Low", so this answer is the only record of the effort. The addendum below goes with the
+second-sitting opener, pasted after it or sent to the Codex session as a follow-up. It replaces
+the opener's "Not yet answered" paragraph and the effort question in its brief section.
+
+```text
+ADDENDUM from Beni (Mon 16 Nov 2026, about 10:30 PM EST): Cursor's fix round ran on Grok 4.7 at Extra High, that is grok-4.7-xhigh, the same model and effort as the build and Pass 2. Beni gave this answer to the PM seat in one word ("Extra High") and is pasting it to you himself, so record it in your comment and your brief as his answer, named as his, and do not ask him again. It replaces the "Not yet answered" paragraph and the effort question under THE BRIEF AND THE COMMENT. The fix round's own comment still says "effort not observed": say that the effort comes from Beni, not from Cursor's logs or `agent about`.
+```
