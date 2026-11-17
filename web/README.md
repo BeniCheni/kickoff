@@ -5,7 +5,7 @@ GitHub Pages. This package installs `@kickoff/catalog` and `@kickoff/demo` as co
 (`file:../packages/kickoff-catalog`, `file:../packages/kickoff-demo`,
 `web/.npmrc` with `install-links=true`).
 After editing either package, `npm ci` in `web/` refreshes the copy; a plain
-`npm install` does not. The catalog's zod `4.4.3` is nested at
+`npm install` does not. The catalog's zod `4.6.7` is nested at
 `web/node_modules/@kickoff/catalog/node_modules/zod`, because this install
 already hoists zod 3 for another package. Nothing is written back into
 `packages/`. The database client is server-only. There is no credential in

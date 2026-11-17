@@ -42,12 +42,20 @@ describe('studio tokens', () => {
         expect(actual.get(name), `${selector} ${name}`).toBe(value)
       }
     }
+    // The reader serves its own subset of IBM Plex Mono, renamed Kickoff Mono because Plex's OFL
+    // reserves the name for unmodified copies (public/fonts/RECORD.md). The Studio is not a reader
+    // page and loads Google's unmodified IBM Plex Mono (ui/index.html), so it names the original
+    // family. That is the one substitution; the rest of every stack must match the reader's.
+    const renamed = new Map([["'Kickoff Mono'", "'IBM Plex Mono'"]])
     const fonts = ['--font-display', '--font-sans', '--font-mono']
     const theme = properties(reader, '@theme inline')
     const root = properties(studio, ':root')
     for (const name of fonts) {
-      expect(root.get(name)).toBe(theme.get(name))
+      const [first = '', ...rest] = (theme.get(name) ?? '').split(',').map(part => part.trim())
+      expect(root.get(name), name).toBe([renamed.get(first) ?? first, ...rest].join(', '))
     }
+    const html = readFileSync(path.join(repoRoot, 'studio/ui/index.html'), 'utf8')
+    expect(html).toContain('family=IBM+Plex+Mono')
   })
 
   it('shows a recorded dollar figure without changing it', () => {
