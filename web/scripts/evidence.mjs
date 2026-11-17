@@ -17,9 +17,9 @@
 //
 // Contrast records today's ratios and fails nothing. --enforce fails below 4.5, or 3
 // for large text, and on text whose colour could not be read, after the receipt is written.
-// A cold load may ask for its own host and the two font hosts. Any other http(s)
-// request the page emits fails the run. That is the plan's same-origin check on
-// today's look. A WebSocket the page opens is not one of those requests.
+// A cold load may ask for its own host. A font host is foreign, online and on the
+// offline file. Any other http(s) request the page emits fails the run. A WebSocket
+// the page opens is not one of those requests.
 import assert from 'node:assert/strict'
 import { mkdirSync, statSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
@@ -27,7 +27,7 @@ import { pathToFileURL, fileURLToPath } from 'node:url'
 import puppeteer from 'puppeteer-core'
 import { decodePng } from '../../scripts/decode-png.mjs'
 import { chooseWeeks, matrixAnchor, readSnapshot } from '../../scripts/evidence-weeks.mjs'
-import { BITMAP_GLYPH, FONT_HOSTS, createColdLoad, isLargeText, paintedColor, sampleContrast, unexpectedHost, unreadColors } from '../../scripts/rendered-contrast.mjs'
+import { BITMAP_GLYPH, createColdLoad, isLargeText, paintedColor, sampleContrast, unexpectedHost, unreadColors } from '../../scripts/rendered-contrast.mjs'
 
 const root = fileURLToPath(new URL('../..', import.meta.url))
 const chrome = process.env.CHROME_PATH ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
@@ -43,10 +43,6 @@ export function launchBrowser() {
   return puppeteer.launch({ executablePath: chrome, headless: true })
 }
 
-function hostOf(url) {
-  try { return new URL(url).host } catch { return '' }
-}
-
 // puppeteer names console.warn 'warn'; 'warning' is the protocol's word for the same level.
 const CONSOLE_FAILS = new Set(['error', 'warn', 'warning', 'assert'])
 
@@ -54,22 +50,19 @@ export async function openPage(browser, url, theme, width, { waitUntil = 'networ
   const context = await browser.createBrowserContext()
   const page = await context.newPage()
   const errors = []
-  const network = []
+  // A request to any host but this page's own is recorded in `escaped` and fails the
+  // open. There is no second list: nothing was writing one.
   const escaped = []
   page.on('pageerror', (error) => errors.push(String(error)))
   page.on('console', (message) => {
     if (!CONSOLE_FAILS.has(message.type())) return
-    const text = message.text()
-    // Offline, the one expected complaint is a font request that could not leave.
-    if (offline && /Failed to load resource/.test(text) && FONT_HOSTS.has(hostOf(message.location()?.url ?? ''))) network.push(text)
-    else errors.push(text)
+    errors.push(message.text())
   })
   // The page target's own http(s) requests. A WebSocket, or a worker or service-worker
   // fetch, may not arrive here. A failed socket can still fail the console gate.
   page.on('request', (request) => {
     const target = unexpectedHost(request.url(), url, { offline })
     if (target) escaped.push(`${request.method()} ${target}`)
-    else if (offline && FONT_HOSTS.has(hostOf(request.url()))) network.push(`${request.method()} ${request.url()}`)
   })
   await page.setViewport({ width, height: 844, deviceScaleFactor: 1 })
   await page.evaluateOnNewDocument((chosen) => {
@@ -79,8 +72,8 @@ export async function openPage(browser, url, theme, width, { waitUntil = 'networ
   }, theme)
   if (offline) await page.setOfflineMode(true)
   const response = await page.goto(url, { waitUntil, timeout: 30_000 })
-  // An offline file's font CSS never finishes, so only that load stops waiting for it.
-  // Online, a capture never lands before the fonts, as in the clearing.
+  // The offline file carries its faces. The bound stays so a face that never
+  // arrives cannot hold the capture. Online, a capture waits for the fonts.
   if (offline) {
     await Promise.race([
       page.evaluate(() => document.fonts.ready),
@@ -90,10 +83,10 @@ export async function openPage(browser, url, theme, width, { waitUntil = 'networ
   await page.waitForFunction((chosen) => document.documentElement.dataset.theme === chosen, { timeout: 15_000 }, theme)
   if (escaped.length) {
     await context.close()
-    const scope = offline ? 'the two font hosts' : 'this page and the two font hosts'
-    throw new Error(`asked for a host other than ${scope}: ${escaped.join(' | ')}`)
+    const scope = offline ? 'the offline file asked for a host' : "asked for a host other than this page's own"
+    throw new Error(`${scope}: ${escaped.join(' | ')}`)
   }
-  return { context, page, errors, network, escaped, status: response?.status() ?? 0 }
+  return { context, page, errors, escaped, status: response?.status() ?? 0 }
 }
 
 async function inspect(page) {
@@ -313,32 +306,153 @@ export async function captureWeeks(browser, { origins, out, weeks, contrast }, r
   return result
 }
 
-/** `rows` is filled as loads pass, so the caller's receipt keeps them if a later load throws. */
-export async function captureRequests(browser, origins, anchor, rows = []) {
-  for (const [app, origin] of Object.entries(origins)) {
-    for (const tab of ['fixtures', 'table', 'moments']) for (const width of [390, 1000]) {
-      const context = await browser.createBrowserContext()
-      const page = await context.newPage()
-      const client = await page.createCDPSession()
-      await client.send('Network.enable')
-      await client.send('Network.setCacheDisabled', { cacheDisabled: true })
-      const log = createColdLoad()
-      client.on('Network.requestWillBeSent', (event) => log.requestWillBeSent(event))
-      client.on('Network.responseReceived', (event) => log.responseReceived(event))
-      client.on('Network.loadingFinished', (event) => log.loadingFinished(event))
-      await page.setViewport({ width, height: 844, deviceScaleFactor: 1 })
-      await page.evaluateOnNewDocument(() => localStorage.setItem('kickoff-theme', 'light'))
-      await page.goto(`${origin}/?lens=poster&tab=${tab}&date=${anchor}`, { waitUntil: 'networkidle0', timeout: 30_000 })
-      await context.close()
-      const tally = log.tally(origin)
-      if (tally.foreign.length) throw new Error(`cold load ${app} ${tab} ${width} asked for ${tally.foreign.join(', ')}`)
-      rows.push({
-        id: `${app}-${tab}-${width}`,
-        bytes: tally.bytes,
-        hosts: tally.hosts,
-      })
+// The path after `fonts/`, so a relative stylesheet url and an absolute preload href
+// name the same file.
+export function fontFile(href) {
+  const match = String(href).match(/fonts\/[^?#")\s]+/)
+  return match ? match[0] : null
+}
+
+// Chrome fetches a preload it never applies and, headless, logs nothing.
+// "Used" is a document.fonts entry whose status is "loaded" once the page has
+// settled. The browser does not load a face for text it does not render — the
+// hidden attribute, display:none, a closed details — so those do not count.
+// The loaded face already carries the weight the browser applied (Kickoff Mono
+// at 500 for a 400 request), so the gate matches that face to the @font-face
+// rule and does not choose a nearest weight itself. document.fonts does not
+// expose the file, which is why the stylesheet is still read.
+function filesForLoadedFaces(faces, loaded) {
+  const chosen = new Set()
+  for (const entry of loaded ?? []) {
+    if (entry.status !== 'loaded') continue
+    const family = String(entry.family).replaceAll(/['"]/g, '').trim()
+    const style = String(entry.style || 'normal').trim()
+    const weight = String(entry.weight).trim()
+    for (const face of faces) {
+      const faceStyle = String(face.style || 'normal').trim()
+      if (face.family !== family || faceStyle !== style || String(face.weight).trim() !== weight) continue
+      const file = fontFile(face.src)
+      if (file) chosen.add(file)
     }
   }
+  return chosen
+}
+
+export function unusedFontPreloads({ preloads, faces, loaded }) {
+  const chosen = filesForLoadedFaces(faces, loaded)
+  return preloads.filter((href) => {
+    const file = fontFile(href)
+    return !file || !chosen.has(file)
+  })
+}
+
+// One app's pages are one decision. A file Vite renders does not excuse the
+// same path on Next. Within an app, a file one tab leaves unused is recorded
+// on that page and does not abort the run; the cold load fails when no measured
+// page of that app loaded the face. Pages with no app share one group, which
+// is the shape of the unit cases.
+export function preloadsUnusedOnEveryPage(pages) {
+  const byApp = new Map()
+  for (const page of pages) {
+    const app = page.app ?? ''
+    const seen = byApp.get(app) ?? new Map()
+    const unused = new Set(page.unused)
+    for (const href of page.preloads) {
+      const file = fontFile(href) ?? href
+      const row = seen.get(file) ?? { href, used: false }
+      if (!unused.has(href)) row.used = true
+      seen.set(file, row)
+    }
+    byApp.set(app, seen)
+  }
+  const missed = []
+  for (const [app, seen] of byApp) {
+    for (const row of seen.values()) {
+      if (!row.used) missed.push(app ? `${app} ${row.href}` : row.href)
+    }
+  }
+  return missed
+}
+
+// Poster and ledger, for each tab the cold load covers. 2 apps × 3 tabs ×
+// 2 lenses × 2 widths = 24 loads. A face only the ledger lens renders has to
+// be in this list, or the preload fails on the poster pages alone.
+export function coldLoadTargets(apps) {
+  const targets = []
+  for (const app of apps) {
+    for (const tab of ['fixtures', 'table', 'moments']) {
+      for (const lens of ['poster', 'ledger']) {
+        for (const width of [390, 1000]) targets.push({ app, tab, lens, width })
+      }
+    }
+  }
+  return targets
+}
+
+/** `rows` is filled as loads pass, so the caller's receipt keeps them if a later load throws. */
+export async function captureRequests(browser, origins, anchor, rows = []) {
+  for (const target of coldLoadTargets(Object.keys(origins))) {
+    const { app, tab, lens, width } = target
+    const origin = origins[app]
+    const context = await browser.createBrowserContext()
+    const page = await context.newPage()
+    const client = await page.createCDPSession()
+    await client.send('Network.enable')
+    await client.send('Network.setCacheDisabled', { cacheDisabled: true })
+    const log = createColdLoad()
+    client.on('Network.requestWillBeSent', (event) => log.requestWillBeSent(event))
+    client.on('Network.responseReceived', (event) => log.responseReceived(event))
+    client.on('Network.loadingFinished', (event) => log.loadingFinished(event))
+    await page.setViewport({ width, height: 844, deviceScaleFactor: 1 })
+    await page.evaluateOnNewDocument(() => localStorage.setItem('kickoff-theme', 'light'))
+    await page.goto(`${origin}/?lens=${lens}&tab=${tab}&date=${anchor}`, { waitUntil: 'networkidle0', timeout: 30_000 })
+    const usage = await page.evaluate(async () => {
+      await document.fonts.ready
+      const faces = []
+      for (const sheet of document.styleSheets) {
+        let rules
+        try { rules = [...sheet.cssRules] } catch { continue }
+        for (const rule of rules) {
+          if (rule.type !== CSSRule.FONT_FACE_RULE) continue
+          const family = rule.style.getPropertyValue('font-family').replaceAll(/['"]/g, '').trim()
+          const style = rule.style.getPropertyValue('font-style').trim() || 'normal'
+          const weight = rule.style.getPropertyValue('font-weight').trim()
+          const src = rule.style.getPropertyValue('src')
+          const url = src.match(/url\((?:"|')?([^"')]+)/)?.[1] ?? ''
+          faces.push({ family, style, weight, src: url })
+        }
+      }
+      const loaded = []
+      for (const face of document.fonts) {
+        if (face.status !== 'loaded') continue
+        loaded.push({
+          family: face.family.replaceAll(/['"]/g, '').trim(),
+          style: String(face.style || 'normal').trim(),
+          weight: String(face.weight).trim(),
+          status: face.status,
+        })
+      }
+      return {
+        preloads: [...document.querySelectorAll('link[rel="preload"][as="font"]')].map((link) => link.href),
+        faces,
+        loaded,
+      }
+    })
+    const unused = unusedFontPreloads(usage)
+    await context.close()
+    const tally = log.tally(origin)
+    if (tally.foreign.length) throw new Error(`cold load ${app} ${tab} ${lens} ${width} asked for ${tally.foreign.join(', ')}`)
+    rows.push({
+      id: `${app}-${tab}-${lens}-${width}`,
+      app,
+      bytes: tally.bytes,
+      hosts: tally.hosts,
+      preloads: usage.preloads,
+      unused,
+    })
+  }
+  const never = preloadsUnusedOnEveryPage(rows)
+  if (never.length) throw new Error(`font preload no measured page uses: ${never.join(', ')}`)
   return rows
 }
 
@@ -356,7 +470,7 @@ export async function captureOffline(browser, out, result = { sizes: {}, cells: 
   for (const tab of ['fixtures', 'table']) for (const theme of ['light', 'dark']) {
     const id = `offline-${tab}-${theme}-390`
     const search = tab === 'fixtures' ? '' : '?tab=table'
-    const { context, page, errors, network, escaped } = await openPage(
+    const { context, page, errors, escaped } = await openPage(
       browser, `${pathToFileURL(files.offline).href}${search}`, theme, 390,
       { waitUntil: 'domcontentloaded', offline: true },
     )
@@ -366,13 +480,13 @@ export async function captureOffline(browser, out, result = { sizes: {}, cells: 
       const state = await inspect(page)
       assert.equal(state.scrollWidth, state.innerWidth, id)
       assert.equal(state.theme, theme, id)
-      // The font stylesheet is the one request the file is known to try. Anything else
+      // The file carries its faces, so it is known to try no request at all. Any request
       // means the file is not whole without the network. Checked first, so the failure
       // names the address rather than the console's complaint about it.
-      assert.deepEqual(escaped, [], `${id} asked for a host other than the font hosts`)
+      assert.deepEqual(escaped, [], `${id} asked for a host`)
       assert.deepEqual(errors, [], id)
       await shoot(page, path.join(out, `${id}.png`), 390)
-      cells.push({ id, theme, tab, scrollWidth: state.scrollWidth, network })
+      cells.push({ id, theme, tab, scrollWidth: state.scrollWidth })
     } finally { await context.close() }
   }
   return result

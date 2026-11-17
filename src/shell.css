@@ -81,7 +81,8 @@
 
   --font-display: 'Oswald', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', monospace;
+  /* Kickoff Mono is IBM Plex Mono, renamed. The OFL reserves "Plex". */
+  --font-mono: 'Kickoff Mono', ui-monospace, 'SF Mono', monospace;
 }
 
 @layer base {
@@ -118,4 +119,87 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.12em;
+}
+
+/*
+ * Second edition, beside the first. Nothing in the app reads these yet.
+ *
+ * Stock is a local attribute, not a second theme. :root is paper stock on a
+ * light page. [data-stock='black'] is a cover, band or plate on that page.
+ * Custom properties inherit, so a paper surface inside black sets the paper
+ * voices itself: the nearest [data-stock] wins, at any depth. A dark page is
+ * [data-theme='dark'] on :root, which outranks [data-stock] on the page
+ * itself. A descendant that named its own stock would otherwise repaint only
+ * itself, so the black-stock rule is also written on either stock inside a
+ * dark page. One declaration block, so the two cannot drift.
+ *
+ * Hairline alphas are the handoff's paper figure (22%) and the middle of each
+ * range it leaves open: 19% of 18–20, 52% of 50–55. The black-stock hairline
+ * uses pulp-ink's black voice, the same voice the paper hairline uses.
+ * Paper has no torch; zero alpha is the form the contrast parser accepts.
+ * The foil stops are --fb-foil-1 through --fb-foil-5, in the handoff's order.
+ */
+:root {
+  --fb-pulp: #EBDDBE;
+  --fb-typescript: #EDE9DD;
+  --fb-cover-black: #0A0A0C;
+  --fb-pulp-ink: #1C1611;
+  --fb-pulp-muted: #4E4538;
+  --fb-cover-ink: #F2EBDD;
+  --fb-cover-muted: #A69E8F;
+  --fb-pitch: #1E5636;
+  --fb-amber: #6E4B00;
+  --fb-alarm: #B3121B;
+  --fb-blood: #B3121B;
+  --fb-rift: #9DFFC8;
+  --fb-on-pitch: #F2EBDD;
+  --fb-rule: rgb(28 22 17 / 0.22);
+  --fb-rule-strong: rgb(28 22 17 / 0.52);
+  --fb-scrim: rgb(10 10 12 / 0.92);
+  --fb-torch: rgb(232 179 111 / 0);
+  --fb-foil-1: #E8D9B8;
+  --fb-foil-2: #FF7AB8;
+  --fb-foil-3: #C9A2FF;
+  --fb-foil-4: #7FE0FF;
+  --fb-foil-5: #B8F5A0;
+  --fb-display: 'Kickoff Display', Georgia, serif;
+  --fb-book: 'Libre Caslon Text', Palatino, serif;
+  --fb-neon: 'Chakra Petch', ui-sans-serif, sans-serif;
+  --fb-label: 'Oswald', ui-sans-serif, sans-serif;
+  /* 400 and 400 italic live here. Kickoff Mono itself is 500 and 600. */
+  --fb-mono: 'Kickoff Mono Text', ui-monospace, 'SF Mono', monospace;
+  --fb-gutter: 16px;
+  --fb-measure: 640px;
+  --fb-measure-register: 780px;
+}
+
+[data-stock='paper'] {
+  --fb-pulp: #EBDDBE;
+  --fb-typescript: #EDE9DD;
+  --fb-pulp-ink: #1C1611;
+  --fb-pulp-muted: #4E4538;
+  --fb-pitch: #1E5636;
+  --fb-amber: #6E4B00;
+  --fb-alarm: #B3121B;
+  --fb-on-pitch: #F2EBDD;
+  --fb-rule: rgb(28 22 17 / 0.22);
+  --fb-rule-strong: rgb(28 22 17 / 0.52);
+  --fb-torch: rgb(232 179 111 / 0);
+}
+
+[data-stock='black'],
+:root[data-theme='dark'],
+:root[data-theme='dark'] [data-stock='paper'],
+:root[data-theme='dark'] [data-stock='black'] {
+  --fb-pulp: #0E1420;
+  --fb-typescript: #0E1420;
+  --fb-pulp-ink: #E9E4D4;
+  --fb-pulp-muted: #A9A493;
+  --fb-pitch: #56C083;
+  --fb-amber: #F7C948;
+  --fb-alarm: #FF7074;
+  --fb-on-pitch: #0A0A0C;
+  --fb-rule: rgb(233 228 212 / 0.19);
+  --fb-rule-strong: rgb(233 228 212 / 0.52);
+  --fb-torch: rgb(232 179 111 / 0.2);
 }

@@ -5,6 +5,7 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { viteSingleFile } from 'vite-plugin-singlefile'
 import pkg from './package.json' with { type: 'json' }
+import { inlineBundledFaces } from './scripts/inline-faces.ts'
 import { themeBootstrap } from './scripts/themeBootstrap.ts'
 
 // Serve only: the dev server, and vitest, which runs this config in serve mode. Nothing
@@ -41,7 +42,16 @@ export default defineConfig(({ mode }) => ({
     kickoffHarnessSpecimen(),
     react(),
     tailwindcss(),
-    ...(mode === 'single' || mode === 'offline' ? [viteSingleFile()] : []),
+    ...(mode === 'single' || mode === 'offline' ? [{
+      name: 'kickoff-inline-faces',
+      enforce: 'pre' as const,
+      transformIndexHtml: {
+        order: 'pre' as const,
+        handler(html: string) {
+          return inlineBundledFaces(html)
+        },
+      },
+    }, viteSingleFile()] : []),
     ...(mode === 'offline' ? [{
       name: 'kickoff-offline-index',
       apply: 'build' as const,

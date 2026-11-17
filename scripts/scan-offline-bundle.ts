@@ -22,6 +22,8 @@ const MARKERS = [
   'data-moments-youtube-api',
   'data-moments-player-slot',
   'player-lost',
+  'fonts.googleapis.com',
+  'fonts.gstatic.com',
 ]
 
 export function offlineBundleViolations(html: string): string[] {

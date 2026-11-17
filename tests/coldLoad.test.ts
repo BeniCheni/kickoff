@@ -40,7 +40,7 @@ describe('cold-load redirect hops', () => {
     ])
   })
 
-  it('allows a font host to redirect to the other font host', () => {
+  it('names a font host that redirects to the other font host', () => {
     const log = createColdLoad()
     log.requestWillBeSent({ requestId: 'font', type: 'Stylesheet', request: { url: 'https://fonts.googleapis.com/css?family=Inter' } })
     log.requestWillBeSent({
@@ -52,7 +52,7 @@ describe('cold-load redirect hops', () => {
     log.responseReceived({ requestId: 'font', type: 'Font' })
     log.loadingFinished({ requestId: 'font', encodedDataLength: 2000 })
     const tally = log.tally(page)
-    expect(tally.foreign).toEqual([])
+    expect(tally.foreign).toEqual(['fonts.googleapis.com', 'fonts.gstatic.com'])
     expect(tally.bytes).toEqual({ fonts: 2000, images: 0, script: 0, style: 0, other: 0 })
   })
 
@@ -86,7 +86,7 @@ describe('cold-load redirect hops', () => {
     log.responseReceived({ requestId: 'font', type: 'Font' })
     log.loadingFinished({ requestId: 'font', encodedDataLength: 187 })
     const tally = log.tally(page)
-    expect(tally.foreign).toEqual([])
+    expect(tally.foreign).toEqual(['fonts.googleapis.com', 'fonts.gstatic.com'])
     expect(tally.bytes).toEqual({ fonts: 187, images: 0, script: 0, style: 156, other: 0 })
     expect(tally.hosts).toEqual([
       { host: 'fonts.googleapis.com', bytes: 156, count: 1 },
