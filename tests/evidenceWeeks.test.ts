@@ -72,12 +72,7 @@ describe('evidence week rules', () => {
     expect(() => matrixAnchor({ from: '2026-11-22', to: '2026-11-30' }, { heavy: { monday: null } })).toThrow(/inventing none/)
   })
 
-  // chooseWeeks builds one Intl.DateTimeFormat per fixture per whole week: 36,150 on the
-  // snapshot of 15 Nov 2026 (1,446 fixtures, 25 weeks). Alone that is about a second. In the
-  // full suite it took 1.9 to 4.6 s over twelve verify runs on 15 and 16 Nov, against the
-  // node project's 5 s default, and it timed out locally with the cores busy. 20 s is the
-  // dom project's limit. The cost is in scripts/evidence-weeks.mjs, not in this test.
-  it('names weeks from the committed snapshot without a hard-coded date', { timeout: 20_000 }, () => {
+  it('names weeks from the committed snapshot without a hard-coded date', () => {
     const chosen = chooseWeeks(fixtures, meta.window)
     const weeks = wholeWeeks(meta.window).map((week) => {
       const rows = fixtures.filter((fixture) => {
