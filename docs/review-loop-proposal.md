@@ -875,6 +875,23 @@ for Cursor (S7).
   [`review-loop-sprint-2-fix-prompt.md`](review-loop-sprint-2-fix-prompt.md). After the round the
   Planner re-reads each fix against this list, read-only, and Beni merges with a message written
   by hand, guarded by `--match-head-commit`.
+- **elenchus is a general review controller, not Kickoff's tool (Beni, Tue 17 Nov 2026).** keel
+  uses it as well as Kickoff, and later projects will too. Beni disliked a README that led with
+  Kickoff, because it reads as if elenchus served only one repository.
+  - **The README is rewritten** as elenchus #5, a draft stacked on `sprint-2` until #4 merges.
+    It describes the tool on its own terms and lists keel and Kickoff as adopters. It names what
+    is still fixed in code (the seven pass ids, the finding-carry passes, the escalation's
+    addressee, the base branch in the release block), and puts each on the roadmap. The minimal
+    configuration and the example record in it pass elenchus's own parser and validator.
+  - **The repository's About line now reads:** "A read-only controller for multi-pass,
+    cross-vendor AI code review on GitHub. Each agent seat posts a record; elenchus checks them
+    and says what the review needs next."
+  - **A new roadmap item, not yet scheduled:** schema v1.2 lets a repository name its own
+    passes, in place of v1.1's fixed seven. It joins the v1.2 gaps already listed: the next
+    pass's route, and the paths a record read rather than their count.
+  - **D5 reads more strictly from now on.** Anything that names an adopter, a person or a branch
+    belongs in configuration, and a review of elenchus treats a Kickoff value in `src/` as a
+    finding.
 
 D1 to D4 and D8 to D12 are not yet ruled.
 
