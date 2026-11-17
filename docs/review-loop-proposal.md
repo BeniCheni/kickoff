@@ -495,7 +495,7 @@ Cursor's hands this track seats no Cursor.
   the pull request's own workflow as the required check. The review gate held on every forge
   path.
 - *Review brief:* [`review-loop-sprint-3-review-prompt.md`](review-loop-sprint-3-review-prompt.md),
-  Pass 0's brief for Pass 1 (Claude Code, `claude-fable-5-2`, `max`), with its sealed appendix as
+  Pass 0's brief for Pass 1 (Claude Code, `claude-fable-5-2`, `xhigh`), with its sealed appendix as
   a second paste.
 - *Carried from Sprint 1's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are that
   comment's findings): 6, sequence by the order records were posted, not their presence; 7, every
@@ -1024,14 +1024,13 @@ for Cursor (S7).
     |---|---|---|
     | Plan of record and build brief | Claude Planner | Claude Planner |
     | Passes 0 and 1.5 | Claude Planner | Codex, `gpt-6.2-astra`, as review lead |
-    | Build, Pass 2, executor | Sprint 5: `gpt-6.2-astra`, `max`. Sprint 7: `gpt-6.2-sol`, `xhigh`. Sprint 3 stays on `gpt-6.1-sol`. | Claude Code, `claude-fable-5-2`, `xhigh` |
-    | Pass 1 | Claude Code, `claude-fable-5-2`, `max` | Codex, `gpt-6.2-astra`, `max`, fresh |
-    | Pass 2.5 | Claude Code, `claude-opus-5-5`, `max`, a fresh session that writes nothing | Codex, `gpt-6.2-sol`, `max`, `--sandbox read-only` (read-only on disk, S7) |
+    | Build, Pass 2, executor | Sprint 5: `gpt-6.2-astra`, `xhigh`. Sprint 7: `gpt-6.2-sol`, `xhigh`. Sprint 3 stays on `gpt-6.1-sol`. | Claude Code, `claude-fable-5-2`, `xhigh` |
+    | Pass 1 | Claude Code, `claude-fable-5-2`, `xhigh` | Codex, `gpt-6.2-astra`, `xhigh`, fresh |
+    | Pass 2.5 | Claude Code, `claude-opus-5-5`, `xhigh`, a fresh session that writes nothing | Codex, `gpt-6.2-sol`, `xhigh`, `--sandbox read-only` (read-only on disk, S7) |
 
     - **Sprint 3** is Codex's and already building; a sprint never switches mid-build. Its
-      Pass 1 rises to `max`, and its Pass 2.5 becomes Opus 5.5 at `max`. The review paragraph
-      of its build brief is superseded on those two points, and Sprint 3's Pass 0 brief carries
-      the new seats.
+      Pass 2.5 becomes Opus 5.5 at `xhigh`. The review paragraph of its build brief is
+      superseded on that point, and Sprint 3's Pass 0 brief carries the new seats.
     - **Sprint 4 is Claude's.** It is Kickoff's skill text, in Claude's own skill format, and a
       Codex review clears flag (a) for it.
     - **Sprint 5 is Codex's.** It ports Sprint 3's reviewed gate code, so the port stays a copy.
@@ -1045,9 +1044,9 @@ for Cursor (S7).
       other builds and the synthesis.
     - **`gpt-6-astra`** is now "previous generation".
     - **Efforts.** Every GPT-6.x model offers `low` to `max` plus `ultra`, which is "maximum
-      reasoning with automatic task delegation". `ultra` stays off seats until a probe shows a
-      record can see the delegated work's model. Claude Code 2.1.325 offers `low` to `max`.
-      Effort labels are still never mapped across vendors.
+      reasoning with automatic task delegation". Claude Code 2.1.325 offers `low` to `max`. No
+      seat goes above `xhigh` (Beni's effort cap, below). Effort labels are still never mapped
+      across vendors.
     - **Configuration.** Sprint 4's brief adds both 6.2 models to the model tables in Kickoff's
       configuration.
   - **The wait rule stands:** this track's Codex builds still wait while an overhaul Codex build
@@ -1081,6 +1080,16 @@ for Cursor (S7).
       probability. S12 scores all of them the same way.
   - **The App's avatar and the repository's social preview** were generated on fal: Nano Banana
     Pro, four images, about $0.60. Beni chooses which to use and uploads them himself.
+
+- **The effort cap is Extra High (Beni, Tue 17 Nov 2026).** No model runs deeper than `xhigh`,
+  the level both CLIs call Extra High. That applies to every seat on both vendors, and to S12's
+  judges. `max`, and Codex's `ultra`, are used nowhere.
+  - **The roster.** The two-vendor table above was amended to read `xhigh` wherever it said
+    `max`.
+  - **Sprint 3.** Its Pass 0 brief and Pass 0 comment were corrected before Pass 1 started.
+  - **Enforcement already exists.** In `examples/kickoff.elenchus.json`, every vendor's effort
+    table stops at `xhigh`, so `check`'s route rule fails a record that requests `max`. Sprint
+    4's brief keeps that ceiling when it adds the two GPT-6.2 models.
 
 D8, D10 and D11 are not yet ruled. D4 is withdrawn, and D12 is Pilot (17 Nov).
 

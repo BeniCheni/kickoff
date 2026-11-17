@@ -11,7 +11,8 @@ Written by the Planner seat (Claude Code, Opus 5.5, `xhigh`) on Tue 17 Nov 2026,
 
 The build brief is [review-loop-sprint-3-build-prompt.md](review-loop-sprint-3-build-prompt.md).
 Under Beni's two-vendor ruling of 17 Nov, Pass 1's seat is Claude Code on `claude-fable-5-2` at
-`max`, in a fresh session. This brief also serves as Pass 0, whose record the Planner posts on
+`xhigh`, in a fresh session; Beni capped every seat at `xhigh` (Extra High) before Pass 1
+started, and this copy carries that correction. This brief also serves as Pass 0, whose record the Planner posts on
 #8.
 
 Before writing, the Planner checked the builder's report with read calls:
@@ -33,11 +34,11 @@ chat.
 ## First paste: the brief
 
 ````text
-elenchus PR #8 (Sprint 3), Pass 1: the cold review (Claude Code, claude-fable-5-2 at max)
+elenchus PR #8 (Sprint 3), Pass 1: the cold review (Claude Code, claude-fable-5-2 at xhigh)
 
-You are Pass 1, the cold review, of pull request #8 in BeniCheni/elenchus: sprint-3 → main, head 91aa3dc4f66eadea680063bc93e0bcb3b165e059, thirteen commits on main's 7affd47. elenchus is a controller for multi-pass, cross-vendor AI code review on GitHub: each pass of a pull request's review is a seat whose comment ends with a seat record, and elenchus reads the records back and says what the review needs next. Sprints 1 and 2, merged, read and check records (status, check), make seats (prep) and print the release block (handoff). Sprint 3 adds the gate, elenchus authorize, which posts one commit status as a GitHub App when a review is complete, through a client that allows exactly three requests. It also adds schema v1.2, which lets a repository name its own passes and record re-reads; Kickoff's values moved from src/ into configuration; the deferred findings of Sprints 1 and 2; and seat credentials under D9. Live, it adds three rulesets on replay/main, an Actions environment, a gate fixture (pull request #6) and a forge pull request (#7, closed). Codex on gpt-6.1-sol built it; you built none of it, which is why you hold this seat. This is the first sprint reviewed in all six passes. The Planner briefed Pass 0, and its record is on #8. You hold Pass 1. The Planner briefs Pass 1.5. Codex, the builder, holds Pass 2 and pushes fixes. A fresh Claude Code session on claude-opus-5-5 at max holds Pass 2.5 and writes nothing. Beni rules at Pass 3, and Codex applies his rulings. The Planner seat (Claude Code, Opus 5.5) wrote this brief on Tue 17 Nov 2026.
+You are Pass 1, the cold review, of pull request #8 in BeniCheni/elenchus: sprint-3 → main, head 91aa3dc4f66eadea680063bc93e0bcb3b165e059, thirteen commits on main's 7affd47. elenchus is a controller for multi-pass, cross-vendor AI code review on GitHub: each pass of a pull request's review is a seat whose comment ends with a seat record, and elenchus reads the records back and says what the review needs next. Sprints 1 and 2, merged, read and check records (status, check), make seats (prep) and print the release block (handoff). Sprint 3 adds the gate, elenchus authorize, which posts one commit status as a GitHub App when a review is complete, through a client that allows exactly three requests. It also adds schema v1.2, which lets a repository name its own passes and record re-reads; Kickoff's values moved from src/ into configuration; the deferred findings of Sprints 1 and 2; and seat credentials under D9. Live, it adds three rulesets on replay/main, an Actions environment, a gate fixture (pull request #6) and a forge pull request (#7, closed). Codex on gpt-6.1-sol built it; you built none of it, which is why you hold this seat. This is the first sprint reviewed in all six passes. The Planner briefed Pass 0, and its record is on #8. You hold Pass 1. The Planner briefs Pass 1.5. Codex, the builder, holds Pass 2 and pushes fixes. A fresh Claude Code session on claude-opus-5-5 at xhigh holds Pass 2.5 and writes nothing. Beni rules at Pass 3, and Codex applies his rulings. The Planner seat (Claude Code, Opus 5.5) wrote this brief on Tue 17 Nov 2026.
 
-CONFIRM YOUR MODEL FIRST. Beni starts you with claude --model claude-fable-5-2 --effort max from an empty temporary directory. Both flags are needed, because this Mac's user settings set the effort to low. Run claude --version and state the model id your environment gives you. If it is not claude-fable-5-2, stop and say so. You cannot observe your own effort, so your record carries it as requested max, observed null, with the source "not reported".
+CONFIRM YOUR MODEL FIRST. Beni starts you with claude --model claude-fable-5-2 --effort xhigh from an empty temporary directory. Both flags are needed, because this Mac's user settings set the effort to low. Run claude --version and state the model id your environment gives you. If it is not claude-fable-5-2, stop and say so. You cannot observe your own effort, so your record carries it as requested xhigh, observed null, with the source "not reported".
 
 YOU WRITE EXACTLY ONE THING ON GITHUB: one comment on BeniCheni/elenchus pull request #8, posted once, at the end. In elenchus that rules out any push, branch, commit, label, review (no approval and no request for changes), merge, workflow run or re-run, commit status, ruleset, environment or setting, and any edit or deletion of a comment, yours included. If your comment needs a correction after posting, tell Beni in chat. Pull requests #1, #3 and #6 are live fixtures, all locked, and #7 is closed: post, edit, label, close and reopen nothing there. BeniCheni/kickoff and BeniCheni/keel are read-only in every way, including their public timelines. In anything you post, name a Kickoff pull request in plain text ("Kickoff PR 320"), never as owner/repo#number or a link, because GitHub adds a cross-reference event to the Kickoff pull request for each one. Do not invoke /kickoff-pr-review or any other skill that pushes or posts. Your gh login is Beni's admin account, so GitHub will stop nothing: before any command that writes, check that it is that one comment on #8.
 
@@ -120,7 +121,7 @@ Build the record from schema/seat-record-1.2.json in this pull request:
 - Your findings, with ids, severities, paths, lines and an evidence string each.
 - The coverage block above.
 - model: requested claude-fable-5-2, with your observed model and its source.
-- effort: requested max, observed null, source "not reported".
+- effort: requested xhigh, observed null, source "not reported".
 - route: recommended by the Planner, confirmed by Beni.
 - posted_by: BeniCheni.
 - next_route for Pass 1.5: Claude Code, claude-opus-5-5, xhigh, recommended by the roster (D7), confirmed by Beni.
