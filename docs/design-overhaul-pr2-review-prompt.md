@@ -949,3 +949,104 @@ That is the correction the PM seat already owes #328. Receipts are under
 a later PR into the integration branch. #341 merges with all six faces' halves, so nothing on
 #342's side changes from that. Once #341 lands, #342's base moves, and its checks and runner
 cells need a re-run on the new `overhaul/second-edition` before #342 merges.
+
+## #341 landed, Pass 2.5 waits, and the base-refresh brief (Wed 18 Nov 2026, about 6:50 PM EST)
+
+The PM seat asked Beni whether Pass 2.5's second sitting should run now at `72608cb` or after
+#341 lands. He answered **"After #341 lands"**, so Pass 2.5 reviews the merge that will actually
+happen, not a test merge into a base that is about to move.
+
+#341 landed at 6:34 PM EST as squash `81730669d7b53c88046a882bfc3d10208d18d639` on
+`overhaul/second-edition`. Its only parent is `34b5160`. GitHub still showed #342 as mergeable
+and clean, because its hosted checks ran on a test merge into `34b5160` and do not re-run when the
+base moves. The PM seat checked:
+- `git merge-tree --write-tree 72608cb 8173066` exits 0 with no conflicted paths and gives
+  tree `6952705`, with `src/data` at `7439dcc`.
+- #341 changes 30 files, +1,013 / −170: 21 under `public/fonts`, plus the faces stylesheet, three
+  scripts, two root tests, `web/scripts/copy-faces.mjs`, `web/scripts/evidence.mjs` and one web
+  test. It touches no `src/data`, workflow or package file. `src/data` at `8173066` is the
+  integration branch's own `988f494`.
+- The new matched base merges `541b9a9` with `8173066`: the integration tip with main's data and
+  without PR 2's chrome. `merge-tree` gives tree `1cb6fa4`, with `src/data` at `7439dcc`.
+- The faces copies that #341's build writes into `web/public` are already gitignored at
+  `72608cb`. The fix round's worktree holds one untracked folder, `.agents/`, which the brief
+  says never to add.
+
+Under #328 the PM seat writes every build brief, and Claude holds the builder's fix rounds, so
+the refresh goes to the same seat: Claude Code `claude-fable-5-2` at xhigh in
+`kickoff-pr342-fix1`, continuing fix round 1's session if it is still open. The brief names which
+fix round 1 figures rest on the faces #341 split, so the refresh re-measures them. It names no
+suspected fault. It was delivered in chat in a four-backtick fenced block, one line per paragraph,
+with this launch for a fresh session:
+
+```bash
+cd /Users/benicheni/code/kickoff-pr342-fix1 && claude --model claude-fable-5-2 --effort xhigh
+```
+
+````text
+PR #342 — base refresh after #341 landed: overhaul PR 2, chrome and the motion control
+
+You are the base refresh for PR #342 in github.com/BeniCheni/kickoff ("Overhaul PR 2: chrome and the motion control", from cursor/overhaul-pr2-chrome into the integration branch overhaul/second-edition). You hold the builder's seat as Beni re-routed it per #328: Claude Code on claude-fable-5-2 with --effort xhigh, in /Users/benicheni/code/kickoff-pr342-fix1. If you are the fix round 1 session that posted comment 6994520192, carry on in it. If you are a fresh session, read that comment before anything else, because this round re-proves its recipes and figures. Name the model and effort that ran on your comment's first line, from this session's own record, not from memory. Read CLAUDE.md and AGENTS.md first. The PM seat (Claude Code, Opus 5.5, in another session) wrote this brief on Wed 18 Nov 2026 at about 6:50 PM EST. Treat the repository and GitHub as ground truth. Where this brief disagrees with them, they win, and you say so. Run TZ=America/New_York date before writing any date.
+
+WHY THIS ROUND. Fix round 1 reported mergeable after fixes at 72608cb22fe4014f10e7bd6f13e0f82f134a7043. Beni ruled that Pass 2.5's next sitting waits until #341 lands, so it reviews the merge that will actually happen. #341 ("Overhaul PR 1b: the font split") landed at 6:34 PM EST as squash 81730669d7b53c88046a882bfc3d10208d18d639. Its only parent is 34b5160, #342's base until now. GitHub still shows #342 as mergeable and clean, but its hosted checks ran on a test merge into 34b5160, and they do not re-run when the base moves. Your job is to bring the new base into the branch with a merge commit, prove everything still holds on the result, and push it. This round adds no new fix unless the merge breaks something.
+
+WHAT THE PM SEAT CHECKED, at about 6:40 PM EST. git merge-tree --write-tree 72608cb 8173066 exits 0 with no conflicted paths, giving tree 6952705402a4029202907f75a0c7ac242d894ea2. #341 changes 30 files, +1,013 / −170. 21 are under public/fonts: the faces, each split into a latin half and a latin-ext half, and their record. The other nine are public/faces.css, scripts/inline-faces.ts, scripts/split-font-ranges.py, scripts/strip-face-css-comments.ts, tests/faces.test.ts, tests/font-record.test.ts, web/scripts/copy-faces.mjs, web/scripts/evidence.mjs and web/test/font-preload.test.ts. It touches no src/data, workflow or package file. It shares two files with this PR: tests/faces.test.ts and web/scripts/evidence.mjs. src/data is tree 988f494 at 8173066 and 7439dcc at 72608cb (main's 4cf9caf, which Beni accepted as main's sync). The merged tree keeps 7439dcc. The new matched base is a merge of 541b9a9 (this branch's merge of main) with 8173066: the integration tip with main's data and without this PR's chrome. merge-tree gives it as tree 1cb6fa47d7a2a3a8c628877db63626a5dff25936, with src/data 7439dcc.
+
+WHAT #341 CHANGES THAT YOUR FIGURES DEPEND ON. Every face is now two files, and a page fetches a latin-ext half only for a character the latin half cannot draw. Today that is the Ş and ğ of one UEFA venue. #341's squash message reports cold font bytes on Fixtures and Table of 108,868 on Vite and 108,716 on Next, against 205,174 and 205,022 before. These fix round 1 figures rest on the faces:
+- the stamp's wrap point (it fits at 366 with the web faces and at 367 with the fallback);
+- the band's 133 / 118 heights;
+- the strap's end at 90.00;
+- the tabs' drawn widths (56.72, 35.75 and 56.91);
+- the late-face case the band script watches for;
+- the 261,490 cold font bytes on Vite's Fixtures.
+Re-measure each at the merged tip and report each one that moved, by how much, and why. A figure a test pins may move with the face. If it does, the test moves with it, in its own commit, against its prior rule. A rule may not be loosened, and no data-honesty assertion is weakened.
+
+THE MERGE. /Users/benicheni/code/kickoff-pr342-fix1 is at 72608cb and clean, apart from an untracked .agents/ folder that is not yours. Run git fetch origin, then git merge --no-ff origin/overhaul/second-edition, committed as Claude (below), with a message that names #341 and 8173066. Confirm the merge commit's parents are 72608cb and 8173066, its tree is 6952705…, and its src/data is 7439dcc. If git reports any conflict, run git merge --abort, push nothing, then stop and report the conflicted paths here.
+
+THE MATCHED BASE. /Users/benicheni/code/kickoff-pr342-fix1-base is at 541b9a9 and clean. Create a local branch named local/pr342-base-after-341 at 541b9a9 and merge 8173066 into it with --no-ff, committed as Claude. Confirm its tree is 1cb6fa4… and its src/data is 7439dcc. Never push this branch. It exists so that your negative controls and Pass 2.5 compare like with like, and the shared .git makes its SHA reachable from the other worktrees.
+
+VERIFY AT THE MERGE COMMIT, before you push.
+- The eleven checks: root typecheck, npm test (both vitest projects), build, build:single, build:offline and node node_modules/tsx/dist/cli.mjs scripts/scan-offline-bundle.ts; then in web/, typecheck, test, build, check:client and check:css.
+- The test counts per project at the merge commit, at 72608cb and at 8173066.
+- Both disk bundle sizes, against 72608cb's 1,293,939 and 1,344,471.
+- The runner whole, on your own servers, from a clean build of the merge commit: report mode, then --enforce. At 72608cb, --enforce failed on exactly R2's 16 light-Table loss-pip samples, with 0 unread. Report the count at the merge commit exactly. If it moved, say which samples and why, and do not move the gate.
+- Both PRs changed evidence.mjs, so name each step and cell family from each side and show that each one ran: #341's preload and face steps, and this PR's focus (24 cells) and first-frame (5 cells) steps.
+- The runner at local/pr342-base-after-341, report mode and --enforce, so this round has its own matched comparison. The focus and first-frame steps there are negative controls, and must fail for the reasons fix round 1 gave.
+- Mutation receipts only for a test this round changes. If none changes, say so.
+
+PUSH. Once every check is green, push the merge commit only: git push origin HEAD:refs/heads/cursor/overhaul-pr2-chrome. It must be a fast-forward. Never force. git may still register cursor/overhaul-pr2-chrome as checked out in a worktree that no longer exists, which is why you push by refspec and never check the branch out by name. Then wait for the hosted checks at the new head (verify, studio, Vercel, Vercel Preview Comments and vercel-smoke), and report each.
+
+IF THE MERGE BREAKS SOMETHING. Find which side the failure is on. A fix on this PR's side goes in its own commit before the push, red then green, with a mutation receipt. #341 is merged and reviewed, so do not change a file that #341 added or changed unless the failure cannot be fixed any other way. If it cannot, stop and report before changing it.
+
+FIX ROUND 1'S FIVE CHOICES stand as written in comment 6994520192. Do not re-argue or change them. Pass 2.5 weighs them and puts them to Beni.
+
+THE SEAT. #341's squash message on overhaul/second-edition now records that Beni re-routed the remaining seats per #328 on Wed 18 Nov 2026. The plan on origin/docs/review-loop-plan still lists PR 2 under the Sun 15 routing. Correcting it is the PM seat's job. Follow this brief.
+
+COMMIT IDENTITY. The repository's git config says Cursor (user.name Cursor, cursoragent@cursor.com), in every worktree. Author and commit every commit as Claude, setting both on each one: GIT_AUTHOR_NAME=Claude GIT_AUTHOR_EMAIL=noreply@anthropic.com GIT_COMMITTER_NAME=Claude GIT_COMMITTER_EMAIL=noreply@anthropic.com. End each message with the Co-Authored-By line your session's attribution gives. Check git log --format='%an <%ae> | %cn' on each commit before you push.
+
+HOSTS AND LIMITS.
+- Work only in kickoff-pr342-fix1 and kickoff-pr342-fix1-base. Do not touch, build in or reuse Beni's checkout at /Users/benicheni/code/kickoff, which holds untracked files of his. The same goes for the three kickoff-pr342-pass25* trees, which Pass 2.5's next sitting reuses, and any #341 tree.
+- Ports 6773 to 6875 are yours, as in fix round 1. 7473 to 7675 belong to Pass 2.5, and 5173 is Beni's.
+- Keep every receipt, log, probe and capture under /private/tmp/kickoff-342-refresh/, never inside a worktree. Record each server's listener PID when you start it, and stop it by PID.
+- Stage by path only, and never add the untracked .agents/ folder.
+- In this app's Bash sandbox, these need the sandbox off: git fetch, git worktree commands, gh, builds, web/'s tests, loopback servers and headless Chrome. Bypass it on an EPERM, one command at a time.
+- Before any step that reads a worktree, check with ls that it is still on disk. If one is gone, stop, say which and when, and do not rebuild it.
+
+PROHIBITED.
+- No merge of #342, no approval, no --auto, no force-push and no rebase.
+- No version, tag or CHANGELOG section, and no edit to the PR's title or body.
+- No change to src/data, workflows, main or another PR. Do not merge main into the branch: main has moved since 4cf9caf, and its data is not this round's.
+- No npm audit fix and no next upgrade. Never npm run sync.
+
+DELIVERABLE. One PR comment whose first line is "<model> · <effort> · Base refresh — <verdict> at <sha>". It covers:
+- the merge commit, its parents and its tree;
+- the matched base's local SHA and tree;
+- src/data at each;
+- the eleven checks and the counts;
+- the runner in both modes at the tip and at the matched base, by step and cell family;
+- each face-dependent figure that moved, by how much and why;
+- the hosted checks at the new head;
+- what you could not verify;
+- the handoff to Pass 2.5's second sitting, a fresh Codex session on gpt-6.2-sol at xhigh, read-only, at the new head.
+It approves, merges and enables nothing. Beni's word merges.
+````
