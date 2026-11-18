@@ -402,11 +402,13 @@ it('StrictMode yields one player instance after one Play', () => {
   expect(player().reads.disposes).toBe(0)
 })
 
-it('H-B/H-E: the header shell stays 780 and empty copy is unchanged', () => {
+it('H-B/H-E: the content shell stays 780, the band spans the page, and empty copy is unchanged', () => {
   renderVisit()
   const shell = document.querySelector('.max-w-\\[780px\\]')
-  expect(shell?.contains(document.querySelector('header'))).toBe(true)
-  expect(shell?.contains(document.querySelector('nav'))).toBe(true)
+  const header = document.querySelector('header')
+  expect(shell?.contains(header)).toBe(false)
+  expect(header?.contains(document.querySelector('nav'))).toBe(true)
+  expect(header?.classList.contains('imprint-band')).toBe(true)
   cleanup()
   render(<App momentsEdition={[]} momentsPlayer={createMockMomentsPlayer} momentsPlayability={mockPlayability} />)
   expect(screen.getByText('No moments curated yet.')).toBeTruthy()

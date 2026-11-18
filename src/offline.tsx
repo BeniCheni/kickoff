@@ -5,9 +5,7 @@ import { useCanonicalSearch, useUrlState } from './lib/useUrlState'
 import { encodeTab, parseTab, type Tab } from './lib/urlCodecs'
 import { DEFAULT_LENS, encodeLens, parseLens } from './lib/lens'
 import { useThemeController } from './lib/useThemeController'
-import { TabNav } from './components/TabNav'
-import { AppHeader } from './components/AppHeader'
-import { LensSwitcher } from './components/LensSwitcher'
+import { ImprintBand } from './components/ImprintBand'
 import { FixturesPage } from './components/FixturesPage'
 import { TablePage } from './components/TablePage'
 import { StalenessBanner } from './components/StalenessBanner'
@@ -21,8 +19,8 @@ const OFFLINE_TABS: ReadonlyArray<{ key: Tab; label: string }> = [
 
 /**
  * Fixtures and Table only. `?tab=moments` renders Fixtures and does not rewrite the URL.
- * The "Offline snapshot" line sits outside AppHeader, so the shared header's DOM in the
- * Vite app and the Next app is unchanged.
+ * The "Offline snapshot" line sits outside the band. The tab list is the only
+ * difference: Moments is not on this page.
  */
 export function OfflineApp() {
   const { today } = useNow()
@@ -33,16 +31,19 @@ export function OfflineApp() {
   const shown = tab === 'table' ? 'table' : 'fixtures'
 
   return (
+    <>
+    <ImprintBand
+      version={__APP_VERSION__}
+      tab={shown}
+      lens={lens}
+      tabs={OFFLINE_TABS}
+      onSelectTab={setTab}
+      onSelectLens={setLens}
+      onToggleTheme={toggle}
+      themeLabel={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+    />
     <div className="mx-auto max-w-[780px] px-5 pt-7 pb-16">
-      <AppHeader
-        version={__APP_VERSION__}
-        onToggleTheme={toggle}
-        themeLabel={theme === 'dark' ? 'Light mode' : 'Dark mode'}
-      />
       <p data-offline-snapshot="" className="label-caps mb-4 text-[10px] text-ink-muted">Offline snapshot</p>
-      <TabNav tab={shown} onSelect={setTab} tabs={OFFLINE_TABS}>
-        <LensSwitcher lens={lens} onSelect={setLens} />
-      </TabNav>
       <div data-moments-background="route">
         <ViewBoundary key={`${shown}:${lens}`}>
           <StalenessBanner />
@@ -50,6 +51,7 @@ export function OfflineApp() {
         </ViewBoundary>
       </div>
     </div>
+    </>
   )
 }
 

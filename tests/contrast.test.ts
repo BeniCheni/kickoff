@@ -85,10 +85,11 @@ describe('second-edition pairs, read from the tokens', () => {
   })
 })
 
-it('no rendered file reads an fb- token yet', () => {
+it('fb tokens and stock render only from the chrome that owns them', () => {
+  const allowed = new Set(['components/ImprintBand.tsx'])
   const root = new URL('../src/', import.meta.url)
   const hits = globSync('**/*.{css,ts,tsx}', { cwd: root }).filter((file) => {
-    if (file === 'shell.css') return false
+    if (file === 'shell.css' || allowed.has(file)) return false
     return /--fb-|data-stock/.test(readFileSync(new URL(file, root), 'utf8'))
   })
   expect(hits).toEqual([])

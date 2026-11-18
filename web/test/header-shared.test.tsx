@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { expect, test } from 'vitest'
-import { AppHeader } from '../../src/components/AppHeader'
+import { ImprintBand } from '../../src/components/ImprintBand'
 import { clockSnapshotAt } from '../../src/lib/clock'
 import { META, SYNC_STAMP } from '../../src/lib/fixtures'
 import { RequestClock } from '../../src/lib/RequestClock'
@@ -12,27 +12,35 @@ function headerHtml(html: string) {
   return match[0]
 }
 
-test('Next renders the header from the shared module', () => {
+const themeLabel = (
+  <>
+    <span className="theme-when-light">Dark mode</span>
+    <span className="theme-when-dark">Light mode</span>
+  </>
+)
+
+test('Next renders the band from the shared module', () => {
   const html = renderToStaticMarkup(
     <RequestClock snapshot={clockSnapshotAt(Date.parse('2026-09-14T16:00:00Z'))}>
       <Shell search="" />
     </RequestClock>,
   )
   const fromModule = renderToStaticMarkup(
-    <AppHeader
+    <ImprintBand
       version="0.5.5"
+      tab="fixtures"
+      lens="poster"
+      onSelectTab={() => {}}
+      onSelectLens={() => {}}
       onToggleTheme={() => {}}
-      themeLabel={(
-        <>
-          <span className="dark:hidden">Dark mode</span>
-          <span className="hidden dark:inline">Light mode</span>
-        </>
-      )}
+      themeLabel={themeLabel}
     />,
   )
   expect(headerHtml(html)).toBe(fromModule)
   expect(fromModule).toContain('Brooklyn · ET')
-  expect(fromModule).toContain('dark:hidden')
+  expect(fromModule).toContain('theme-when-light')
+  expect(fromModule).toContain('theme-when-dark')
+  expect(fromModule).toContain('aria-label="Primary"')
   const provenance = html.toLowerCase()
   expect(provenance).toContain(`${META.total} fixtures`)
   expect(provenance).toContain(SYNC_STAMP.toLowerCase())

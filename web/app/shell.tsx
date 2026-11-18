@@ -1,9 +1,7 @@
 'use client'
 
 import pkg from '../../package.json'
-import { AppHeader } from '../../src/components/AppHeader'
-import { TabNav } from '../../src/components/TabNav'
-import { LensSwitcher } from '../../src/components/LensSwitcher'
+import { ImprintBand } from '../../src/components/ImprintBand'
 import { StalenessBanner } from '../../src/components/StalenessBanner'
 import { ViewBoundary } from '../../src/components/ViewBoundary'
 import { MomentsRegion } from './moments/region'
@@ -59,20 +57,22 @@ function ShellInner({ moments, catalogMode }: { moments: MomentsPayload; catalog
   }
 
   return (
+    <>
+    <ImprintBand
+      version={pkg.version}
+      tab={tab}
+      lens={lens}
+      onSelectTab={onSelect}
+      onSelectLens={setLens}
+      onToggleTheme={toggle}
+      themeLabel={(
+        <>
+          <span className="theme-when-light">Dark mode</span>
+          <span className="theme-when-dark">Light mode</span>
+        </>
+      )}
+    />
     <div className="mx-auto max-w-[780px] px-5 pt-7 pb-16">
-      <AppHeader
-        version={pkg.version}
-        onToggleTheme={toggle}
-        themeLabel={(
-          <>
-            <span className="dark:hidden">Dark mode</span>
-            <span className="hidden dark:inline">Light mode</span>
-          </>
-        )}
-      />
-      <TabNav tab={tab} onSelect={onSelect}>
-        <LensSwitcher lens={lens} onSelect={setLens} />
-      </TabNav>
       {tab === 'moments' ? <ViewBoundary key={tab}><MomentsRegion moments={moments} catalogMode={catalogMode} search={liveSearch} /></ViewBoundary> : (
         <div data-moments-background="route"><ViewBoundary key={`${tab}:${lens}`}>
           <StalenessBanner />
@@ -81,5 +81,6 @@ function ShellInner({ moments, catalogMode }: { moments: MomentsPayload; catalog
       )}
       <PrivacyFoot />
     </div>
+    </>
   )
 }

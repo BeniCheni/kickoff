@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url'
  *  src/main.tsx, src/App.tsx, Moments session/player/YouTube modules and studio/
  *  are absent on purpose. */
 export const SRC_ALLOWLIST = [
-  'src/components/AppHeader.tsx',
+  'src/components/ImprintBand.tsx',
   'src/components/CompetitionChip.tsx', // chip ink and competition colour, shared by the filter bar and the table
   'src/components/FilterBar.tsx', // the Fixtures competition filter
   'src/components/FixtureRow.tsx', // one fixture, including TBC and unsettled status
