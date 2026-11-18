@@ -139,7 +139,7 @@ SEALED APPENDIX — claims to re-derive independently, never conclusions. Reach 
 - P8 (PM seat): the Poster foot's "unless marked local" is true today, and the reader no longer learns what "time not yet set" means from any foot.
 ````
 
-### Not used: the Codex seat line
+### The Codex seat line (unused at 10:20 AM; the next section reopens it)
 
 The brief's first paragraph as first written, for Codex, at about 10:15 AM EST, before the PM seat
 learned of Beni's "Keep both builds". It is kept as the record of the seat it would have taken
@@ -147,4 +147,44 @@ under PR #328's table.
 
 ````text
 You are Pass 1 of the 360 cycle for PR #342 in github.com/BeniCheni/kickoff: a fresh Codex session that built none of this. Run on gpt-6.2-astra at xhigh, and name the model and effort that actually ran on the first line of your comment, read from your session file rather than from memory. The method is the repository's review skill: read .claude/skills/kickoff-pr-review/SKILL.md and the files it names for a Pass 1 run with --no-merge, and follow them. The skill outranks this brief on process, except where FIX SCOPE below says otherwise, and this brief adds the PR's particulars. Read CLAUDE.md and AGENTS.md first; they bind you. The PM seat (Claude Code, Opus 5.5) wrote this on Wed 18 Nov 2026 at about 10:15 AM EST, from #342 at e820fd4, with verify, studio, the Vercel deployment and vercel-smoke green, mergeable, auto-merge off and no review yet. It read the PR body, every non-test hunk of PR 2's own change except the three scan lists, and seven of the test diffs, searched the rest for removed assertions, and ran no test, build or browser. Treat the repository as ground truth and this brief as a map of it. Run TZ=America/New_York date before writing any date.
+````
+
+## Beni's second answer, "Re-route per #328" (Wed 18 Nov 2026, about 10:39 AM EST), and the Codex Pass 0 opener
+
+The routing question reached Beni in two PM sessions forked from one another. He answered "Keep
+both builds" at about 10:18 AM, in the sibling session; this file's brief was seated on that
+answer at 10:20. At about 10:39 AM, in another fork, he answered **"Re-route per #328"**, and the
+later answer is the ruling of record. It is recorded in full, with how the PM seat applies it, at
+the end of [design-overhaul-pr1b-review-prompt.md](design-overhaul-pr1b-review-prompt.md)
+(`eb2a86b`). The PM seat here took the ruling from that record and from the session that wrote it,
+and did not see Beni's own words.
+
+For #342, the "When Claude builds" column of #328's table applies from Pass 1 on, on the code Cursor
+wrote: Passes 0 and 1.5 and Pass 1 are Codex on `gpt-6.2-astra` at `xhigh`; Pass 2 and every fix
+round are Claude Code on `claude-fable-5-2` at `xhigh`; Pass 2.5 is Codex on `gpt-6.2-sol` at
+`xhigh` with `--sandbox read-only`. No Cursor seat holds a pass, so the Thursday deadline is gone.
+No Pass 1 had started when the ruling came.
+
+So the brief above was not pasted. #328 gives the review briefs to the reviewing vendor "so the side
+that built never steers its own reviewer", and Claude, the PM seat's vendor, now answers PR 2's
+Pass 2. The PM seat recommended that a Codex Pass 0 write PR 2's Pass 1 brief, with the brief above
+as material to check, and wrote the thin opener below for it. Pasting the Codex seat line above
+straight into Pass 1 stays open to Beni.
+
+````text
+Kickoff design overhaul — PR #342 (overhaul PR 2, chrome and the motion control): Pass 0, write the Pass 1 brief
+
+You are Pass 0 of the 360 cycle for PR #342 in github.com/BeniCheni/kickoff, in a fresh Codex session on gpt-6.2-astra at xhigh. Name the model and effort that actually ran, read from your session file, on the first line of what you deliver. Read CLAUDE.md and AGENTS.md first; they bind you. Then read .claude/skills/kickoff-pr-review/SKILL.md, whose six-pass table says what Pass 0 reads and what it leaves behind. The PM seat (Claude Code, Opus 5.5) wrote this opener on Wed 18 Nov 2026 at about 10:45 AM EST, and kept it thin for the reason under WHY YOU. Treat the repository as ground truth; where this opener disagrees with it or with #328, the repository wins, and you say so beside your brief. Run TZ=America/New_York date before writing any date.
+
+WHY YOU. Cursor built #342 on Grok 4.7 (head e820fd4) from docs/design-overhaul-pr2-implementation-prompt.md. On Wed 18 Nov 2026 at about 10:39 AM EST Beni ruled "Re-route per #328": the code Cursor wrote stands, and from Pass 1 on #342 takes the seats of the "When Claude builds" column in PR #328's two-vendor amendment. Read it with git show origin/docs/review-loop-plan:docs/design-overhaul-plan.md, under "Amended Tue 17 Nov 2026: two vendors". Passes 0 and 1.5 are yours. Pass 1 is a fresh Codex session on gpt-6.2-astra at xhigh. Pass 2 and every fix round are Claude Code's, on claude-fable-5-2 at xhigh. Pass 2.5 is Codex on gpt-6.2-sol at xhigh with --sandbox read-only. Pass 3 is Beni. The amendment gives the review briefs to the reviewing vendor "so the side that built never steers its own reviewer", and Claude now answers PR 2's Pass 2. That is why this brief is yours to write and not the PM seat's.
+
+WHAT YOU LEAVE BEHIND. One Pass 1 brief for a fresh Codex session on gpt-6.2-astra at xhigh, delivered in chat in a four-backtick fenced block, one line per paragraph and never hand-wrapped, ready for Beni to paste. Shape it as the skill's Pass 0 row says: the review method, the PR's particulars, and a sealed appendix of claims for Pass 1 to re-derive, never conclusions. Pass 1 is report-only, because the amendment gives every fix round to the builder: it pushes no commit, and it puts each fix in its comment as a finding. You change nothing either. Read the PR, its body and the repository fresh, with git and gh, and run no test, build, server or browser; that is Pass 1's work. Make no commit, push nothing, post no PR comment, and write no file outside a scratch directory. Beni brings your brief to the PM seat, which archives it under docs/ with your seat named.
+
+MATERIAL, NOT CONCLUSIONS. Before the re-route, the PM seat drafted a Pass 1 brief for this PR. Read it with git show claude/track-a-archive-4:docs/design-overhaul-pr2-review-prompt.md, a local branch in this repository that is not pushed. Claude wrote it, and Claude now holds PR 2's Pass 2, so read it as a list of claims from the other side, and only after your own fresh read of the PR. Check each of its facts and questions against the repository: keep what you reproduce, in your own words; drop what you do not; and add what it missed. Any claim of the draft's that you carry into your brief unchecked goes in your sealed appendix, marked as the PM seat's.
+
+PARTICULARS YOUR BRIEF MUST CARRY. These are rulings and arrangements, not findings.
+- Beni's rulings, named as his: Sat 14 Nov 2026, in docs/design-overhaul-plan-review.md (1 Branch, 2 Ten, 3 Oswald, 12 Six, 17 Approve, with string 34 awaiting his approval in this PR, and 19 Repaint); Mon 16 Nov, in PR 1's review (stock nests, pinned by tests/stockCascade.test.ts, and ruling 5, no Caslon preload before Caslon text); Tue 17 Nov, "Yes, extend it" (the offline page renders Caslon 400 and Kickoff Mono 400, which PR 1b inlines); PR 0's R2 and R3; and CLAUDE.md's standing honesty rules. Beni's word merges: nobody approves, merges, enables auto-merge, bumps or tags.
+- Where Pass 1 works: worktrees /Users/benicheni/code/kickoff-pr2-review at e820fd4 and /Users/benicheni/code/kickoff-pr2-review-base at 541b9a9, the branch's merge of main, whose snapshot is the head's, so git diff 541b9a9 e820fd4 is PR 2's own change; servers on 6773 to 6775 for the head and 6873 to 6875 for the base. Port 5173 is Beni's, 6073 to 6375 are the builders', and 6573 to 6675 belong to #341's Pass 1, which may be running at the same time. Never Beni's checkout at /Users/benicheni/code/kickoff, which holds untracked files of his, the builders' worktrees, or #341's review worktrees.
+- #341 is PR 1b and is reviewed separately. Pass 1 does not review it.
+- No Cursor seat holds a pass now, so there is no Thursday deadline. Beni sets the date.
 ````
