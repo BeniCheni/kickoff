@@ -1,9 +1,8 @@
 // The evidence runner later overhaul PRs extend. Same Chrome, same two origins, and the
 // same open discipline as the clearing. PNGs and receipt.json stay outside the repo.
 //
-// Not in this pass, and left for the PRs that need them: hit areas, reduced motion, the
-// motion control, the flash gate, the title-swap watch, and the phone bench. Add them
-// here. Do not start a second runner.
+// Hit areas and the motion control's first frame are measured here. The flash gate,
+// the title-swap watch and the phone bench stay for the PRs that need them.
 //
 //   node web/scripts/evidence.mjs [outDir] [--enforce]
 //
@@ -235,6 +234,41 @@ export function emptyMatrix() {
   return { cells: [], legacy: [], measurements: [], contrast: [] }
 }
 
+/** Band controls only. A box under 44, or two boxes that overlap, is a fault.
+ *  Touching edges are not an overlap. The week stepper is outside the band. */
+export function hitAreaFaults(boxes) {
+  const faults = []
+  for (const box of boxes) {
+    if (box.w < 43.5 || box.h < 43.5) faults.push(`${box.name} ${box.w.toFixed(1)}×${box.h.toFixed(1)}`)
+  }
+  for (let i = 0; i < boxes.length; i += 1) {
+    for (let j = i + 1; j < boxes.length; j += 1) {
+      const a = boxes[i]
+      const b = boxes[j]
+      const overlap = a.left < b.right - 0.5 && b.left < a.right - 0.5 && a.top < b.bottom - 0.5 && b.top < a.bottom - 0.5
+      if (overlap) faults.push(`${a.name} overlaps ${b.name}`)
+    }
+  }
+  return faults
+}
+
+async function bandGeometry(page) {
+  return page.evaluate(() => {
+    const header = document.querySelector('header[data-moments-background="header"]')
+    if (!header) return null
+    const controls = [...header.querySelectorAll('button')].map((el) => {
+      const box = el.getBoundingClientRect()
+      const name = (el.getAttribute('aria-label') || el.innerText || '').replace(/\s+/g, ' ').trim()
+      return { name, left: box.left, top: box.top, right: box.right, bottom: box.bottom, w: box.width, h: box.height }
+    })
+    const rows = [...header.querySelectorAll('[data-imprint-row]')].map((el) => ({
+      name: el.getAttribute('data-imprint-row'),
+      h: el.getBoundingClientRect().height,
+    }))
+    return { controls, rows, height: header.getBoundingClientRect().height }
+  })
+}
+
 export async function runMatrix(browser, { origins, out, anchor, contrast = false }, result = emptyMatrix()) {
   const { cells, legacy, measurements, contrast: contrastCells } = result
   for (const [app, origin] of Object.entries(origins)) {
@@ -245,6 +279,19 @@ export async function runMatrix(browser, { origins, out, anchor, contrast = fals
         try {
           const state = await inspect(page)
           assertCell(state, errors, { id, lens, theme, tab })
+          const band = await bandGeometry(page)
+          if (band) {
+            const faults = hitAreaFaults(band.controls)
+            assert.deepEqual(faults, [], `${id} ${faults.join('; ')}`)
+            if (width === 390 && theme === 'light' && tab === 'fixtures') {
+              measurements.push({
+                app, lens,
+                bandHeight: band.height,
+                rows: band.rows,
+                controls: band.controls.map((box) => ({ name: box.name, w: Math.round(box.w * 10) / 10, h: Math.round(box.h * 10) / 10 })),
+              })
+            }
+          }
           if (tab === 'table') assert.ok(await page.$('[data-table-picker]'), id)
           if (width === 390 && tab === 'fixtures' && theme === 'light') {
             const row = await page.$('button[aria-expanded]')
@@ -589,6 +636,55 @@ function belowFloor(cells) {
   return cells.flatMap((cell) => cell.minimums.filter((row) => row.ratio < row.floor).map((row) => ({ id: cell.id, ...row })))
 }
 
+export async function proveMotion(browser, origin, out) {
+  const specs = [
+    { id: 'stored-on', motion: 'on', reduced: false, expect: 'on', name: 'Stop motion' },
+    { id: 'stored-off', motion: 'off', reduced: false, expect: 'off', name: 'Start motion' },
+    { id: 'absent-reduced', motion: null, reduced: true, expect: 'off', name: 'Start motion' },
+    { id: 'absent-running', motion: null, reduced: false, expect: 'on', name: 'Stop motion' },
+  ]
+  const cases = []
+  for (const spec of specs) {
+    const context = await browser.createBrowserContext()
+    const page = await context.newPage()
+    try {
+      await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 })
+      if (spec.reduced) await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }])
+      await page.evaluateOnNewDocument((motion) => {
+        localStorage.setItem('kickoff-theme', 'light')
+        if (motion) localStorage.setItem('kickoff-motion', motion)
+        document.addEventListener('DOMContentLoaded', () => {
+          window.__kickoffMotion = document.documentElement.dataset.motion ?? ''
+        })
+      }, spec.motion)
+      await page.goto(`${origin}/`, { waitUntil: 'networkidle0', timeout: 30_000 })
+      await page.evaluate(() => document.fonts.ready)
+      const frame = await page.evaluate(() => ({
+        atReady: window.__kickoffMotion ?? null,
+        now: document.documentElement.dataset.motion ?? '',
+        name: (document.querySelector('.motion-control')?.innerText ?? '').replace(/\s+/g, ' ').trim(),
+      }))
+      assert.equal(frame.atReady, spec.expect, `${spec.id} first frame`)
+      assert.equal(frame.now, spec.expect, spec.id)
+      assert.equal(frame.name, spec.name, spec.id)
+      let still = null
+      if (spec.expect === 'off') {
+        const first = await page.screenshot()
+        await new Promise((resolve) => setTimeout(resolve, 2000))
+        const second = await page.screenshot()
+        still = Buffer.from(first).equals(Buffer.from(second))
+        assert.equal(still, true, `${spec.id} still`)
+        if (spec.id === 'stored-off') {
+          writeFileSync(path.join(out, 'motion-stopped-a.png'), first)
+          writeFileSync(path.join(out, 'motion-stopped-b.png'), second)
+        }
+      }
+      cases.push({ id: spec.id, motion: frame.now, name: frame.name, atReady: frame.atReady, still })
+    } finally { await context.close() }
+  }
+  return cases
+}
+
 async function main() {
   const args = process.argv.slice(2)
   const enforce = args.includes('--enforce')
@@ -604,7 +700,7 @@ async function main() {
   // holds every step and cell that passed before it.
   const matrix = emptyMatrix()
   const weekRun = { cells: [], contrast: [] }
-  const steps = { requests: null, offline: null, harness: null }
+  const steps = { motion: null, requests: null, offline: null, harness: null }
   const receipt = () => {
     const contrastCells = [...matrix.contrast, ...weekRun.contrast]
     return {
@@ -616,6 +712,7 @@ async function main() {
     }
   }
   try {
+    steps.motion = await proveMotion(browser, origins.vite, out)
     await runMatrix(browser, { origins, out, anchor, contrast: true }, matrix)
     assert.equal(matrix.cells.length, 96)
     await captureWeeks(browser, { origins, out, weeks, contrast: true }, weekRun)
