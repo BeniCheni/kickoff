@@ -6,8 +6,8 @@ const table = readFileSync(new URL('../src/components/TablePage.tsx', import.met
 
 /** Tailwind's spacing step is 4px; an arbitrary value is its own figure. */
 function px(utility: string): number {
-  const arbitrary = utility.match(/\[(\d+)px\]/)
-  return arbitrary ? Number(arbitrary[1]) : Number(utility.match(/-(\d+)$/)![1]) * 4
+  const arbitrary = utility.match(/\[([\d.]+)px\]/)
+  return arbitrary ? Number(arbitrary[1]) : Number(utility.match(/-([\d.]+)$/)![1]) * 4
 }
 
 it('the Table’s pinned rows start at the band’s foot, at the height the band measures', () => {
@@ -35,4 +35,32 @@ it('the band stays pinned, above the rows that pin below it', () => {
   expect(band).toContain('position: sticky')
   expect(band).toContain('top: 0')
   expect(Number(band.match(/z-index: (\d+)/)![1])).toBeGreaterThan(10)
+})
+
+it('a standings row the keyboard reaches stops below the labels, a pinned divider and its own ring', () => {
+  // What pins above a phone row, below the band, from the Table's own classes.
+  const labels = px(table.match(/sticky top-0 z-10 grid (h-\d+) /)![1]!)
+  const padding = table.match(/wide \? 'pt-[\d.]+ pb-[\d.]+' : 'px-[\d.]+ (pt-[\d.]+) (pb-[\d.]+)'/)
+  const label = table.match(/wide \? 'text-\[[\d.]+px\]' : '(text-\[[\d.]+px\])'/)
+  expect(padding, 'the phone divider’s padding').not.toBeNull()
+  expect(label, 'the phone divider’s label').not.toBeNull()
+  // The label names no line height, so it takes Tailwind's: 1.5.
+  const divider = px(padding![1]!) + px(padding![2]!) + px(label![1]!) * 1.5
+  // The ring is the page's own, and a scroll is rounded to a whole pixel.
+  const ring = css.match(/:focus-visible \{\s*outline: (\d+)px solid [^;]+;\s*outline-offset: (\d+)px;/)
+  expect(ring, 'the focus ring').not.toBeNull()
+  const clear = Number(ring![1]) + Number(ring![2]) + 0.5
+
+  expect([labels, divider, clear]).toEqual([28, 27.5, 4.5])
+  expect(css).toContain(`.imprint-band ~ .page-measure [data-table='mobile'] [data-table-row] > button {\n  scroll-margin-top: calc(${labels}px + ${clear}px);\n}`)
+  expect(css).toContain(`.imprint-band ~ .page-measure [data-table='mobile'] [data-zone-divider].sticky ~ [data-table-row] > button {\n  scroll-margin-top: calc(${labels}px + ${divider}px + ${clear}px);\n}`)
+
+  // The rules name the Table's markup. A phone row is one button under its row marker,
+  // a pinned divider is that row's earlier sibling, and a desktop row holds no control.
+  const [phone, desktop] = table.split('data-table="desktop"') as [string, string]
+  expect(phone).toMatch(/data-table-row=\{r\.teamId\}>\s*<button/)
+  expect(phone).toMatch(/\{band\.zone && <ZoneDivider zone=\{band\.zone\} \/>\}\s*\{band\.rows\.map/)
+  expect(table).toContain("data-zone-divider={zone.name}")
+  const desktopRows = desktop.slice(desktop.indexOf('data-table-row'))
+  expect(desktopRows).not.toMatch(/<button|<a |tabIndex/)
 })

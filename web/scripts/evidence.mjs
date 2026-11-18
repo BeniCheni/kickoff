@@ -1,9 +1,9 @@
 // The evidence runner later overhaul PRs extend. Same Chrome, same two origins, and the
 // same open discipline as the clearing. PNGs and receipt.json stay outside the repo.
 //
-// The band's contract (H1 to H4), the Table's pinned rows, the motion control's first
-// frame, the chrome's reduced-motion and hover paths and the banner's two planes are
-// measured here. The flash gate, the title-swap watch and the phone bench stay for the
+// The band's contract (H1 to H4), the Table's pinned rows, focus under everything that
+// is pinned, the motion control's first frame, the chrome's reduced-motion and hover
+// paths and the banner's two planes are measured here. The flash gate, the title-swap watch and the phone bench stay for the
 // PRs that need them.
 //
 //   node web/scripts/evidence.mjs [outDir] [--enforce]
@@ -492,6 +492,144 @@ export async function proveTablePins(browser, origins, anchor = null) {
       assert.deepEqual(faults, [], `${id} ${faults.join('; ')}`)
       assert.deepEqual(errors, [], id)
       rows.push({ id, band: reveal.band, before: reveal.before, reveal: reveal.top, row: reveal.text })
+    } finally { await context.close() }
+  }
+  return rows
+}
+
+// Focus under everything that is pinned: the band, and on the phone Table the labels and
+// a long zone's divider below it. Each control is put where a pinned row would cover it and
+// reached with a real Tab press from the control before it, as a keyboard reaches it.
+const FOCUS_RING = 3 // inside the 2px line a ring draws 2px off its control
+
+/**
+ * What one Tab press left on the page. The control has to be the one the press was meant
+ * for, show its ring, and have no sample point under anything pinned. `ringUnder` is read
+ * only for a standings row, which runs the full width of the page: its ring shows above
+ * and below it and nowhere else, so the upper edge has to clear the stack too.
+ */
+export function focusFaults(seen) {
+  const what = `"${seen.text}"`
+  if (!seen.landed) return [`Tab before ${what} went to "${seen.active}"`]
+  const faults = []
+  if (!seen.focusVisible) faults.push(`${what} took focus and shows no focus ring`)
+  const under = Object.entries(seen.under)
+  if (under.length) {
+    const hidden = under.reduce((sum, [, points]) => sum + points, 0)
+    faults.push(`${what} took focus at ${seen.before.toFixed(2)} and rests at ${seen.top.toFixed(2)} to ${seen.bottom.toFixed(2)}, with ${hidden} of ${seen.points} points under ${under.map(([name]) => name).join(' and ')}`)
+  }
+  const ring = Object.keys(seen.ringUnder ?? {})
+  if (ring.length) faults.push(`the focus ring above ${what} is under ${ring.join(' and ')}`)
+  return faults
+}
+
+/** Every control a Tab press can reach inside `within`, each placed by `place` first:
+ *  { y } is its top in the viewport, { underFoot } that many pixels under the band's foot. */
+async function sweepFocus(page, place, within = '.page-measure') {
+  const targets = await page.evaluate((scope) => {
+    const reachable = (el) => el.tabIndex >= 0 && !el.disabled && !el.closest('[inert]')
+      && el.checkVisibility({ visibilityProperty: true }) && el.getClientRects().length > 0
+    const list = [...document.querySelectorAll('a[href], button, input, select, textarea, summary, iframe, [tabindex], [contenteditable]')].filter(reachable)
+    window.__kickoffFocus = { list, targets: list.map((_, i) => i).filter((i) => i > 0 && list[i].closest(scope)) }
+    return window.__kickoffFocus.targets.length
+  }, within)
+  const seen = []
+  for (let n = 0; n < targets; n += 1) {
+    const placed = await page.evaluate((index, where) => {
+      const { list, targets: chosen } = window.__kickoffFocus
+      const target = list[chosen[index]]
+      list[chosen[index] - 1].focus({ preventScroll: true })
+      const foot = document.querySelector('header.imprint-band').getBoundingClientRect().height
+      const y = where.underFoot === undefined ? where.y : foot + where.underFoot
+      window.scrollTo(0, target.getBoundingClientRect().top + window.scrollY - y)
+      return { before: target.getBoundingClientRect().top }
+    }, n, place)
+    await page.keyboard.press('Tab')
+    seen.push({ ...placed, ...(await page.evaluate((index, ring) => {
+      const { list, targets: chosen } = window.__kickoffFocus
+      const target = list[chosen[index]]
+      const active = document.activeElement
+      const name = (el) => (el?.getAttribute?.('aria-label') || el?.textContent || el?.tagName || 'nothing').replace(/\s+/g, ' ').trim().slice(0, 48)
+      const rect = target.getBoundingClientRect()
+      // What covers a point, if it is pinned: anything else is the control's own ground.
+      // A sticky element still in its own place in the flow is not pinned yet. A zone's
+      // divider sits directly above its first row there, on the first edition as well.
+      const pinned = (x, y) => {
+        const hit = document.elementFromPoint(x, y)
+        if (!hit || hit === target || target.contains(hit)) return null
+        for (let el = hit; el && el !== document.body; el = el.parentElement) {
+          const style = getComputedStyle(el)
+          if (style.position !== 'sticky' && style.position !== 'fixed') continue
+          if (style.position === 'sticky' && el.getBoundingClientRect().top > Number.parseFloat(style.top) + 0.01) continue
+          if (el.matches('header.imprint-band')) return 'the band'
+          if (el.hasAttribute('data-zone-divider')) return `the ${el.getAttribute('data-zone-divider')} divider`
+          return el.parentElement?.hasAttribute('data-table') ? 'the labels' : 'a pinned element'
+        }
+        return null
+      }
+      const tally = (points) => points.reduce((under, [x, y]) => {
+        const by = pinned(x, y)
+        if (by) under[by] = (under[by] ?? 0) + 1
+        return under
+      }, {})
+      const across = [0.1, 0.3, 0.5, 0.7, 0.9].map((fx) => rect.left + rect.width * fx)
+      const body = across.flatMap((x) => [0.1, 0.5, 0.9].map((fy) => [x, rect.top + rect.height * fy]))
+      const row = !!target.parentElement?.hasAttribute('data-table-row')
+      return {
+        text: name(target), active: name(active), landed: active === target, row,
+        focusVisible: target.matches(':focus-visible'), top: rect.top, bottom: rect.bottom,
+        points: body.length, under: tally(body),
+        ...(row ? { ringUnder: tally(across.map((x) => [x, rect.top - ring])) } : {}),
+      }
+    }, n, FOCUS_RING)) })
+  }
+  return seen
+}
+
+/** The Table in both apps, and both files from disk, at every width of the matrix. Each
+ *  control is placed twice: one pixel under the band's foot, where the labels and a
+ *  divider cover a row, and 20px from the top of the page, behind the band itself. */
+export async function proveFocus(browser, origins, out) {
+  const files = { offline: path.join(root, 'dist-offline/index.html'), single: path.join(root, 'dist-single/index.html') }
+  const shells = [
+    ...Object.entries(origins).map(([app, origin]) => ({ app, url: (league) => `${origin}/?tab=table&league=${league}`, leagues: ['ucl', 'pl'], open: {} })),
+    ...Object.entries(files).map(([app, file]) => ({ app, url: (league) => `${pathToFileURL(file).href}?tab=table&league=${league}`, leagues: ['ucl'], open: { waitUntil: 'domcontentloaded', offline: true } })),
+  ]
+  const places = [{ name: 'under the band’s foot', underFoot: 1.06 }, { name: 'behind the band', y: 20 }]
+  const rows = []
+  for (const shell of shells) for (const league of shell.leagues) for (const width of [360, 375, 390, 1000]) {
+    const id = `focus-${shell.app}-${league}-${width}`
+    const { context, page, errors } = await openPage(browser, shell.url(league), 'light', width, shell.open)
+    try {
+      await page.waitForSelector('[data-table-picker]', { timeout: 15_000 })
+      const layout = width >= 768 ? 'desktop' : 'mobile'
+      // The desktop rows hold no control. If one arrives, the sweep below reaches it.
+      const inRows = await page.evaluate((shown) => document.querySelectorAll(`[data-table="${shown}"] [data-table-row] :is(a[href], button, [tabindex])`).length, layout)
+      const row = { id, controls: 0, rowControls: inRows, pressed: 0, moved: 0 }
+      for (const place of places) {
+        const seen = await sweepFocus(page, place)
+        const faults = seen.flatMap(focusFaults)
+        assert.deepEqual(faults, [], `${id} ${place.name}: ${faults.join('; ')}`)
+        row.controls = seen.length
+        row.pressed += seen.length
+        row.moved += seen.filter((control) => Math.abs(control.top - control.before) > EPSILON).length
+        // The reviewed case: position 16 of the Champions League table.
+        const reviewed = league === 'ucl' && layout === 'mobile' && seen.filter((control) => control.row)[15]
+        if (reviewed) row[place.underFoot === undefined ? 'behindBand' : 'underFoot'] = { text: reviewed.text.slice(0, 16), before: reviewed.before, top: reviewed.top, bottom: reviewed.bottom }
+        if (reviewed && place.underFoot !== undefined && width === 390 && out) {
+          await page.evaluate(() => {
+            const { list, targets } = window.__kickoffFocus
+            const rows = targets.map((i) => list[i]).filter((el) => el.parentElement.hasAttribute('data-table-row'))
+            rows[14].focus({ preventScroll: true })
+            window.scrollTo(0, rows[15].getBoundingClientRect().top + window.scrollY - document.querySelector('header.imprint-band').getBoundingClientRect().height - 1.06)
+          })
+          await page.keyboard.press('Tab')
+          await page.screenshot({ path: path.join(out, `${id}.png`), captureBeyondViewport: false })
+        }
+      }
+      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth === innerWidth), true, id)
+      assert.deepEqual(errors, [], id)
+      rows.push(row)
     } finally { await context.close() }
   }
   return rows
@@ -1390,7 +1528,7 @@ async function main() {
   // holds every step and cell that passed before it.
   const matrix = emptyMatrix()
   const weekRun = { cells: [], contrast: [] }
-  const steps = { motion: null, chrome: null, feedback: null, banner: null, pins: null, requests: null, offline: null, harness: null }
+  const steps = { motion: null, chrome: null, feedback: null, banner: null, pins: null, focus: null, requests: null, offline: null, harness: null }
   const receipt = () => {
     const contrastCells = [...matrix.contrast, ...weekRun.contrast]
     return {
@@ -1407,6 +1545,7 @@ async function main() {
     steps.feedback = await proveFeedback(browser, origins)
     steps.banner = await proveBanner(browser, origins, out)
     steps.pins = await proveTablePins(browser, origins, anchor)
+    steps.focus = await proveFocus(browser, origins, out)
     await runMatrix(browser, { origins, out, anchor, contrast: true }, matrix)
     assert.equal(matrix.cells.length, 96)
     await captureWeeks(browser, { origins, out, weeks, contrast: true }, weekRun)

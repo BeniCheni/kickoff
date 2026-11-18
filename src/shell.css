@@ -239,6 +239,25 @@ html {
 .imprint-band ~ .page-measure [data-table='desktop'] [data-zone-divider].sticky {
   top: calc(var(--band-height) + 34px);
 }
+/*
+ * The scroll padding stops at the band, and on the phone layout the Table pins
+ * two more rows under it. A standings row that takes focus while it lies under
+ * them counts as in view, so the browser leaves it there. Each row's scroll
+ * margin is what pins above it, below the band: the labels (28px), and the
+ * divider in a zone long enough to pin one (27.5px: 8 and 6 of padding, and a
+ * 9px label on a 1.5 line). The last 4.5px is the focus ring, 2px drawn 2px
+ * off the row, and the half pixel a browser can lose when it rounds a scroll
+ * to a whole one. A row runs the full width of the page, so its ring shows
+ * above and below it and nowhere else; with the upper edge under the divider,
+ * one line is left between two rows and names neither. The desktop layout has
+ * no control in its rows; its sort buttons are in the pinned labels.
+ */
+.imprint-band ~ .page-measure [data-table='mobile'] [data-table-row] > button {
+  scroll-margin-top: calc(28px + 4.5px);
+}
+.imprint-band ~ .page-measure [data-table='mobile'] [data-zone-divider].sticky ~ [data-table-row] > button {
+  scroll-margin-top: calc(28px + 27.5px + 4.5px);
+}
 .imprint-band[data-stock='black'] {
   background: var(--fb-cover-black);
   --band-ground: var(--fb-cover-black);

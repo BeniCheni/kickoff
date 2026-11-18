@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { bandFaults, hitAreaFaults, momentsPaintFaults, pinFaults, revealFaults } from '../scripts/evidence.mjs'
+import { bandFaults, focusFaults, hitAreaFaults, momentsPaintFaults, pinFaults, revealFaults } from '../scripts/evidence.mjs'
 
 const box = (name: string, left: number, top: number, w: number, h = 44) => ({ name, left, top, right: left + w, bottom: top + h, w, h })
 
@@ -129,6 +129,34 @@ test('a control focused behind the band is brought out to the band’s foot', ()
   expect(revealFaults({ text: '2:30 PM Bayern', before: 20, top: 118, band: 118, topmost: 'itself' })).toEqual([])
   expect(revealFaults({ text: '2:30 PM Bayern', before: 20, top: 20, band: 118, topmost: 'the band' }))
     .toEqual(['"2:30 PM Bayern" took focus at 20.00 and rests at 20.00, under the band; the band ends at 118.00'])
+})
+
+test('a standings row that takes focus under the labels and a divider is a fault', () => {
+  const row = {
+    text: '16. LASK, 6 points from 4 played', active: '16. LASK, 6 points from 4 played', landed: true, row: true,
+    focusVisible: true, before: 119.06, top: 178.06, bottom: 232.06, points: 15, under: {}, ringUnder: {},
+  }
+  expect(focusFaults(row)).toEqual([])
+  // The reviewed head at 390: the browser counts the row as in view and leaves it where it is.
+  expect(focusFaults({ ...row, top: 119.06, bottom: 173.06, under: { 'the labels': 5, 'the Knockout play-offs divider': 10 }, ringUnder: { 'the band': 5 } })).toEqual([
+    '"16. LASK, 6 points from 4 played" took focus at 119.06 and rests at 119.06 to 173.06, with 15 of 15 points under the labels and the Knockout play-offs divider',
+    'the focus ring above "16. LASK, 6 points from 4 played" is under the band',
+  ])
+  // Out from under the stack and no further: the row is whole and its ring's upper edge is not.
+  expect(focusFaults({ ...row, top: 173.06, bottom: 227.06, ringUnder: { 'the Knockout play-offs divider': 5 } }))
+    .toEqual(['the focus ring above "16. LASK, 6 points from 4 played" is under the Knockout play-offs divider'])
+  // One point is enough: 2.4.11 asks for not entirely hidden, and this asks for whole.
+  expect(focusFaults({ ...row, top: 160, bottom: 214, under: { 'the Knockout play-offs divider': 1 } }))
+    .toEqual(['"16. LASK, 6 points from 4 played" took focus at 119.06 and rests at 160.00 to 214.00, with 1 of 15 points under the Knockout play-offs divider'])
+})
+
+test('a sweep that lands on another control, or a control with no ring, is a fault and not a pass', () => {
+  const chip = { text: 'La Liga', active: 'La Liga', landed: true, row: false, focusVisible: true, before: 20, top: 421, bottom: 451, points: 15, under: {} }
+  expect(focusFaults(chip)).toEqual([])
+  expect(focusFaults({ ...chip, landed: false, active: 'Premier League' })).toEqual(['Tab before "La Liga" went to "Premier League"'])
+  expect(focusFaults({ ...chip, focusVisible: false })).toEqual(['"La Liga" took focus and shows no focus ring'])
+  expect(focusFaults({ ...chip, top: 20, bottom: 50, under: { 'the band': 15 } }))
+    .toEqual(['"La Liga" took focus at 20.00 and rests at 20.00 to 50.00, with 15 of 15 points under the band'])
 })
 
 test('Moments paint: pulp ground and pulp-ink pass; the first edition’s ground or ink is a fault', () => {
