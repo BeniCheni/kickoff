@@ -490,3 +490,76 @@
   padding: 16px var(--page-gutter) 0;
   background: var(--fb-cover-black);
 }
+
+/* Flat planes. Amber from 24 hours, alarm from 72. The Ledger ground is typescript. */
+.staleness {
+  margin-bottom: 16px;
+  border: 1.5px solid var(--fb-amber);
+  border-left-width: 4px;
+  background: var(--fb-pulp);
+  color: var(--fb-amber);
+  padding: 10px 14px;
+  font-family: var(--fb-book);
+  font-size: 14px;
+  line-height: 1.35;
+}
+.staleness[data-plane='alarm'] {
+  border-color: var(--fb-alarm);
+  color: var(--fb-alarm);
+}
+[data-ground='typescript'] .staleness {
+  background: var(--fb-typescript);
+}
+.staleness code {
+  font-family: var(--fb-mono);
+  font-size: 0.92em;
+}
+.view-alert {
+  border: 1.5px solid var(--fb-rule-strong);
+  background: var(--fb-pulp);
+  color: var(--fb-pulp-ink);
+  padding: 16px;
+}
+.view-alert-title {
+  margin: 0;
+  font-family: var(--fb-label);
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 1.2;
+}
+.view-alert-copy {
+  margin: 4px 0 0;
+  font-family: var(--fb-book);
+  font-size: 14px;
+  line-height: 1.35;
+  color: var(--fb-pulp-muted);
+}
+.view-alert-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+.view-alert-button {
+  box-sizing: border-box;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--fb-pulp-ink);
+  background: transparent;
+  color: var(--fb-pulp-ink);
+  font-family: var(--fb-label);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+}
+.view-alert-solid {
+  background: var(--fb-pulp-ink);
+  color: var(--fb-pulp);
+}

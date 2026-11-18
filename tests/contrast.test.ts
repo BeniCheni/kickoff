@@ -20,7 +20,7 @@ it('keeps every floodlight tint site in the mounted inventory', () => {
       const count = [...readFileSync(new URL(p, root), 'utf8').matchAll(/\bbg-floodlight-bg\b/g)].length
       return count ? [[p, count]] : []
     })
-  expect(sites).toEqual([['components/MomentsEmpty.tsx', 1], ['components/StalenessBanner.tsx', 1], ['components/TablePage.tsx', 2]])
+  expect(sites).toEqual([['components/MomentsEmpty.tsx', 1], ['components/TablePage.tsx', 2]])
 })
 
 describe('second-edition pairs, read from the tokens', () => {
@@ -99,9 +99,9 @@ it('reads changed token and component alphas instead of certifying yesterday’s
   const measured = (cases: typeof contrastCases, theme: string, role: string) => cases.find((c) => c.theme === theme && c.role === role)!.ratio
   const border = measureContrast(css.replace('rgb(22 33 27 / 0.12)', 'rgb(22 33 27 / 0.22)'))
   expect(measured(border, 'light', 'FT pill')).toBeLessThan(4.5)
-  const darkTint = measureContrast(css.replace('--floodlight-bg: rgb(247 201 72 / 0.14)', '--floodlight-bg: rgb(247 201 72 / 0.50)'))
-  expect(measured(darkTint, 'dark', '24h banner')).toBeLessThan(4.5)
-  const alarm = measureContrast(css, bannerSource.replace('bg-accent/10', 'bg-accent/15'))
+  const darkBanner = measureContrast(css.replace('--fb-amber: #F7C948', '--fb-amber: #2A2410'))
+  expect(measured(darkBanner, 'dark', '24h banner')).toBeLessThan(4.5)
+  const alarm = measureContrast(css.replace('--fb-alarm: #B3121B', '--fb-alarm: #F6C1C3'))
   expect(measured(alarm, 'light', '72h banner')).toBeLessThan(4.5)
-  expect(() => measureContrast(css, bannerSource.replace('bg-accent/10', 'bg-surface'))).toThrow('72h banner tint')
+  expect(() => measureContrast(css, bannerSource.replace('data-plane={plane}', 'data-plane="surface"'))).toThrow('72h banner tint')
 })

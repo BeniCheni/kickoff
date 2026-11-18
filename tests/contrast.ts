@@ -39,11 +39,10 @@ export function parseColor(value: string): { color: RGB; alpha: number } {
 }
 
 export function measureContrast(cssSource = css, componentSource = bannerSource): ContrastCase[] {
-  // The component owns the Tailwind opacity, not this receipt. A changed class must be read
-  // here or fail closed; rendered pixels still arbitrate margins under 0.05 (oklab mix).
-  const tint = [...componentSource.matchAll(/\bbg-accent\/(\d+(?:\.\d+)?)\b/g)]
-  if (tint.length !== 1) throw new Error('Expected one measurable 72h banner tint')
-  const bannerAlpha = Number(tint[0]![1]) / 100
+  // The banner's two planes are flat tokens. A missing plane fails closed.
+  if (!componentSource.includes('data-plane={plane}') || !componentSource.includes("'amber'") || !componentSource.includes("'alarm'")) {
+    throw new Error('72h banner tint')
+  }
   const contrastCases: ContrastCase[] = []
   for (const theme of ['light', 'dark'] as const) {
     const tokens = palette(cssSource, theme)
@@ -72,10 +71,11 @@ export function measureContrast(cssSource = css, componentSource = bannerSource)
       if (ground === 'floodlight-bg') add('text-secondary', color('text-secondary'), value('text-secondary'), ground, bg)
       add('Poster focus ring (unchanged)', color('pitch'), value('pitch'), ground, bg, 3)
     }
-    add('24h banner', color('floodlight-strong'), value('floodlight-strong'), 'floodlight-bg over bg',
-      paint('floodlight-bg', color('bg')))
-    add('72h banner', color('accent-strong'), value('accent-strong'), `accent/${bannerAlpha * 100} over bg`,
-      composite(color('accent'), color('bg'), bannerAlpha))
+    const stock = theme === 'light' ? secondEditionTokens(cssSource).paper : secondEditionTokens(cssSource).black
+    for (const ground of ['fb-pulp', 'fb-typescript']) {
+      add('24h banner', opaqueToken(stock, 'fb-amber'), stock['fb-amber']!, ground, opaqueToken(stock, ground))
+      add('72h banner', opaqueToken(stock, 'fb-alarm'), stock['fb-alarm']!, ground, opaqueToken(stock, ground))
+    }
     for (const ground of ['bg', 'surface']) {
       add('FT pill', color('text-secondary'), value('text-secondary'), `border fill over ${ground}`,
         paint('border', color(ground)))

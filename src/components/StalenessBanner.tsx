@@ -12,17 +12,13 @@ export function StalenessBanner() {
   const hours = hoursSinceSync(new Date(nowUtcIso))
   if (hours < 24) return null
   const stale = hours >= 72
+  const plane = stale ? 'alarm' : 'amber'
   return (
-    <div
-      className={[
-        'mb-4 rounded border px-3.5 py-2.5 text-[11.5px] leading-relaxed',
-        stale ? 'border-accent bg-accent/10 text-accent-strong' : 'border-floodlight bg-floodlight-bg text-floodlight-strong',
-      ].join(' ')}
-    >
+    <div className="staleness" data-plane={plane} data-voice={plane}>
       <b>{stale ? 'Data is stale.' : 'Data may have moved.'}</b> Last synced{' '}
       {Math.floor(hours / 24)} day{Math.floor(hours / 24) === 1 ? '' : 's'} ago (
       {LAST_SYNC_DATE}). Fixtures get rescheduled — run{' '}
-      <code className="font-mono">npm run sync</code> before staking anything on a kickoff time.
+      <code>npm run sync</code> before staking anything on a kickoff time.
     </div>
   )
 }

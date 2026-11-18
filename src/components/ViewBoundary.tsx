@@ -14,21 +14,23 @@ export class ViewBoundary extends Component<{ children: ReactNode; allowRetry?: 
   render() {
     if (!this.state.failed) return this.props.children
     return (
-      <div role="alert" className="rounded border border-line-strong bg-surface p-4 text-ink">
-        <p className="font-display text-[22px] font-semibold">This view couldn’t load.</p>
-        <p className="mt-1 text-[13px] text-ink-secondary">{this.props.allowRetry ? 'Retry this view to keep your current visit.' : 'Reload or reset the view to try again.'}</p>
-        <div className="mt-4 flex flex-wrap gap-3">
+      <div role="alert" className="view-alert">
+        <p className="view-alert-title">This view couldn’t load.</p>
+        <p className="view-alert-copy">{this.props.allowRetry ? 'Retry this view to keep your current visit.' : 'Reload or reset the view to try again.'}</p>
+        <div className="view-alert-actions">
           {this.props.allowRetry && <button
+            type="button"
             onClick={() => this.setState({ failed: false })}
-            className="label-caps cursor-pointer rounded border border-ink px-3 py-2 text-[12px]"
+            className="view-alert-button"
           >Retry</button>}
           <button
+            type="button"
             onClick={() => window.location.reload()}
-            className="label-caps cursor-pointer rounded border border-ink bg-ink px-3 py-2 text-[12px] text-bg"
+            className="view-alert-button view-alert-solid"
           >
             Reload
           </button>
-          <a href={window.location.pathname} className="label-caps rounded border border-ink px-3 py-2 text-[12px] text-ink">
+          <a href={window.location.pathname} className="view-alert-button">
             Reset view
           </a>
         </div>

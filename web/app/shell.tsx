@@ -81,7 +81,7 @@ function ShellInner({ moments, catalogMode }: { moments: MomentsPayload; catalog
         </>
       )}
     />
-    <div className="page-measure" data-measure={tab === 'moments' ? 'moments' : tab === 'table' ? 'register' : 'poster'}>
+    <div className="page-measure" data-measure={tab === 'moments' ? 'moments' : tab === 'table' ? 'register' : 'poster'} data-ground={tab === 'table' || tab === 'moments' ? 'black' : lens === 'ledger' ? 'typescript' : 'pulp'}>
       {tab === 'moments' ? <ViewBoundary key={tab}><MomentsRegion moments={moments} catalogMode={catalogMode} search={liveSearch} /></ViewBoundary> : (
         <div data-moments-background="route"><ViewBoundary key={`${tab}:${lens}`}>
           <StalenessBanner />

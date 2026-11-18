@@ -26,10 +26,19 @@ function checkTint(container: HTMLElement, count: number) {
     expect(ground.querySelector('[class*="text-ink-muted"]')).toBeNull()
   }
 }
-it('the 24h banner never renders muted text on its floodlight tint', () => {
+it('the 24h banner is the amber plane, and the 72h banner is the alarm plane', () => {
   release = primeClock(new Date(Date.parse(META.lastSyncAt) + 25 * 60 * 60 * 1000))
-  const { container } = render(<StalenessBanner />)
-  checkTint(container, 1)
+  const day = render(<StalenessBanner />)
+  expect(day.container.querySelector('.staleness')?.getAttribute('data-plane')).toBe('amber')
+  expect(day.container.querySelector('.staleness')?.getAttribute('data-voice')).toBe('amber')
+  expect(day.container.querySelector('.bg-floodlight-bg')).toBeNull()
+  day.unmount()
+  release()
+  release = primeClock(new Date(Date.parse(META.lastSyncAt) + 73 * 60 * 60 * 1000))
+  const old = render(<StalenessBanner />)
+  expect(old.container.querySelector('.staleness')?.getAttribute('data-plane')).toBe('alarm')
+  expect(old.container.querySelector('.staleness')?.getAttribute('data-voice')).toBe('alarm')
+  expect(old.container.textContent).toContain('Data is stale.')
 })
 it.each(TABLE_LEAGUES)('%s callouts and the sorted banner use readable roles on the tint', (league) => {
   window.history.replaceState(null, '', `/?league=${league}`)
