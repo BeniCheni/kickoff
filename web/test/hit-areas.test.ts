@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { bandFaults, focusFaults, hitAreaFaults, momentsPaintFaults, pinFaults, revealFaults } from '../scripts/evidence.mjs'
+import { bandFaults, firstFrameFaults, focusFaults, hitAreaFaults, momentsPaintFaults, pinFaults, revealFaults } from '../scripts/evidence.mjs'
 
 const box = (name: string, left: number, top: number, w: number, h = 44) => ({ name, left, top, right: left + w, bottom: top + h, w, h })
 
@@ -157,6 +157,34 @@ test('a sweep that lands on another control, or a control with no ring, is a fau
   expect(focusFaults({ ...chip, focusVisible: false })).toEqual(['"La Liga" took focus and shows no focus ring'])
   expect(focusFaults({ ...chip, top: 20, bottom: 50, under: { 'the band': 15 } }))
     .toEqual(['"La Liga" took focus at 20.00 and rests at 20.00 to 50.00, with 15 of 15 points under the band'])
+})
+
+test('before the app runs, the pinned rows and the scroll padding already start at the band’s foot', () => {
+  const held = {
+    hydrated: false, padding: 133, band: { top: 0, bottom: 133 },
+    labels: { name: 'labels', top: 133, bottom: 161, topmost: 'itself' },
+    divider: { name: 'Knockout play-offs', top: 161, bottom: 188.5, topmost: 'itself' },
+  }
+  expect(firstFrameFaults(held)).toEqual([])
+  // The reviewed head at 360: the sheet's 118 stood in for a band that had wrapped to 133.
+  expect(firstFrameFaults({
+    ...held, padding: 118,
+    labels: { name: 'labels', top: 118, bottom: 146, topmost: 'the band' },
+    divider: { name: 'Knockout play-offs', top: 146, bottom: 173.5, topmost: 'itself' },
+  })).toEqual([
+    'the scroll padding is 118.00, and the band ends at 133.00',
+    'the labels are under the band',
+    'the labels pin at 118.00, and the band ends at 133.00',
+  ])
+  // A figure that is too tall hides nothing and is still wrong: the rows hang 15px under the band.
+  expect(firstFrameFaults({
+    ...held, band: { top: 0, bottom: 118 },
+  })).toEqual([
+    'the scroll padding is 133.00, and the band ends at 118.00',
+    'the labels pin at 133.00, and the band ends at 118.00',
+  ])
+  // Held means held: a reading taken after the app ran proves nothing about the first frame.
+  expect(firstFrameFaults({ ...held, hydrated: true })).toEqual(['the app ran while its scripts were held'])
 })
 
 test('Moments paint: pulp ground and pulp-ink pass; the first edition’s ground or ink is a fault', () => {

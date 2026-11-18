@@ -2,7 +2,7 @@
 // same open discipline as the clearing. PNGs and receipt.json stay outside the repo.
 //
 // The band's contract (H1 to H4), the Table's pinned rows, focus under everything that
-// is pinned, the motion control's first frame, the chrome's reduced-motion and hover
+// is pinned, the server-rendered shell's first frame, the motion control's first frame, the chrome's reduced-motion and hover
 // paths and the banner's two planes are measured here. The flash gate, the title-swap watch and the phone bench stay for the
 // PRs that need them.
 //
@@ -630,6 +630,84 @@ export async function proveFocus(browser, origins, out) {
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth === innerWidth), true, id)
       assert.deepEqual(errors, [], id)
       rows.push(row)
+    } finally { await context.close() }
+  }
+  return rows
+}
+
+// The first frame of a shell the server renders. Its HTML is laid out before the app
+// runs, so what pins below the band has to start at the band's foot by then.
+/** `state` is the scrolled Table with the app's scripts held. The pinned rows are held to
+ *  pinFaults; the app must not have run, and the scroll padding has to end where the band does. */
+export function firstFrameFaults(state) {
+  const faults = []
+  if (state.hydrated) faults.push('the app ran while its scripts were held')
+  if (!near(state.padding, state.band.bottom)) faults.push(`the scroll padding is ${state.padding.toFixed(2)}, and the band ends at ${state.band.bottom.toFixed(2)}`)
+  return [...faults, ...pinFaults(state)]
+}
+
+/** Next's Table with hydration held, then released: at 360, at 365 and 366 where the
+ *  provenance stops wrapping, at 390 and at 1000. The band's faces are not scripts and
+ *  load while the app waits, so each width is read in the face a reader ends up with. */
+export async function proveFirstFrame(browser, origins) {
+  const rows = []
+  if (!origins.next) return rows
+  for (const width of [360, 365, 366, 390, 1000]) {
+    const id = `first-next-${width}`
+    const context = await browser.createBrowserContext()
+    const page = await context.newPage()
+    const errors = []
+    page.on('pageerror', (error) => errors.push(String(error)))
+    page.on('console', (message) => { if (CONSOLE_FAILS.has(message.type())) errors.push(message.text()) })
+    try {
+      await page.setViewport({ width, height: 844, deviceScaleFactor: 1 })
+      await page.evaluateOnNewDocument(() => localStorage.setItem('kickoff-theme', 'light'))
+      const scripts = await holdScripts(page)
+      const loaded = page.goto(`${origins.next}/?tab=table&league=ucl`, { waitUntil: 'load', timeout: 30_000 })
+      loaded.catch(() => {})
+      await until(() => scripts.count() > 0, `${id}: the app's scripts`)
+      await until(() => page.evaluate(() => !!document.querySelector('[data-table] [data-table-row]')).catch(() => false), `${id}: the server-rendered table`)
+      const read = () => page.evaluate(async (layout) => {
+        await document.fonts.ready
+        // A face that has just arrived moves the wrap; the band is watched, and reports in a frame.
+        await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+        const table = document.querySelector(`[data-table="${layout}"]`)
+        const bands = [...table.querySelectorAll('[data-zone-band]')]
+        const sizes = bands.map((zone) => zone.querySelectorAll('[data-table-row]').length)
+        const deepest = bands[sizes.indexOf(Math.max(...sizes))]
+        const middle = deepest.querySelectorAll('[data-table-row]')[Math.floor(Math.max(...sizes) / 2)]
+        window.scrollTo(0, middle.getBoundingClientRect().top + window.scrollY - innerHeight / 2)
+        const topmost = (el) => {
+          const rect = el.getBoundingClientRect()
+          const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2)
+          return hit === el || el.contains(hit) ? 'itself' : hit?.closest('header') ? 'the band' : 'another element'
+        }
+        const measure = (el, name) => ({ name, top: el.getBoundingClientRect().top, bottom: el.getBoundingClientRect().bottom, topmost: topmost(el) })
+        const header = document.querySelector('header.imprint-band')
+        const divider = deepest.querySelector('[data-zone-divider]')
+        return {
+          hydrated: Object.keys(header).some((key) => key.startsWith('__reactFiber')),
+          published: document.documentElement.style.getPropertyValue('--band-height') || null,
+          padding: Number.parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop),
+          band: { top: header.getBoundingClientRect().top, bottom: header.getBoundingClientRect().bottom },
+          labels: measure(table.querySelector(':scope > .sticky'), 'labels'),
+          divider: divider && getComputedStyle(divider).position === 'sticky' ? measure(divider, divider.getAttribute('data-zone-divider')) : null,
+          scrollWidth: document.documentElement.scrollWidth, innerWidth,
+        }
+      }, width >= 768 ? 'desktop' : 'mobile')
+      const held = await read()
+      const faults = firstFrameFaults(held)
+      assert.deepEqual(faults, [], `${id} with the app held: ${faults.join('; ')}`)
+      await scripts.release()
+      await loaded
+      await page.waitForFunction(() => Object.keys(document.querySelector('header.imprint-band') ?? {}).some((key) => key.startsWith('__reactFiber')), { timeout: 15_000 })
+      const after = await read()
+      const later = [...(after.hydrated ? [] : ['the app never ran']), ...firstFrameFaults({ ...after, hydrated: false })]
+      assert.deepEqual(later, [], `${id} after hydration: ${later.join('; ')}`)
+      assert.equal(after.scrollWidth, after.innerWidth, id)
+      assert.deepEqual(errors, [], id)
+      const brief = (state) => ({ band: state.band.bottom, published: state.published, padding: state.padding, labels: state.labels.top, divider: state.divider?.top ?? null })
+      rows.push({ id, held: brief(held), after: brief(after) })
     } finally { await context.close() }
   }
   return rows
@@ -1528,7 +1606,7 @@ async function main() {
   // holds every step and cell that passed before it.
   const matrix = emptyMatrix()
   const weekRun = { cells: [], contrast: [] }
-  const steps = { motion: null, chrome: null, feedback: null, banner: null, pins: null, focus: null, requests: null, offline: null, harness: null }
+  const steps = { motion: null, chrome: null, feedback: null, banner: null, pins: null, focus: null, first: null, requests: null, offline: null, harness: null }
   const receipt = () => {
     const contrastCells = [...matrix.contrast, ...weekRun.contrast]
     return {
@@ -1546,6 +1624,7 @@ async function main() {
     steps.banner = await proveBanner(browser, origins, out)
     steps.pins = await proveTablePins(browser, origins, anchor)
     steps.focus = await proveFocus(browser, origins, out)
+    steps.first = await proveFirstFrame(browser, origins)
     await runMatrix(browser, { origins, out, anchor, contrast: true }, matrix)
     assert.equal(matrix.cells.length, 96)
     await captureWeeks(browser, { origins, out, weeks, contrast: true }, weekRun)

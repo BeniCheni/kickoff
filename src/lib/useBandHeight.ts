@@ -10,6 +10,17 @@ export const BAND_HEIGHT = '--band-height'
  * measured and the figure is published on <html>, where the Table's pinned rows
  * and the page's scroll padding read it (src/shell.css).
  */
+/**
+ * The same measurement for a shell the server renders. Its HTML is laid out before the
+ * app runs, and the hook below measures nothing until it does: at 360 the band stood 133
+ * tall over a stylesheet that still said 118, and the Table's labels pinned 15px behind
+ * it. This runs as the parser passes the band, as the script directly after it, and
+ * publishes the figure in the form the hook writes. It keeps watching, because the band
+ * can change height before the app arrives: the provenance is drawn in a fallback face
+ * until its own loads, and the two wrap one pixel apart.
+ */
+export const BAND_HEIGHT_BOOT = `(function(){var b=document.currentScript.previousElementSibling;if(!b)return;var m=function(){var h=b.getBoundingClientRect().height;if(h)document.documentElement.style.setProperty('${BAND_HEIGHT}',h+'px')};m();if(window.ResizeObserver)new ResizeObserver(m).observe(b)})()`
+
 export function useBandHeight(ref: RefObject<HTMLElement | null>): void {
   useLayoutEffect(() => {
     const band = ref.current

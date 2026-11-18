@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { expect, test } from 'vitest'
-import { ImprintBand } from '../../src/components/ImprintBand'
+import { BandHeightBoot, ImprintBand } from '../../src/components/ImprintBand'
 import { clockSnapshotAt } from '../../src/lib/clock'
 import { META, SYNC_STAMP } from '../../src/lib/fixtures'
 import { RequestClock } from '../../src/lib/RequestClock'
@@ -51,4 +51,19 @@ test('Next renders the band from the shared module', () => {
   const provenance = html.toLowerCase()
   expect(provenance).toContain(`${META.total} fixtures`)
   expect(provenance).toContain(SYNC_STAMP.toLowerCase())
+})
+
+test('the server’s HTML measures its band before the app runs: the script is the band’s next sibling', () => {
+  const html = renderToStaticMarkup(
+    <RequestClock snapshot={clockSnapshotAt(Date.parse('2026-09-14T16:00:00Z'))}>
+      <Shell search="?tab=table" />
+    </RequestClock>,
+  )
+  const boot = renderToStaticMarkup(<BandHeightBoot />)
+  expect(boot).toMatch(/^<script data-kickoff-band="">\(function\(\)\{var b=document\.currentScript\.previousElementSibling;/)
+  expect(boot).toContain("setProperty('--band-height',h+'px')")
+  // Directly after the band and before the page, so previousElementSibling is the band
+  // and the general-sibling rules in the shared sheet still reach the page.
+  expect(html).toContain(`</header>${boot}<div class="page-measure"`)
+  expect(html.split('data-kickoff-band').length - 1).toBe(1)
 })

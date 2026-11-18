@@ -1,7 +1,7 @@
 import { useRef, type ReactNode } from 'react'
 import type { Lens } from '../lib/lens'
 import type { Tab } from '../lib/urlCodecs'
-import { useBandHeight } from '../lib/useBandHeight'
+import { BAND_HEIGHT_BOOT, useBandHeight } from '../lib/useBandHeight'
 import { LensSwitcher } from './LensSwitcher'
 import { MotionControl } from './MotionControl'
 import { Glyph, PlusFive } from './glyphs'
@@ -70,4 +70,11 @@ export function ImprintBand({
       <ProvenanceLine version={version} />
     </header>
   )
+}
+
+/** For a shell whose band arrives as the server's HTML: rendered directly after the band,
+ *  so the band is measured before the app runs. The Vite shells render the band
+ *  themselves, measure it before their first paint, and need none. */
+export function BandHeightBoot() {
+  return <script data-kickoff-band="" dangerouslySetInnerHTML={{ __html: BAND_HEIGHT_BOOT }} />
 }

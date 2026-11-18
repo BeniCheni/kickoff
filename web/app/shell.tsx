@@ -1,7 +1,7 @@
 'use client'
 
 import pkg from '../../package.json'
-import { ImprintBand } from '../../src/components/ImprintBand'
+import { BandHeightBoot, ImprintBand } from '../../src/components/ImprintBand'
 import { StalenessBanner } from '../../src/components/StalenessBanner'
 import { ViewBoundary } from '../../src/components/ViewBoundary'
 import { MomentsRegion } from './moments/region'
@@ -81,6 +81,7 @@ function ShellInner({ moments, catalogMode }: { moments: MomentsPayload; catalog
         </>
       )}
     />
+    <BandHeightBoot />
     <div className="page-measure" data-measure={tab === 'moments' ? 'moments' : tab === 'table' ? 'register' : 'poster'} data-ground={tab === 'table' || tab === 'moments' ? 'black' : lens === 'ledger' ? 'typescript' : 'pulp'}>
       {tab === 'moments' ? <ViewBoundary key={tab}><MomentsRegion moments={moments} catalogMode={catalogMode} search={liveSearch} /></ViewBoundary> : (
         <div data-moments-background="route"><ViewBoundary key={`${tab}:${lens}`}>
