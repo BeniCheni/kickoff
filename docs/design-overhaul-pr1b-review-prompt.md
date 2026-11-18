@@ -823,3 +823,11 @@ To file on the PM seat's next docs pass: the hostile-spellings row; the Vercel `
 restarting the runner's dev server after an edit to a file that Vite's config imports; offline
 Kickoff Mono Text at 500 and 600; plan section 3's PR 1b row, which still says four faces; and
 the trim PR, with its brief.
+
+Filed by the PM seat on Wed 18 Nov 2026, about 6:45 PM EST:
+- rows 135 to 138 in `docs/v0.2.6-ideas.md`: the two hostile spellings, the Vercel ignore
+  step's import walk, the runner's stale harness server, and offline Kickoff Mono Text at 500
+  and 600;
+- plan section 3's PR 1b row, corrected to six faces;
+- section 4.2's Wed 18 Nov amendment, which records the Trim and proposes the trim as PR 7b,
+  after PR 7, with its brief written once PR 7 merges.
