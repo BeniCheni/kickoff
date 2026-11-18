@@ -276,12 +276,21 @@ Unchanged: Pass 1 is a fresh Claude Code session; Beni's word merges; PR 8's sea
 
 **Ruling.** Beni approved this amendment as drafted on Tue 17 Nov 2026 at about 11:10 PM EST ("Approve as drafted"). That includes lifting the review loop's wait rule. PR 8's builder stays his word, as the rules below say.
 
+**Corrected Wed 18 Nov 2026.** This amendment missed two builds that had started about twenty minutes before Beni approved it. At 10:35 PM on Tue 17 Nov, Track A's PM seat ran the routing check (tier Super, `grok-4.7-xhigh` listed); at 10:52 PM #339 merged ("docs: start the PR 1b and PR 2 builds tonight, after the routing check"), and Beni started PRs 1b and 2 in Cursor on Grok 4.7. On Wed 18 Nov at about 10:18 AM EST he ruled "Keep both builds": #341 (PR 1b) and #342 (PR 2) are reviewed by the Sun 15 routing they started under, and this amendment applies from PR 3 on. Each correction below is marked where it falls. Track A's review brief for PR 1b records the same ruling.
+
 **Why.** On Tue 17 Nov 2026 Beni moved to Claude Max and ChatGPT Pro, and he is ending the xAI and Cursor paid tiers. Every seat above routes the builder and Pass 2 through Cursor on Grok 4.7 at Extra High, and so does the Sun 15 amendment just above. The same day, Beni ruled one rule for two vendors in the review loop (`docs/review-loop-proposal.md`, under "Rulings received", "Two vendors, each at its deepest"). This amendment applies that rule to PRs 1b to 9. It replaces the seats paragraph at the head of this section, the seat lines for PRs 0 and 8, and the Sun 15 amendment: that amendment's steps for PRs 0 and 1 are done, and its table and Cursor rules give way to the tables below. Where this plan says "the routing amendment", it now means this one.
 
-**Where the overhaul stood.** No Cursor seat was open, so nothing hands over mid-flight and no pass re-runs.
+**Where the overhaul stood.** *Corrected Wed 18 Nov:* two Cursor builds were open, and Beni kept both, so nothing hands over mid-flight and no pass re-runs.
 - PR 0 (#327) merged into `main` on Mon 16 Nov as `2fd2466`. Cursor's last commit was `ae927d7`, the end of its second fix round. Its Pass 2 ran on `grok-4.7-xhigh`, and Codex's Pass 2.5 and Beni's merge closed the cycle.
 - PR 1 (#330) merged into `overhaul/second-edition` on Tue 17 Nov as `3733fd9`. Cursor's last commit was `b421e13`, the end of its fix round.
-- PRs 1b to 9 had no brief yet. Their briefs no longer wait for Thu 19 Nov, and the check of Cursor's models that day is dropped.
+- *Corrected Wed 18 Nov:* PRs 1b and 2 were building in Cursor on Grok 4.7, from the briefs #338 merged. PR 1b is open as #341 (head `ad728bd`, five commits by Cursor, `verify` green) and PR 2 as #342 (head `e820fd4`, ten commits by Cursor, `verify` green).
+- PRs 3 to 9 had no brief yet. Their briefs no longer wait for Thu 19 Nov, and the check of Cursor's models that day is dropped.
+
+**Kept under the Sun 15 routing: PRs 1b and 2** (Beni, Wed 18 Nov, "Keep both builds").
+- Pass 1: a fresh Claude Code session on `claude-fable-5-2` at `xhigh`, report-only. Passes 0 and 1.5: Track A's PM seat.
+- Pass 2 and every fix round: Cursor on `grok-4.7-xhigh`, before the tier changes on Thu 19 Nov. A fix round that cannot land by then pushes what is green and waits for Beni's word, and is never finished on another model.
+- Pass 2.5: Codex, in a fresh session. Pass 3: Beni.
+- Neither reviewer is the builder's vendor, so the rule below holds for both PRs.
 
 **The rule.**
 - The vendor that builds a PR never holds its Pass 1 or Pass 2.5. The other vendor holds both, each in a fresh session, and Pass 2.5 writes nothing.
@@ -297,12 +306,12 @@ Unchanged: Pass 1 is a fresh Claude Code session; Beni's word merges; PR 8's sea
 | Pass 1 | Claude Code, `claude-fable-5-2`, `xhigh`, fresh | Codex, `gpt-6.2-astra`, `xhigh`, fresh |
 | Pass 2.5, every sitting | Claude Code, `claude-opus-5-5`, `xhigh`, fresh, writes nothing | Codex, `gpt-6.2-sol`, `xhigh`, `--sandbox read-only` |
 
-**The builders.** Along the chain of PRs 2, 3, 5, 6, 7, 8 and 9 the builder alternates, so each PR's reviewer is the vendor that built the PR it stands on.
+**The builders.** *Corrected Wed 18 Nov:* PRs 1b and 2 stay with Cursor, as above. From PR 3 the builder alternates along the chain of PRs 3, 5, 6, 7, 8 and 9, so from PR 5 on each PR's reviewer is the vendor that built the PR it stands on. PRs 3 and 4 stand on PR 2, which Cursor built and both vendors review, Claude at Pass 1 and Codex at Pass 2.5, so each still goes to a reviewer that has read the PR beneath it, and no row from PR 3 on changes.
 
 | PR | Size | Builds | Why |
 |---|---|---|---|
-| 1b · The font split | M | Codex, `gpt-6.2-sol`, `xhigh` | Bounded tooling, which PR 0's seat line above already counts as Codex's kind of work. The two guard gaps it must close came from Codex's Pass 2.5 on #330. |
-| 2 · Chrome and the motion control | L | Claude | Built beside 1b on the other vendor, as Beni's "Beside" ruling of Mon 16 Nov asks when two builder seats are free. Two now always are, and each vendor reviews the other's PR. |
+| 1b · The font split | M | Cursor, `grok-4.7-xhigh` (#341) | *Corrected Wed 18 Nov:* already building when this amendment was approved, and kept by Beni's ruling. It is reviewed under the Sun 15 routing above. This amendment had proposed Codex. |
+| 2 · Chrome and the motion control | L | Cursor, `grok-4.7-xhigh` (#342) | *Corrected Wed 18 Nov:* the same as 1b. This amendment had proposed Claude, built beside 1b. |
 | 3 · The Ledger | L | Codex, `gpt-6.2-astra`, `xhigh` | The PR a reviewer should break on purpose most. Codex's model for complex builds builds it, and Fable 5.2, the strongest Pass 1 on record here, reviews it. |
 | 4 · The Table's skin | M | Claude | It stands on PRs 1 and 2 only, so Claude can take it while Codex builds PR 3. Building it beside PR 3 is Beni's word, as 1b's was. |
 | 5 · Poster's books, still | L | Claude | A book's contents are PR 3's rows, so Codex, which built them, reviews the books that hold them. |
@@ -317,7 +326,7 @@ Rules that ride with the tables:
 - Every seat runs at `xhigh`, the cap Beni set on Tue 17 Nov 2026 ("The effort cap is Extra High", under "Rulings received" in `docs/review-loop-proposal.md`): Claude Code with `--effort xhigh`, Codex with `xhigh`. No seat uses `max`, and none uses Codex's `ultra`. Effort labels are never mapped across vendors.
 - PR 8's seat question stands. The builder is Beni's word, Codex is the recommendation, and the brief hands the builder PR 0's benchmark harness. Neither vendor can hold a phone, so gap 20's benchmark stays a person's.
 - **The review loop's wait rule is lifted.** It held the loop's Codex builds while Codex built an overhaul PR. In its place, on either vendor: both tracks may run at once, and an overhaul seat outranks a loop seat. When a vendor's usage limit warns or refuses, the loop seat on that vendor yields first. It pushes what is green and waits, and no loop seat starts there while an overhaul seat waits for room.
-- Dropped with Cursor: the `composer-2.5` trial rule, and the rule on the Cursor CLI's stored default model.
+- Dropped with Cursor: the `composer-2.5` trial rule, and the rule on the Cursor CLI's stored default model. *Corrected Wed 18 Nov:* the stored-default rule stands for #341's and #342's Cursor seats until both close.
 
 Unchanged: PRs 0 and 1 stand as built and reviewed. Beni's word merges. The two rules for a new file under `src/components/`, and the rollback for each PR, stay as written.
 

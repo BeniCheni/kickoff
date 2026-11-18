@@ -1112,8 +1112,11 @@ for Cursor (S7).
 - **The overhaul on two vendors, and the wait rule lifted (Beni, Tue 17 Nov 2026).** Beni
   approved the overhaul's re-routing "as drafted". It is `design-overhaul-plan.md`, section 3,
   "Amended Tue 17 Nov 2026: two vendors, and no seat for Cursor or Grok", in Kickoff PR 340,
-  merged into this branch the same night. It applies the two-vendor rule above to overhaul PRs 1b to 9: Codex
-  builds 1b, 3, 6 and 8, and Claude builds 2, 4, 5, 7 and 9. What it changes for this track:
+  merged into this branch the same night. It applies the two-vendor rule above to overhaul PRs 3
+  to 9: Codex builds 3, 6 and 8, and Claude builds 4, 5, 7 and 9. *Corrected Wed 18 Nov:* PRs 1b
+  and 2 were already building in Cursor when Beni approved it, and he kept both ("Keep both
+  builds"), so #341 and #342 are reviewed under the Sun 15 routing (Pass 1 Claude, Pass 2 Cursor
+  before Thu 19 Nov, Pass 2.5 Codex). What it changes for this track:
   - **The wait rule is lifted.** It came with the overhaul's Sun 15 Nov amendment (under D7,
     above): while Codex built an overhaul PR, this track's Codex builds waited.
   - **In its place, on either vendor,** both tracks may run at once, and an overhaul seat
@@ -1122,7 +1125,9 @@ for Cursor (S7).
     seats starts on that vendor while an overhaul seat waits for room.
   - **It now reaches Claude's seats too.** The overhaul's Claude builds share Claude Max with
     this track's Claude seats, so a Pass 1, a Pass 1.5 or a Pass 2.5 here can be the seat that
-    yields.
+    yields. *Corrected Wed 18 Nov:* this week both vendors carry overhaul seats, since #341 and
+    #342 each take a Claude Pass 1 and a Codex Pass 2.5, so Sprint 3's Codex fix round can be the
+    seat that yields too.
   - **A seat that yields resumes on the same model.** A sprint still never switches seat or
     model mid-build.
 
