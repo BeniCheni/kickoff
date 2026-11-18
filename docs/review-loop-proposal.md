@@ -521,6 +521,14 @@ Cursor's hands this track seats no Cursor.
   rulings and finding 3-1 are under "Rulings received" ("Sprint 3's Pass 3").
 - *Second fix brief:* [`review-loop-sprint-3-fix-2-prompt.md`](review-loop-sprint-3-fix-2-prompt.md),
   for Pass 2 again, as a re-read (Codex in the ChatGPT desktop app, `gpt-6.2-sol`, `xhigh`).
+- *Fixed again (Wed 18 Nov 2026):* the Pass 2 re-read's
+  [record](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-6992207381): two commits to
+  `1f69883`, rulings 1 to 6 and finding 3-1 carried out as the round reports them, 7, 12, 13, 14
+  and 15 left open as deferred, and 73 of 74 single deletions caught, one equivalent, with the
+  list in #8's body.
+- *Re-read brief:* [`review-loop-sprint-3-synthesis-2-prompt.md`](review-loop-sprint-3-synthesis-2-prompt.md),
+  for the Pass 2.5 re-read (Claude Code, `claude-opus-5-5`, `xhigh`), with its sealed appendix as
+  a second paste.
 - *Carried from Sprint 1's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are that
   comment's findings): 6, sequence by the order records were posted, not their presence; 7, every
   pass's `input_sha` is the previous recorded pass's `output_sha`, writing or not, and a head
