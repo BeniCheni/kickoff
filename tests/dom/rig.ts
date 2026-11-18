@@ -87,6 +87,19 @@ export function throwingStorage(): () => void {
 }
 
 /**
+ * A store that reads and will not write: a full quota, or one the browser has made
+ * read-only. `throwingStorage` above refuses the read first, so a write is never tried
+ * under it. Returns the spy, so a test can show the write was attempted, and the restore
+ * function; call it in `finally`.
+ */
+export function refusingWrites() {
+  const setItem = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+    throw new DOMException('The quota has been exceeded.', 'QuotaExceededError')
+  })
+  return { setItem, restore: () => setItem.mockRestore() }
+}
+
+/**
  * Drive the clock the app actually reads. Fake timers take over `Date` and `setTimeout` —
  * only those; React's scheduler keeps its own primitives — then one subscription is held for
  * the test's life so the store re-reads the faked instant now, not when App's first
