@@ -45,7 +45,7 @@ const moving = rules(plain).filter((rule) => /(^|[;\s])transition(-duration)?\s*
 const stilled = rules(reduced).filter((rule) => /transition:\s*none/.test(rule.body)).flatMap((rule) => rule.selectors)
 
 it('every transition the chrome declares is stopped when the system asks for reduced motion', () => {
-  expect(moving).toEqual(expect.arrayContaining(['.theme-disc', '.lens-switch button span', '.imprint-tabs button']))
+  expect(moving).toEqual(expect.arrayContaining(['.imprint-hit', '.theme-disc', '.lens-switch button', '.lens-switch button span', '.imprint-tabs button']))
   for (const selector of moving) expect(stilled, `${selector} keeps its transition under reduced motion`).toContain(selector)
 })
 
@@ -53,4 +53,36 @@ it('the chrome keeps to the state budget: 150, 180 and 220 ms', () => {
   const durations = [...plain.matchAll(/transition[^;{}]*;/g)].flatMap((match) => match[0].match(/\d+ms/g) ?? [])
   expect(durations.length).toBeGreaterThan(0)
   for (const duration of durations) expect(['150ms', '180ms', '220ms']).toContain(duration)
+})
+
+/** The declarations of the first rule whose selector list is exactly `selector`, @media blocks included. */
+function declarations(selector: string): string {
+  const found = rules(css.replace(/@media[^{]*\{/g, '')).find((rule) => rule.selectors.join(', ') === selector)
+  expect(found, `no rule for ${selector}`).toBeDefined()
+  return found!.body
+}
+
+it('hover and pressed are 150 ms ink shifts between the band’s own voices', () => {
+  // One duration per property: ink 150, the lens thumb's fill 180, the theme disc's fill 220.
+  expect(declarations('.imprint-hit')).toContain('transition: color 150ms ease')
+  expect(declarations('.lens-switch button')).toContain('transition: color 150ms ease')
+  expect(declarations('.imprint-tabs button')).toContain('transition: color 150ms ease, box-shadow 150ms ease')
+  expect(declarations('.lens-switch button span')).toContain('transition: background-color 180ms cubic-bezier(.2, .7, .2, 1);')
+  expect(declarations('.theme-disc')).toContain('transition: background-color 220ms ease;')
+
+  const shifts: Array<[string, string]> = [
+    ['.imprint-hit:hover', '--band-pitch'],
+    [".lens-switch button[aria-checked='false']:hover, .imprint-tabs button:not([aria-current='page']):hover", '--band-ink'],
+    ['.imprint-hit:active', '--band-muted'],
+    [".lens-switch button[aria-checked='false']:active, .imprint-tabs button:not([aria-current='page']):active", '--band-pitch'],
+  ]
+  for (const [selector, voice] of shifts) {
+    // Ink only: colour, and nothing that scales, glows or repaints the ground.
+    expect(declarations(selector).trim(), selector).toBe(`color: var(${voice});`)
+  }
+  // Hover is fenced to pointers that hover; pressed is not, and comes after it so it wins.
+  const hover = css.indexOf('@media (hover: hover)')
+  expect(hover).toBeGreaterThan(-1)
+  expect(css.indexOf('.imprint-hit:hover')).toBeGreaterThan(hover)
+  expect(css.indexOf('.imprint-hit:active')).toBeGreaterThan(css.indexOf('.imprint-hit:hover'))
 })

@@ -309,6 +309,7 @@ html {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  transition: color 150ms ease;
 }
 .imprint-name {
   position: absolute;
@@ -332,7 +333,7 @@ html {
   place-items: center;
 }
 .theme-disc {
-  transition: background-color 220ms ease, color 220ms ease;
+  transition: background-color 220ms ease;
 }
 .motion-disc svg,
 .theme-disc svg {
@@ -382,13 +383,14 @@ html {
   font-size: 10px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  transition: color 150ms ease;
 }
 .lens-switch button span {
   display: grid;
   place-items: center;
   height: 23px;
   border-radius: 999px;
-  transition: background-color 180ms cubic-bezier(.2, .7, .2, 1), color 180ms cubic-bezier(.2, .7, .2, 1);
+  transition: background-color 180ms cubic-bezier(.2, .7, .2, 1);
 }
 .lens-switch button[aria-checked='true'] {
   color: var(--band-ground);
@@ -445,13 +447,40 @@ html {
   box-shadow: inset 0 -2.5px 0 var(--band-pitch);
 }
 /*
+ * Hover and pressed are ink shifts in 150 ms (handoff 5). Nothing scales or
+ * glows and no ink is mixed: the band's three voices trade places. A disc
+ * rests in ink, so it goes to pitch under the pointer and to muted ink while
+ * held. A lens or a tab that is not the current one rests in muted ink, so it
+ * goes to ink, then to pitch. Each property has one duration: ink is 150, the
+ * lens thumb's fill 180, the theme disc's fill 220. Hover is for pointers
+ * that hover, so a tap leaves nothing behind.
+ */
+@media (hover: hover) {
+  .imprint-hit:hover {
+    color: var(--band-pitch);
+  }
+  .lens-switch button[aria-checked='false']:hover,
+  .imprint-tabs button:not([aria-current='page']):hover {
+    color: var(--band-ink);
+  }
+}
+.imprint-hit:active {
+  color: var(--band-muted);
+}
+.lens-switch button[aria-checked='false']:active,
+.imprint-tabs button:not([aria-current='page']):active {
+  color: var(--band-pitch);
+}
+/*
  * A system that asks for reduced motion gets the band's state changes at once,
  * as the first edition's switcher gave them. This is not the reader's motion
  * control: that switch stops the decorative layer, and state changes keep
  * running under it.
  */
 @media (prefers-reduced-motion: reduce) {
+  .imprint-hit,
   .theme-disc,
+  .lens-switch button,
   .lens-switch button span,
   .imprint-tabs button {
     transition: none;

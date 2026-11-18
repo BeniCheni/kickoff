@@ -767,6 +767,81 @@ export async function proveChrome(browser, origins) {
   return rows
 }
 
+// Hover and pressed, sampled as a reader makes them: the pointer rests on the control,
+// then the button is held. A disc rests in ink; a lens or tab that is not current rests
+// in muted ink. Each state is named by the band voice its ink equals.
+const FEEDBACK_CONTROLS = [
+  { name: 'motion', selector: '.motion-control', states: ['ink', 'pitch', 'muted'] },
+  { name: 'theme', selector: '.theme-toggle', states: ['ink', 'pitch', 'muted'] },
+  { name: 'inactive lens', selector: '.lens-switch button[aria-checked="false"]', states: ['muted', 'ink', 'pitch'] },
+  { name: 'inactive tab', selector: '.imprint-tabs button:not([aria-current])', states: ['muted', 'ink', 'pitch'] },
+]
+
+/** `sample` is { rest, hover, held }, each { ink, ground, shadow, voices }. Ink must move
+ *  to the expected voice at each step, and nothing but ink may move. */
+export function feedbackFaults(control, sample) {
+  const faults = []
+  const steps = ['rest', 'hover', 'held']
+  steps.forEach((step, i) => {
+    const expected = control.states[i]
+    const state = sample[step]
+    const voice = Object.entries(state.voices).find(([, color]) => color === state.ink)?.[0] ?? state.ink
+    if (voice !== expected) faults.push(`${control.name} ${step} ink is ${voice}, expected ${expected}`)
+  })
+  for (const step of ['hover', 'held']) {
+    if (sample[step].ground !== sample.rest.ground) faults.push(`${control.name} ${step} repaints its ground`)
+    if (sample[step].shadow !== sample.rest.shadow) faults.push(`${control.name} ${step} changes its shadow`)
+  }
+  return faults
+}
+
+export async function proveFeedback(browser, origins) {
+  const rows = []
+  const settle = () => new Promise((resolve) => setTimeout(resolve, 260))
+  for (const [app, origin] of Object.entries(origins)) for (const lens of ['poster', 'ledger']) for (const theme of ['light', 'dark']) {
+    const id = `${app}-${lens}-${theme}`
+    const { context, page } = await openPage(browser, `${origin}/?lens=${lens}`, theme, 1000)
+    try {
+      for (const control of FEEDBACK_CONTROLS) {
+        const read = () => page.evaluate((selector) => {
+          const el = document.querySelector(selector)
+          const band = el.closest('header')
+          const probe = band.appendChild(document.createElement('i'))
+          const voice = (name) => { probe.style.color = `var(${name})`; return getComputedStyle(probe).color }
+          const voices = { ink: voice('--band-ink'), muted: voice('--band-muted'), pitch: voice('--band-pitch') }
+          probe.remove()
+          const style = getComputedStyle(el)
+          return { ink: style.color, ground: style.backgroundColor, shadow: style.boxShadow, voices }
+        }, control.selector)
+        await page.mouse.move(4, 500)
+        await settle()
+        const rest = await read()
+        const box = await (await page.$(control.selector)).boundingBox()
+        await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
+        await settle()
+        const hover = await read()
+        await page.mouse.down()
+        await settle()
+        const held = await read()
+        // Leave before releasing, so the press never becomes a click.
+        await page.mouse.move(4, 500)
+        await page.mouse.up()
+        const faults = feedbackFaults(control, { rest, hover, held })
+        assert.deepEqual(faults, [], `${id} ${faults.join('; ')}`)
+        rows.push({ id, control: control.name, stock: await page.evaluate(() => document.querySelector('header').dataset.stock), rest: rest.ink, hover: hover.ink, held: held.ink })
+      }
+      const focus = await page.evaluate(() => {
+        const el = document.querySelector('.motion-control')
+        el.focus({ focusVisible: true })
+        const style = getComputedStyle(el)
+        return { visible: el.matches(':focus-visible'), outline: `${style.outlineWidth} ${style.outlineStyle}` }
+      })
+      assert.deepEqual(focus, { visible: true, outline: '2px solid' }, `${id} keyboard focus ring`)
+    } finally { await context.close() }
+  }
+  return rows
+}
+
 export async function proveMotion(browser, origin, out) {
   const specs = [
     { id: 'stored-on', motion: 'on', reduced: false, expect: 'on', name: 'Stop motion' },
@@ -831,7 +906,7 @@ async function main() {
   // holds every step and cell that passed before it.
   const matrix = emptyMatrix()
   const weekRun = { cells: [], contrast: [] }
-  const steps = { motion: null, chrome: null, requests: null, offline: null, harness: null }
+  const steps = { motion: null, chrome: null, feedback: null, requests: null, offline: null, harness: null }
   const receipt = () => {
     const contrastCells = [...matrix.contrast, ...weekRun.contrast]
     return {
@@ -845,6 +920,7 @@ async function main() {
   try {
     steps.motion = await proveMotion(browser, origins.vite, out)
     steps.chrome = await proveChrome(browser, origins)
+    steps.feedback = await proveFeedback(browser, origins)
     await runMatrix(browser, { origins, out, anchor, contrast: true }, matrix)
     assert.equal(matrix.cells.length, 96)
     await captureWeeks(browser, { origins, out, weeks, contrast: true }, weekRun)
