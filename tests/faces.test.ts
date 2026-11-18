@@ -149,6 +149,15 @@ it('refuses to inline LOCAL() and a source that mixes local() with a url', () =>
   expect(() => inlineFaceCss(mixed, () => Buffer.from('x'))).toThrow(/local\(/i)
 })
 
+it('refuses a second src declaration and a local() source with no semicolon', () => {
+  const second = '@font-face { font-family: "Oswald"; font-style: normal; font-weight: 500; font-display: swap; unicode-range: U+0000-00FF; src: url("./fonts/oswald/Oswald.woff2") format("woff2"); src: local("Arial"); }'
+  const bare = '@font-face { font-family: "Oswald"; font-style: normal; font-weight: 500; font-display: swap; unicode-range: U+0000-00FF; src: local("Arial") }'
+  expect(() => inlineFaceCss(second, () => Buffer.from('x'))).toThrow(/local\(/i)
+  expect(() => nextFacesCss(second)).toThrow(/local\(/i)
+  expect(() => inlineFaceCss(bare, () => Buffer.from(''))).toThrow(/local\(/i)
+  expect(() => nextFacesCss(bare)).toThrow(/local\(/i)
+})
+
 it('the Next copy refuses local(), LOCAL(), and a mixed source', () => {
   for (const src of ['local("Arial")', 'LOCAL("Arial")', 'local("Arial"), url("./fonts/oswald/Oswald.woff2")']) {
     const css = `@font-face { font-family: "Oswald"; font-style: normal; font-weight: 500; font-display: swap; src: ${src}; }`

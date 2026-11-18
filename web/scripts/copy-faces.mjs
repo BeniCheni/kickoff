@@ -9,19 +9,11 @@ const repoRoot = path.join(webRoot, '..')
 // urls. The Next app is served from the domain root, including routes below /,
 // so the copy it serves uses root urls. The file name after /fonts/ is the same.
 // The directory copy includes both halves. unicode-range is left as written.
-function localFaceSources(css) {
-  const found = []
-  for (const match of css.matchAll(/@font-face\s*\{([^}]+)\}/g)) {
-    const src = match[1].match(/src:\s*([^;]+);/)?.[1] ?? ''
-    if (/local\(/i.test(src)) found.push(src.trim())
-  }
-  return found
-}
-
 export function nextFacesCss(css) {
-  const local = localFaceSources(css)
-  if (local.length) {
-    throw new Error(`A local() face is not copied (${local.join('; ')}).`)
+  // The whole stylesheet, in any letter case. A second src, and a src with
+  // no trailing semicolon, both fail here. The per-rule scan did not see them.
+  if (/local\(/i.test(css)) {
+    throw new Error('A local() face is not copied.')
   }
   return css.replaceAll('url("./fonts/', 'url("/fonts/')
 }

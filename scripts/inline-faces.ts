@@ -31,7 +31,6 @@ interface Face {
   style: string
   weight: string
   src: string
-  declared: string
   range: string
 }
 
@@ -46,7 +45,7 @@ function faces(css: string): Face[] {
     const range = value('unicode-range') ?? ''
     const src = declared.match(/url\("([^"]+)"\)/)?.[1]
     if (!family || !style || !weight || !declared) throw new Error('A face is missing family, style, weight or src')
-    return { family, style, weight, src: src ?? declared, declared, range }
+    return { family, style, weight, src: src ?? declared, range }
   })
 }
 
@@ -77,11 +76,12 @@ function selected(face: Face): boolean {
 // which Oswald does not contain, and changed the loaded page (e34e032). A later
 // fallback has to carry its unicode-range into this function before it can ship.
 export function inlineFaceCss(css: string, read: (src: string) => Buffer): string {
-  const parsed = faces(css)
-  const local = parsed.filter(face => /local\(/i.test(face.declared))
-  if (local.length) {
-    throw new Error(`A local() face is not inlined (${local.map(face => face.family).join(', ')}). Carry its unicode-range into the offline file before shipping one.`)
+  // The whole stylesheet, not the first src of a rule. A second src, and a
+  // src with no trailing semicolon, both have to fail this.
+  if (/local\(/i.test(css)) {
+    throw new Error('A local() face is not inlined. Carry its unicode-range into the offline file before shipping one.')
   }
+  const parsed = faces(css)
   const bySrc = new Map<string, { face: Face, weights: number[] }>()
   for (const face of parsed) {
     if (!selected(face)) continue
