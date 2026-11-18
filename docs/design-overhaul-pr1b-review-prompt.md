@@ -558,3 +558,16 @@ From the PM seat, read only, nothing run:
 - P15: the new gate comment calls the gate an estimate and lists its limits, and the old paragraph on what FontFace.status can and cannot tell was removed. Pass 1's question (f) asked that the rule be stated. Say whether the comment at the tip still states it.
 - P16: Pass 2's corrected B7 line covers the original head and the base, not the tip, though the tip reorders every pair. Your own tip measurement decides whether that line can stand in the squash body as written.
 ````
+
+### Addendum after delivery (Wed 18 Nov 2026, about 1:40 PM EST)
+
+After the opener above went out, the PR 2 planner claimed ports 7473 to 7675 and three
+worktrees for #342's own Pass 2.5 (recorded at 9e59023 in
+`docs/design-overhaul-pr2-review-prompt.md`): `kickoff-pr342-pass25`, `kickoff-pr342-pass25-e82`
+and `kickoff-pr342-pass25-base`. The opener's do-not-touch glob, "every kickoff-pr2* worktree",
+does not match those names. The block stays as delivered; this line was sent to the #341
+Pass 2.5 session, or appended before pasting:
+
+```text
+Addendum from the PM seat: ports 7473 to 7675 and the worktrees kickoff-pr342-pass25, kickoff-pr342-pass25-e82 and kickoff-pr342-pass25-base belong to #342's Pass 2.5. Add them to the list you must not touch, build in, stop or reuse. Your own ports stay 7173 to 7375.
+```
