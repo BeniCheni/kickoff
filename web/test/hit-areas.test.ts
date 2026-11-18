@@ -1,12 +1,134 @@
 import { expect, test } from 'vitest'
-import { hitAreaFaults, momentsPaintFaults } from '../scripts/evidence.mjs'
+import { bandFaults, hitAreaFaults, momentsPaintFaults, pinFaults, revealFaults } from '../scripts/evidence.mjs'
+
+const box = (name: string, left: number, top: number, w: number, h = 44) => ({ name, left, top, right: left + w, bottom: top + h, w, h })
 
 test('a 44px control passes, a short one fails, and a shared edge is not an overlap', () => {
-  const ok = { name: 'Stop motion', left: 0, top: 0, right: 44, bottom: 44, w: 44, h: 44 }
-  const next = { name: 'Dark mode', left: 44, top: 0, right: 88, bottom: 44, w: 44, h: 44 }
+  const ok = box('Stop motion', 0, 0, 44)
+  const next = box('Dark mode', 44, 0, 44)
   expect(hitAreaFaults([ok, next])).toEqual([])
-  expect(hitAreaFaults([{ ...ok, w: 26, h: 26 }])).toEqual(['Stop motion 26.0×26.0'])
+  expect(hitAreaFaults([{ ...ok, w: 26, h: 26 }])).toEqual(['Stop motion 26.00×26.00'])
   expect(hitAreaFaults([ok, { ...next, left: 40, right: 84 }])).toEqual(['Stop motion overlaps Dark mode'])
+})
+
+test('H1 is 44, not 43.5, and H2 has no half-pixel of grace', () => {
+  // The layout unit is a sixty-fourth of a pixel. One unit short is short.
+  expect(hitAreaFaults([box('a', 0, 0, 44 - 1 / 64, 44)])).toEqual(['a 43.98×44.00'])
+  expect(hitAreaFaults([box('a', 0, 0, 43.99, 43.99)])).toEqual(['a 43.99×43.99'])
+  expect(hitAreaFaults([box('a', 0, 0, 43.5, 43.5)])).toEqual(['a 43.50×43.50'])
+  expect(hitAreaFaults([box('a', 0, 0, 44), box('b', 43.5, 0, 44)])).toEqual(['a overlaps b'])
+  expect(hitAreaFaults([box('a', 0, 0, 44), box('b', 43.98, 0, 44)])).toEqual(['a overlaps b'])
+  expect(hitAreaFaults([box('a', 0, 0, 44), box('b', 44, 0, 44)])).toEqual([])
+  expect(hitAreaFaults([box('a', 0, 0, 44), box('b', 0, 44, 44)])).toEqual([])
+})
+
+/** The band as measured at 360: 133 tall, the provenance wrapped under the tab row. */
+function band(tabs = ['Fixtures', 'Table', 'Moments']) {
+  let left = 16
+  const tabBoxes = tabs.map((name) => { const tab = { ...box(name, left, 44, 80), row: 'tabs' }; left += 84; return tab })
+  return {
+    landmark: true, className: 'imprint-band', box: { left: 0, top: 0, width: 360, height: 133 }, innerWidth: 360, height: 133,
+    rows: [{ name: 'controls', top: 0, bottom: 44, h: 44 }, { name: 'tabs', top: 44, bottom: 88, h: 44 }],
+    controls: [
+      { ...box('Stop motion', 116, 0, 44), row: 'controls' }, { ...box('Dark mode', 160, 0, 44), row: 'controls' },
+      { ...box('Poster', 204, 0, 57), row: 'controls' }, { ...box('Ledger', 261, 0, 57), row: 'controls' },
+      ...tabBoxes,
+    ],
+    provenance: { top: 88, bottom: 133 },
+    data: [
+      { name: 'wordmark', rects: [box('', 16, 8, 67, 22)] },
+      { name: 'strap', rects: [box('', 16, 31, 62, 10)] },
+      { name: 'provenance line', rects: [box('', 16, 96, 150, 15), box('', 16, 111, 190, 15)] },
+    ],
+  }
+}
+
+test('the band passes whole, with three tabs online and two offline', () => {
+  expect(bandFaults(band())).toEqual([])
+  expect(bandFaults(band(['Fixtures', 'Table']), { tabs: ['Fixtures', 'Table'] })).toEqual([])
+  // The offline file holds two tabs, and the online shell is not excused a third.
+  expect(bandFaults(band(['Fixtures', 'Table']))).toEqual(['controls are [Stop motion, Dark mode, Poster, Ledger, Fixtures, Table], expected [Stop motion | Start motion, Dark mode | Light mode, Poster, Ledger, Fixtures, Table, Moments]'])
+  expect(bandFaults(band(), { tabs: ['Fixtures', 'Table'] })[0]).toContain('expected [Stop motion | Start motion, Dark mode | Light mode, Poster, Ledger, Fixtures, Table]')
+})
+
+test('a missing band, landmark, row or control is a fault and never a skipped gate', () => {
+  expect(bandFaults(null)).toEqual(['the band is missing'])
+  expect(bandFaults({ ...band(), landmark: false })).toEqual(['the band has lost its header landmark, data-moments-background="header"'])
+  const noTheme = band()
+  noTheme.controls.splice(1, 1)
+  expect(bandFaults(noTheme)).toEqual(['controls are [Stop motion, Poster, Ledger, Fixtures, Table, Moments], expected [Stop motion | Start motion, Dark mode | Light mode, Poster, Ledger, Fixtures, Table, Moments]'])
+  const noRow = band()
+  noRow.rows.pop()
+  expect(bandFaults(noRow)).toContain('rows are [controls], expected [controls, tabs]')
+  const swapped = band()
+  ;[swapped.controls[2], swapped.controls[3]] = [swapped.controls[3]!, swapped.controls[2]!]
+  expect(bandFaults(swapped)[0]).toContain('controls are [Stop motion, Dark mode, Ledger, Poster,')
+  expect(bandFaults({ ...band(), box: { left: 20, top: 0, width: 320, height: 133 } })).toEqual(['the band is 320.00 wide at 20.00, and the page is 360'])
+})
+
+test('H3: nine pixels before the tab row breaks the 44px pitch', () => {
+  const pushed = band()
+  pushed.rows[1] = { name: 'tabs', top: 53, bottom: 97, h: 44 }
+  pushed.provenance = { top: 97, bottom: 142 }
+  for (const control of pushed.controls.slice(4)) { control.top += 9; control.bottom += 9 }
+  for (const rect of pushed.data[2]!.rects) { rect.top += 9; rect.bottom += 9 }
+  expect(bandFaults(pushed)).toEqual(['the tab row sits 53.00 below the control row, expected a 44px pitch'])
+})
+
+test('H4: tabs moved thirty pixels down cover the provenance line', () => {
+  const moved = band()
+  moved.rows[1] = { name: 'tabs', top: 74, bottom: 118, h: 44 }
+  for (const control of moved.controls.slice(4)) { control.top += 30; control.bottom += 30 }
+  expect(bandFaults(moved)).toEqual([
+    'the tab row sits 74.00 below the control row, expected a 44px pitch',
+    "the provenance line starts at 88.00, above the tab row's foot at 118.00",
+    'Fixtures covers the provenance line',
+    'Table covers the provenance line',
+    'Moments covers the provenance line',
+  ])
+  // A tab that slides alone leaves its row and is caught without the row moving.
+  const one = band()
+  one.controls[4]!.top += 30
+  one.controls[4]!.bottom += 30
+  expect(bandFaults(one)).toEqual(['Fixtures at 74.00 to 118.00 leaves the tabs row', 'Fixtures covers the provenance line'])
+})
+
+test('the drawn contract: a disc is 44 wide and a lens segment 57', () => {
+  const thin = band()
+  Object.assign(thin.controls[2]!, { w: 50, right: 254 })
+  expect(bandFaults(thin)).toEqual(['Poster hit area is 50.00×44.00, expected 57×44'])
+  const short = band()
+  Object.assign(short.controls[5]!, { h: 40, bottom: 84 })
+  expect(bandFaults(short)).toEqual(['Table hit area is 80.00×40.00, expected at least 44×44', 'Table 80.00×40.00'])
+})
+
+test('pinned rows: flush under what pins above them, and topmost at their own centre', () => {
+  const pinned = {
+    band: { top: 0, bottom: 133 },
+    labels: { name: 'labels', top: 133, bottom: 161, topmost: 'itself' },
+    divider: { name: 'Knockout play-offs', top: 161, bottom: 188.5, topmost: 'itself' },
+    focus: { text: 'W', focusVisible: true, top: 127.4, topmost: 'itself' },
+  }
+  expect(pinFaults(pinned)).toEqual([])
+  expect(pinFaults({ ...pinned, divider: null, focus: undefined })).toEqual([])
+  // The reviewed head: both rows pinned at the top of the page, behind the band.
+  expect(pinFaults({
+    band: { top: 0, bottom: 133 },
+    labels: { name: 'labels', top: 0, bottom: 28, topmost: 'the band' },
+    divider: { name: 'Knockout play-offs', top: 28, bottom: 55.5, topmost: 'the band' },
+    focus: { text: 'W', focusVisible: true, top: 9.4, topmost: 'the band' },
+  })).toEqual([
+    'the labels are under the band',
+    'the labels pin at 0.00, and the band ends at 133.00',
+    'the Knockout play-offs divider is under the band',
+    'the focused W sort is under the band',
+  ])
+})
+
+test('a control focused behind the band is brought out to the band’s foot', () => {
+  expect(revealFaults({ text: '2:30 PM Bayern', before: 20, top: 118, band: 118, topmost: 'itself' })).toEqual([])
+  expect(revealFaults({ text: '2:30 PM Bayern', before: 20, top: 20, band: 118, topmost: 'the band' }))
+    .toEqual(['"2:30 PM Bayern" took focus at 20.00 and rests at 20.00, under the band; the band ends at 118.00'])
 })
 
 test('Moments paint: pulp ground and pulp-ink pass; the first edition’s ground or ink is a fault', () => {

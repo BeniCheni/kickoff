@@ -1,8 +1,10 @@
 // The evidence runner later overhaul PRs extend. Same Chrome, same two origins, and the
 // same open discipline as the clearing. PNGs and receipt.json stay outside the repo.
 //
-// Hit areas and the motion control's first frame are measured here. The flash gate,
-// the title-swap watch and the phone bench stay for the PRs that need them.
+// The band's contract (H1 to H4), the Table's pinned rows, the motion control's first
+// frame, the chrome's reduced-motion and hover paths and the banner's two planes are
+// measured here. The flash gate, the title-swap watch and the phone bench stay for the
+// PRs that need them.
 //
 //   node web/scripts/evidence.mjs [outDir] [--enforce]
 //
@@ -235,39 +237,264 @@ export function emptyMatrix() {
   return { cells: [], legacy: [], measurements: [], contrast: [] }
 }
 
-/** Band controls only. A box under 44, or two boxes that overlap, is a fault.
+// The band's contract (handoff section 5, H1 to H4), measured. Chrome lays out in
+// sixty-fourths of a pixel, so a box drawn at 44 reads 44 exactly; the tolerance is
+// for floating point alone and is smaller than one layout unit.
+const HIT = 44
+const EPSILON = 0.005
+
+/** H1 and H2. A box under 44 either way, or two boxes that overlap, is a fault.
  *  Touching edges are not an overlap. The week stepper is outside the band. */
 export function hitAreaFaults(boxes) {
   const faults = []
   for (const box of boxes) {
-    if (box.w < 43.5 || box.h < 43.5) faults.push(`${box.name} ${box.w.toFixed(1)}×${box.h.toFixed(1)}`)
+    if (box.w < HIT - EPSILON || box.h < HIT - EPSILON) faults.push(`${box.name} ${box.w.toFixed(2)}×${box.h.toFixed(2)}`)
   }
   for (let i = 0; i < boxes.length; i += 1) {
     for (let j = i + 1; j < boxes.length; j += 1) {
-      const a = boxes[i]
-      const b = boxes[j]
-      const overlap = a.left < b.right - 0.5 && b.left < a.right - 0.5 && a.top < b.bottom - 0.5 && b.top < a.bottom - 0.5
-      if (overlap) faults.push(`${a.name} overlaps ${b.name}`)
+      if (overlaps(boxes[i], boxes[j])) faults.push(`${boxes[i].name} overlaps ${boxes[j].name}`)
     }
   }
   return faults
 }
 
+function overlaps(a, b) {
+  return a.left < b.right - EPSILON && b.left < a.right - EPSILON && a.top < b.bottom - EPSILON && b.top < a.bottom - EPSILON
+}
+
+const near = (a, b) => Math.abs(a - b) <= EPSILON
+
+/** The control row, then the tab row. `tabs` is the shell's own set: three online, two offline. */
+export function expectedControls(tabs = ['Fixtures', 'Table', 'Moments']) {
+  return [
+    { name: /^(Stop|Start) motion$/, label: 'Stop motion | Start motion', row: 'controls', w: HIT },
+    { name: /^(Dark|Light) mode$/, label: 'Dark mode | Light mode', row: 'controls', w: HIT },
+    { name: /^Poster$/, label: 'Poster', row: 'controls', w: 57 },
+    { name: /^Ledger$/, label: 'Ledger', row: 'controls', w: 57 },
+    ...tabs.map((tab) => ({ name: new RegExp(`^${tab}$`), label: tab, row: 'tabs', w: null })),
+  ]
+}
+
+/**
+ * Everything the gate requires of one shell's band. A band that is missing, or that has
+ * lost a control or a row, is a fault: the gate has nothing to skip.
+ *   H1  every hit area at least 44 × 44, and the drawn contract (44, 44, 57, 57; tabs 44 tall)
+ *   H2  no two hit areas overlap
+ *   H3  the control row and the tab row are each 44 tall, on a 44 px pitch
+ *   H4  no hit area covers the wordmark, the strap or the provenance line
+ */
+export function bandFaults(band, { tabs } = {}) {
+  if (!band) return ['the band is missing']
+  const faults = []
+  if (!band.landmark) faults.push('the band has lost its header landmark, data-moments-background="header"')
+  if (!band.className.split(/\s+/).includes('imprint-band')) faults.push('the band has lost its imprint-band class')
+  if (!near(band.box.left, 0) || !near(band.box.width, band.innerWidth)) {
+    faults.push(`the band is ${band.box.width.toFixed(2)} wide at ${band.box.left.toFixed(2)}, and the page is ${band.innerWidth}`)
+  }
+
+  const rowNames = band.rows.map((row) => row.name)
+  const [controlRow, tabRow] = band.rows
+  if (rowNames.join(',') !== 'controls,tabs') faults.push(`rows are [${rowNames.join(', ')}], expected [controls, tabs]`)
+  else {
+    for (const row of band.rows) if (!near(row.h, HIT)) faults.push(`the ${row.name} row is ${row.h.toFixed(2)} tall, expected ${HIT}`)
+    const pitch = tabRow.top - controlRow.top
+    if (!near(pitch, HIT)) faults.push(`the tab row sits ${pitch.toFixed(2)} below the control row, expected a ${HIT}px pitch`)
+    if (!band.provenance) faults.push('the band has no provenance line')
+    else if (band.provenance.top < tabRow.bottom - EPSILON) {
+      faults.push(`the provenance line starts at ${band.provenance.top.toFixed(2)}, above the tab row's foot at ${tabRow.bottom.toFixed(2)}`)
+    }
+  }
+
+  const expected = expectedControls(tabs)
+  const names = band.controls.map((control) => control.name)
+  const ordered = names.length === expected.length && expected.every((want, i) => want.name.test(names[i]))
+  if (!ordered) faults.push(`controls are [${names.join(', ')}], expected [${expected.map((want) => want.label).join(', ')}]`)
+  else {
+    band.controls.forEach((control, i) => {
+      const want = expected[i]
+      const row = band.rows.find((candidate) => candidate.name === want.row)
+      if (control.row !== want.row) faults.push(`${control.name} is in the ${control.row ?? 'no'} row, expected ${want.row}`)
+      else if (row && (control.top < row.top - EPSILON || control.bottom > row.bottom + EPSILON)) {
+        faults.push(`${control.name} at ${control.top.toFixed(2)} to ${control.bottom.toFixed(2)} leaves the ${want.row} row`)
+      }
+      if (!near(control.h, HIT) || (want.w !== null && !near(control.w, want.w))) {
+        faults.push(`${control.name} hit area is ${control.w.toFixed(2)}×${control.h.toFixed(2)}, expected ${want.w ?? 'at least 44'}×${HIT}`)
+      }
+      const before = band.controls[i - 1]
+      if (before && before.row === control.row && control.left < before.left) faults.push(`${control.name} is drawn before ${before.name}`)
+    })
+  }
+
+  faults.push(...hitAreaFaults(band.controls))
+  for (const control of band.controls) for (const line of band.data) {
+    if (line.rects.some((rect) => overlaps(control, rect))) faults.push(`${control.name} covers the ${line.name}`)
+  }
+  return [...new Set(faults)]
+}
+
 async function bandGeometry(page) {
   return page.evaluate(() => {
-    const header = document.querySelector('header[data-moments-background="header"]')
+    const header = document.querySelector('header.imprint-band') ?? document.querySelector('header')
     if (!header) return null
+    const box = (rect) => ({ left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom, w: rect.width, h: rect.height })
+    // The name as written. innerText would apply text-transform, and textContent would
+    // read the label the Next shell renders for the other state and hides.
+    const shownText = (el) => {
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT)
+      let text = ''
+      for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+        if (node.parentElement.checkVisibility()) text += node.textContent
+      }
+      return text.replace(/\s+/g, ' ').trim()
+    }
     const controls = [...header.querySelectorAll('button')].map((el) => {
-      const box = el.getBoundingClientRect()
-      const name = (el.getAttribute('aria-label') || el.innerText || '').replace(/\s+/g, ' ').trim()
-      return { name, left: box.left, top: box.top, right: box.right, bottom: box.bottom, w: box.width, h: box.height }
+      const name = el.getAttribute('aria-label') || shownText(el)
+      return { name, row: el.closest('[data-imprint-row]')?.getAttribute('data-imprint-row') ?? null, ...box(el.getBoundingClientRect()) }
     })
-    const rows = [...header.querySelectorAll('[data-imprint-row]')].map((el) => ({
-      name: el.getAttribute('data-imprint-row'),
-      h: el.getBoundingClientRect().height,
-    }))
-    return { controls, rows, height: header.getBoundingClientRect().height }
+    const rows = [...header.querySelectorAll('[data-imprint-row]')].map((el) => {
+      const rect = el.getBoundingClientRect()
+      return { name: el.getAttribute('data-imprint-row'), top: rect.top, bottom: rect.bottom, h: rect.height }
+    })
+    // The lines of data in the band, as the boxes their text is drawn in.
+    const lines = (name, el) => {
+      if (!el) return []
+      const range = document.createRange()
+      range.selectNodeContents(el)
+      return [{ name, rects: [...range.getClientRects()].filter((rect) => rect.width >= 1 && rect.height >= 1).map(box) }]
+    }
+    const provenance = header.querySelector('[data-provenance]')
+    const rect = header.getBoundingClientRect()
+    return {
+      landmark: header.getAttribute('data-moments-background') === 'header',
+      className: header.className,
+      box: { left: rect.left, top: rect.top, width: rect.width, height: rect.height },
+      innerWidth,
+      height: rect.height,
+      controls, rows,
+      provenance: provenance ? { top: provenance.getBoundingClientRect().top, bottom: provenance.getBoundingClientRect().bottom } : null,
+      data: [
+        ...lines('wordmark', header.querySelector('.wordmark-name')),
+        ...lines('strap', header.querySelector('.wordmark-strap')),
+        ...lines('provenance line', provenance),
+      ],
+    }
   })
+}
+
+/** The gate, for one cell of any shell. */
+async function assertBand(page, id, tabs) {
+  const band = await bandGeometry(page)
+  const faults = bandFaults(band, { tabs })
+  assert.deepEqual(faults, [], `${id} ${faults.join('; ')}`)
+  return band
+}
+
+// The Table's pinned rows, with the page scrolled into its deepest zone. The band is
+// pinned above them; a pinned row behind it is H4 broken where a static cell cannot see it.
+/** `state` is what the scrolled page showed. Each pinned row has to be the topmost
+ *  element at its own centre, starting at the foot of what pins above it. */
+export function pinFaults(state) {
+  const faults = []
+  const { band, labels, divider, focus } = state
+  if (labels.topmost !== 'itself') faults.push(`the labels are under ${labels.topmost}`)
+  if (!near(labels.top, band.bottom)) faults.push(`the labels pin at ${labels.top.toFixed(2)}, and the band ends at ${band.bottom.toFixed(2)}`)
+  if (divider) {
+    if (divider.topmost !== 'itself') faults.push(`the ${divider.name} divider is under ${divider.topmost}`)
+    if (!near(divider.top, labels.bottom)) faults.push(`the ${divider.name} divider pins at ${divider.top.toFixed(2)}, and the labels end at ${labels.bottom.toFixed(2)}`)
+  }
+  if (focus) {
+    if (!focus.focusVisible) faults.push(`the focused ${focus.text} sort shows no focus ring`)
+    if (focus.topmost !== 'itself') faults.push(`the focused ${focus.text} sort is under ${focus.topmost}`)
+  }
+  return faults
+}
+
+/** A control that takes focus while it lies behind the band has to be brought out from
+ *  under it: at or below the band's foot, and the topmost element at its own centre. A
+ *  browser leaves a control it counts as visible where it is, so without the page's
+ *  scroll padding the control stays where it was. */
+export function revealFaults(reveal) {
+  if (reveal.top >= reveal.band - EPSILON && reveal.topmost === 'itself') return []
+  return [`"${reveal.text}" took focus at ${reveal.before.toFixed(2)} and rests at ${reveal.top.toFixed(2)}, under ${reveal.topmost === 'itself' ? 'the band' : reveal.topmost}; the band ends at ${reveal.band.toFixed(2)}`]
+}
+
+export async function proveTablePins(browser, origins, anchor = null) {
+  const rows = []
+  for (const [app, origin] of Object.entries(origins)) for (const league of ['ucl', 'pl']) for (const width of [360, 390, 1000]) {
+    const id = `pins-${app}-${league}-${width}`
+    const { context, page, errors } = await openPage(browser, `${origin}/?tab=table&league=${league}`, 'light', width)
+    try {
+      const wide = width >= 768
+      const state = await page.evaluate((layout) => {
+        const table = document.querySelector(`[data-table="${layout}"]`)
+        const bands = [...table.querySelectorAll('[data-zone-band]')]
+        const sizes = bands.map((zone) => zone.querySelectorAll('[data-table-row]').length)
+        const deepest = bands[sizes.indexOf(Math.max(...sizes))]
+        const middle = deepest.querySelectorAll('[data-table-row]')[Math.floor(Math.max(...sizes) / 2)]
+        window.scrollTo(0, middle.getBoundingClientRect().top + window.scrollY - innerHeight / 2)
+        const topmost = (el) => {
+          const rect = el.getBoundingClientRect()
+          const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2)
+          return hit === el || el.contains(hit) ? 'itself' : hit?.closest('header') ? 'the band' : 'another element'
+        }
+        const read = (el, name) => ({ name, top: el.getBoundingClientRect().top, bottom: el.getBoundingClientRect().bottom, topmost: topmost(el) })
+        const header = document.querySelector('header.imprint-band').getBoundingClientRect()
+        const divider = deepest.querySelector('[data-zone-divider]')
+        return {
+          band: { top: header.top, bottom: header.bottom },
+          labels: read(table.querySelector(':scope > .sticky'), 'labels'),
+          divider: divider && getComputedStyle(divider).position === 'sticky' ? read(divider, divider.getAttribute('data-zone-divider')) : null,
+          scrollWidth: document.documentElement.scrollWidth, innerWidth,
+        }
+      }, wide ? 'desktop' : 'mobile')
+      if (wide) {
+        // The first column sort is focused where it is pinned, then Tab moves along the row.
+        await page.evaluate(() => document.querySelector('[data-table="desktop"] > .sticky button').focus({ preventScroll: true }))
+        await page.keyboard.press('Tab')
+        state.focus = await page.evaluate(() => {
+          const el = document.activeElement
+          const rect = el.getBoundingClientRect()
+          const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2)
+          return { text: el.textContent, focusVisible: el.matches(':focus-visible'), top: rect.top, topmost: hit === el || el.contains(hit) ? 'itself' : hit?.closest('header') ? 'the band' : 'another element' }
+        })
+      }
+      const faults = pinFaults(state)
+      assert.deepEqual(faults, [], `${id} ${faults.join('; ')}`)
+      assert.equal(state.scrollWidth, state.innerWidth, id)
+      assert.deepEqual(errors, [], id)
+      rows.push({ id, band: state.band.bottom, labels: state.labels.top, divider: state.divider?.top ?? null, focus: state.focus?.top ?? null })
+    } finally { await context.close() }
+  }
+  // Focus on a control that lies behind the band, on Fixtures, where the band is the only
+  // thing pinned. A fixture row is scrolled to 20px from the top of the page, then focused.
+  for (const [app, origin] of Object.entries(origins)) for (const width of [360, 1000]) {
+    const id = `reveal-${app}-${width}`
+    const { context, page, errors } = await openPage(browser, `${origin}/?lens=ledger${anchor ? `&date=${anchor}` : ''}`, 'light', width)
+    try {
+      const reveal = await page.evaluate(() => {
+        const all = [...document.querySelectorAll('button[aria-expanded]')]
+        const row = all[Math.min(all.length - 1, 12)]
+        if (!row) return null
+        window.scrollTo(0, row.getBoundingClientRect().top + window.scrollY - 20)
+        const before = row.getBoundingClientRect().top
+        row.focus()
+        const rect = row.getBoundingClientRect()
+        const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2)
+        return {
+          text: row.textContent.replace(/\s+/g, ' ').trim().slice(0, 40), before, top: rect.top,
+          band: document.querySelector('header.imprint-band').getBoundingClientRect().bottom,
+          topmost: hit === row || row.contains(hit) ? 'itself' : hit?.closest('header') ? 'the band' : 'another element',
+        }
+      })
+      assert.ok(reveal, `${id} found no fixture row to focus`)
+      assert.ok(reveal.before < reveal.band, `${id} the row was not behind the band before it took focus`)
+      const faults = revealFaults(reveal)
+      assert.deepEqual(faults, [], `${id} ${faults.join('; ')}`)
+      assert.deepEqual(errors, [], id)
+      rows.push({ id, band: reveal.band, before: reveal.before, reveal: reveal.top, row: reveal.text })
+    } finally { await context.close() }
+  }
+  return rows
 }
 
 /** Ruling 19 on the rendered page. The ground is the first opaque background at or
@@ -315,18 +542,14 @@ export async function runMatrix(browser, { origins, out, anchor, contrast = fals
         try {
           const state = await inspect(page)
           assertCell(state, errors, { id, lens, theme, tab })
-          const band = await bandGeometry(page)
-          if (band) {
-            const faults = hitAreaFaults(band.controls)
-            assert.deepEqual(faults, [], `${id} ${faults.join('; ')}`)
-            if (width === 390 && theme === 'light' && tab === 'fixtures') {
-              measurements.push({
-                app, lens,
-                bandHeight: band.height,
-                rows: band.rows,
-                controls: band.controls.map((box) => ({ name: box.name, w: Math.round(box.w * 10) / 10, h: Math.round(box.h * 10) / 10 })),
-              })
-            }
+          const band = await assertBand(page, id)
+          if (width === 390 && theme === 'light' && tab === 'fixtures') {
+            measurements.push({
+              app, lens,
+              bandHeight: band.height,
+              rows: band.rows.map((row) => ({ name: row.name, h: row.h })),
+              controls: band.controls.map((box) => ({ name: box.name, w: Math.round(box.w * 10) / 10, h: Math.round(box.h * 10) / 10 })),
+            })
           }
           if (tab === 'table') assert.ok(await page.$('[data-table-picker]'), id)
           if (tab === 'moments') {
@@ -381,6 +604,7 @@ export async function captureWeeks(browser, { origins, out, weeks, contrast }, r
           try {
             const state = await inspect(page)
             assertCell(state, errors, { id, lens, theme, tab: 'fixtures' })
+            await assertBand(page, id)
             const shown = await shoot(page, path.join(out, `${id}.png`), width)
             if (contrast) contrastCells.push(await measureContrast(page, id, width, shown))
             cells.push({ ...cellReceipt(id, state, errors), week: week.monday, kind })
@@ -572,6 +796,7 @@ export async function captureOffline(browser, out, result = { sizes: {}, cells: 
       // names the address rather than the console's complaint about it.
       assert.deepEqual(escaped, [], `${id} asked for a host`)
       assert.deepEqual(errors, [], id)
+      await assertBand(page, id, ['Fixtures', 'Table'])
       await shoot(page, path.join(out, `${id}.png`), 390)
       cells.push({ id, theme, tab, scrollWidth: state.scrollWidth })
     } finally { await context.close() }
@@ -981,7 +1206,7 @@ async function main() {
   // holds every step and cell that passed before it.
   const matrix = emptyMatrix()
   const weekRun = { cells: [], contrast: [] }
-  const steps = { motion: null, chrome: null, feedback: null, banner: null, requests: null, offline: null, harness: null }
+  const steps = { motion: null, chrome: null, feedback: null, banner: null, pins: null, requests: null, offline: null, harness: null }
   const receipt = () => {
     const contrastCells = [...matrix.contrast, ...weekRun.contrast]
     return {
@@ -997,6 +1222,7 @@ async function main() {
     steps.chrome = await proveChrome(browser, origins)
     steps.feedback = await proveFeedback(browser, origins)
     steps.banner = await proveBanner(browser, origins, out)
+    steps.pins = await proveTablePins(browser, origins, anchor)
     await runMatrix(browser, { origins, out, anchor, contrast: true }, matrix)
     assert.equal(matrix.cells.length, 96)
     await captureWeeks(browser, { origins, out, weeks, contrast: true }, weekRun)
