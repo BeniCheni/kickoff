@@ -513,6 +513,14 @@ Cursor's hands this track seats no Cursor.
 - *Synthesis brief:* [`review-loop-sprint-3-synthesis-prompt.md`](review-loop-sprint-3-synthesis-prompt.md),
   for Pass 2.5 (Claude Code, `claude-opus-5-5`, `xhigh`), with its sealed appendix as a second
   paste.
+- *Synthesized (Wed 18 Nov 2026):* Pass 2.5's
+  [comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-6989421952): *another fix
+  round first*. 17 of Pass 1's findings fixed, 9 in part, five deferrals as ruled, and findings
+  25-1 to 25-7 (2 blocking, 2 should-fix, 3 notes).
+- *Ruled (Wed 18 Nov 2026):* Pass 3's [comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-6990209294), by the Planner for Beni. The
+  rulings and finding 3-1 are under "Rulings received" ("Sprint 3's Pass 3").
+- *Second fix brief:* [`review-loop-sprint-3-fix-2-prompt.md`](review-loop-sprint-3-fix-2-prompt.md),
+  for Pass 2 again, as a re-read (Codex in the ChatGPT desktop app, `gpt-6.2-sol`, `xhigh`).
 - *Carried from Sprint 1's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are that
   comment's findings): 6, sequence by the order records were posted, not their presence; 7, every
   pass's `input_sha` is the previous recorded pass's `output_sha`, writing or not, and a head
@@ -1218,6 +1226,36 @@ for Cursor (S7).
       (`src/report.ts`). Until a configuration lists xAI with `grok-4.7` at `medium`, a Grok
       record fails `check` and blocks `authorize`. Sprint 4's brief adds that entry to Kickoff's
       configuration, beside the two GPT-6.2 models.
+
+- **Sprint 3's Pass 3 (Beni, Wed 18 Nov 2026, "Rule as recommended"; finding 3-1 and the comment,
+  "Approve and post").** Pass 2.5 returned *another fix round first*, and Beni ruled another round
+  on the Planner's six recommendations, numbered as Pass 2.5's questions. The Planner wrote and
+  posted the record ([comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-6990209294)). The brief is
+  [`review-loop-sprint-3-fix-2-prompt.md`](review-loop-sprint-3-fix-2-prompt.md).
+  - **1, 25-1.** `authorize` refuses a gate with no `allowed_changes`.
+  - **2, 25-2.** The parsed comparison goes. The version files are compared as text by the ruled
+    words, "the two lines npm version writes", so a dependency that moves with the bump is a
+    third changed line.
+  - **3, 25-3.** A merge with more than one merge base is refused now, since Sprint 5 ports the
+    rule to adopters whose bases may hold merge commits.
+  - **4, 25-4 with A6, raised to blocking.** A same-SHA replacement counts only while no later
+    pass has recorded, and `authorize` prints every replacement it relies on.
+  - **5, finding 9.** Each survivor gets a test, and the deletion list is published in the pull
+    request's body.
+  - **6, a ruling of `open`.** It no longer settles a contested blocking finding: only `fixed` or
+    `killed` does.
+  - **Finding 3-1, the Planner's.** `authorize` read no finding's severity, so an open blocking
+    finding with nothing contested did not stop it. It now refuses while any blocking finding is
+    neither `fixed` nor `killed`.
+  - **Three of Pass 2.5's findings were the Planner's.** 25-2, 25-3 and 25-4 come from the first
+    fix brief's resolutions of findings 3, 2 and 10, and A6, the Planner's own question, made
+    25-4 worse. The second brief quotes the ruled packet and drops the parsed comparison.
+  - **Checked by the Planner:** Pass 2.5's comment against GitHub, the seal, the code paths of
+    25-1, 25-2 and A6, and Pass 2's runtime and route in Codex's own session log. No probe was
+    re-run.
+  - **The builder's folder.** Beni removed `~/review-seats/elenchus-pr8-pass2` after Pass 2, so
+    Pass 2's deletion list could not be checked. Every seat folder is now kept until its pull
+    request merges.
 
 D8, D10 and D11 are not yet ruled. D4 is withdrawn, and D12 is Pilot (17 Nov).
 
