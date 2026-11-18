@@ -57,7 +57,7 @@ export function PlusFive() {
       <rect className="plus-five-ground" x="0.75" y="0.75" width="24.5" height="31.5" rx="2.5" />
       <circle className="plus-five-lamp" cx="13" cy="9" r="3.25" />
       <path className="plus-five-filament" d="M13 7.15v3.7M11.15 9h3.7" />
-      <text className="plus-five-mark" x="13" y="25.2" textAnchor="middle">+5</text>
+      <path className="plus-five-mark" d="M5.1 24.6h4.4M7.3 22.4v4.4M15.6 22.5h4.6M15.6 22.5v2.15h3.7c.7 0 1.25.5 1.25 1.2S20 27 19.2 27h-3.6" />
     </svg>
   )
 }

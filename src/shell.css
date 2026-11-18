@@ -391,10 +391,11 @@
   stroke-linecap: round;
 }
 .plus-five-mark {
-  fill: var(--fb-cover-ink);
-  font-family: var(--fb-label);
-  font-weight: 700;
-  font-size: 11px;
+  fill: none;
+  stroke: var(--fb-cover-ink);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 .imprint-tabs {
   padding-inline: var(--fb-gutter);
@@ -428,7 +429,7 @@
   align-items: baseline;
   min-height: 30px;
   margin: 0;
-  padding: 7.5px var(--fb-gutter);
+  padding: 6.25px var(--fb-gutter);
   color: var(--fb-amber);
   font-family: var(--fb-mono);
   font-weight: 400;
