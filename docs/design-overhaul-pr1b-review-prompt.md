@@ -674,3 +674,88 @@ From the PM seat, read only, nothing run:
 - P18: an unquoted url(x/*) followed later by a */ inside a string may hide a local() the same way, because CSS opens no comment inside a url token. A strip that skips strings but not url tokens would leave this open.
 - P19: the stylesheet's only comment is its header, and none of its 32 url( sources is unquoted, so a stricter tokenizer should change no build at 032a109.
 ````
+
+## Fix round 1's result, and the Pass 2.5 re-run (Wed 18 Nov 2026, about 4:20 PM EST)
+
+Codex pushed one commit, `17660f9` ("Respect CSS token boundaries in the font source check"),
+at 3:48 PM EST, fast-forward from `032a109`, and posted
+https://github.com/BeniCheni/kickoff/pull/341#issuecomment-6991349443. The commit adds a shared
+comment scanner, `scripts/strip-face-css-comments.ts`, that both build paths call. It
+recognises quoted strings and unquoted `url(` tokens, and refuses an unclosed comment or string.
+It adds eleven tests, and the four briefed builds are byte-identical to `032a109`'s. The commit stays inside the
+fix scope. Codex's comment adds two notes. The escaped identifier still passes both guards.
+And because `buildInputs()` in `web/scripts/vercel-build-inputs.mjs` follows imports only
+from file entries, never from the `web/` directory entry, a change made only to the helper
+would not trigger a Vercel preview. The PM seat confirmed that second note by reading the
+code.
+
+The re-run goes back to the Pass 2.5 session that holds the `032a109` receipts, as a
+follow-up rather than a fresh seat. If the bytes are identical, only what the commit can
+change needs re-running: the checks, the fix with breaks of its own, the scanner against the
+spec, the `.ts` import from an `.mjs`, the Vercel input list, a smoke pass and the escaped
+identifier. The re-issued brief carries the handoff block at `17660f9`.
+
+````text
+/kickoff-pr-review 341 --pass 2.5 --no-merge
+
+PR #341 — Pass 2.5 re-run after fix round 1: the head moved from 032a109 to 17660f9
+
+This is a follow-up in your own Pass 2.5 session, from the PM seat (Claude Code, Opus 5.5, in another session), written Wed 18 Nov 2026 at about 4:20 PM EST. Your synthesis at 032a109 stands as the record for everything this round did not touch. Re-run only what the new commit can change, to the same standard: every number from a command you ran in this re-run, and anything you could not re-run listed as not verified. You are still the seat that writes nothing: no commit, no push, no edit to any file in the PR, its title or its body, and every rule in WHAT YOU MUST NOT DO from your opener still holds.
+
+WHAT HAPPENED SINCE YOUR BRIEF.
+- Beni answered your third question at about 3:07 PM EST: "Have Codex fix it". Your other three questions are still open: the build's effort, keeping both halves of the six offline faces, and the merge.
+- The PM seat briefed fix round 1 for Codex on gpt-6.2-sol at xhigh. The brief is archived in git show claude/track-a-archive-4:docs/design-overhaul-pr1b-review-prompt.md, under "Pass 2.5's result, and fix round 1 for Codex". Read it as the record of what Codex was asked: the fix scope, the requirement that the builds stay byte-identical, and the unquoted url( form the PM seat added.
+- Codex pushed one commit, 17660f9 "Respect CSS token boundaries in the font source check", authored Codex <noreply@openai.com>, fast-forward from 032a109. It touches four files (+121/−2): a new scripts/strip-face-css-comments.ts, the call sites in scripts/inline-faces.ts and web/scripts/copy-faces.mjs, and tests/faces.test.ts. Its comment: https://github.com/BeniCheni/kickoff/pull/341#issuecomment-6991349443.
+- At the PM seat's read (about 4:10 PM EST) the head was 17660f9e404ff21f99a1c74857720899fcd5eaa1: open, CLEAN, auto-merge off, no review, with verify, the Vercel deployment and vercel-smoke green. The base, overhaul/second-edition, was still at 34b5160.
+- Your earlier worktrees were moved to the Trash while folders were being tidied. That is explained, and nothing else is moving trees. Beni has a list of the live folders and will leave yours alone. Keep receipts in your scratchpad as before.
+
+WHERE TO WORK.
+- Do not reuse kickoff-pr341-p25-tip, -p25-ad7 or -p25-base, which hold only a .vite cache now, or Codex's kickoff-pr341-fix1. Make two new detached worktrees:
+  - git -C /Users/benicheni/code/kickoff fetch origin
+  - git -C /Users/benicheni/code/kickoff worktree add --detach /Users/benicheni/code/kickoff-pr341-rerun-tip 17660f9
+  - git -C /Users/benicheni/code/kickoff worktree add --detach /Users/benicheni/code/kickoff-pr341-rerun-032 032a109
+- Confirm each HEAD, and run npm ci at the root and in web/ of each.
+- Serve the tip on 7873, 7874 and 7875, and 032a109 on 7973, 7974 and 7975 if you need it. Codex's fix round used 7773 to 7775, and #342's seats hold 6773 to 6875 and 7473 to 7675. Confirm each port is free and each server's cwd with lsof, and record each listener's PID when you start it.
+- Do not touch, build in or reuse any other worktree: every kickoff-pr2*, kickoff-pr342* and kickoff-pr1b* tree, every earlier kickoff-pr341* tree, and everything under .claude/worktrees/. Never run git worktree prune.
+
+WHAT THE RE-RUN MUST SHOW.
+1. Green at 17660f9. At the root: typecheck, npm test (both vitest projects), build, build:single, build:offline and the offline-bundle scan. In web/: typecheck, test, build, check:client and check:css. Give the counts against your 032a109 figures (1,118 root and 131 web).
+2. The bytes. Build 032a109 and 17660f9 and compare dist/, dist-single/, dist-offline/index.html and web/public/faces.css. If they are byte-identical, your 032a109 runner, captures, cold-load bytes and layout shift stand for 17660f9: say so, and do not re-run the matrix. If any byte differs, run the runner whole at the tip and treat the difference as a finding.
+3. The fix, red then green, with breaks of your own. Codex used four payloads: double-quoted, single-quoted, an escaped quote, and unquoted url(x/*). Choose others: for example, an escaped or uppercase url name, whitespace before a quoted url value, a backslash-newline inside a string, CRLF line ends, or a /* inside an unquoted url( inside a real comment. On every input that hides a local(, both paths must throw their own local() error at 17660f9. Show which of your inputs passed at 032a109. Show that finding 5 still holds: a real comment that mentions local( passes both paths, and nextFacesCss returns its input with only the url prefix rewritten. Show that an unclosed comment and an unclosed string are refused, and that the real stylesheet passes.
+4. The scanner against the spec. Read scripts/strip-face-css-comments.ts against CSS Syntax Level 3's tokenizer. Look for an input where it and Chrome disagree about where a comment is, in a way that hides a local( from both paths or refuses the real stylesheet. In Chrome, confirm through the CSSOM what each of your payloads' rules reads back as.
+5. Two things the fix brought in.
+  - A .ts import from an .mjs. web/scripts/copy-faces.mjs, which Node runs directly in the web build through web/scripts/write-shell-css.mjs, now imports ../../scripts/strip-face-css-comments.ts. That works only under Node's built-in type stripping. Say which Node ran your web build, and whether the engines floor in package.json (^22.22.2 || ^24.15.0 || >=26.0.0) runs it. If you cannot test the floor, list it as not verified.
+  - The Vercel build-input list. Codex's comment says a change made only to the helper would not trigger a Vercel preview. Check web/scripts/vercel-build-inputs.mjs at 17660f9: does buildInputs() include scripts/strip-face-css-comments.ts? Then decide whether this is a finding for this PR, at what severity, and whether its fix belongs in this PR or in an ideas row. The fix would be one entry in a file outside fix round 1's scope.
+6. A browser smoke pass at 17660f9. Run the Vite preview on 7873 and the Next app on 7874, at 390 by 844 and about 1000. Check for no console error, every font request going to the page's own host, and scrollWidth === innerWidth. Set the viewport before any capture you attach. This is a smoke pass, not the matrix, because the diff is build tooling; step 2 decides whether more is owed.
+7. The escaped identifier. l\ocal(, l\6f cal( and \6c ocal( still pass both guards, by Codex's account. Re-derive it. Beni has not ruled on it. Add it to your questions as one word: Leave (an ideas row) or Fix.
+
+THE COMMENT AND THE BRIEF.
+- Post one short follow-up PR comment with gh pr comment 341 --body-file <file>. Its first line is "Pass 2.5 re-run after fix round 1", followed by the seat, and the model and effort read from this session's own file. Give one line each for the fix, the bytes, the checks, the two things in step 5, the smoke pass and the escaped identifier. Then say what you could not re-run, and the escalation.
+- Then re-issue the Executive Summary Brief for 17660f9, following executive-brief.md.
+  - Mark what changed since your 2:58 PM brief, and keep everything else as it was.
+  - The questions, each answerable in one word: the build's effort (Yes / No); the offline faces (Keep / Trim); the escaped identifier (Leave / Fix); anything you add from step 5; and the merge (Merge / Hold).
+  - The merge gate, clause by clause. It still ends in escalation, because plan section 3 gives the merge to Beni's word.
+- The handoff block is your 2:58 PM block, updated:
+  - --match-head-commit 17660f9e404ff21f99a1c74857720899fcd5eaa1;
+  - the local() line of the squash body replaced by Codex's proposed line, or by your correction of it (his line is in his comment, under "Squash-body line");
+  - the credit line saying that Codex wrote Pass 2's two commits and fix round 1's one;
+  - the landing check in a new worktree named kickoff-341-landed, detached, as before.
+- The trailers stay Cursor and Codex only. Claude wrote no code in this PR.
+
+IF YOU FIND A BLOCKER. Do not fix it. Give the minimal reproduction, its severity and the follow-up for Codex, and escalate.
+
+SEALED APPENDIX — claims to re-derive, never cite. If one does not reproduce, say so.
+From fix round 1 (Codex), at 17660f9 unless 032a109 is named:
+- R1: Each of the four payloads, appended in memory to the real public/faces.css, behaved the same way at 032a109: nextFacesCss returned it, and inlineFaceCss threw "A face is missing family, style, weight or src". At 17660f9, nextFacesCss threw "A local() face is not copied." and inlineFaceCss threw its local() error before parsing.
+- R2: With only the test changes applied at 032a109, 11 new tests failed and 11 existing ones passed in tests/faces.test.ts. At 17660f9 all 22 passed.
+- R3: diff -qr matched all 35 files in dist/ and all 33 in dist-single/, and cmp matched dist-offline/index.html and web/public/faces.css, against a fresh 032a109 build.
+- R4: 1,129 root tests in 84 files (891 node, 238 dom) and 131 web tests in 26 files. build:acceptance passed. next build passed first try at both SHAs. Node 24.15.0.
+- R5: In Chrome 157.0.8103.79 at 390 by 844 and 1000 by 844, each load made four same-origin font requests, with zero console or page errors and scrollWidth === innerWidth. The CSSOM read local("Arial") from all four payload rules, with url("x/*") also present in the fourth rule's source list, in an unattached stylesheet.
+- R6: l\ocal(, l\6f cal( and \6c ocal( pass both guards.
+- R7: A first version of the helper under web/ failed the root TypeScript isolation test, so it moved to scripts/.
+- R8: A change made only to the helper would need its own entry in the Vercel build-input list to trigger a preview.
+From the PM seat, read only, nothing run:
+- P20: buildInputs() follows imports only from INPUTS entries that are files. 'web/' is a directory, so copy-faces.mjs's import of ../../scripts/strip-face-css-comments.ts is never followed, and the helper is not in the list. The ignore step skips builds only off main, so main always builds.
+- P21: copy-faces.mjs importing a .ts file depends on Node's type stripping. Node turned it on by default in 22.18 and 23.6, so the floor 22.22.2 should run it.
+- P22: Codex's squash-body line does not mention that the escaped identifier still passes. Decide whether the body should say so, as your 2:58 PM draft said of the string gap.
+````
