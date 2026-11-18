@@ -917,3 +917,35 @@ Pass 2.5 keeps ports 7473 to 7675.
 The missing worktrees are explained. No tool and no schedule was involved. Nothing in fix
 round 1's brief or in the three `kickoff-pr342-pass25*` trees changes, and the instruction to
 stop if a tree vanishes still stands.
+
+## Fix round 1 posted: mergeable after fixes at `72608cb` (Wed 18 Nov 2026, 6:20 PM EST)
+
+Fix round 1 posted [comment 6994520192](https://github.com/BeniCheni/kickoff/pull/342#issuecomment-6994520192)
+at 6:19 PM EST. Its first line reads "claude-fable-5-2 · xhigh · Fix round 1 — mergeable after
+fixes at `72608cb`: the High, both Mediums, and rulings 2 and 3". The PM seat checked it against
+GitHub and the repository:
+- The head is `72608cb22fe4014f10e7bd6f13e0f82f134a7043`. The six commits listed in the note above
+  are each authored and committed as `Claude <noreply@anthropic.com>`.
+- `ea5242c` to the tip changes 15 files, +742 / −38. The matched base `541b9a9` to the tip changes
+  61 files, +3,397 / −250. Both match the comment.
+- `src/data` is tree `7439dcc` at the base, at `ea5242c` and at the tip. No workflow, CHANGELOG
+  or version file is touched. The PR title is unchanged.
+- Hosted checks at the tip: verify, studio, Vercel, Vercel Preview Comments and vercel-smoke all
+  pass.
+
+What the comment reports, in short. All three of Pass 2.5's findings reproduced at `ea5242c`, and
+each has a fix commit, as do Beni's rulings 2 and 3. Test counts moved from 899 / 248 / 145 to
+903 / 254 / 152 (node, DOM, web). There are 62 of 62 Vitest mutants red, and ten wrong builds fail
+the runner. The runner in report mode exits 0. `--enforce` fails only on R2's 16 light-Table loss
+pips, with 0 unread. There were 1,548 real Tab presses in 24 focus cells. The comment names five
+choices no ruling made, for Beni. It also says the plan on `origin/docs/review-loop-plan` still
+lists PR 2 under the Sun 15 routing, and that "Re-route per #328" is recorded only on this branch.
+That is the correction the PM seat already owes #328. Receipts are under
+`/private/tmp/kickoff-342-fix1/`.
+
+**#341's merge.** The PR 1b Encore session reported that Beni has ruled Merge on #341 at
+`17660f9`. The squash is his to run, and at 6:20 PM EST it had not run:
+`overhaul/second-edition` was still `34b5160`. He also ruled that the offline faces be trimmed in
+a later PR into the integration branch. #341 merges with all six faces' halves, so nothing on
+#342's side changes from that. Once #341 lands, #342's base moves, and its checks and runner
+cells need a re-run on the new `overhaul/second-edition` before #342 merges.
