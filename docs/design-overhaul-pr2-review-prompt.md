@@ -287,3 +287,62 @@ D. PM-seat hypotheses, unverified in a browser by Pass 0. Does the sticky band o
 
 E. Codex Pass 0 questions from the diff. In runMatrix, what happens if the header marker disappears or a control is missing from the enumerated buttons? At the fractional boundaries in hitAreaFaults, what fails? In tests/dom/appHeader.test.tsx, which assertions actually run after switching to Ledger? On a light page with a black band, what colour does the keyboard focus ring actually paint? On a populated gallery, which elements consume the remapped variables and which inherit an already-computed body colour or transparent ground? On the harness pages, which text actually uses the new Caslon preload? Treat each as a question. Report the observation even when it clears the implementation.
 ````
+
+## Pass 1 posted (Wed 18 Nov 2026, 12:16 PM EST)
+
+Codex's Pass 1 posted at 12:16 PM EST:
+https://github.com/BeniCheni/kickoff/pull/342#issuecomment-6985955898. Its first line names
+`gpt-6.2-astra` at `xhigh` and the verdict "not mergeable at this head". At about 12:20 PM the PM
+seat read the comment from GitHub. The head was still `e820fd4`, with 13 commits and no review, so
+the pass pushed nothing. Beni relayed its report in chat: 99 per-commit checks passed; both trees
+showed the same 16 loss-pip failures with no unread sample; and both review worktrees were left
+clean, with all six servers stopped.
+
+Its ten findings for Claude's Pass 2:
+1. High. The sticky band hides the Table's column labels, the UCL league phase's long zone divider
+   and, at 1000, a keyboard-focused sort button, in both apps.
+2. Medium. Ruling 19 reaches Moments only in part. The Vite empty route gets nothing. The populated
+   Vite gallery keeps the old heading and body ink and the old ground. The Next gallery root stays
+   transparent.
+3. Medium. The runner's hit-area gate passes a missing band, a missing control, an H3 gap and an
+   H4 overlap, and it accepts 43.5 px and 0.5 px of overlap.
+4. Medium. The motion receipt still passes when the decision moves from the head into the deferred
+   module, and it visits only Vite.
+5. Medium. The foot tests miss a wrong count or stamp in the Ledger's foot, and a wrong stamp in
+   the Poster's.
+6. Medium. A write that throws is never exercised on a path that writes, so a mutant that throws
+   passes.
+7. Medium. The banner's node contrast test passes with the banner painted amber on amber.
+8. Medium. The new lens segments, the theme disc and the tabs keep their transitions under reduced
+   motion.
+9. Low. The band's controls give no hover or press feedback, which handoff section 5 asks for.
+10. Low. The Moments harness preloads Caslon, which nothing on it draws.
+
+Of the PM draft's eight suspicions, Pass 1 confirmed the sticky band (finding 1), the missing H3
+and H4 checks (3), the motion receipt (4) and the banner's node test (7), and widened the Moments
+one (2). It found that the builder's claim that tighter tracking keeps the control row inside 360
+did not reproduce. It left Beni these:
+- string 34: Chromium names the theme button "Dark mode" on light and "Light mode" on dark, before
+  and after hydration;
+- the strap's tracking and the tabs' drawn size;
+- the 4 px step between the band's inset and the content's, for the row and Table owners;
+- the real-iPhone check and the visual H4 judgment.
+Both the SHA's preview and the branch alias answered 302 to Vercel's sign-in.
+
+The comment ends with an HTML comment, `pr342-pass1-avif`, holding about 52 KB of base64 image data.
+GitHub renders it as nothing.
+
+## The Pass 1.5 handoff to Codex (Wed 18 Nov 2026, about 12:25 PM EST)
+
+Under #328's "When Claude builds" column, Pass 1.5 is Codex's, on `gpt-6.2-astra`. The PM seat
+recommended that it go to the Codex session that ran Pass 0, which has already read the PR, or to a
+fresh session on the same model if that one is gone. The handoff is kept as thin as the Pass 0
+opener, for the same reason: Claude answers Pass 2.
+
+````text
+Pass 1 has posted on #342: https://github.com/BeniCheni/kickoff/pull/342#issuecomment-6985955898 (Wed 18 Nov 2026, 12:16 PM EST), from a fresh Codex session on gpt-6.2-astra at xhigh. Its verdict is not mergeable at e820fd4, with ten findings: one High, seven Medium and two Low. The head has not moved. You hold Pass 1.5 under #328's "When Claude builds" column, so write the Pass 2 brief now. If you are not the session that ran Pass 0, first read the Codex Pass 0 opener and the Pass 1 brief it wrote, in docs/design-overhaul-pr2-review-prompt.md on the local branch claude/track-a-archive-4 (git show claude/track-a-archive-4:docs/design-overhaul-pr2-review-prompt.md).
+
+WHO PASS 2 IS. A fresh Claude Code session on claude-fable-5-2 with --effort xhigh. Under Beni's "Re-route per #328" it is PR 2's builder from here: it answers Pass 2 and runs every fix round, on the code Cursor wrote. The skill's 1.5 row says what the brief carries: every finding for the builder to accept, contest, or accept while contesting its characterisation, with what it needs to reproduce each, and Beni's rulings so far, named as his. Pass 1 left Beni some decisions: string 34, the strap's tracking, the tabs' drawn size, and the 4 px step between the band's inset and the content's. Carry them as open. Pass 2 recommends; it does not settle them.
+
+WHAT YOU LEAVE BEHIND. The same as Pass 0: one brief in chat in a four-backtick fenced block, one line per paragraph and never hand-wrapped, ready for Beni to paste, with a short note beside it. Change nothing: no commit, no push, no PR comment, and no file outside a scratch directory. Beni brings your brief to the PM seat, which archives it word for word.
+````
