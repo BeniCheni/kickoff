@@ -519,12 +519,13 @@ must show" are the skill's 2.5 row applied to this PR's surfaces.
 for. Today's five Codex seat sessions on this Mac all record `workspace-write`, the config default;
 only the `codex-auto-review` helpers that Codex starts beside them run read-only. PR 0's and PR 1's
 Codex Pass 2.5 openers asked for approval only for gh, git fetch and git worktree add, which fits
-that same mode. The review
-loop's S7 probe showed that Codex's read-only sandbox refuses every write, `npm test`'s cache
-included. So under the seat as ruled, every install, build, test run, checkout, scratch file,
-server and the comment's post needs Beni's approval, one command at a time. Running the pass at
-`workspace-write` instead, as the earlier sittings did, would change a seat Beni approved, so that
-is his word.
+that same mode. The review loop's S7 probe showed that Codex's read-only sandbox refuses every
+write, `npm test`'s cache included. So under the seat as ruled, every install, build, test run,
+checkout, scratch file, server and the comment's post needs Beni's approval, one command at a
+time. Running the pass at `workspace-write`, the mode the earlier sittings appear to have used,
+would change a seat Beni approved, so the PM seat put it to him. At about 2:45 PM EST he answered
+**"Read-only, as ruled"**: the launch and the opener below stand as delivered, and he approves
+the pass's writes one by one.
 
 **The worktrees.** So the session can start in a clean copy of the tip, without the untracked
 `.agents/skills/kickoff-pr-review/` that Beni's checkout holds, the PM seat made the three
