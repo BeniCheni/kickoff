@@ -168,8 +168,9 @@ No Pass 1 had started when the ruling came.
 So the brief above was not pasted. #328 gives the review briefs to the reviewing vendor "so the side
 that built never steers its own reviewer", and Claude, the PM seat's vendor, now answers PR 2's
 Pass 2. The PM seat recommended that a Codex Pass 0 write PR 2's Pass 1 brief, with the brief above
-as material to check, and wrote the thin opener below for it. Pasting the Codex seat line above
-straight into Pass 1 stays open to Beni.
+as material to check, and wrote the thin opener below for it. Beni chose that path at about
+10:48 AM EST ("Codex Pass 0 first"), so the Codex seat line above is not pasted either. Codex's
+Pass 1 brief joins this file when Beni brings it back.
 
 ````text
 Kickoff design overhaul — PR #342 (overhaul PR 2, chrome and the motion control): Pass 0, write the Pass 1 brief
