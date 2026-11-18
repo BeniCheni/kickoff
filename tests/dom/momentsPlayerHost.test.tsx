@@ -208,7 +208,7 @@ it('D-19/D-07/H-C: Cinema has one live region, a stable Save name, and no histor
   expect(document.querySelector('header')?.hasAttribute('inert')).toBe(true)
   expect(document.querySelector('nav')?.hasAttribute('inert')).toBe(true)
   expect(document.querySelector('[data-moments-background="route"]')?.hasAttribute('inert')).toBe(true)
-  expect(document.querySelector('.max-w-\\[780px\\]')?.hasAttribute('inert')).toBe(false)
+  expect(document.querySelector('.page-measure')?.hasAttribute('inert')).toBe(false)
   expect(document.body.hasAttribute('inert')).toBe(false)
   expect(cinema.closest('[inert]')).toBeNull()
   const save = within(cinema).getByRole('button', { name: /Save reference/ })
@@ -404,7 +404,7 @@ it('StrictMode yields one player instance after one Play', () => {
 
 it('H-B/H-E: the content shell stays 780, the band spans the page, and empty copy is unchanged', () => {
   renderVisit()
-  const shell = document.querySelector('.max-w-\\[780px\\]')
+  const shell = document.querySelector('.page-measure')
   const header = document.querySelector('header')
   expect(shell?.contains(header)).toBe(false)
   expect(header?.contains(document.querySelector('nav'))).toBe(true)

@@ -429,7 +429,7 @@
   min-height: 30px;
   margin: 0;
   padding: 7.5px var(--fb-gutter);
-  color: var(--band-amber);
+  color: var(--fb-amber);
   font-family: var(--fb-mono);
   font-weight: 400;
   font-size: 10px;
@@ -450,3 +450,43 @@
   flex: none;
 }
 .glyph { display: block; }
+
+/*
+ * Content column. Poster and Ledger are 640px, the Table 780. The padding
+ * stays 20px: Tonight, the Poster week block and the mobile table bleed by
+ * 20px, and those rows are later PRs. A 16px gutter would push them past
+ * the viewport. The band itself uses the 16px token.
+ */
+.page-measure {
+  --page-gutter: 20px;
+  box-sizing: border-box;
+  width: min(100%, calc(var(--fb-measure) + 2 * var(--page-gutter)));
+  margin-inline: auto;
+  padding: 28px var(--page-gutter) 64px;
+}
+.page-measure[data-measure='register'] {
+  width: min(100%, calc(var(--fb-measure-register) + 2 * var(--page-gutter)));
+}
+.page-measure[data-measure='moments'] {
+  width: min(100%, 780px);
+}
+.page-foot {
+  margin-top: 32px;
+  font-family: var(--fb-book);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--fb-pulp-ink);
+}
+.page-foot .provenance {
+  min-height: 0;
+  padding: 0;
+}
+.page-foot-copy {
+  margin: 8px 0 0;
+}
+.page-foot[data-stock='black'] {
+  margin-inline: calc(-1 * var(--page-gutter));
+  padding: 16px var(--page-gutter) 0;
+  background: var(--fb-cover-black);
+}

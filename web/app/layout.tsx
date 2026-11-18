@@ -19,6 +19,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
         <link rel="preload" href="/fonts/oswald/Oswald.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <link rel="preload" href="/fonts/kickoff-mono/KickoffMono-Medium.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="/fonts/libre-caslon-text/LibreCaslonText-Regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <link rel="stylesheet" href="/faces.css" />
         <style data-kickoff-shell="" dangerouslySetInnerHTML={{ __html: themeCss }} />
       </head>

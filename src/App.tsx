@@ -66,7 +66,7 @@ export default function App({ momentsEdition = MOMENTS, momentsStorage, momentsR
       onToggleMotion={toggleMotion}
       motionLabel={motion === 'off' ? 'Start motion' : 'Stop motion'}
     />
-    <div className="mx-auto max-w-[780px] px-5 pt-7 pb-16">
+    <div className="page-measure" data-measure={tab === 'moments' ? 'moments' : tab === 'table' ? 'register' : 'poster'}>
 
       {/* The Moments visit owner (Decision 1) is mounted once and never keyed, whatever the tab,
           so the visit survives tab and lens changes — but only the Moments route sits under it.

@@ -26,6 +26,7 @@ assert.deepEqual(sources, [
   '../../src/components/glyphs.tsx',
   '../../src/components/ImprintBand.tsx',
   '../../src/components/MotionControl.tsx',
+  '../../src/components/PageFoot.tsx',
   '../../src/components/ProvenanceLine.tsx',
   '../../src/components/TabNav.tsx',
   '../../src/components/LensSwitcher.tsx',

@@ -46,7 +46,7 @@ export function OfflineApp() {
       onToggleMotion={toggleMotion}
       motionLabel={motion === 'off' ? 'Start motion' : 'Stop motion'}
     />
-    <div className="mx-auto max-w-[780px] px-5 pt-7 pb-16">
+    <div className="page-measure" data-measure={shown === 'table' ? 'register' : 'poster'}>
       <p data-offline-snapshot="" className="label-caps mb-4 text-[10px] text-ink-muted">Offline snapshot</p>
       <div data-moments-background="route">
         <ViewBoundary key={`${shown}:${lens}`}>

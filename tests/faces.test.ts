@@ -61,7 +61,7 @@ it('the stylesheet names the fifteen faces, and every face swaps', () => {
   ])
 })
 
-it('preloads the two first-paint faces, and the href equals the src', () => {
+it('preloads the three first-paint faces, and the href equals the src', () => {
   const index = readFileSync('index.html', 'utf8')
   const layout = readFileSync('web/app/layout.tsx', 'utf8')
   const vitePreloads = [...index.matchAll(/rel="preload" href="([^"]+)" as="font"/g)].map(match => match[1])
@@ -69,10 +69,12 @@ it('preloads the two first-paint faces, and the href equals the src', () => {
   expect(vitePreloads).toEqual([
     './fonts/oswald/Oswald.woff2',
     './fonts/kickoff-mono/KickoffMono-Medium.woff2',
+    './fonts/libre-caslon-text/LibreCaslonText-Regular.woff2',
   ])
   expect(nextPreloads).toEqual([
     '/fonts/oswald/Oswald.woff2',
     '/fonts/kickoff-mono/KickoffMono-Medium.woff2',
+    '/fonts/libre-caslon-text/LibreCaslonText-Regular.woff2',
   ])
   for (const href of vitePreloads) expect(vite).toContain(`url("${href}")`)
   for (const href of nextPreloads) expect(nextFacesCss(vite)).toContain(`url("${href}")`)

@@ -7,7 +7,8 @@ import { primeClock } from './rig'
  * A club whose next fixture has no league-set time. The mobile sentence and the desktop
  * "time TBC" are the cell; the colour is not part of the rule (PR 4 sets the amber).
  */
-vi.mock('../../src/lib/fixtures', () => ({
+vi.mock('../../src/lib/fixtures', async (importOriginal) => ({
+  ...await importOriginal<typeof import('../../src/lib/fixtures')>(),
   FIXTURES: [
     {
       id: 'laliga:unset',

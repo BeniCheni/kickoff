@@ -11,7 +11,7 @@ afterEach(() => { for (const root of roots.splice(0)) rmSync(root, { recursive: 
 function history() {
   const root = mkdtempSync(path.join(tmpdir(), 'vercel-ignore-')); roots.push(root)
   // Use the real input graph and script, but a fabricated Git history.
-  for (const entry of ['web', 'src', 'scripts', 'tests/fixtures']) {
+  for (const entry of ['web', 'src', 'scripts', 'tests/fixtures', 'package.json']) {
     cpSync(entry, path.join(root, entry), { recursive: true, filter: file => !/(?:^|\/)(?:node_modules|\.next|generated)(?:\/|$)/.test(file) })
   }
   const git = (...args: string[]) => execFileSync('git', args, { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim()

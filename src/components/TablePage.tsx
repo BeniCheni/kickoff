@@ -22,6 +22,7 @@ import { encodeLeague, parseLeague } from '../lib/urlCodecs'
 import { useNow } from '../lib/useNow'
 import { META } from '../lib/fixtures'
 import { CompetitionChip } from './CompetitionChip'
+import { PageFoot } from './PageFoot'
 
 /**
  * The league table, built to the standings design reference (docs/Kickoff Standings.html):
@@ -483,13 +484,9 @@ export function TablePage() {
         </div>
       </div>
 
-      <div className="mt-4 border-t border-line pt-3.5 text-[10px] leading-relaxed text-ink-muted">
-        Table read from ESPN's public standings feed by <code className="font-mono">npm run sync</code>{' '}
-        — league position, points and records are the provider's official table, never recomputed
-        locally, because tie-breakers differ by competition. Form and next-fixture join to the
-        fixtures snapshot. Zone hues are the competition colours from the calendar, so a Champions
-        League band here matches a Champions League fixture there.
-      </div>
+      <PageFoot kind="table">
+        Table read from ESPN's standings feed by npm run sync, never recomputed locally. Form and next fixture join to the fixtures snapshot.
+      </PageFoot>
     </div>
   )
 }

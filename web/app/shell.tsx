@@ -81,7 +81,7 @@ function ShellInner({ moments, catalogMode }: { moments: MomentsPayload; catalog
         </>
       )}
     />
-    <div className="mx-auto max-w-[780px] px-5 pt-7 pb-16">
+    <div className="page-measure" data-measure={tab === 'moments' ? 'moments' : tab === 'table' ? 'register' : 'poster'}>
       {tab === 'moments' ? <ViewBoundary key={tab}><MomentsRegion moments={moments} catalogMode={catalogMode} search={liveSearch} /></ViewBoundary> : (
         <div data-moments-background="route"><ViewBoundary key={`${tab}:${lens}`}>
           <StalenessBanner />
