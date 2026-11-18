@@ -325,6 +325,15 @@ export function bandFaults(band, { tabs } = {}) {
     })
   }
 
+  // The strap as ruled: a caps label tracked .12em, on one line.
+  if (!band.strap) faults.push('the band has no strap')
+  else {
+    const { transform, tracking, size, lines } = band.strap
+    if (transform !== 'uppercase') faults.push(`the strap is set ${transform === 'none' ? 'as typed' : transform}, expected caps`)
+    if (!near(tracking, 0.12 * size)) faults.push(`the strap is tracked ${tracking.toFixed(2)}px at ${size}px, expected .12em (${(0.12 * size).toFixed(2)}px)`)
+    if (lines !== 1) faults.push(`the strap runs to ${lines} lines`)
+  }
+
   faults.push(...hitAreaFaults(band.controls))
   for (const control of band.controls) for (const line of band.data) {
     if (line.rects.some((rect) => overlaps(control, rect))) faults.push(`${control.name} covers the ${line.name}`)
@@ -364,7 +373,17 @@ async function bandGeometry(page) {
     }
     const provenance = header.querySelector('[data-provenance]')
     const rect = header.getBoundingClientRect()
+    const strapEl = header.querySelector('.wordmark-strap')
+    const strapStyle = strapEl && getComputedStyle(strapEl)
+    const strapLines = lines('strap', strapEl)[0]?.rects ?? []
     return {
+      strap: strapEl ? {
+        transform: strapStyle.textTransform,
+        tracking: Number.parseFloat(strapStyle.letterSpacing) || 0,
+        size: Number.parseFloat(strapStyle.fontSize),
+        lines: new Set(strapLines.map((line) => Math.round(line.top))).size,
+        right: Math.max(...strapLines.map((line) => line.right)),
+      } : null,
       landmark: header.getAttribute('data-moments-background') === 'header',
       className: header.className,
       box: { left: rect.left, top: rect.top, width: rect.width, height: rect.height },
@@ -759,6 +778,15 @@ export async function runMatrix(browser, { origins, out, anchor, contrast = fals
           const state = await inspect(page)
           assertCell(state, errors, { id, lens, theme, tab })
           const band = await assertBand(page, id)
+          // The strap against the first hit area, and the band's height, at every width.
+          if (theme === 'light' && tab === 'fixtures') {
+            measurements.push({
+              app, lens, width, bandHeight: band.height,
+              strapRight: Math.round(band.strap.right * 100) / 100,
+              firstHit: band.controls[0].left,
+              clearance: Math.round((band.controls[0].left - band.strap.right) * 100) / 100,
+            })
+          }
           if (width === 390 && theme === 'light' && tab === 'fixtures') {
             measurements.push({
               app, lens,

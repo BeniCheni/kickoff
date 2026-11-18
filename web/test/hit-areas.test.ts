@@ -35,6 +35,7 @@ function band(tabs = ['Fixtures', 'Table', 'Moments']) {
       ...tabBoxes,
     ],
     provenance: { top: 88, bottom: 133 },
+    strap: { transform: 'uppercase', tracking: 1.2, size: 10, lines: 1, right: 90 },
     data: [
       { name: 'wordmark', rects: [box('', 16, 8, 67, 22)] },
       { name: 'strap', rects: [box('', 16, 31, 62, 10)] },
@@ -100,6 +101,23 @@ test('the drawn contract: a disc is 44 wide and a lens segment 57', () => {
   const short = band()
   Object.assign(short.controls[5]!, { h: 40, bottom: 84 })
   expect(bandFaults(short)).toEqual(['Table hit area is 80.00×40.00, expected at least 44×44', 'Table 80.00×40.00'])
+})
+
+test('the strap is a caps label tracked .12em on one line, and a band without one is a fault', () => {
+  // As built before the ruling: sentence case at 0.6px.
+  expect(bandFaults({ ...band(), strap: { transform: 'none', tracking: 0.6, size: 10, lines: 1, right: 75.44 } })).toEqual([
+    'the strap is set as typed, expected caps',
+    'the strap is tracked 0.60px at 10px, expected .12em (1.20px)',
+  ])
+  // The handoff's range runs to .18em; the ruling is its low end.
+  expect(bandFaults({ ...band(), strap: { transform: 'uppercase', tracking: 1.8, size: 10, lines: 1, right: 97.8 } }))
+    .toEqual(['the strap is tracked 1.80px at 10px, expected .12em (1.20px)'])
+  expect(bandFaults({ ...band(), strap: { transform: 'uppercase', tracking: 1.2, size: 10, lines: 2, right: 60 } })).toEqual(['the strap runs to 2 lines'])
+  expect(bandFaults({ ...band(), strap: null })).toEqual(['the band has no strap'])
+  // Tracked wide enough to reach the first control, the strap is under its hit area: H4.
+  const wide = band()
+  wide.data[1]!.rects[0] = box('', 16, 31, 104, 10)
+  expect(bandFaults(wide)).toEqual(['Stop motion covers the strap'])
 })
 
 test('pinned rows: flush under what pins above them, and topmost at their own centre', () => {

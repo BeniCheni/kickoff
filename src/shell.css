@@ -301,13 +301,17 @@ html {
   text-transform: uppercase;
   color: var(--band-ink);
 }
+/* The strap is a caps label, as the boards draw it: tracked .12em, the low end
+   of the handoff's caps range and the first edition's figure. The string in
+   the markup stays "Brooklyn · ET". */
 .wordmark-strap {
   display: block;
   margin-top: 1px;
   font-family: var(--fb-label);
   font-weight: 600;
   font-size: 10px;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   color: var(--band-pitch);
 }
 .imprint-tools {

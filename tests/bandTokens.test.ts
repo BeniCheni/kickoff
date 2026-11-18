@@ -12,3 +12,21 @@ it('the band paints with the second-edition tokens', () => {
   }
   expect(css.match(/@theme inline\s*\{([^}]+)\}/)?.[1] ?? '').not.toContain('--fb-')
 })
+
+it('the strap is set in caps at .12em, and its string is not typed in caps', () => {
+  const strap = css.match(/^\.wordmark-strap \{([^}]*)\}/m)
+  expect(strap, 'the strap’s rule').not.toBeNull()
+  const declared = Object.fromEntries(strap![1]!.split(';').map((line) => line.split(':').map((part) => part.trim())).filter((pair) => pair.length === 2))
+  expect(declared).toMatchObject({
+    'font-family': 'var(--fb-label)',
+    'font-weight': '600',
+    'font-size': '10px',
+    'letter-spacing': '0.12em',
+    'text-transform': 'uppercase',
+    color: 'var(--band-pitch)',
+  })
+  // One rule sets the strap: nothing later in the sheet tracks or cases it again.
+  expect(css.match(/\.wordmark-strap\b/g)).toHaveLength(1)
+  const band = readFileSync(new URL('../src/components/ImprintBand.tsx', import.meta.url), 'utf8')
+  expect(band).toContain('<span className="wordmark-strap" data-voice="pitch">Brooklyn · ET</span>')
+})
