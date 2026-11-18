@@ -141,3 +141,46 @@ builder rows for 1b and 2.
 
 The PR 2 planning session had written PR 2's Pass 1 brief for Codex on `gpt-6.2-astra`. The
 ruling moves that pass to a fresh Claude Code session, as for #341.
+
+## Beni's second answer, which replaces the first (Wed 18 Nov 2026, about 10:39 AM EST)
+
+The same question reached Beni in two PM sessions forked from one another. In one he answered
+"Keep both builds" at about 10:18 AM, recorded above. In the other, at about 10:39 AM, he
+answered **"Re-route per #328"**. The later answer is the ruling of record. When it came, no
+Pass 1 had posted on #341 or #342 and neither head had moved, so no pass had run under the
+first answer.
+
+How the PM seat applies it:
+- Neither Cursor build is rebuilt. Each was finished and open before its Pass 1 began, so
+  nothing switches builder mid-build. From Pass 1 on, each PR takes the seats #328's tables give
+  its builder there, and that builder answers Pass 2 and runs every fix round on the code Cursor
+  wrote. If Beni meant a rebuild from the build brief, this reading is wrong, and the PM seat
+  asked him to say so.
+- #341 takes the "When Codex builds" column. Passes 0 and 1.5: the PM seat. Pass 1: a fresh
+  Claude Code session, `claude-fable-5-2` at `xhigh`, report-only, which is the brief above with
+  the addendum below. Pass 2 and every fix round: Codex, `gpt-6.2-sol` at `xhigh`, the model the
+  table gives an M PR. Pass 2.5: a fresh Claude Code session, `claude-opus-5-5` at `xhigh`, which
+  writes nothing. Pass 3: Beni.
+- #342 takes the "When Claude builds" column. Passes 0 and 1.5: Codex, `gpt-6.2-astra` at
+  `xhigh`. Pass 1: a fresh Codex session, `gpt-6.2-astra` at `xhigh`. Pass 2 and every fix
+  round: Claude Code, `claude-fable-5-2` at `xhigh`. Pass 2.5: Codex, `gpt-6.2-sol` at `xhigh`,
+  `--sandbox read-only`. Pass 3: Beni. The PR 2 planning session's Pass 1 brief was written by
+  the PM seat, which is Claude, the vendor that now answers PR 2's Pass 2. #328 has the reviewing
+  vendor write the review briefs, "so the side that built never steers its own reviewer". So the
+  PM seat recommended that the brief reach Codex's Pass 0 as material to check, not as the
+  brief, and left the call to that session and to Beni.
+- No Cursor seat holds a pass, so the Thursday deadline is gone, and so is Beni's open question
+  on the build's effort, except as a fact for the record.
+- Before #328 merges, its "Where the overhaul stood" paragraph still needs correcting. It should
+  say that Cursor built 1b and 2, and that Beni re-routed their remaining seats by its tables on
+  Wed 18 Nov.
+
+The addendum for #341's Pass 1, delivered in chat with this ruling. It goes after the brief in a
+session not yet started, or as a message to one that has.
+
+````text
+ADDENDUM TO THE PASS 1 BRIEF FOR #341 (Wed 18 Nov 2026, about 10:45 AM EST). Where it differs from the brief's WHO BUILT IT, THE DEADLINE or FACTS paragraphs, this wins.
+- The routing is settled. Beni ruled at about 10:39 AM EST, "Re-route per #328": the PR keeps Cursor's code, and from your pass on it takes the seats PR #328's amendment gives a Codex build. You sit Pass 1 as briefed, report-only. Codex, on gpt-6.2-sol at xhigh, answers you in Pass 2 and runs every fix round, so write each finding for Codex to reproduce cold. A fresh Claude Code session on claude-opus-5-5 at xhigh writes Pass 2.5. Do not report the routing as a finding.
+- No Cursor seat is left, so the Thursday deadline is gone. Post when the review is done, today if you can. Depth comes first, and what you could not run still goes in "Not verified".
+- PR 2 is not being built. It has been open since 12:27 AM as #342, head e820fd4, and Codex reviews it. Where the brief says "PR 2's unopened branch (e820fd4)", read #342's head. Do not review #342, and keep off ports 6773 to 6875, which its review uses.
+````
