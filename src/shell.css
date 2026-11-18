@@ -223,10 +223,11 @@
  * its measured height (src/lib/useBandHeight.ts): 118px, or more once the
  * provenance wraps. Where the server renders the band, a script directly after
  * it measures it before the app runs, so 118px is only what a page reads
- * before its band exists. The Table's label row and its deep-zone divider are PR 4's
- * markup, so their offsets are written here. 28px and 34px are that label
- * row's height in its two layouts; tests/bandPins.test.ts holds the two files
- * together. A page without the band, such as the states harness, is untouched.
+ * before its band exists. The Table's label row and its deep-zone divider are
+ * PR 4's markup, so their offsets are written here. 28px and 34px are that
+ * label row's height in its two layouts; tests/bandPins.test.ts holds the two
+ * files together. A page without the band, such as the states harness, is
+ * untouched.
  */
 html {
   --band-height: 118px;
