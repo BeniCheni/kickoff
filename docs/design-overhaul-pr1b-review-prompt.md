@@ -20,7 +20,11 @@ start PR 1b and PR 2 that night, and #339 put that start on `main` at 10:52 PM. 
 11:10 PM Beni approved the amendment in PR #328, "two vendors, and no seat for Cursor or Grok",
 which names Codex as 1b's builder and Claude as 2's and says "No Cursor seat was open". That
 paragraph was written in the other track without knowing the two builds had started. When this
-brief was written, PR 2's branch stood at `e820fd4`, nine Cursor commits and no PR. The PM seat
+brief was written, PR 2 had been open since 12:27 AM as #342, head `e820fd4`, with ten Cursor
+commits counting its merge of `main` (corrected Wed 18 Nov at about 10:35 AM EST; this line first
+said "nine Cursor commits and no PR", because the PM seat read the branch and not the PR list,
+and PR 1b's body, written a minute before #342 opened, said PR 2 was not open). The brief below
+keeps the error as delivered, where it calls PR 2's branch "unopened". The PM seat
 put the conflict to Beni beside this brief. Pass 1 is a fresh Claude Code session under both
 routings, so the brief is written not to depend on his answer.
 
