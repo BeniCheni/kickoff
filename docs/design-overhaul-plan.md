@@ -212,7 +212,7 @@ The cost accepted is drift and one large final diff. The release PR's review is 
 
 ## 3. The split into PRs
 
-Ten PRs: one on `main`, eight into the integration branch, one release. (Amended Mon 16 Nov 2026: PR 1b, the font split, makes it eleven review cycles. PRs 2 to 9 keep their numbers; see section 4.2. Wed 18 Nov 2026: Beni ruled a trim of the offline set after #341 merges, and section 4.2 proposes it as PR 7b.) The order differs from the brief's example in two places, and both are deliberate. **The rows and their states come before the books**, because a book's contents are rows and the rows carry the honesty rules. **States are not a PR of their own**: each state is built with the surface it lives on, and a states harness grows with them.
+Ten PRs: one on `main`, eight into the integration branch, one release. (Amended Mon 16 Nov 2026: PR 1b, the font split, makes it eleven review cycles. PRs 2 to 9 keep their numbers; see section 4.2. Wed 18 Nov 2026: Beni ruled a trim of the offline set after #341 merges, and approved it as PR 7b, after PR 7 (section 4.2). That makes twelve review cycles.) The order differs from the brief's example in two places, and both are deliberate. **The rows and their states come before the books**, because a book's contents are rows and the rows carry the honesty rules. **States are not a PR of their own**: each state is built with the surface it lives on, and a states harness grows with them.
 
 Seats for every PR, unless a row says otherwise: **Cursor builds** (Grok 4.7, Extra High); **Pass 1** is a fresh Claude Code session that is not this one; **Pass 2** is Cursor's rebuttal; **Pass 2.5** is Codex's synthesis; **Beni's word** merges. That matches the seats table at `README.md:387-392`, where the synthesis seat is one that "wrote neither the build nor the fixes" (`README.md:376`).
 
@@ -231,6 +231,7 @@ Two rules ride with every PR that adds a file under `src/components/`: add it to
 | **5 · Poster's books, still** | branch | Cover face, the cover's band, part openers, contents under a part, the "more" control, the shelf and spines, the quiet week, the UEFA week's eight markers, the closed book. Everything is drawn in its motion-off state on flat black stock. | The Ledger. No photograph yet, no rotation, no canvas. | L |
 | **6 · The Rack turns** | branch | Rotation, the swipe, the tap that opens a book, the page after it opens, the carousel's roles and names, the Rack's Stop as the motion control's mirror. CSS and DOM only. | No WebGL. With motion off the Rack is PR 5's. | L |
 | **7 · Imagery and its licence** | branch | The photographs as AVIF and WebP crops, their folder, licence file and records, the scrims, the ILLUSTRATIVE captions, the foot's sentence, the offline and single builds' no-photograph state. | Every layout. A cover without its file still reads. | M |
+| **7b · The offline trim** (amended 18 Nov, section 4.2) | branch | The offline and single files carry an extended half only where a face draws a character in the snapshot that needs it. Today that is Inter's, for one venue's Ş and ğ. The map of which faces draw which data fields, and what keeps it true when a later PR moves a field. | Every glyph the six-face set draws for the snapshot. `verify` stays green whatever a sync brings. Rulings 3 and 9. | S–M |
 | **8 · The decorative layer** | branch | The one clock, the canvases, the shaders, the CSS effects (foil sweep, spine glitch, torch), the runtime governor, the flash gate. | Every still. With motion off the page is PR 7's, pixel for pixel. | L |
 | **9 · The release** | `main` | `main` merged in; the version in its seven places; `CHANGELOG.md`; the README pictures; `docs/nextjs-migration-plan.md` amended (section 7); the Step 0 lines handed to Beni. | The code, unless the sum review finds something. | S |
 
@@ -386,7 +387,7 @@ The rows for PR 1b in section 3's table, its evidence list, and section 8.3 foll
 2. Which files? **All** · Four. Recommended: All.
 3. When? **Beside** PR 2 · After PR 2. Recommended: Beside, when two builder seats are free.
 
-### Amended Wed 18 Nov 2026: the offline set, six faces now and trimmed later (Beni's rulings at #341's Pass 3; the PR is proposed by the Track A Planner)
+### Amended Wed 18 Nov 2026: the offline set, six faces now and trimmed later (Beni's rulings at #341's Pass 3; PR 7b proposed by the Track A Planner and approved by Beni the same day)
 
 - **What grew.** On Tue 17 Nov Beni answered "Yes, extend it": the offline and single files carry Caslon 400 and Kickoff Mono 400 beside ruling 4's four faces, so they hold both halves of six faces. #341 built that, and its Pass 2.5 measured the cost at 148,593 bytes a file.
 - **The ruling.** On Wed 18 Nov Beni ruled "Trim", and then "Merge now, trim later". #341 merges with all six faces' halves, and a later PR into the integration branch trims the set before v0.6.0. #341's Pass 2.5 found that 106,864 of the 148,593 bytes are five extended halves no character in the snapshot needs. Only Inter's extended half is used today, for the Ş and ğ of Şükrü Saracoğlu.
@@ -395,7 +396,7 @@ The rows for PR 1b in section 3's table, its evidence list, and section 8.3 foll
   - A sync never turns `verify` red. Sync PRs merge once `verify` is green (`CLAUDE.md`, "Scheduled sync"). A coverage test that failed when a snapshot brought a new character would hold every fixture update until someone changed the code. So the build must decide from the data it inlines whether a face carries its extended half, or the rule must be conservative enough that no snapshot can need more.
   - Rulings 3 and 9 stand: no `local()` face, and no page contacts a font host.
 - **What the brief must settle.** Which faces draw which data fields, on the offline page and in the single file. And how that map stays true when a later PR moves a field to another face: either the evidence runner reads it from the rendered page, or it is declared and a test pins it.
-- **When.** After PR 7, proposed as **PR 7b**. PRs 3 to 5 decide which faces draw the rows, the Table and the books, and PRs 2 and 7 set the offline page and its no-photograph state. A map measured before them would describe a page that is about to change. So the brief is written from a fresh read once PR 7 merges, and not before.
+- **When.** After PR 7, as **PR 7b** (Beni: "Yes, PR 7b"). PRs 3 to 5 decide which faces draw the rows, the Table and the books, and PRs 2 and 7 set the offline page and its no-photograph state. A map measured before them would describe a page that is about to change. So the brief is written from a fresh read once PR 7 merges, and not before.
 - **Size and seats.** S to M. The seats follow the routing amendment's table at the time.
 
 The rulings and their record: `docs/design-overhaul-pr1b-review-prompt.md`, under "The re-run's result, Beni's rulings and the merge handoff".
