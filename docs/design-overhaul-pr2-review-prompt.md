@@ -883,3 +883,37 @@ VERIFY BEFORE YOU PUSH, and report it in your comment.
 
 DELIVERABLE. One PR comment whose first line is "<model> · <effort> · Fix round 1 — <verdict> at <sha>", with each change and its commit, the receipts above, what you could not verify, and the handoff: Pass 2.5's next sitting goes to a fresh Codex session on gpt-6.2-sol at xhigh, read-only, at your final SHA. Then a short report to Beni in chat with the final SHA. Approve nothing and merge nothing; Beni's word merges.
 ````
+
+## While fix round 1 runs: the overlap with #341, and the missing worktrees (Wed 18 Nov 2026, 6:10 PM EST)
+
+By 6:10 PM EST fix round 1 had pushed six commits to `cursor/overhaul-pr2-chrome`, all authored
+as Claude. They take #342's head from `ea5242c` to `72608cb`:
+
+| Commit | Change |
+|---|---|
+| `d0e743c` | The focused standings row comes out from under the labels and the divider |
+| `231869a` | The gallery's width is held to the gallery's own rule |
+| `30d7631` | The band is measured in the server's HTML, before the app runs |
+| `6d21c04` | The strap is set in caps at .12em |
+| `219a2e2` | The tab is drawn 22 px tall inside its 44 px hit area |
+| `72608cb` | A comment goes back on its hook |
+
+The fix round had not posted its comment yet. GitHub reported #342 as mergeable and clean.
+
+The PR 1b Encore session reported that #341's Pass 2.5 re-run finished at `17660f9` (comment
+6994255176) and escalated. #341's merge is Beni's call and has not happened. The PM seat checked:
+- Both PRs branch from `34b5160`.
+- Both change `tests/faces.test.ts` and `web/scripts/evidence.mjs`. In those two files #342 adds
+  1,101 lines and deletes 12, and #341 adds 237 and deletes 49.
+- `git merge-tree --write-tree 72608cb 17660f9` exits 0 and lists no conflicted paths.
+
+A clean text merge is not a passing merge. The two PRs change the same test file and the same
+evidence runner. If #341 lands first, #342's base moves off `34b5160`, and #342's checks and runner
+cells need a re-run on the new `overhaul/second-edition` before it merges. The next Pass 2.5
+opener will state that as a fact about the base. #341's re-run worktrees are
+`kickoff-pr341-rerun-tip` and `kickoff-pr341-rerun-032` on ports 7873 to 7975. #342's next
+Pass 2.5 keeps ports 7473 to 7675.
+
+The missing worktrees are explained. No tool and no schedule was involved. Nothing in fix
+round 1's brief or in the three `kickoff-pr342-pass25*` trees changes, and the instruction to
+stop if a tree vanishes still stands.
