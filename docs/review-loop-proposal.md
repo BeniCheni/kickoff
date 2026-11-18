@@ -1202,13 +1202,17 @@ for Cursor (S7).
     is open or contested, and Beni's ruling is a plain yes. Grok then writes the record from
     Beni's words. Anything that needs judgement goes to the Planner.
   - **Merges, tags and releases** run on Grok only for the version Beni names, each on his word.
+    *Narrowed the same day:* the runtime is chat only (below), so Grok drafts the release notes
+    and the commands, and Beni runs them.
     The number stays his (D8).
   - **Sprint 3 is unchanged.** The Planner writes its Pass 3 record. Its executor, the first live
     run of `authorize`, does not go to Grok; its model is still Beni's word (above).
-  - **Two points are open.**
+  - **Two points were open; the first is answered.**
     - **The runtime.** The only Grok software on Beni's Mac is `Grok Bot.app`; there is no CLI.
-      Whether it can run git and gh is not yet known. If it cannot, it drafts and Beni runs the
-      commands.
+      *Answered the same day (Beni, "Chat only"):* it cannot run git, gh or tests, and it reads
+      only what Beni pastes in. So Grok drafts and someone else acts. Its docs text, release notes
+      and Pass 3 records are committed and posted by Beni. A hotfix it drafts is applied by Beni
+      or a Codex or Claude seat, which runs the tests before the pull request opens.
     - **The model tables.** `check`'s route rule looks a record's runtime up in the
       configuration's vendors and fails any model or effort its tables do not list
       (`src/report.ts`). Until a configuration lists xAI with `grok-4.7` at `medium`, a Grok
