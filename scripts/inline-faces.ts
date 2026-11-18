@@ -76,12 +76,13 @@ function selected(face: Face): boolean {
 // which Oswald does not contain, and changed the loaded page (e34e032). A later
 // fallback has to carry its unicode-range into this function before it can ship.
 export function inlineFaceCss(css: string, read: (src: string) => Buffer): string {
-  // The whole stylesheet, not the first src of a rule. A second src, and a
-  // src with no trailing semicolon, both have to fail this.
-  if (/local\(/i.test(css)) {
+  // Scan uncommented CSS so a second src or a src without a trailing
+  // semicolon also fails the check.
+  const uncommented = css.replace(/\/\*[\s\S]*?\*\//g, '')
+  if (/local\(/i.test(uncommented)) {
     throw new Error('A local() face is not inlined. Carry its unicode-range into the offline file before shipping one.')
   }
-  const parsed = faces(css)
+  const parsed = faces(uncommented)
   const bySrc = new Map<string, { face: Face, weights: number[] }>()
   for (const face of parsed) {
     if (!selected(face)) continue

@@ -3,8 +3,8 @@
 The faces for the second edition, plus Inter, which the first edition and Moments
 already set. Each of the ten files is now two halves. The latin half keeps the
 file name the pages already preload. The latin-ext half adds `-ext` before
-`.woff2`. A page fetches a latin-ext half only when it shows a character in
-that half's `unicode-range`.
+`.woff2`. The latin rule comes after the latin-ext rule so the browser tries
+latin first for characters in both ranges. The page heads preload latin files.
 
 Fixtures and Table load the latin halves of Oswald, Inter, and Kickoff Mono at
 500 and 600 (107,588 bytes). Moments loads the latin halves of Oswald and
@@ -40,8 +40,8 @@ contact a font host. The stylesheet the site loaded before these files were
 self-hosted is `https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap`.
 The same two ranges are on every family in this set, including the families
 that stylesheet did not request (checked the same day against a css2 request
-that names them). U+0304, U+0308 and U+0329 sit in both ranges, which is how
-Google served them.
+that names them). Seven code points sit in both ranges: U+0131, U+0152,
+U+0153, U+0304, U+0308, U+0329 and U+2020.
 
 Latin:
 
@@ -55,8 +55,7 @@ Latin-ext:
 U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF
 ```
 
-The previous single range was these two joined, with U+0304, U+0308 and U+0329
-written once.
+The previous single range covered the same union of 1,546 code points.
 
 The subset options, with `<input>`, `<output>` and `<range>` filled in by the
 script:
@@ -105,18 +104,24 @@ The twenty WOFF2 files total 441,844 bytes.
 
 ## Sources
 
-| Source | Commit | SHA-256 |
-| --- | --- | --- |
-| Oswald `fonts/variable/Oswald[wght].ttf` at https://github.com/googlefonts/OswaldFont | `89795261ac9eeb9aa8cd99f43982c4e4b0e53261` | `5b38c246e255a12f5712d640d56bcced0472466fc68983d2d0410ec0457c2817` |
-| Libre Caslon Text regular at https://github.com/thundernixon/Libre-Caslon | `52200a76d723e4a8cb9a566686ed1f56a794f39a` | `be0839d01507ee8767eca5ce1a4ea31c7cf067d00327e37683455176539e809c` |
-| Libre Caslon Text italic, same repository | `52200a76d723e4a8cb9a566686ed1f56a794f39a` | `3316c5dc72ea9c70192f2444bc80332f1830ffe1fd41b4443df50bbbc0c4c556` |
-| Chakra Petch bold at https://github.com/m4rc1e/Chakra-Petch | `6176529d05acf654f31e024daad77966319e499d` | `c44620722a5fa412f54abe14f0323263f9ecc948d076f991a707476fcd48eba7` |
-| Abril Fatface `ofl/abrilfatface/AbrilFatface-Regular.ttf` at https://github.com/google/fonts. The glyphs repository https://github.com/googlefonts/abrilfatface at `9d1486e10152a225e46f9d1f787410d7d269015e` ships no TTF. The OFL text of the two commits is the same, and the copy here is the upstream file. | `90abd17b4f97671435798b6147b698aa9087612f` | `5971d4a3758a922a9fedc7f6fb825a96341a2e718c45a4b2c9a6b417c8c4dbe9` |
-| IBM Plex Mono regular at https://github.com/googlefonts/plex `IBM-Plex-Mono/fonts/complete/ttf/` | `9ab3b5b3b96325fb20f365ee0804adca92024cbf` | `a3c50f7c0e063998cfaeae56c6169ece9e0feaffaef425aa038f85d037fb4b9b` |
-| IBM Plex Mono italic, same commit | `9ab3b5b3b96325fb20f365ee0804adca92024cbf` | `d70bd62fa6b97d19853c0cf823667f99f7ff023d915052248e68635179c8fa83` |
-| IBM Plex Mono medium, same commit | `9ab3b5b3b96325fb20f365ee0804adca92024cbf` | `6f390a008f2f3b530b6bd4b2b410261f550b3cd366dc4a8bbc13527011437e81` |
-| IBM Plex Mono semibold, same commit | `9ab3b5b3b96325fb20f365ee0804adca92024cbf` | `00247c2a8bcbcba476b26e3a29a332eff7dfeceeb813291805bda5bdd9071a51` |
-| Inter `InterVariable.ttf` inside https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip. Tag `v4.1` points at the commit in this row. The font's version string is `4.001;git-9221beed3`. The OFL is `LICENSE.txt` in that zip. It names no reserved font name. | `e3a3d4c57d5ecc01453a575621882a384c1995a3` | `9883fdd4a49d4fb66bd8177ba6625ef9a64aa45899767dde3d36aa425756b11e` |
+| Source | Version (name ID 5) | Commit | SHA-256 |
+| --- | --- | --- | --- |
+| Oswald `fonts/variable/Oswald[wght].ttf` at https://github.com/googlefonts/OswaldFont | `4.103` | `89795261ac9eeb9aa8cd99f43982c4e4b0e53261` | `5b38c246e255a12f5712d640d56bcced0472466fc68983d2d0410ec0457c2817` |
+| Libre Caslon Text regular at https://github.com/thundernixon/Libre-Caslon | `2.000` | `52200a76d723e4a8cb9a566686ed1f56a794f39a` | `be0839d01507ee8767eca5ce1a4ea31c7cf067d00327e37683455176539e809c` |
+| Libre Caslon Text italic, same repository | `2.000` | `52200a76d723e4a8cb9a566686ed1f56a794f39a` | `3316c5dc72ea9c70192f2444bc80332f1830ffe1fd41b4443df50bbbc0c4c556` |
+| Chakra Petch bold at https://github.com/m4rc1e/Chakra-Petch | `1.000` | `6176529d05acf654f31e024daad77966319e499d` | `c44620722a5fa412f54abe14f0323263f9ecc948d076f991a707476fcd48eba7` |
+| Abril Fatface `ofl/abrilfatface/AbrilFatface-Regular.ttf` at https://github.com/google/fonts. The glyphs repository https://github.com/googlefonts/abrilfatface at `9d1486e10152a225e46f9d1f787410d7d269015e` ships no TTF. The OFL text of the two commits is the same, and the copy here is the upstream file. | `1.001` | `90abd17b4f97671435798b6147b698aa9087612f` | `5971d4a3758a922a9fedc7f6fb825a96341a2e718c45a4b2c9a6b417c8c4dbe9` |
+| IBM Plex Mono regular at https://github.com/googlefonts/plex `IBM-Plex-Mono/fonts/complete/ttf/`. The OFL is `license.txt` in the same directory. | `2.3` | `9ab3b5b3b96325fb20f365ee0804adca92024cbf` | `a3c50f7c0e063998cfaeae56c6169ece9e0feaffaef425aa038f85d037fb4b9b` |
+| IBM Plex Mono italic, same commit | `2.3` | `9ab3b5b3b96325fb20f365ee0804adca92024cbf` | `d70bd62fa6b97d19853c0cf823667f99f7ff023d915052248e68635179c8fa83` |
+| IBM Plex Mono medium, same commit | `2.3` | `9ab3b5b3b96325fb20f365ee0804adca92024cbf` | `6f390a008f2f3b530b6bd4b2b410261f550b3cd366dc4a8bbc13527011437e81` |
+| IBM Plex Mono semibold, same commit | `2.3` | `9ab3b5b3b96325fb20f365ee0804adca92024cbf` | `00247c2a8bcbcba476b26e3a29a332eff7dfeceeb813291805bda5bdd9071a51` |
+| Inter `InterVariable.ttf` inside https://github.com/rsms/inter/releases/download/v4.1/Inter-4.1.zip. Tag `v4.1` points at the commit in this row. The OFL is `LICENSE.txt` in that zip. It names no reserved font name. | `4.001;git-9221beed3` | `e3a3d4c57d5ecc01453a575621882a384c1995a3` | `9883fdd4a49d4fb66bd8177ba6625ef9a64aa45899767dde3d36aa425756b11e` |
+
+Horizontal glyph advances match on the shared code points of both halves
+against the files the original Google css2 URL above returned to a Chrome
+157 user agent on Wed 18 Nov 2026. The comparison covers Oswald at 500, 600 and 700,
+Inter at 400, 500 and 600, and Plex Mono at 500 and 600. Advances were
+compared in em units at the listed weights.
 
 ## Files
 

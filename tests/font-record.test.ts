@@ -18,6 +18,7 @@ it('every file under public/fonts matches the record', () => {
   const record = readFileSync('public/fonts/RECORD.md', 'utf8')
   const rows = [...record.matchAll(/^\| `([^`]+)` \| (\d+) \| `([0-9a-f]{64})` \|$/gm)]
   const table = new Map(rows.map(row => [row[1], { bytes: Number(row[2]), sha256: row[3] }]))
+  expect(table.size, 'each file has one checksum row').toBe(rows.length)
   const files = filesUnder('public/fonts')
     .map(file => path.relative('public/fonts', file))
     .filter(file => file !== 'RECORD.md')

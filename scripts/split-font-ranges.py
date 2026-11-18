@@ -53,8 +53,8 @@ if brotli.__version__ != "1.2.1":
 ROOT = Path(__file__).resolve().parents[1]
 
 # Google's css2 stylesheet, fetched with curl on Tue 17 Nov 2026. The same
-# two strings are on every family this set uses. U+0304, U+0308 and U+0329
-# sit in both, which is how Google served them.
+# two strings are on every family this set uses. Seven code points sit in
+# both: U+0131, U+0152, U+0153, U+0304, U+0308, U+0329 and U+2020.
 LATIN = (
     "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, "
     "U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, "

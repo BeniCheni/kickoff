@@ -40,10 +40,14 @@ interface Face {
   range: string
 }
 
+const record = readFileSync('public/fonts/RECORD.md', 'utf8')
+const latin = record.match(/^Latin:\n\n```\n([^\n]+)\n```$/m)?.[1]
+const latinExt = record.match(/^Latin-ext:\n\n```\n([^\n]+)\n```$/m)?.[1]
+
 function half(range: string): string {
-  if (range.startsWith('U+0000-00FF')) return 'latin'
-  if (range.startsWith('U+0100-02BA')) return 'ext'
-  return 'missing'
+  if (range === latin) return 'latin'
+  if (range === latinExt) return 'ext'
+  return `invalid range: ${range}`
 }
 
 function facesOf(css: string): Face[] {
@@ -70,8 +74,8 @@ function identity(face: { family: string, style: string, weight: string, file: s
 const declared = FACES.flatMap(([family, style, weight, file]) => {
   const ext = file.replace(/\.woff2$/, '-ext.woff2')
   return [
-    `${family} ${style} ${weight} ${file} latin`,
     `${family} ${style} ${weight} ${ext} ext`,
+    `${family} ${style} ${weight} ${file} latin`,
   ]
 })
 
@@ -82,6 +86,16 @@ it('the stylesheet names both halves of each face, and every face swaps', () => 
   expect(left.map(face => face.display)).toEqual(left.map(() => 'swap'))
   expect(left.map(identity)).toEqual(declared)
   expect(left.every(face => face.range.length > 0)).toBe(true)
+})
+
+it('the split script uses the ranges recorded for the two halves', () => {
+  const script = readFileSync('scripts/split-font-ranges.py', 'utf8')
+  for (const [name, range] of [['LATIN', latin], ['LATIN_EXT', latinExt]]) {
+    expect(range, name).toBeTruthy()
+    const assignment = script.match(new RegExp(`^${name} = \\(([\\s\\S]*?)^\\)`, 'm'))?.[1] ?? ''
+    const fragments = [...assignment.matchAll(/"([^"]+)"/g)].map(match => match[1])
+    expect(fragments.join(''), name).toBe(range)
+  }
 })
 
 it('preloads the two first-paint faces, and the href equals the src', () => {
@@ -114,27 +128,32 @@ it('the single-file build inlines the six rendered faces and nothing else', () =
   expect(html).toBe(inlineBundledFaces(html))
   expect(html).not.toMatch(/fonts\.googleapis\.com|fonts\.gstatic\.com|url\("\.\/fonts\/|rel="preload"|href="\.\/faces\.css"/)
   expect(html).toContain('data:font/woff2;base64,')
-  const block = html.slice(html.indexOf('data-kickoff-faces'), html.indexOf('</style>'))
+  const facesStart = html.indexOf('<style data-kickoff-faces')
+  const facesEnd = html.indexOf('</style>', facesStart) + '</style>'.length
+  const block = html.slice(facesStart, facesEnd)
+  const rest = html.slice(0, facesStart) + html.slice(facesEnd)
   const inlined = facesOf(block)
   // Kickoff Mono 400 is inlined as Kickoff Mono Text. A 400 face on Kickoff
   // Mono would replace the 500 the page currently gets as the nearest weight.
   expect(inlined.map(face => `${face.family} ${face.weight} ${half(face.range)}`)).toEqual([
-    'Oswald 500 700 latin',
     'Oswald 500 700 ext',
-    'Inter 400 600 latin',
+    'Oswald 500 700 latin',
     'Inter 400 600 ext',
-    'Kickoff Mono 500 latin',
+    'Inter 400 600 latin',
     'Kickoff Mono 500 ext',
-    'Kickoff Mono 600 latin',
+    'Kickoff Mono 500 latin',
     'Kickoff Mono 600 ext',
-    'Libre Caslon Text 400 latin',
+    'Kickoff Mono 600 latin',
     'Libre Caslon Text 400 ext',
-    'Kickoff Mono Text 400 latin',
+    'Libre Caslon Text 400 latin',
     'Kickoff Mono Text 400 ext',
+    'Kickoff Mono Text 400 latin',
   ])
   expect(inlined.every(face => face.range.length > 0)).toBe(true)
-  expect(block.match(/url\("data:font\/woff2;base64,/g)).toHaveLength(12)
-  expect(block).not.toMatch(/size-adjust|Oswald Fallback|Chakra|Kickoff Display|italic/)
+  expect(html.match(/url\("data:font\/woff2;base64,/g)).toHaveLength(12)
+  expect(html).not.toMatch(/size-adjust|Oswald Fallback|Chakra|Kickoff Display/)
+  expect(rest).not.toMatch(/@font-face|Caslon|Kickoff Mono Text/)
+  expect(block).not.toMatch(/italic/)
 })
 
 it('refuses to inline a local() face', () => {
@@ -163,6 +182,13 @@ it('the Next copy refuses local(), LOCAL(), and a mixed source', () => {
     const css = `@font-face { font-family: "Oswald"; font-style: normal; font-weight: 500; font-display: swap; src: ${src}; }`
     expect(() => nextFacesCss(css), src).toThrow(/local\(/i)
   }
+})
+
+it('a comment can mention local() without adding a face on either build path', () => {
+  const css = `/* Old example: @font-face { src: local("Arial"); } */\n${vite}`
+  const read = () => Buffer.from('face')
+  expect(inlineFaceCss(css, read)).toBe(inlineFaceCss(vite, read))
+  expect(nextFacesCss(css)).toBe(`/* Old example: @font-face { src: local("Arial"); } */\n${nextFacesCss(vite)}`)
 })
 
 it('the Next copy is the same bytes with root urls, and the suite does not rewrite the checkout', () => {
