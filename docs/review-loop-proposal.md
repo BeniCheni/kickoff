@@ -505,7 +505,8 @@ Cursor's hands this track seats no Cursor.
   a fix round*, 23 findings (4 blocking, 6 should-fix, 13 notes). Beni's rulings on them are
   under "Rulings received" ("Sprint 3's fix round").
 - *Fix brief:* [`review-loop-sprint-3-fix-prompt.md`](review-loop-sprint-3-fix-prompt.md),
-  Pass 1.5's brief for Pass 2 (Codex, `gpt-6.1-sol`, `xhigh`).
+  Pass 1.5's brief for Pass 2 (Codex in the ChatGPT desktop app, `gpt-6.2-sol`, `xhigh`, by Beni's
+  ruling of 18 Nov; the build was `gpt-6.1-sol`).
 - *Carried from Sprint 1's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are that
   comment's findings): 6, sequence by the order records were posted, not their presence; 7, every
   pass's `input_sha` is the previous recorded pass's `output_sha`, writing or not, and a head
@@ -1042,7 +1043,7 @@ for Cursor (S7).
     |---|---|---|
     | Plan of record and build brief | Claude Planner | Claude Planner |
     | Passes 0 and 1.5 | Claude Planner | Codex, `gpt-6.2-astra`, as review lead |
-    | Build, Pass 2, executor | Sprint 5: `gpt-6.2-astra`, `xhigh`. Sprint 7: `gpt-6.2-sol`, `xhigh`. Sprint 3 stays on `gpt-6.1-sol`. | Claude Code, `claude-fable-5-2`, `xhigh` |
+    | Build, Pass 2, executor | Sprint 5: `gpt-6.2-astra`, `xhigh`. Sprint 7: `gpt-6.2-sol`, `xhigh`. Sprint 3's build stayed on `gpt-6.1-sol`; its fix round runs on `gpt-6.2-sol` (Beni, 18 Nov). | Claude Code, `claude-fable-5-2`, `xhigh` |
     | Pass 1 | Claude Code, `claude-fable-5-2`, `xhigh` | Codex, `gpt-6.2-astra`, `xhigh`, fresh |
     | Pass 2.5 | Claude Code, `claude-opus-5-5`, `xhigh`, a fresh session that writes nothing | Codex, `gpt-6.2-sol`, `xhigh`, `--sandbox read-only` (read-only on disk, S7) |
 
@@ -1136,8 +1137,17 @@ for Cursor (S7).
   `claude-fable-5-2` at `xhigh`) returned *merge after a fix round*: 23 findings (4 blocking, 6
   should-fix, 13 notes), and verdicts on all ten appendix items, none of which changed a finding
   or joined one. Beni approved the Planner's dispositions as proposed. The brief is
-  [`review-loop-sprint-3-fix-prompt.md`](review-loop-sprint-3-fix-prompt.md), for Codex on
-  `gpt-6.1-sol` at `xhigh`, the model that built the sprint.
+  [`review-loop-sprint-3-fix-prompt.md`](review-loop-sprint-3-fix-prompt.md), for Codex, the
+  sprint's builder; the model it runs on is the next item.
+  - **The fix round's model (Beni, Wed 18 Nov 2026, "we can use gpt-6.2-sol and Extra high").**
+    Pass 2 runs on `gpt-6.2-sol` at `xhigh`, in Codex in the ChatGPT desktop app, because the
+    restart closed the terminal that built the sprint. It is a ruled exception to the rule that a
+    pull request never changes model partway: the builder stays Codex, the build stays
+    `gpt-6.1-sol` on its record, and Pass 2's record names Beni as recommending its route. Pass
+    1.5's `next_route` still carries `gpt-6.1-sol`, the roster's recommendation when it was
+    posted; nothing reads it but `prep`, so it stands as history. The example configuration's
+    Codex table gains `gpt-6.2-sol` in this round. Sprint 3's executor model is Beni's word when
+    it starts; the Planner recommends the fix round's.
   - **Fixed in Pass 2:** 1 to 6, 8 to 11 and 16 to 23; the test half of 7, the README half of 12
     and the output half of 13; A1 and A9, as corrections in the pull request's body; A3, by
     deleting `codex/forge`; and A10, the latest status per creator in `status`'s gate line.
