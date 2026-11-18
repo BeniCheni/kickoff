@@ -507,6 +507,12 @@ Cursor's hands this track seats no Cursor.
 - *Fix brief:* [`review-loop-sprint-3-fix-prompt.md`](review-loop-sprint-3-fix-prompt.md),
   Pass 1.5's brief for Pass 2 (Codex in the ChatGPT desktop app, `gpt-6.2-sol`, `xhigh`, by Beni's
   ruling of 18 Nov; the build was `gpt-6.1-sol`).
+- *Fixed (Wed 18 Nov 2026):* Pass 2's
+  [record](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-6985927278): three commits to
+  `65d38f1`, 21 findings fixed and 14 and 15 left open as Beni deferred them.
+- *Synthesis brief:* [`review-loop-sprint-3-synthesis-prompt.md`](review-loop-sprint-3-synthesis-prompt.md),
+  for Pass 2.5 (Claude Code, `claude-opus-5-5`, `xhigh`), with its sealed appendix as a second
+  paste.
 - *Carried from Sprint 1's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are that
   comment's findings): 6, sequence by the order records were posted, not their presence; 7, every
   pass's `input_sha` is the previous recorded pass's `output_sha`, writing or not, and a head
