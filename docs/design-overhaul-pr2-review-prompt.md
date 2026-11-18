@@ -189,3 +189,101 @@ PARTICULARS YOUR BRIEF MUST CARRY. These are rulings and arrangements, not findi
 - #341 is PR 1b and is reviewed separately. Pass 1 does not review it.
 - No Cursor seat holds a pass now, so there is no Thursday deadline. Beni sets the date.
 ````
+
+## Codex's Pass 0, and its Pass 1 brief (Wed 18 Nov 2026, about 11:20 AM EST)
+
+Beni pasted Codex's Pass 0 reply into the PM session at about 11:20 AM EST. Codex ran on
+`gpt-6.2-astra` at `xhigh`, read from its session's `turn_context` record. It ran no test, build,
+server or browser, wrote no file and posted nothing. Its notes beside the brief, in short:
+- #328's "Where the overhaul stood" names Claude as PR 2's planned builder and says no Cursor build
+  had started. #342 holds nine Cursor commits after `541b9a9`, and "Re-route per #328" keeps them
+  and assigns the remaining seats. Cursor's build effort is still unconfirmed.
+- It corrected two details of the PM seat's draft. Plan section 10.5 puts Beni's rulings first, then
+  the Claude Design boards, the handoff and the build spec. And the band and the foot read the
+  version by different code paths that both start from the root `package.json`.
+- It read the comparison range and all 54 files' changes before it opened the draft.
+
+The PM seat archives the brief word for word and did not edit it. Under #328 the reviewing vendor
+writes the review briefs, and Claude answers PR 2's Pass 2. The PM seat checked only what could
+stop the pass mechanically, and told Beni three things:
+- The first line, `/kickoff-pr-review 342 --no-merge`, can only resolve to an untracked Codex copy
+  of the skill in Beni's checkout, at `.agents/skills/kickoff-pr-review/`. A worktree carries no
+  untracked file, so it is not found there. That copy's `SKILL.md` differs from the tracked one by
+  a find-and-replace of "Claude" with "Codex" and of `CLAUDE.md` with `AGENTS.md`, with errors such
+  as "`AGENTS.md` and `AGENTS.md` outrank this skill" and "Codex, Fable 5.1 Extra". Its other
+  three files are identical. The brief's next paragraph sends the pass to the tracked
+  `.claude/skills/kickoff-pr-review/`, which is right. So the PM seat recommended dropping the
+  first line when pasting, and left the untracked copy, which is Beni's, untouched.
+- The pass builds, serves, drives Chrome, makes two worktrees through the checkout's common `.git`
+  and posts with `gh`. Its Codex sandbox must allow those writes and that network;
+  `--sandbox read-only` is Pass 2.5's.
+- Every path and command the brief names exists at `e820fd4`. `scripts/n6b-proof.mjs` takes its
+  receipt path as its first argument, and the scan runs through the repository's own `tsx`.
+
+Delivered by Codex in chat. This copy is the archive.
+
+````text
+/kickoff-pr-review 342 --no-merge
+
+PR #342 · Overhaul PR 2 · Chrome and the motion control · Pass 1 cold review
+
+You are a fresh Codex session on gpt-6.2-astra at xhigh. Codex Pass 0 wrote this brief on that same model and effort after reading the PR and its code independently. Read CLAUDE.md and AGENTS.md first. Then read .claude/skills/kickoff-pr-review/SKILL.md, browser-matrix.md and pr-comment.md. Use the skill’s Pass 1 method with the report-only override below. Run TZ=America/New_York date before writing any date. Read your own session file and name your actual model and effort when you start and on the first line of your PR comment. Keep the sealed appendix closed until you have recorded your own observations.
+
+Mandate and seats
+
+Review github.com/BeniCheni/kickoff#342, the first overhaul PR to render the second edition. Cursor built it on Grok 4.7 from docs/design-overhaul-pr2-implementation-prompt.md. Its recorded build report leaves effort unconfirmed. Beni ruled “Re-route per #328” on Wed 18 Nov 2026 at about 10:39 AM EST. Read `git show origin/docs/review-loop-plan:docs/design-overhaul-plan.md` under “Amended Tue 17 Nov 2026: two vendors”. Apply the “When Claude builds” column to the review. Codex Astra xhigh owns Passes 0, 1 and 1.5, with a fresh session for this Pass 1. Claude Code on claude-fable-5-2 at xhigh owns Pass 2 and every fix round. Each Pass 2.5 is fresh Codex on gpt-6.2-sol at xhigh with --sandbox read-only. Pass 3 is Beni. No Cursor seat remains and there is no Thursday deadline. Beni sets the date.
+
+Your deliverable is one evidence-backed comment on #342. Put every proposed fix in that comment as a finding Claude can reproduce. Make no fix commit, push or tracked edit to deliver. The skill’s fix, archive, retro-edit and landing steps give way to this instruction. Nobody in these agent seats approves, merges, enables auto-merge, bumps or tags. Beni’s word merges. #341 is PR 1b and has its own review.
+
+Establish the comparison
+
+Read the live PR body, comments, reviews, commits, file list, checks and base/head OIDs with gh. Check for an existing Pass 1 before duplicating one. The reviewed head is e820fd436f193bc8ebfb95cfa776f56305681932 on cursor/overhaul-pr2-chrome, targeting overhaul/second-edition. At Pass 0 the target was 34b5160. GitHub’s comparison had 65 files, +4141/−2259. Commit 541b9a9d77c1db9d6cb923634111d323a6e567c9 merged main at 26bbc61 into the branch before the nine implementation commits. `git diff 541b9a9 e820fd4` isolates 54 files, +1330/−240. Verify that `git rev-parse 541b9a9:src/data e820fd4:src/data` returns the same tree twice. Read every hunk of that range. The extra docs and generated snapshot in GitHub’s comparison arrived with the merge. Recheck the live head before posting and identify exactly which SHA each result covers.
+
+Fetch origin and create or verify two detached review worktrees, /Users/benicheni/code/kickoff-pr2-review at e820fd4 and /Users/benicheni/code/kickoff-pr2-review-base at 541b9a9. Use the common Git directory for setup. Beni’s checkout at /Users/benicheni/code/kickoff holds his untracked files. Keep all installs, checkouts, builds and probes out of it, the builders’ worktrees and #341’s review worktrees. Install dependencies locally in each review tree. Keep receipts, screenshots and disposable mutation copies in your own scratch directory. Leave both review trees clean at their assigned SHAs. Never run npm run sync or hand-edit src/data/*.json.
+
+Use 127.0.0.1 ports 6773, 6774 and 6775 for head Vite production preview, Next production and Vite dev harness, respectively. Use 6873, 6874 and 6875 in that order for the base. Port 5173 is Beni’s, 6073–6375 are the builders’, and 6573–6675 belong to #341’s Pass 1. Set KICKOFF_VITE_ORIGIN, KICKOFF_NEXT_ORIGIN and KICKOFF_HARNESS_ORIGIN explicitly for each runner. Confirm each listener’s PID and cwd with lsof, give each run a distinct output directory, and stop only processes you started.
+
+Authority and Beni’s rulings
+
+Read the PR 2 build brief at the reviewed SHA. In docs/design-overhaul-plan.md read §§1.1, 1.7, 3, 4.3, 5.1–5.2, 6.1–6.2, 7.1–7.4, 8.1–8.3, 10.1, 10.4 and 10.5. Read the relevant boards and §§2–5 and 8 of docs/design/5-handoff/second-edition-handoff.md, with gap-18-addendum.md for the sections it updates. Read the PR 0 and PR 1 review carry-forwards and the process notes in docs/v0.2.6-ideas.md and the two earlier files its notes name. Use §10.5’s precedence and explicit conflict resolutions. Identify any design source you could not inspect. Account for all six items in the builder’s “Where the repository won” against their owning sources.
+
+Beni ruled on Sat 14 Nov 2026 in docs/design-overhaul-plan-review.md. 1 Branch and 2 Ten put the overhaul on the integration branch after PR 0, with one public change at release. 3 Oswald keeps the wordmark in Oswald at a size the builder measures. 12 Six assigns v0.6.0 to the eventual release. #342 has no release bump, tag or CHANGELOG section. 17 Approve accepts §10.4’s words with its exclusions, including removal of string 9’s Step 0 sentence. Strings 33–35 return individually for approval. String 34 here is the proposed spoken theme action, “Dark mode” on light and “Light mode” on dark. Beni’s approval is pending. 19 Repaint gives Moments second-edition ground and inks under .moments-gallery while preserving its layout, motion and Inter. This supersedes the plan’s earlier Moments pixel-parity wording.
+
+Beni ruled on Mon 16 Nov in PR 1’s review that stock nests. On light pages the nearest data-stock, including the element itself, supplies the voices. On dark pages every stock takes the black voices. tests/stockCascade.test.ts pins the rule. His ruling 5 allows Caslon’s preload when text first uses Caslon. On Tue 17 Nov he ruled “Yes, extend it”. PR 2 supplies the offline Caslon 400 text and Kickoff Mono 400 provenance. PR 1b owns their inlining in the offline and single files. Record what the standalone #342 artifacts actually draw. Whichever PR merges second reconciles public/fonts/RECORD.md and reruns evidence. The two heads touch tests/faces.test.ts and web/scripts/evidence.mjs in separate areas. Review #342’s changes only.
+
+Beni’s PR 0 ruling R2 carries the 16 Table loss-pip samples as the known full --enforce failure until PR 4. Identify each failure and any unread sample before applying that exception. R3 preserves a real button named exactly “Previous” in the server HTML of `/`, including when muted and inert. The other smoke routes do not require that fixture landmark. PRs 3 and 5 carry R3 forward. The week stepper is outside this change. CLAUDE.md’s honesty rules stand throughout. Fixture data is generated and diffed, no unset or dead kickoff is presented as confirmed, no fixture fact or matchday is invented, both clocks derive from one UTC instant, and no honesty assertion is weakened.
+
+Work to perform
+
+1. Establish green by SHA. Follow the build brief’s per-commit verification at each of the nine implementation SHAs, checked out in isolation, and return to e820fd4 for the browser work. Record root typecheck, both npm test projects with actual counts, build, build:single, build:offline and `node node_modules/tsx/dist/cli.mjs scripts/scan-offline-bundle.ts`. In web/ run typecheck, test, build, check:client and check:css. Check the component scan lists, shared-client imports and generated Next head. Apply the brief’s Studio admin-token check if an @theme font value changed. Distinguish hosted checks at the tip from checks you reproduced at earlier commits. Identify any command or SHA left unverified.
+
+2. Run each tree’s own web/scripts/evidence.mjs in report mode and then with --enforce. Compare the same snapshot, selected weeks and clock bucket. Cover Vite and Next, Poster and Ledger, light and dark, Fixtures/Table/Moments at 360, 375, 390 and 1000 px. Add the quiet, heavy and UEFA weeks, states harness and offline cells. Set the viewport before capture. Record cell counts, console and page errors, and document.documentElement.scrollWidth === window.innerWidth per cell. Keep the four 390 px Fixtures lens/theme captures. Run `node scripts/n6b-proof.mjs <scratch-receipt-path>` after the local Next production build. It starts its own loopback child and exercises the smoke checker. Verify `/`, `/?tab=table`, `/?tab=moments` and `/api/snapshot`, including the server landmarks and snapshot identity.
+
+3. Measure the band in all three shells. Compare the wordmark, strap, motion and theme discs, Poster/Ledger segments, +5 drawing, tabs and provenance against the handoff. Record drawn size separately from hit size, actual control order, row heights, wrap point, glyph position, full width and content insets. Check H1’s 44 × 44 minimum, H2 overlap, H3’s 44 px vertical pitch and H4 coverage of data. The build brief asks for scripted measurement. Plan §8.2 also assigns a person the H4 look. Report what the runner asserts, what you measured independently and what remains for a person. Exercise keyboard focus, arrow/Home/End and tab history, including ?only= and &date= through a lens change and Back. Check the measured focus ring on each new stock as §10.5(i) requires. Scroll deep Premier League and Champions League tables at 360, 390 and 1000 on both trees. Record what happens to the column labels, zone dividers and focused controls.
+
+4. Prove the motion state in production. Exercise actual presses and reloads on both apps, stored on/off, missing or invalid values, both OS preferences, independently throwing reads and writes, an OS change during the visit, a lens/tab change and StrictMode cleanup. Under reduced motion, verify Start lasts for the visit and leaves storage as found. Hold application scripts on a cold load. On Vite read data-motion while the React root is empty, then release the module and inspect the first rendered control. On Next inspect the raw server HTML and, with hydration held and the head bootstrap active, the painted glyph and browser-computed accessible name. Repeat after hydration for both motion and theme. Capture the stopped page twice two seconds apart. Verify state-transition timings and the reduced-motion path. Decorative motion arrives in PRs 6 and 8. Moments retains its own playback setting.
+
+5. Verify the reader-facing content. Trace band and foot version, META.total and SYNC_STAMP to their sources for Poster, Ledger and Table. Read the Poster time sentence beside collapsed and expanded rows, unset and unknown-local cases. Check the Ledger exclusion and the Table’s distinction between provider standings and locally joined form/next fixture. Exercise the request clock just below, at and above 24 and 72 hours, including day wording. Measure the rendered banner on pulp and typescript, feet on their actual grounds, and the error boundary with Retry, Reload and Reset where applicable. Compare actual ink, background, frame, corners and text contrast in both themes. Include the controls’ glyphs, +5 mark and focus indicators in the visual inspection. The text sampler alone cannot establish their visibility.
+
+6. For ruling 19, trace the production Vite empty route, a populated gallery with the repository’s harness, and the Next gallery state actually served. Compare computed foregrounds and painted grounds in both themes, plus element sizes, positions relative to the gallery, typography and motion. Separate a whole-page offset from internal reflow. Exercise the Moments player’s background inertness and focus return now that the band contains the nav. Check that Fixtures and Table retain their first-edition bodies, allowing for the specified page measures. Record exactly which screens and states support any parity claim.
+
+7. Measure cold font transfers per app, tab, lens and width at 390 and 1000. Identify the face applied to rendered text, unused preloads per page, and the commit that first paired rendered Caslon with its preload. Inspect both harness heads as well as both apps. Build and size both dist-offline/index.html and dist-single/index.html on the matched base and head. Open each from disk with networking off, inspect actual fonts, layout, controls and host requests. Record the offline Fixtures/Table tab set and what `?tab=moments` shows there. Keep findings about PR 2 distinct from PR 1b’s assigned font-tooling work.
+
+8. Reconcile every touched assertion to the before/after line and its rule. Use the build brief’s four kinds: renamed selector, wording changed by a named ruling, assertion moved to its replacement, or removal with equivalent coverage in the same PR. Check for omissions in the body’s table. Reproduce its eight mutation receipts in disposable scratch copies, restore each, and show the named test back to green. Probe rules the receipts do not cover, including each foot’s stamp/count, an independent write failure, and a missing band control. State separately when the page behaves correctly but its evidence check would accept a regression.
+
+The comment and handoff
+
+Post one ordinary PR comment with gh using the skill’s pr-comment.md shape. Put actual model, effort and verdict on the first line. Include reviewed SHA, comparison range, real check counts and checks at the live tip. For each finding give severity, file:line, reproduction command or exact interaction, expected and observed result, and the smallest proposed change for Claude’s Pass 2. Include leads disproved, precedence resolutions, matrix as run, captures and “Not verified” with reasons. Give Beni the evidence for string 34 and any genuine design choice that remains. Identify the preview for this SHA and whether it opens signed out. The real-iPhone WebKit check of the band, wrap and motion first frame is Beni’s. Return the posted comment URL in chat.
+
+Sealed appendix — open after recording the independent review
+
+A. Builder claims to remeasure. The body reports a 118 px band at 390/1000 and 133 px at 360, with the entire SYNCED unit wrapping and the glyph staying on line one. It reports 26 px discs inside 44 px hits, 57 × 44 lens hits, a 26 × 33 badge and no overlap. Compare its tab widths, 16 px band gutter, 20 px content gutter, strap tracking, tab type and Ledger ground against the actual cells and the handoff.
+
+B. Builder claims to rerun. The body reports 96 matrix, 72 week, six harness and four offline cells, 16 loss-pip failures out of 1,882 contrast samples, zero unread, and byte-identical stopped captures on Vite. It reports passing root/web checks, four local smoke routes and eight successful mutation demonstrations. Check the scope of each receipt, including which host, instant, state and SHA it establishes.
+
+C. Builder claims on weight and parity. The body reports cold font increases of 56,316 bytes on Vite and 56,240 on Next, two unused Moments preloads, and smaller offline/single outputs. Its size baseline is 34b5160. Recompute against 541b9a9 before attributing a delta to chrome. Recheck the Moments box counts and offsets against the actual states, and the claimed sign-in redirect against the correct preview URL.
+
+D. PM-seat hypotheses, unverified in a browser by Pass 0. Does the sticky band obscure Table headers or zone dividers? Which H3/H4 faults would the runner detect? Can a late client write satisfy the motion receipt? Would the banner’s node contrast test notice a CSS change to its actual paint? Does the Vite empty Moments page receive the ruled repaint? Which current rows support or qualify the Poster foot’s time wording? Resolve each from your evidence. A lead that fails to reproduce belongs in the comment as such.
+
+E. Codex Pass 0 questions from the diff. In runMatrix, what happens if the header marker disappears or a control is missing from the enumerated buttons? At the fractional boundaries in hitAreaFaults, what fails? In tests/dom/appHeader.test.tsx, which assertions actually run after switching to Ledger? On a light page with a black band, what colour does the keyboard focus ring actually paint? On a populated gallery, which elements consume the remapped variables and which inherit an already-computed body colour or transparent ground? On the harness pages, which text actually uses the new Caslon preload? Treat each as a question. Report the observation even when it clears the implementation.
+````
