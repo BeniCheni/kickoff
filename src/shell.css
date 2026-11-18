@@ -493,6 +493,15 @@ html {
 .page-measure[data-measure='moments'] {
   width: min(100%, 780px);
 }
+/*
+ * Ruling 19. Moments' ground is the page behind the route, not a panel inside
+ * it: the gallery outdents the column, so a ground painted on either box would
+ * leave the old page showing around it. The page takes pulp while the Moments
+ * column is on it, and the black voices on a dark page. No box moves.
+ */
+body:has(.page-measure[data-measure='moments']) {
+  background: var(--fb-pulp);
+}
 .page-foot {
   margin-top: 32px;
   font-family: var(--fb-book);

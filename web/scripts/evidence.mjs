@@ -269,6 +269,41 @@ async function bandGeometry(page) {
   })
 }
 
+/** Ruling 19 on the rendered page. The ground is the first opaque background at or
+ *  beneath the Moments route, and the ink is what text inherits there. Both are read
+ *  against the tokens as the route resolves them, so a dark page is held to the black voices. */
+async function momentsPaint(page) {
+  return page.evaluate(() => {
+    const main = document.querySelector('main[aria-label="Moments"]')
+    if (!main) return null
+    const opaque = (value) => {
+      const parts = value.match(/rgba?\(([^)]+)\)/)?.[1].split(/[ ,/]+/).filter(Boolean)
+      return !!parts && (parts.length < 4 || Number(parts[3]) === 1)
+    }
+    let ground = null
+    for (let el = main; el && !ground; el = el.parentElement) {
+      const color = getComputedStyle(el).backgroundColor
+      if (opaque(color)) ground = color
+    }
+    const probe = main.appendChild(document.createElement('i'))
+    const token = (name) => { probe.style.color = `var(${name})`; return getComputedStyle(probe).color }
+    const pulp = token('--fb-pulp')
+    const pulpInk = token('--fb-pulp-ink')
+    probe.remove()
+    const heading = main.querySelector('h1, h2, h3')
+    return { ground, ink: getComputedStyle(main).color, heading: heading ? getComputedStyle(heading).color : null, pulp, pulpInk }
+  })
+}
+
+export function momentsPaintFaults(paint) {
+  if (!paint) return ['the Moments route is missing']
+  const faults = []
+  if (paint.ground !== paint.pulp) faults.push(`ground ${paint.ground}, expected pulp ${paint.pulp}`)
+  if (paint.ink !== paint.pulpInk) faults.push(`inherited ink ${paint.ink}, expected pulp-ink ${paint.pulpInk}`)
+  if (paint.heading && paint.heading !== paint.pulpInk) faults.push(`heading ink ${paint.heading}, expected pulp-ink ${paint.pulpInk}`)
+  return faults
+}
+
 export async function runMatrix(browser, { origins, out, anchor, contrast = false }, result = emptyMatrix()) {
   const { cells, legacy, measurements, contrast: contrastCells } = result
   for (const [app, origin] of Object.entries(origins)) {
@@ -293,6 +328,10 @@ export async function runMatrix(browser, { origins, out, anchor, contrast = fals
             }
           }
           if (tab === 'table') assert.ok(await page.$('[data-table-picker]'), id)
+          if (tab === 'moments') {
+            const faults = momentsPaintFaults(await momentsPaint(page))
+            assert.deepEqual(faults, [], `${id} ${faults.join('; ')}`)
+          }
           if (width === 390 && tab === 'fixtures' && theme === 'light') {
             const row = await page.$('button[aria-expanded]')
             assert.ok(row, id)
@@ -579,6 +618,27 @@ export async function captureHarness(browser, out, cells = []) {
       assert.match(table, /kicked off/i, `${id} does not show the kicked-off cell`)
       await shoot(page, path.join(out, `${id}.png`), width)
       cells.push({ id, theme, width, scrollWidth: state.scrollWidth })
+    } finally { await context.close() }
+  }
+  // The populated gallery. Production Vite is empty and local Next has no catalog, so
+  // this is the one place the gallery's own headings and cards are painted.
+  for (const theme of ['light', 'dark']) {
+    const id = `harness-moments-${theme}-390`
+    const { context, page, errors, status } = await openPage(
+      browser, `${origin}/tests/harness/moments.html?tab=moments&theme=${theme}`, theme, 390,
+      { waitUntil: 'load' },
+    )
+    try {
+      if (status >= 400) throw new Error(`${id} HTTP ${status}`)
+      await page.waitForSelector('main.moments-gallery h1', { timeout: 15_000 })
+      const state = await inspect(page)
+      assert.equal(state.scrollWidth, state.innerWidth, id)
+      assert.equal(state.theme, theme, id)
+      assert.deepEqual(errors, [], id)
+      const faults = momentsPaintFaults(await momentsPaint(page))
+      assert.deepEqual(faults, [], `${id} ${faults.join('; ')}`)
+      await shoot(page, path.join(out, `${id}.png`), 390)
+      cells.push({ id, theme, width: 390, scrollWidth: state.scrollWidth })
     } finally { await context.close() }
   }
   return cells

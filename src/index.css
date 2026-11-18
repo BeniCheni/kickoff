@@ -3,10 +3,11 @@
 
 @import './shell.css';
 
-/* Moments is the only region that outdents the persistent 780px shell.
-   1160 includes the same 20px page gutters; no viewport-width overflow band. */
-.moments-gallery {
-  /* Second-edition voices, under this box only. Layout, motion and type stay. */
+/* Second-edition voices (ruling 19). Layout, motion and type stay. The gallery
+   takes them, and so does the production-empty route, which has no gallery box:
+   .moments-voices is the voices alone, with none of the layout below. Text that
+   names no colour inherits the ink from here. */
+.moments-gallery, .moments-voices {
   --bg: var(--fb-pulp);
   --surface: var(--fb-typescript);
   --surface-alt: var(--fb-pulp);
@@ -27,6 +28,11 @@
   --accent-lead-strong: var(--fb-pitch);
   --lens-accent: var(--fb-pitch);
   --on-accent-lead: var(--fb-on-pitch);
+  color: var(--text);
+}
+/* Moments is the only region that outdents the persistent 780px shell.
+   1160 includes the same 20px page gutters; no viewport-width overflow band. */
+.moments-gallery {
   width: min(calc(100vw - 40px), 1120px);
   margin-inline: calc((100% - min(calc(100vw - 40px), 1120px)) / 2);
   font-size: 13px;
