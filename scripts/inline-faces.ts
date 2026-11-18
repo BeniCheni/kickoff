@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { stripFaceCssComments } from './strip-face-css-comments.ts'
 
 const root = fileURLToPath(new URL('..', import.meta.url))
 
@@ -78,7 +79,7 @@ function selected(face: Face): boolean {
 export function inlineFaceCss(css: string, read: (src: string) => Buffer): string {
   // Scan uncommented CSS so a second src or a src without a trailing
   // semicolon also fails the check.
-  const uncommented = css.replace(/\/\*[\s\S]*?\*\//g, '')
+  const uncommented = stripFaceCssComments(css)
   if (/local\(/i.test(uncommented)) {
     throw new Error('A local() face is not inlined. Carry its unicode-range into the offline file before shipping one.')
   }

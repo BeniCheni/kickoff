@@ -191,6 +191,48 @@ it('a comment can mention local() without adding a face on either build path', (
   expect(nextFacesCss(css)).toBe(`/* Old example: @font-face { src: local("Arial"); } */\n${nextFacesCss(vite)}`)
 })
 
+it.each([
+  { name: 'double-quoted string', family: '"a/*"', src: 'local("Arial")' },
+  { name: 'single-quoted string', family: "'a/*'", src: 'local("Arial")' },
+  { name: 'escaped quote', family: String.raw`"a\"/*"`, src: 'local("Arial")' },
+  { name: 'unquoted URL', family: '"URL probe"', src: 'url(x/*), local("Arial")' },
+  {
+    name: 'unquoted URL with an escaped closing parenthesis',
+    family: '"URL probe"',
+    src: String.raw`URL( x\)/*), local("Arial")`,
+  },
+  {
+    name: 'unquoted URL with an escaped name',
+    family: '"URL probe"',
+    src: String.raw`\75 rl(x/*), local("Arial")`,
+  },
+])('a comment marker in a $name cannot hide a local() source', ({ family, src }) => {
+  const css = `${vite}
+@font-face {
+  font-family: ${family};
+  src: ${src};
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  unicode-range: U+0000-00FF;
+  font-feature-settings: "*/";
+}`
+  expect.soft(() => inlineFaceCss(css, () => Buffer.from('face'))).toThrow(/A local\(\) face is not inlined/)
+  expect.soft(() => nextFacesCss(css)).toThrow(/A local\(\) face is not copied/)
+})
+
+it.each([
+  ['an unclosed comment', '/* incomplete', /Unclosed CSS comment/],
+  ['an unclosed string', '"incomplete', /Unclosed CSS string/],
+  ['a newline in a string', "'line\nbreak'", /Unescaped newline in CSS string/],
+  ['a CRLF in a string', "'line\r\nbreak'", /Unescaped newline in CSS string/],
+  ['a form feed in a string', "'line\fbreak'", /Unescaped newline in CSS string/],
+] as const)('both build paths refuse %s', (_name, suffix, error) => {
+  const css = `${vite}\n${suffix}`
+  expect.soft(() => inlineFaceCss(css, () => Buffer.from('face'))).toThrow(error)
+  expect.soft(() => nextFacesCss(css)).toThrow(error)
+})
+
 it('the Next copy is the same bytes with root urls, and the suite does not rewrite the checkout', () => {
   const sentinel = 'web/public/fonts/oswald/Oswald.woff2'
   const before = existsSync(sentinel) ? statSync(sentinel) : null

@@ -1,6 +1,7 @@
 import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { stripFaceCssComments } from '../../scripts/strip-face-css-comments.ts'
 
 const webRoot = fileURLToPath(new URL('..', import.meta.url))
 const repoRoot = path.join(webRoot, '..')
@@ -11,7 +12,7 @@ const repoRoot = path.join(webRoot, '..')
 // The directory copy includes both halves. unicode-range is left as written.
 export function nextFacesCss(css) {
   // A second src or a src without a trailing semicolon also fails the check.
-  const uncommented = css.replace(/\/\*[\s\S]*?\*\//g, '')
+  const uncommented = stripFaceCssComments(css)
   if (/local\(/i.test(uncommented)) {
     throw new Error('A local() face is not copied.')
   }
