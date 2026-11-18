@@ -55,8 +55,8 @@ describe('the band is one module', () => {
       const dark = document.querySelector('header')!.outerHTML
       const darkSlot = render(band('Light mode'))
       expect(darkSlot.container.querySelector('header')!.outerHTML).toBe(dark)
-      expect(dark).toContain('>Light mode</button>')
-      expect(light).toContain('>Dark mode</button>')
+      expect(dark).toContain('>Light mode</span>')
+      expect(light).toContain('>Dark mode</span>')
     } finally {
       release()
     }

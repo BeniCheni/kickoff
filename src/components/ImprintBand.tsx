@@ -3,7 +3,7 @@ import type { Lens } from '../lib/lens'
 import type { Tab } from '../lib/urlCodecs'
 import { LensSwitcher } from './LensSwitcher'
 import { MotionControl } from './MotionControl'
-import { PlusFive } from './glyphs'
+import { Glyph, PlusFive } from './glyphs'
 import { ProvenanceLine } from './ProvenanceLine'
 import { TabNav } from './TabNav'
 
@@ -53,8 +53,9 @@ export function ImprintBand({
         </div>
         <div className="imprint-tools">
           <MotionControl label={motionLabel} onToggle={onToggleMotion} />
-          <button type="button" className="imprint-hit theme-text" onClick={onToggleTheme}>
-            {themeLabel}
+          <button type="button" className="imprint-hit theme-toggle" onClick={onToggleTheme}>
+            <span className="theme-disc" aria-hidden="true"><Glyph name="moon" /></span>
+            <span className="imprint-name">{themeLabel}</span>
           </button>
           <LensSwitcher lens={lens} onSelect={onSelectLens} />
           <PlusFive />
