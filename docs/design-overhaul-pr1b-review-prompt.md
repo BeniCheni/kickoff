@@ -759,3 +759,67 @@ From the PM seat, read only, nothing run:
 - P21: copy-faces.mjs importing a .ts file depends on Node's type stripping. Node turned it on by default in 22.18 and 23.6, so the floor 22.22.2 should run it.
 - P22: Codex's squash-body line does not mention that the escaped identifier still passes. Decide whether the body should say so, as your 2:58 PM draft said of the string gap.
 ````
+
+## The re-run's result, Beni's rulings and the merge handoff (Wed 18 Nov 2026, about 6:20 PM EST)
+
+The Pass 2.5 re-run (Claude Code, `claude-opus-5-5`, xhigh, wrote nothing) posted at 6:05 PM
+EST: https://github.com/BeniCheni/kickoff/pull/341#issuecomment-6994255176. It ran from 4:20
+to 6:05 PM, with a pause from 4:45 to 5:59 for a usage limit. Its findings:
+- The fix holds against eight hostile inputs of its own.
+- The builds are byte-identical to `032a109`'s, so the earlier runner, captures, cold-load
+  bytes and layout shift still apply.
+- Every check is green: 1,129 root tests and 131 web tests.
+- One new low gap: `<!--` written directly before `url(x/*)` still hides a `local()` from the
+  Next copy. The scanner reads `--url` as one name, where CSS reads a CDO token.
+- The escaped identifier and the Vercel input gap are both confirmed, and both are low.
+
+It escalated with five questions. Once both #341's and #342's heads were on the remote, the PM
+seat checked them with `git merge-tree`: they merge cleanly, though they share
+`tests/faces.test.ts` and `web/scripts/evidence.mjs`.
+
+Beni's rulings, about 6:15 PM EST:
+- **The build's effort: "Yes".** Cursor built #341 on Grok 4.7 at Extra High.
+- **The offline faces: "Trim".** He then answered "Merge now, trim later": #341 merges with all
+  six faces' halves, and a later PR into the integration branch trims the set before v0.6.0.
+- **The two hostile spellings (the escaped identifier and the CDO form): "Leave"**, as one ideas row.
+- **The Vercel build-input entry for the shared helper: "Leave"**, as an ideas row.
+- **The merge: "Yes"**, at `17660f9`.
+
+The PM seat changed three things in the re-run's handoff block. The credit line now names
+Extra High. The offline sentence now records the Trim ruling. The hostile-spellings line now
+says the two spellings get past the `local()` check rather than "pass both paths", because on
+the CDO form the offline path fails by accident with an unrelated error. The block Beni
+pastes:
+
+```bash
+gh pr merge 341 --repo BeniCheni/kickoff --squash --match-head-commit 17660f9e404ff21f99a1c74857720899fcd5eaa1 --subject "Overhaul PR 1b: the font split (#341)" --body "$(cat <<'EOF'
+Each of the ten self-hosted faces is now two files: a latin half under today's name, so every preload href is unchanged, and a latin-ext half with -ext before .woff2. Each pair is declared extended first and latin last, as Google's stylesheet does, so the latin half answers the code points the two ranges share. A page fetches an -ext half only for a character the latin half cannot draw. Today that is the Ş and ğ of one venue, on the UEFA week's Fixtures.
+
+scripts/split-font-ranges.py makes every half from pinned sources with fontTools 4.60.2 and brotli 1.2.1, and it rebuilds all twenty files byte for byte. RECORD.md gives each source's commit, version and hash, each output's hash, and the two ranges. The tests pin the stylesheet's and the script's ranges to the record, and fail a second checksum row for one file. The offline and single files inline both halves of six faces ("Yes, extend it"); a later PR trims that set (Beni's "Trim", Wed 18 Nov 2026). Neither build path ships a local() source. No version, tag or CHANGELOG section.
+
+- The latin (387) and latin-ext (1,166) ranges share seven code points: U+0131, U+0152, U+0153, U+0304, U+0308, U+0329 and U+2020. Their union is the previous 1,546-code-point range. The extended rule comes first, so latin takes priority for the overlap.
+- Font bytes per cold load, on the wire: Fixtures and Table 108,868 on Vite and 108,716 on Next, against 205,174 and 205,022 before. Moments 90,660 and 90,546, against 179,294 and 179,180. Next is 152 bytes under Vite on the four-file rows and 114 on Moments, before and after. The UEFA week's Fixtures adds Inter-ext, for 192,856 and 192,667.
+- The 182 runner captures at this head match the integration base pixel for pixel. The one exception is one-level antialiasing on a control's edge in one capture.
+- With Oswald's latin file held 1.5 s, ten runs a width at 360, 375 and 390 by 844, on / and ?date=2026-11-21, the summed layout shift at this head is the split's first head's and, within 0.001, the base's. Vite reads 0.046–0.047, 0.188–0.189 and 0.046–0.047, and Next 0.045, 0.187 and 0.045. Every load showed "v0.5.5 · 1442 fixtures · synced 2026-11-16 21:09 UTC".
+- The runner's preload gate is a text-and-face estimate. Its byte totals are taken before the probe reads styles. Both build paths refuse a literal local( outside CSS comments, in any letter case, including a second src and a src with no final semicolon. They find comments with one shared scanner that skips quoted strings and unquoted url() tokens, and refuse an unclosed comment, an unclosed string, or a string broken by a newline. Two hostile spellings still get past the local() check on both paths: an escaped identifier such as l\ocal(, and <!-- written directly before url(. Beni left both for a later token-aware check ("Leave"), and any extra face in public/faces.css fails the stylesheet test.
+
+Built by Cursor on Grok 4.7 at Extra High. Beni re-routed the remaining seats per #328 on Wed 18 Nov 2026. Pass 1: Claude Code (claude-fable-5-2, xhigh), report-only. Pass 2's two commits and fix round 1's one: Codex (gpt-6.2-sol, xhigh). Pass 2.5 and its re-run: Claude Code (claude-opus-5-5, xhigh), which wrote nothing. Merged on Beni's word.
+
+Co-authored-by: Cursor <cursoragent@cursor.com>
+Co-authored-by: Codex <noreply@openai.com>
+EOF
+)"
+git -C /Users/benicheni/code/kickoff fetch origin
+git -C /Users/benicheni/code/kickoff worktree add --detach /Users/benicheni/code/kickoff-341-landed origin/overhaul/second-edition
+cd /Users/benicheni/code/kickoff-341-landed
+git pull --ff-only origin overhaul/second-edition
+npm ci && npm ci --no-audit --no-fund --prefix web
+npm run typecheck
+npm test
+npm run build
+```
+
+To file on the PM seat's next docs pass: the hostile-spellings row; the Vercel `INPUTS` row;
+restarting the runner's dev server after an edit to a file that Vite's config imports; offline
+Kickoff Mono Text at 500 and 600; plan section 3's PR 1b row, which still says four faces; and
+the trim PR, with its brief.
