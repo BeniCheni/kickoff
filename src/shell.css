@@ -444,6 +444,19 @@ html {
   color: var(--band-ink);
   box-shadow: inset 0 -2.5px 0 var(--band-pitch);
 }
+/*
+ * A system that asks for reduced motion gets the band's state changes at once,
+ * as the first edition's switcher gave them. This is not the reader's motion
+ * control: that switch stops the decorative layer, and state changes keep
+ * running under it.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .theme-disc,
+  .lens-switch button span,
+  .imprint-tabs button {
+    transition: none;
+  }
+}
 .provenance {
   box-sizing: border-box;
   display: flex;

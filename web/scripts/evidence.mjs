@@ -696,6 +696,77 @@ function belowFloor(cells) {
   return cells.flatMap((cell) => cell.minimums.filter((row) => row.ratio < row.floor).map((row) => ({ id: cell.id, ...row })))
 }
 
+// The band's state transitions, read after real presses. `property duration` for every
+// transition that would actually run; an element at rest under reduced motion lists none.
+const CHROME_PARTS = {
+  'theme disc': '.theme-disc',
+  'lens thumb': '.lens-switch button span',
+  'lens label': '.lens-switch button',
+  'disc hit area': '.imprint-hit',
+  tab: '.imprint-tabs button',
+}
+
+async function chromeTransitions(page) {
+  return page.evaluate((parts) => Object.fromEntries(Object.entries(parts).map(([name, selector]) => {
+    const el = document.querySelector(selector)
+    if (!el) return [name, null]
+    const style = getComputedStyle(el)
+    const durations = style.transitionDuration.split(',').map((part) => part.trim())
+    const properties = style.transitionProperty.split(',').map((part) => part.trim())
+    const running = properties.map((property, i) => ({ property, duration: durations[i % durations.length] }))
+      .filter((entry) => entry.property !== 'none' && Number.parseFloat(entry.duration) > 0)
+      .map((entry) => `${entry.property} ${entry.duration}`)
+    return [name, running]
+  })), CHROME_PARTS)
+}
+
+/** Under the system's reduced-motion setting no band control may keep a transition. */
+export function reducedChromeFaults(transitions) {
+  return Object.entries(transitions).flatMap(([name, running]) => {
+    if (running === null) return [`${name} is missing`]
+    return running.length ? [`${name} still runs ${running.join(', ')}`] : []
+  })
+}
+
+/** Lens, theme and a tab are pressed for real, with the system asking for reduced motion
+ *  and without. Reduced: nothing transitions. Ordinary: the state budget is still there. */
+export async function proveChrome(browser, origins) {
+  const rows = []
+  for (const [app, origin] of Object.entries(origins)) for (const reduced of [true, false]) {
+    const id = `${app}-${reduced ? 'reduced' : 'ordinary'}`
+    const context = await browser.createBrowserContext()
+    const page = await context.newPage()
+    try {
+      await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 })
+      if (reduced) await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }])
+      await page.evaluateOnNewDocument(() => localStorage.setItem('kickoff-theme', 'light'))
+      await page.goto(`${origin}/`, { waitUntil: 'networkidle0', timeout: 30_000 })
+      await page.click('.lens-switch button[aria-checked="false"]')
+      await page.click('.theme-toggle')
+      await page.evaluate(() => [...document.querySelectorAll('.imprint-tabs button')].find((el) => el.textContent === 'Table').click())
+      // The lens cross-fade class comes off after its 220 ms; read the controls' own rules.
+      await new Promise((resolve) => setTimeout(resolve, 450))
+      const state = await page.evaluate(() => ({
+        lens: document.documentElement.dataset.lens,
+        theme: document.documentElement.dataset.theme,
+        tab: document.querySelector('.imprint-tabs button[aria-current="page"]')?.textContent,
+      }))
+      assert.deepEqual(state, { lens: 'ledger', theme: 'dark', tab: 'Table' }, `${id} the three presses`)
+      const transitions = await chromeTransitions(page)
+      if (reduced) {
+        const faults = reducedChromeFaults(transitions)
+        assert.deepEqual(faults, [], `${id} ${faults.join('; ')}`)
+      } else {
+        assert.ok(transitions.tab?.includes('color 0.15s'), `${id} tab ink is not 150 ms: ${transitions.tab}`)
+        assert.ok(transitions['lens thumb']?.includes('background-color 0.18s'), `${id} lens thumb is not 180 ms: ${transitions['lens thumb']}`)
+        assert.ok(transitions['theme disc']?.includes('background-color 0.22s'), `${id} theme disc is not 220 ms: ${transitions['theme disc']}`)
+      }
+      rows.push({ id, app, reduced, transitions })
+    } finally { await context.close() }
+  }
+  return rows
+}
+
 export async function proveMotion(browser, origin, out) {
   const specs = [
     { id: 'stored-on', motion: 'on', reduced: false, expect: 'on', name: 'Stop motion' },
@@ -760,7 +831,7 @@ async function main() {
   // holds every step and cell that passed before it.
   const matrix = emptyMatrix()
   const weekRun = { cells: [], contrast: [] }
-  const steps = { motion: null, requests: null, offline: null, harness: null }
+  const steps = { motion: null, chrome: null, requests: null, offline: null, harness: null }
   const receipt = () => {
     const contrastCells = [...matrix.contrast, ...weekRun.contrast]
     return {
@@ -773,6 +844,7 @@ async function main() {
   }
   try {
     steps.motion = await proveMotion(browser, origins.vite, out)
+    steps.chrome = await proveChrome(browser, origins)
     await runMatrix(browser, { origins, out, anchor, contrast: true }, matrix)
     assert.equal(matrix.cells.length, 96)
     await captureWeeks(browser, { origins, out, weeks, contrast: true }, weekRun)
