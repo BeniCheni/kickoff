@@ -12,12 +12,38 @@ const { copyFaces, nextFacesCss } = createRequire(import.meta.url)('../web/scrip
 
 const pages = ['index.html', 'offline.html', 'web/app/layout.tsx', 'tests/harness/states.html', 'tests/harness/moments.html']
 
+const FACES: [string, string, string, string][] = [
+  ['Oswald', 'normal', '500', 'oswald/Oswald.woff2'],
+  ['Oswald', 'normal', '600', 'oswald/Oswald.woff2'],
+  ['Oswald', 'normal', '700', 'oswald/Oswald.woff2'],
+  ['Inter', 'normal', '400', 'inter/Inter.woff2'],
+  ['Inter', 'normal', '500', 'inter/Inter.woff2'],
+  ['Inter', 'normal', '600', 'inter/Inter.woff2'],
+  ['Kickoff Mono', 'normal', '500', 'kickoff-mono/KickoffMono-Medium.woff2'],
+  ['Kickoff Mono', 'normal', '600', 'kickoff-mono/KickoffMono-SemiBold.woff2'],
+  ['Kickoff Display', 'normal', '400', 'kickoff-display/KickoffDisplay-Regular.woff2'],
+  ['Libre Caslon Text', 'normal', '400', 'libre-caslon-text/LibreCaslonText-Regular.woff2'],
+  ['Libre Caslon Text', 'italic', '400', 'libre-caslon-text/LibreCaslonText-Italic.woff2'],
+  ['Chakra Petch', 'normal', '700', 'chakra-petch/ChakraPetch-Bold.woff2'],
+  ['Kickoff Mono Text', 'normal', '400', 'kickoff-mono/KickoffMono-Regular.woff2'],
+  ['Kickoff Mono Text', 'italic', '400', 'kickoff-mono/KickoffMono-Italic.woff2'],
+  ['Kickoff Mono Text', 'normal', '500', 'kickoff-mono/KickoffMono-Medium.woff2'],
+  ['Kickoff Mono Text', 'normal', '600', 'kickoff-mono/KickoffMono-SemiBold.woff2'],
+]
+
 interface Face {
   family: string
   style: string
   weight: string
   file: string
   display: string
+  range: string
+}
+
+function half(range: string): string {
+  if (range.startsWith('U+0000-00FF')) return 'latin'
+  if (range.startsWith('U+0100-02BA')) return 'ext'
+  return 'missing'
 }
 
 function facesOf(css: string): Face[] {
@@ -32,33 +58,30 @@ function facesOf(css: string): Face[] {
       weight: value('font-weight'),
       file: src.includes('fonts/') ? src.slice(src.indexOf('fonts/') + 'fonts/'.length) : src,
       display: value('font-display'),
+      range: value('unicode-range'),
     }
   })
 }
 
+function identity(face: { family: string, style: string, weight: string, file: string, range: string }): string {
+  return `${face.family} ${face.style} ${face.weight} ${face.file} ${half(face.range)}`
+}
+
+const declared = FACES.flatMap(([family, style, weight, file]) => {
+  const ext = file.replace(/\.woff2$/, '-ext.woff2')
+  return [
+    `${family} ${style} ${weight} ${file} latin`,
+    `${family} ${style} ${weight} ${ext} ext`,
+  ]
+})
+
 const vite = readFileSync('public/faces.css', 'utf8')
 
-it('the stylesheet names the fifteen faces, and every face swaps', () => {
+it('the stylesheet names both halves of each face, and every face swaps', () => {
   const left = facesOf(vite)
   expect(left.map(face => face.display)).toEqual(left.map(() => 'swap'))
-  expect(left.map(face => `${face.family} ${face.style} ${face.weight} ${face.file}`)).toEqual([
-    'Oswald normal 500 oswald/Oswald.woff2',
-    'Oswald normal 600 oswald/Oswald.woff2',
-    'Oswald normal 700 oswald/Oswald.woff2',
-    'Inter normal 400 inter/Inter.woff2',
-    'Inter normal 500 inter/Inter.woff2',
-    'Inter normal 600 inter/Inter.woff2',
-    'Kickoff Mono normal 500 kickoff-mono/KickoffMono-Medium.woff2',
-    'Kickoff Mono normal 600 kickoff-mono/KickoffMono-SemiBold.woff2',
-    'Kickoff Display normal 400 kickoff-display/KickoffDisplay-Regular.woff2',
-    'Libre Caslon Text normal 400 libre-caslon-text/LibreCaslonText-Regular.woff2',
-    'Libre Caslon Text italic 400 libre-caslon-text/LibreCaslonText-Italic.woff2',
-    'Chakra Petch normal 700 chakra-petch/ChakraPetch-Bold.woff2',
-    'Kickoff Mono Text normal 400 kickoff-mono/KickoffMono-Regular.woff2',
-    'Kickoff Mono Text italic 400 kickoff-mono/KickoffMono-Italic.woff2',
-    'Kickoff Mono Text normal 500 kickoff-mono/KickoffMono-Medium.woff2',
-    'Kickoff Mono Text normal 600 kickoff-mono/KickoffMono-SemiBold.woff2',
-  ])
+  expect(left.map(identity)).toEqual(declared)
+  expect(left.every(face => face.range.length > 0)).toBe(true)
 })
 
 it('preloads the two first-paint faces, and the href equals the src', () => {
@@ -86,21 +109,32 @@ it('no reader page contacts a font host', () => {
   }
 })
 
-it('the single-file build inlines the four rendered faces and nothing else', () => {
+it('the single-file build inlines the six rendered faces and nothing else', () => {
   const html = inlineBundledFaces(readFileSync('index.html', 'utf8'))
   expect(html).toBe(inlineBundledFaces(html))
   expect(html).not.toMatch(/fonts\.googleapis\.com|fonts\.gstatic\.com|url\("\.\/fonts\/|rel="preload"|href="\.\/faces\.css"/)
   expect(html).toContain('data:font/woff2;base64,')
-  const inlined = facesOf(html.slice(html.indexOf('data-kickoff-faces')))
-  expect(inlined.map(face => `${face.family} ${face.weight}`)).toEqual([
-    'Oswald 500 700',
-    'Inter 400 600',
-    'Kickoff Mono 500',
-    'Kickoff Mono 600',
+  const block = html.slice(html.indexOf('data-kickoff-faces'), html.indexOf('</style>'))
+  const inlined = facesOf(block)
+  // Kickoff Mono 400 is inlined as Kickoff Mono Text. A 400 face on Kickoff
+  // Mono would replace the 500 the page currently gets as the nearest weight.
+  expect(inlined.map(face => `${face.family} ${face.weight} ${half(face.range)}`)).toEqual([
+    'Oswald 500 700 latin',
+    'Oswald 500 700 ext',
+    'Inter 400 600 latin',
+    'Inter 400 600 ext',
+    'Kickoff Mono 500 latin',
+    'Kickoff Mono 500 ext',
+    'Kickoff Mono 600 latin',
+    'Kickoff Mono 600 ext',
+    'Libre Caslon Text 400 latin',
+    'Libre Caslon Text 400 ext',
+    'Kickoff Mono Text 400 latin',
+    'Kickoff Mono Text 400 ext',
   ])
-  expect(html.match(/url\("data:font\/woff2;base64,/g)).toHaveLength(4)
-  expect(html).not.toMatch(/size-adjust|Oswald Fallback/)
-  expect(html).not.toMatch(/Caslon|Chakra|Kickoff Display|Kickoff Mono Text/)
+  expect(inlined.every(face => face.range.length > 0)).toBe(true)
+  expect(block.match(/url\("data:font\/woff2;base64,/g)).toHaveLength(12)
+  expect(block).not.toMatch(/size-adjust|Oswald Fallback|Chakra|Kickoff Display|italic/)
 })
 
 it('refuses to inline a local() face', () => {
@@ -134,10 +168,8 @@ it('the Next copy is the same bytes with root urls, and the suite does not rewri
     expect(writtenFiles).toEqual(sourceFiles)
     expect(written).not.toMatch(/url\("\.\//)
     expect(written).toBe(nextFacesCss(vite))
-    expect(facesOf(written).map(face => `${face.family} ${face.style} ${face.weight} ${face.file}`)).toEqual(
-      facesOf(vite).map(face => `${face.family} ${face.style} ${face.weight} ${face.file}`),
-    )
-    for (const file of ['oswald/Oswald.woff2', 'inter/Inter.woff2', 'kickoff-mono/KickoffMono-Medium.woff2']) {
+    expect(facesOf(written).map(identity)).toEqual(facesOf(vite).map(identity))
+    for (const file of ['oswald/Oswald.woff2', 'oswald/Oswald-ext.woff2', 'inter/Inter.woff2', 'kickoff-mono/KickoffMono-Medium.woff2']) {
       expect(readFileSync(path.join(dir, 'fonts', file)).equals(readFileSync(`public/fonts/${file}`))).toBe(true)
     }
   } finally {

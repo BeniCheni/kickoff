@@ -3,6 +3,11 @@
  * the @font-face src character for character. The Next app rewrites ./fonts/
  * to /fonts/ when it copies this file; the file names stay the same.
  *
+ * Each face is two rules. The latin half keeps today's file name, which is
+ * what a preload href already points at. The latin-ext half is that name
+ * with -ext before .woff2. The browser fetches a half only for a character
+ * in its unicode-range.
+ *
  * Kickoff Mono is the renamed IBM Plex Mono, at the two weights the page
  * renders today (500 and 600). Kickoff Mono Text carries 400 and 400 italic
  * as well. Those two faces stay off Kickoff Mono: an italic face there would
@@ -21,6 +26,23 @@
   font-style: normal;
   font-weight: 500;
   font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  src: url("./fonts/oswald/Oswald.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Oswald";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  src: url("./fonts/oswald/Oswald-ext.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Oswald";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
   src: url("./fonts/oswald/Oswald.woff2") format("woff2");
 }
 @font-face {
@@ -28,6 +50,15 @@
   font-style: normal;
   font-weight: 600;
   font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  src: url("./fonts/oswald/Oswald-ext.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Oswald";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
   src: url("./fonts/oswald/Oswald.woff2") format("woff2");
 }
 @font-face {
@@ -35,13 +66,31 @@
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url("./fonts/oswald/Oswald.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  src: url("./fonts/oswald/Oswald-ext.woff2") format("woff2");
 }
 @font-face {
   font-family: "Inter";
   font-style: normal;
   font-weight: 400;
   font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  src: url("./fonts/inter/Inter.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  src: url("./fonts/inter/Inter-ext.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
   src: url("./fonts/inter/Inter.woff2") format("woff2");
 }
 @font-face {
@@ -49,6 +98,15 @@
   font-style: normal;
   font-weight: 500;
   font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  src: url("./fonts/inter/Inter-ext.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
   src: url("./fonts/inter/Inter.woff2") format("woff2");
 }
 @font-face {
@@ -56,75 +114,166 @@
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url("./fonts/inter/Inter.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  src: url("./fonts/inter/Inter-ext.woff2") format("woff2");
 }
 @font-face {
   font-family: "Kickoff Mono";
   font-style: normal;
   font-weight: 500;
   font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
   src: url("./fonts/kickoff-mono/KickoffMono-Medium.woff2") format("woff2");
 }
 @font-face {
   font-family: "Kickoff Mono";
   font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  src: url("./fonts/kickoff-mono/KickoffMono-Medium-ext.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Kickoff Mono";
+  font-style: normal;
   font-weight: 600;
   font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
   src: url("./fonts/kickoff-mono/KickoffMono-SemiBold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Kickoff Mono";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  src: url("./fonts/kickoff-mono/KickoffMono-SemiBold-ext.woff2") format("woff2");
 }
 @font-face {
   font-family: "Kickoff Display";
   font-style: normal;
   font-weight: 400;
   font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
   src: url("./fonts/kickoff-display/KickoffDisplay-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Kickoff Display";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  src: url("./fonts/kickoff-display/KickoffDisplay-Regular-ext.woff2") format("woff2");
 }
 @font-face {
   font-family: "Libre Caslon Text";
   font-style: normal;
   font-weight: 400;
   font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
   src: url("./fonts/libre-caslon-text/LibreCaslonText-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Libre Caslon Text";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  src: url("./fonts/libre-caslon-text/LibreCaslonText-Regular-ext.woff2") format("woff2");
 }
 @font-face {
   font-family: "Libre Caslon Text";
   font-style: italic;
   font-weight: 400;
   font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
   src: url("./fonts/libre-caslon-text/LibreCaslonText-Italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Libre Caslon Text";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  src: url("./fonts/libre-caslon-text/LibreCaslonText-Italic-ext.woff2") format("woff2");
 }
 @font-face {
   font-family: "Chakra Petch";
   font-style: normal;
   font-weight: 700;
   font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
   src: url("./fonts/chakra-petch/ChakraPetch-Bold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Chakra Petch";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  src: url("./fonts/chakra-petch/ChakraPetch-Bold-ext.woff2") format("woff2");
 }
 @font-face {
   font-family: "Kickoff Mono Text";
   font-style: normal;
   font-weight: 400;
   font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
   src: url("./fonts/kickoff-mono/KickoffMono-Regular.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Kickoff Mono Text";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  src: url("./fonts/kickoff-mono/KickoffMono-Regular-ext.woff2") format("woff2");
 }
 @font-face {
   font-family: "Kickoff Mono Text";
   font-style: italic;
   font-weight: 400;
   font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
   src: url("./fonts/kickoff-mono/KickoffMono-Italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Kickoff Mono Text";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  src: url("./fonts/kickoff-mono/KickoffMono-Italic-ext.woff2") format("woff2");
 }
 @font-face {
   font-family: "Kickoff Mono Text";
   font-style: normal;
   font-weight: 500;
   font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
   src: url("./fonts/kickoff-mono/KickoffMono-Medium.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Kickoff Mono Text";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  src: url("./fonts/kickoff-mono/KickoffMono-Medium-ext.woff2") format("woff2");
 }
 @font-face {
   font-family: "Kickoff Mono Text";
   font-style: normal;
   font-weight: 600;
   font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
   src: url("./fonts/kickoff-mono/KickoffMono-SemiBold.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Kickoff Mono Text";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  src: url("./fonts/kickoff-mono/KickoffMono-SemiBold-ext.woff2") format("woff2");
 }

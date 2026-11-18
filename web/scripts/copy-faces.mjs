@@ -8,6 +8,7 @@ const repoRoot = path.join(webRoot, '..')
 // The Vite page is served from a subpath, so its stylesheet uses document-relative
 // urls. The Next app is served from the domain root, including routes below /,
 // so the copy it serves uses root urls. The file name after /fonts/ is the same.
+// The directory copy includes both halves. unicode-range is left as written.
 function localFaceSources(css) {
   const found = []
   for (const match of css.matchAll(/@font-face\s*\{([^}]+)\}/g)) {
