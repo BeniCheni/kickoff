@@ -1,6 +1,7 @@
-import type { ReactNode } from 'react'
+import { useRef, type ReactNode } from 'react'
 import type { Lens } from '../lib/lens'
 import type { Tab } from '../lib/urlCodecs'
+import { useBandHeight } from '../lib/useBandHeight'
 import { LensSwitcher } from './LensSwitcher'
 import { MotionControl } from './MotionControl'
 import { Glyph, PlusFive } from './glyphs'
@@ -39,8 +40,12 @@ export function ImprintBand({
   onToggleMotion: () => void
 }) {
   const stock = bandStock(tab, lens)
+  // The band is pinned. What pins below it reads the height measured here.
+  const band = useRef<HTMLElement>(null)
+  useBandHeight(band)
   return (
     <header
+      ref={band}
       className="imprint-band"
       data-stock={stock}
       data-ground={stock === 'paper' ? 'typescript' : 'black'}

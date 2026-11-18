@@ -217,6 +217,28 @@
   width: 100%;
   color: var(--band-ink);
 }
+/*
+ * The band is pinned, so whatever pins below it starts at the band's foot, and
+ * a control the keyboard brings into view stops there too. The band publishes
+ * its measured height (src/lib/useBandHeight.ts): 118px, or more once the
+ * provenance wraps. The Table's label row and its deep-zone divider are PR 4's
+ * markup, so their offsets are written here. 28px and 34px are that label
+ * row's height in its two layouts; tests/bandPins.test.ts holds the two files
+ * together. A page without the band, such as the states harness, is untouched.
+ */
+html {
+  --band-height: 118px;
+  scroll-padding-top: var(--band-height);
+}
+.imprint-band ~ .page-measure [data-table] > .sticky {
+  top: var(--band-height);
+}
+.imprint-band ~ .page-measure [data-table='mobile'] [data-zone-divider].sticky {
+  top: calc(var(--band-height) + 28px);
+}
+.imprint-band ~ .page-measure [data-table='desktop'] [data-zone-divider].sticky {
+  top: calc(var(--band-height) + 34px);
+}
 .imprint-band[data-stock='black'] {
   background: var(--fb-cover-black);
   --band-ground: var(--fb-cover-black);
