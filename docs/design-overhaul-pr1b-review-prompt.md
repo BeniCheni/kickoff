@@ -110,3 +110,30 @@ SEALED APPENDIX — claims to re-derive independently, never conclusions. Reach 
 - P5 (PM seat): the "Inter Variable" to "Inter" rename is not in the brief, and may not reproduce the name table of the Inter file at 34b5160.
 - P6 (PM seat): the base's one self-disagreement on offline-fixtures-light-390 points to an unstable offline cell, not to noise.
 ````
+
+---
+
+## Beni's routing ruling (Wed 18 Nov 2026, about 10:18 AM EST)
+
+The PM seat put the conflict to Beni beside the brief above. Two Cursor builds had started under
+his start-tonight ruling, and PR #328's two-vendor amendment, approved about half an hour later,
+routes 1b to Codex and 2 to Claude. The PM seat recommended keeping both builds, since the
+amendment's own rule says a PR never switches builder mid-build, and reviewing each by the
+Sun 15 row it was started under. Beni answered **"Keep both builds"**.
+
+So, for #341 and for PR 2:
+- Pass 1: a fresh Claude Code session, `claude-fable-5-2` at `xhigh`, report-only. The brief
+  above needs no change: it already left Pass 2 and Pass 2.5 to this ruling.
+- Pass 1.5: the PM seat's brief for Cursor.
+- Pass 2 and every fix round: Cursor, on `grok-4.7-xhigh`, before Beni's Cursor tier changes on
+  Thu 19 Nov 2026. A seat the tier change stops pushes what is green, and the PR waits or Beni
+  re-routes it.
+- Pass 2.5: Codex, in a fresh session. Its opener names the model.
+- Pass 3: Beni.
+
+From PR 3 on, the Tue 17 amendment applies as approved. Before #328 merges, two parts of it need
+correcting: its "Where the overhaul stood" paragraph, which says no Cursor seat was open, and its
+builder rows for 1b and 2.
+
+The PR 2 planning session had written PR 2's Pass 1 brief for Codex on `gpt-6.2-astra`. The
+ruling moves that pass to a fresh Claude Code session, as for #341.
