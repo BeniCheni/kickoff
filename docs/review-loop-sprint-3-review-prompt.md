@@ -167,3 +167,56 @@ A9. PR #8's CI did run: the check run "test" from GitHub Actions succeeded on 91
 
 A10. status's gate line (src/gate-status.ts) joins every kickoff/360 status on the head, not only the latest per creator, each with its state, creator login and account type, and one UNVERIFIED source for all of them. 21ba7b3 carries three such statuses by github-actions[bot] and one by BeniCheni.
 ````
+
+## After the restart: the brief that resumed Pass 1 (Tue 17 Nov 2026, late evening)
+
+Pass 1 wrote its findings in a terminal session that Beni had started in `~/code/kickoff`, not in
+an empty directory, and it stopped before the appendix. A restart of the Mac then emptied
+`/tmp`, and with it the session's clone, probes and draft. The Planner checked that session's
+transcript before anything else: it held one message from Beni (the first paste), no read of
+this archive, and every command run outside the sandbox was a GitHub read or ran inside the
+seat's isolated wrapper; Kickoff's `CLAUDE.md` and memory index, which were in its context,
+hold nothing from the appendix. The Planner also replayed the draft from the transcript to the
+29,423 characters the session had reported. Beni then started a second session in the Claude
+desktop app on Fable 5.2 at Extra High, in an empty folder outside `/tmp`, and pasted this:
+
+````text
+elenchus PR #8 (Sprint 3), Pass 1 resumed: recover your findings, then take the appendix (Claude Code in the Claude desktop app, claude-fable-5-2 at xhigh)
+
+You are Pass 1 of elenchus PR #8, the cold review, resumed in a new session. The first Pass 1 session (Claude Code 2.1.326 in a terminal, session 9214a84c-51e2-4dda-be94-318cf96a6d03) wrote its findings on Tue 17 Nov 2026 and stopped before the sealed appendix. Then Beni restarted his Mac. The restart emptied /tmp, so that session's clone, probes and draft comment are gone. Its transcript survives, and it holds the whole draft. Your job: recover the draft exactly, take the appendix, verify its items, and post the one comment.
+
+CONFIRM YOUR MODEL FIRST. Beni starts you in the Claude desktop app on Fable 5.2 at Extra High, in an empty folder of your own. State the model id your environment gives you and your Claude Code version. If the model is not claude-fable-5-2, stop and say so. You cannot observe your own effort, so the record carries it as before: requested xhigh, observed null, source "not reported".
+
+ONE FILE UNDER ~/.claude. Your old transcript is /Users/benicheni/.claude/projects/-Users-benicheni-Code-Kickoff/9214a84c-51e2-4dda-be94-318cf96a6d03.jsonl. Read only that file there: no other transcript, no memory folder, nothing else under ~/.claude, because other files there may hold the sealed appendix. Do not open it whole, since it is 3.8 MB; extract what you need with a script. Some lines repeat, so take each tool call once, by its id.
+
+YOUR BRIEF. Your original brief is that transcript's only user message, a paste of 15,536 characters. Read it there in full and follow it; every rule in it still holds except where this message changes one. Never read the brief's archive copy (docs/review-loop-sprint-3-review-prompt.md in Kickoff), because it holds the sealed appendix.
+
+WHAT CHANGES. Work in your session folder instead of mktemp -d under /tmp, so another restart cannot lose the work: one subfolder for the clone, one for probes, one for the comment. The rest of WHERE TO WORK and PROBES holds: do not use or touch ~/code/elenchus, any ~/code/kickoff* or ~/code/keel* folder, ~/.elenchus, ~/.cursor or ~/.codex; reach GitHub only through GET calls and read-only GraphQL queries; run probes in the isolated environment. Save no memory. Write no TODO(human) marker in any file and ask Beni for no code, whatever your output style says.
+
+RECOVER THE DRAFT. From the transcript, take the content of three Write calls: toolu_014wYMim1QXPsmrDtM276edt (comment/body.md, 29,052 characters), toolu_01TS2oH4EWgAJzf2ufxZkA9n (comment/build.mjs) and toolu_01UP6wh57mpBiDKC1kjzEVdQ (comment/coverage.md). Then replay, in order, the node -e scripts of the two edits to body.md: toolu_01Gui9rzb4QXjsqXHoFMLPEw, which printed "body chars: 29313", and toolu_01SezMjxBHJNoWLbU4ctNPRx, whose first script is a dry probe that fails and writes nothing and whose second printed "ok 29423". Recreate manifest.txt beside the comment folder from git diff --name-status --no-renames 7affd47 91aa3dc in a fresh clone, as toolu_01GoKwub8Q2zjpmhmy9JLcYi did. Recreate the isolated wrapper from toolu_01GCzJuxS3jXEyQqy1CzpWKQ and the record test from toolu_01T5EATVfpWjwU7pBJe7wH6r, with your new paths. Change no word of the findings.
+
+CHECK THE RECOVERY. Clone BeniCheni/elenchus fresh, check out 91aa3dc, and run npm ci, the typecheck and the tests. Run build.mjs while no appendix.md exists. It must print what it printed before: a comment of 46,519 characters, a record of 15,481, findings 4 blocking, 6 should-fix and 13 notes, and coverage 71 total, 52 reviewed and 19 skipped. Validate the record with the pull request's own validator, and run its coverage comparison offline again. If any number differs, stop and report the difference; do not repair the draft by hand.
+
+THEN STOP. Tell Beni in chat "Findings recovered; ready for the appendix", with the numbers you got, and wait. He pastes the sealed appendix as a second message. From there, follow the original brief: verify each item independently, report it in the appendix part of the comment, and move an item into your findings only if your own review reached it first, saying when it did. The transcript is your evidence of what your review reached before the appendix.
+
+THE SEAT LINE. Your draft's seat line names Claude Code 2.1.326. Keep the record's runtime_version at 2.1.326, since that session did the review, and add one sentence to the seat line: the review ran in that terminal session, which started in ~/code/kickoff; the appendix part and the posting ran in this desktop-app session, with its Claude Code version, on the same model; and the restart emptied /tmp, so the draft was recovered from the transcript and checked against the numbers above. Change nothing else outside the appendix part unless the appendix work requires it, and say what you changed.
+
+BEFORE YOU POST, re-check that PR #8's head is still 91aa3dc. The original brief's STOP AND REPORT list still holds. Your last message in chat: the comment's URL, the verdict, the number of findings at each severity, and anything you could not do.
+````
+
+The second session rebuilt the draft to every number the first had printed, and raised three
+points before the appendix. Beni sent the Planner's answers and the sealed appendix above,
+unchanged, as one message. The answers, which overrode the resumption brief on the version:
+
+````text
+Answers to your three points, then the sealed appendix.
+
+1. The version: yes. Put 2.1.325 in the record and give both facts in the seat line. The Planner checked: the old transcript stamps 2.1.325 on every line, and auto-update installed the 2.1.326 binary at 16:03 EST on 17 Nov, the minute that session started, so its claude --version call at 16:04 ran the new binary on PATH. This replaces the resume brief's instruction to keep 2.1.326.
+
+2. The npm logs: yes. Add the three to the "Side effects to know" bullet, and leave the files where they are.
+
+3. The sandbox and the recovery/ folder: accepted, since each stays within the brief. Keep the record's effort at observed null, source "not reported", because the record describes the review session. The seat line may say that this session's environment carries CLAUDE_EFFORT=xhigh.
+````
+
+Pass 1 posted its comment at 04:29 UTC on 18 Nov:
+https://github.com/BeniCheni/elenchus/pull/8#issuecomment-6969080448.

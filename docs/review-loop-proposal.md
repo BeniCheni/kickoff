@@ -491,12 +491,21 @@ Cursor's hands this track seats no Cursor.
   - the rulesets mirror Kickoff's two exactly, apart from the ref;
   - the review gate pins the App's integration, `5804709`, with no bypass;
   - `replay/main` gained one commit, touching only `.elenchus.json`.
-  T7's fourth forge path counts as a finding for Kickoff: GitHub treated a `verify` job added by
-  the pull request's own workflow as the required check. The review gate held on every forge
-  path.
+  T7's fourth forge path counts as a finding for Kickoff, *corrected after Pass 1 (finding 11)*:
+  GitHub labels a `verify` job that the pull request's own workflow adds as a required check.
+  That such a job satisfies the CI gate is very likely and not shown, and that it can stand in
+  for a failing `verify` is not shown. The plainer path needs no test: a pull request can edit
+  the `verify` job in `ci.yml` itself. The review gate held on every forge path GitHub still
+  shows.
 - *Review brief:* [`review-loop-sprint-3-review-prompt.md`](review-loop-sprint-3-review-prompt.md),
   Pass 0's brief for Pass 1 (Claude Code, `claude-fable-5-2`, `xhigh`), with its sealed appendix as
-  a second paste.
+  a second paste, and the brief that resumed Pass 1 after a restart emptied `/tmp`.
+- *Reviewed (Wed 18 Nov 2026):* Pass 1's
+  [comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-6969080448): *merge after
+  a fix round*, 23 findings (4 blocking, 6 should-fix, 13 notes). Beni's rulings on them are
+  under "Rulings received" ("Sprint 3's fix round").
+- *Fix brief:* [`review-loop-sprint-3-fix-prompt.md`](review-loop-sprint-3-fix-prompt.md),
+  Pass 1.5's brief for Pass 2 (Codex, `gpt-6.1-sol`, `xhigh`).
 - *Carried from Sprint 1's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are that
   comment's findings): 6, sequence by the order records were posted, not their presence; 7, every
   pass's `input_sha` is the previous recorded pass's `output_sha`, writing or not, and a head
@@ -552,6 +561,15 @@ Cursor's hands this track seats no Cursor.
   checks the binding each time it posts, against the `app_slug` its first allowed request
   already returns. Kickoff's configuration is written here from scratch, so adding the binding
   needs no exception to a ruleset.
+- *Carried from Sprint 3's Pass 1* (Beni, 18 Nov, under "Rulings received"; the numbers are
+  [that comment's](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-6969080448)):
+  7, a pass names the pass whose vendor it must differ from, so that the roster's rule is
+  checked; 12, a rule for any path under `.github/workflows/` in the manifest; 13, which
+  configuration a gate trusts, since a status sits on a commit and a second pull request with a
+  lax base can authorize the same head; 14, who may post which pass, with D9's machine account;
+  15, blocking on an unreported model without blocking on an unreported effort; A6, what binds
+  a seat besides the Keychain prompt; and A7, `prep` for an adopter with no seat token, with the
+  Keychain service names as configuration.
 - *Review:* all six passes.
 - *Rollback:* disable the ruleset (a settings act, Beni's).
 
@@ -1094,7 +1112,7 @@ for Cursor (S7).
 - **The overhaul on two vendors, and the wait rule lifted (Beni, Tue 17 Nov 2026).** Beni
   approved the overhaul's re-routing "as drafted". It is `design-overhaul-plan.md`, section 3,
   "Amended Tue 17 Nov 2026: two vendors, and no seat for Cursor or Grok", in Kickoff PR 340,
-  which stacks on this branch. It applies the two-vendor rule above to overhaul PRs 1b to 9: Codex
+  merged into this branch the same night. It applies the two-vendor rule above to overhaul PRs 1b to 9: Codex
   builds 1b, 3, 6 and 8, and Claude builds 2, 4, 5, 7 and 9. What it changes for this track:
   - **The wait rule is lifted.** It came with the overhaul's Sun 15 Nov amendment (under D7,
     above): while Codex built an overhaul PR, this track's Codex builds waited.
@@ -1107,6 +1125,45 @@ for Cursor (S7).
     yields.
   - **A seat that yields resumes on the same model.** A sprint still never switches seat or
     model mid-build.
+
+- **Sprint 3's fix round (Beni, Wed 18 Nov 2026, "Approve and post").** Pass 1
+  ([comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-6969080448),
+  `claude-fable-5-2` at `xhigh`) returned *merge after a fix round*: 23 findings (4 blocking, 6
+  should-fix, 13 notes), and verdicts on all ten appendix items, none of which changed a finding
+  or joined one. Beni approved the Planner's dispositions as proposed. The brief is
+  [`review-loop-sprint-3-fix-prompt.md`](review-loop-sprint-3-fix-prompt.md), for Codex on
+  `gpt-6.1-sol` at `xhigh`, the model that built the sprint.
+  - **Fixed in Pass 2:** 1 to 6, 8 to 11 and 16 to 23; the test half of 7, the README half of 12
+    and the output half of 13; A1 and A9, as corrections in the pull request's body; A3, by
+    deleting `codex/forge`; and A10, the latest status per creator in `status`'s gate line.
+  - **Three of the four blocking findings were the Planner's.** The build brief restated D3
+    loosely: Part D measured it from "the last recorded output_sha", Part B put the merge shape
+    as a second-parent test, and its path list dropped "(the two lines `npm version` writes)".
+    The fix brief quotes the ruled packet word for word, and later briefs quote a ruling instead
+    of restating it.
+  - **The Planner's resolutions.** The merge shape is a three-way test against the merge base,
+    because the API cannot run `--remerge-diff`; a path both sides changed goes to a re-read.
+    The version files are compared parsed, so a dependency pinned at the old version string
+    cannot move with the bump. A later unmarked record at the same SHAs replaces the earlier one,
+    and `status` names both comments.
+  - **Two constraints.** `replay/main` does not change, because its review gate admits a commit
+    only with the App's status, so every rule must work on the replay's configuration as it
+    stands. No seat reads a Keychain item in this round: the live gate (T1, T6, T7) waits until
+    Beni re-creates both items with an empty trusted list and rotates the App's key and the
+    seats' token (finding 8).
+  - **Deferred to Sprint 5:** 7's vendor check, 12, 13's trusted configuration, 14, 15, A6 and
+    A7, each written into Sprint 5 above. **Recorded as a limit:** a lock does not stop an
+    admin's comments (A2).
+  - **Corrected here:** the Sprint 3 entry's line on T7's fourth forge path, which said more
+    than its evidence (finding 11).
+  - **Pass 1 ran in two sessions.** A restart of the Mac emptied `/tmp` after the findings were
+    written and before the appendix. The Planner checked the first session's transcript (one
+    message from Beni, no read of the archive, every command outside the sandbox a GitHub read
+    or inside the seat's isolated wrapper), and a second session rebuilt the draft from it to the
+    first session's numbers before the appendix was pasted. Both briefs are archived together.
+    Beni ruled the record's `runtime_version` 2.1.325, the version every line of the first
+    transcript carries: an auto-update put 2.1.326 on PATH in the minute the session started,
+    and its `claude --version` ran that.
 
 D8, D10 and D11 are not yet ruled. D4 is withdrawn, and D12 is Pilot (17 Nov).
 
