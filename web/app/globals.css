@@ -1,6 +1,7 @@
 @import 'tailwindcss' source(none);
 @source "./";
 @source "../../src/components/AppHeader.tsx";
+@source "../../src/components/glyphs.tsx";
 @source "../../src/components/TabNav.tsx";
 @source "../../src/components/LensSwitcher.tsx";
 @source "../../src/components/StalenessBanner.tsx";

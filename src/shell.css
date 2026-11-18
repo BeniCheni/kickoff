@@ -122,7 +122,8 @@
 }
 
 /*
- * Second edition, beside the first. Nothing in the app reads these yet.
+ * Second edition, beside the first. The imprint band is the first surface
+ * that reads them. The stock rule below is unchanged.
  *
  * Stock is a local attribute, not a second theme. :root is paper stock on a
  * light page. [data-stock='black'] is a cover, band or plate on that page.
@@ -203,3 +204,247 @@
   --fb-rule-strong: rgb(233 228 212 / 0.52);
   --fb-torch: rgb(232 179 111 / 0.2);
 }
+
+/*
+ * Imprint band. Stock voices come from the rule above: paper on the Ledger,
+ * black everywhere else, and black voices on a dark page either way.
+ * 44 + 44 + 30 = 118. The provenance row grows when it wraps.
+ */
+.imprint-band {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  width: 100%;
+  color: var(--band-ink);
+}
+.imprint-band[data-stock='black'] {
+  background: var(--fb-cover-black);
+  --band-ground: var(--fb-cover-black);
+  --band-ink: var(--fb-cover-ink);
+  --band-muted: var(--fb-cover-muted);
+  --band-pitch: var(--fb-pitch);
+  --band-amber: var(--fb-amber);
+}
+.imprint-band[data-stock='paper'] {
+  background: var(--fb-typescript);
+  --band-ground: var(--fb-typescript);
+  --band-ink: var(--fb-pulp-ink);
+  --band-muted: var(--fb-pulp-muted);
+  --band-pitch: var(--fb-pitch);
+  --band-amber: var(--fb-amber);
+}
+.imprint-controls,
+.imprint-tabs {
+  box-sizing: border-box;
+  height: 44px;
+  display: flex;
+  align-items: center;
+}
+.imprint-controls {
+  justify-content: space-between;
+  padding-inline: var(--fb-gutter);
+  gap: 8px;
+}
+.wordmark {
+  min-width: 0;
+  line-height: 1;
+}
+.wordmark-name {
+  display: block;
+  font-family: var(--fb-label);
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--band-ink);
+}
+.wordmark-strap {
+  display: block;
+  margin-top: 1px;
+  font-family: var(--fb-label);
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--band-pitch);
+}
+.imprint-tools {
+  display: flex;
+  align-items: center;
+  flex: none;
+}
+.imprint-hit {
+  position: relative;
+  box-sizing: border-box;
+  width: 44px;
+  height: 44px;
+  padding: 9px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.imprint-name {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.motion-disc,
+.theme-disc {
+  box-sizing: border-box;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  display: grid;
+  place-items: center;
+}
+.theme-disc {
+  transition: background-color 220ms ease, color 220ms ease;
+}
+.motion-disc svg,
+.theme-disc svg {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+.motion-glyph { display: none; }
+[data-motion='on'] .motion-glyph-on { display: grid; }
+[data-motion='off'] .motion-glyph-off { display: grid; }
+@media (prefers-reduced-motion: reduce) {
+  html:not([data-motion]) .motion-glyph-off { display: grid; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html:not([data-motion]) .motion-glyph-on { display: grid; }
+}
+[data-motion='off'] .motion-disc,
+[data-theme='dark'] .theme-disc {
+  background: currentColor;
+}
+[data-motion='off'] .motion-disc svg,
+[data-theme='dark'] .theme-disc svg {
+  color: var(--band-ground);
+}
+.motion-when-off,
+.theme-when-dark { display: none; }
+[data-motion='off'] .motion-when-on { display: none; }
+[data-motion='off'] .motion-when-off { display: inline; }
+[data-theme='dark'] .theme-when-light { display: none; }
+[data-theme='dark'] .theme-when-dark { display: inline; }
+.lens-switch {
+  display: inline-flex;
+  align-items: center;
+  height: 44px;
+}
+.lens-switch button {
+  box-sizing: border-box;
+  width: 57px;
+  height: 44px;
+  padding: 10.5px 0;
+  border: 0;
+  background: transparent;
+  color: var(--band-muted);
+  cursor: pointer;
+  font-family: var(--fb-label);
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.lens-switch button span {
+  display: grid;
+  place-items: center;
+  height: 23px;
+  border-radius: 999px;
+  transition: background-color 180ms cubic-bezier(.2, .7, .2, 1), color 180ms cubic-bezier(.2, .7, .2, 1);
+}
+.lens-switch button[aria-checked='true'] {
+  color: var(--band-ground);
+}
+.lens-switch button[aria-checked='true'] span {
+  background: var(--band-ink);
+}
+.plus-five {
+  display: block;
+  flex: none;
+}
+.plus-five-ground {
+  fill: var(--fb-cover-black);
+  stroke: var(--fb-cover-ink);
+  stroke-width: 1;
+}
+.plus-five-lamp { fill: var(--fb-rift); }
+.plus-five-filament {
+  fill: none;
+  stroke: var(--fb-cover-black);
+  stroke-width: 1.1;
+  stroke-linecap: round;
+}
+.plus-five-mark {
+  fill: var(--fb-cover-ink);
+  font-family: var(--fb-label);
+  font-weight: 700;
+  font-size: 11px;
+}
+.imprint-tabs {
+  padding-inline: var(--fb-gutter);
+  gap: 4px;
+  box-shadow: inset 0 -1.5px 0 var(--fb-rule);
+}
+.imprint-tabs button {
+  box-sizing: border-box;
+  min-width: 44px;
+  height: 44px;
+  padding: 0 12px;
+  border: 0;
+  background: transparent;
+  color: var(--band-muted);
+  cursor: pointer;
+  font-family: var(--fb-label);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: color 150ms ease, box-shadow 150ms ease;
+}
+.imprint-tabs button[aria-current='page'] {
+  color: var(--band-ink);
+  box-shadow: inset 0 -2.5px 0 var(--band-pitch);
+}
+.provenance {
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  min-height: 30px;
+  margin: 0;
+  padding: 7.5px var(--fb-gutter);
+  color: var(--band-amber);
+  font-family: var(--fb-mono);
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 1.5;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.provenance-lead,
+.provenance-sync {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.provenance-lead svg {
+  width: 12px;
+  height: 12px;
+  flex: none;
+}
+.glyph { display: block; }

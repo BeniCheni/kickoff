@@ -24,6 +24,7 @@ const sources = [...globals.matchAll(/@source\s+"([^"]+)"/g)].map(match => match
 assert.deepEqual(sources, [
   './',
   '../../src/components/AppHeader.tsx',
+  '../../src/components/glyphs.tsx',
   '../../src/components/TabNav.tsx',
   '../../src/components/LensSwitcher.tsx',
   '../../src/components/StalenessBanner.tsx',
