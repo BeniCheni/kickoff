@@ -835,3 +835,19 @@ Filed by the PM seat on Wed 18 Nov 2026, about 6:30 PM EST:
 Beni approved the trim as PR 7b at about 6:35 PM EST ("Yes, PR 7b"). The plan's section 3
 gains PR 7b's row, after PR 7, and section 4.2's amendment says so. Its evidence row in
 section 8.3 and its brief are written once PR 7 merges.
+
+## Merged (Wed 18 Nov 2026, 6:34 PM EST)
+
+Beni merged #341 into `overhaul/second-edition` as squash `81730669d7b53c88046a882bfc3d10208d18d639`
+at 6:34 PM EST (23:34 UTC), on his own account, from the handoff block above. The PM seat
+checked the result:
+- The squash's tree is identical to `17660f9`, the head Pass 2.5's re-run verified.
+- Its subject and body are the block's, ending with the Cursor and Codex trailers.
+- Vercel and `vercel-smoke` are green on the squash commit.
+- The landing worktree `kickoff-341-landed` sits at `8173066`, with `dist/` built.
+
+The PM seat did not see that worktree's typecheck and test output. Pass 2.5's re-run measured
+the same tree: typecheck, 1,129 root tests and 131 web tests, and every build, all green.
+`main` and Pages did not move, and no tag, version or CHANGELOG section followed.
+#342's base moved off `34b5160` with this merge, and the PR 2 planner briefed its base
+refresh at `5371d7a`.
