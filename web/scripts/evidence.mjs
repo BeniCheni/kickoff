@@ -313,23 +313,15 @@ export function fontFile(href) {
   return match ? match[0] : null
 }
 
-// A face is used when the browser applied it. Text that is laid out but
-// invisible, at visibility:hidden or opacity:0, counts as use, because the
-// browser fetches and applies the face for it. Text that is not laid out —
-// the hidden attribute, display:none, a closed details — does not.
+// The cold-load gate estimates face use on Kickoff's measured pages. It matches
+// loaded FontFace descriptors to stylesheet rules. For ranged rules it also
+// checks authored DOM text collected by the first family and style of the
+// computed stack. It includes laid-out text at visibility:hidden or opacity:0.
 //
-// The loaded face already carries the weight the browser applied (Kickoff Mono
-// at 500 for a 400 request), so the gate matches that face to the @font-face
-// rule and does not choose a nearest weight itself. document.fonts does not
-// expose the file, which is why the stylesheet is still read.
-//
-// Two rules can share a family, style and weight and differ only in
-// unicode-range. FontFace.status cannot tell those halves apart: Chrome
-// reports both loaded when both were preloaded, while only the latin half
-// drew a glyph. document.fonts.check() reports the same thing, because a
-// preloaded face is loaded whether or not it drew. The half counts when a
-// character of the laid-out text for that family and style falls inside the
-// rule's unicode-range. A rule with no unicode-range keeps the weight match.
+// A preload can set FontFace.status to loaded without drawing a glyph. This
+// estimate misses generated text, control values and placeholders, fallback
+// families, synthesized styles and text transforms. It can overcount skipped
+// content, overlapping ranges and characters drawn at a different weight.
 export function textIntersectsUnicodeRange(chars, range) {
   const intervals = []
   for (const match of String(range).matchAll(/U\+([0-9A-Fa-f]+)(?:-([0-9A-Fa-f]+))?/g)) {
@@ -455,8 +447,11 @@ export async function captureRequests(browser, origins, anchor, rows = []) {
     await page.setViewport({ width, height: 844, deviceScaleFactor: 1 })
     await page.evaluateOnNewDocument(() => localStorage.setItem('kickoff-theme', 'light'))
     await page.goto(`${origin}/?lens=${lens}&tab=${tab}&date=${anchor}`, { waitUntil: 'networkidle0', timeout: 30_000 })
-    const usage = await page.evaluate(async () => {
-      await document.fonts.ready
+    // Navigation's networkidle0 and fonts.ready settle the cold page. Style reads
+    // in the usage probe can trigger additional font requests.
+    await page.evaluate(() => document.fonts.ready)
+    const tally = log.tally(origin)
+    const usage = await page.evaluate(() => {
       const faces = []
       for (const sheet of document.styleSheets) {
         let rules
@@ -482,8 +477,8 @@ export async function captureRequests(browser, origins, anchor, rows = []) {
           status: face.status,
         })
       }
-      // Laid out includes visibility:hidden and opacity:0. It excludes the
-      // hidden attribute, display:none, and the body of a closed details.
+      // Include visibility:hidden and opacity:0. Skip the hidden attribute,
+      // display:none and the body of a closed details.
       const laidOut = (el) => {
         for (let node = el; node; node = node.parentElement) {
           if (node.hidden) return false
@@ -523,8 +518,9 @@ export async function captureRequests(browser, origins, anchor, rows = []) {
     })
     const unused = unusedFontPreloads(usage)
     await context.close()
-    const tally = log.tally(origin)
-    if (tally.foreign.length) throw new Error(`cold load ${app} ${tab} ${lens} ${width} asked for ${tally.foreign.join(', ')}`)
+    // Apply the host guard to the probe's requests as well as the cold load.
+    const { foreign } = log.tally(origin)
+    if (foreign.length) throw new Error(`cold load ${app} ${tab} ${lens} ${width} asked for ${foreign.join(', ')}`)
     rows.push({
       id: `${app}-${tab}-${lens}-${width}`,
       app,
