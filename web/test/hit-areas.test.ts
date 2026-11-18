@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { bandFaults, firstFrameFaults, focusFaults, hitAreaFaults, momentsPaintFaults, pinFaults, revealFaults } from '../scripts/evidence.mjs'
+import { bandFaults, firstFrameFaults, focusFaults, hitAreaFaults, momentsPaintFaults, pinFaults, revealFaults, tabFaults } from '../scripts/evidence.mjs'
 
 const box = (name: string, left: number, top: number, w: number, h = 44) => ({ name, left, top, right: left + w, bottom: top + h, w, h })
 
@@ -22,18 +22,39 @@ test('H1 is 44, not 43.5, and H2 has no half-pixel of grace', () => {
   expect(hitAreaFaults([box('a', 0, 0, 44), box('b', 0, 44, 44)])).toEqual([])
 })
 
+const PITCH = 'rgb(86, 192, 131)'
+const UNDERLINE = `${PITCH} 0px -2.5px 0px 0px inset`
+
+/** A tab's hit area with the tab drawn inside it: 22 tall at its centre, as wide as its label. */
+function tabBox(name: string, left: number, current: boolean) {
+  return {
+    ...box(name, left, 44, 80), row: 'tabs', current, shadow: 'none',
+    drawn: { ...box('', left + 12, 55, 56, 22), label: 56, underline: current ? UNDERLINE : 'none' },
+  }
+}
+
+/** A band control as the runner reads it. Only a tab has a drawing, a current state and a shadow. */
+type Control = ReturnType<typeof box> & { row: string; current?: boolean; shadow?: string; drawn?: ReturnType<typeof tabBox>['drawn'] | null }
+
+/** Moves a control, and what is drawn inside it, down the page. */
+function lower(control: Control, by: number) {
+  control.top += by
+  control.bottom += by
+  if (control.drawn) { control.drawn.top += by; control.drawn.bottom += by }
+}
+
 /** The band as measured at 360: 133 tall, the provenance wrapped under the tab row. */
 function band(tabs = ['Fixtures', 'Table', 'Moments']) {
   let left = 16
-  const tabBoxes = tabs.map((name) => { const tab = { ...box(name, left, 44, 80), row: 'tabs' }; left += 84; return tab })
+  const tabBoxes = tabs.map((name, i) => { const tab = tabBox(name, left, i === 0); left += 84; return tab })
   return {
-    landmark: true, className: 'imprint-band', box: { left: 0, top: 0, width: 360, height: 133 }, innerWidth: 360, height: 133,
+    landmark: true, pitch: PITCH, className: 'imprint-band', box: { left: 0, top: 0, width: 360, height: 133 }, innerWidth: 360, height: 133,
     rows: [{ name: 'controls', top: 0, bottom: 44, h: 44 }, { name: 'tabs', top: 44, bottom: 88, h: 44 }],
     controls: [
       { ...box('Stop motion', 116, 0, 44), row: 'controls' }, { ...box('Dark mode', 160, 0, 44), row: 'controls' },
       { ...box('Poster', 204, 0, 57), row: 'controls' }, { ...box('Ledger', 261, 0, 57), row: 'controls' },
       ...tabBoxes,
-    ],
+    ] as Control[],
     provenance: { top: 88, bottom: 133 },
     strap: { transform: 'uppercase', tracking: 1.2, size: 10, lines: 1, right: 90 },
     data: [
@@ -71,7 +92,7 @@ test('H3: nine pixels before the tab row breaks the 44px pitch', () => {
   const pushed = band()
   pushed.rows[1] = { name: 'tabs', top: 53, bottom: 97, h: 44 }
   pushed.provenance = { top: 97, bottom: 142 }
-  for (const control of pushed.controls.slice(4)) { control.top += 9; control.bottom += 9 }
+  for (const control of pushed.controls.slice(4)) lower(control, 9)
   for (const rect of pushed.data[2]!.rects) { rect.top += 9; rect.bottom += 9 }
   expect(bandFaults(pushed)).toEqual(['the tab row sits 53.00 below the control row, expected a 44px pitch'])
 })
@@ -79,7 +100,7 @@ test('H3: nine pixels before the tab row breaks the 44px pitch', () => {
 test('H4: tabs moved thirty pixels down cover the provenance line', () => {
   const moved = band()
   moved.rows[1] = { name: 'tabs', top: 74, bottom: 118, h: 44 }
-  for (const control of moved.controls.slice(4)) { control.top += 30; control.bottom += 30 }
+  for (const control of moved.controls.slice(4)) lower(control, 30)
   expect(bandFaults(moved)).toEqual([
     'the tab row sits 74.00 below the control row, expected a 44px pitch',
     "the provenance line starts at 88.00, above the tab row's foot at 118.00",
@@ -89,8 +110,7 @@ test('H4: tabs moved thirty pixels down cover the provenance line', () => {
   ])
   // A tab that slides alone leaves its row and is caught without the row moving.
   const one = band()
-  one.controls[4]!.top += 30
-  one.controls[4]!.bottom += 30
+  lower(one.controls[4]!, 30)
   expect(bandFaults(one)).toEqual(['Fixtures at 74.00 to 118.00 leaves the tabs row', 'Fixtures covers the provenance line'])
 })
 
@@ -100,6 +120,8 @@ test('the drawn contract: a disc is 44 wide and a lens segment 57', () => {
   expect(bandFaults(thin)).toEqual(['Poster hit area is 50.00×44.00, expected 57×44'])
   const short = band()
   Object.assign(short.controls[5]!, { h: 40, bottom: 84 })
+  // The drawing stays at the centre of the shorter hit area, so the fault is the hit area's alone.
+  Object.assign(short.controls[5]!.drawn!, { top: 53, bottom: 75 })
   expect(bandFaults(short)).toEqual(['Table hit area is 80.00×40.00, expected at least 44×44', 'Table 80.00×40.00'])
 })
 
@@ -118,6 +140,43 @@ test('the strap is a caps label tracked .12em on one line, and a band without on
   const wide = band()
   wide.data[1]!.rects[0] = box('', 16, 31, 104, 10)
   expect(bandFaults(wide)).toEqual(['Stop motion covers the strap'])
+})
+
+test('a tab is drawn 22px tall at the centre of its 44px hit area, underlined at its label’s width', () => {
+  const on = tabBox('Fixtures', 16, true)
+  const off = tabBox('Table', 100, false)
+  expect(tabFaults(on, PITCH)).toEqual([])
+  expect(tabFaults(off, PITCH)).toEqual([])
+  // As built before the ruling: no drawn tab, and the underline on the hit area's own foot.
+  expect(tabFaults({ ...on, drawn: null, shadow: UNDERLINE }, PITCH)).toEqual(['Fixtures has no drawn tab inside its hit area'])
+  expect(tabFaults({ ...on, shadow: UNDERLINE }, PITCH)).toEqual([`Fixtures draws on its hit area: ${UNDERLINE}`])
+  // A drawing that fills the hit area puts the underline back at the row's foot.
+  expect(tabFaults({ ...on, drawn: { ...on.drawn, ...box('', 28, 44, 56, 44) } }, PITCH)).toEqual(['Fixtures is drawn 44.00 tall, expected 22'])
+  expect(tabFaults({ ...on, drawn: { ...on.drawn, ...box('', 28, 50, 56, 22) } }, PITCH))
+    .toEqual(['Fixtures is drawn at 50.00 to 72.00, off the centre of its hit area at 44.00 to 88.00'])
+  // As wide as the hit area's content box and no wider than the label.
+  expect(tabFaults({ ...on, drawn: { ...on.drawn, ...box('', 16, 55, 80, 22) } }, PITCH)).toEqual(['Fixtures is drawn 80.00 wide, and its label is 56.00'])
+  expect(tabFaults({ ...on, drawn: { ...on.drawn, label: 56 + 1 / 64 } }, PITCH)).toEqual([])
+  expect(tabFaults({ ...on, drawn: { ...on.drawn, underline: 'none' } }, PITCH))
+    .toEqual(['Fixtures is the current tab, and the foot of its drawn tab reads none, expected a 2.5px underline'])
+  expect(tabFaults({ ...on, drawn: { ...on.drawn, underline: 'rgb(86, 192, 131) 0px -1px 0px 0px inset' } }, PITCH))
+    .toEqual(['Fixtures is the current tab, and the foot of its drawn tab reads rgb(86, 192, 131) 0px -1px 0px 0px inset, expected a 2.5px underline'])
+  expect(tabFaults({ ...on, drawn: { ...on.drawn, underline: 'rgb(110, 75, 0) 0px -2.5px 0px 0px inset' } }, PITCH))
+    .toEqual(["Fixtures's underline is rgb(110, 75, 0), expected the band's pitch rgb(86, 192, 131)"])
+  expect(tabFaults({ ...off, drawn: { ...off.drawn, underline: UNDERLINE } }, PITCH)).toEqual(['Table is not the current tab and is underlined'])
+})
+
+test('the gate reads every tab’s drawing, and exactly one tab is the current page', () => {
+  const none = band()
+  none.controls[4]!.current = false
+  none.controls[4]!.drawn!.underline = 'none'
+  expect(bandFaults(none)).toEqual(['0 tabs are marked as the current page'])
+  const filled = band()
+  Object.assign(filled.controls[5]!.drawn!, { top: 44, bottom: 88, h: 44 })
+  expect(bandFaults(filled)).toEqual(['Table is drawn 44.00 tall, expected 22'])
+  const bare = band()
+  bare.controls[6]!.drawn = null
+  expect(bandFaults(bare)).toEqual(['Moments has no drawn tab inside its hit area'])
 })
 
 test('pinned rows: flush under what pins above them, and topmost at their own centre', () => {

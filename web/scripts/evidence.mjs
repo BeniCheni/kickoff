@@ -275,10 +275,35 @@ export function expectedControls(tabs = ['Fixtures', 'Table', 'Moments']) {
   ]
 }
 
+// The tab as drawn (handoff section 5): 22px tall, the label over an underline at the
+// label's width. A box and the range of its text can differ by one layout unit.
+const TAB_DRAWN = 22
+const LAYOUT_UNIT = 1 / 64
+const UNDERLINE = /0px -2\.5px 0px 0px inset/
+
+/** One tab's drawing, inside its hit area. The hit area itself draws nothing. */
+export function tabFaults(control, pitch) {
+  const { drawn, name } = control
+  if (!drawn) return [`${name} has no drawn tab inside its hit area`]
+  const faults = []
+  if (!near(drawn.h, TAB_DRAWN)) faults.push(`${name} is drawn ${drawn.h.toFixed(2)} tall, expected ${TAB_DRAWN}`)
+  if (!near(drawn.top - control.top, control.bottom - drawn.bottom)) {
+    faults.push(`${name} is drawn at ${drawn.top.toFixed(2)} to ${drawn.bottom.toFixed(2)}, off the centre of its hit area at ${control.top.toFixed(2)} to ${control.bottom.toFixed(2)}`)
+  }
+  if (Math.abs(drawn.w - drawn.label) > LAYOUT_UNIT + EPSILON) faults.push(`${name} is drawn ${drawn.w.toFixed(2)} wide, and its label is ${drawn.label.toFixed(2)}`)
+  if (control.current) {
+    if (!UNDERLINE.test(drawn.underline)) faults.push(`${name} is the current tab, and the foot of its drawn tab reads ${drawn.underline}, expected a 2.5px underline`)
+    else if (pitch && !drawn.underline.startsWith(pitch)) faults.push(`${name}'s underline is ${drawn.underline.split(' 0px')[0]}, expected the band's pitch ${pitch}`)
+  } else if (drawn.underline !== 'none') faults.push(`${name} is not the current tab and is underlined`)
+  if (control.shadow !== 'none') faults.push(`${name} draws on its hit area: ${control.shadow}`)
+  return faults
+}
+
 /**
  * Everything the gate requires of one shell's band. A band that is missing, or that has
  * lost a control or a row, is a fault: the gate has nothing to skip.
- *   H1  every hit area at least 44 × 44, and the drawn contract (44, 44, 57, 57; tabs 44 tall)
+ *   H1  every hit area at least 44 × 44, and the drawn contract (44, 44, 57, 57; tabs 44 tall,
+ *       each drawn 22 tall inside it)
  *   H2  no two hit areas overlap
  *   H3  the control row and the tab row are each 44 tall, on a 44 px pitch
  *   H4  no hit area covers the wordmark, the strap or the provenance line
@@ -322,7 +347,10 @@ export function bandFaults(band, { tabs } = {}) {
       }
       const before = band.controls[i - 1]
       if (before && before.row === control.row && control.left < before.left) faults.push(`${control.name} is drawn before ${before.name}`)
+      if (want.row === 'tabs') faults.push(...tabFaults(control, band.pitch))
     })
+    const current = band.controls.filter((control) => control.current).length
+    if (current !== 1) faults.push(`${current} tabs are marked as the current page`)
   }
 
   // The strap as ruled: a caps label tracked .12em, on one line.
@@ -358,8 +386,24 @@ async function bandGeometry(page) {
     }
     const controls = [...header.querySelectorAll('button')].map((el) => {
       const name = el.getAttribute('aria-label') || shownText(el)
-      return { name, row: el.closest('[data-imprint-row]')?.getAttribute('data-imprint-row') ?? null, ...box(el.getBoundingClientRect()) }
+      const row = el.closest('[data-imprint-row]')?.getAttribute('data-imprint-row') ?? null
+      const control = { name, row, ...box(el.getBoundingClientRect()) }
+      if (row !== 'tabs') return control
+      // A tab's drawing is the one span inside its hit area, and its label the text in it.
+      const span = el.children.length === 1 && el.firstElementChild.tagName === 'SPAN' ? el.firstElementChild : null
+      const text = document.createRange()
+      if (span) text.selectNodeContents(span)
+      return {
+        ...control,
+        current: el.getAttribute('aria-current') === 'page',
+        shadow: getComputedStyle(el).boxShadow,
+        drawn: span ? { ...box(span.getBoundingClientRect()), label: text.getBoundingClientRect().width, underline: getComputedStyle(span).boxShadow } : null,
+      }
     })
+    const voice = header.appendChild(document.createElement('i'))
+    voice.style.color = 'var(--band-pitch)'
+    const pitch = getComputedStyle(voice).color
+    voice.remove()
     const rows = [...header.querySelectorAll('[data-imprint-row]')].map((el) => {
       const rect = el.getBoundingClientRect()
       return { name: el.getAttribute('data-imprint-row'), top: rect.top, bottom: rect.bottom, h: rect.height }
@@ -385,6 +429,7 @@ async function bandGeometry(page) {
         right: Math.max(...strapLines.map((line) => line.right)),
       } : null,
       landmark: header.getAttribute('data-moments-background') === 'header',
+      pitch,
       className: header.className,
       box: { left: rect.left, top: rect.top, width: rect.width, height: rect.height },
       innerWidth,
@@ -792,7 +837,10 @@ export async function runMatrix(browser, { origins, out, anchor, contrast = fals
               app, lens,
               bandHeight: band.height,
               rows: band.rows.map((row) => ({ name: row.name, h: row.h })),
-              controls: band.controls.map((box) => ({ name: box.name, w: Math.round(box.w * 10) / 10, h: Math.round(box.h * 10) / 10 })),
+              controls: band.controls.map((box) => ({
+                name: box.name, w: Math.round(box.w * 10) / 10, h: Math.round(box.h * 10) / 10,
+                ...(box.drawn ? { drawn: { w: Math.round(box.drawn.w * 100) / 100, h: box.drawn.h, top: box.drawn.top, bottom: box.drawn.bottom, underline: box.drawn.underline } } : {}),
+              })),
             })
           }
           if (tab === 'table') assert.ok(await page.$('[data-table-picker]'), id)
@@ -1248,6 +1296,7 @@ const CHROME_PARTS = {
   'lens label': '.lens-switch button',
   'disc hit area': '.imprint-hit',
   tab: '.imprint-tabs button',
+  'tab underline': '.imprint-tabs button span',
 }
 
 async function chromeTransitions(page) {
@@ -1302,6 +1351,7 @@ export async function proveChrome(browser, origins) {
         assert.deepEqual(faults, [], `${id} ${faults.join('; ')}`)
       } else {
         assert.ok(transitions.tab?.includes('color 0.15s'), `${id} tab ink is not 150 ms: ${transitions.tab}`)
+        assert.ok(transitions['tab underline']?.includes('box-shadow 0.15s'), `${id} tab underline is not 150 ms: ${transitions['tab underline']}`)
         assert.ok(transitions['lens thumb']?.includes('background-color 0.18s'), `${id} lens thumb is not 180 ms: ${transitions['lens thumb']}`)
         assert.ok(transitions['theme disc']?.includes('background-color 0.22s'), `${id} theme disc is not 220 ms: ${transitions['theme disc']}`)
       }

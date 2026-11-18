@@ -45,7 +45,7 @@ const moving = rules(plain).filter((rule) => /(^|[;\s])transition(-duration)?\s*
 const stilled = rules(reduced).filter((rule) => /transition:\s*none/.test(rule.body)).flatMap((rule) => rule.selectors)
 
 it('every transition the chrome declares is stopped when the system asks for reduced motion', () => {
-  expect(moving).toEqual(expect.arrayContaining(['.imprint-hit', '.theme-disc', '.lens-switch button', '.lens-switch button span', '.imprint-tabs button']))
+  expect(moving).toEqual(expect.arrayContaining(['.imprint-hit', '.theme-disc', '.lens-switch button', '.lens-switch button span', '.imprint-tabs button', '.imprint-tabs button span']))
   for (const selector of moving) expect(stilled, `${selector} keeps its transition under reduced motion`).toContain(selector)
 })
 
@@ -66,7 +66,9 @@ it('hover and pressed are 150 ms ink shifts between the band’s own voices', ()
   // One duration per property: ink 150, the lens thumb's fill 180, the theme disc's fill 220.
   expect(declarations('.imprint-hit')).toContain('transition: color 150ms ease')
   expect(declarations('.lens-switch button')).toContain('transition: color 150ms ease')
-  expect(declarations('.imprint-tabs button')).toContain('transition: color 150ms ease, box-shadow 150ms ease')
+  // The tab's ink is on its hit area and its underline on the drawn tab inside it, 150 each.
+  expect(declarations('.imprint-tabs button')).toContain('transition: color 150ms ease;')
+  expect(declarations('.imprint-tabs button span')).toContain('transition: box-shadow 150ms ease;')
   expect(declarations('.lens-switch button span')).toContain('transition: background-color 180ms cubic-bezier(.2, .7, .2, 1);')
   expect(declarations('.theme-disc')).toContain('transition: background-color 220ms ease;')
 

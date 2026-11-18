@@ -2,13 +2,14 @@ import { expect, test } from 'vitest'
 import { bannerFaults, feedbackFaults, motionFaults, reducedChromeFaults, serverMotionFaults } from '../scripts/evidence.mjs'
 
 test('reduced motion: a control with no running transition passes, one that keeps a duration is named', () => {
-  const still = { 'theme disc': [], 'lens thumb': [], 'lens label': [], 'disc hit area': [], tab: [] }
+  const still = { 'theme disc': [], 'lens thumb': [], 'lens label': [], 'disc hit area': [], tab: [], 'tab underline': [] }
   expect(reducedChromeFaults(still)).toEqual([])
   expect(reducedChromeFaults({ ...still, 'lens thumb': ['background-color 0.18s', 'color 0.18s'], tab: ['color 0.15s'] })).toEqual([
     'lens thumb still runs background-color 0.18s, color 0.18s',
     'tab still runs color 0.15s',
   ])
   expect(reducedChromeFaults({ ...still, 'theme disc': null })).toEqual(['theme disc is missing'])
+  expect(reducedChromeFaults({ ...still, 'tab underline': ['box-shadow 0.15s'] })).toEqual(['tab underline still runs box-shadow 0.15s'])
 })
 
 test('feedback: ink moves through the band’s voices, and a control that never changes is named', () => {

@@ -465,10 +465,24 @@ html {
   font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  transition: color 150ms ease, box-shadow 150ms ease;
+  transition: color 150ms ease;
+}
+/*
+ * The tab as drawn is 22px tall inside its 44px hit area (handoff 5): the
+ * label, and for the current tab the pitch underline along the foot of those
+ * 22px, as wide as the label. The hit area is made by the button around it
+ * and draws nothing of its own.
+ */
+.imprint-tabs button span {
+  display: inline-block;
+  height: 22px;
+  line-height: 22px;
+  transition: box-shadow 150ms ease;
 }
 .imprint-tabs button[aria-current='page'] {
   color: var(--band-ink);
+}
+.imprint-tabs button[aria-current='page'] span {
   box-shadow: inset 0 -2.5px 0 var(--band-pitch);
 }
 /*
@@ -476,9 +490,9 @@ html {
  * glows and no ink is mixed: the band's three voices trade places. A disc
  * rests in ink, so it goes to pitch under the pointer and to muted ink while
  * held. A lens or a tab that is not the current one rests in muted ink, so it
- * goes to ink, then to pitch. Each property has one duration: ink is 150, the
- * lens thumb's fill 180, the theme disc's fill 220. Hover is for pointers
- * that hover, so a tap leaves nothing behind.
+ * goes to ink, then to pitch. Each property has one duration: ink and the
+ * tab's underline are 150, the lens thumb's fill 180, the theme disc's fill
+ * 220. Hover is for pointers that hover, so a tap leaves nothing behind.
  */
 @media (hover: hover) {
   .imprint-hit:hover {
@@ -507,7 +521,8 @@ html {
   .theme-disc,
   .lens-switch button,
   .lens-switch button span,
-  .imprint-tabs button {
+  .imprint-tabs button,
+  .imprint-tabs button span {
     transition: none;
   }
 }

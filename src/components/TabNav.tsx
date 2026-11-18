@@ -7,7 +7,8 @@ const DEFAULT_TABS: ReadonlyArray<{ key: Tab; label: string }> = [
   { key: 'moments', label: 'Moments' },
 ]
 
-/** Fixtures, Table and Moments. Each hit area is 44px tall and at least 44 wide.
+/** Fixtures, Table and Moments. Each hit area is 44px tall and at least 44 wide; the
+ *  span is the tab as drawn, 22px tall, the label over an underline at the label's width.
  *  The offline build passes the first two. The lens switch lives in the control row. */
 export function TabNav({
   tab,
@@ -32,7 +33,7 @@ export function TabNav({
           onClick={() => onSelect(key)}
           aria-current={tab === key ? 'page' : undefined}
         >
-          {label}
+          <span>{label}</span>
         </button>
       ))}
     </nav>

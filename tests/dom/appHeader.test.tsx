@@ -22,6 +22,27 @@ function band(themeLabel: string) {
 }
 
 describe('the band is one module', () => {
+  it('each tab is one drawn span inside its button, and is still named by its label', () => {
+    installMatchMedia({ dark: false })
+    const release = primeClock(edt('2026-09-05T12:00:00'))
+    try {
+      render(<App />)
+      const tabs = [...document.querySelectorAll('nav[aria-label="Primary"] button')]
+      expect(tabs.map((tab) => tab.textContent)).toEqual(['Fixtures', 'Table', 'Moments'])
+      for (const tab of tabs) {
+        expect(tab.children).toHaveLength(1)
+        expect(tab.firstElementChild!.tagName).toBe('SPAN')
+        expect(tab.firstElementChild!.textContent).toBe(tab.textContent)
+        expect(screen.getByRole('button', { name: tab.textContent! })).toBe(tab)
+      }
+      expect(tabs.map((tab) => tab.getAttribute('aria-current'))).toEqual(['page', null, null])
+      fireEvent.click(tabs[1]!.firstElementChild!)
+      expect(tabs.map((tab) => tab.getAttribute('aria-current'))).toEqual([null, 'page', null])
+    } finally {
+      release()
+    }
+  })
+
   it('prints the fixture count and the sync stamp', () => {
     installMatchMedia({ dark: false })
     const release = primeClock(edt('2026-09-05T12:00:00'))
