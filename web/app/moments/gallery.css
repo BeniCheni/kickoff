@@ -2,6 +2,27 @@
    do not inherit it. No animation and no transition are added here. */
 
 .moments-gallery {
+  /* Second-edition voices, under this box only. Layout, motion and type stay. */
+  --bg: var(--fb-pulp);
+  --surface: var(--fb-typescript);
+  --surface-alt: var(--fb-pulp);
+  --media: var(--fb-pulp);
+  --text: var(--fb-pulp-ink);
+  --text-secondary: var(--fb-pulp-muted);
+  --text-muted: var(--fb-pulp-muted);
+  --border: var(--fb-rule);
+  --border-strong: var(--fb-rule-strong);
+  --pitch: var(--fb-pitch);
+  --pitch-deep: var(--fb-pitch);
+  --floodlight: var(--fb-amber);
+  --floodlight-strong: var(--fb-amber);
+  --floodlight-bg: var(--fb-pulp);
+  --accent: var(--fb-alarm);
+  --accent-strong: var(--fb-alarm);
+  --accent-lead: var(--fb-pitch);
+  --accent-lead-strong: var(--fb-pitch);
+  --lens-accent: var(--fb-pitch);
+  --on-accent-lead: var(--fb-on-pitch);
   width: min(calc(100vw - 40px), 1120px);
   margin-inline: calc((100% - min(calc(100vw - 40px), 1120px)) / 2);
   font-size: 13px;
