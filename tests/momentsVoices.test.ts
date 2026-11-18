@@ -37,12 +37,30 @@ const sheets = [
   ['../web/app/moments/gallery.css', '.moments-gallery'],
 ] as const
 
+/** The gallery's own rule: the first block whose whole selector is .moments-gallery, at
+ *  the start of a line. A selector that only begins with it is another rule, and so is a
+ *  copy indented inside a media query. The Next sheet names the view transition in a
+ *  second, later block; the box is laid out in the first. */
+function galleryRule(file: string) {
+  const css = readFileSync(new URL(file, import.meta.url), 'utf8')
+  const rule = css.match(/^\.moments-gallery \{([^}]*)\}/m)
+  expect(rule, `${file} has no .moments-gallery rule of its own`).not.toBeNull()
+  return rule![1]!
+}
+
 it('Moments remaps its colours under .moments-gallery in both sheets', () => {
   for (const [file, selector] of sheets) {
     const block = voicesBlock(file, selector)
     for (const [from, to] of voices) expect(block, file).toContain(`${from}: var(${to})`)
-    const css = readFileSync(new URL(file, import.meta.url), 'utf8')
-    expect(css, file).toContain('width: min(calc(100vw - 40px), 1120px)')
+  }
+})
+
+it('the gallery keeps its width and the margin that centres it, on its own rule in both sheets', () => {
+  const width = 'min(calc(100vw - 40px), 1120px)'
+  for (const [file] of sheets) {
+    const rule = galleryRule(file)
+    expect(rule, file).toContain(`\n  width: ${width};\n`)
+    expect(rule, file).toContain(`\n  margin-inline: calc((100% - ${width}) / 2);\n`)
   }
 })
 
