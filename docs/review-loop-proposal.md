@@ -1049,15 +1049,15 @@ for Cursor (S7).
       across vendors.
     - **Configuration.** Sprint 4's brief adds both 6.2 models to the model tables in Kickoff's
       configuration.
-  - **The wait rule stands:** this track's Codex builds still wait while an overhaul Codex build
-    runs, until Beni lifts the rule.
+  - **The wait rule stood at this ruling:** this track's Codex builds waited while an overhaul
+    Codex build ran. Beni lifted it the same evening (the overhaul's routing, below).
   - **Sprint 8 is dropped and D4 withdrawn.** Both concerned Cursor seats.
     - **elenchus stays vendor-neutral.** An adopter such as keel may still configure Cursor,
       and nothing in `src/` changes.
     - **The 19 Nov check of Cursor's models is dropped.**
-    - **Outside this track, still open:** the v0.6.0 overhaul routes its builder and Pass 2
-      through Cursor on Grok (`design-overhaul-plan.md`). That plan needs re-routing before
-      Cursor's paid tier ends.
+    - **Outside this track:** the v0.6.0 overhaul routed its builder and Pass 2 through Cursor
+      on Grok (`design-overhaul-plan.md`). It was re-routed to two vendors the same evening
+      (below).
   - **D12 — Pilot, with S12 widened to compare judges.**
     - **The blocker is gone.** D12 waited for a structured evidence field, and schema v1.2's
       findings carry `evidence`.
@@ -1090,6 +1090,23 @@ for Cursor (S7).
   - **Enforcement already exists.** In `examples/kickoff.elenchus.json`, every vendor's effort
     table stops at `xhigh`, so `check`'s route rule fails a record that requests `max`. Sprint
     4's brief keeps that ceiling when it adds the two GPT-6.2 models.
+
+- **The overhaul on two vendors, and the wait rule lifted (Beni, Tue 17 Nov 2026).** Beni
+  approved the overhaul's re-routing "as drafted". It is `design-overhaul-plan.md`, section 3,
+  "Amended Tue 17 Nov 2026: two vendors, and no seat for Cursor or Grok", in Kickoff PR 340,
+  which stacks on this branch. It applies the two-vendor rule above to overhaul PRs 1b to 9: Codex
+  builds 1b, 3, 6 and 8, and Claude builds 2, 4, 5, 7 and 9. What it changes for this track:
+  - **The wait rule is lifted.** It came with the overhaul's Sun 15 Nov amendment (under D7,
+    above): while Codex built an overhaul PR, this track's Codex builds waited.
+  - **In its place, on either vendor,** both tracks may run at once, and an overhaul seat
+    outranks a seat of this track. When a vendor's usage limit warns or refuses, this track's
+    seat on that vendor yields first: it pushes what is green and waits. None of this track's
+    seats starts on that vendor while an overhaul seat waits for room.
+  - **It now reaches Claude's seats too.** The overhaul's Claude builds share Claude Max with
+    this track's Claude seats, so a Pass 1, a Pass 1.5 or a Pass 2.5 here can be the seat that
+    yields.
+  - **A seat that yields resumes on the same model.** A sprint still never switches seat or
+    model mid-build.
 
 D8, D10 and D11 are not yet ruled. D4 is withdrawn, and D12 is Pilot (17 Nov).
 
