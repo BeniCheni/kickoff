@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { feedbackFaults, reducedChromeFaults } from '../scripts/evidence.mjs'
+import { bannerFaults, feedbackFaults, reducedChromeFaults } from '../scripts/evidence.mjs'
 
 test('reduced motion: a control with no running transition passes, one that keeps a duration is named', () => {
   const still = { 'theme disc': [], 'lens thumb': [], 'lens label': [], 'disc hit area': [], tab: [] }
@@ -28,4 +28,21 @@ test('feedback: ink moves through the band’s voices, and a control that never 
     'motion hover repaints its ground',
     'motion held changes its shadow',
   ])
+})
+
+test('banner: the plane, its words and its rendered pair are all held; amber on amber fails', () => {
+  const amber = { hours: 25, plane: 'amber', lead: 'Data may have moved.', days: 'Last synced 1 day ago' }
+  const pulp = 'rgb(235, 221, 190)'
+  const seen = { plane: 'amber', lead: 'Data may have moved.', text: 'Data may have moved. Last synced 1 day ago (2026-11-17).', ground: pulp, expectedGround: pulp }
+  const pair = { ink: 'rgba(110, 75, 0, 1)', ground: pulp, ratio: 5.85, floor: 4.5 }
+  expect(bannerFaults(amber, seen, [pair])).toEqual([])
+  expect(bannerFaults(amber, seen, [{ ...pair, ground: 'rgb(110, 75, 0)', ratio: 1 }])).toEqual(['rgba(110, 75, 0, 1) on rgb(110, 75, 0) is 1.00, under 4.5'])
+  expect(bannerFaults(amber, { ...seen, ground: 'rgb(110, 75, 0)' }, [pair])).toEqual(['ground rgb(110, 75, 0), expected rgb(235, 221, 190)'])
+  expect(bannerFaults(amber, { ...seen, plane: 'alarm', lead: 'Data is stale.', text: 'Data is stale. Last synced 3 days ago' }, [pair])).toEqual([
+    'plane alarm, expected amber',
+    'lead "Data is stale.", expected "Data may have moved."',
+    'day wording missing: Last synced 1 day ago',
+  ])
+  expect(bannerFaults(amber, null, [])).toEqual(['no banner at 25 hours'])
+  expect(bannerFaults(amber, seen, [])).toEqual(['no banner text was sampled'])
 })

@@ -38,6 +38,30 @@ export function parseColor(value: string): { color: RGB; alpha: number } {
   return { color: [Number(match[1]), Number(match[2]), Number(match[3])], alpha: Number(match[4]) }
 }
 
+/**
+ * What the banner's own rules paint, as token names: the ink of each plane and the
+ * ground under it. The pairs below are measured from these, so a rule that paints
+ * the plane in another colour is measured in that colour. A value that is not a
+ * token fails closed.
+ */
+export function bannerPaint(cssSource = css): { amber: string; alarm: string; grounds: string[] } {
+  const block = (selector: string): string => {
+    const start = cssSource.indexOf(`\n${selector} {`)
+    if (start === -1) throw new Error(`Missing banner rule: ${selector}`)
+    return cssSource.slice(start, cssSource.indexOf('}', start))
+  }
+  const token = (selector: string, property: 'background' | 'color'): string => {
+    const value = block(selector).match(new RegExp(`[{;\\s]${property}:\\s*var\\(--([\\w-]+)\\)\\s*;`))?.[1]
+    if (!value) throw new Error(`The banner's ${property} is not a token: ${selector}`)
+    return value
+  }
+  return {
+    amber: token('.staleness', 'color'),
+    alarm: token(".staleness[data-plane='alarm']", 'color'),
+    grounds: [token('.staleness', 'background'), token("[data-ground='typescript'] .staleness", 'background')],
+  }
+}
+
 export function measureContrast(cssSource = css, componentSource = bannerSource): ContrastCase[] {
   // The banner's two planes are flat tokens. A missing plane fails closed.
   if (!componentSource.includes('data-plane={plane}') || !componentSource.includes("'amber'") || !componentSource.includes("'alarm'")) {
@@ -72,9 +96,10 @@ export function measureContrast(cssSource = css, componentSource = bannerSource)
       add('Poster focus ring (unchanged)', color('pitch'), value('pitch'), ground, bg, 3)
     }
     const stock = theme === 'light' ? secondEditionTokens(cssSource).paper : secondEditionTokens(cssSource).black
-    for (const ground of ['fb-pulp', 'fb-typescript']) {
-      add('24h banner', opaqueToken(stock, 'fb-amber'), stock['fb-amber']!, ground, opaqueToken(stock, ground))
-      add('72h banner', opaqueToken(stock, 'fb-alarm'), stock['fb-alarm']!, ground, opaqueToken(stock, ground))
+    const banner = bannerPaint(cssSource)
+    for (const ground of banner.grounds) {
+      add('24h banner', opaqueToken(stock, banner.amber), stock[banner.amber]!, ground, opaqueToken(stock, ground))
+      add('72h banner', opaqueToken(stock, banner.alarm), stock[banner.alarm]!, ground, opaqueToken(stock, ground))
     }
     for (const ground of ['bg', 'surface']) {
       add('FT pill', color('text-secondary'), value('text-secondary'), `border fill over ${ground}`,

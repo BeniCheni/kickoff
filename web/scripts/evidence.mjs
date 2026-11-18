@@ -20,7 +20,7 @@
 // offline file. Any other http(s) request the page emits fails the run. A WebSocket
 // the page opens is not one of those requests.
 import assert from 'node:assert/strict'
-import { mkdirSync, statSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { pathToFileURL, fileURLToPath } from 'node:url'
 import puppeteer from 'puppeteer-core'
@@ -126,8 +126,8 @@ function assertCell(state, errors, { id, lens, theme, tab }) {
 // on both axes. Not sampled: pseudo-element text, form values, SVG text, images of text.
 // A text node of colour-bitmap glyphs alone (a flag, an emoji star) is counted and set
 // aside. isBitmapGlyph is that rule; the page uses the same expression.
-async function collectText(page) {
-  return page.evaluate((pattern, flags) => {
+async function collectText(page, scope = null) {
+  return page.evaluate((pattern, flags, within) => {
     const pictographsOnly = new RegExp(pattern, flags)
     window.scrollTo(0, 0)
     const samples = []
@@ -143,7 +143,7 @@ async function collectText(page) {
       return `rgba(${r}, ${g}, ${b}, ${Number((a / 255).toFixed(3))})`
     }
     let pictographs = 0
-    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT)
+    const walker = document.createTreeWalker((within && document.querySelector(within)) || document.body, NodeFilter.SHOW_TEXT)
     let node = walker.nextNode()
     while (node) {
       const raw = node.textContent ?? ''
@@ -192,13 +192,14 @@ async function collectText(page) {
       scrollHeight: document.documentElement.scrollHeight,
       innerWidth: window.innerWidth,
     }
-  }, BITMAP_GLYPH.source, BITMAP_GLYPH.flags)
+  }, BITMAP_GLYPH.source, BITMAP_GLYPH.flags, scope)
 }
 
 // `shown` is the capture just taken of this page with its text drawn. Transitions and
 // animations stop with the text, so the second capture never catches an ink mid-fade.
-async function measureContrast(page, id, width, shown) {
-  const collected = await collectText(page)
+// `scope` holds the sample to the text inside one element.
+async function measureContrast(page, id, width, shown, scope = null) {
+  const collected = await collectText(page, scope)
   await page.evaluate(() => {
     const style = document.createElement('style')
     style.setAttribute('data-contrast-hide', '')
@@ -696,6 +697,80 @@ function belowFloor(cells) {
   return cells.flatMap((cell) => cell.minimums.filter((row) => row.ratio < row.floor).map((row) => ({ id: cell.id, ...row })))
 }
 
+// The staleness banner at its two ages, on the rendered page. The matrix runs inside
+// 24 hours, where there is no banner, so its pixels are never sampled there.
+const BANNER_AGES = [
+  { hours: 25, plane: 'amber', lead: 'Data may have moved.', days: 'Last synced 1 day ago' },
+  { hours: 73, plane: 'alarm', lead: 'Data is stale.', days: 'Last synced 3 days ago' },
+]
+
+/** `seen` is what the page showed; `rows` are the sampler's minimums for the banner's text. */
+export function bannerFaults(expected, seen, rows) {
+  if (!seen) return [`no banner at ${expected.hours} hours`]
+  const faults = []
+  if (seen.plane !== expected.plane) faults.push(`plane ${seen.plane}, expected ${expected.plane}`)
+  if (seen.lead !== expected.lead) faults.push(`lead "${seen.lead}", expected "${expected.lead}"`)
+  if (!seen.text.includes(expected.days)) faults.push(`day wording missing: ${expected.days}`)
+  if (seen.ground !== seen.expectedGround) faults.push(`ground ${seen.ground}, expected ${seen.expectedGround}`)
+  if (!rows.length) faults.push('no banner text was sampled')
+  for (const row of rows) {
+    if (row.ratio < row.floor) faults.push(`${row.ink} on ${row.ground} is ${row.ratio.toFixed(2)}, under ${row.floor}`)
+  }
+  return faults
+}
+
+/** Amber at 25 hours and alarm at 73, on pulp (Poster) and typescript (Ledger), in both
+ *  themes and both apps. The clock is the page's own, moved before any script runs; the
+ *  Next server renders inside 24 hours and the browser's clock brings the banner in. */
+export async function proveBanner(browser, origins, out) {
+  const { lastSyncAt } = JSON.parse(readFileSync(path.join(root, 'src/data/meta.json'), 'utf8'))
+  const rows = []
+  for (const [app, origin] of Object.entries(origins)) for (const lens of ['poster', 'ledger']) for (const theme of ['light', 'dark']) {
+    for (const age of BANNER_AGES) {
+      const id = `banner-${app}-${lens}-${theme}-${age.hours}h`
+      const context = await browser.createBrowserContext()
+      const page = await context.newPage()
+      try {
+        await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 })
+        await page.evaluateOnNewDocument((chosen, offset) => {
+          localStorage.setItem('kickoff-theme', chosen)
+          const Real = Date
+          window.Date = class extends Real {
+            constructor(...args) { if (args.length) super(...args); else super(Real.now() + offset) }
+            static now() { return Real.now() + offset }
+          }
+        }, theme, Date.parse(lastSyncAt) + age.hours * 3_600_000 - Date.now())
+        await page.goto(`${origin}/?lens=${lens}`, { waitUntil: 'networkidle0', timeout: 30_000 })
+        await page.evaluate(() => { window.dispatchEvent(new Event('focus')); return document.fonts.ready })
+        await page.waitForSelector('.staleness', { timeout: 15_000 }).catch(() => null)
+        const seen = await page.evaluate((ground) => {
+          const banner = document.querySelector('.staleness')
+          if (!banner) return null
+          const probe = banner.appendChild(document.createElement('i'))
+          probe.style.color = `var(${ground})`
+          const expectedGround = getComputedStyle(probe).color
+          probe.remove()
+          const style = getComputedStyle(banner)
+          return {
+            plane: banner.getAttribute('data-plane'),
+            lead: banner.querySelector('b')?.textContent ?? '',
+            text: banner.textContent.replace(/\s+/g, ' '),
+            ink: style.color, ground: style.backgroundColor, expectedGround,
+            scrollWidth: document.documentElement.scrollWidth, innerWidth,
+          }
+        }, lens === 'ledger' ? '--fb-typescript' : '--fb-pulp')
+        const shown = seen ? await shoot(page, path.join(out, `${id}.png`), 390) : null
+        const sampled = seen ? (await measureContrast(page, id, 390, shown, '.staleness')).minimums : []
+        const faults = bannerFaults(age, seen, sampled)
+        assert.deepEqual(faults, [], `${id} ${faults.join('; ')}`)
+        assert.equal(seen.scrollWidth, seen.innerWidth, id)
+        rows.push({ id, plane: seen.plane, ink: seen.ink, ground: seen.ground, pairs: sampled.map((row) => ({ ink: row.ink, ground: row.ground, ratio: Math.round(row.ratio * 100) / 100 })) })
+      } finally { await context.close() }
+    }
+  }
+  return rows
+}
+
 // The band's state transitions, read after real presses. `property duration` for every
 // transition that would actually run; an element at rest under reduced motion lists none.
 const CHROME_PARTS = {
@@ -906,7 +981,7 @@ async function main() {
   // holds every step and cell that passed before it.
   const matrix = emptyMatrix()
   const weekRun = { cells: [], contrast: [] }
-  const steps = { motion: null, chrome: null, feedback: null, requests: null, offline: null, harness: null }
+  const steps = { motion: null, chrome: null, feedback: null, banner: null, requests: null, offline: null, harness: null }
   const receipt = () => {
     const contrastCells = [...matrix.contrast, ...weekRun.contrast]
     return {
@@ -921,6 +996,7 @@ async function main() {
     steps.motion = await proveMotion(browser, origins.vite, out)
     steps.chrome = await proveChrome(browser, origins)
     steps.feedback = await proveFeedback(browser, origins)
+    steps.banner = await proveBanner(browser, origins, out)
     await runMatrix(browser, { origins, out, anchor, contrast: true }, matrix)
     assert.equal(matrix.cells.length, 96)
     await captureWeeks(browser, { origins, out, weeks, contrast: true }, weekRun)
