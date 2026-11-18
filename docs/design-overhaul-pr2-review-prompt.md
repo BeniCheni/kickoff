@@ -612,3 +612,20 @@ WHAT YOUR PASS MUST SHOW. The skill's 2.5 row and executive-brief.md set the met
 6. The squash body. The PR body becomes it. Say which of its lines the tip makes false, and give corrected ones from what you ran.
 7. The merge gate, clause by clause, in your brief. It ends in escalation whatever it finds, because plan section 3 gives the merge to Beni's word. A fix you find goes to Claude's next fix round as a finding; you write none.
 ````
+
+## Pass 2.5 under way, and a note on the missing worktrees (Wed 18 Nov 2026, about 3:00 PM EST)
+
+Codex's Pass 2.5 session started at 2:47 PM EST. Its session file records `gpt-6.2-sol` at
+`xhigh`, a `read-only` sandbox and the tip worktree as its cwd, which is the seat as ruled. By
+3:00 PM it had `node_modules` in all three worktrees and was writing a base report under
+`/private/tmp/kickoff-342-pass25/`.
+
+At 3:00 PM the PR 1b Encore session reported that something outside the review sessions had moved
+#341's review worktrees to the Trash twice, at 2:18 and 2:54 PM EST, along with their KEEP notes.
+The cause is not known, and Encore has asked Beni. At 3:00 PM the three `kickoff-pr342-pass25*`
+worktrees were on disk, registered, clean and at their SHAs. The PM seat gave Beni this note to
+paste into the running session:
+
+````text
+PM SEAT'S NOTE FOR #342'S PASS 2.5 (Wed 18 Nov 2026, about 3:00 PM EST). Twice this afternoon, at about 2:18 and 2:54 PM EST, something outside the review sessions moved #341's review worktrees to the Trash, the KEEP notes in them included; nobody yet knows what. Your three kickoff-pr342-pass25* worktrees were intact at 3:00 PM. Keep every receipt, log and capture under /private/tmp/kickoff-342-pass25/, as you already are, and nothing you need only inside a worktree. Before each step, check that the worktree it uses still exists at its SHA. If one is gone, stop, tell Beni which one and what you had finished, and do not rebuild it until he says so. List anything lost as not verified. Nothing else in your opener changes.
+````
