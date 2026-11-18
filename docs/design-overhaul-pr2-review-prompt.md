@@ -29,9 +29,9 @@ Sunday row gives Pass 1 to a fresh Claude Code session. The Tuesday table, appro
 Claude as PR 2's builder and Codex as its reviewer, with Pass 1 on `gpt-6.2-astra` and Pass 2.5 on
 `gpt-6.2-sol`.
 
-This brief was first written for Codex, from the later table, at about 10:45 AM EST. At about
-11:05 AM the sibling session said it had already put one recommendation for both PRs to Beni,
-with the box "Keep both builds" or "Re-route per #328": keep both Cursor builds, because the Tuesday
+This brief was first written for Codex, from the later table, at about 10:15 AM EST. Minutes later
+the sibling session said it had already put one recommendation for both PRs to Beni, with the box
+"Keep both builds" or "Re-route per #328": keep both Cursor builds, because the Tuesday
 amendment says a PR never switches builder mid-build, and review both by the Sunday row they were
 built under. That means Pass 1 on a fresh Claude Code session (`claude-fable-5-2`, `xhigh`), Pass 2
 in Cursor on `grok-4.7-xhigh` before the tier change, and Pass 2.5 in Codex. Its reasons hold:
@@ -40,9 +40,12 @@ in Cursor on `grok-4.7-xhigh` before the tier change, and Pass 2.5 in Codex. Its
 - the Sunday row keeps Pass 1 and Pass 2.5 on two vendors, where the Tuesday column puts two Codex
   models on both.
 The only reason the PM seat had left, two Fable `xhigh` Pass 1s at once on one Claude plan, the
-sibling had already weighed. So the brief was re-seated on Claude Code, to give Beni one
-recommendation. If he picks "Re-route per #328", the Codex seat line at the end of this file
-replaces the first paragraph, and the rest stands.
+sibling had already weighed. So the brief was re-seated on Claude Code at about 10:20 AM, to give
+Beni one recommendation. He had already answered, at about 10:18 AM EST: **"Keep both builds"**.
+#341 and #342 are reviewed by the Sun 15 row they were started under, and from PR 3 on PR #328's
+two-vendor amendment applies as approved (recorded in
+[design-overhaul-pr1b-review-prompt.md](design-overhaul-pr1b-review-prompt.md)). The Codex seat
+line at the end of this file is kept as a record and was not used.
 
 Pass 1 is report-only, as PR 1b's is: the amendment gives every fix round to the builder, and a
 pushed commit would move the branch under Pass 2. Beni's default output style is Learning, so the
@@ -56,7 +59,7 @@ archive.
 ````text
 Kickoff design overhaul — PR #342 (overhaul PR 2, chrome and the motion control): Pass 1, cold review
 
-You are Pass 1 of the 360 cycle for PR #342 in github.com/BeniCheni/kickoff: a fresh Claude Code session that built none of this. Run /kickoff-pr-review on #342 with --no-merge. The skill outranks this brief on process, except where FIX SCOPE below says otherwise, and this brief adds the PR's particulars. Run on claude-fable-5-2 with --effort xhigh, and name the model and effort that actually ran at the top of your comment; Claude Code records both in its session file. The PM seat (Claude Code, Opus 5.5) wrote this on Wed 18 Nov 2026 at about 10:45 AM EST, and re-seated it at about 11:10 AM, from #342 at e820fd4, with verify, studio, the Vercel deployment and vercel-smoke green, mergeable, auto-merge off and no review yet. It read the PR body, every non-test hunk of PR 2's own change except the three scan lists, and seven of the test diffs, searched the rest for removed assertions, and ran no test, build or browser. Treat the repository as ground truth and this brief as a map of it. Run TZ=America/New_York date before writing any date.
+You are Pass 1 of the 360 cycle for PR #342 in github.com/BeniCheni/kickoff: a fresh Claude Code session that built none of this. Run /kickoff-pr-review on #342 with --no-merge. The skill outranks this brief on process, except where FIX SCOPE below says otherwise, and this brief adds the PR's particulars. Run on claude-fable-5-2 with --effort xhigh, and name the model and effort that actually ran at the top of your comment; Claude Code records both in its session file. The PM seat (Claude Code, Opus 5.5) wrote this on Wed 18 Nov 2026 at about 10:15 AM EST, and seated it at about 10:20 AM by Beni's routing ruling, from #342 at e820fd4, with verify, studio, the Vercel deployment and vercel-smoke green, mergeable, auto-merge off and no review yet. It read the PR body, every non-test hunk of PR 2's own change except the three scan lists, and seven of the test diffs, searched the rest for removed assertions, and ran no test, build or browser. Treat the repository as ground truth and this brief as a map of it. Run TZ=America/New_York date before writing any date.
 
 OUTPUT STYLE. If this session runs in the Learning output style, keep it out of the deliverable: no Learn-by-Doing request, no TODO(human), and no insight box in the PR comment.
 
@@ -64,9 +67,9 @@ BEFORE YOU START. Any of these stops you, and you tell Beni.
 - A Pass 1 comment already exists on #342, or another session is reviewing it.
 - The head is not e820fd4. If commits landed since, review them too and list them.
 
-WHO BUILT IT, AND THE ROUTING. Cursor built #342 on Grok 4.7 from docs/design-overhaul-pr2-implementation-prompt.md, after Beni ruled on Tue 17 Nov 2026 at about 10:40 PM EST to start the build that night. Its effort is not in Cursor's logs, and Beni's word on it is pending. At about 11:10 PM Beni approved a newer routing amendment in PR #328, which is not merged; read it with git show origin/docs/review-loop-plan:docs/design-overhaul-plan.md, under "Amended Tue 17 Nov 2026: two vendors". It names Claude as PR 2's builder and Codex as its reviewer, and says no Cursor seat was open. That was written in another session without knowing this build had started, and the amendment's own rules say a PR never switches builder mid-build. Under the Sun 15 row this build started under, Pass 1 is a fresh Claude Code session, Pass 2 is Cursor and Pass 2.5 is Codex. That routing is the PM seat's recommendation to Beni for both PR 1b and PR 2, and his answer is pending. Who holds Pass 2 and Pass 2.5 does not change this pass: do not stop on it, and do not report it as a finding. The PR body asks Beni which effort the build ran at. That is his to answer, not yours.
+WHO BUILT IT, AND THE ROUTING. Cursor built #342 on Grok 4.7 from docs/design-overhaul-pr2-implementation-prompt.md, after Beni ruled on Tue 17 Nov 2026 at about 10:40 PM EST to start the build that night. Its effort is not in Cursor's logs, and Beni's word on it is pending. At about 11:10 PM Beni approved a newer routing amendment in PR #328, which is not merged; read it with git show origin/docs/review-loop-plan:docs/design-overhaul-plan.md, under "Amended Tue 17 Nov 2026: two vendors". It names Claude as PR 2's builder and Codex as its reviewer, and says no Cursor seat was open. That was written in another session without knowing this build had started, and the amendment's own rules say a PR never switches builder mid-build. Under the Sun 15 row this build started under, Pass 1 is a fresh Claude Code session, Pass 2 is Cursor and Pass 2.5 is Codex. Beni ruled on Wed 18 Nov 2026 at about 10:18 AM EST, "Keep both builds": #341 and #342 are reviewed by that row, and from PR 3 on the Tuesday amendment applies as approved. So you sit this Pass 1, Cursor answers it in Pass 2, and Codex synthesises in Pass 2.5. The routing is settled: do not stop on it, and do not report it as a finding. The PR body asks Beni which effort the build ran at. That is his to answer, not yours.
 
-THE DEADLINE. Post today, Wed 18 Nov 2026, by about 6 PM EST, so that Pass 2 can still run in Cursor before the tier change if Beni keeps it there. Do not buy the date with depth: what you could not run goes in "Not verified". Write each finding so the builder can reproduce it cold: file and line, the command, expected and observed.
+THE DEADLINE. Post today, Wed 18 Nov 2026, by about 6 PM EST, so that Cursor's Pass 2 can run before Beni's Cursor tier changes on Thu 19 Nov. Do not buy the date with depth: what you could not run goes in "Not verified". Write each finding so the builder can reproduce it cold: file and line, the command, expected and observed.
 
 WHERE TO WORK.
 - Run git -C /Users/benicheni/code/kickoff fetch origin. Then git -C /Users/benicheni/code/kickoff worktree add --detach /Users/benicheni/code/kickoff-pr2-review e820fd4, and git -C /Users/benicheni/code/kickoff worktree add --detach /Users/benicheni/code/kickoff-pr2-review-base 541b9a9. Run npm ci at the root and in web/ of each.
@@ -136,13 +139,12 @@ SEALED APPENDIX — claims to re-derive independently, never conclusions. Reach 
 - P8 (PM seat): the Poster foot's "unless marked local" is true today, and the reader no longer learns what "time not yet set" means from any foot.
 ````
 
-### If Beni re-routes PR 2 per #328: the Codex seat line
+### Not used: the Codex seat line
 
-The brief's first version, written for Codex at about 10:45 AM EST. If Beni answers "Re-route per
-#328", this paragraph replaces the brief's first paragraph and its OUTPUT STYLE paragraph. In WHO
-BUILT IT, AND THE ROUTING, the sentence on the Sun 15 row then gives way to "You sit the Pass 1
-that table names for PR 2." Everything else stands.
+The brief's first paragraph as first written, for Codex, at about 10:15 AM EST, before the PM seat
+learned of Beni's "Keep both builds". It is kept as the record of the seat it would have taken
+under PR #328's table.
 
 ````text
-You are Pass 1 of the 360 cycle for PR #342 in github.com/BeniCheni/kickoff: a fresh Codex session that built none of this. Run on gpt-6.2-astra at xhigh, and name the model and effort that actually ran on the first line of your comment, read from your session file rather than from memory. The method is the repository's review skill: read .claude/skills/kickoff-pr-review/SKILL.md and the files it names for a Pass 1 run with --no-merge, and follow them. The skill outranks this brief on process, except where FIX SCOPE below says otherwise, and this brief adds the PR's particulars. Read CLAUDE.md and AGENTS.md first; they bind you. The PM seat (Claude Code, Opus 5.5) wrote this on Wed 18 Nov 2026 at about 10:45 AM EST, from #342 at e820fd4, with verify, studio, the Vercel deployment and vercel-smoke green, mergeable, auto-merge off and no review yet. It read the PR body, every non-test hunk of PR 2's own change except the three scan lists, and seven of the test diffs, searched the rest for removed assertions, and ran no test, build or browser. Treat the repository as ground truth and this brief as a map of it. Run TZ=America/New_York date before writing any date.
+You are Pass 1 of the 360 cycle for PR #342 in github.com/BeniCheni/kickoff: a fresh Codex session that built none of this. Run on gpt-6.2-astra at xhigh, and name the model and effort that actually ran on the first line of your comment, read from your session file rather than from memory. The method is the repository's review skill: read .claude/skills/kickoff-pr-review/SKILL.md and the files it names for a Pass 1 run with --no-merge, and follow them. The skill outranks this brief on process, except where FIX SCOPE below says otherwise, and this brief adds the PR's particulars. Read CLAUDE.md and AGENTS.md first; they bind you. The PM seat (Claude Code, Opus 5.5) wrote this on Wed 18 Nov 2026 at about 10:15 AM EST, from #342 at e820fd4, with verify, studio, the Vercel deployment and vercel-smoke green, mergeable, auto-merge off and no review yet. It read the PR body, every non-test hunk of PR 2's own change except the three scan lists, and seven of the test diffs, searched the rest for removed assertions, and ran no test, build or browser. Treat the repository as ground truth and this brief as a map of it. Run TZ=America/New_York date before writing any date.
 ````
