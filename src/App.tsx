@@ -3,6 +3,7 @@ import { useNow } from './lib/useNow'
 import { useUrlState, useCanonicalSearch } from './lib/useUrlState'
 import { encodeTab, parseTab } from './lib/urlCodecs'
 import { DEFAULT_LENS, encodeLens, parseLens, type Lens } from './lib/lens'
+import { useMotionController } from './lib/useMotionController'
 import { useThemeController } from './lib/useThemeController'
 import { ImprintBand } from './components/ImprintBand'
 import type { Tab } from './components/TabNav'
@@ -50,6 +51,7 @@ export default function App({ momentsEdition = MOMENTS, momentsStorage, momentsR
 
   useCanonicalSearch(today)
   const { theme, toggle } = useThemeController(lens)
+  const { motion, toggle: toggleMotion } = useMotionController()
 
   return (
     <>
@@ -61,6 +63,8 @@ export default function App({ momentsEdition = MOMENTS, momentsStorage, momentsR
       onSelectLens={setLens}
       onToggleTheme={toggle}
       themeLabel={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+      onToggleMotion={toggleMotion}
+      motionLabel={motion === 'off' ? 'Start motion' : 'Stop motion'}
     />
     <div className="mx-auto max-w-[780px] px-5 pt-7 pb-16">
 

@@ -27,11 +27,14 @@ export function themeBootstrap(): Plugin {
     name: 'kickoff-theme-bootstrap',
     transformIndexHtml: {
       order: 'pre',
-      async handler() {
-        // The emitted charset declaration must end within 1024 bytes; tests measure both
-        // builds. If this binds, insert after charset but before styles/modules. Prepending
-        // the head is convenient, not required for the bootstrap's ordering guarantee.
-        return [{ tag: 'script', attrs: { 'data-kickoff-theme': '' }, children: await buildThemeBootstrap(), injectTo: 'head-prepend' }]
+      async handler(html) {
+        // The charset declaration must end within 1024 bytes. The script sits
+        // immediately after it, and still before styles and modules.
+        const script = `<script data-kickoff-theme="">${await buildThemeBootstrap()}</script>`
+        const meta = html.match(/<meta\b[^>]*\bcharset\s*=\s*["']?utf-8["']?[^>]*>/i)
+        if (!meta || meta.index === undefined) throw new Error('charset missing')
+        const at = meta.index + meta[0].length
+        return html.slice(0, at) + script + html.slice(at)
       },
     },
   }

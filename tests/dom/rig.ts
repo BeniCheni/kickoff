@@ -18,8 +18,8 @@ export function edt(local: string): Date {
 
 /**
  * jsdom has no `matchMedia`. The stub answers the two queries the app asks —
- * `prefers-color-scheme: dark` (theme.ts) and `prefers-reduced-motion: reduce` (App's lens
- * cross-fade) — and nothing else matches. The returned controls dispatch changes to the
+ * `prefers-color-scheme: dark` (theme.ts) and `prefers-reduced-motion: reduce`
+ * (the lens cross-fade and the motion control) — and nothing else matches. The returned controls dispatch changes to the
  * same MediaQueryLists the app subscribed to; listenerCount checks cleanup.
  */
 export function installMatchMedia({ dark = false, reducedMotion = false } = {}) {

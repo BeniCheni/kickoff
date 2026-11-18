@@ -9,6 +9,7 @@ import type { CatalogMode, MomentsPayload } from '../lib/catalog/types'
 import { FixturesPage } from '../../src/components/FixturesPage'
 import { TablePage } from '../../src/components/TablePage'
 import { DEFAULT_LENS, encodeLens, parseLens } from '../../src/lib/lens'
+import { useMotionController } from '../../src/lib/useMotionController'
 import { useThemeController } from '../../src/lib/useThemeController'
 import { useNow } from '../../src/lib/useNow'
 import { SearchProvider, useCanonicalSearch, useUrlState } from '../../src/lib/useUrlState'
@@ -44,6 +45,7 @@ function ShellInner({ moments, catalogMode }: { moments: MomentsPayload; catalog
   useCanonicalSearch(today)
   useIgnoredWatchScrub()
   const { toggle } = useThemeController(lens)
+  const { toggle: toggleMotion } = useMotionController()
   function onSelect(next: Tab) {
     const currentWatch = new URLSearchParams(window.location.search).get('watch')
     const enteringMoments = next === 'moments' && tab !== 'moments'
@@ -69,6 +71,13 @@ function ShellInner({ moments, catalogMode }: { moments: MomentsPayload; catalog
         <>
           <span className="theme-when-light">Dark mode</span>
           <span className="theme-when-dark">Light mode</span>
+        </>
+      )}
+      onToggleMotion={toggleMotion}
+      motionLabel={(
+        <>
+          <span className="motion-when-on">Stop motion</span>
+          <span className="motion-when-off">Start motion</span>
         </>
       )}
     />

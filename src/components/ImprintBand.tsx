@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import type { Lens } from '../lib/lens'
 import type { Tab } from '../lib/urlCodecs'
 import { LensSwitcher } from './LensSwitcher'
+import { MotionControl } from './MotionControl'
 import { PlusFive } from './glyphs'
 import { ProvenanceLine } from './ProvenanceLine'
 import { TabNav } from './TabNav'
@@ -23,6 +24,8 @@ export function ImprintBand({
   onSelectLens,
   themeLabel,
   onToggleTheme,
+  motionLabel,
+  onToggleMotion,
 }: {
   version: string
   tab: Tab
@@ -32,6 +35,8 @@ export function ImprintBand({
   onSelectLens: (lens: Lens) => void
   themeLabel: ReactNode
   onToggleTheme: () => void
+  motionLabel: ReactNode
+  onToggleMotion: () => void
 }) {
   const stock = bandStock(tab, lens)
   return (
@@ -47,6 +52,7 @@ export function ImprintBand({
           <span className="wordmark-strap" data-voice="pitch">Brooklyn · ET</span>
         </div>
         <div className="imprint-tools">
+          <MotionControl label={motionLabel} onToggle={onToggleMotion} />
           <button type="button" className="imprint-hit theme-text" onClick={onToggleTheme}>
             {themeLabel}
           </button>

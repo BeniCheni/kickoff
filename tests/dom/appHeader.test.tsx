@@ -15,6 +15,8 @@ function band(themeLabel: string) {
       onSelectLens={() => {}}
       onToggleTheme={() => {}}
       themeLabel={themeLabel}
+      onToggleMotion={() => {}}
+      motionLabel="Stop motion"
     />
   )
 }

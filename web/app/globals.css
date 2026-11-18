@@ -2,6 +2,7 @@
 @source "./";
 @source "../../src/components/glyphs.tsx";
 @source "../../src/components/ImprintBand.tsx";
+@source "../../src/components/MotionControl.tsx";
 @source "../../src/components/ProvenanceLine.tsx";
 @source "../../src/components/TabNav.tsx";
 @source "../../src/components/LensSwitcher.tsx";

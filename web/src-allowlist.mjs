@@ -36,10 +36,12 @@ export const SRC_ALLOWLIST = [
   'src/lib/momentsSaved.ts', // kickoff-moments-saved-v1, the visit-only refusal included
   'src/lib/schema.ts', // fixture and standings validation
   'src/lib/standings.ts', // table rows from the committed standings snapshot
+  'src/lib/motion.ts',
   'src/lib/theme.ts',
   'src/lib/time.ts',
   'src/lib/urlCodecs.ts',
   'src/lib/useNow.ts',
+  'src/lib/useMotionController.ts',
   'src/lib/useThemeController.ts',
   'src/lib/useUrlState.ts',
   'tests/fixtures/edgeFixtures.ts', // synthetic in-play, postponed, suspended, missing-venue and TBC rows shared with the root test

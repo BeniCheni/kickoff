@@ -3,6 +3,7 @@ import { build } from 'vite'
 import { runInNewContext } from 'node:vm'
 import { buildThemeBootstrap } from '../scripts/themeBootstrap'
 import { parseLens } from '../src/lib/lens'
+import { parseMotion, resolveMotion, motionStorageKey } from '../src/lib/motion'
 import { parseTheme, resolveTheme, themeStorageKey } from '../src/lib/theme'
 
 let code: string
@@ -10,21 +11,33 @@ beforeAll(async () => { code = await buildThemeBootstrap() })
 
 // Spelled in full. tests/removalAudit.test.ts allows this file by name.
 const retiredLens = 'broadcast'
-function run(rawLens: string | null, stored: string | null, dark: boolean, hostile = false) {
+function run(
+  rawLens: string | null,
+  stored: string | null,
+  dark: boolean,
+  hostile = false,
+  storedMotion: string | null = null,
+  reduced = false,
+) {
   const dataset: Record<string, string> = {}
   const reads: string[] = []
   const environment = {
     URLSearchParams,
     window: { location: { search: rawLens === null ? '' : `?lens=${rawLens}` } },
     document: { documentElement: { dataset } },
-    matchMedia: () => ({ matches: dark }),
+    matchMedia: (query: string) => ({ matches: query.includes('reduced') ? reduced : dark }),
     get localStorage() {
       if (hostile) throw new Error('storage access blocked')
-      return { getItem: (key: string) => { reads.push(key); return stored } }
+      return {
+        getItem: (key: string) => {
+          reads.push(key)
+          return key === motionStorageKey() ? storedMotion : stored
+        },
+      }
     },
   }
   runInNewContext(code, environment)
-  expect(reads).toEqual(hostile ? [] : [themeStorageKey()])
+  expect(reads).toEqual(hostile ? [] : [themeStorageKey(), motionStorageKey()])
   return dataset
 }
 
@@ -34,7 +47,9 @@ describe('the generated head script executes the production lens/theme decision'
       for (const stored of [null, 'light', 'dark', 'junk']) {
         for (const dark of [false, true]) {
           expect(run(lens, stored, dark)).toEqual({
-            lens: parseLens(lens), theme: resolveTheme(parseTheme(stored), dark),
+            lens: parseLens(lens),
+            theme: resolveTheme(parseTheme(stored), dark),
+            motion: resolveMotion(null, false),
           })
         }
       }
@@ -44,10 +59,21 @@ describe('the generated head script executes the production lens/theme decision'
     for (const lens of ['ledger', 'poster', retiredLens]) {
       for (const dark of [false, true]) {
         expect(run(lens, null, dark, true)).toEqual({
-          lens: parseLens(lens), theme: resolveTheme(null, dark),
+          lens: parseLens(lens),
+          theme: resolveTheme(null, dark),
+          motion: resolveMotion(null, false),
         })
       }
     }
+  })
+})
+
+describe('motion is its own key and its own media query', () => {
+  it('a stored choice wins, and reduced motion is not the dark flag', () => {
+    expect(run('poster', 'light', false, false, 'off', false)).toMatchObject({ theme: 'light', motion: 'off' })
+    expect(run('poster', null, true, false, null, true)).toMatchObject({ theme: 'dark', motion: 'off' })
+    expect(run('poster', null, false, false, 'on', true)).toMatchObject({ theme: 'light', motion: 'on' })
+    expect(run('poster', 'junk', false, false, 'junk', true).motion).toBe(resolveMotion(parseMotion('junk'), true))
   })
 })
 

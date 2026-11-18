@@ -34,6 +34,13 @@ test('Next renders the band from the shared module', () => {
       onSelectLens={() => {}}
       onToggleTheme={() => {}}
       themeLabel={themeLabel}
+      onToggleMotion={() => {}}
+      motionLabel={(
+        <>
+          <span className="motion-when-on">Stop motion</span>
+          <span className="motion-when-off">Start motion</span>
+        </>
+      )}
     />,
   )
   expect(headerHtml(html)).toBe(fromModule)
