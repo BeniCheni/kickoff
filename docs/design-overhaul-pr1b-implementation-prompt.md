@@ -66,6 +66,12 @@ BEFORE YOU START. Any of these stops you.
 - This session runs on the model and effort the seat line names. Your logs may not record the effort; in this overhaul's earlier passes they did not, and Beni confirmed it. If you cannot confirm it, say so in the PR and ask Beni in one word. If usage stops you partway, push what is green, say so in the PR and stop. Never finish on another model.
 - If PR 2 is being built at the same time, its brief owns the page heads, the shells and the components. Read FILES YOU OWN below, and stay inside them.
 
+WHERE TO WORK. Work in a git worktree of your own, never in Beni's checkout at /Users/benicheni/code/kickoff (it holds untracked files of his) and never in another session's worktree. PR 2 may be building at the same time in its own worktree, so the two of you share nothing but the repository.
+- Run git -C /Users/benicheni/code/kickoff fetch origin. Then run git -C /Users/benicheni/code/kickoff worktree add -b cursor/overhaul-pr1b-font-split /Users/benicheni/code/kickoff-pr1b origin/overhaul/second-edition, and confirm HEAD. For the base's evidence builds, run git -C /Users/benicheni/code/kickoff worktree add --detach /Users/benicheni/code/kickoff-pr1b-base origin/overhaul/second-edition.
+- Run npm ci at the root and in web/ of each worktree.
+- Put the head's three servers on 6073, 6074 and 6075 and the base's on 6173, 6174 and 6175. Port 5173 is Beni's. Confirm each listener's cwd with lsof before you trust it, and do not stop a process you did not start.
+- Push with git push origin HEAD:cursor/overhaul-pr1b-font-split, fast-forward only.
+
 WHAT THIS PR IS. Today each of the ten self-hosted font files is one subset of the union of the latin and latin-ext ranges that Google's stylesheet served (public/fonts/RECORD.md). So a cold load of Fixtures or Table fetches about 205 kB of fonts, where main fetched about 90 kB before PR 1. This PR splits every file into two halves, each with its unicode-range: a latin half under today's file name, and a latin-ext half with -ext in its name. A page then fetches a latin-ext half only when it shows a character in that range. Once the fonts have loaded, nothing a reader sees changes.
 
 RULINGS THAT BIND IT (Beni's, named as his).
