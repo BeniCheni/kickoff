@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { bannerFaults, feedbackFaults, reducedChromeFaults } from '../scripts/evidence.mjs'
+import { bannerFaults, feedbackFaults, motionFaults, reducedChromeFaults, serverMotionFaults } from '../scripts/evidence.mjs'
 
 test('reduced motion: a control with no running transition passes, one that keeps a duration is named', () => {
   const still = { 'theme disc': [], 'lens thumb': [], 'lens label': [], 'disc hit area': [], tab: [] }
@@ -45,4 +45,31 @@ test('banner: the plane, its words and its rendered pair are all held; amber on 
   ])
   expect(bannerFaults(amber, null, [])).toEqual(['no banner at 25 hours'])
   expect(bannerFaults(amber, seen, [])).toEqual(['no banner text was sampled'])
+})
+
+test('motion: the attribute, the glyph, the label and the accessible name all name one state', () => {
+  const running = { attribute: 'on', glyph: 'pause', filled: false, text: 'Stop motion', name: 'Stop motion' }
+  const stopped = { attribute: 'off', glyph: 'play', filled: true, text: 'Start motion', name: 'Start motion' }
+  expect(motionFaults('load', 'on', running)).toEqual([])
+  expect(motionFaults('load', 'off', stopped)).toEqual([])
+  // The first control has no computed name yet; the rest still has to agree.
+  expect(motionFaults('first', 'off', { attribute: 'off', glyph: 'play', filled: true, text: 'Start motion' })).toEqual([])
+  expect(motionFaults('load', 'off', running)).toEqual([
+    'load: data-motion is on, expected off',
+    'load: the glyph drawn is pause, expected play',
+    'load: the label shown is "Stop motion", expected "Start motion"',
+    'load: the disc is outlined, expected filled',
+    'load: the accessible name is "Stop motion", expected "Start motion"',
+  ])
+  // A decision that arrives late: no attribute, so the stylesheet falls back to the system.
+  expect(motionFaults('held', 'off', { ...stopped, attribute: null })).toEqual(['held: data-motion is missing, expected off'])
+  expect(motionFaults('held', 'on', null)).toEqual(['held: the motion control is missing'])
+})
+
+test('motion: the server renders both actions and decides nothing', () => {
+  const html = '<html lang="en"><head><script>localStorage.getItem("kickoff-motion");document.documentElement.dataset.motion="on"</script></head><body><span>Stop motion</span><span>Start motion</span><span>Dark mode</span><span>Light mode</span></body></html>'
+  expect(serverMotionFaults(html)).toEqual([])
+  expect(serverMotionFaults(html.replace('<span>Start motion</span>', ''))).toEqual(['the server HTML has no "Start motion"'])
+  expect(serverMotionFaults(html.replace('<html lang="en">', '<html lang="en" data-motion="on">'))).toEqual(['the server set data-motion itself'])
+  expect(serverMotionFaults(html.replace(/<script>.*<\/script>/, ''))).toEqual(['the head has no pre-paint motion read'])
 })

@@ -1142,51 +1142,235 @@ export async function proveFeedback(browser, origins) {
   return rows
 }
 
-export async function proveMotion(browser, origin, out) {
-  const specs = [
-    { id: 'stored-on', motion: 'on', reduced: false, expect: 'on', name: 'Stop motion' },
-    { id: 'stored-off', motion: 'off', reduced: false, expect: 'off', name: 'Start motion' },
-    { id: 'absent-reduced', motion: null, reduced: true, expect: 'off', name: 'Start motion' },
-    { id: 'absent-running', motion: null, reduced: false, expect: 'on', name: 'Stop motion' },
-  ]
+// The motion control's first frame. The decision has to be on <html> before the app
+// runs, so the app's scripts are held at the network and the page is read while they
+// wait. A decision made at the top of the app module is late, and is caught here: the
+// attribute is still missing when the document has parsed and nothing has rendered.
+const MOTION_SPECS = [
+  { id: 'stored-on', motion: 'on', reduced: false, expect: 'on', press: 'off', stored: 'off' },
+  { id: 'stored-off', motion: 'off', reduced: false, expect: 'off', press: 'on', stored: 'on' },
+  // Start under reduced motion is for the visit: nothing is stored, and a reload is stopped again.
+  { id: 'absent-reduced', motion: null, reduced: true, expect: 'off', press: 'on', stored: null },
+  { id: 'absent-running', motion: null, reduced: false, expect: 'on', press: 'off', stored: 'off' },
+]
+const MOTION_ACTION = { on: 'Stop motion', off: 'Start motion' }
+const MOTION_GLYPH = { on: 'pause', off: 'play' }
+
+/** What one reading of the control has to be for a motion state. `name` is the browser's
+ *  computed accessible name, when it was read. */
+export function motionFaults(label, expect, seen) {
+  if (!seen) return [`${label}: the motion control is missing`]
+  const faults = []
+  if (seen.attribute !== expect) faults.push(`${label}: data-motion is ${seen.attribute ?? 'missing'}, expected ${expect}`)
+  if (seen.glyph !== MOTION_GLYPH[expect]) faults.push(`${label}: the glyph drawn is ${seen.glyph}, expected ${MOTION_GLYPH[expect]}`)
+  if (seen.text !== MOTION_ACTION[expect]) faults.push(`${label}: the label shown is "${seen.text}", expected "${MOTION_ACTION[expect]}"`)
+  if (seen.filled !== (expect === 'off')) faults.push(`${label}: the disc is ${seen.filled ? 'filled' : 'outlined'}, expected ${expect === 'off' ? 'filled' : 'outlined'}`)
+  if ('name' in seen && seen.name !== MOTION_ACTION[expect]) faults.push(`${label}: the accessible name is "${seen.name}", expected "${MOTION_ACTION[expect]}"`)
+  return faults
+}
+
+/** The server cannot know the reader's choice. Its HTML carries both actions and both
+ *  theme names, the pre-paint script in the head, and no decision of its own. */
+export function serverMotionFaults(html) {
+  const faults = []
+  const head = html.slice(0, html.indexOf('<body'))
+  if (!head.includes('kickoff-motion') || !head.includes('dataset.motion')) faults.push('the head has no pre-paint motion read')
+  for (const action of ['Stop motion', 'Start motion', 'Dark mode', 'Light mode']) {
+    if (!html.includes(`>${action}<`)) faults.push(`the server HTML has no "${action}"`)
+  }
+  if (/<html[^>]*\sdata-motion=/.test(html)) faults.push('the server set data-motion itself')
+  return faults
+}
+
+function readMotionControl() {
+  const control = document.querySelector('.motion-control')
+  if (!control) return null
+  const shown = (selector) => {
+    const el = control.querySelector(selector)
+    return !!el && getComputedStyle(el).display !== 'none'
+  }
+  const pause = shown('.motion-glyph-on')
+  const play = shown('.motion-glyph-off')
+  const text = [...control.querySelectorAll('.imprint-name, .imprint-name *')]
+    .flatMap((el) => [...el.childNodes].filter((node) => node.nodeType === 3 && el.checkVisibility()).map((node) => node.textContent))
+    .join('').replace(/\s+/g, ' ').trim()
+  return {
+    attribute: document.documentElement.dataset.motion ?? null,
+    glyph: pause && play ? 'both' : pause ? 'pause' : play ? 'play' : 'none',
+    filled: getComputedStyle(control.querySelector('.motion-disc')).backgroundColor !== 'rgba(0, 0, 0, 0)',
+    text,
+    hydrated: Object.keys(control).some((key) => key.startsWith('__reactFiber') || key.startsWith('__reactProps')),
+  }
+}
+
+/** The control as the page shows it, with the name the browser computes for it. */
+async function motionControl(page) {
+  const seen = await page.evaluate(readMotionControl)
+  if (!seen) return null
+  const handle = await page.$('.motion-control')
+  const node = await page.accessibility.snapshot({ root: handle, interestingOnly: false })
+  return { ...seen, name: node?.name ?? '' }
+}
+
+/** Every external script the page asks for is held until `release`. Inline scripts, the
+ *  pre-paint one among them, are not requests and run as the parser meets them. */
+async function holdScripts(page) {
+  const held = []
+  let holding = true
+  await page.setRequestInterception(true)
+  page.on('request', (request) => {
+    if (holding && request.resourceType() === 'script') held.push(request)
+    else request.continue().catch(() => {})
+  })
+  return {
+    count: () => held.length,
+    hold() { holding = true },
+    async release() {
+      holding = false
+      await Promise.all(held.splice(0).map((request) => request.continue().catch(() => {})))
+    },
+  }
+}
+
+async function until(condition, what, timeout = 15_000) {
+  const deadline = Date.now() + timeout
+  while (Date.now() < deadline) {
+    if (await condition()) return
+    await new Promise((resolve) => setTimeout(resolve, 25))
+  }
+  throw new Error(`timed out waiting for ${what}`)
+}
+
+/** One load with the app's scripts held: what the page shows before the app runs, then
+ *  the control in its first frame and once the page has settled. */
+async function heldLoad(page, scripts, app, navigate, label, expect) {
+  scripts.hold()
+  // The document being left is marked, so nothing below reads it by mistake.
+  await page.evaluate(() => { window.__kickoffLeaving = true }).catch(() => {})
+  const loaded = navigate()
+  loaded.catch(() => {})
+  await until(() => scripts.count() > 0, `${label}: the app's scripts`)
+  let before
+  if (app === 'next') {
+    // The server's HTML is on the page and nothing has hydrated it.
+    await until(() => page.evaluate(() => !window.__kickoffLeaving && !!document.querySelector('.motion-control')).catch(() => false), `${label}: the server-rendered control`)
+    before = await motionControl(page)
+    assert.equal(before.hydrated, false, `${label}: the control hydrated while its scripts were held`)
+    const faults = motionFaults(`${label} before hydration`, expect, before)
+    assert.deepEqual(faults, [], faults.join('; '))
+  } else {
+    // The document has parsed, the root is empty, and the decision is already made.
+    await until(() => page.evaluate(() => !window.__kickoffLeaving && !!document.getElementById('root')).catch(() => false), `${label}: the parsed document`)
+    before = await page.evaluate(() => ({
+      attribute: document.documentElement.dataset.motion ?? null,
+      rootChildren: document.getElementById('root').childElementCount,
+      readyState: document.readyState,
+    }))
+    assert.equal(before.rootChildren, 0, `${label}: the app rendered while its module was held`)
+    assert.equal(before.attribute, expect, `${label}: data-motion is ${before.attribute ?? 'missing'} with the app module held, expected ${expect}`)
+  }
+  await scripts.release()
+  await loaded
+  await page.waitForFunction(
+    () => Object.keys(document.querySelector('.motion-control') ?? {}).some((key) => key.startsWith('__reactFiber')),
+    { timeout: 15_000 },
+  )
+  const first = await page.evaluate(() => window.__kickoffFirstControl ?? null)
+  if (app !== 'next') {
+    const faults = motionFaults(`${label} first control`, expect, first)
+    assert.deepEqual(faults, [], faults.join('; '))
+  }
+  await page.evaluate(() => document.fonts.ready)
+  const settled = await motionControl(page)
+  const faults = motionFaults(`${label} ${app === 'next' ? 'after hydration' : 'settled'}`, expect, settled)
+  assert.deepEqual(faults, [], faults.join('; '))
+  return { before, first, settled }
+}
+
+export async function proveMotion(browser, origins, out) {
   const cases = []
-  for (const spec of specs) {
-    const context = await browser.createBrowserContext()
-    const page = await context.newPage()
-    try {
-      await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 })
-      if (spec.reduced) await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }])
-      await page.evaluateOnNewDocument((motion) => {
-        localStorage.setItem('kickoff-theme', 'light')
-        if (motion) localStorage.setItem('kickoff-motion', motion)
-        document.addEventListener('DOMContentLoaded', () => {
-          window.__kickoffMotion = document.documentElement.dataset.motion ?? ''
-        })
-      }, spec.motion)
-      await page.goto(`${origin}/`, { waitUntil: 'networkidle0', timeout: 30_000 })
-      await page.evaluate(() => document.fonts.ready)
-      const frame = await page.evaluate(() => ({
-        atReady: window.__kickoffMotion ?? null,
-        now: document.documentElement.dataset.motion ?? '',
-        name: (document.querySelector('.motion-control')?.innerText ?? '').replace(/\s+/g, ' ').trim(),
-      }))
-      assert.equal(frame.atReady, spec.expect, `${spec.id} first frame`)
-      assert.equal(frame.now, spec.expect, spec.id)
-      assert.equal(frame.name, spec.name, spec.id)
-      let still = null
-      if (spec.expect === 'off') {
-        const first = await page.screenshot()
-        await new Promise((resolve) => setTimeout(resolve, 2000))
-        const second = await page.screenshot()
-        still = Buffer.from(first).equals(Buffer.from(second))
-        assert.equal(still, true, `${spec.id} still`)
-        if (spec.id === 'stored-off') {
-          writeFileSync(path.join(out, 'motion-stopped-a.png'), first)
-          writeFileSync(path.join(out, 'motion-stopped-b.png'), second)
+  for (const [app, origin] of Object.entries(origins)) {
+    let server = null
+    if (app === 'next') {
+      const html = await (await fetch(`${origin}/`)).text()
+      const faults = serverMotionFaults(html)
+      assert.deepEqual(faults, [], `next server HTML: ${faults.join('; ')}`)
+      server = { bytes: html.length, bothActions: true, prePaintInHead: true, serverDecision: false }
+    }
+    for (const spec of MOTION_SPECS) {
+      const label = `${app} ${spec.id}`
+      const context = await browser.createBrowserContext()
+      const page = await context.newPage()
+      try {
+        await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 1 })
+        if (spec.reduced) await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }])
+        await page.evaluateOnNewDocument((motion, read) => {
+          // Seeded once for the tab: a reload has to read what the press stored.
+          if (!sessionStorage.getItem('kickoff-evidence-seeded')) {
+            sessionStorage.setItem('kickoff-evidence-seeded', '1')
+            localStorage.setItem('kickoff-theme', 'light')
+            if (motion) localStorage.setItem('kickoff-motion', motion)
+          }
+          // The control as it is when it first enters the document.
+          const readControl = new Function(`return (${read})`)()
+          const observer = new MutationObserver(() => {
+            if (window.__kickoffFirstControl || !document.querySelector('.motion-control')) return
+            window.__kickoffFirstControl = readControl()
+            observer.disconnect()
+          })
+          observer.observe(document, { childList: true, subtree: true })
+        }, spec.motion, readMotionControl.toString())
+        const scripts = await holdScripts(page)
+        const client = await page.createCDPSession()
+
+        const load = await heldLoad(page, scripts, app, () => page.goto(`${origin}/`, { waitUntil: 'load', timeout: 30_000 }), `${label} load`, spec.expect)
+
+        // A real press, then what the page and the store hold.
+        await page.click('.motion-control')
+        const pressed = await motionControl(page)
+        const pressFaults = motionFaults(`${label} after the press`, spec.press, pressed)
+        assert.deepEqual(pressFaults, [], pressFaults.join('; '))
+        const stored = await page.evaluate(() => localStorage.getItem('kickoff-motion'))
+        assert.equal(stored, spec.stored, `${label}: the store holds ${stored} after the press, expected ${spec.stored}`)
+
+        // A reload, held the same way. An unstored Start does not survive it.
+        const afterReload = spec.stored ?? (spec.reduced ? 'off' : 'on')
+        // The reload goes past the renderer's memory cache: a script served from there
+        // is never a request, so it could not be held.
+        const reload = await heldLoad(page, scripts, app, () => {
+          const done = page.waitForNavigation({ waitUntil: 'load', timeout: 30_000 })
+          client.send('Page.reload', { ignoreCache: true }).catch(() => {})
+          return done
+        }, `${label} reload`, afterReload)
+
+        let still = null
+        if (afterReload === 'off') {
+          await page.mouse.move(4, 600)
+          await new Promise((resolve) => setTimeout(resolve, 400))
+          const first = await page.screenshot()
+          await new Promise((resolve) => setTimeout(resolve, 2000))
+          const second = await page.screenshot()
+          still = Buffer.from(first).equals(Buffer.from(second))
+          assert.equal(still, true, `${label} still`)
+          if (spec.id === 'stored-on') {
+            writeFileSync(path.join(out, `motion-stopped-${app}-a.png`), first)
+            writeFileSync(path.join(out, `motion-stopped-${app}-b.png`), second)
+          }
         }
-      }
-      cases.push({ id: spec.id, motion: frame.now, name: frame.name, atReady: frame.atReady, still })
-    } finally { await context.close() }
+        cases.push({
+          app, id: spec.id, server,
+          held: app === 'next'
+            ? { hydrated: load.before.hydrated, motion: load.before.attribute, glyph: load.before.glyph, name: load.before.name }
+            : { rootChildren: load.before.rootChildren, motion: load.before.attribute, readyState: load.before.readyState },
+          first: load.first && { motion: load.first.attribute, glyph: load.first.glyph, label: load.first.text },
+          settled: { motion: load.settled.attribute, glyph: load.settled.glyph, name: load.settled.name },
+          pressed: { motion: pressed.attribute, name: pressed.name, stored },
+          reloaded: { motion: reload.settled.attribute, name: reload.settled.name },
+          still,
+        })
+      } finally { await context.close() }
+    }
+    console.log(`motion ${app}: ${MOTION_SPECS.length} cases passed`)
   }
   return cases
 }
@@ -1218,7 +1402,7 @@ async function main() {
     }
   }
   try {
-    steps.motion = await proveMotion(browser, origins.vite, out)
+    steps.motion = await proveMotion(browser, origins, out)
     steps.chrome = await proveChrome(browser, origins)
     steps.feedback = await proveFeedback(browser, origins)
     steps.banner = await proveBanner(browser, origins, out)
