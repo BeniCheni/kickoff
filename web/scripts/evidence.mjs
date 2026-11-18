@@ -313,24 +313,64 @@ export function fontFile(href) {
   return match ? match[0] : null
 }
 
-// Chrome fetches a preload it never applies and, headless, logs nothing.
-// "Used" is a document.fonts entry whose status is "loaded" once the page has
-// settled. The browser does not load a face for text it does not render — the
-// hidden attribute, display:none, a closed details — so those do not count.
+// A face is used when the browser applied it. Text that is laid out but
+// invisible, at visibility:hidden or opacity:0, counts as use, because the
+// browser fetches and applies the face for it. Text that is not laid out —
+// the hidden attribute, display:none, a closed details — does not.
+//
 // The loaded face already carries the weight the browser applied (Kickoff Mono
 // at 500 for a 400 request), so the gate matches that face to the @font-face
 // rule and does not choose a nearest weight itself. document.fonts does not
 // expose the file, which is why the stylesheet is still read.
-function filesForLoadedFaces(faces, loaded) {
+//
+// Two rules can share a family, style and weight and differ only in
+// unicode-range. FontFace.status cannot tell those halves apart: Chrome
+// reports both loaded when both were preloaded, while only the latin half
+// drew a glyph. document.fonts.check() reports the same thing, because a
+// preloaded face is loaded whether or not it drew. The half counts when a
+// character of the laid-out text for that family and style falls inside the
+// rule's unicode-range. A rule with no unicode-range keeps the weight match.
+export function textIntersectsUnicodeRange(chars, range) {
+  const intervals = []
+  for (const match of String(range).matchAll(/U\+([0-9A-Fa-f]+)(?:-([0-9A-Fa-f]+))?/g)) {
+    const start = Number.parseInt(match[1], 16)
+    const end = match[2] ? Number.parseInt(match[2], 16) : start
+    intervals.push([start, end])
+  }
+  if (!intervals.length) return false
+  for (const char of chars) {
+    const code = char.codePointAt(0)
+    for (const [start, end] of intervals) {
+      if (code >= start && code <= end) return true
+    }
+  }
+  return false
+}
+
+function charsForFace(text, family, style) {
+  if (!text) return null
+  let chars = ''
+  for (const row of text) {
+    const rowFamily = String(row.family).replaceAll(/['"]/g, '').trim()
+    const rowStyle = String(row.style || 'normal').trim()
+    if (rowFamily === family && rowStyle === style) chars += row.chars ?? ''
+  }
+  return chars
+}
+
+function filesForLoadedFaces(faces, loaded, text) {
   const chosen = new Set()
   for (const entry of loaded ?? []) {
     if (entry.status !== 'loaded') continue
     const family = String(entry.family).replaceAll(/['"]/g, '').trim()
     const style = String(entry.style || 'normal').trim()
     const weight = String(entry.weight).trim()
+    const chars = charsForFace(text, family, style)
     for (const face of faces) {
       const faceStyle = String(face.style || 'normal').trim()
       if (face.family !== family || faceStyle !== style || String(face.weight).trim() !== weight) continue
+      const range = String(face.unicodeRange || '').trim()
+      if (range && (chars == null || !textIntersectsUnicodeRange(chars, range))) continue
       const file = fontFile(face.src)
       if (file) chosen.add(file)
     }
@@ -338,8 +378,17 @@ function filesForLoadedFaces(faces, loaded) {
   return chosen
 }
 
-export function unusedFontPreloads({ preloads, faces, loaded }) {
-  const chosen = filesForLoadedFaces(faces, loaded)
+/**
+ * @param {{
+ *   preloads: string[],
+ *   faces: { family: string, style?: string, weight: string, src: string, unicodeRange?: string }[],
+ *   loaded: { family: string, style?: string, weight: string, status: string }[],
+ *   text?: { family: string, style?: string, chars: string }[] | null,
+ * }} usage
+ */
+export function unusedFontPreloads(usage) {
+  const { preloads, faces, loaded, text = null } = usage
+  const chosen = filesForLoadedFaces(faces, loaded, text)
   return preloads.filter((href) => {
     const file = fontFile(href)
     return !file || !chosen.has(file)
@@ -419,7 +468,8 @@ export async function captureRequests(browser, origins, anchor, rows = []) {
           const weight = rule.style.getPropertyValue('font-weight').trim()
           const src = rule.style.getPropertyValue('src')
           const url = src.match(/url\((?:"|')?([^"')]+)/)?.[1] ?? ''
-          faces.push({ family, style, weight, src: url })
+          const unicodeRange = rule.style.getPropertyValue('unicode-range').trim()
+          faces.push({ family, style, weight, src: url, unicodeRange })
         }
       }
       const loaded = []
@@ -432,10 +482,43 @@ export async function captureRequests(browser, origins, anchor, rows = []) {
           status: face.status,
         })
       }
+      // Laid out includes visibility:hidden and opacity:0. It excludes the
+      // hidden attribute, display:none, and the body of a closed details.
+      const laidOut = (el) => {
+        for (let node = el; node; node = node.parentElement) {
+          if (node.hidden) return false
+          if (getComputedStyle(node).display === 'none') return false
+          if (node.tagName === 'DETAILS' && !node.open) {
+            const summary = node.querySelector(':scope > summary')
+            if (!summary || !summary.contains(el)) return false
+          }
+        }
+        return true
+      }
+      const buckets = new Map()
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT)
+      let node = walker.nextNode()
+      while (node) {
+        const value = node.nodeValue ?? ''
+        const el = node.parentElement
+        if (value.trim() && el && laidOut(el)) {
+          const computed = getComputedStyle(el)
+          const textFamily = computed.fontFamily.split(',')[0].replaceAll(/["']/g, '').trim()
+          const textStyle = computed.fontStyle || 'normal'
+          const key = `${textFamily}\n${textStyle}`
+          buckets.set(key, (buckets.get(key) ?? '') + value)
+        }
+        node = walker.nextNode()
+      }
+      const text = [...buckets.entries()].map(([key, chars]) => {
+        const [textFamily, textStyle] = key.split('\n')
+        return { family: textFamily, style: textStyle, chars }
+      })
       return {
         preloads: [...document.querySelectorAll('link[rel="preload"][as="font"]')].map((link) => link.href),
         faces,
         loaded,
+        text,
       }
     })
     const unused = unusedFontPreloads(usage)

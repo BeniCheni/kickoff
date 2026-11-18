@@ -56,6 +56,28 @@ describe('an unused font preload', () => {
     expect(unusedFontPreloads(usage)).toEqual([caslon])
   })
 
+  it('fails the latin-ext preload when both halves are loaded and the page is latin text', () => {
+    const latin = 'https://page.example/fonts/oswald/Oswald.woff2'
+    const ext = 'https://page.example/fonts/oswald/Oswald-ext.woff2'
+    const split = [
+      { family: 'Oswald', style: 'normal', weight: '600', src: `url("${latin}")`, unicodeRange: 'U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD' },
+      { family: 'Oswald', style: 'normal', weight: '600', src: `url("${ext}")`, unicodeRange: 'U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF' },
+    ]
+    // Chrome reports both FontFace entries loaded when both halves were preloaded.
+    const loadedBoth = [
+      { family: 'Oswald', weight: '600', style: 'normal', status: 'loaded' },
+      { family: 'Oswald', weight: '600', style: 'normal', status: 'loaded' },
+    ]
+    const text = [{ family: 'Oswald', style: 'normal', chars: 'Kickoff' }]
+    expect(unusedFontPreloads({ preloads: [latin, ext], faces: split, loaded: loadedBoth, text })).toEqual([ext])
+    expect(unusedFontPreloads({
+      preloads: [latin, ext],
+      faces: split,
+      loaded: loadedBoth,
+      text: [{ family: 'Oswald', style: 'normal', chars: 'Şükrü Saracoğlu' }],
+    })).toEqual([])
+  })
+
   it("does not let one app's use clear the other's miss", () => {
     const mono = 'https://page.example/fonts/kickoff-mono/KickoffMono-Medium.woff2'
     expect(preloadsUnusedOnEveryPage([
