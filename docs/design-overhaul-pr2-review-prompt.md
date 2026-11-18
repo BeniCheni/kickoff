@@ -629,3 +629,162 @@ paste into the running session:
 ````text
 PM SEAT'S NOTE FOR #342'S PASS 2.5 (Wed 18 Nov 2026, about 3:00 PM EST). Twice this afternoon, at about 2:18 and 2:54 PM EST, something outside the review sessions moved #341's review worktrees to the Trash, the KEEP notes in them included; nobody yet knows what. Your three kickoff-pr342-pass25* worktrees were intact at 3:00 PM. Keep every receipt, log and capture under /private/tmp/kickoff-342-pass25/, as you already are, and nothing you need only inside a worktree. Before each step, check that the worktree it uses still exists at its SHA. If one is gone, stop, tell Beni which one and what you had finished, and do not rebuild it until he says so. List anything lost as not verified. Nothing else in your opener changes.
 ````
+
+## Pass 2.5 posted: not mergeable at `ea5242c`, escalated (Wed 18 Nov 2026, 3:15 PM EST)
+
+Codex's Pass 2.5 posted at 3:15 PM EST:
+https://github.com/BeniCheni/kickoff/pull/342#issuecomment-6990366476. Its first line is
+"gpt-6.2-sol · xhigh · sandbox read-only · Pass 2.5 — not mergeable at `ea5242c`". The session
+reported working for 30 min 15 s. Its Executive Summary Brief reached the PM seat as Beni's paste,
+and is archived below word for word.
+
+At about 3:40 PM EST the PM seat read the record and checked these facts:
+- The session file (`rollout-2026-11-18T14-47-28-01a1f033-2f7…`) records one sandbox policy,
+  `read-only`.
+- Of its 123 tool calls, its one write to GitHub was `gh pr comment 342`, run with an escalation
+  Beni approved. It made no push, commit, tag, edit or merge.
+- The head is still `ea5242c`, CLEAN, with no review and auto-merge off.
+- Its captures are under `/private/tmp/kickoff-342-pass25/captures/`.
+- All three `kickoff-pr342-pass25*` worktrees were still on disk.
+
+Three facts for Beni's reading of the brief:
+- **The `src/data` clause.** The target-side difference in `src/data` is `main`'s own sync commit
+  `4cf9caf`, byte for byte. The tip's tree, `7439dcc`, is `4cf9caf`'s, and the integration
+  branch's, `988f494`, is that commit's parent. The branch's merge of `main` at `541b9a9` carried
+  it in, and no commit in the PR edits a data file. The squash would bring `main`'s 17 Nov snapshot
+  onto `overhaul/second-edition`, as #330's carried #329's docs. Whether that is acceptable is
+  Beni's call.
+- **The squash trailers.** Earlier overhaul squashes credit the vendors that wrote code:
+  `3733fd9` (#330) and `2fd2466` (#327) both carry `Cursor <cursoragent@cursor.com>` and
+  `Claude <noreply@anthropic.com>`. In #342 Cursor and Claude wrote the code, and Codex wrote
+  none, since its Pass 1 was report-only and its Pass 2.5 writes nothing. The brief's proposed
+  trailers are Codex's and Claude's, so by that precedent they should be Cursor's and Claude's.
+- **A new contest.** Pass 2.5 disputes Pass 2's description of a row hidden under the Table's
+  pinned labels as inherited behaviour. Its High finding says the occlusion on the mobile UCL
+  Table was introduced by moving the sticky stack below the band. Under #328 the fix round is
+  Claude Code's, on `claude-fable-5-2` at `xhigh`, as the builder of record.
+
+````text
+## Executive Summary Brief — PR #342 · Pass 2.5 · Wed 18 Nov 2026, Brooklyn time
+
+Decision — escalated. Hold ea5242c. In both production apps, a keyboard-focused mobile Champions League row can disappear completely behind the pinned Table labels and zone divider. Beni owns the merge under plan §3. I posted and verified one PR comment with the findings and captures. Pass 2.5 comment
+
+### Why I would hold it
+
+High — the new pinned stack hides keyboard focus. At 390 px, open /?tab=table&league=ucl, focus row 15, scroll row 16 to roughly y=119, then press Tab. Row 16 receives focus and stays at y=119.06–173.06. The opaque labels and divider cover that entire range. All 15 hit-test points landed on the labels or divider. This reproduced at 360, 375 and 390 px in both Vite and Next. The same row placement was visible on 541b9a9 and e820fd4. Pass 2 described hidden Table rows as inherited behavior. The matched comparison shows that this occlusion was introduced by moving the sticky stack below the band. A temporary 56 px addition to the Table's scroll padding brought the row into view in both apps at 390 px. The fix should account for the full pinned stack and test a real Tab press into a mobile standings row. Focus captures (/private/tmp/kickoff-342-pass25/captures/focus-390.avif) · WCAG 2.4.11
+
+Two Medium findings also remain:
+
+- The Moments width assertion can pass when the gallery loses its width declaration. Moving that declaration to an unused selector left all four tests green. The shipped geometry matched the base in all 18 comparison cells. Restore the assertion against the gallery selector. Test (tests/momentsVoices.test.ts:45)
+- Next's initial Table offset is too short at 360 px. With hydration held, the band ended at 133 px and labels pinned at y=118–146, with their centre under the band. After hydration, labels moved to y=133–161 and were exposed. This independently reproduces the limit Pass 2 recorded. Stylesheet (src/shell.css:229)
+
+### What ships when the PR clears
+
+- A full-width imprint band brings the lens, theme, motion and tab controls together. The band and page feet repeat the version, fixture count and snapshot stamp from the app.
+- The motion control reads its preference before the app starts and keeps the reader's choice where storage permits. Starting motion under OS reduced motion lasts for the visit. The future Rack and decorative effects own the animations this switch will control.
+- Staleness uses distinct amber and alarm planes while retaining the request clock and its 24 h and 72 h thresholds. Moments takes the second-edition ground and ink while retaining its layout and Inter.
+
+This is an integration step at v0.5.5. Your Branch, Ten and Six rulings put the public overhaul at v0.6.0, with the font split added as a separate review cycle. The remaining plan covers rows and states, Table skin, still books, Rack motion, imagery, decorative motion and the release. That is one public release to the overhaul milestone. The Next cutover follows as a later minor, with its number still yours. Overhaul plan (docs/design-overhaul-plan.md:213)
+
+### What the 360 found
+
+Pass 1 reported one High, seven Medium and two Low findings. Pass 2 accepted all ten and disputed no severity. Cursor's original nine implementation commits followed the merge at 541b9a9. Claude authored and committed the ten fast-forward fixes. I read each fix separately and reran the proof at the tip. The focused mobile row and the weakened Moments width assertion limit what those fixes establish. Pass 1 (/https://github.com/BeniCheni/kickoff/pull/342#issuecomment-6985955898) · Pass 2
+
+| Pass 1 finding | Fix | Cold review and independent red → green | Root tests, node / DOM |
+|---|---|---|---:|
+| 1. Table pins and focus | ca0cf74 | Measures wraps and disconnects its observer. The original pin and desktop sort cases passed. Removing only scroll padding hid a focused Fixtures row at y=20.31. Restoring it passed. The mobile Table check above exposed the remaining gap. | 891 / 246 |
+| 2. Moments repaint | 2fe35cf | Preserves the token map, adds the page ground and gives the empty route voices without gallery layout. Alarm ink on the populated harness failed both inherited-ink checks. The restored paint and 18 relative-layout comparisons passed. The width assertion lost selector scope. | 894 / 246 |
+| 3. Geometry gate | d3cb613 | Requires the landmark, ordered controls, both rows, 44 px targets and pitch, and clear text. Shifting an intact theme target into Poster failed. The restored cell passed. | 899 / 248 |
+| 4. First-frame proof | ea5242c | Holds external scripts and verifies the glyph, name, press and reload. Hiding Next's pause glyph left raw SSR intact and failed before hydration. All eight tip cases passed with the original CSS. | 899 / 248 |
+| 5. Foot provenance | 27eea9e | Binds version, count, stamp and amber voice to each foot's own provenance line. A wrong Ledger-only version failed. The restored test passed. | 898 / 246 |
+| 6. Throwing write | 76fad9b | Keeps the reduced-motion case and adds a persisting press against a store that refuses writes. Skipping the write failed the attempt count and persistence assertions. Restoration passed. | 898 / 248 |
+| 7. Banner contrast | 6040e69 | Preserves both planes, grounds and themes and the 4.5 floor. Using typescript as the alarm ink produced a 1:1 pair and failed. The restored forced-age browser cases measured 5.17:1 or better. | 899 / 248 |
+| 8. OS reduced motion | aab1165 | Retains ordinary timing and removes the band transitions under OS reduce. Restoring a transition only on the motion hit failed the computed-style probe. Restoration passed. | 896 / 246 |
+| 9. Pointer feedback | 60a3240 | Adds 150 ms ink feedback while retaining the 180 ms lens fill and 220 ms theme fill. Amber on a held inactive tab failed the pitch check. Restoration passed. | 897 / 246 |
+| 10. Harness preload | 7a1e6b6 | Removes the gallery harness preload and pins both harness heads. Restoring that preload failed. The States harness drew Caslon in six elements, and the populated gallery drew none on arrival. | 898 / 246 |
+
+The existing two-media-listener assertion and its zero-on-unmount assertion were already in Cursor's table and stayed intact through Pass 2. I found no weakened data-honesty assertion. The Moments width assertion is a layout coverage loss.
+
+### Verification as rerun
+
+Local and hosted. Root typecheck and both Vitest projects passed independently at all ten detached fix SHAs. The tip passed 899 node tests in 61 files, 248 DOM tests in 31 files and 145 web tests in 28 files. The first root run overlapped builds and timed out in the Vercel ignore suite. The full serial rerun passed with the original timeout. Root build, build:single, build:offline and the 22-marker offline scan passed. Web typecheck, test, build, check:client and check:css passed. Next built on the first try at all three comparison SHAs. GitHub reported verify, studio, Vercel, Vercel Preview Comments and vercel-smoke green at ea5242c. Verify job
+
+Browser. I ran each tree's stock runner in Chrome 157, in report mode and then with --enforce, on the assigned origins. lsof confirmed the working directory of each listener. Each run passed 96 matrix cells at 360, 375, 390 and 1000 px, 72 week cells, 24 cold loads and four offline cells. There were six harness cells on each earlier SHA and eight at the tip. Scroll width equalled viewport width in every layout cell. Both tip modes also passed eight motion, four reduced/ordinary-motion, 32 feedback, 16 forced-banner and 16 original pin/reveal cases. Four 390 px captures (/private/tmp/kickoff-342-pass25/captures/fixtures-390.png)
+
+| SHA | Report / enforce exit | Contrast samples, report / enforce | Below floor / unread |
+|---|---:|---:|---:|
+| 541b9a9 | 0 / 1 | 1,224 / 1,224 | 16 / 0 |
+| e820fd4 | 0 / 1 | 1,890 / 1,898 | 16 / 0 |
+| ea5242c | 0 / 1 | 1,898 / 1,898 | 16 / 0 |
+
+Every failure was R2's white L on #D85A30, 3.871:1, on the light Table in both apps, both lenses and all four widths. Passes 1 and 2 reported 1,882 samples before staleness. My e820fd4 report crossed the 24 h boundary, and the receipt comparison shows banner text entering the samples. The later enforce runs match at 1,898 for both PR heads.
+
+Contracts and disk builds. In both apps, lens navigation preserved ?only= and &date= without adding history entries. Table added one entry and Back restored Fixtures and the Ledger. The local Next smoke proof passed the route landmarks, the real Fixtures Previous button and the deployed SHA and snapshot digest checks. Both disk builds opened without HTTP requests. Chromium drew their provenance in Menlo and their foot copy in Palatino. I adapted Pass 2's decision, navigation, Moments, disk and harness-font recipes to my own servers and generated fresh receipts.
+
+Unverified. Physical iPhone WebKit, VoiceOver and your visual H4 judgment remain open. Local Next served the gallery-unavailable state, so a populated Next catalog remains unverified. The signed-out tip preview returned 302 to Vercel sign-in. The earlier fix SHAs received root typecheck and both root test projects in this pass. Their full build and web suites remain Pass 2's receipts. Tip preview
+
+### Corrections for the squash body
+
+| Current body | Replacement |
+|---|---|
+| e820fd4 is the head and its receipts describe the final implementation. | The reviewed tip is ea5242c. The matched app diff is 61 files, +2,693/−250. Pass 2 contributed 20 files, +1,460/−107. The live target diff is 72 files, +5,504/−2,269, including the merge from main. Use new measurements for any replacement tip. |
+| Tighter strap tracking was needed to fit. The tab drawing is treated as the hit area. | At 360 px, tracked caps at .12em left 26 px before the first hit. At 390 px, the Fixtures text range was 17 px inside an 80.72 × 44 px button. The underline is currently at the button's foot. The 22 px drawing remains an owner decision. |
+| The empty Moments route misses the remap and both harness heads preload Caslon. | The empty Vite route, populated Vite harness and Next unavailable state all take the ruled ground and ink. Their relative geometry and Inter matched the base in 18 of 18 cases. Only the States harness preloads Caslon. Production Moments still leaves Caslon and Mono Medium unused. |
+| The motion proof is Vite-only and the older offline base implies file-size savings. | The proof covers both apps with scripts held, real presses, reloads and stopped captures. Against 541b9a9 with the same snapshot, offline is 1,293,508 B, up 8,260 B, and single is 1,344,040 B, up 8,315 B. |
+| The builder's transfer and test figures describe the final tip. | Fonts still add 56,316 B per Vite page and 56,240 B per Next page against the matched base. In this run Vite style/script added 914/1,051 B and Next added 122/1,027 B. Replace the old unit and browser receipts with the final review receipts. |
+| First-edition rows all already print both clocks. | The retained rows show clocks according to their existing state. The approved foot wording stands. The same-UTC and unset-kickoff rules still govern the rows. |
+
+### Merge gate, clause by clause
+
+| Clause | Result |
+|---|---|
+| Integration change, no release | Met. Version, lockfile, README release markers and CHANGELOG were unchanged. The tip carries no tag. |
+| No numbering fork | Met. Your ruling assigns v0.6.0 to the eventual overhaul release. |
+| Every High has a sufficient fix commit | Open. ca0cf74 fixes the original measured pin positions and desktop sort case. The mobile focused row remains fully obscured. |
+| No contest between Passes 1 and 2 | Met on their recorded dispositions. Claude accepted all ten. This synthesis disputes Pass 2's characterization of the mobile-row occlusion as inherited. |
+| verify green at the tip | Met at ea5242c. |
+| ?only=, &date= and sync.yml preserved | Met. Browser navigation passed in both apps, and the workflow diff was empty. |
+| src/data/*.json clear of changes | Fails against the live integration target. The data tree is 7439dcc at the matched base, Pass 1 head and tip. The target-side diff still carries three generated files from main's 4cf9caf. |
+| Owner authority | Escalate. Plan §3 gives the merge to you. GitHub's mechanical mergeability and the green checks leave the focus finding open. |
+
+### Risks and follow-through
+
+Keep the loss pips with PR 4 under R2, and reconcile the font record when the companion font split and chrome have both landed. The retained body bleeds explain the temporary inset difference. The Step 0 switch to &lens=ledger stays with the public release. The related carry-forwards are rows 125, 126, 129 and 131 in the ideas file. For the review retro, capture focus through the entire sticky stack and record when a live-clock comparison crosses a state boundary. Ideas and process notes (docs/v0.2.6-ideas.md:159)
+
+### Questions for Beni
+
+| Decision | Recommendation and evidence |
+|---|---|
+| String 34 — Approve? | Approve. "Dark mode" and "Light mode" were the computed action names in both apps, including Next before hydration. Pressing the button performed and stored the named action. |
+| Strap — Caps? | Caps at .12em. It matches the boards and left 26 px clear at 360. |
+| Drawn tab — 22? | 22, inside the existing 44 px hit. The shorter underline follows the board and the prototype kept the same target dimensions. |
+| Inset — Keep? | Keep 16 px for the band and 20 px for the content through this PR. Changing only the content inset to 16 produced 4 px of overflow on Fixtures and Table at 360 and 390. |
+| Pinning — Pinned? | Pinned after the focus and pre-hydration checks clear. The temporary full-stack offset preserved the band and exposed the row. |
+| Feedback — Keep? | Keep the band's existing ink, pitch and muted voices. The pointer cases and reduced-motion checks passed. |
+| Focus fix before merge — Fix? | Fix. Retest keyboard focus on the mobile UCL Table and the pre-hydration labels. On a signed-in iPhone, check the 390 px band, 360 px wrap, scrolled Table and motion glyph after reload. |
+
+Build effort?
+
+### Handoff block
+
+Hold PR #342 at ea5242c.
+
+After the focus fix, recheck the replacement SHA on both apps and the disk shells. Confirm the 360 px Next label offset with hydration held, restore the gallery width assertion, and record Beni's iPhone and H4 judgment. Beni then decides whether to click Squash and merge into overhaul/second-edition.
+
+Squash title
+Overhaul PR 2: chrome and the motion control (#342)
+
+Squash body
+Unify the imprint band, provenance and page feet across the Kickoff shells. Read the motion preference before the app starts, repaint the staleness banner and carry the second-edition ground and ink to Moments. Keep the Table's pinned labels and keyboard focus visible beneath the band.
+
+Cursor built the original PR on Grok 4.7. Codex ran the cold review and synthesis. Claude ran the rebuttal and fixes. Record the final reviewed SHA and checks from the fix round. This integration step stays at v0.5.5.
+
+Co-authored-by: Codex <noreply@openai.com>
+Co-authored-by: Claude <noreply@anthropic.com>
+
+After merge, from a checkout of overhaul/second-edition
+git pull --ff-only
+npm run typecheck
+npm test
+npm run build
+````
