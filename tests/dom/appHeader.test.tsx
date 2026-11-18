@@ -65,23 +65,30 @@ describe('the band is one module', () => {
     }
   })
 
-  it('every foot repeats the count and the stamp', () => {
+  it('every foot repeats the version, the count and the stamp on its own provenance line', () => {
     installMatchMedia({ dark: false })
     const release = primeClock(edt('2026-09-05T12:00:00'))
     try {
       render(<App />)
       const footText = () => (document.querySelector('footer')?.textContent ?? '').toLowerCase()
-      expect(footText()).toContain(`${META.total} fixtures`)
-      expect(footText()).toContain(SYNC_STAMP.toLowerCase())
+      // The line itself, not the foot's whole text: Poster's sentence repeats the stamp,
+      // and the band prints the same three figures a few hundred pixels up.
+      const expectProvenance = (foot: string) => {
+        const lines = document.querySelectorAll('footer [data-provenance]')
+        expect(lines, `${foot} foot`).toHaveLength(1)
+        expect(lines[0]!.textContent, `${foot} foot`).toBe(`v${__APP_VERSION__} · ${META.total} fixtures · SYNCED ${SYNC_STAMP}`)
+        expect(lines[0]!.getAttribute('data-voice'), `${foot} foot`).toBe('amber')
+      }
+      expectProvenance('Poster')
       expect(document.querySelector('.page-measure')?.getAttribute('data-measure')).toBe('poster')
       expect(footText()).toContain('fixtures from the snapshot synced')
       fireEvent.click(screen.getByRole('radio', { name: 'Ledger' }))
+      expectProvenance('Ledger')
       expect(document.querySelector('.page-measure')?.getAttribute('data-measure')).toBe('poster')
       expect(footText()).toContain('always verify in the book before staking.')
       expect(footText()).not.toContain('fixtures from the snapshot synced')
       fireEvent.click(screen.getByRole('button', { name: 'Table' }))
-      expect(footText()).toContain(`${META.total} fixtures`)
-      expect(footText()).toContain(SYNC_STAMP.toLowerCase())
+      expectProvenance('Table')
       expect(document.querySelector('footer')?.getAttribute('data-stock')).toBe('black')
       expect(document.querySelector('.page-measure')?.getAttribute('data-measure')).toBe('register')
       expect(footText()).toContain('never recomputed locally')
