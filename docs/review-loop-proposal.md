@@ -1033,9 +1033,11 @@ for Cursor (S7).
     with its review gate turned off. It is a candidate for Sprint 5 instead (see there).
 
 - **Two vendors, each at its deepest (Beni, Tue 17 Nov 2026).** Beni moved to Claude Max and
-  ChatGPT Pro, and is ending the xAI and Cursor paid tiers. He asked for the review cycle to be
-  fitted to the two vendors at the deepest each subscription allows. He approved four proposals
-  as written, after confirming that GPT-6.2 Sol is available and having it folded in.
+  ChatGPT Pro, and is ending the xAI and Cursor paid tiers. *Corrected Wed 18 Nov:* xAI was kept,
+  downgraded to $8 a month, for light work only ("A light seat on Grok 4.7", below). He asked for
+  the review cycle to be fitted to the two vendors at the deepest each subscription allows. He
+  approved four proposals as written, after confirming that GPT-6.2 Sol is available and having
+  it folded in.
   - **D7, amended: one rule, two orientations.**
     - **The rule.** The vendor that builds a pull request never holds its Pass 1 or Pass 2.5.
       The other vendor holds both, each in a fresh session, and Pass 2.5 writes nothing.
@@ -1185,6 +1187,33 @@ for Cursor (S7).
     Beni ruled the record's `runtime_version` 2.1.325, the version every line of the first
     transcript carries: an auto-update put 2.1.326 on PATH in the minute the session started,
     and its `claude --version` ran that.
+
+- **A light seat on Grok 4.7 (Beni, Wed 18 Nov 2026, "Yes, record it").** xAI was downgraded
+  that day to $8 a month, not ended. The tier offers one model, Grok 4.7, at medium effort only,
+  with a 256K context window. Beni is keeping it for now and may still drop it. He offered it
+  "for anything simple docs update, straightforward hotfixes or Pass 3 to logistically approve,
+  merging PRs and tagging and/or releasing new version", and said to record it with the
+  Planner's limits:
+  - **It builds only small work:** simple docs updates and straightforward hotfixes. D7's rule
+    holds with a third vendor: when Grok builds, Claude and Codex hold Pass 1 and Pass 2.5.
+  - **It never holds Pass 1 or Pass 2.5, and never writes a ruling.** Medium effort is too
+    shallow for a cold review or a synthesis.
+  - **A Pass 3 goes to it only when nothing is left to decide:** Pass 2.5 says ready, no finding
+    is open or contested, and Beni's ruling is a plain yes. Grok then writes the record from
+    Beni's words. Anything that needs judgement goes to the Planner.
+  - **Merges, tags and releases** run on Grok only for the version Beni names, each on his word.
+    The number stays his (D8).
+  - **Sprint 3 is unchanged.** The Planner writes its Pass 3 record. Its executor, the first live
+    run of `authorize`, does not go to Grok; its model is still Beni's word (above).
+  - **Two points are open.**
+    - **The runtime.** The only Grok software on Beni's Mac is `Grok Bot.app`; there is no CLI.
+      Whether it can run git and gh is not yet known. If it cannot, it drafts and Beni runs the
+      commands.
+    - **The model tables.** `check`'s route rule looks a record's runtime up in the
+      configuration's vendors and fails any model or effort its tables do not list
+      (`src/report.ts`). Until a configuration lists xAI with `grok-4.7` at `medium`, a Grok
+      record fails `check` and blocks `authorize`. Sprint 4's brief adds that entry to Kickoff's
+      configuration, beside the two GPT-6.2 models.
 
 D8, D10 and D11 are not yet ruled. D4 is withdrawn, and D12 is Pilot (17 Nov).
 
