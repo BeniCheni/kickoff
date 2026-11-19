@@ -529,6 +529,15 @@ Cursor's hands this track seats no Cursor.
 - *Re-read brief:* [`review-loop-sprint-3-synthesis-2-prompt.md`](review-loop-sprint-3-synthesis-2-prompt.md),
   for the Pass 2.5 re-read (Claude Code, `claude-opus-5-5`, `xhigh`), with its sealed appendix as
   a second paste.
+- *Re-read (Wed 18 Nov 2026):* the Pass 2.5 re-read's
+  [comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-6995379370): *another fix
+  round first*. Rulings 1 to 4 and 6 fixed, 3-1 and ruling 5 fixed in part, and findings 25-8 to
+  25-13 (3 blocking, 3 notes).
+- *Ruled again (Wed 18 Nov 2026):* the second Pass 3's
+  [comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-6995611154), by the Planner
+  for Beni. The rulings are under "Rulings received" ("Sprint 3's second Pass 3").
+- *Third fix brief:* [`review-loop-sprint-3-fix-3-prompt.md`](review-loop-sprint-3-fix-3-prompt.md),
+  for Pass 2 again, as a re-read (Codex in the ChatGPT desktop app, `gpt-6.2-sol`, `xhigh`).
 - *Carried from Sprint 1's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are that
   comment's findings): 6, sequence by the order records were posted, not their presence; 7, every
   pass's `input_sha` is the previous recorded pass's `output_sha`, writing or not, and a head
@@ -1264,6 +1273,37 @@ for Cursor (S7).
   - **The builder's folder.** Beni removed `~/review-seats/elenchus-pr8-pass2` after Pass 2, so
     Pass 2's deletion list could not be checked. Every seat folder is now kept until its pull
     request merges.
+
+- **Sprint 3's second Pass 3 (Beni, Wed 18 Nov 2026, "Rule as recommended"; the comment,
+  "Approve and post").** The Pass 2.5 re-read
+  ([comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-6995379370)) returned
+  *another fix round first*: rulings 1 to 4 and 6 fixed, 3-1 and ruling 5 fixed in part, and
+  findings 25-8 to 25-13. Beni ruled another round on the Planner's seven recommendations,
+  numbered as the re-read's questions. The Planner wrote and posted the record, a re-read of pass
+  3 at `1f69883` ([comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-6995611154)).
+  The brief is [`review-loop-sprint-3-fix-3-prompt.md`](review-loop-sprint-3-fix-3-prompt.md).
+  - **1, 25-8.** v1.2's severity becomes the enum `blocking`, `should-fix`, `note`, and
+    `authorize` refuses a synthesis or ruling record that is not v1.2.
+  - **2, 25-9.** The standing synthesis must carry every id that an earlier synthesis record or a
+    ruling record names. That is a rule about re-reads, not the deferred one about replacements.
+  - **3, 25-10.** `authorize` refuses a `finding_flow` with no carrying pass.
+  - **4, 25-11.** A finding blocking in the synthesis or in the ruling it reads needs `fixed` or
+    `killed`, contested or not.
+  - **5, finding 9.** The three survivors get tests, the five equivalents are named, and rows 6
+    and 72 are rewritten as deletions that typecheck.
+  - **6, 25-12.** One README sentence on `package.json` files npm reformats.
+  - **7, 25-13.** In this round, `status` names the ruling pass as next when its record precedes
+    the standing synthesis.
+  - **The seats' credentials.** Reading and posting through gh's own login is within the Keychain
+    rule for every seat; only `/usr/bin/security` and elenchus's own items are out.
+  - **Two of the new blocking findings were the Planner's.** 25-9 and 25-10 come from the
+    wording of 3-1's ruling, and 25-8 from the severity words it never named. The third brief
+    states each rule as what must hold, beside its mechanism.
+  - **One appendix item was wrong in part.** A6 put the file-only deletion rows down to a
+    timeout. The seat showed they did not typecheck, so the CLI test's build failed.
+  - **Checked by the Planner:** the re-read's comment against GitHub, its record through the
+    head's own code, the seal in the seat's transcript, and the code paths of 25-8, 25-9, 25-10
+    and 25-13. No probe was re-run.
 
 D8, D10 and D11 are not yet ruled. D4 is withdrawn, and D12 is Pilot (17 Nov).
 
