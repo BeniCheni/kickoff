@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { bandFaults, firstFrameFaults, focusFaults, handoffFaults, hitAreaFaults, momentsPaintFaults, pinFaults, revealFaults, sweepFaults, tabFaults } from '../scripts/evidence.mjs'
+import { DESKTOP_TABLE_CONTROLS, bandFaults, firstFrameFaults, focusFaults, handoffFaults, hitAreaFaults, momentsPaintFaults, pinFaults, revealFaults, sweepFaults, tabFaults } from '../scripts/evidence.mjs'
 
 const box = (name: string, left: number, top: number, w: number, h = 44) => ({ name, left, top, right: left + w, bottom: top + h, w, h })
 
@@ -278,12 +278,16 @@ test('a sweep that lands on another control, or a control with no ring, is a fau
     .toEqual(['"La Liga" took focus at 20.00 and rests at 20.00 to 50.00, with 15 of 15 points under the band'])
 })
 
+// One press as the sweep records it: `owed` is its target's place among the table's controls, or -1.
+const press = (owed: number, text = owed < 0 ? 'La Liga' : `${owed + 1}. Club`) => ({ text, row: owed >= 0, owed })
+// The phone Table as the sweep reads it off the page: a row for each club in the standings,
+// carrying that club's id, and one control in each row.
+const clubs = [1, 2, 3, 4, 5].map((n) => ({ id: `${n}0`, name: `Club ${n}` }))
+const rowControl = (place: number) => ({ name: `${place + 1}. Club`, row: place, reachable: true })
+const phone = { within: '.page-measure', clubs, rows: clubs.map((club) => club.id), controls: clubs.map((_, place) => rowControl(place)) }
+const whole = [press(-1), press(0), press(1), press(2), press(3), press(4)]
+
 test('a sweep that pressed nothing is a fault, and so is a table control no press was aimed at', () => {
-  // One press as the sweep records it: `owed` is the control's place among the table's own, or -1.
-  const press = (owed: number) => ({ text: owed < 0 ? 'La Liga' : `${owed + 1}. Club`, row: owed >= 0, owed })
-  const table = ['1. Club', '2. Club', '3. Club', '4. Club', '5. Club']
-  const phone = { within: '.page-measure', owed: table, inRows: 5, clubs: 5 }
-  const whole = [press(-1), press(0), press(1), press(2), press(3), press(4)]
   expect(sweepFaults(whole, phone)).toEqual([])
   // The reviewed head on a page with no .page-measure: the rows were counted, nothing was pressed, and it passed.
   expect(sweepFaults([], phone)).toEqual([
@@ -295,17 +299,67 @@ test('a sweep that pressed nothing is a fault, and so is a table control no pres
   expect(sweepFaults(whole.filter((seen) => seen.owed !== 3), phone)).toEqual(['1 of the table’s 5 controls was never the target of a press: "4. Club"'])
   // A press is counted by the control it was aimed at, not by how many there were.
   expect(sweepFaults([press(-1), press(0), press(0), press(1), press(2), press(3)], phone)).toEqual(['1 of the table’s 5 controls was never the target of a press: "5. Club"'])
-  // The phone table holds one control for each club in the standings, counted off the page.
-  expect(sweepFaults(whole, { ...phone, clubs: 6 })).toEqual(['the table’s rows hold 5 controls, and the standings hold 6 clubs'])
-  expect(sweepFaults(whole.slice(0, 5), { ...phone, owed: table.slice(0, 4), inRows: 4 })).toEqual(['the table’s rows hold 4 controls, and the standings hold 5 clubs'])
-  // It is the rows that are counted. A row that has lost its marker is no longer read as one.
-  expect(sweepFaults(whole, { ...phone, inRows: 0 })).toEqual(['the table’s rows hold 0 controls, and the standings hold 5 clubs'])
-  // The desktop rows hold no control and are owed none: its nine sorts are in the pinned labels.
-  const desk = { within: '.page-measure', owed: ['Pts', 'Pl'], inRows: 0, clubs: null }
-  expect(sweepFaults([press(-1), { text: 'Pts', row: false, owed: 0 }, { text: 'Pl', row: false, owed: 1 }], desk)).toEqual([])
+  // A judge told of no club and no named control would hold the table to nothing, so that is a fault.
+  expect(sweepFaults(whole, { ...phone, clubs: null })).toEqual(['the sweep was not told what the table is owed: no club and no named control'])
+  expect(sweepFaults(whole, { ...phone, clubs: [], named: [] })).toEqual(['the sweep was not told what the table is owed: no club and no named control'])
+})
+
+test('on the phone, each club in the standings has a row of its own that holds one control', () => {
+  // The reviewed head: the second row's control sits in the first row. The rows held five
+  // controls for five clubs, every one of them was pressed, and it passed.
+  const moved = { ...phone, controls: phone.controls.map((control, place) => (place === 1 ? { ...control, row: 0 } : control)) }
+  expect(sweepFaults(whole, moved)).toEqual([
+    '1 of the standings’ 5 clubs has a row that holds no control a keyboard can reach: Club 2',
+    '1 of the standings’ 5 clubs has a row that holds more than one control a keyboard can reach: Club 1 (2)',
+  ])
+  // So did two rows that carry one club's id, with a control in each.
+  expect(sweepFaults(whole, { ...phone, rows: ['10', '10', '30', '40', '50'] })).toEqual([
+    '1 of the standings’ 5 clubs has no row in the table: Club 2',
+    '1 of the standings’ 5 clubs has more than one row in the table: Club 1 (2)',
+  ])
+  // A club is matched by its id, in the committed standings and on the page's row. The
+  // standings hold a club the page has no row for:
+  expect(sweepFaults(whole, { ...phone, clubs: [...clubs, { id: '60', name: 'Club 6' }] })).toEqual(['1 of the standings’ 6 clubs has no row in the table: Club 6'])
+  // the fifth row is gone, and its control with it:
+  expect(sweepFaults(whole.slice(0, 5), { ...phone, rows: phone.rows.slice(0, 4), controls: phone.controls.slice(0, 4) })).toEqual(['1 of the standings’ 5 clubs has no row in the table: Club 5'])
+  // and the rows have lost their marker, so none is read as a row and no control sits in one.
+  expect(sweepFaults(whole, { ...phone, rows: [], controls: phone.controls.map((control) => ({ ...control, row: -1 })) })).toEqual(['5 of the standings’ 5 clubs have no row in the table: Club 1, Club 2, Club 3, …'])
+  // A row with no control of its own: gone from the page, or there and out of a keyboard's reach.
+  expect(sweepFaults([press(-1), press(0), press(1), press(2), press(3, '5. Club')], { ...phone, controls: phone.controls.filter((_, place) => place !== 3) }))
+    .toEqual(['1 of the standings’ 5 clubs has a row that holds no control a keyboard can reach: Club 4'])
+  expect(sweepFaults(whole.filter((seen) => seen.owed !== 3), { ...phone, controls: phone.controls.map((control, place) => (place === 3 ? { ...control, reachable: false } : control)) }))
+    .toEqual(['1 of the standings’ 5 clubs has a row that holds no control a keyboard can reach: Club 4'])
+  // A row for a club the standings do not hold.
+  expect(sweepFaults([...whole, press(5)], { ...phone, rows: [...phone.rows, '99'], controls: [...phone.controls, rowControl(5)] }))
+    .toEqual(['1 of the table’s 6 rows is for a club the standings do not hold: "99"'])
+})
+
+test('on the desktop, the table is owed its nine labels by name, each within reach and pressed', () => {
+  expect(DESKTOP_TABLE_CONTROLS).toEqual(['Pl', 'W', 'D', 'L', 'GF', 'GA', 'GD', 'Pts', 'PPG'])
+  // The desktop rows hold no control: the nine are in the pinned row above them.
+  const desk = {
+    within: '.page-measure', named: DESKTOP_TABLE_CONTROLS, rows: clubs.map((club) => club.id),
+    controls: DESKTOP_TABLE_CONTROLS.map((name) => ({ name, row: -1, reachable: true })),
+  }
+  const all = [press(-1), ...DESKTOP_TABLE_CONTROLS.map((name, place) => press(place, name))]
+  expect(sweepFaults(all, desk)).toEqual([])
+  // The reviewed head: the table held no control, the league picker was pressed, and it passed.
+  expect(sweepFaults([press(-1)], { ...desk, controls: [] })).toEqual(['9 of the 9 controls owed by name are not in the table: "Pl", "W", "D", …'])
+  // In the table and out of a keyboard's reach is not held either.
+  expect(sweepFaults([press(-1)], { ...desk, controls: desk.controls.map((control) => ({ ...control, reachable: false })) }))
+    .toEqual(['9 of the 9 controls owed by name cannot be reached by a keyboard: "Pl", "W", "D", …'])
+  // Nine controls are not the nine: Pts reads Pl, and every one of them was pressed.
+  expect(sweepFaults(all, { ...desk, controls: desk.controls.map((control) => (control.name === 'Pts' ? { ...control, name: 'Pl' } : control)) })).toEqual([
+    '1 of the 9 controls owed by name is not in the table: "Pts"',
+    '1 of the 9 controls owed by name is in the table more than once: "Pl" (2)',
+  ])
+  // Each is owed a press, and so is a control the list does not name: a row's, if one arrives.
+  expect(sweepFaults(all.filter((seen) => seen.text !== 'Pts'), desk)).toEqual(['1 of the table’s 9 controls was never the target of a press: "Pts"'])
+  expect(sweepFaults(all, { ...desk, controls: [...desk.controls, { name: '3. Club', row: 2, reachable: true }] }))
+    .toEqual(['1 of the table’s 10 controls was never the target of a press: "3. Club"'])
   expect(sweepFaults([], desk)).toEqual([
     'no Tab was pressed: nothing a keyboard can reach is inside .page-measure',
-    '2 of the table’s 2 controls were never the target of a press: "Pts", "Pl"',
+    '9 of the table’s 9 controls were never the target of a press: "Pl", "W", "D", …',
   ])
 })
 

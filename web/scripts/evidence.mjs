@@ -579,6 +579,10 @@ export async function proveTablePins(browser, origins, anchor = null) {
 // reached with a real Tab press from the control before it, as a keyboard reaches it.
 const FOCUS_RING = 3 // inside the 2px line a ring draws 2px off its control
 
+// The desktop table's controls, by the name each carries: the nine labels in its pinned
+// row, each a button a keyboard stops on. Six of them sort; W, D and L do nothing.
+export const DESKTOP_TABLE_CONTROLS = ['Pl', 'W', 'D', 'L', 'GF', 'GA', 'GD', 'Pts', 'PPG']
+
 /**
  * What one Tab press left on the page. The control has to be the one the press was meant
  * for, show its ring, and have no sample point under anything pinned. `ringUnder` is read
@@ -603,40 +607,83 @@ export function focusFaults(seen) {
 /**
  * What a placement's sweep has to have done before its presses are evidence. A sweep that
  * reached nothing has no control to fault, so it passed: on a page without the wrapper it
- * looks inside, every cell did. `owed` names the shown table's controls, read from the
- * whole document and not through that wrapper, and each has to have been the target of a
- * press. On the phone layout a club's row is a control, so `clubs`, counted in the
- * committed standings and not on the page, is how many the rows have to hold.
+ * looks inside, every cell did. And a table held to a total passed with two controls in
+ * one row and none in the next, so the table is held to what it is owed by identity.
+ * `rows` is the club id on each row of the shown table and `controls` every control in
+ * it, read from the whole document and not through that wrapper. On the phone a club's
+ * row is a control: each of `clubs`, read from the committed standings and not from the
+ * page, has one row of its own, and that row holds one control a keyboard can reach. On
+ * the desktop the rows hold none: each of `named` is in the table once, within reach.
+ * Every control a keyboard can reach in the table has to have been the target of a press.
  *
- * @param {{ owed: number }[]} seen
- * @param {{ within: string, owed: string[], inRows: number, clubs?: number | null }} expected
+ * @param {{ owed: number }[]} seen  each press, by its target's place in `controls`, or -1
+ * @param {{
+ *   within: string,
+ *   rows: string[],
+ *   controls: { name: string, row: number, reachable: boolean }[],
+ *   clubs?: { id: string, name: string }[] | null,
+ *   named?: string[] | null,
+ * }} expected
  */
-export function sweepFaults(seen, { within, owed, inRows, clubs = null }) {
+export function sweepFaults(seen, { within, rows, controls, clubs = null, named = null }) {
   const faults = []
   if (!seen.length) faults.push(`no Tab was pressed: nothing a keyboard can reach is inside ${within}`)
-  if (clubs !== null && inRows !== clubs) faults.push(`the table’s rows hold ${inRows} controls, and the standings hold ${clubs} clubs`)
-  const pressed = new Set(seen.map((control) => control.owed))
-  const missed = owed.filter((_, place) => !pressed.has(place))
-  if (missed.length) {
-    const names = missed.slice(0, 3).map((name) => `"${name}"`).join(', ')
-    faults.push(`${missed.length} of the table’s ${owed.length} controls ${missed.length === 1 ? 'was' : 'were'} never the target of a press: ${names}${missed.length > 3 ? ', …' : ''}`)
+  if (!clubs?.length && !named?.length) faults.push('the sweep was not told what the table is owed: no club and no named control')
+  const first = (names) => `${names.slice(0, 3).join(', ')}${names.length > 3 ? ', …' : ''}`
+  const reachable = controls.map((control, place) => ({ ...control, place })).filter((control) => control.reachable)
+  if (clubs?.length) {
+    // A club's rows are the ones that carry its id, and its control the one in its own row.
+    const rowsOf = (club) => rows.flatMap((id, at) => (id === club.id ? [at] : []))
+    const heldBy = (club) => reachable.filter((control) => control.row === rowsOf(club)[0])
+    const tell = (some, one, many, show = (club) => club.name) => {
+      if (some.length) faults.push(`${some.length} of the standings’ ${clubs.length} clubs ${some.length === 1 ? one : many}: ${first(some.map(show))}`)
+    }
+    tell(clubs.filter((club) => rowsOf(club).length === 0), 'has no row in the table', 'have no row in the table')
+    tell(clubs.filter((club) => rowsOf(club).length > 1), 'has more than one row in the table', 'have more than one row in the table', (club) => `${club.name} (${rowsOf(club).length})`)
+    const own = clubs.filter((club) => rowsOf(club).length === 1)
+    tell(own.filter((club) => heldBy(club).length === 0), 'has a row that holds no control a keyboard can reach', 'have a row that holds no control a keyboard can reach')
+    tell(own.filter((club) => heldBy(club).length > 1), 'has a row that holds more than one control a keyboard can reach', 'have a row that holds more than one control a keyboard can reach', (club) => `${club.name} (${heldBy(club).length})`)
+    const known = new Set(clubs.map((club) => club.id))
+    const strangers = rows.filter((id) => !known.has(id))
+    if (strangers.length) faults.push(`${strangers.length} of the table’s ${rows.length} rows ${strangers.length === 1 ? 'is' : 'are'} for a club the standings do not hold: ${first(strangers.map((id) => `"${id}"`))}`)
   }
+  if (named?.length) {
+    const called = (name) => controls.filter((control) => control.name === name)
+    const tell = (some, one, many, show = (name) => `"${name}"`) => {
+      if (some.length) faults.push(`${some.length} of the ${named.length} controls owed by name ${some.length === 1 ? one : many}: ${first(some.map(show))}`)
+    }
+    tell(named.filter((name) => called(name).length === 0), 'is not in the table', 'are not in the table')
+    tell(named.filter((name) => called(name).length > 1), 'is in the table more than once', 'are in the table more than once', (name) => `"${name}" (${called(name).length})`)
+    tell(named.filter((name) => called(name).length === 1 && !called(name)[0].reachable), 'cannot be reached by a keyboard', 'cannot be reached by a keyboard')
+  }
+  // Owed by a club, by a name or by neither: every control a keyboard can reach in the table.
+  const pressed = new Set(seen.map((control) => control.owed))
+  const missed = reachable.filter((control) => !pressed.has(control.place)).map((control) => `"${control.name}"`)
+  if (missed.length) faults.push(`${missed.length} of the table’s ${reachable.length} controls ${missed.length === 1 ? 'was' : 'were'} never the target of a press: ${first(missed)}`)
   return faults
 }
 
 /** Every control a Tab press can reach inside `within`, each placed by `place` first:
  *  { y } is its top in the viewport, { underFoot } that many pixels under the band's foot.
- *  `owed` is the shown table's controls and `inRows` how many of them sit in its rows. */
+ *  `table` is the shown table as sweepFaults reads it: the club id on each of its rows,
+ *  and each of its controls with the row it sits in and whether a keyboard can reach it. */
 async function sweepFocus(page, place, { within = '.page-measure', layout }) {
   const found = await page.evaluate((scope, shown) => {
     const reachable = (el) => el.tabIndex >= 0 && !el.disabled && !el.closest('[inert]')
       && el.checkVisibility({ visibilityProperty: true }) && el.getClientRects().length > 0
-    const list = [...document.querySelectorAll('a[href], button, input, select, textarea, summary, iframe, [tabindex], [contenteditable]')].filter(reachable)
-    // Not through `scope`: these are owed a press whether or not the wrapper is there.
-    const table = list.filter((el) => el.closest(`[data-table="${shown}"]`))
+    const every = [...document.querySelectorAll('a[href], button, input, select, textarea, summary, iframe, [tabindex], [contenteditable]')]
+    const list = every.filter(reachable)
+    // Not through `scope`: the table is owed its presses whether or not the wrapper is there.
+    const table = every.filter((el) => el.closest(`[data-table="${shown}"]`))
+    const rows = [...document.querySelectorAll(`[data-table="${shown}"] [data-table-row]`)]
     const name = (el) => (el.getAttribute('aria-label') || el.textContent || el.tagName).replace(/\s+/g, ' ').trim().slice(0, 48)
     window.__kickoffFocus = { list, table, targets: list.map((_, i) => i).filter((i) => i > 0 && list[i].closest(scope)) }
-    return { targets: window.__kickoffFocus.targets.length, owed: table.map(name), inRows: table.filter((el) => el.closest('[data-table-row]')).length }
+    return {
+      targets: window.__kickoffFocus.targets.length,
+      rows: rows.map((row) => row.getAttribute('data-table-row')),
+      // A control's row is the nearest one around it, by its place among `rows`, or -1.
+      controls: table.map((el) => ({ name: name(el), row: rows.indexOf(el.closest('[data-table-row]')), reachable: reachable(el) })),
+    }
   }, within, layout)
   const seen = []
   for (let n = 0; n < found.targets; n += 1) {
@@ -682,7 +729,7 @@ async function sweepFocus(page, place, { within = '.page-measure', layout }) {
       const row = !!target.parentElement?.hasAttribute('data-table-row')
       return {
         text: name(target), active: name(active), landed: active === target, row,
-        // The control's place among the table's own, or -1: a press is counted by its target.
+        // The control's place among the table's controls, or -1: a press is counted by its target.
         owed: table.indexOf(target),
         focusVisible: target.matches(':focus-visible'), top: rect.top, bottom: rect.bottom,
         points: body.length, under: tally(body),
@@ -690,7 +737,7 @@ async function sweepFocus(page, place, { within = '.page-measure', layout }) {
       }
     }, n, FOCUS_RING)) })
   }
-  return { seen, owed: found.owed, inRows: found.inRows }
+  return { seen, table: { rows: found.rows, controls: found.controls } }
 }
 
 /** The Table in both apps, and both files from disk, at every width of the matrix. Each
@@ -712,18 +759,22 @@ export async function proveFocus(browser, origins, out) {
     try {
       await page.waitForSelector('[data-table-picker]', { timeout: 15_000 })
       const layout = width >= 768 ? 'desktop' : 'mobile'
-      // A club's row is a control on the phone. The desktop rows hold none, and its sorts
-      // are in the pinned labels; if a row control arrives there, it is owed a press too.
-      const clubs = layout === 'mobile' ? standings[league].length : null
-      const row = { id, controls: 0, tableControls: 0, rowControls: 0, clubs, pressed: 0, moved: 0 }
+      // A club's row is a control on the phone: each club in the committed standings is
+      // owed its own, matched by the id the row carries. The desktop rows hold none and
+      // the table is owed its labels by name; a row control arriving there is owed a press too.
+      const clubs = layout === 'mobile' ? standings[league].map((club) => ({ id: club.teamId, name: club.name })) : null
+      const named = layout === 'desktop' ? DESKTOP_TABLE_CONTROLS : null
+      const row = { id, controls: 0, tableControls: 0, rowControls: 0, tableRows: 0, clubs: clubs?.length ?? null, named, pressed: 0, moved: 0 }
       for (const place of places) {
         const within = '.page-measure'
-        const { seen, owed, inRows } = await sweepFocus(page, place, { within, layout })
-        const faults = [...sweepFaults(seen, { within, owed, inRows, clubs }), ...seen.flatMap(focusFaults)]
+        const { seen, table } = await sweepFocus(page, place, { within, layout })
+        const faults = [...sweepFaults(seen, { within, ...table, clubs, named }), ...seen.flatMap(focusFaults)]
         assert.deepEqual(faults, [], `${id} ${place.name}: ${faults.join('; ')}`)
+        const reachable = table.controls.filter((control) => control.reachable)
         row.controls = seen.length
-        row.tableControls = owed.length
-        row.rowControls = inRows
+        row.tableControls = reachable.length
+        row.rowControls = reachable.filter((control) => control.row >= 0).length
+        row.tableRows = table.rows.length
         row.pressed += seen.length
         row.moved += seen.filter((control) => Math.abs(control.top - control.before) > EPSILON).length
         // The reviewed case: position 16 of the Champions League table.
