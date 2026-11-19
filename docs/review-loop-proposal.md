@@ -560,6 +560,20 @@ Cursor's hands this track seats no Cursor.
   for Beni. The rulings and finding 3-2 are under "Rulings received" ("Sprint 3's third Pass 3").
 - *Fourth fix brief:* [`review-loop-sprint-3-fix-4-prompt.md`](review-loop-sprint-3-fix-4-prompt.md),
   for Pass 2 again, as a re-read (Codex in the ChatGPT desktop app, `gpt-6.2-sol`, `xhigh`).
+- *Stopped and answered (Thu 19 Nov 2026):* Codex stopped on ruling 1 before pushing. A re-read
+  that returned to an older posting's SHAs skipped that posting's ids, because the brief never
+  defined "same-range correction". Beni answered with load.ts's own `replaces` link; the answer
+  is appended to the fourth fix brief.
+- *Fixed a fourth time (Thu 19 Nov 2026):* the Pass 2 re-read's
+  [record](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7019079788): two commits to
+  `addc77a`. All six rulings, 3-1, 25-9 and 3-2 are carried out as the round reports them. 7, 12,
+  13, 14, 15 and 25-15 are left open as deferred, and 15 of 15 serial deletions are caught. #8's
+  body was at GitHub's 65,536-character limit, so the receipts and the seven-test audit are in the
+  record comment, with a pointer in the body (Beni's choice when Codex asked). The brief had asked
+  for them in the body; the Planner had not checked the body's length.
+- *Third re-read brief:* [`review-loop-sprint-3-synthesis-4-prompt.md`](review-loop-sprint-3-synthesis-4-prompt.md),
+  for the third Pass 2.5 re-read (Claude Code, `claude-opus-5-5`, `xhigh`), with its sealed
+  appendix as a second paste.
 - *Carried from Sprint 1's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are that
   comment's findings): 6, sequence by the order records were posted, not their presence; 7, every
   pass's `input_sha` is the previous recorded pass's `output_sha`, writing or not, and a head
@@ -1349,7 +1363,12 @@ for Cursor (S7).
     named, and only an explicit kill removes one. When the standing ruling follows the standing
     synthesis, it must carry every id that an earlier ruling record, posted after the standing
     synthesis, names. A ruling's re-read at a new range is outside the replacement deferral; a
-    same-range correction stays inside it.
+    same-range correction stays inside it. *Clarified Thu 19 Nov 2026 (Beni), after Codex stopped:*
+    a same-range correction is what load.ts calls a replacement, a posting not marked as a
+    re-read at the same SHAs as its pass's latest valid posting, linked by `replaces`. The
+    deferral covers only the standing record and the postings it replaces. Every other earlier
+    posting is an earlier round, and its ids are carried, even when a later posting returns to its
+    SHAs.
   - **2, ruling 2's words.** The rule governs. Ruling 2 of the second Pass 3 is amended in place
     to name both carriers; the fix brief's "posted before it" was right for the synthesis and
     incomplete for the ruling.

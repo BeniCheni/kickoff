@@ -76,3 +76,22 @@ YOUR RECORD, as the last fenced json block of one new comment on #8 (not a reply
 
 STOP AND REPORT if: your folder is not as above; the model or effort is not gpt-6.2-sol at xhigh; anything in the start check differs; a write would land outside the list above; a command would read the Keychain or post a status; a probe could reach GitHub as Beni; a ruling's mechanism holds where its rule does not; or a usage limit stops you. Your last message, in chat: the new head of sprint-3, each ruling, 3-1, 25-9 and 3-2 with its commit, the deletion list's result, the receipts, what status names on #1, #6 and #8 after your record, your comment's URL, and what you did not do. Then stop. A fresh Pass 2.5 re-read on claude-opus-5-5 at xhigh, which writes only its comment, reads the round next, and Beni rules again at Pass 3.
 ````
+
+## The answer on same-range corrections (Thu 19 Nov 2026)
+
+Codex stopped on ruling 1 before pushing. Its probe had a synthesis posting at B..B name F9, a
+later posting at base..base, and a marked re-read that returned to B..B. The carry check, which
+treated every posting at the standing record's SHAs as a same-range correction, skipped the first
+posting, so F9 left the review unread. The brief had used "same-range correction" without
+defining it, and load.ts already defines it by its `replaces` link. The Planner drafted this
+answer for Beni, who sent it. #8's body was at GitHub's 65,536-character limit, so when Codex
+asked, Beni chose to keep it verbatim with a pointer, and the round's receipts and the seven-test
+audit went into its record comment.
+
+````text
+Answered (Beni). Ruling 1's rule stands: the older record's ids are carried. A same-range correction is what load.ts already calls a replacement: a posting not marked as a re-read, at the same SHAs as its pass's latest valid posting before it, which load.ts links with replaces. For the synthesis and for the ruling alike, the deferral covers only the standing record and the postings it replaces, followed back link by link. Every other valid posting of the pass, at whatever range and of whatever schema version, is an earlier round, and its ids are carried, even when a later posting returns to its range. Tests: your probe's same-old-range case fails check naming F9 and the older record, and refuses authorize; its distinct-range control keeps its result; the early same-range correction test keeps its result; and the same shape for the ruling pass, a ruling re-read posted after the standing synthesis that returns to an older ruling record's range, fails check, while RR5 keeps its result.
+
+RR1 and RR6 naming authorize in status, while authorize refuses them, is what the brief expected: report it and leave status as it is.
+
+Name each of the seven tests you adjusted in #8's body, with its old and new expectation and the ruling that moves it. If any moved for a reason other than this brief's rulings, stop and say so. Then re-run the full suite and carry on.
+````
