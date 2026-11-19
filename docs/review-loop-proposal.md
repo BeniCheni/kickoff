@@ -550,6 +550,16 @@ Cursor's hands this track seats no Cursor.
 - *Second re-read brief:* [`review-loop-sprint-3-synthesis-3-prompt.md`](review-loop-sprint-3-synthesis-3-prompt.md),
   for the second Pass 2.5 re-read (Claude Code, `claude-opus-5-5`, `xhigh`), with its sealed
   appendix as a second paste.
+- *Re-read again (Thu 19 Nov 2026):* the second Pass 2.5 re-read's
+  [comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7017224427): *another fix
+  round first*. Rulings 1 and 3 to 7 fixed (7 as amended), ruling 2 and 3-1 fixed in part, and
+  findings 25-14 to 25-16 (1 blocking, 2 notes). The earlier seats' folders had been deleted
+  before it started.
+- *Ruled a third time (Thu 19 Nov 2026):* the third Pass 3's
+  [comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7017734345), by the Planner
+  for Beni. The rulings and finding 3-2 are under "Rulings received" ("Sprint 3's third Pass 3").
+- *Fourth fix brief:* [`review-loop-sprint-3-fix-4-prompt.md`](review-loop-sprint-3-fix-4-prompt.md),
+  for Pass 2 again, as a re-read (Codex in the ChatGPT desktop app, `gpt-6.2-sol`, `xhigh`).
 - *Carried from Sprint 1's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are that
   comment's findings): 6, sequence by the order records were posted, not their presence; 7, every
   pass's `input_sha` is the previous recorded pass's `output_sha`, writing or not, and a head
@@ -1298,6 +1308,11 @@ for Cursor (S7).
     `authorize` refuses a synthesis or ruling record that is not v1.2.
   - **2, 25-9.** The standing synthesis must carry every id that an earlier synthesis record or a
     ruling record names. That is a rule about re-reads, not the deferred one about replacements.
+    *Amended Thu 19 Nov 2026 (Beni, ruling 2 of the third Pass 3), after the second Pass 2.5
+    re-read found 25-14:* no synthesis can carry an id a ruling raises after it. The rule is that
+    `authorize` reads every finding id any valid synthesis or ruling record has named, and only an
+    explicit kill removes one. The standing synthesis carries the ids named before it, and the
+    standing ruling carries the ids a ruling names after it.
   - **3, 25-10.** `authorize` refuses a `finding_flow` with no carrying pass.
   - **4, 25-11.** A finding blocking in the synthesis or in the ruling it reads needs `fixed` or
     `killed`, contested or not.
@@ -1321,6 +1336,51 @@ for Cursor (S7).
   - **Checked by the Planner:** the re-read's comment against GitHub, its record through the
     head's own code, the seal in the seat's transcript, and the code paths of 25-8, 25-9, 25-10
     and 25-13. No probe was re-run.
+
+- **Sprint 3's third Pass 3 (Beni, Thu 19 Nov 2026, "Rule as recommended"; the comment,
+  "Approve and post").** The second Pass 2.5 re-read
+  ([comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7017224427)) returned
+  *another fix round first*: rulings 1 and 3 to 7 fixed, ruling 2 and 3-1 fixed in part, and
+  findings 25-14 to 25-16. Beni ruled another round on the Planner's six recommendations,
+  numbered as the re-read's questions. The Planner wrote and posted the record, a re-read of pass
+  3 at `d4c32d8` ([comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7017734345)).
+  The brief is [`review-loop-sprint-3-fix-4-prompt.md`](review-loop-sprint-3-fix-4-prompt.md).
+  - **1, 25-14.** `authorize` reads every finding id any valid synthesis or ruling record has
+    named, and only an explicit kill removes one. When the standing ruling follows the standing
+    synthesis, it must carry every id that an earlier ruling record, posted after the standing
+    synthesis, names. A ruling's re-read at a new range is outside the replacement deferral; a
+    same-range correction stays inside it.
+  - **2, ruling 2's words.** The rule governs. Ruling 2 of the second Pass 3 is amended in place
+    to name both carriers; the fix brief's "posted before it" was right for the synthesis and
+    incomplete for the ruling.
+  - **3, 25-15.** Deferred to Sprint 5, before the port. In the next round, one README sentence:
+    `status` makes no head compare, so a re-read `check` asks for comes before the pass `status`
+    names.
+  - **4, 25-16.** While `authorize` would refuse the synthesis or the ruling it reads, for a
+    ruling reason or for its schema, `status` names the earliest configured pass among the items
+    `checkRuling` reports. *Clarified Thu 19 Nov 2026 (Beni), in the fourth fix brief:* a ruling
+    reason names the ruling pass, whatever record it was read from, and a schema item names the
+    refused record's own pass. `checkRuling` locates a finding item at the record it was read
+    from, so read literally, the mechanism would have sent a blocking finding that only the
+    synthesis names to pass 2.5.
+  - **5, finding 9.** The next round's deletion list names the re-read's U5 to U7 as equivalent
+    deletions.
+  - **6, 3-2, opened at this pass (a note).** A `finding_flow` with no `carries` goes back to the
+    parse error `1f69883` gave, naming `config.finding_flow.carries`. An empty list still parses,
+    and `authorize` refuses it.
+  - **25-14 was the Planner's.** Ruling 2 of the second Pass 3 said "the standing synthesis names
+    it too". That named the record that carries an id, not what the gate must read, and no
+    synthesis can carry an id raised after it.
+  - **One appendix item was wrong in part.** A7 said a same-range correction is never read for
+    ids. The round's own test shows that it is read once the synthesis re-reads at another range.
+  - **The seat folders, again.** `~/review-seats` was re-created at 11:26:57 EST on 19 Nov, after
+    the third round finished and after the Planner's message asking to keep them. The builder's
+    and the first re-read's folders went with it, and they were not in the Trash. Codex's F7 probe
+    and the round's deletion logs are lost; the deletion list in elenchus PR 8's body survived.
+    The note Beni sent with the appendix is appended to the second re-read brief.
+  - **Checked by the Planner:** the re-read's comment against GitHub, its record through the
+    head's own code, the seal and the seat's limits in its transcripts, and the code paths of
+    25-14 to 25-16. No probe was re-run.
 
 D8, D10 and D11 are not yet ruled. D4 is withdrawn, and D12 is Pilot (17 Nov).
 

@@ -125,3 +125,15 @@ A8. #8's body, against GitHub's edit history: the edit at 16:06:07 UTC adds 66 l
 
 A9. #8 carries ten comments, none edited; the record's is 7014646627, at 16:06:47 UTC. #1's seven and #3's one replay comments were last edited on 17 Nov, and #6's eight are unedited. #1, #3 and #6 are open, draft and locked at their pinned heads; #7 is closed and locked, and codex/forge returns 404. d4c32d8 and #1's head carry no status, and #6's head carries four, as before.
 ````
+
+## Note sent with the appendix (Thu 19 Nov 2026)
+
+The seat reported, when its synthesis was written, that the builder's folder and the first
+re-read's folder did not exist. The Planner confirmed it: `~/review-seats` was re-created at
+11:26:57 EST, after the third round finished, and the three earlier PR 8 folders were not in the
+Trash. The appendix above was not changed. Beni sent this note in front of it, in the same
+message:
+
+````text
+Before the appendix, an answer on the missing folders. You're right that they're gone. ~/review-seats was re-created at 11:26:57 EST today, and the earlier seats' folders (elenchus-pr8-pass2-r2, elenchus-pr8-pass2-r3 and elenchus-pr8-pass25-r2) went with it. They aren't in the Trash and can't be recovered. In your comment, say the folders were deleted before you started, not that they don't exist on this Mac. Keep what they held under what you did not verify. The record of the round's deletions that survives is the list Codex published in #8's body. Your question 5 is answered here: drop it from the questions for Beni, or turn it into a line under what you did not verify. Change nothing else in your synthesis because of this message.
+````
