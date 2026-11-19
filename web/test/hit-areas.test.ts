@@ -179,6 +179,48 @@ test('the gate reads every tab’s drawing, and exactly one tab is the current p
   expect(bandFaults(bare)).toEqual(['Moments has no drawn tab inside its hit area'])
 })
 
+/** Takes the current mark and the underline off one tab and puts them on another. */
+function markCurrent(shown: ReturnType<typeof band>, from: number, to: number) {
+  Object.assign(shown.controls[from]!, { current: false })
+  shown.controls[from]!.drawn!.underline = 'none'
+  Object.assign(shown.controls[to]!, { current: true })
+  shown.controls[to]!.drawn!.underline = UNDERLINE
+  return shown
+}
+
+test('the current tab is the tab the cell asked for: the mark and the underline on another are a fault', () => {
+  // The Fixtures page with aria-current and the underline moved to Table. One tab is
+  // current, it is underlined in the band's pitch, and the reviewed head found no fault.
+  const onTable = markCurrent(band(), 4, 5)
+  expect(bandFaults(onTable, { current: 'Fixtures' })).toEqual(['Table is marked as the current page, and the cell asked for Fixtures'])
+  // That band is what a Table cell has to show, and the untouched one is not.
+  expect(bandFaults(onTable, { current: 'Table' })).toEqual([])
+  expect(bandFaults(band(), { current: 'Table' })).toEqual(['Fixtures is marked as the current page, and the cell asked for Table'])
+  expect(bandFaults(markCurrent(band(), 4, 6), { current: 'Moments' })).toEqual([])
+  expect(bandFaults(markCurrent(band(), 4, 6), { current: 'Table' })).toEqual(['Moments is marked as the current page, and the cell asked for Table'])
+  // A cell that names no tab asked for the shell's first, which is what a URL without one shows.
+  expect(bandFaults(onTable)).toEqual(['Table is marked as the current page, and the cell asked for Fixtures'])
+  // The offline file's two tabs are held the same way.
+  const two = ['Fixtures', 'Table']
+  expect(bandFaults(band(two), { tabs: two, current: 'Table' })).toEqual(['Fixtures is marked as the current page, and the cell asked for Table'])
+  expect(bandFaults(markCurrent(band(two), 4, 5), { tabs: two, current: 'Table' })).toEqual([])
+  // A tab the shell does not hold cannot be the current one.
+  expect(bandFaults(band(two), { tabs: two, current: 'Moments' })).toEqual(['Fixtures is marked as the current page, and the cell asked for Moments'])
+  // The mark on the tab that was asked for and the underline on another: each tab is named.
+  const split = band()
+  split.controls[4]!.drawn!.underline = 'none'
+  split.controls[5]!.drawn!.underline = UNDERLINE
+  expect(bandFaults(split, { current: 'Fixtures' })).toEqual([
+    'Fixtures is the current tab, and the foot of its drawn tab reads none, expected a 2.5px underline',
+    'Table is not the current tab and is underlined',
+  ])
+  // Two marks, one of them right, is still two.
+  const both = band()
+  Object.assign(both.controls[5]!, { current: true })
+  both.controls[5]!.drawn!.underline = UNDERLINE
+  expect(bandFaults(both, { current: 'Fixtures' })).toEqual(['2 tabs are marked as the current page'])
+})
+
 test('pinned rows: flush under what pins above them, and topmost at their own centre', () => {
   const pinned = {
     band: { top: 0, bottom: 133 },

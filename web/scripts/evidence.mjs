@@ -307,8 +307,13 @@ export function tabFaults(control, pitch) {
  *   H2  no two hit areas overlap
  *   H3  the control row and the tab row are each 44 tall, on a 44 px pitch
  *   H4  no hit area covers the wordmark, the strap or the provenance line
+ * `current` is the tab the cell asked for, and the one tab that may be marked as the page
+ * and underlined. A cell that names none asked for the shell's first, which is what a URL
+ * without a tab shows; a caller that leaves it out for another tab fails, and is not excused.
+ *
+ * @param {{ tabs?: string[], current?: string }} [cell]
  */
-export function bandFaults(band, { tabs } = {}) {
+export function bandFaults(band, { tabs, current } = {}) {
   if (!band) return ['the band is missing']
   const faults = []
   if (!band.landmark) faults.push('the band has lost its header landmark, data-moments-background="header"')
@@ -349,8 +354,12 @@ export function bandFaults(band, { tabs } = {}) {
       if (before && before.row === control.row && control.left < before.left) faults.push(`${control.name} is drawn before ${before.name}`)
       if (want.row === 'tabs') faults.push(...tabFaults(control, band.pitch))
     })
-    const current = band.controls.filter((control) => control.current).length
-    if (current !== 1) faults.push(`${current} tabs are marked as the current page`)
+    // One tab is the page, and it is the one that was asked for. tabFaults has already put
+    // the underline on whichever tab is marked, so the mark carries the underline with it.
+    const marked = band.controls.filter((control) => control.current).map((control) => control.name)
+    const asked = current ?? expected.find((want) => want.row === 'tabs').label
+    if (marked.length !== 1) faults.push(`${marked.length} tabs are marked as the current page`)
+    else if (marked[0] !== asked) faults.push(`${marked[0]} is marked as the current page, and the cell asked for ${asked}`)
   }
 
   // The strap as ruled: a caps label tracked .12em, on one line.
@@ -445,10 +454,14 @@ async function bandGeometry(page) {
   })
 }
 
-/** The gate, for one cell of any shell. */
-async function assertBand(page, id, tabs) {
+/** A tab as the URL names it, and as the band labels it. */
+const TAB_LABEL = { fixtures: 'Fixtures', table: 'Table', moments: 'Moments' }
+
+/** The gate, for one cell of any shell. `tab` is the tab the cell's URL asked for. */
+async function assertBand(page, id, tab, tabs) {
   const band = await bandGeometry(page)
-  const faults = bandFaults(band, { tabs })
+  assert.ok(TAB_LABEL[tab], `${id} the band gate was not told which tab the cell asked for`)
+  const faults = bandFaults(band, { tabs, current: TAB_LABEL[tab] })
   assert.deepEqual(faults, [], `${id} ${faults.join('; ')}`)
   return band
 }
@@ -858,7 +871,7 @@ export async function runMatrix(browser, { origins, out, anchor, contrast = fals
         try {
           const state = await inspect(page)
           assertCell(state, errors, { id, lens, theme, tab })
-          const band = await assertBand(page, id)
+          const band = await assertBand(page, id, tab)
           // The strap against the first hit area, and the band's height, at every width.
           if (theme === 'light' && tab === 'fixtures') {
             measurements.push({
@@ -932,7 +945,7 @@ export async function captureWeeks(browser, { origins, out, weeks, contrast }, r
           try {
             const state = await inspect(page)
             assertCell(state, errors, { id, lens, theme, tab: 'fixtures' })
-            await assertBand(page, id)
+            await assertBand(page, id, 'fixtures')
             const shown = await shoot(page, path.join(out, `${id}.png`), width)
             if (contrast) contrastCells.push(await measureContrast(page, id, width, shown))
             cells.push({ ...cellReceipt(id, state, errors), week: week.monday, kind })
@@ -1203,7 +1216,7 @@ export async function captureOffline(browser, out, result = { sizes: {}, cells: 
       // names the address rather than the console's complaint about it.
       assert.deepEqual(escaped, [], `${id} asked for a host`)
       assert.deepEqual(errors, [], id)
-      await assertBand(page, id, ['Fixtures', 'Table'])
+      await assertBand(page, id, tab, ['Fixtures', 'Table'])
       await shoot(page, path.join(out, `${id}.png`), 390)
       cells.push({ id, theme, tab, scrollWidth: state.scrollWidth })
     } finally { await context.close() }
