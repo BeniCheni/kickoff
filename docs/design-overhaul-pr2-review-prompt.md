@@ -1184,3 +1184,146 @@ WHAT YOUR PASS MUST SHOW. The skill's 2.5 row and executive-brief.md set the met
 6. The squash body. The PR body becomes it. Say which of its lines the tip makes false, and give corrected ones from what you ran, with the trailers.
 7. The merge gate, clause by clause, in your brief. It ends in escalation whatever it finds, because plan section 3 gives the merge to Beni's word. A fix you find goes to Claude's next fix round as a finding; you write none.
 ````
+
+## Pass 2.5's second sitting: a read-only brief, escalated, its rerun and comment pending (Thu 19 Nov 2026, 10:44 AM EST)
+
+The Mac restarted at about 8:56 AM EST Thu 19 Nov. The restart emptied `/private/tmp`, and every
+#342 receipt folder there went with it: Pass 1's captures, Pass 2.5's first sitting, fix round 1
+and the base refresh. Their PR comments are now the only record of what each round measured. The
+three `kickoff-pr342-pass25*` worktrees under `/Users/benicheni/code/` survived, clean and at
+their SHAs.
+
+Codex's second sitting started at 10:30 AM EST. Its session file records `gpt-6.2-sol` at
+`xhigh`, a `read-only` sandbox, approval `on-request` and the tip worktree as its cwd, which is
+the seat as ruled. It worked for 13 minutes 34 seconds and returned the Executive Summary Brief
+below at 10:44 AM. It ran only what needed no write: standalone compiler checks, a reconstruction
+of both merges, and jsdom runs of the runner's own functions. Its first write request, the
+receipts folder, was still awaiting Beni's approval. No build or server ran, and no PR comment was
+posted. The brief lists the eleven checks, the per-commit suites and both runner modes as not
+verified.
+
+The PM seat checked the three findings against the code at `0f3270f`, at about 11:10 AM EST:
+- The focus sweep, `sweepFocus(page, place, within = '.page-measure')` in
+  `web/scripts/evidence.mjs`, collects reachable controls inside that class, and nothing fails
+  when it collects none. The base refresh reported the same gap.
+- The tab validator counts the tabs marked current and requires one. It does not check which tab
+  that is against the tab the cell requested.
+- `public/fonts/RECORD.md` still says "PR 2 has not merged, so the offline page does not select
+  Caslon 400 or Kickoff Mono 400 yet". It gives Fixtures and Table three faces at 107,588 bytes,
+  where the refresh measured six files. `public/faces.css` still says nothing renders Kickoff Mono
+  Text or Libre Caslon Text. Line 226 of the build brief gives the correction to this PR:
+  "Whichever of the two PRs merges second merges the integration branch into its own branch,
+  makes that line true and re-runs its evidence." The PM seat's base-refresh brief did not carry
+  that line forward, so the refresh re-measured the figures but did not reconcile the record.
+
+The brief, verbatim as Beni pasted it:
+
+````text
+## Executive Summary Brief — PR #342 · Pass 2.5, second sitting · Thu 19 Nov 2026, EST
+
+Decision — escalate and hold 0f3270f. GitHub reports all five checks green at the reviewed head. The independent read reproduced a focus-runner coverage gap, a smaller tab-selection coverage gap, and a stale font record that the build brief requires this PR to reconcile. The production browser rerun and the PR comment remain pending. The first requested write, creating the receipt directory, is still awaiting your approval.
+
+This sitting ran on gpt-6.2-sol at xhigh in the read-only sandbox, verified from its turn_context. GitHub still shows the PR open and ready for review, MERGEABLE and CLEAN, with base 8173066, no review decision, and auto-merge off. PR #342
+
+### What ships
+
+- One imprint band brings together the lens, theme, motion, and tab controls. The band and the page feet repeat the version, fixture count, and snapshot stamp.
+- The motion preference is read before the app starts. Starting motion under OS reduced motion lasts for the visit. The Rack and decorative effects arrive in later PRs.
+- The staleness banner uses amber and alarm planes on the existing request clock. Moments takes the second-edition ground and ink. Fixtures and Table retain their first-edition bodies.
+
+This is an integration step at v0.5.5. Your Branch, Ten, and Six rulings put the public overhaul at v0.6.0, with #341 added as a separate font-split cycle. The remaining plan covers rows and states, Table skin, still books, Rack motion, imagery, decorative motion, and the release. Step 0 moves to &lens=ledger at that one public release. The Next cutover follows as a later minor. Overhaul plan (docs/design-overhaul-plan.md:213)
+
+### What the 360 found
+
+Cursor’s nine build commits followed 541b9a9. Pass 1 reported ten findings. Pass 2 accepted all ten and committed fixes for Table pins, Moments paint, the band geometry gate, motion first frame, foot provenance, throwing storage writes, banner contrast, reduced motion, pointer feedback, and the gallery-harness preload. The first synthesis reported the remaining mobile focus and Next pre-hydration failures and the weakened Moments width assertion. The six fix-round commits and the refresh merge have Claude as both author and committer. Pass 1 · Pass 2 · First synthesis · Fix round
+
+| Commit | Cold read and independent corroboration |
+|---|---|
+| d0e743c | Adds the mobile row’s scroll margin for the labels, divider, and ring. The existing pin assertions stay intact and the new tests cover row structure and focus faults. In jsdom, the old CSS gave the sample row zero margin, a wrong divider selector gave 32.5 px, and the restored tip gave 60 px. Real keyboard scrolling is still open. |
+| 231869a | Keeps the colour mapping assertions and moves width and centring checks into the gallery’s own rule. Moving width to an unused selector passed the old predicate in both sheets. The tip predicates rejected displaced width and displaced centring, then passed on the original source. |
+| 30d7631 | Adds the Next-only parser script after the band. The new assertions cover placement, publication, a resize, and the Vite path. With stubbed heights, the tip script published 133 px and then 118 px on resize. The old path and a tip mutation that inserted a sibling before the script both stayed at the 118 px fallback. Production held-hydration layout is still open. |
+| 6d21c04 | Applies your caps and .12em ruling while retaining the source string. The stock validator rejected the old treatment and a lowercase tip mutation, then accepted the restored case. Real clearance at 360 px is still open. |
+| 219a2e2 | Puts the 22 px drawing and underline inside the 44 px button. It preserves the hit-area expectations and moves the 150 ms underline assertion to the span, including under reduced motion. The validator rejected a missing drawing and a drawing one pixel narrower than its label, then accepted restoration. Real geometry and navigation are still open. |
+| 72608cb | Moves the existing bootstrap declaration below the hook and reflows comments. The declaration, CSS rules, and assertions are identical. |
+| 0f3270f | I reconstructed the merge from both parents and compared every resulting tree entry. It matches the committed tree. Only tests/faces.test.ts and web/scripts/evidence.mjs needed a three-way content merge. The Caslon preload assertion survives, and the runner changes on each side retain their patch IDs. The matched base 3d44af1 also reconstructs exactly. |
+
+I found no weakened data-honesty assertion in the fix round or the refresh. The Table tests’ fixture mocks pick up the real provenance exports while keeping their synthetic fixtures and existing expectations.
+
+### Findings for Claude’s next round
+
+| Severity | Finding | Smallest useful fix |
+|---|---|---|
+| Medium | The focus runner can pass without pressing Tab. I ran stock proveFocus with a jsdom page adapter and reachable Table buttons under a renamed wrapper. It returned 24 passing cells and zero presses, including cells where it independently counted row controls. This corroborates the refresh’s concern about .page-measure. | Require a nonempty sweep at each placement and verify that every reachable row control was exercised. Add a missing-wrapper mutation that fails the step. Focus sweep (web/scripts/evidence.mjs:592) |
+| Medium | The font record still describes the pre-chrome page. It says the offline page does not select Caslon 400 or Kickoff Mono 400, and the face sheet says neither family renders. The current CSS assigns both to rendered elements, and I ran the actual inliner and found both halves of each regular face in its output. The build brief assigns record reconciliation to whichever PR lands second. | Correct the record and stale comments. Replace transfer totals after a fresh cold-load run. Font record (public/fonts/RECORD.md:9) · Face sheet (public/faces.css:11) |
+| Low | The tab validator accepts the underline on the wrong tab. On the Fixtures geometry fixture, I moved the sole aria-current and underline to Table. The validator returned no faults. The shipped TabNav binds aria-current to the selected tab. | Pass the requested tab into the geometry assertion and require that tab to be the sole current one. Tab validator (web/scripts/evidence.mjs:350) |
+
+### Verification and merge gate
+
+- Hosted green. verify, studio, Vercel, Vercel Preview Comments, and vercel-smoke succeeded at 0f3270f. The signed-out preview returned HTTP 302 to Vercel. Verify · Studio · Preview
+- Local evidence available. The three root TypeScript projects passed standalone compiler checks with incremental writes disabled. All three worktrees are clean at their assigned SHAs, their four package manifests and lockfiles match their prior checkouts, and lsof found no listener on the assigned ports. The earlier scratch directories were absent. I used the published comments and checked-in code as recipes.
+- Not verified this sitting. The prescribed npm suites and builds, offline scan on a fresh bundle, web checks, per-commit suites at the six detached SHAs, local Next smoke, real-browser red-to-green checks, and both runner modes at all three SHAs. That includes the exact R2 contrast tally, font transfer, bundle sizes, disk wrap width, and the four fresh captures. No build output was removed and no server was started. Physical iPhone WebKit, VoiceOver, H4, and a populated production Next gallery also remain open.
+- Non-release and numbering. The landing diff changes no version, lockfile, README release marker, or CHANGELOG. Your v0.6.0 ruling governs the eventual release. This PR needs no tag.
+- High findings and vendor agreement. Both High findings have fix commits. Pass 2 accepted all ten original findings. The existing evidence distinguishes the inherited ability to obscure focus from the new position of the sticky stack. Independent browser verification of the current fix is still required.
+- Step 0 and data. The URL codecs, URL-state helper, and sync workflow have no landing diff. The live navigation check is open. The landing diff carries three generated files whose tree 7439dcc matches 4cf9caf; the integration base’s 988f494 matches that sync’s parent. The matched application diff has no data changes. Your “Accept as main’s sync” ruling covers the target-side data change.
+- Authority. Plan §3 leaves the squash to your word. --no-merge applies throughout this pass.
+
+The live target diff is 72 files, +6,208/−2,269. The matched-snapshot diff is 61 files, +3,397/−250. The comparison with origin/main is 109 files, +6,078/−340, and includes earlier integration work.
+
+### Questions for Beni
+
+| Choice | Recommendation |
+|---|---|
+| Add ring clearance to global scroll padding? | Local. Keep the allowance on the Table rows while the phone check establishes whether other controls need it. |
+| Measure the band in Next’s HTML? | Measure. The parser probe followed a height change without a fixed breakpoint. Give the bootstrap observer an explicit handoff to the React observer. |
+| Change the upper ring on the first row of a long zone here? | Defer. Put the in-flow divider treatment in PR 4. On the phone, check that the first row has a visible focus indicator. |
+| Underline the whole label box, including final tracking? | Keep. The board exports support the label-box width, and the drawn span preserves the surrounding hit area. |
+| Keep the strap and tab geometry in the runner gate? | Keep. The isolated validators caught the changed casing and mismatched drawing width. Bind the underline to the requested tab as well. |
+| Require the focus sweep to prove coverage? | Fix. The stock runner accepted zero Tab presses with reachable controls present. |
+| Reconcile the font record in #342? | Fix. The actual inliner and current selectors contradict the record, and the build brief assigns the correction here. |
+
+Your prior rulings on string 34, the strap, tab drawing, inset, pinned band, feedback inks, and build effort are settled. PR 4 owns the loss pips and Table skin. PRs 3 and 5 carry the Previous contract. PR 7b owns the offline font trim. The relevant ideas are rows 125, 126, 129, and 131. Ideas (docs/v0.2.6-ideas.md:159)
+
+### Squash body corrections
+
+Replace the e820fd4 head line and the pending effort and string-34 questions. Use the approved caps strap and the drawn tab within its hit area. Describe the Moments repaint and the States-only harness preload. Replace the prediction of fallback fonts with the two regular faces now carried by the disk bundles. Refresh the old weight, bundle, and runner figures from the completed independent run. Preserve the approved Brooklyn-time wording and the existing unset-kickoff rule. Use Cursor and Claude’s trailers, following the integration branch’s author-credit precedent.
+
+### Handoff block
+
+Hold PR #342 at 0f3270f599ae5eb920abacb876224077afc08909.
+
+The pending approval is `mkdir -p /private/tmp/kickoff-342-pass25/sitting-2`
+for this sitting’s receipts. The production rerun and one PR comment still
+require their command approvals. Send the focus and tab validator findings
+and the font-record correction to Claude’s fix round.
+
+At the replacement head, rerun the checks and both runner modes. On the
+signed-in exact-head iPhone preview, inspect the band at 390 px and the wrap
+at 360 px. Scroll the UCL Table into positions 9–24, check the labels and
+divider, and Tab into a row under the pinned stack. Stop motion and reload
+to check the first glyph. Record H4 before deciding the squash.
+
+When the review clears, Beni clicks Squash and merge into overhaul/second-edition.
+
+Squash title
+Overhaul PR 2: chrome and the motion control (#342)
+
+Squash body
+Unify Kickoff’s imprint band, provenance and page feet. Read the motion
+preference before the app starts, repaint the staleness banner and Moments,
+and keep the Table’s pinned labels and keyboard focus visible under the band.
+Carry the two regular chrome faces in the offline and single-file builds.
+
+Cursor built the original PR on Grok 4.7 at Extra High, confirmed by Beni.
+Codex ran the cold review and synthesis. Claude ran the rebuttal, fixes and
+font-split refresh. Carry main’s generated snapshot from 4cf9caf as accepted
+by Beni. This integration step stays at v0.5.5.
+
+Co-authored-by: Cursor <cursoragent@cursor.com>
+Co-authored-by: Claude <noreply@anthropic.com>
+
+After the squash, from an overhaul/second-edition checkout
+git pull --ff-only
+npm run typecheck
+npm test
+npm run build
+````
