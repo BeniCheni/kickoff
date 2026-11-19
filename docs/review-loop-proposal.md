@@ -538,6 +538,10 @@ Cursor's hands this track seats no Cursor.
   for Beni. The rulings are under "Rulings received" ("Sprint 3's second Pass 3").
 - *Third fix brief:* [`review-loop-sprint-3-fix-3-prompt.md`](review-loop-sprint-3-fix-3-prompt.md),
   for Pass 2 again, as a re-read (Codex in the ChatGPT desktop app, `gpt-6.2-sol`, `xhigh`).
+- *Stopped and amended (Thu 19 Nov 2026):* Codex stopped at ruling 7 before any code change,
+  because a ruling posted after the synthesis could leave a finding contested while `status`
+  named the executor. Beni amended ruling 7 ("Fresh ruling required"); the resume paste is
+  appended to the third fix brief.
 - *Carried from Sprint 1's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are that
   comment's findings): 6, sequence by the order records were posted, not their presence; 7, every
   pass's `input_sha` is the previous recorded pass's `output_sha`, writing or not, and a head
@@ -1293,7 +1297,12 @@ for Cursor (S7).
     and 72 are rewritten as deletions that typecheck.
   - **6, 25-12.** One README sentence on `package.json` files npm reformats.
   - **7, 25-13.** In this round, `status` names the ruling pass as next when its record precedes
-    the standing synthesis.
+    the standing synthesis. *Amended Thu 19 Nov 2026 (Beni, "Fresh ruling required"), after
+    Codex stopped on a probe:* `status` and `authorize` share one answer to whether the review
+    needs a ruling. It does when the ruling pass has no standing record posted after the standing
+    synthesis, even with every finding settled, or when the findings check reports anything.
+    While it does, `authorize` refuses and `status` names the ruling pass. The order test alone
+    missed a later ruling that leaves a finding contested.
   - **The seats' credentials.** Reading and posting through gh's own login is within the Keychain
     rule for every seat; only `/usr/bin/security` and elenchus's own items are out.
   - **Two of the new blocking findings were the Planner's.** 25-9 and 25-10 come from the

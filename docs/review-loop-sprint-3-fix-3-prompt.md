@@ -68,3 +68,22 @@ YOUR RECORD, as the last fenced json block of one new comment on #8 (not a reply
 
 STOP AND REPORT if: the model or effort is not gpt-6.2-sol at xhigh; anything in the start check differs; a write would land outside the list above; a command would read the Keychain or post a status; a probe could reach GitHub as Beni; a ruling's mechanism holds where its rule does not; or a usage limit stops you. Your last message, in chat: the new head of sprint-3, each ruling and 3-1 with its commit, the deletion list's result, the receipts, what status names on #8 after your record, your comment's URL, and what you did not do. Then stop. A fresh Pass 2.5 re-read on claude-opus-5-5 at xhigh, which writes nothing, reads the round next, and Beni rules again at Pass 3.
 ````
+
+## Amendment: ruling 7 (Thu 19 Nov 2026)
+
+Codex stopped at ruling 7 before any code change, under the brief's own clause: an isolated probe
+at `1f69883` had a Pass 3 record, posted after the synthesis, leave note F7 contested. The ruled
+posting-order check then named the executor next, while `authorize --dry-run` refused with
+"contested finding F7 needs a ruling in pass 3". The cause was the Planner's: the ruling gave
+`status` a second, narrower test instead of the one `authorize` uses. Beni chose the wider reading
+("Fresh ruling required"): a ruling older than the standing synthesis is stale even when every
+finding is settled, and `authorize` refuses it too. The resume paste below replaces RULING 7;
+the delivery was the fenced block in chat.
+
+````text
+Ruling 7 is amended (Beni, Thu 19 Nov 2026), after your stop. It replaces RULING 7 in the brief. Everything else in the brief stands, and nothing of this round is done yet, so start from the code.
+
+RULING 7 — 25-13, AS AMENDED: ONE ANSWER TO "DOES THE REVIEW NEED A RULING?". Rule: status and authorize give the same answer, and while the answer is yes, status names neither the executor nor authorize. The review needs a ruling when either holds: the ruling pass has no standing record posted after the standing synthesis's, even if every finding is settled; or the findings check reports anything, that is a contested finding the ruling leaves unanswered or contested, or a blocking finding that is neither fixed nor killed. Mechanism: move unresolvedFindings out of src/authorize.ts into a module both import, add the posting-order test to it, and use it in both. authorize refuses with each reason it reports, the stale ruling as a rule "ruling" item naming both comments. status names the ruling pass as next, with the first reason as blocked, whenever it reports anything, in place of the executor or authorize. Tests: your F7 probe (a later ruling leaves F7 contested, and the same with F7 left out) names pass 3, and authorize refuses; 25-13's shape (passes 0 to 2.5 standing, the ruling before the synthesis re-read, every finding settled) names pass 3, and authorize refuses for the stale ruling alone; your control (a later ruling settles everything) names the executor, and with an executor record, authorize. Run status and authorize --dry-run on #1, #6 and #8 and report what each prints. On #6 the Pass 3 record (18:34:55 UTC) predates its synthesis re-read (18:46:17 UTC), so expect status to name pass 3 and the dry-run to gain the stale-ruling line. On #1 finding 6 is still contested, so expect status to name pass 3; the recapture commit carries any P9 file that moves.
+
+IF ANOTHER RULING STOPS YOU the same way, stop before pushing anything, keep your local commits, say in chat which ruling and why, and wait for Beni. Record the stop in #8's body when the round ends. Your body's stop report stays as written: add under it that the round resumed on the amended ruling, with this message's date.
+````
