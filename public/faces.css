@@ -12,9 +12,11 @@
  * renders today (500 and 600). Kickoff Mono Text carries 400 and 400 italic
  * as well. Those two faces stay off Kickoff Mono: an italic face there would
  * be the one today's italic mono matches, and a real 400 would replace the
- * 500 the page currently gets as the nearest weight. Nothing renders
- * Kickoff Mono Text, Kickoff Display, Libre Caslon Text or Chakra Petch yet,
- * so the browser does not fetch them.
+ * 500 the page currently gets as the nearest weight. The band's provenance
+ * line renders Kickoff Mono Text at 400 on every tab. The page foot and the
+ * staleness banner render Libre Caslon Text at 400 on Fixtures and Table.
+ * Nothing renders either italic, Kickoff Display or Chakra Petch yet, so the
+ * browser does not fetch them.
  *
  * A size-adjusted Arial was measured as a stand-in for Oswald and not shipped.
  * Oswald has no U+2192, so the stand-in drew the table's "Form →" arrow, and
