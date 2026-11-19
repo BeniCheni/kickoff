@@ -1446,3 +1446,20 @@ The fix round 2 brief above was amended in place before delivery, in four places
 at the second sitting's brief by its heading (it is no longer the archive's last section), it
 dates the state at 12:40 PM, it names the one Pass 2.5 tree still on disk and says not to
 recreate the other two, and it adds a free-space floor (17 GiB at 12:40 PM; stop below 5 GiB).
+
+## The second sitting's comment is posted (Thu 19 Nov 2026, 1:01 PM EST)
+
+Codex wrote the body at 12:45 PM EST to
+`/Users/benicheni/code/kickoff-receipts/pr342/pass25-sitting2/pr-comment.md` (23 lines, 5,154
+bytes), working from that folder, and asked to post it. The PM seat read the whole file before
+the post. Its header SHAs, the linked verify job (CI run 44461333845, a `pull_request` run at
+`0f3270f` that succeeded), the three findings and Beni's rulings matched the sitting's brief.
+The squash-body corrections from that brief are not in the comment; they stay in this archive,
+and the third sitting writes the squash body. Beni approved the post, and it went up as
+[issuecomment-7017561335](https://github.com/BeniCheni/kickoff/pull/342#issuecomment-7017561335)
+at 1:01 PM EST. Fetched back from GitHub, it matches the file apart from a trailing newline. The
+head was still `0f3270f`, CLEAN.
+
+Its first line: "gpt-6.2-sol · xhigh · sandbox read-only · Pass 2.5, second sitting — hold
+`0f3270f` for fix round 2". Fix round 2's brief, as amended above, starts next and reads this
+comment as "the first Codex comment after 7000167398".
