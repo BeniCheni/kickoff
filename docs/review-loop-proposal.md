@@ -542,6 +542,14 @@ Cursor's hands this track seats no Cursor.
   because a ruling posted after the synthesis could leave a finding contested while `status`
   named the executor. Beni amended ruling 7 ("Fresh ruling required"); the resume paste is
   appended to the third fix brief.
+- *Fixed a third time (Thu 19 Nov 2026):* the Pass 2 re-read's
+  [record](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7014646627): two commits to
+  `d4c32d8`, after a second stop on A16b that Beni answered. All seven rulings and 3-1 carried out
+  as the round reports them, 7, 12, 13, 14 and 15 left open as deferred, and 29 of 29 serial
+  deletions caught.
+- *Second re-read brief:* [`review-loop-sprint-3-synthesis-3-prompt.md`](review-loop-sprint-3-synthesis-3-prompt.md),
+  for the second Pass 2.5 re-read (Claude Code, `claude-opus-5-5`, `xhigh`), with its sealed
+  appendix as a second paste.
 - *Carried from Sprint 1's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are that
   comment's findings): 6, sequence by the order records were posted, not their presence; 7, every
   pass's `input_sha` is the previous recorded pass's `output_sha`, writing or not, and a head

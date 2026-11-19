@@ -87,3 +87,15 @@ RULING 7 — 25-13, AS AMENDED: ONE ANSWER TO "DOES THE REVIEW NEED A RULING?". 
 
 IF ANOTHER RULING STOPS YOU the same way, stop before pushing anything, keep your local commits, say in chat which ruling and why, and wait for Beni. Record the stop in #8's body when the round ends. Your body's stop report stays as written: add under it that the round resumed on the amended ruling, with this message's date.
 ````
+
+## The answer on A16b (Thu 19 Nov 2026)
+
+On resuming, Codex stopped a second time: ruling 2 expected `authorize` to admit A16b once the
+synthesis re-read carries F31 as `fixed`, but that probe's only Pass 3 predates the synthesis
+re-read, so amended ruling 7 refuses it for the stale ruling. The conflict was the Planner's: the
+brief's tests were written before the amendment. The Planner drafted this answer for Beni, who
+answered Codex, and the round resumed (#8's body, "Resumed on 19 Nov 2026").
+
+````text
+Confirmed (Beni). Amended ruling 7 wins over every earlier test in the brief. A16b with F31 carried as fixed is refused for the stale ruling alone, and the test asserts that item and no finding-carry item. A16b with F31 carried as open is refused for both 3-1 and the stale ruling. Add the second control you propose: the same review plus a Pass 3 re-read posted after the synthesis re-read, carrying F31 as fixed or leaving it out, then the executor's record; authorize admits it. Wherever another test in the brief expects authorize to admit a review whose ruling is older than its synthesis, apply the same rule: assert the stale-ruling refusal, and add a fresh-ruling control that is admitted. Name each such test in #8's body. Carry on.
+````
