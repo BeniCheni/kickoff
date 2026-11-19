@@ -1,6 +1,7 @@
 import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { stripFaceCssComments } from '../../scripts/strip-face-css-comments.ts'
 
 const webRoot = fileURLToPath(new URL('..', import.meta.url))
 const repoRoot = path.join(webRoot, '..')
@@ -8,19 +9,12 @@ const repoRoot = path.join(webRoot, '..')
 // The Vite page is served from a subpath, so its stylesheet uses document-relative
 // urls. The Next app is served from the domain root, including routes below /,
 // so the copy it serves uses root urls. The file name after /fonts/ is the same.
-function localFaceSources(css) {
-  const found = []
-  for (const match of css.matchAll(/@font-face\s*\{([^}]+)\}/g)) {
-    const src = match[1].match(/src:\s*([^;]+);/)?.[1] ?? ''
-    if (/local\(/i.test(src)) found.push(src.trim())
-  }
-  return found
-}
-
+// The directory copy includes both halves. unicode-range is left as written.
 export function nextFacesCss(css) {
-  const local = localFaceSources(css)
-  if (local.length) {
-    throw new Error(`A local() face is not copied (${local.join('; ')}).`)
+  // A second src or a src without a trailing semicolon also fails the check.
+  const uncommented = stripFaceCssComments(css)
+  if (/local\(/i.test(uncommented)) {
+    throw new Error('A local() face is not copied.')
   }
   return css.replaceAll('url("./fonts/', 'url("/fonts/')
 }
