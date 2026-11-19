@@ -587,18 +587,46 @@ export function focusFaults(seen) {
   return faults
 }
 
+/**
+ * What a placement's sweep has to have done before its presses are evidence. A sweep that
+ * reached nothing has no control to fault, so it passed: on a page without the wrapper it
+ * looks inside, every cell did. `owed` names the shown table's controls, read from the
+ * whole document and not through that wrapper, and each has to have been the target of a
+ * press. On the phone layout a club's row is a control, so `clubs`, counted in the
+ * committed standings and not on the page, is how many the rows have to hold.
+ *
+ * @param {{ owed: number }[]} seen
+ * @param {{ within: string, owed: string[], inRows: number, clubs?: number | null }} expected
+ */
+export function sweepFaults(seen, { within, owed, inRows, clubs = null }) {
+  const faults = []
+  if (!seen.length) faults.push(`no Tab was pressed: nothing a keyboard can reach is inside ${within}`)
+  if (clubs !== null && inRows !== clubs) faults.push(`the table’s rows hold ${inRows} controls, and the standings hold ${clubs} clubs`)
+  const pressed = new Set(seen.map((control) => control.owed))
+  const missed = owed.filter((_, place) => !pressed.has(place))
+  if (missed.length) {
+    const names = missed.slice(0, 3).map((name) => `"${name}"`).join(', ')
+    faults.push(`${missed.length} of the table’s ${owed.length} controls ${missed.length === 1 ? 'was' : 'were'} never the target of a press: ${names}${missed.length > 3 ? ', …' : ''}`)
+  }
+  return faults
+}
+
 /** Every control a Tab press can reach inside `within`, each placed by `place` first:
- *  { y } is its top in the viewport, { underFoot } that many pixels under the band's foot. */
-async function sweepFocus(page, place, within = '.page-measure') {
-  const targets = await page.evaluate((scope) => {
+ *  { y } is its top in the viewport, { underFoot } that many pixels under the band's foot.
+ *  `owed` is the shown table's controls and `inRows` how many of them sit in its rows. */
+async function sweepFocus(page, place, { within = '.page-measure', layout }) {
+  const found = await page.evaluate((scope, shown) => {
     const reachable = (el) => el.tabIndex >= 0 && !el.disabled && !el.closest('[inert]')
       && el.checkVisibility({ visibilityProperty: true }) && el.getClientRects().length > 0
     const list = [...document.querySelectorAll('a[href], button, input, select, textarea, summary, iframe, [tabindex], [contenteditable]')].filter(reachable)
-    window.__kickoffFocus = { list, targets: list.map((_, i) => i).filter((i) => i > 0 && list[i].closest(scope)) }
-    return window.__kickoffFocus.targets.length
-  }, within)
+    // Not through `scope`: these are owed a press whether or not the wrapper is there.
+    const table = list.filter((el) => el.closest(`[data-table="${shown}"]`))
+    const name = (el) => (el.getAttribute('aria-label') || el.textContent || el.tagName).replace(/\s+/g, ' ').trim().slice(0, 48)
+    window.__kickoffFocus = { list, table, targets: list.map((_, i) => i).filter((i) => i > 0 && list[i].closest(scope)) }
+    return { targets: window.__kickoffFocus.targets.length, owed: table.map(name), inRows: table.filter((el) => el.closest('[data-table-row]')).length }
+  }, within, layout)
   const seen = []
-  for (let n = 0; n < targets; n += 1) {
+  for (let n = 0; n < found.targets; n += 1) {
     const placed = await page.evaluate((index, where) => {
       const { list, targets: chosen } = window.__kickoffFocus
       const target = list[chosen[index]]
@@ -610,7 +638,7 @@ async function sweepFocus(page, place, within = '.page-measure') {
     }, n, place)
     await page.keyboard.press('Tab')
     seen.push({ ...placed, ...(await page.evaluate((index, ring) => {
-      const { list, targets: chosen } = window.__kickoffFocus
+      const { list, table, targets: chosen } = window.__kickoffFocus
       const target = list[chosen[index]]
       const active = document.activeElement
       const name = (el) => (el?.getAttribute?.('aria-label') || el?.textContent || el?.tagName || 'nothing').replace(/\s+/g, ' ').trim().slice(0, 48)
@@ -641,19 +669,23 @@ async function sweepFocus(page, place, within = '.page-measure') {
       const row = !!target.parentElement?.hasAttribute('data-table-row')
       return {
         text: name(target), active: name(active), landed: active === target, row,
+        // The control's place among the table's own, or -1: a press is counted by its target.
+        owed: table.indexOf(target),
         focusVisible: target.matches(':focus-visible'), top: rect.top, bottom: rect.bottom,
         points: body.length, under: tally(body),
         ...(row ? { ringUnder: tally(across.map((x) => [x, rect.top - ring])) } : {}),
       }
     }, n, FOCUS_RING)) })
   }
-  return seen
+  return { seen, owed: found.owed, inRows: found.inRows }
 }
 
 /** The Table in both apps, and both files from disk, at every width of the matrix. Each
  *  control is placed twice: one pixel under the band's foot, where the labels and a
- *  divider cover a row, and 20px from the top of the page, behind the band itself. */
+ *  divider cover a row, and 20px from the top of the page, behind the band itself. Each
+ *  placement is held to sweepFaults first, so a cell that pressed nothing cannot pass. */
 export async function proveFocus(browser, origins, out) {
+  const standings = JSON.parse(readFileSync(path.join(root, 'src/data/standings.json'), 'utf8')).leagues
   const files = { offline: path.join(root, 'dist-offline/index.html'), single: path.join(root, 'dist-single/index.html') }
   const shells = [
     ...Object.entries(origins).map(([app, origin]) => ({ app, url: (league) => `${origin}/?tab=table&league=${league}`, leagues: ['ucl', 'pl'], open: {} })),
@@ -667,14 +699,18 @@ export async function proveFocus(browser, origins, out) {
     try {
       await page.waitForSelector('[data-table-picker]', { timeout: 15_000 })
       const layout = width >= 768 ? 'desktop' : 'mobile'
-      // The desktop rows hold no control. If one arrives, the sweep below reaches it.
-      const inRows = await page.evaluate((shown) => document.querySelectorAll(`[data-table="${shown}"] [data-table-row] :is(a[href], button, [tabindex])`).length, layout)
-      const row = { id, controls: 0, rowControls: inRows, pressed: 0, moved: 0 }
+      // A club's row is a control on the phone. The desktop rows hold none, and its sorts
+      // are in the pinned labels; if a row control arrives there, it is owed a press too.
+      const clubs = layout === 'mobile' ? standings[league].length : null
+      const row = { id, controls: 0, tableControls: 0, rowControls: 0, clubs, pressed: 0, moved: 0 }
       for (const place of places) {
-        const seen = await sweepFocus(page, place)
-        const faults = seen.flatMap(focusFaults)
+        const within = '.page-measure'
+        const { seen, owed, inRows } = await sweepFocus(page, place, { within, layout })
+        const faults = [...sweepFaults(seen, { within, owed, inRows, clubs }), ...seen.flatMap(focusFaults)]
         assert.deepEqual(faults, [], `${id} ${place.name}: ${faults.join('; ')}`)
         row.controls = seen.length
+        row.tableControls = owed.length
+        row.rowControls = inRows
         row.pressed += seen.length
         row.moved += seen.filter((control) => Math.abs(control.top - control.before) > EPSILON).length
         // The reviewed case: position 16 of the Champions League table.

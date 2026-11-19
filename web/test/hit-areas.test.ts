@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { bandFaults, firstFrameFaults, focusFaults, hitAreaFaults, momentsPaintFaults, pinFaults, revealFaults, tabFaults } from '../scripts/evidence.mjs'
+import { bandFaults, firstFrameFaults, focusFaults, hitAreaFaults, momentsPaintFaults, pinFaults, revealFaults, sweepFaults, tabFaults } from '../scripts/evidence.mjs'
 
 const box = (name: string, left: number, top: number, w: number, h = 44) => ({ name, left, top, right: left + w, bottom: top + h, w, h })
 
@@ -234,6 +234,37 @@ test('a sweep that lands on another control, or a control with no ring, is a fau
   expect(focusFaults({ ...chip, focusVisible: false })).toEqual(['"La Liga" took focus and shows no focus ring'])
   expect(focusFaults({ ...chip, top: 20, bottom: 50, under: { 'the band': 15 } }))
     .toEqual(['"La Liga" took focus at 20.00 and rests at 20.00 to 50.00, with 15 of 15 points under the band'])
+})
+
+test('a sweep that pressed nothing is a fault, and so is a table control no press was aimed at', () => {
+  // One press as the sweep records it: `owed` is the control's place among the table's own, or -1.
+  const press = (owed: number) => ({ text: owed < 0 ? 'La Liga' : `${owed + 1}. Club`, row: owed >= 0, owed })
+  const table = ['1. Club', '2. Club', '3. Club', '4. Club', '5. Club']
+  const phone = { within: '.page-measure', owed: table, inRows: 5, clubs: 5 }
+  const whole = [press(-1), press(0), press(1), press(2), press(3), press(4)]
+  expect(sweepFaults(whole, phone)).toEqual([])
+  // The reviewed head on a page with no .page-measure: the rows were counted, nothing was pressed, and it passed.
+  expect(sweepFaults([], phone)).toEqual([
+    'no Tab was pressed: nothing a keyboard can reach is inside .page-measure',
+    '5 of the table’s 5 controls were never the target of a press: "1. Club", "2. Club", "3. Club", …',
+  ])
+  // Not empty is not enough. The picker was reached and the table was not.
+  expect(sweepFaults([press(-1)], phone)).toEqual(['5 of the table’s 5 controls were never the target of a press: "1. Club", "2. Club", "3. Club", …'])
+  expect(sweepFaults(whole.filter((seen) => seen.owed !== 3), phone)).toEqual(['1 of the table’s 5 controls was never the target of a press: "4. Club"'])
+  // A press is counted by the control it was aimed at, not by how many there were.
+  expect(sweepFaults([press(-1), press(0), press(0), press(1), press(2), press(3)], phone)).toEqual(['1 of the table’s 5 controls was never the target of a press: "5. Club"'])
+  // The phone table holds one control for each club in the standings, counted off the page.
+  expect(sweepFaults(whole, { ...phone, clubs: 6 })).toEqual(['the table’s rows hold 5 controls, and the standings hold 6 clubs'])
+  expect(sweepFaults(whole.slice(0, 5), { ...phone, owed: table.slice(0, 4), inRows: 4 })).toEqual(['the table’s rows hold 4 controls, and the standings hold 5 clubs'])
+  // It is the rows that are counted. A row that has lost its marker is no longer read as one.
+  expect(sweepFaults(whole, { ...phone, inRows: 0 })).toEqual(['the table’s rows hold 0 controls, and the standings hold 5 clubs'])
+  // The desktop rows hold no control and are owed none: its nine sorts are in the pinned labels.
+  const desk = { within: '.page-measure', owed: ['Pts', 'Pl'], inRows: 0, clubs: null }
+  expect(sweepFaults([press(-1), { text: 'Pts', row: false, owed: 0 }, { text: 'Pl', row: false, owed: 1 }], desk)).toEqual([])
+  expect(sweepFaults([], desk)).toEqual([
+    'no Tab was pressed: nothing a keyboard can reach is inside .page-measure',
+    '2 of the table’s 2 controls were never the target of a press: "Pts", "Pl"',
+  ])
 })
 
 test('before the app runs, the pinned rows and the scroll padding already start at the band’s foot', () => {
