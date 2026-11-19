@@ -759,9 +759,78 @@ export function firstFrameFaults(state) {
   return [...faults, ...pinFaults(state)]
 }
 
+const BAND_WATCHER = { script: 'the server’s script', app: 'the app' }
+
+/**
+ * Who watches the band's height, and who wrote it. With the app held, the script the
+ * server renders after the band is the one observer, and it has published the figure.
+ * Once the app has hydrated, that script has stopped and the app's observer is the one
+ * left. Two would publish one figure, and the older of the two is the one that writes, so
+ * the app's would never publish at all. `writes` are those since the reading before, and
+ * `owned` is whether the app's observer was watching when a write was made. After a wrap
+ * the app has to have published the new height.
+ *
+ * @param {'held' | 'hydrated' | 'wrapped'} phase
+ * @param {{ watchers: { by: string, live: boolean }[], writes: { value: string, by: string, owned: boolean }[] }} watch
+ */
+export function handoffFaults(phase, { watchers, writes }) {
+  const owner = BAND_WATCHER[phase === 'held' ? 'script' : 'app']
+  const watching = watchers.filter((watcher) => watcher.live).map((watcher) => BAND_WATCHER[watcher.by])
+  const faults = []
+  if (watching.length !== 1 || watching[0] !== owner) {
+    faults.push(`${watching.length ? watching.join(' and ') : 'nothing'} ${watching.length > 1 ? 'watch' : 'watches'} the band, expected ${owner} alone`)
+  }
+  if (writes.some((write) => write.owned && write.by !== 'app')) faults.push('the server’s script wrote the band’s height after the app had it')
+  if (phase === 'held' && !writes.some((write) => write.by === 'script')) faults.push('the server’s script published no height before the app ran')
+  if (phase === 'wrapped' && !writes.some((write) => write.by === 'app')) faults.push('the band changed height and the app published nothing')
+  return faults
+}
+
+/** Runs in the page before any of its scripts. Each observer that takes the band is
+ *  recorded with who made it, the script the server renders after the band or the app, and
+ *  each write of the band's height with who made it and whether the app was watching by then. */
+function watchBand() {
+  const Real = window.ResizeObserver
+  const who = () => (document.currentScript?.hasAttribute('data-kickoff-band') ? 'script' : 'app')
+  const watchers = []
+  const writes = []
+  const made = new WeakMap()
+  let reporting = null
+  window.ResizeObserver = class extends Real {
+    constructor(callback) {
+      super((entries, observer) => {
+        reporting = made.get(this)?.by ?? null
+        try { callback(entries, observer) } finally { reporting = null }
+      })
+    }
+    observe(target, options) {
+      if (target instanceof Element && target.matches('header.imprint-band')) {
+        const entry = { by: who(), live: true }
+        made.set(this, entry)
+        watchers.push(entry)
+      }
+      return super.observe(target, options)
+    }
+    disconnect() {
+      const entry = made.get(this)
+      if (entry) entry.live = false
+      return super.disconnect()
+    }
+  }
+  const set = CSSStyleDeclaration.prototype.setProperty
+  CSSStyleDeclaration.prototype.setProperty = function (name, value, priority) {
+    if (name === '--band-height' && this === document.documentElement.style) {
+      writes.push({ value, by: reporting ?? who(), owned: watchers.some((entry) => entry.by === 'app' && entry.live) })
+    }
+    return set.call(this, name, value, priority)
+  }
+  window.__kickoffBand = { watchers, writes }
+}
+
 /** Next's Table with hydration held, then released: at 360, at 365 and 366 where the
  *  provenance stops wrapping, at 390 and at 1000. The band's faces are not scripts and
- *  load while the app waits, so each width is read in the face a reader ends up with. */
+ *  load while the app waits, so each width is read in the face a reader ends up with.
+ *  Each width is then taken across the wrap, with the app's observer alone to publish it. */
 export async function proveFirstFrame(browser, origins) {
   const rows = []
   if (!origins.next) return rows
@@ -775,12 +844,13 @@ export async function proveFirstFrame(browser, origins) {
     try {
       await page.setViewport({ width, height: 844, deviceScaleFactor: 1 })
       await page.evaluateOnNewDocument(() => localStorage.setItem('kickoff-theme', 'light'))
+      await page.evaluateOnNewDocument(watchBand)
       const scripts = await holdScripts(page)
       const loaded = page.goto(`${origins.next}/?tab=table&league=ucl`, { waitUntil: 'load', timeout: 30_000 })
       loaded.catch(() => {})
       await until(() => scripts.count() > 0, `${id}: the app's scripts`)
       await until(() => page.evaluate(() => !!document.querySelector('[data-table] [data-table-row]')).catch(() => false), `${id}: the server-rendered table`)
-      const read = () => page.evaluate(async (layout) => {
+      const read = (shown = width) => page.evaluate(async (layout) => {
         await document.fonts.ready
         // A face that has just arrived moves the wrap; the band is watched, and reports in a frame.
         await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
@@ -806,21 +876,43 @@ export async function proveFirstFrame(browser, origins) {
           labels: measure(table.querySelector(':scope > .sticky'), 'labels'),
           divider: divider && getComputedStyle(divider).position === 'sticky' ? measure(divider, divider.getAttribute('data-zone-divider')) : null,
           scrollWidth: document.documentElement.scrollWidth, innerWidth,
+          watch: { watchers: window.__kickoffBand.watchers.map((entry) => ({ ...entry })), writes: window.__kickoffBand.writes.map((entry) => ({ ...entry })) },
         }
-      }, width >= 768 ? 'desktop' : 'mobile')
+      }, shown >= 768 ? 'desktop' : 'mobile')
+      // Each reading is judged on the writes made since the one before it.
+      let judged = 0
+      const since = (state) => {
+        const watch = { watchers: state.watch.watchers, writes: state.watch.writes.slice(judged) }
+        judged = state.watch.writes.length
+        return watch
+      }
       const held = await read()
-      const faults = firstFrameFaults(held)
+      const faults = [...firstFrameFaults(held), ...handoffFaults('held', since(held))]
       assert.deepEqual(faults, [], `${id} with the app held: ${faults.join('; ')}`)
       await scripts.release()
       await loaded
       await page.waitForFunction(() => Object.keys(document.querySelector('header.imprint-band') ?? {}).some((key) => key.startsWith('__reactFiber')), { timeout: 15_000 })
       const after = await read()
-      const later = [...(after.hydrated ? [] : ['the app never ran']), ...firstFrameFaults({ ...after, hydrated: false })]
+      const later = [...(after.hydrated ? [] : ['the app never ran']), ...firstFrameFaults({ ...after, hydrated: false }), ...handoffFaults('hydrated', since(after))]
       assert.deepEqual(later, [], `${id} after hydration: ${later.join('; ')}`)
       assert.equal(after.scrollWidth, after.innerWidth, id)
+      // A wrap after the handoff. The page goes to the matrix width where the band stands
+      // at its other height, and the app's observer has to publish that by itself.
+      let wrapped = null
+      for (const across of [390, 360]) {
+        if (across === width || wrapped) continue
+        await page.setViewport({ width: across, height: 844, deviceScaleFactor: 1 })
+        const state = await read(across)
+        if (!near(state.band.bottom, after.band.bottom)) wrapped = { width: across, ...state }
+      }
+      assert.ok(wrapped, `${id} the band stands ${after.band.bottom.toFixed(2)} tall at ${width}, at 390 and at 360: there was no wrap to cross`)
+      const across = [...firstFrameFaults({ ...wrapped, hydrated: false }), ...handoffFaults('wrapped', since(wrapped))]
+      assert.deepEqual(across, [], `${id} taken to ${wrapped.width} after hydration: ${across.join('; ')}`)
+      assert.equal(wrapped.scrollWidth, wrapped.innerWidth, `${id} at ${wrapped.width}`)
       assert.deepEqual(errors, [], id)
-      const brief = (state) => ({ band: state.band.bottom, published: state.published, padding: state.padding, labels: state.labels.top, divider: state.divider?.top ?? null })
-      rows.push({ id, held: brief(held), after: brief(after) })
+      const watching = (state) => state.watch.watchers.filter((entry) => entry.live).map((entry) => BAND_WATCHER[entry.by])
+      const brief = (state) => ({ band: state.band.bottom, published: state.published, padding: state.padding, labels: state.labels.top, divider: state.divider?.top ?? null, watching: watching(state) })
+      rows.push({ id, held: brief(held), after: brief(after), wrapped: { width: wrapped.width, ...brief(wrapped), writes: wrapped.watch.writes.slice(after.watch.writes.length).map((entry) => `${entry.value} by ${BAND_WATCHER[entry.by]}`) } })
     } finally { await context.close() }
   }
   return rows

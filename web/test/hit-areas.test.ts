@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { bandFaults, firstFrameFaults, focusFaults, hitAreaFaults, momentsPaintFaults, pinFaults, revealFaults, sweepFaults, tabFaults } from '../scripts/evidence.mjs'
+import { bandFaults, firstFrameFaults, focusFaults, handoffFaults, hitAreaFaults, momentsPaintFaults, pinFaults, revealFaults, sweepFaults, tabFaults } from '../scripts/evidence.mjs'
 
 const box = (name: string, left: number, top: number, w: number, h = 44) => ({ name, left, top, right: left + w, bottom: top + h, w, h })
 
@@ -335,6 +335,43 @@ test('before the app runs, the pinned rows and the scroll padding already start 
   ])
   // Held means held: a reading taken after the app ran proves nothing about the first frame.
   expect(firstFrameFaults({ ...held, hydrated: true })).toEqual(['the app ran while its scripts were held'])
+})
+
+test('one observer has the band: the server’s script until the app arrives, and the app’s alone after', () => {
+  const script = { by: 'script', live: true }
+  const app = { by: 'app', live: true }
+  const stopped = { by: 'script', live: false }
+  // `owned` is whether the app's observer was watching when the height was written.
+  const write = (by: string, owned: boolean, value = '133px') => ({ value, by, owned })
+  expect(handoffFaults('held', { watchers: [script], writes: [write('script', false), write('script', false, '118px')] })).toEqual([])
+  expect(handoffFaults('hydrated', { watchers: [stopped, app], writes: [] })).toEqual([])
+  expect(handoffFaults('wrapped', { watchers: [stopped, app], writes: [write('app', true, '118px')] })).toEqual([])
+  // The reviewed head: the script never stops, and it is the one that publishes each wrap.
+  expect(handoffFaults('hydrated', { watchers: [script, app], writes: [] })).toEqual(['the server’s script and the app watch the band, expected the app alone'])
+  expect(handoffFaults('wrapped', { watchers: [script, app], writes: [write('script', true)] })).toEqual([
+    'the server’s script and the app watch the band, expected the app alone',
+    'the server’s script wrote the band’s height after the app had it',
+    'the band changed height and the app published nothing',
+  ])
+  // What the script wrote before the app had the band is its own to write, whenever it is read.
+  expect(handoffFaults('hydrated', { watchers: [stopped, app], writes: [write('script', false)] })).toEqual([])
+  // One watcher is not enough: it has to be the right one. An app that never took the band
+  // leaves the script on it, and a held page has no app to watch.
+  expect(handoffFaults('hydrated', { watchers: [script], writes: [] })).toEqual(['the server’s script watches the band, expected the app alone'])
+  expect(handoffFaults('held', { watchers: [app], writes: [write('script', false)] })).toEqual(['the app watches the band, expected the server’s script alone'])
+  // A handoff made before the app's observer is watching leaves nothing watching.
+  expect(handoffFaults('hydrated', { watchers: [stopped], writes: [] })).toEqual(['nothing watches the band, expected the app alone'])
+  // The script told to stop while the app is still held.
+  expect(handoffFaults('held', { watchers: [stopped], writes: [write('script', false)] })).toEqual(['nothing watches the band, expected the server’s script alone'])
+  expect(handoffFaults('held', { watchers: [], writes: [] })).toEqual([
+    'nothing watches the band, expected the server’s script alone',
+    'the server’s script published no height before the app ran',
+  ])
+  // The app alone watches, and the wrap is not published: the figure is stale.
+  expect(handoffFaults('wrapped', { watchers: [stopped, app], writes: [] })).toEqual(['the band changed height and the app published nothing'])
+  // StrictMode mounts the effect twice. The observer it dropped is not a second watcher.
+  expect(handoffFaults('hydrated', { watchers: [stopped, { by: 'app', live: false }, app], writes: [] })).toEqual([])
+  expect(handoffFaults('hydrated', { watchers: [stopped, app, app], writes: [] })).toEqual(['the app and the app watch the band, expected the app alone'])
 })
 
 test('Moments paint: pulp ground and pulp-ink pass; the first edition’s ground or ink is a fault', () => {

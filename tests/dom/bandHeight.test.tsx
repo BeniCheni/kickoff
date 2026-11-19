@@ -4,7 +4,7 @@ import { afterEach, expect, it, vi } from 'vitest'
 import App from '../../src/App'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { BandHeightBoot } from '../../src/components/ImprintBand'
-import { BAND_HEIGHT, BAND_HEIGHT_BOOT } from '../../src/lib/useBandHeight'
+import { BAND_HEIGHT, BAND_HEIGHT_BOOT, BAND_HEIGHT_OWNED } from '../../src/lib/useBandHeight'
 import { edt, primeClock } from './rig'
 
 let release: (() => void) | null = null
@@ -16,6 +16,8 @@ afterEach(() => {
   document.documentElement.style.removeProperty(BAND_HEIGHT)
   document.querySelectorAll('[data-server-html]').forEach((el) => el.remove())
   delete pageWindow().ResizeObserver
+  // A script left listening by one test would hear the next test's app.
+  document.dispatchEvent(new Event(BAND_HEIGHT_OWNED))
 })
 
 /** An inserted script runs in the document's own window. Under vitest that is not the
@@ -129,6 +131,97 @@ it('the script follows the band until the app arrives: a face that loads late mo
   // A band taken off the page reports no height. The last figure stands.
   server.resize(0)
   observed[0]!.notify()
+  expect(published()).toBe('118px')
+})
+
+/** The page window's ResizeObserver, as the script after the band meets it. A stopped
+ *  observer is handed nothing, as a browser's is not, and says so in `live`. */
+function installPageObserver() {
+  const observers: Array<{ target: Element | null; live: boolean; notify: () => void }> = []
+  pageWindow().ResizeObserver = class {
+    private readonly entry: { target: Element | null; live: boolean; notify: () => void }
+    constructor(callback: () => void) {
+      const entry = { target: null as Element | null, live: false, notify: () => { if (entry.live) callback() } }
+      this.entry = entry
+    }
+    observe(target: Element) {
+      this.entry.target = target
+      this.entry.live = true
+      observers.push(this.entry)
+    }
+    disconnect() { this.entry.live = false }
+    unobserve() {}
+  }
+  return observers
+}
+
+it('the app’s observer takes the band over: the script stops watching, and one writer is left', () => {
+  release = primeClock(edt('2026-09-05T12:00:00'))
+  const script = installPageObserver()
+  const server = parseServerBand(133)
+  expect(published()).toBe('133px')
+  expect(script.map((observer) => observer.live)).toEqual([true])
+  // jsdom does not hydrate, so the app's band is an element of its own here. The handoff
+  // is made on the document, and does not turn on which element the app was given.
+  const layout = installBandLayout(133)
+  // StrictMode mounts the effect twice: the second mount finds no script left to tell.
+  const view = render(<StrictMode><App /></StrictMode>)
+  expect(layout.observing()).toBe(1)
+  expect(script.map((observer) => observer.live)).toEqual([false])
+  // The script reports nothing now, whatever its band measures.
+  const written = vi.spyOn(document.documentElement.style, 'setProperty')
+  server.resize(140)
+  script[0]!.notify()
+  expect(published()).toBe('133px')
+  // A wrap is published once, and by the app.
+  layout.resize(118)
+  expect(published()).toBe('118px')
+  expect(written.mock.calls.filter(([name]) => name === BAND_HEIGHT)).toEqual([[BAND_HEIGHT, '118px']])
+  view.unmount()
+  expect(published()).toBe('')
+  expect(layout.observing()).toBe(0)
+})
+
+it('the script watches until it is told the app has the band, and nothing else stops it', () => {
+  const script = installPageObserver()
+  const server = parseServerBand(133)
+  document.dispatchEvent(new Event('kickoff:band-height'))
+  window.dispatchEvent(new Event(BAND_HEIGHT_OWNED))
+  expect(script[0]!.live).toBe(true)
+  server.resize(118)
+  script[0]!.notify()
+  expect(published()).toBe('118px')
+  document.dispatchEvent(new Event(BAND_HEIGHT_OWNED))
+  expect(script[0]!.live).toBe(false)
+  server.resize(133)
+  script[0]!.notify()
+  expect(published()).toBe('118px')
+})
+
+it('the app says it has the band once it has published and is watching, and not before', () => {
+  release = primeClock(edt('2026-09-05T12:00:00'))
+  const layout = installBandLayout(118)
+  const heard: Array<{ observing: number; published: string }> = []
+  const listen = () => heard.push({ observing: layout.observing(), published: published() })
+  document.addEventListener(BAND_HEIGHT_OWNED, listen)
+  const view = render(<App />)
+  expect(heard).toEqual([{ observing: 1, published: '118px' }])
+  layout.resize(133)
+  view.unmount()
+  document.removeEventListener(BAND_HEIGHT_OWNED, listen)
+  // A wrap and an unmount are not a second handoff.
+  expect(heard).toHaveLength(1)
+})
+
+it('an app that cannot watch the band leaves the script watching it', () => {
+  release = primeClock(edt('2026-09-05T12:00:00'))
+  const script = installPageObserver()
+  const server = parseServerBand(133)
+  // The test's own global has no ResizeObserver here, so the hook measures nothing.
+  render(<App />)
+  expect(script.map((observer) => observer.live)).toEqual([true])
+  server.resize(118)
+  script[0]!.notify()
   expect(published()).toBe('118px')
 })
 

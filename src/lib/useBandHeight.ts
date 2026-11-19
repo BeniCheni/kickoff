@@ -3,6 +3,9 @@ import { useLayoutEffect, type RefObject } from 'react'
 /** The custom property the stylesheet reads. 118px there until the page measures. */
 export const BAND_HEIGHT = '--band-height'
 
+/** Sent on the document once the app's own observer is watching the band. */
+export const BAND_HEIGHT_OWNED = 'kickoff:band-height-owned'
+
 /**
  * The band is pinned, so whatever pins below it has to start at its foot. Its
  * height is not a constant: the provenance wraps under about 366px, and a
@@ -22,6 +25,11 @@ export function useBandHeight(ref: RefObject<HTMLElement | null>): void {
     publish()
     const observer = new ResizeObserver(publish)
     observer.observe(band)
+    // The handoff. In a shell the server rendered, the script below has watched the band
+    // until now. Two observers would publish one figure, and the older is reported to
+    // first, so the script would go on writing it and this one never would. This one has
+    // published and is watching, so the script is told, and stops.
+    document.dispatchEvent(new Event(BAND_HEIGHT_OWNED))
     return () => {
       observer.disconnect()
       root.style.removeProperty(BAND_HEIGHT)
@@ -36,6 +44,7 @@ export function useBandHeight(ref: RefObject<HTMLElement | null>): void {
  * it. This runs as the parser passes the band, as the script directly after it, and
  * publishes the figure in the form the hook writes. It keeps watching, because the band
  * can change height before the app arrives: the provenance is drawn in a fallback face
- * until its own loads, and the two wrap one pixel apart.
+ * until its own loads, and the two wrap one pixel apart. It stops when the hook says the
+ * app has the band, and the hook's observer is the only one from then on.
  */
-export const BAND_HEIGHT_BOOT = `(function(){var b=document.currentScript.previousElementSibling;if(!b)return;var m=function(){var h=b.getBoundingClientRect().height;if(h)document.documentElement.style.setProperty('${BAND_HEIGHT}',h+'px')};m();if(window.ResizeObserver)new ResizeObserver(m).observe(b)})()`
+export const BAND_HEIGHT_BOOT = `(function(){var b=document.currentScript.previousElementSibling;if(!b)return;var m=function(){var h=b.getBoundingClientRect().height;if(h)document.documentElement.style.setProperty('${BAND_HEIGHT}',h+'px')};m();if(!window.ResizeObserver)return;var o=new ResizeObserver(m);o.observe(b);document.addEventListener('${BAND_HEIGHT_OWNED}',function(){o.disconnect()},{once:true})})()`
