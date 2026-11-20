@@ -695,3 +695,53 @@ body:has(.page-measure[data-measure='moments']) {
 .fixture-status-poster[data-voice='pitch'] { color: var(--fb-on-pitch); background: var(--fb-pitch); border-color: var(--fb-pitch); }
 .fixture-score[data-voice='pitch'] { color: var(--fb-pitch); }
 .fixture-score[data-voice='ink'] { color: var(--fb-pulp-ink); }
+
+.fixture-row {
+  padding: 9px 0;
+  border-bottom: 1px solid var(--fb-rule);
+  color: var(--fb-pulp-ink);
+  background: var(--fb-typescript);
+}
+.fixture-poster { background: var(--fb-pulp); }
+.fixture-first, .fixture-outcome, .fixture-meta, .fixture-clock {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+.fixture-clock, .fixture-score {
+  flex: none;
+  white-space: nowrap;
+  color: var(--fb-pitch);
+  font: 700 12px/1.4 var(--fb-mono);
+}
+.fixture-clock[data-voice='ink'] { color: var(--fb-pulp-ink); }
+.fixture-ledger .fixture-clock { min-width: 62px; }
+.fixture-day-note { font: 400 10px/1.2 var(--fb-mono); color: var(--fb-pulp-muted); }
+.fixture-names { min-width: 0; overflow-wrap: anywhere; font: 400 15px/1.3 var(--fb-book); }
+.fixture-ledger .fixture-names { flex: 1; font-family: var(--fb-mono); font-size: 13px; }
+.fixture-poster .fixture-clock { margin-left: auto; }
+.fixture-leader {
+  flex: 1 1 12px;
+  align-self: baseline;
+  container-type: inline-size;
+}
+.fixture-leader::after { content: ''; display: block; border-bottom: 1px dotted var(--fb-pulp-muted); }
+@container (width < 12px) { .fixture-leader::after { visibility: hidden; } }
+.fixture-outcome { flex: none; white-space: nowrap; }
+.fixture-outcome:empty { display: none; }
+.fixture-meta {
+  flex-wrap: wrap;
+  gap: 2px 5px;
+  margin-top: 3px;
+  font: 400 10px/1.5 var(--fb-mono);
+  color: var(--fb-pulp-muted);
+}
+.fixture-meta > span { white-space: nowrap; }
+.fixture-ledger .fixture-meta { text-transform: uppercase; }
+.fixture-competition i, .competition-dot {
+  display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px;
+}
+.stadium-clock[data-voice='amber'], .fixture-unset { color: var(--fb-amber); }
+.fixture-unset, .fixture-note { margin-top: 3px; font: 400 12px/1.4 var(--fb-book); }
+.fixture-unset { font-style: italic; }
+.fixture-note { color: var(--fb-pulp-muted); overflow-wrap: anywhere; }

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { fireEvent, render, screen } from '@testing-library/react'
+import { render, screen } from '@testing-library/react'
 import { FixtureRow } from '../../src/components/FixtureRow'
 import { NextUpStrip } from '../../src/components/NextUpStrip'
 import { TonightSlate } from '../../src/components/TonightSlate'
@@ -22,9 +22,8 @@ afterEach(() => { release?.(); release = undefined })
 describe('missing venue UI', () => {
   it('renders amber unknown-local and the real Brooklyn pill without a spurious next-day label', () => {
     render(<FixtureRow fixture={f} />)
-    fireEvent.click(screen.getByRole('button'))
-    expect(screen.getByText('local time not known').className).toContain('text-floodlight-strong')
-    expect(screen.getByText(/12:45 PM EDT/)).toBeTruthy()
+    expect(screen.getByText('local time not known').dataset.voice).toBe('amber')
+    expect(screen.getByText('12:45 PM')).toBeTruthy()
     expect(screen.queryByText(/next day|prev\./)).toBeNull()
   })
   it.each([NextUpStrip, TonightSlate])('%s keeps its Brooklyn-only output when the venue zone disappears', (Hero) => {

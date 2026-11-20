@@ -48,8 +48,8 @@ describe('day-level matchday provenance', () => {
   it('keeps the competition name in readable muted ink while the glyph retains its hue', () => {
     render(<FixtureRow fixture={f} />)
     const meta = screen.getByText(/Champions League/)
-    expect(meta.className).toBe('text-ink-muted')
+    expect(meta.closest('.fixture-meta')).toBeTruthy()
     expect(meta.getAttribute('style')).toBeNull()
-    expect(meta.querySelector('span')!.style.color).toBe('rgb(139, 111, 232)')
+    expect(meta.querySelector('i')!.style.backgroundColor).toBe('rgb(139, 111, 232)')
   })
 })

@@ -1,117 +1,64 @@
-import { useState } from 'react'
 import { COMPETITIONS } from '../lib/competitions'
-import { fixtureTimes } from '../lib/time'
-import { unsettledStatus, type Fixture } from '../lib/schema'
-
-import { StatusPill } from './StatusPill'
-import { hasKickedOff } from '../lib/lensSelectors'
 import type { Lens } from '../lib/lens'
+import { hasKickedOff } from '../lib/lensSelectors'
+import { unsettledStatus, type Fixture } from '../lib/schema'
+import { fixtureTimes } from '../lib/time'
+import { StatusPill } from './StatusPill'
 
-/**
- * One fixture as a ledger row on hairlines: leading Brooklyn time in mono, teams, score,
- * status pill; competition + venue as a muted meta line. Tapping expands the detail line —
- * both clock pills (stadium-local and Brooklyn, derived from one UTC instant so they cannot
- * disagree) and the note. A kickoff whose time the league has not actually set
- * is rendered as "time not yet set" rather than as a confident number.
- *
- * Lens deltas (Poster's 20px time) are pure CSS variants — the
- * component takes no lens prop. `stale` is selected by the parent clock; `hot` marks the
- * LIVE/next-kickoff rows for the retained data marker.
- */
-export function FixtureRow({ fixture, hot = false, stale = false, next = false, lens = 'ledger', nowUtcIso }: { fixture: Fixture; hot?: boolean; stale?: boolean; next?: boolean; lens?: Lens; nowUtcIso?: string }) {
+type Props = {
+  fixture: Fixture
+  lens?: Lens
+  hot?: boolean
+  stale?: boolean
+  next?: boolean
+  nowUtcIso?: string
+}
+
+/** Both layouts describe the same fixture. Only a league-set, settled kickoff has clocks. */
+export function FixtureRow({ fixture, lens = 'ledger', hot, stale, next, nowUtcIso }: Props) {
   const comp = COMPETITIONS[fixture.competition]
-  const t = fixtureTimes(fixture.kickoffUtc, fixture.venueTz)
-  const marquee = comp.group !== 'domestic'
-  const isStale = fixture.status === 'in_play' && stale
-  const pastScheduled = nowUtcIso !== undefined && hasKickedOff(fixture, nowUtcIso)
+  const times = fixtureTimes(fixture.kickoffUtc, fixture.venueTz)
   const unsettled = unsettledStatus(fixture.status)
-  const placeholder = fixture.timeConfidence !== 'exact'
-  const [expanded, setExpanded] = useState(false)
+  const unset = !unsettled && fixture.timeConfidence !== 'exact'
+  const timed = !unsettled && !unset
+  const poster = lens === 'poster'
+  const isStale = fixture.status === 'in_play' && stale === true
+  const pastScheduled = nowUtcIso !== undefined && hasKickedOff(fixture, nowUtcIso)
+  const dayNote = timed && times.dayDelta ? <small className="fixture-day-note">
+    ({times.brooklyn.weekday}, {times.dayDelta < 0 ? 'prev.' : 'next'} day)
+  </small> : null
+  const clock = <span className="fixture-clock" data-voice={unset ? 'ink' : 'pitch'}>
+    {poster && dayNote}{timed ? times.brooklyn.time : unset ? '—' : null}{!poster && dayNote}
+  </span>
+  const result = fixture.result && !pastScheduled && (
+    <span className="fixture-score" data-voice={isStale ? 'amber' : fixture.status === 'in_play' ? 'ink' : 'pitch'}>
+      {fixture.result.home}–{fixture.result.away}
+      {fixture.shootout && ` (${fixture.shootout.home}–${fixture.shootout.away})`}
+    </span>
+  )
+  const pill = <StatusPill status={fixture.status} kickedOff={isStale || pastScheduled}
+    next={next === true && timed} lens={lens} />
 
   return (
-    <div
-      data-hot={hot ? 'true' : undefined}
-      className="relative border-b border-line py-2 pl-[9px]"
-    >
-      {(marquee || unsettled) && (
-        <span
-          aria-hidden
-          className="absolute inset-y-0 left-0 w-[3px]"
-          style={{ background: unsettled ? 'var(--accent)' : comp.color }}
-        />
-      )}
-
-      <button
-        type="button"
-        onClick={() => setExpanded((e) => !e)}
-        aria-expanded={expanded}
-        className="block w-full cursor-pointer text-left"
-      >
-        {/* spans with block/flex display — a <button> must not contain <div>s */}
-        <span className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-          <span className="font-mono min-w-[58px] text-[13px] font-medium text-ink-secondary poster:min-w-[82px] poster:text-[20px] poster:font-semibold poster:text-ink">
-            {unsettled ? null : placeholder ? '—' : t.brooklyn.time}
-          </span>
-          <span className="text-[13.5px] font-semibold">
-            {fixture.home.name}{' '}
-            <span className="text-[12px] font-normal text-ink-muted">vs</span>{' '}
-            {fixture.away.name}
-          </span>
-          {fixture.result && !pastScheduled && (
-            <span className="fixture-score font-mono text-[13px] font-semibold" data-voice={isStale ? 'amber' : fixture.status === 'in_play' ? 'ink' : 'pitch'}>
-              {fixture.result.home}–{fixture.result.away}
-              {fixture.shootout ? ` (${fixture.shootout.home}–${fixture.shootout.away})` : ''}
-            </span>
-          )}
-          <StatusPill status={fixture.status} kickedOff={isStale || pastScheduled}
-            next={next && !placeholder} lens={lens} />
-        </span>
-
-        <span className="mt-0.5 block pl-[66px] text-[11px] text-ink-muted poster:pl-[92px]">
-          <span className="text-ink-muted">
-            <span aria-hidden style={{ color: comp.color }}>{comp.flag}</span> {comp.name}
-          </span>
-          {fixture.venue && <> &middot; {fixture.venue}</>}
-        </span>
-
-        {!unsettled && placeholder && (
-          <span className="mt-0.5 block pl-[66px] text-[11px] text-floodlight-strong italic poster:pl-[92px]">
-            {t.brooklyn.weekday} {t.brooklyn.isoDate} &mdash; kickoff time not yet set by the league
-          </span>
-        )}
-      </button>
-
-      <div
-        className={[
-          'grid transition-[grid-template-rows] duration-150 ease-out motion-reduce:transition-none',
-          expanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
-        ].join(' ')}
-      >
-        <div className="min-h-0 overflow-hidden">
-          <div className="pt-1.5 pl-[66px] poster:pl-[92px]">
-            {!unsettled && !placeholder && (
-              <div className="flex flex-wrap gap-x-2.5 gap-y-1 text-[11px] text-ink-secondary">
-                <span className={`inline-flex items-center gap-1 rounded-full border border-line bg-surface px-2 py-0.5${t.local ? '' : ' font-mono text-[10px] font-medium tracking-[0.06em] uppercase text-floodlight-strong'}`}>
-                  {t.local ? <><span aria-hidden>{comp.flag}</span> {t.local.time} local</> : 'local time not known'}
-                </span>
-                <span className="inline-flex items-center gap-1 rounded-full border border-pitch bg-surface px-2 py-0.5 font-semibold text-pitch">
-                  <span aria-hidden>🗽</span> {t.brooklyn.time} {t.abbrev}
-                  {t.dayDelta !== null && t.dayDelta !== 0 && (
-                    <span className="font-normal">
-                      ({t.brooklyn.weekday}, {t.dayDelta === -1 ? 'prev.' : 'next'} day)
-                    </span>
-                  )}
-                </span>
-              </div>
-            )}
-
-            {fixture.note && (
-              <div className="mt-1.5 text-[10.5px] text-ink-muted">{fixture.note}</div>
-            )}
-
-          </div>
-        </div>
+    <div className={`fixture-row fixture-${lens}`} data-fixture-id={fixture.id} data-hot={hot || undefined}>
+      <div className="fixture-first">
+        {!poster && clock}
+        <span className="fixture-names">{fixture.home.name} v {fixture.away.name}</span>
+        {poster && timed && <span aria-hidden="true" className="fixture-leader" />}
+        {poster ? !unsettled && clock : <span className="fixture-outcome">{result}{pill}</span>}
       </div>
+      <div className="fixture-meta">
+        {poster && <span className="fixture-outcome">{result}{pill}</span>}
+        <span className="fixture-competition"><i aria-hidden="true" style={{ backgroundColor: comp.color }} />{comp.name}</span>
+        {fixture.venue && <span> · {fixture.venue}</span>}
+        {timed && <span> · <span className="stadium-clock" data-voice={times.local ? 'muted' : 'amber'}>
+          {times.local ? `${times.local.clock24} local` : 'local time not known'}
+        </span></span>}
+      </div>
+      {unset && <div className="fixture-unset" data-voice="amber">
+        {times.brooklyn.weekday} {times.brooklyn.isoDate} — kickoff time not yet set by the league
+      </div>}
+      {fixture.note && <div className="fixture-note" data-voice="muted">{fixture.note}</div>}
     </div>
   )
 }

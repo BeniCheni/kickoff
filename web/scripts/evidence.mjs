@@ -543,14 +543,13 @@ export async function proveTablePins(browser, origins, anchor = null) {
     } finally { await context.close() }
   }
   // Focus on a control that lies behind the band, on Fixtures, where the band is the only
-  // thing pinned. A fixture row is scrolled to 20px from the top of the page, then focused.
+  // thing pinned. The Previous week button is scrolled to 20px from the top of the page, then focused.
   for (const [app, origin] of Object.entries(origins)) for (const width of [360, 1000]) {
     const id = `reveal-${app}-${width}`
     const { context, page, errors } = await openPage(browser, `${origin}/?lens=ledger${anchor ? `&date=${anchor}` : ''}`, 'light', width)
     try {
       const reveal = await page.evaluate(() => {
-        const all = [...document.querySelectorAll('button[aria-expanded]')]
-        const row = all[Math.min(all.length - 1, 12)]
+        const row = document.querySelector('button[aria-label="Previous"]:enabled') ?? document.querySelector('button[aria-label="Next"]:enabled')
         if (!row) return null
         window.scrollTo(0, row.getBoundingClientRect().top + window.scrollY - 20)
         const before = row.getBoundingClientRect().top
@@ -563,7 +562,7 @@ export async function proveTablePins(browser, origins, anchor = null) {
           topmost: hit === row || row.contains(hit) ? 'itself' : hit?.closest('header') ? 'the band' : 'another element',
         }
       })
-      assert.ok(reveal, `${id} found no fixture row to focus`)
+      assert.ok(reveal, `${id} found no enabled week stepper to focus`)
       assert.ok(reveal.before < reveal.band, `${id} the row was not behind the band before it took focus`)
       const faults = revealFaults(reveal)
       assert.deepEqual(faults, [], `${id} ${faults.join('; ')}`)
@@ -1041,9 +1040,9 @@ export async function runMatrix(browser, { origins, out, anchor, contrast = fals
             assert.deepEqual(faults, [], `${id} ${faults.join('; ')}`)
           }
           if (width === 390 && tab === 'fixtures' && theme === 'light') {
-            const row = await page.$('button[aria-expanded]')
+            const row = await page.$('[data-fixture-id]')
             assert.ok(row, id)
-            measurements.push({ app, lens, top: await row.evaluate((el) => el.parentElement.getBoundingClientRect().top) })
+            measurements.push({ app, lens, top: await row.evaluate((el) => el.getBoundingClientRect().top) })
           }
           const shown = await shoot(page, path.join(out, `${id}.png`), width)
           if (contrast) contrastCells.push(await measureContrast(page, id, width, shown))
