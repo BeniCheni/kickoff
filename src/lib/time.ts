@@ -20,6 +20,7 @@ export type ZonedParts = {
   /** Display pieces from Intl, so components never have to split a formatted string. */
   clock: string
   meridiem: string
+  clock24: string
   /** "2026-08-21" — the calendar date *in that zone*, which may differ from the UTC date. */
   isoDate: string
   /** "Fri" */
@@ -52,6 +53,7 @@ export function zonedParts(instant: Date, tz: string): ZonedParts {
     time: meridiem ? `${clock} ${meridiem}` : clock,
     clock,
     meridiem,
+    clock24: formatter(tz, { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(instant),
     isoDate: `${parts.year}-${parts.month}-${parts.day}`,
     weekday: parts.weekday ?? '',
   }

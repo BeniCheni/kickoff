@@ -29,6 +29,10 @@ describe('stadium clocks follow the venue, never the competition or viewer', () 
       // may legitimately acquire an unknown venue after this acceptance sample.
       expect(venueTimeZone(f.venueCountry, f.venueId), `${f.id}: unmapped ${f.venueCountry}`).toBeDefined()
       expect(f.venueTz, f.id).toBe(venueTimeZone(f.venueCountry, f.venueId))
+      const { local } = fixtureTimes(f.kickoffUtc, f.venueTz)
+      const [hour, minute] = local.clock.split(':')
+      const hour24 = Number(hour) % 12 + (local.meridiem === 'PM' ? 12 : 0)
+      expect(local.clock24, f.id).toBe(`${String(hour24).padStart(2, '0')}:${minute}`)
       expect(fixtureTimes(f.kickoffUtc, f.venueTz).brooklyn)
         .toEqual(fixtureTimes(f.kickoffUtc, 'Europe/Zurich').brooklyn)
     }

@@ -13,6 +13,12 @@ describe('structured display time', () => {
     expect(parts.time).toBe(`${clock} ${meridiem}`)
   })
 
+  it.each([
+    ['04:00', '00:00'], ['13:05', '09:05'], ['16:00', '12:00'], ['00:30', '20:30'],
+  ])('formats %s UTC as %s on the Brooklyn 24-hour clock', (utc, expected) => {
+    expect(zonedParts(new Date(`2026-09-05T${utc}:00Z`), 'America/New_York').clock24).toBe(expected)
+  })
+
   it('formats Poster titles at calendar boundaries', () => {
     expect(posterDayTitle('2026-08-30')).toBe('Sun 30 Aug')
     expect(posterDayTitle('2027-01-01')).toBe('Fri 1 Jan')
