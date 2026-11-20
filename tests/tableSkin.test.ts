@@ -82,12 +82,32 @@ describe('voices, as painted', () => {
   })
 })
 
-describe('the Table’s files and the clock', () => {
-  it('build no Date from a kickoff: every clock a cell prints is the pure layer’s', () => {
-    for (const file of ['components/TablePage.tsx', 'components/NextFixtureCell.tsx', 'components/FormPips.tsx']) {
-      const text = source(file)
-      expect(text, file).not.toMatch(/new Date\([^)]*kickoff|Date\.parse\([^)]*kickoff|toLocale(Time|Date)?String|Intl\.DateTimeFormat/)
+/*
+ * Section 6's source scan, for the Table's files. PR 3 builds beside this PR and its
+ * tests/fixtureHonesty.test.ts holds the same first pattern over every component; whichever
+ * merges second leaves one scan covering both. The Table's rule is the stricter one, and it
+ * is what NextFixtureCell's own comment says: the lane brings both clocks, already formatted
+ * from one UTC instant by fixtureTimes, and no Table file formats or builds a time.
+ */
+describe('the Table’s files and time', () => {
+  const files = ['TablePage', 'FormPips', 'NextFixtureCell', 'LeagueTabs', 'ZonesKey', 'RegisterCover']
+  const code = (file: string) => readFileSync(new URL(`../src/components/${file}.tsx`, import.meta.url), 'utf8')
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/^\s*\/\/.*$/gm, '')
+
+  it('builds no Date from a kickoff instant', () => {
+    for (const file of files) expect(code(file), file).not.toMatch(/new\s+Date\s*\([^)]*\bkickoffUtc\b/)
+  })
+
+  it('builds no Date at all and formats no time: every clock is the lane’s own', () => {
+    for (const file of files) {
+      expect(code(file), file).not.toMatch(/\bnew\s+Date\b|\bDate\s*\.\s*(?:parse|UTC|now)\b|\bIntl\s*\.|\.toLocale(?:Time|Date)?String\b|\.get(?:UTC)?(?:Hours|Minutes)\b/)
     }
+    // The one place the Table prints a clock reads it from the lane.
+    const cell = code('NextFixtureCell')
+    expect(cell).toContain('const { brooklyn, local } = lane.times')
+    expect(cell).toContain('{brooklyn.time}')
+    expect(cell).toContain('{local.clock24} local')
   })
 })
 
