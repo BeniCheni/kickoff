@@ -42,17 +42,14 @@ describe('shared fixture row, server render and hydration', () => {
     expect(text).not.toContain('Ramón')
     const host = document.createElement('div')
     host.innerHTML = renderToString(<FixtureRow fixture={fixture({ venue: undefined, venueTz: undefined })} />)
-    // The collapsed row omits the venue. Expanding is client state; the server HTML
-    // still carries the unknown-local sentence inside the collapsed detail.
     expect(host.textContent).toContain('local time not known')
   })
 
   it('prints the stadium time and the word local from the same instant', async () => {
     const row = fixture({ venueTz: 'Europe/Madrid' })
-    // Today's 12-hour form. PR 3 prints the 24-hour stadium clock and moves this assertion.
     const { local } = fixtureTimes(row.kickoffUtc, 'Europe/Madrid')
     const text = await serverAndClient(row)
-    expect(text).toContain(`${local.time} local`)
+    expect(text).toContain(`${local.clock24} local`)
   })
 
   it.each([

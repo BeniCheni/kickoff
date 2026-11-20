@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { COMPETITION_KEYS, COMPETITIONS, type CompetitionKey } from '../lib/competitions'
-import { addDays, niceDate, shortDate, startOfWeek } from '../lib/time'
+import { addDays, startOfWeek } from '../lib/time'
 import { useUrlState } from '../lib/useUrlState'
 import { encodeDate, encodeOnly, parseDateParam, parseOnlyParam } from '../lib/urlCodecs'
 import type { Lens } from '../lib/lens'
@@ -8,6 +8,7 @@ import { SYNC_STAMP } from '../lib/fixtures'
 import { PageFoot } from './PageFoot'
 import { NextUpStrip } from './NextUpStrip'
 import { TonightSlate } from './TonightSlate'
+import { WeekRow } from './WeekRow'
 import { FilterBar } from './FilterBar'
 import { WeekView } from './WeekView'
 
@@ -66,7 +67,7 @@ export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
 
   const weekStart = startOfWeek(anchor)
   const nav = (dir: number) => setAnchor(addDays(anchor, dir * 7))
-  const periodLabel = `${shortDate(weekStart)} – ${niceDate(addDays(weekStart, 6))}`
+  const [filtersOpen, setFiltersOpen] = useState(false)
 
   return (
     <>
@@ -78,26 +79,10 @@ export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
         <NextUpStrip today={today} active={active} />
       ) : null}
 
-      <FilterBar
-        active={active}
-        onToggle={onToggle}
-        onSetGroup={onSetGroup}
-        onSetAll={(on) => setActive(on ? ALL : new Set())}
-      />
-
-      <div className="mb-4 flex items-center justify-between gap-2">
-        <button onClick={() => nav(-1)} aria-label="Previous"
-          className="size-9 shrink-0 cursor-pointer rounded border-[1.5px] border-line-strong bg-surface">‹</button>
-        <div className="flex-1">
-          <div className="font-display text-center text-[17px] font-semibold">{periodLabel}</div>
-          <button onClick={() => setAnchor(today)}
-            className="mt-0.5 w-full cursor-pointer text-center text-[10px] font-semibold tracking-wide text-pitch uppercase">
-            Jump to today
-          </button>
-        </div>
-        <button onClick={() => nav(1)} aria-label="Next"
-          className="size-9 shrink-0 cursor-pointer rounded border-[1.5px] border-line-strong bg-surface">›</button>
-      </div>
+      <WeekRow start={weekStart} today={today} lens={lens} count={active.size} expanded={filtersOpen}
+        onNavigate={nav} onToday={() => setAnchor(today)} onFilters={() => setFiltersOpen(!filtersOpen)} />
+      <FilterBar active={active} lens={lens} open={filtersOpen} onToggle={onToggle}
+        onSetGroup={onSetGroup} onShowAll={() => setActive(ALL)} />
 
       <WeekView weekStart={weekStart} active={active} today={today} lens={lens} />
 

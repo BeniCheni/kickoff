@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { fixtureTimes, brooklynAbbrev, brooklynDate, startOfWeek, addDays, syncStamp, posterDayTitle, zonedParts } from '../src/lib/time'
+import { fixtureTimes, brooklynAbbrev, brooklynDate, startOfWeek, addDays, syncStamp, posterDayTitle, weekRange, zonedParts } from '../src/lib/time'
 
 describe('structured display time', () => {
   it.each([
@@ -11,6 +11,12 @@ describe('structured display time', () => {
     expect(parts.clock).toBe(clock)
     expect(parts.meridiem).toBe(meridiem)
     expect(parts.time).toBe(`${clock} ${meridiem}`)
+  })
+
+  it.each([
+    ['04:00', '00:00'], ['13:05', '09:05'], ['16:00', '12:00'], ['00:30', '20:30'],
+  ])('formats %s UTC as %s on the Brooklyn 24-hour clock', (utc, expected) => {
+    expect(zonedParts(new Date(`2026-09-05T${utc}:00Z`), 'America/New_York').clock24).toBe(expected)
   })
 
   it('formats Poster titles at calendar boundaries', () => {
@@ -94,5 +100,16 @@ describe('calendar helpers', () => {
     expect(addDays('2026-10-31', 1)).toBe('2026-11-01')
     expect(addDays('2026-11-01', -1)).toBe('2026-10-31')
     expect(addDays('2026-12-31', 1)).toBe('2027-01-01')
+  })
+})
+
+describe('Brooklyn week range', () => {
+  it.each([
+    ['2026-12-21', '2026-12-31', 'Dec 21–27'],
+    ['2026-12-28', '2026-12-31', 'Dec 28, 2026–Jan 3, 2027'],
+    ['2027-01-04', '2026-12-31', 'Jan 4–10, 2027'],
+    ['2027-01-04', '2027-01-01', 'Jan 4–10'],
+  ])('labels %s relative to %s', (start, today, expected) => {
+    expect(weekRange(start, today)).toBe(expected)
   })
 })

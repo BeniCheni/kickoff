@@ -4,7 +4,7 @@ import { WeekView } from '../../src/components/WeekView'
 import { COMPETITION_KEYS, competitionRank } from '../../src/lib/competitions'
 import { FIXTURES } from '../../src/lib/fixtures'
 import type { Fixture } from '../../src/lib/schema'
-import { brooklynDate, posterDayTitle, startOfWeek, weekdayShort } from '../../src/lib/time'
+import { brooklynDate, posterDayTitle, startOfWeek } from '../../src/lib/time'
 
 /**
  * One synthetic Saturday, in a file order that is not the display order. The committed
@@ -32,7 +32,7 @@ vi.mock('../../src/data/fixtures.json', () => {
       // name, the competition key, the venue and the id.
       row('e-tie-first', 'uel', 18, 'Zebra'),
       row('d-supercup', 'supercopa', 20, 'Trophy'),
-      row('c-tie-second', 'ucl', 18, 'Alpha'),
+      { ...row('c-tie-second', 'ucl', 18, 'Alpha'), status: 'postponed' },
       row('b-league-early', 'laliga', 12, 'Early League'),
       row('a-europe-early', 'uecl', 12, 'Early Europe'),
     ],
@@ -52,7 +52,7 @@ function expectedOrder(date: string): Fixture[] {
 }
 
 function pairing(fixture: Fixture): string {
-  return `${fixture.home.name} vs ${fixture.away.name}`
+  return `${fixture.home.name} v ${fixture.away.name}`
 }
 
 /** An element's own text, ignoring descendants. Ledger's weekday and numeral are divs. */
@@ -69,20 +69,15 @@ function sectionFor(container: HTMLElement, date: string, lens: 'poster' | 'ledg
       [...section.querySelectorAll('span')].some((span) => ownText(span) === title),
     ) ?? null
   }
-  const numeral = String(Number(date.slice(8)))
-  const weekday = weekdayShort(date)
-  return sections.find((section) => {
-    const texts = [...section.querySelectorAll('div')].map(ownText)
-    return texts.includes(weekday) && texts.includes(numeral)
-  }) ?? null
+  return sections.find(section => section.dataset.weekDate === date) ?? null
 }
 
 /** Longest contained pairing wins, so "Arsenal vs Chelsea" does not claim "Arsenal vs Chelsea B". */
 function renderedIds(section: HTMLElement, expected: Fixture[]): string[] {
   const remaining = [...expected]
   const found: string[] = []
-  for (const button of section.querySelectorAll('button')) {
-    const text = button.textContent ?? ''
+  for (const row of section.querySelectorAll('[data-fixture-id]')) {
+    const text = row.textContent ?? ''
     const hits = remaining.filter((fixture) => text.includes(pairing(fixture)))
     hits.sort((a, b) => pairing(b).length - pairing(a).length)
     const hit = hits[0]
@@ -112,6 +107,7 @@ describe('a day renders in display order in both lenses', () => {
       const section = sectionFor(view.container, DATE, lens)
       expect(section, `${lens} section for ${DATE}`).toBeTruthy()
       expect(renderedIds(section!, expected)).toEqual(expected.map((fixture) => fixture.id))
+      expect(section!.querySelector('[data-fixture-id="synthetic:c-tie-second"]')!.textContent).not.toMatch(/\d:\d\d|local/)
       view.unmount()
     }
   })

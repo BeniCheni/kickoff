@@ -206,29 +206,29 @@ export function hotFixtureIds(
  * gap never lies about hidden matches).
  */
 export type PosterBlock =
-  | { kind: 'big'; date: string; isToday: boolean; fixtures: Fixture[]; dominant: CompetitionKey }
-  | { kind: 'small'; date: string; isToday: boolean; fixtures: Fixture[] }
+  | { kind: 'big'; date: string; isToday: boolean; hidden?: number; fixtures: Fixture[]; dominant: CompetitionKey }
+  | { kind: 'small'; date: string; isToday: boolean; hidden?: number; fixtures: Fixture[] }
   | { kind: 'gap'; dates: string[]; hiddenTotal: number }
 
-export function planPosterWeek(days: readonly DayInfo[]): PosterBlock[] {
-  const blocks: PosterBlock[] = []
+/** One group per visible day, or per uninterrupted run of empty days. */
+export function groupWeekDays(days: readonly DayInfo[]): DayInfo[][] {
+  const groups: DayInfo[][] = []
   for (const day of days) {
-    if (day.shown.length === 0) {
-      const last = blocks[blocks.length - 1]
-      if (last && last.kind === 'gap') {
-        last.dates.push(day.date)
-        last.hiddenTotal += day.total
-      } else {
-        blocks.push({ kind: 'gap', dates: [day.date], hiddenTotal: day.total })
-      }
-      continue
-    }
-    const dominant = dominantCompetition(day.shown)
-    if (day.shown.length > 2 && dominant !== null) {
-      blocks.push({ kind: 'big', date: day.date, isToday: day.isToday, fixtures: day.shown, dominant })
-    } else {
-      blocks.push({ kind: 'small', date: day.date, isToday: day.isToday, fixtures: day.shown })
-    }
+    const previous = groups.at(-1)
+    if (!day.shown.length && previous && !previous[0]!.shown.length) previous.push(day)
+    else groups.push([day])
   }
-  return blocks
+  return groups
+}
+
+export function planPosterWeek(days: readonly DayInfo[]): PosterBlock[] {
+  return groupWeekDays(days).map(group => {
+    const day = group[0]!
+    if (!day.shown.length) {
+      return { kind: 'gap', dates: group.map(d => d.date), hiddenTotal: group.reduce((sum, d) => sum + d.total, 0) }
+    }
+    const fields = { date: day.date, isToday: day.isToday, fixtures: day.shown, hidden: day.total - day.shown.length }
+    const dominant = dominantCompetition(day.shown)
+    return day.shown.length > 2 && dominant !== null ? { kind: 'big', ...fields, dominant } : { kind: 'small', ...fields }
+  })
 }

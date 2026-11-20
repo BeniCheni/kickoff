@@ -1,66 +1,41 @@
 import { COMPETITIONS, COMPETITION_KEYS, GROUP_LABELS, type CompetitionKey } from '../lib/competitions'
-import { CompetitionChip } from './CompetitionChip'
+import type { Lens } from '../lib/lens'
+import { FilterToggle } from './FilterToggle'
 
 type Props = {
   active: ReadonlySet<CompetitionKey>
+  lens: Lens
+  open: boolean
   onToggle: (key: CompetitionKey) => void
   onSetGroup: (group: string, on: boolean) => void
-  onSetAll: (on: boolean) => void
+  onShowAll: () => void
 }
 
-export function FilterBar({ active, onToggle, onSetGroup, onSetAll }: Props) {
-  return (
-    <details className="mb-4 rounded border border-line bg-surface">
-      <summary className="label-caps flex cursor-pointer items-center justify-between gap-2 px-3.5 py-3 text-[12.5px]">
-        <span>Filters</span>
-        <span className="font-sans text-[10.5px] font-normal tracking-normal normal-case text-ink-muted">
-          {active.size === COMPETITION_KEYS.length
-            ? `All ${COMPETITION_KEYS.length} competitions shown`
-            : `${active.size} of ${COMPETITION_KEYS.length} competitions shown`}
-        </span>
-      </summary>
-
-      <div className="border-t border-line px-3.5 pt-3 pb-3.5">
-        <div className="mb-3 flex items-center justify-between gap-2">
-          <span className="text-[11px] leading-snug text-ink-muted">
-            Hide a competition here and it disappears everywhere below.
-          </span>
-          <button
-            onClick={() => onSetAll(true)}
-            className="cursor-pointer rounded bg-pitch px-2.5 py-1.5 text-[11px] font-semibold tracking-wide text-white uppercase"
-          >
-            Show all
-          </button>
+export function FilterBar({ active, lens, open, onToggle, onSetGroup, onShowAll }: Props) {
+  return <div id="competition-filters" data-open={open} className="filter-disclosure"
+    aria-hidden={!open} inert={!open}>
+    <div className="filter-clip">
+      <div className="filter-panel" data-lens={lens} data-stock="paper">
+        <div className="filter-heading">
+          <p>Hide a competition here and it disappears everywhere below.</p>
+          <button type="button" disabled={active.size === COMPETITION_KEYS.length} onClick={onShowAll}>Show all</button>
         </div>
-
         {GROUP_LABELS.map(({ group, label }) => {
-          const keys = COMPETITION_KEYS.filter((k) => COMPETITIONS[k].group === group)
-          const allOn = keys.every((k) => active.has(k))
-          return (
-            <div key={group} className="mb-3 last:mb-0">
-              <div className="mb-1.5 flex items-center justify-between">
-                <span className="label-caps text-[10px] text-ink-muted">{label}</span>
-                <button
-                  onClick={() => onSetGroup(group, !allOn)}
-                  className="cursor-pointer text-[10.5px] font-semibold text-pitch uppercase"
-                >
-                  {allOn ? 'Hide all' : 'Show all'}
-                </button>
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                {keys.map((key) => (
-                  <CompetitionChip
-                    key={key}
-                    competition={key}
-                    on={active.has(key)}
-                    onClick={() => onToggle(key)}
-                  />
-                ))}
-              </div>
+          const keys = COMPETITION_KEYS.filter(key => COMPETITIONS[key].group === group)
+          const allOn = keys.every(key => active.has(key))
+          const action = allOn ? 'Hide all' : 'Show all'
+          return <div key={group} role="group" aria-label={label}>
+            <div className="filter-heading">
+              <span>{label}</span>
+              <button type="button" aria-label={`${action} ${label}`}
+                onClick={() => onSetGroup(group, !allOn)}>{action}</button>
             </div>
-          )
+            <div className="filter-options">
+              {keys.map(key => <FilterToggle key={key} competition={key} shown={active.has(key)} onToggle={onToggle} />)}
+            </div>
+          </div>
         })}
       </div>
-    </details>
-  )
+    </div>
+  </div>
 }

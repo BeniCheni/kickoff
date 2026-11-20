@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { cleanup, fireEvent, render, screen, within } from '@testing-library/react'
+import { cleanup, render, screen, within } from '@testing-library/react'
 import { BY_DATE, FIXTURES } from '../../src/lib/fixtures'
 import type { Fixture } from '../../src/lib/schema'
 import { COMPETITION_KEYS } from '../../src/lib/competitions'
-import { brooklynDate, fixtureTimes, startOfWeek } from '../../src/lib/time'
+import { brooklynDate, startOfWeek } from '../../src/lib/time'
 import { LIVE_WINDOW_MS } from '../../src/lib/lensSelectors'
 import { WeekView } from '../../src/components/WeekView'
 import { NextUpStrip } from '../../src/components/NextUpStrip'
@@ -28,18 +28,10 @@ afterEach(() => {
 })
 const active = new Set(COMPETITION_KEYS)
 
-/**
- * The row for one exact-time fixture, by its accessible name: a FixtureRow's button carries no
- * aria-label, so the name is its content in render order — the Brooklyn time first, then
- * "home vs away". Anchoring on both keeps a 12:30 PM row from answering for a 2:30 PM one
- * (`includes` alone would) and a venue string from answering for a pairing.
- * Placeholder rows render "—" in the time slot and are not this helper's job.
- */
 function fixtureRowFor(fixture: Fixture) {
-  const { brooklyn } = fixtureTimes(fixture.kickoffUtc, fixture.venueTz)
-  return screen.getByRole('button', {
-    name: (name) => name.startsWith(brooklyn.time) && name.includes(`${fixture.home.name} vs ${fixture.away.name}`),
-  })
+  const row = document.querySelector<HTMLElement>(`[data-fixture-id="${fixture.id}"]`)
+  if (!row) throw new Error(`Missing fixture row ${fixture.id}`)
+  return row
 }
 
 describe('synthetic frozen snapshot through the real selector and clock wiring', () => {
@@ -61,12 +53,12 @@ describe('synthetic frozen snapshot through the real selector and clock wiring',
       wake(new Date(kickoff + LIVE_WINDOW_MS + 60_000))
       expect(scope.queryByText('LIVE')).toBeNull()
       const pill = scope.getByText('KICKED OFF')
-      expect(pill.className).toContain('border-floodlight-strong')
+      expect(pill.dataset.voice).toBe('amber')
       expect(pill.closest('[data-hot]')).toBeNull()
-      expect(within(pill.closest('button')!).getByText('1–0').className).toContain('text-pitch')
+      expect(scope.getByText('1–0').dataset.voice).toBe('amber')
       expect(fixture.status).toBe('in_play')
-      fireEvent.click(pill.closest('button')!)
-      expect(pill.closest('button')?.getAttribute('aria-expanded')).toBe('true')
+      expect(row.querySelector('button, [aria-expanded]')).toBeNull()
+      expect(scope.getByText(/local$/)).toBeTruthy()
     })
   }
 
@@ -101,7 +93,7 @@ describe('synthetic frozen snapshot through the real selector and clock wiring',
     wake(new Date(kickoff + LIVE_WINDOW_MS + 60_000))
     expect(() => screen.getByText('KICKED OFF')).toThrow(/multiple elements/)
     expect(scope.queryByText('LIVE')).toBeNull()
-    expect(scope.getByText('KICKED OFF').className).toContain('border-floodlight-strong')
+    expect(scope.getByText('KICKED OFF').dataset.voice).toBe('amber')
   })
 })
 
@@ -136,7 +128,7 @@ describe('an unset kickoff is never a clock on a hero', () => {
     expect(slots).toHaveLength(4)
     for (const slot of slots) {
       expect(slot.className).toContain('italic')
-      expect(slot.className).toContain('text-floodlight-strong')
+      expect(slot.dataset.voice).toBe('amber')
     }
     expect(container.textContent).toContain(`+1 more today · ${day[4]!.home.name} v ${day[4]!.away.name}`)
     expect(container.textContent).not.toMatch(CLOCK)
