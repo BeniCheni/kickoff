@@ -24,4 +24,5 @@
 @source "../../src/components/FormPips.tsx";
 @source "../../src/components/NextFixtureCell.tsx";
 @source "../../src/components/LeagueTabs.tsx";
+@source "../../src/components/ZonesKey.tsx";
 @import "../../src/shell.css";

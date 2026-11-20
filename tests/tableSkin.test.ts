@@ -11,10 +11,13 @@ import { secondEditionPairs } from './contrast'
 const css = readFileSync(new URL('../src/shell.css', import.meta.url), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '')
 const source = (file: string) => readFileSync(new URL(`../src/${file}`, import.meta.url), 'utf8')
 
-/** The declarations of the one rule whose whole selector is `selector`. */
+/** The page's own rules: what is left once every @media and @keyframes block is set aside. */
+const plain = css.replace(/@(?:media|keyframes)[^{]*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}/g, '')
+
+/** The declarations of the one rule, outside any @media, whose whole selector is `selector`. */
 function rule(selector: string): Record<string, string> {
   const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-  const found = [...css.matchAll(new RegExp(`(?:^|\\})\\s*${escaped}\\s*\\{([^}]*)\\}`, 'g'))]
+  const found = [...plain.matchAll(new RegExp(`(?:^|\\})\\s*${escaped}\\s*\\{([^}]*)\\}`, 'g'))]
   expect(found, `${selector} is written once`).toHaveLength(1)
   return Object.fromEntries(found[0]![1]!.split(';').map((line) => line.trim()).filter(Boolean).map((line) => {
     const colon = line.indexOf(':')
@@ -118,5 +121,35 @@ describe('league tabs and the notes, as painted', () => {
     expect(rule('.register-note').background).toBeUndefined()
     expect(rule('.inhand-chip').border).toBe('1px solid currentColor')
     expect(source('components/TablePage.tsx')).not.toMatch(/bg-floodlight-bg|floodlight/)
+  })
+})
+
+describe('zone marks and the key, as painted', () => {
+  it('draws a place in the hue the zone hands over, and nothing where there is no zone', () => {
+    expect(rule('.zone-mark').background).toBe('var(--zone-hue, transparent)')
+    expect([rule('.zone-mark-band').width, rule('.zone-mark-square').width, rule('.zone-mark-square').height]).toEqual(['3px', '8px', '8px'])
+  })
+
+  it('names blood for relegation and muted ink for Eliminated, and no first-edition hue', () => {
+    expect(css).toContain(".zone-mark[data-band='relegation'],\n.zone-mark[data-band='relegation-playoff'] {\n  --zone-hue: var(--fb-blood);\n}")
+    expect(rule(".zone-mark[data-band='eliminated']")).toEqual({ '--zone-hue': 'var(--fb-pulp-muted)' })
+    const marks = css.slice(css.indexOf('.zone-mark {'), css.indexOf('.zones-key-bar {'))
+    expect(marks).not.toMatch(/--accent|--floodlight|fb-amber|fb-alarm/)
+  })
+
+  it('breaks a play-off 4px on and 3px off, and its square into two bars with a gap', () => {
+    expect(rule(".zone-mark-band[data-band$='playoff']").background).toBe('repeating-linear-gradient(to bottom, var(--zone-hue) 0 4px, transparent 4px 7px)')
+    expect(rule(".zone-mark-square[data-band$='playoff']").background).toBe('linear-gradient(to bottom, var(--zone-hue) 0 2.5px, transparent 2.5px 5.5px, var(--zone-hue) 5.5px 8px)')
+  })
+
+  it('makes the key a 44px disclosure that opens in 180ms, with the rule moving under the key', () => {
+    const bar = rule('.zones-key-bar')
+    expect([bar.height, bar['border-bottom']]).toEqual(['44px', '1.5px solid var(--fb-rule)'])
+    expect(rule('.zones-key[data-open] .zones-key-bar')).toEqual({ 'border-bottom-color': 'transparent' })
+    const panel = rule('.zones-key-panel')
+    expect(panel['border-bottom']).toBe('1.5px solid var(--fb-rule)')
+    expect(panel.animation).toBe('zones-key-open 180ms cubic-bezier(.2, .7, .2, 1)')
+    expect([panel['font-family'], panel['font-size'], panel['line-height']]).toEqual(['var(--fb-book)', '12px', '1.4'])
+    expect(rule('.zones-key-chevron').transition).toBe('transform 180ms cubic-bezier(.2, .7, .2, 1)')
   })
 })

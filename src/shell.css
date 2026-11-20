@@ -790,6 +790,193 @@ body:has(.page-measure[data-measure='register']) {
 }
 
 /*
+ * Zone marks. Colour says where a zone leads; a broken mark says it is not
+ * settled yet (rulings 22 and 23). A place is solid in its destination's hue,
+ * which the zone hands over as --zone-hue. A play-off for a place is the same
+ * hue broken, 4px on and 3px off. A relegation play-off is blood broken the
+ * same way, relegation is solid blood, and Eliminated is solid muted ink.
+ * The 8px square in a zone header and on the closed key breaks the same way:
+ * two bars with a gap. No zone is told by its mark alone: each has its name
+ * in the key and its header in the table. With no data-band the mark is
+ * empty and keeps its place in the row.
+ */
+.zone-mark {
+  display: block;
+  flex: none;
+  background: var(--zone-hue, transparent);
+}
+.zone-mark-band {
+  width: 3px;
+  align-self: stretch;
+}
+.zone-mark-square {
+  width: 8px;
+  height: 8px;
+}
+.zone-mark[data-band='relegation'],
+.zone-mark[data-band='relegation-playoff'] {
+  --zone-hue: var(--fb-blood);
+}
+.zone-mark[data-band='eliminated'] {
+  --zone-hue: var(--fb-pulp-muted);
+}
+.zone-mark-band[data-band$='playoff'] {
+  background: repeating-linear-gradient(to bottom, var(--zone-hue) 0 4px, transparent 4px 7px);
+}
+.zone-mark-square[data-band$='playoff'] {
+  background: linear-gradient(to bottom, var(--zone-hue) 0 2.5px, transparent 2.5px 5.5px, var(--zone-hue) 5.5px 8px);
+}
+
+/*
+ * Zones & key. A 44px disclosure on pulp between the league tabs and the
+ * table head. Closed, the rule is under the bar and the chevron points
+ * along the line. Open, the chevron turns down in 180ms and the rule moves
+ * under the key. The panel is mounted only while open, so a closed key is
+ * out of the page for every reader; its opening is a mount keyframe. Notes
+ * are Caslon 12 on a 1.4 line, and a note sits under its zone's name on a
+ * phone and beside it from 768px, where Columns and the tie-break share a
+ * row. Each column heading is Kickoff Mono 600.
+ */
+.zones-key-bar {
+  box-sizing: border-box;
+  width: 100%;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  border-bottom: 1.5px solid var(--fb-rule);
+  background: transparent;
+  color: var(--fb-pulp-ink);
+  cursor: pointer;
+  font-family: var(--fb-label);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-align: left;
+}
+.zones-key[data-open] .zones-key-bar {
+  border-bottom-color: transparent;
+}
+.zones-key-chevron {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  transform: rotate(-90deg);
+  transition: transform 180ms cubic-bezier(.2, .7, .2, 1);
+}
+.zones-key-chevron svg {
+  width: 16px;
+  height: 16px;
+}
+.zones-key[data-open] .zones-key-chevron {
+  transform: none;
+}
+.zones-key-title {
+  flex: 1;
+}
+.zones-key-squares {
+  display: flex;
+  gap: 4px;
+}
+.zones-key-panel {
+  padding: 2px 0 14px;
+  border-bottom: 1.5px solid var(--fb-rule);
+  font-family: var(--fb-book);
+  font-size: 12px;
+  line-height: 1.4;
+  animation: zones-key-open 180ms cubic-bezier(.2, .7, .2, 1);
+}
+@keyframes zones-key-open {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+.zones-key-season {
+  margin: 0 0 12px;
+}
+.zones-key-heading {
+  margin: 12px 0 4px;
+  font-family: var(--fb-label);
+  font-weight: 600;
+  font-size: 10px;
+  line-height: 1.5;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.zones-key-panel > .zones-key-heading:first-child {
+  margin-top: 0;
+}
+.zones-key-zones {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+.zones-key-zone {
+  display: grid;
+  grid-template-columns: 3px minmax(0, 1fr);
+  column-gap: 10px;
+}
+.zones-key-zone .zone-mark-band {
+  grid-row: 1 / span 2;
+}
+.zones-key-zone-name {
+  grid-column: 2;
+  font-family: var(--fb-label);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.zones-key-zone-range {
+  margin-left: 4px;
+  font-family: 'Kickoff Mono', ui-monospace, 'SF Mono', monospace;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.zones-key-zone-note {
+  grid-column: 2;
+}
+.zones-key-copy {
+  margin: 0;
+}
+.zones-key-copy b {
+  font-family: 'Kickoff Mono', ui-monospace, 'SF Mono', monospace;
+  font-weight: 600;
+  font-size: 11px;
+}
+@media (min-width: 48rem) {
+  .zones-key-zone {
+    grid-template-columns: 3px 232px minmax(0, 1fr);
+  }
+  .zones-key-zone .zone-mark-band {
+    grid-row: auto;
+  }
+  .zones-key-zone-note {
+    grid-column: 3;
+  }
+  .zones-key-pair {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 24px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .zones-key-chevron {
+    transition: none;
+  }
+  .zones-key-panel {
+    animation: none;
+  }
+}
+
+/*
  * Rows. Zone band 3px, position, the club's tile and name, form pips, next
  * fixture, GD over GF–GA, points over played. Team names are Caslon 16,
  * figures Kickoff Mono 500 13 on a 22px line, points 600 16, and nothing is
@@ -833,11 +1020,6 @@ body:has(.page-measure[data-measure='register']) {
   text-decoration: underline 2px var(--fb-pitch);
   text-underline-offset: 5px;
 }
-.register-zone-square {
-  flex: none;
-  width: 8px;
-  height: 8px;
-}
 .register-zone-name {
   font-family: var(--fb-label);
   font-weight: 600;
@@ -870,15 +1052,12 @@ body:has(.page-measure[data-measure='register']) {
 button.register-row {
   cursor: pointer;
 }
-.register-row > :not(.register-band) {
+.register-row > :not(.zone-mark) {
   padding-block: 8px;
 }
 .register-row-wide {
   align-items: center;
   padding: 0;
-}
-.register-band {
-  align-self: stretch;
 }
 .register-pos {
   display: flex;

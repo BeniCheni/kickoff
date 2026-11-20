@@ -22,6 +22,7 @@ import { META } from '../lib/fixtures'
 import { FormPips } from './FormPips'
 import { LeagueTabs } from './LeagueTabs'
 import { NextFixtureCell } from './NextFixtureCell'
+import { ZoneMark, ZonesKey } from './ZonesKey'
 import { PageFoot } from './PageFoot'
 
 /**
@@ -98,7 +99,7 @@ function ZoneDivider({
 }) {
   return (
     <div data-zone-divider={zone.name} className={['register-zone flex items-center gap-2', wide ? 'pt-2.5 pb-1.5' : 'px-3.5 pt-2 pb-1.5', zone.to - zone.from + 1 > 8 ? `sticky z-[1] ${wide ? 'top-[34px]' : 'top-11'}` : ''].join(' ')}>
-      <span className="register-zone-square" style={{ background: zone.color }} />
+      <ZoneMark zone={zone} shape="square" />
       <span className="register-zone-name text-[10px]">{zone.name}</span>
       <span className="register-zone-range" data-voice="muted">· {zoneRange(zone)}</span>
       <span className="register-zone-rule" />
@@ -140,11 +141,11 @@ export function TablePage() {
   const picker = <LeagueTabs league={league} onPick={pickLeague} />
   if (!rows.length) {
     return <div className="register">{picker}
-      <div className="rounded border border-line bg-surface px-3.5 py-3 text-[13px] text-ink-muted">
+      <p className="register-note" data-voice="ink" data-empty-table="">
         No table in the snapshot for {comp.name} — {META.standingsDegraded?.includes(league)
           ? 'the provider no longer supplies the configured league-phase table.'
-          : <>run <code className="font-mono">npm run sync</code>.</>}
-      </div>
+          : <>run <code>npm run sync</code>.</>}
+      </p>
     </div>
   }
 
@@ -167,55 +168,14 @@ export function TablePage() {
           </p>
         </div>
       )}
-      {!zonesCurrent && (
-        <p className="register-note" data-voice="ink">
-          Zone bands are hidden: the snapshot is the {STANDINGS.season}-
-          {(STANDINGS.season + 1) % 100} season but the zone metadata describes{' '}
-          {ZONES_SEASON}-{(ZONES_SEASON + 1) % 100}. Update <code>LEAGUE_TABLES</code>.
-        </p>
-      )}
-
-      {/* zones & key toggle */}
-      <button
-        onClick={() => setLegendOpen((v) => !v)}
-        aria-expanded={legendOpen}
-        className="mb-3 flex w-full cursor-pointer items-center justify-between gap-2 rounded-md border border-line bg-surface px-2.5 py-2 text-left"
-      >
-        <span className="flex items-center gap-1.5">
-          {meta.zones.slice(0, 4).map((z) => (
-            <span key={z.name} className="size-[9px] rounded-[2px]" style={{ background: z.color }} />
-          ))}
-          <span className="label-caps ml-1 text-[10.5px] text-ink">Zones &amp; key</span>
-        </span>
-        <span className="text-[15px] leading-none text-ink-muted">{legendOpen ? '▴' : '▾'}</span>
-      </button>
-
-      {legendOpen && (
-        <div className="mb-3 rounded-lg border border-line bg-surface p-3">
-          <div className="label-caps text-[10px] text-ink-muted">Qualification zones</div>
-          {meta.zones.map((z) => (
-            <div key={z.name} className="flex items-start gap-2 border-b border-line py-2 last:border-b-0">
-              <span className="mt-0.5 h-[30px] w-1 flex-none rounded-[2px]" style={{ background: z.color }} />
-              <div className="min-w-0 flex-1">
-                <div className="text-[12px] font-semibold">
-                  {z.name}{' '}
-                  <span className="font-mono text-[9.5px] font-medium text-ink-muted">{zoneRange(z)}</span>
-                </div>
-                <div className="mt-px text-[10.5px] leading-snug text-ink-secondary">{z.note}</div>
-              </div>
-            </div>
-          ))}
-          <div className="label-caps mt-3.5 text-[10px] text-ink-muted">Columns</div>
-          <div className="mt-1 text-[10.5px] leading-relaxed text-ink-secondary">
-            <b>Pts</b> points · <b>Pl</b> played · <b>GD</b> goal difference · <b>PPG</b> points per
-            game — {meta.phase ? 'different opponents limit the comparison' : 'the honest comparator while clubs have games in hand'} · <b>Form</b> results oldest
-            to newest, W / D / L lettered, not colour alone · <b>Next</b> the club's next{' '}
-            {meta.phase ? <>match in this competition; domestic and other cup ties are not shown here.</> : <><i>league</i> match — midweek European and cup ties are not shown here.</>}
-          </div>
-          <div className="label-caps mt-3.5 text-[10px] text-ink-muted">How ties are broken</div>
-          <div className="mt-1 text-[10.5px] leading-relaxed text-ink-secondary">{meta.tieBreak}</div>
-        </div>
-      )}
+      <ZonesKey
+        meta={meta}
+        open={legendOpen}
+        onToggle={() => setLegendOpen((v) => !v)}
+        zonesCurrent={zonesCurrent}
+        snapshotSeason={STANDINGS.season}
+        zonesSeason={ZONES_SEASON}
+      />
 
       {/* -------- mobile table -------- */}
       <div data-table="mobile" className="-mx-5 md:hidden">
@@ -249,7 +209,7 @@ export function TablePage() {
                 aria-label={`${r.rank}. ${r.name}, ${r.pts} points from ${r.played} played, ${matchLabel}`}
                 className={`grid w-full ${MOBILE_COLS} register-row`}
               >
-                <span className="register-band" style={{ background: zonesCurrent ? (r.zone?.color ?? 'transparent') : 'transparent' }} />
+                <ZoneMark zone={zonesCurrent ? r.zone : null} shape="band" />
                 <span className="register-pos">
                   <span>{r.rank}</span>
                   <Movement change={r.rankChange} />
@@ -325,7 +285,7 @@ export function TablePage() {
           return (
             <div key={r.teamId} data-table-row={r.teamId}>
               <div className={`grid min-h-[46px] ${DESKTOP_COLS} register-row register-row-wide`}>
-                <div className="register-band" style={{ background: showZonesDesktop ? (r.zone?.color ?? 'transparent') : 'transparent' }} />
+                <ZoneMark zone={showZonesDesktop ? r.zone : null} shape="band" />
                 <div className="register-pos register-pos-wide">
                   <span>{r.rank}</span>
                   <Movement change={r.rankChange} />
@@ -358,16 +318,6 @@ export function TablePage() {
             })}
           </div>
         ))}
-
-        <div className="mt-4 flex flex-wrap gap-x-6 gap-y-3 border-t border-line pt-3.5">
-          {meta.zones.map((z) => (
-            <div key={z.name} className="flex items-center gap-1.5">
-              <span className="size-[11px] rounded-[2px]" style={{ background: z.color }} />
-              <span className="text-[11.5px] font-semibold">{z.name}</span>
-              <span className="font-mono text-[10px] text-ink-muted">{zoneRange(z)}</span>
-            </div>
-          ))}
-        </div>
       </div>
 
       <PageFoot kind="table">

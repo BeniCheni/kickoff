@@ -95,17 +95,34 @@ export function venueTimeZone(country?: string, venueId?: string): string | unde
  * Hand-authored reference data: allocation rules are not in the standings
  * feed. Ranges are for 2026-27 — England and Spain hold a fifth Champions League berth via
  * the 2025-26 association coefficients (a European Performance Spot, not permanent).
- * Zone colours are looked up from the european competitions above, so a Champions League
- * band in the table matches a Champions League fixture in the calendar; relegation uses the
- * theme's accent via `var(--accent)` so it tracks light/dark.
+ * A zone that leads to a competition takes that competition's hue from the list above, so a
+ * Champions League band in the table matches a Champions League fixture in the calendar.
+ *
+ * `band` is presentation, beside the data it draws: colour says where a zone leads, and a
+ * broken band says it is not settled yet (rulings 22 and 23, 17 Nov 2026). The stylesheet
+ * draws each kind; no ink is named here.
  */
+export type ZoneBand =
+  /** A place in a competition: solid, in the destination's hue. */
+  | 'place'
+  /** A play-off for a place: the same hue, broken. */
+  | 'playoff'
+  /** A relegation play-off: blood, broken. */
+  | 'relegation-playoff'
+  /** Relegation: solid blood. */
+  | 'relegation'
+  /** Out of the competition, with nowhere to go: solid muted ink. */
+  | 'eliminated'
+
 export type Zone = {
   name: string
   /** Inclusive league positions, e.g. from 1 to 5. */
   from: number
   to: number
-  /** Static hex from a competition above, or a CSS var for theme-dependent hues. */
-  color: string
+  band: ZoneBand
+  /** The destination competition's hue, a static hex from the list above. A zone that leads
+   *  to no competition has none. */
+  color?: string
   note: string
 }
 
@@ -159,8 +176,6 @@ export function zoneRange(z: Zone): string {
 const UCL = RAW.ucl.color
 const UEL = RAW.uel.color
 const UECL = RAW.uecl.color
-const REL = 'var(--accent)'
-const PLAYOFF = 'var(--floodlight)'
 
 export const LEAGUE_TABLES: Partial<Record<CompetitionKey, LeagueTableMeta>> = {
   ucl: {
@@ -168,9 +183,9 @@ export const LEAGUE_TABLES: Partial<Record<CompetitionKey, LeagueTableMeta>> = {
     // Article 18: https://documents.uefa.com/r/Regulations-of-the-UEFA-Champions-League-2026/27/Article-18-Equality-of-points-league-phase-Online
     tieBreak: "The Champions League league phase separates level clubs on goal difference first, then goals scored, then away goals, then wins and away wins; only after that do the opponents' collective records, disciplinary points and the club coefficient come into it (Article 18, UEFA Champions League regulations 2026/27).",
     zones: [
-      { name: 'Round of 16', from: 1, to: 8, color: UCL, note: 'Direct entry to the round of 16.' },
-      { name: 'Knockout play-offs', from: 9, to: 24, color: PLAYOFF, note: 'Two-legged play-offs for the remaining round-of-16 places; ranks 9–16 are seeded.' },
-      { name: 'Eliminated', from: 25, to: 36, color: REL, note: 'No transfer to another UEFA competition.' },
+      { name: 'Round of 16', from: 1, to: 8, band: 'place', color: UCL, note: 'Direct entry to the round of 16.' },
+      { name: 'Knockout play-offs', from: 9, to: 24, band: 'playoff', color: UCL, note: 'Two-legged play-offs for the remaining round-of-16 places; ranks 9–16 are seeded.' },
+      { name: 'Eliminated', from: 25, to: 36, band: 'eliminated', note: 'No transfer to another UEFA competition.' },
     ],
   },
   laliga: {
@@ -178,10 +193,10 @@ export const LEAGUE_TABLES: Partial<Record<CompetitionKey, LeagueTableMeta>> = {
     tieBreak:
       'La Liga separates level clubs on head-to-head record first, then goal difference, then goals scored — which is why a club can sit above another with a worse GD.',
     zones: [
-      { name: 'Champions League', from: 1, to: 5, color: UCL, note: 'League phase. Spain holds a fifth berth on the 2025-26 association coefficient — it is not permanent.' },
-      { name: 'Europa League', from: 6, to: 6, color: UEL, note: 'League phase. Can shift to 7th if the Copa del Rey winner already qualifies through the league.' },
-      { name: 'Conference League', from: 7, to: 7, color: UECL, note: 'Play-off round, not the league phase directly.' },
-      { name: 'Relegation', from: 18, to: 20, color: REL, note: 'Straight drop to LALIGA Hypermotion. No play-off in Spain.' },
+      { name: 'Champions League', from: 1, to: 5, band: 'place', color: UCL, note: 'League phase. Spain holds a fifth berth on the 2025-26 association coefficient — it is not permanent.' },
+      { name: 'Europa League', from: 6, to: 6, band: 'place', color: UEL, note: 'League phase. Can shift to 7th if the Copa del Rey winner already qualifies through the league.' },
+      { name: 'Conference League', from: 7, to: 7, band: 'place', color: UECL, note: 'Play-off round, not the league phase directly.' },
+      { name: 'Relegation', from: 18, to: 20, band: 'relegation', note: 'Straight drop to LALIGA Hypermotion. No play-off in Spain.' },
     ],
   },
   pl: {
@@ -189,10 +204,10 @@ export const LEAGUE_TABLES: Partial<Record<CompetitionKey, LeagueTableMeta>> = {
     tieBreak:
       'The Premier League separates level clubs on goal difference first, then goals scored; head-to-head only comes into it after both of those.',
     zones: [
-      { name: 'Champions League', from: 1, to: 5, color: UCL, note: 'League phase. England holds a fifth berth on the 2025-26 association coefficient — it is not permanent.' },
-      { name: 'Europa League', from: 6, to: 6, color: UEL, note: 'League phase. Shifts down a place when the FA Cup winner has already qualified through the league.' },
-      { name: 'Conference League', from: 7, to: 7, color: UECL, note: 'Play-off round. Nominally the League Cup winner’s spot; it falls to the league when they qualify elsewhere.' },
-      { name: 'Relegation', from: 18, to: 20, color: REL, note: 'Straight drop to the Championship. No play-off in England.' },
+      { name: 'Champions League', from: 1, to: 5, band: 'place', color: UCL, note: 'League phase. England holds a fifth berth on the 2025-26 association coefficient — it is not permanent.' },
+      { name: 'Europa League', from: 6, to: 6, band: 'place', color: UEL, note: 'League phase. Shifts down a place when the FA Cup winner has already qualified through the league.' },
+      { name: 'Conference League', from: 7, to: 7, band: 'place', color: UECL, note: 'Play-off round. Nominally the League Cup winner’s spot; it falls to the league when they qualify elsewhere.' },
+      { name: 'Relegation', from: 18, to: 20, band: 'relegation', note: 'Straight drop to the Championship. No play-off in England.' },
     ],
   },
   seriea: {
@@ -200,10 +215,10 @@ export const LEAGUE_TABLES: Partial<Record<CompetitionKey, LeagueTableMeta>> = {
     tieBreak:
       'Serie A separates level clubs on head-to-head record first, then goal difference — except a tie for the title or relegation, which goes to a one-off play-off.',
     zones: [
-      { name: 'Champions League', from: 1, to: 4, color: UCL, note: 'League phase.' },
-      { name: 'Europa League', from: 5, to: 5, color: UEL, note: 'League phase. Shifts down a place when the Coppa Italia winner has already qualified through the league.' },
-      { name: 'Conference League', from: 6, to: 6, color: UECL, note: 'Play-off round, not the league phase directly.' },
-      { name: 'Relegation', from: 18, to: 20, color: REL, note: 'Straight drop to Serie B.' },
+      { name: 'Champions League', from: 1, to: 4, band: 'place', color: UCL, note: 'League phase.' },
+      { name: 'Europa League', from: 5, to: 5, band: 'place', color: UEL, note: 'League phase. Shifts down a place when the Coppa Italia winner has already qualified through the league.' },
+      { name: 'Conference League', from: 6, to: 6, band: 'place', color: UECL, note: 'Play-off round, not the league phase directly.' },
+      { name: 'Relegation', from: 18, to: 20, band: 'relegation', note: 'Straight drop to Serie B.' },
     ],
   },
   ligue1: {
@@ -211,12 +226,12 @@ export const LEAGUE_TABLES: Partial<Record<CompetitionKey, LeagueTableMeta>> = {
     tieBreak:
       'Ligue 1 separates level clubs on goal difference first, then goals scored.',
     zones: [
-      { name: 'Champions League', from: 1, to: 3, color: UCL, note: 'League phase for the top three; France is outside the coefficient top four.' },
-      { name: 'UCL Qualifying', from: 4, to: 4, color: PLAYOFF, note: 'Enters the third qualifying round, not the league phase.' },
-      { name: 'Europa League', from: 5, to: 5, color: UEL, note: 'League phase. Shifts when the Coupe de France winner already qualifies through the league.' },
-      { name: 'Conference League', from: 6, to: 6, color: UECL, note: 'Play-off round, not the league phase directly.' },
-      { name: 'Relegation play-off', from: 16, to: 16, color: PLAYOFF, note: 'Two-legged barrage against the Ligue 2 play-off winner.' },
-      { name: 'Relegation', from: 17, to: 18, color: REL, note: 'Straight drop to Ligue 2.' },
+      { name: 'Champions League', from: 1, to: 3, band: 'place', color: UCL, note: 'League phase for the top three; France is outside the coefficient top four.' },
+      { name: 'UCL Qualifying', from: 4, to: 4, band: 'playoff', color: UCL, note: 'Enters the third qualifying round, not the league phase.' },
+      { name: 'Europa League', from: 5, to: 5, band: 'place', color: UEL, note: 'League phase. Shifts when the Coupe de France winner already qualifies through the league.' },
+      { name: 'Conference League', from: 6, to: 6, band: 'place', color: UECL, note: 'Play-off round, not the league phase directly.' },
+      { name: 'Relegation play-off', from: 16, to: 16, band: 'relegation-playoff', note: 'Two-legged barrage against the Ligue 2 play-off winner.' },
+      { name: 'Relegation', from: 17, to: 18, band: 'relegation', note: 'Straight drop to Ligue 2.' },
     ],
   },
   bundesliga: {
@@ -224,11 +239,11 @@ export const LEAGUE_TABLES: Partial<Record<CompetitionKey, LeagueTableMeta>> = {
     tieBreak:
       'The Bundesliga separates level clubs on goal difference first, then goals scored, then head-to-head.',
     zones: [
-      { name: 'Champions League', from: 1, to: 4, color: UCL, note: 'League phase.' },
-      { name: 'Europa League', from: 5, to: 5, color: UEL, note: 'League phase. Shifts down a place when the DFB-Pokal winner has already qualified through the league.' },
-      { name: 'Conference League', from: 6, to: 6, color: UECL, note: 'Play-off round, not the league phase directly.' },
-      { name: 'Relegation play-off', from: 16, to: 16, color: PLAYOFF, note: 'Two-legged play-off against the third-placed 2. Bundesliga side.' },
-      { name: 'Relegation', from: 17, to: 18, color: REL, note: 'Straight drop to 2. Bundesliga.' },
+      { name: 'Champions League', from: 1, to: 4, band: 'place', color: UCL, note: 'League phase.' },
+      { name: 'Europa League', from: 5, to: 5, band: 'place', color: UEL, note: 'League phase. Shifts down a place when the DFB-Pokal winner has already qualified through the league.' },
+      { name: 'Conference League', from: 6, to: 6, band: 'place', color: UECL, note: 'Play-off round, not the league phase directly.' },
+      { name: 'Relegation play-off', from: 16, to: 16, band: 'relegation-playoff', note: 'Two-legged play-off against the third-placed 2. Bundesliga side.' },
+      { name: 'Relegation', from: 17, to: 18, band: 'relegation', note: 'Straight drop to 2. Bundesliga.' },
     ],
   },
 }

@@ -47,6 +47,7 @@ assert.deepEqual(sources, [
   '../../src/components/FormPips.tsx',
   '../../src/components/NextFixtureCell.tsx',
   '../../src/components/LeagueTabs.tsx',
+  '../../src/components/ZonesKey.tsx',
 ], 'web Tailwind sources must be web/app plus the named shared files')
 assert.ok(web.includes('bada71'), 'web probe missing: scan check would be vacuous')
 assert.ok(!reader.includes('bada71'), 'web probe reached reader CSS')
