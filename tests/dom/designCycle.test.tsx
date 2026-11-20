@@ -128,7 +128,7 @@ describe('an unset kickoff is never a clock on a hero', () => {
     expect(slots).toHaveLength(4)
     for (const slot of slots) {
       expect(slot.className).toContain('italic')
-      expect(slot.className).toContain('text-floodlight-strong')
+      expect(slot.dataset.voice).toBe('amber')
     }
     expect(container.textContent).toContain(`+1 more today · ${day[4]!.home.name} v ${day[4]!.away.name}`)
     expect(container.textContent).not.toMatch(CLOCK)

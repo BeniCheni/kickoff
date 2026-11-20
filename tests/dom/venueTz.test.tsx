@@ -26,7 +26,7 @@ describe('missing venue UI', () => {
     expect(screen.getByText('12:45 PM')).toBeTruthy()
     expect(screen.queryByText(/next day|prev\./)).toBeNull()
   })
-  it.each([NextUpStrip, TonightSlate])('%s keeps its Brooklyn-only output when the venue zone disappears', (Hero) => {
+  it.each([NextUpStrip, TonightSlate])('%s keeps Brooklyn when the venue zone disappears', (Hero) => {
     release = primeClock(new Date('2026-09-10T12:00:00Z'))
     state.fixtures = [{ ...f, venueTz: 'Europe/London' }]
     const active = new Set(['ucl'] as const)
@@ -34,7 +34,13 @@ describe('missing venue UI', () => {
     const before = view.container.textContent
     state.fixtures = [f]
     view.rerender(<Hero today="2026-09-10" active={new Set(active)} />)
-    expect(view.container.textContent).toBe(before)
+    if (Hero === NextUpStrip) {
+      expect(before).toContain('17:45 local')
+      expect(screen.getByText('local time not known').dataset.voice).toBe('amber')
+      expect(view.container.textContent).not.toMatch(/17:45|\b(?:EDT|EST|GMT|UTC)\b/)
+    } else {
+      expect(view.container.textContent).toBe(before)
+    }
     expect(view.container.textContent).toContain('12:45')
   })
 })
