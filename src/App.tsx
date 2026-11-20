@@ -3,10 +3,10 @@ import { useNow } from './lib/useNow'
 import { useUrlState, useCanonicalSearch } from './lib/useUrlState'
 import { encodeTab, parseTab } from './lib/urlCodecs'
 import { DEFAULT_LENS, encodeLens, parseLens, type Lens } from './lib/lens'
+import { useMotionController } from './lib/useMotionController'
 import { useThemeController } from './lib/useThemeController'
-import { TabNav, type Tab } from './components/TabNav'
-import { AppHeader } from './components/AppHeader'
-import { LensSwitcher } from './components/LensSwitcher'
+import { ImprintBand } from './components/ImprintBand'
+import type { Tab } from './components/TabNav'
 import { FixturesPage } from './components/FixturesPage'
 import { MomentsPage } from './components/MomentsPage'
 import { TablePage } from './components/TablePage'
@@ -51,18 +51,22 @@ export default function App({ momentsEdition = MOMENTS, momentsStorage, momentsR
 
   useCanonicalSearch(today)
   const { theme, toggle } = useThemeController(lens)
+  const { motion, toggle: toggleMotion } = useMotionController()
 
   return (
-    <div className="mx-auto max-w-[780px] px-5 pt-7 pb-16">
-      <AppHeader
-        version={__APP_VERSION__}
-        onToggleTheme={toggle}
-        themeLabel={theme === 'dark' ? 'Light mode' : 'Dark mode'}
-      />
-
-      <TabNav tab={tab} onSelect={setTab}>
-        <LensSwitcher lens={lens} onSelect={setLens} />
-      </TabNav>
+    <>
+    <ImprintBand
+      version={__APP_VERSION__}
+      tab={tab}
+      lens={lens}
+      onSelectTab={setTab}
+      onSelectLens={setLens}
+      onToggleTheme={toggle}
+      themeLabel={theme === 'dark' ? 'Light mode' : 'Dark mode'}
+      onToggleMotion={toggleMotion}
+      motionLabel={motion === 'off' ? 'Start motion' : 'Stop motion'}
+    />
+    <div className="page-measure" data-measure={tab === 'moments' ? 'moments' : tab === 'table' ? 'register' : 'poster'} data-ground={tab === 'table' || tab === 'moments' ? 'black' : lens === 'ledger' ? 'typescript' : 'pulp'}>
 
       {/* The Moments visit owner (Decision 1) is mounted once and never keyed, whatever the tab,
           so the visit survives tab and lens changes — but only the Moments route sits under it.
@@ -84,5 +88,6 @@ export default function App({ momentsEdition = MOMENTS, momentsStorage, momentsR
         {tab === 'table' ? <TablePage /> : <FixturesPage today={today} lens={lens} />}
       </ViewBoundary></div>}
     </div>
+    </>
   )
 }

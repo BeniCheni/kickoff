@@ -18,8 +18,8 @@ export function edt(local: string): Date {
 
 /**
  * jsdom has no `matchMedia`. The stub answers the two queries the app asks —
- * `prefers-color-scheme: dark` (theme.ts) and `prefers-reduced-motion: reduce` (App's lens
- * cross-fade) — and nothing else matches. The returned controls dispatch changes to the
+ * `prefers-color-scheme: dark` (theme.ts) and `prefers-reduced-motion: reduce`
+ * (the lens cross-fade and the motion control) — and nothing else matches. The returned controls dispatch changes to the
  * same MediaQueryLists the app subscribed to; listenerCount checks cleanup.
  */
 export function installMatchMedia({ dark = false, reducedMotion = false } = {}) {
@@ -84,6 +84,19 @@ export function throwingStorage(): () => void {
     if (original) Object.defineProperty(globalThis, 'localStorage', original)
     else delete (globalThis as { localStorage?: unknown }).localStorage
   }
+}
+
+/**
+ * A store that reads and will not write: a full quota, or one the browser has made
+ * read-only. `throwingStorage` above refuses the read first, so a write is never tried
+ * under it. Returns the spy, so a test can show the write was attempted, and the restore
+ * function; call it in `finally`.
+ */
+export function refusingWrites() {
+  const setItem = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+    throw new DOMException('The quota has been exceeded.', 'QuotaExceededError')
+  })
+  return { setItem, restore: () => setItem.mockRestore() }
 }
 
 /**

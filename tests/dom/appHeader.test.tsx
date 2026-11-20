@@ -1,11 +1,48 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import App from '../../src/App'
-import { AppHeader } from '../../src/components/AppHeader'
+import { ImprintBand } from '../../src/components/ImprintBand'
 import { META, SYNC_STAMP } from '../../src/lib/fixtures'
 import { edt, installMatchMedia, primeClock } from './rig'
 
-describe('the header is one module', () => {
+function band(themeLabel: string) {
+  return (
+    <ImprintBand
+      version={__APP_VERSION__}
+      tab="fixtures"
+      lens="poster"
+      onSelectTab={() => {}}
+      onSelectLens={() => {}}
+      onToggleTheme={() => {}}
+      themeLabel={themeLabel}
+      onToggleMotion={() => {}}
+      motionLabel="Stop motion"
+    />
+  )
+}
+
+describe('the band is one module', () => {
+  it('each tab is one drawn span inside its button, and is still named by its label', () => {
+    installMatchMedia({ dark: false })
+    const release = primeClock(edt('2026-09-05T12:00:00'))
+    try {
+      render(<App />)
+      const tabs = [...document.querySelectorAll('nav[aria-label="Primary"] button')]
+      expect(tabs.map((tab) => tab.textContent)).toEqual(['Fixtures', 'Table', 'Moments'])
+      for (const tab of tabs) {
+        expect(tab.children).toHaveLength(1)
+        expect(tab.firstElementChild!.tagName).toBe('SPAN')
+        expect(tab.firstElementChild!.textContent).toBe(tab.textContent)
+        expect(screen.getByRole('button', { name: tab.textContent! })).toBe(tab)
+      }
+      expect(tabs.map((tab) => tab.getAttribute('aria-current'))).toEqual(['page', null, null])
+      fireEvent.click(tabs[1]!.firstElementChild!)
+      expect(tabs.map((tab) => tab.getAttribute('aria-current'))).toEqual([null, 'page', null])
+    } finally {
+      release()
+    }
+  })
+
   it('prints the fixture count and the sync stamp', () => {
     installMatchMedia({ dark: false })
     const release = primeClock(edt('2026-09-05T12:00:00'))
@@ -14,31 +51,71 @@ describe('the header is one module', () => {
       const text = (document.querySelector('header')!.textContent ?? '').toLowerCase()
       expect(text).toContain(`${META.total} fixtures`)
       expect(text).toContain(SYNC_STAMP.toLowerCase())
+      expect(document.querySelector('header')!.dataset.stock).toBe('black')
+      for (const line of document.querySelectorAll('[data-provenance]')) {
+        expect(line.getAttribute('data-voice')).toBe('amber')
+      }
+      fireEvent.click(screen.getByRole('radio', { name: 'Ledger' }))
+      expect(document.querySelector('header')!.dataset.stock).toBe('paper')
+      expect(document.querySelector('header')!.dataset.ground).toBe('typescript')
+      fireEvent.click(screen.getByRole('button', { name: 'Table' }))
+      expect(document.querySelector('header')!.dataset.stock).toBe('black')
     } finally {
       release()
     }
   })
 
-  it('Vite’s header outerHTML is the shared header in both themes', () => {
+  it('Vite’s band outerHTML is the shared band in both themes', () => {
     installMatchMedia({ dark: false })
     const release = primeClock(edt('2026-09-05T12:00:00'))
     try {
       render(<App />)
       const light = document.querySelector('header')!.outerHTML
-      const lightSlot = render(
-        <AppHeader version="0.5.5" themeLabel="Dark mode" onToggleTheme={() => {}} />,
-      )
+      const lightSlot = render(band('Dark mode'))
       expect(lightSlot.container.querySelector('header')!.outerHTML).toBe(light)
       lightSlot.unmount()
 
       fireEvent.click(screen.getByRole('button', { name: 'Dark mode' }))
       const dark = document.querySelector('header')!.outerHTML
-      const darkSlot = render(
-        <AppHeader version="0.5.5" themeLabel="Light mode" onToggleTheme={() => {}} />,
-      )
+      const darkSlot = render(band('Light mode'))
       expect(darkSlot.container.querySelector('header')!.outerHTML).toBe(dark)
-      expect(dark).toContain('>Light mode</button>')
-      expect(light).toContain('>Dark mode</button>')
+      expect(dark).toContain('>Light mode</span>')
+      expect(light).toContain('>Dark mode</span>')
+    } finally {
+      release()
+    }
+  })
+
+  it('every foot repeats the version, the count and the stamp on its own provenance line', () => {
+    installMatchMedia({ dark: false })
+    const release = primeClock(edt('2026-09-05T12:00:00'))
+    try {
+      render(<App />)
+      const footText = () => (document.querySelector('footer')?.textContent ?? '').toLowerCase()
+      // The line itself, not the foot's whole text: Poster's sentence repeats the stamp,
+      // and the band prints the same three figures a few hundred pixels up.
+      const expectProvenance = (foot: string) => {
+        const lines = document.querySelectorAll('footer [data-provenance]')
+        expect(lines, `${foot} foot`).toHaveLength(1)
+        expect(lines[0]!.textContent, `${foot} foot`).toBe(`v${__APP_VERSION__} · ${META.total} fixtures · SYNCED ${SYNC_STAMP}`)
+        expect(lines[0]!.getAttribute('data-voice'), `${foot} foot`).toBe('amber')
+      }
+      expectProvenance('Poster')
+      expect(document.querySelector('.page-measure')?.getAttribute('data-measure')).toBe('poster')
+      expect(footText()).toContain('fixtures from the snapshot synced')
+      fireEvent.click(screen.getByRole('radio', { name: 'Ledger' }))
+      expectProvenance('Ledger')
+      expect(document.querySelector('.page-measure')?.getAttribute('data-measure')).toBe('poster')
+      expect(footText()).toContain('always verify in the book before staking.')
+      expect(footText()).not.toContain('fixtures from the snapshot synced')
+      fireEvent.click(screen.getByRole('button', { name: 'Table' }))
+      expectProvenance('Table')
+      expect(document.querySelector('footer')?.getAttribute('data-stock')).toBe('black')
+      expect(document.querySelector('.page-measure')?.getAttribute('data-measure')).toBe('register')
+      expect(footText()).toContain('never recomputed locally')
+      fireEvent.click(screen.getByRole('button', { name: 'Moments' }))
+      expect(document.querySelector('footer')).toBeNull()
+      expect(document.querySelector('.page-measure')?.getAttribute('data-measure')).toBe('moments')
     } finally {
       release()
     }

@@ -122,7 +122,8 @@
 }
 
 /*
- * Second edition, beside the first. Nothing in the app reads these yet.
+ * Second edition, beside the first. The imprint band is the first surface
+ * that reads them. The stock rule below is unchanged.
  *
  * Stock is a local attribute, not a second theme. :root is paper stock on a
  * light page. [data-stock='black'] is a cover, band or plate on that page.
@@ -202,4 +203,478 @@
   --fb-rule: rgb(233 228 212 / 0.19);
   --fb-rule-strong: rgb(233 228 212 / 0.52);
   --fb-torch: rgb(232 179 111 / 0.2);
+}
+
+/*
+ * Imprint band. Stock voices come from the rule above: paper on the Ledger,
+ * black everywhere else, and black voices on a dark page either way.
+ * 44 + 44 + 30 = 118. The provenance row grows when it wraps.
+ */
+.imprint-band {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  width: 100%;
+  color: var(--band-ink);
+}
+/*
+ * The band is pinned, so whatever pins below it starts at the band's foot, and
+ * a control the keyboard brings into view stops there too. The band publishes
+ * its measured height (src/lib/useBandHeight.ts): 118px, or more once the
+ * provenance wraps. Where the server renders the band, a script directly after
+ * it measures it before the app runs, so 118px is only what a page reads
+ * before its band exists. The Table's label row and its deep-zone divider are
+ * PR 4's markup, so their offsets are written here. 28px and 34px are that
+ * label row's height in its two layouts; tests/bandPins.test.ts holds the two
+ * files together. A page without the band, such as the states harness, is
+ * untouched.
+ */
+html {
+  --band-height: 118px;
+  scroll-padding-top: var(--band-height);
+}
+.imprint-band ~ .page-measure [data-table] > .sticky {
+  top: var(--band-height);
+}
+.imprint-band ~ .page-measure [data-table='mobile'] [data-zone-divider].sticky {
+  top: calc(var(--band-height) + 28px);
+}
+.imprint-band ~ .page-measure [data-table='desktop'] [data-zone-divider].sticky {
+  top: calc(var(--band-height) + 34px);
+}
+/*
+ * The scroll padding stops at the band, and on the phone layout the Table pins
+ * two more rows under it. A standings row that takes focus while it lies under
+ * them counts as in view, so the browser leaves it there. Each row's scroll
+ * margin is what pins above it, below the band: the labels (28px), and the
+ * divider in a zone long enough to pin one (27.5px: 8 and 6 of padding, and a
+ * 9px label on a 1.5 line). The last 4.5px is the focus ring, 2px drawn 2px
+ * off the row, and the half pixel a browser can lose when it rounds a scroll
+ * to a whole one. A row runs the full width of the page, so its ring shows
+ * above and below it and nowhere else; with the upper edge under the divider,
+ * one line is left between two rows and names neither. The desktop layout has
+ * no control in its rows; its sort buttons are in the pinned labels.
+ */
+.imprint-band ~ .page-measure [data-table='mobile'] [data-table-row] > button {
+  scroll-margin-top: calc(28px + 4.5px);
+}
+.imprint-band ~ .page-measure [data-table='mobile'] [data-zone-divider].sticky ~ [data-table-row] > button {
+  scroll-margin-top: calc(28px + 27.5px + 4.5px);
+}
+.imprint-band[data-stock='black'] {
+  background: var(--fb-cover-black);
+  --band-ground: var(--fb-cover-black);
+  --band-ink: var(--fb-cover-ink);
+  --band-muted: var(--fb-cover-muted);
+  --band-pitch: var(--fb-pitch);
+  --band-amber: var(--fb-amber);
+}
+.imprint-band[data-stock='paper'] {
+  background: var(--fb-typescript);
+  --band-ground: var(--fb-typescript);
+  --band-ink: var(--fb-pulp-ink);
+  --band-muted: var(--fb-pulp-muted);
+  --band-pitch: var(--fb-pitch);
+  --band-amber: var(--fb-amber);
+}
+.imprint-controls,
+.imprint-tabs {
+  box-sizing: border-box;
+  height: 44px;
+  display: flex;
+  align-items: center;
+}
+.imprint-controls {
+  justify-content: space-between;
+  padding-inline: var(--fb-gutter);
+  gap: 8px;
+}
+.wordmark {
+  min-width: 0;
+  line-height: 1;
+}
+.wordmark-name {
+  display: block;
+  font-family: var(--fb-label);
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--band-ink);
+}
+/* The strap is a caps label, as the boards draw it: tracked .12em, the low end
+   of the handoff's caps range and the first edition's figure. The string in
+   the markup stays "Brooklyn · ET". */
+.wordmark-strap {
+  display: block;
+  margin-top: 1px;
+  font-family: var(--fb-label);
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--band-pitch);
+}
+.imprint-tools {
+  display: flex;
+  align-items: center;
+  flex: none;
+}
+.imprint-hit {
+  position: relative;
+  box-sizing: border-box;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 9px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 150ms ease;
+}
+.imprint-name {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.motion-disc,
+.theme-disc {
+  box-sizing: border-box;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  display: grid;
+  place-items: center;
+}
+.theme-disc {
+  transition: background-color 220ms ease;
+}
+.motion-disc svg,
+.theme-disc svg {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+.motion-glyph { display: none; }
+[data-motion='on'] .motion-glyph-on { display: grid; }
+[data-motion='off'] .motion-glyph-off { display: grid; }
+@media (prefers-reduced-motion: reduce) {
+  html:not([data-motion]) .motion-glyph-off { display: grid; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html:not([data-motion]) .motion-glyph-on { display: grid; }
+}
+[data-motion='off'] .motion-disc,
+[data-theme='dark'] .theme-disc {
+  background: currentColor;
+}
+[data-motion='off'] .motion-disc svg,
+[data-theme='dark'] .theme-disc svg {
+  color: var(--band-ground);
+}
+.motion-when-off,
+.theme-when-dark { display: none; }
+[data-motion='off'] .motion-when-on { display: none; }
+[data-motion='off'] .motion-when-off { display: inline; }
+[data-theme='dark'] .theme-when-light { display: none; }
+[data-theme='dark'] .theme-when-dark { display: inline; }
+.lens-switch {
+  display: inline-flex;
+  align-items: center;
+  height: 44px;
+}
+.lens-switch button {
+  box-sizing: border-box;
+  width: 57px;
+  height: 44px;
+  padding: 10.5px 0;
+  border: 0;
+  background: transparent;
+  color: var(--band-muted);
+  cursor: pointer;
+  font-family: var(--fb-label);
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: color 150ms ease;
+}
+.lens-switch button span {
+  display: grid;
+  place-items: center;
+  height: 23px;
+  border-radius: 999px;
+  transition: background-color 180ms cubic-bezier(.2, .7, .2, 1);
+}
+.lens-switch button[aria-checked='true'] {
+  color: var(--band-ground);
+}
+.lens-switch button[aria-checked='true'] span {
+  background: var(--band-ink);
+}
+.plus-five {
+  display: block;
+  flex: none;
+}
+.plus-five-ground {
+  fill: var(--fb-cover-black);
+  stroke: var(--fb-cover-ink);
+  stroke-width: 1;
+}
+.plus-five-lamp { fill: var(--fb-rift); }
+.plus-five-filament {
+  fill: none;
+  stroke: var(--fb-cover-black);
+  stroke-width: 1.1;
+  stroke-linecap: round;
+}
+.plus-five-mark {
+  fill: none;
+  stroke: var(--fb-cover-ink);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.imprint-tabs {
+  padding-inline: var(--fb-gutter);
+  gap: 4px;
+  box-shadow: inset 0 -1.5px 0 var(--fb-rule);
+}
+.imprint-tabs button {
+  box-sizing: border-box;
+  min-width: 44px;
+  height: 44px;
+  padding: 0 12px;
+  border: 0;
+  background: transparent;
+  color: var(--band-muted);
+  cursor: pointer;
+  font-family: var(--fb-label);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: color 150ms ease;
+}
+/*
+ * The tab as drawn is 22px tall inside its 44px hit area (handoff 5): the
+ * label, and for the current tab the pitch underline along the foot of those
+ * 22px, as wide as the label. The hit area is made by the button around it
+ * and draws nothing of its own.
+ */
+.imprint-tabs button span {
+  display: inline-block;
+  height: 22px;
+  line-height: 22px;
+  transition: box-shadow 150ms ease;
+}
+.imprint-tabs button[aria-current='page'] {
+  color: var(--band-ink);
+}
+.imprint-tabs button[aria-current='page'] span {
+  box-shadow: inset 0 -2.5px 0 var(--band-pitch);
+}
+/*
+ * Hover and pressed are ink shifts in 150 ms (handoff 5). Nothing scales or
+ * glows and no ink is mixed: the band's three voices trade places. A disc
+ * rests in ink, so it goes to pitch under the pointer and to muted ink while
+ * held. A lens or a tab that is not the current one rests in muted ink, so it
+ * goes to ink, then to pitch. Each property has one duration: ink and the
+ * tab's underline are 150, the lens thumb's fill 180, the theme disc's fill
+ * 220. Hover is for pointers that hover, so a tap leaves nothing behind.
+ */
+@media (hover: hover) {
+  .imprint-hit:hover {
+    color: var(--band-pitch);
+  }
+  .lens-switch button[aria-checked='false']:hover,
+  .imprint-tabs button:not([aria-current='page']):hover {
+    color: var(--band-ink);
+  }
+}
+.imprint-hit:active {
+  color: var(--band-muted);
+}
+.lens-switch button[aria-checked='false']:active,
+.imprint-tabs button:not([aria-current='page']):active {
+  color: var(--band-pitch);
+}
+/*
+ * A system that asks for reduced motion gets the band's state changes at once,
+ * as the first edition's switcher gave them. This is not the reader's motion
+ * control: that switch stops the decorative layer, and state changes keep
+ * running under it.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .imprint-hit,
+  .theme-disc,
+  .lens-switch button,
+  .lens-switch button span,
+  .imprint-tabs button,
+  .imprint-tabs button span {
+    transition: none;
+  }
+}
+.provenance {
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  min-height: 30px;
+  margin: 0;
+  padding: 6.25px var(--fb-gutter);
+  color: var(--fb-amber);
+  font-family: var(--fb-mono);
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 1.5;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.provenance-lead,
+.provenance-sync {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.provenance-lead svg {
+  width: 12px;
+  height: 12px;
+  flex: none;
+}
+.glyph { display: block; }
+
+/*
+ * Content column. Poster and Ledger are 640px, the Table 780. The padding
+ * stays 20px: Tonight, the Poster week block and the mobile table bleed by
+ * 20px, and those rows are later PRs. A 16px gutter would push them past
+ * the viewport. The band itself uses the 16px token.
+ */
+.page-measure {
+  --page-gutter: 20px;
+  box-sizing: border-box;
+  width: min(100%, calc(var(--fb-measure) + 2 * var(--page-gutter)));
+  margin-inline: auto;
+  padding: 28px var(--page-gutter) 64px;
+}
+.page-measure[data-measure='register'] {
+  width: min(100%, calc(var(--fb-measure-register) + 2 * var(--page-gutter)));
+}
+.page-measure[data-measure='moments'] {
+  width: min(100%, 780px);
+}
+/*
+ * Ruling 19. Moments' ground is the page behind the route, not a panel inside
+ * it: the gallery outdents the column, so a ground painted on either box would
+ * leave the old page showing around it. The page takes pulp while the Moments
+ * column is on it, and the black voices on a dark page. No box moves.
+ */
+body:has(.page-measure[data-measure='moments']) {
+  background: var(--fb-pulp);
+}
+.page-foot {
+  margin-top: 32px;
+  font-family: var(--fb-book);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--fb-pulp-ink);
+}
+.page-foot .provenance {
+  min-height: 0;
+  padding: 0;
+}
+.page-foot-copy {
+  margin: 8px 0 0;
+}
+.page-foot[data-stock='black'] {
+  margin-inline: calc(-1 * var(--page-gutter));
+  padding: 16px var(--page-gutter) 0;
+  background: var(--fb-cover-black);
+}
+
+/* Flat planes. Amber from 24 hours, alarm from 72. The Ledger ground is typescript. */
+.staleness {
+  margin-bottom: 16px;
+  border: 1.5px solid var(--fb-amber);
+  border-left-width: 4px;
+  background: var(--fb-pulp);
+  color: var(--fb-amber);
+  padding: 10px 14px;
+  font-family: var(--fb-book);
+  font-size: 14px;
+  line-height: 1.35;
+}
+.staleness[data-plane='alarm'] {
+  border-color: var(--fb-alarm);
+  color: var(--fb-alarm);
+}
+[data-ground='typescript'] .staleness {
+  background: var(--fb-typescript);
+}
+.staleness code {
+  font-family: var(--fb-mono);
+  font-size: 0.92em;
+}
+.view-alert {
+  border: 1.5px solid var(--fb-rule-strong);
+  background: var(--fb-pulp);
+  color: var(--fb-pulp-ink);
+  padding: 16px;
+}
+.view-alert-title {
+  margin: 0;
+  font-family: var(--fb-label);
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 1.2;
+}
+.view-alert-copy {
+  margin: 4px 0 0;
+  font-family: var(--fb-book);
+  font-size: 14px;
+  line-height: 1.35;
+  color: var(--fb-pulp-muted);
+}
+.view-alert-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+.view-alert-button {
+  box-sizing: border-box;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--fb-pulp-ink);
+  background: transparent;
+  color: var(--fb-pulp-ink);
+  font-family: var(--fb-label);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+}
+.view-alert-solid {
+  background: var(--fb-pulp-ink);
+  color: var(--fb-pulp);
 }

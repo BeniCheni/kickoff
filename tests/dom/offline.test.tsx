@@ -15,13 +15,16 @@ describe('offline Fixtures and Table', () => {
   it('keeps the shared header and adds the label outside it', () => {
     release = primeClock(edt('2026-09-14T12:00:00'))
     const live = render(<StrictMode><App /></StrictMode>)
-    const liveHeader = document.querySelector('header')?.outerHTML
+    const liveControls = document.querySelector('.imprint-controls')?.outerHTML
+    const liveStamp = document.querySelector('[data-provenance]')?.outerHTML
     expect(live.container.textContent).not.toContain('Offline snapshot')
     expect(screen.getByRole('button', { name: 'Moments' })).toBeTruthy()
     live.unmount()
 
     render(<StrictMode><OfflineApp /></StrictMode>)
-    expect(document.querySelector('header')?.outerHTML).toBe(liveHeader)
+    expect(document.querySelector('.imprint-controls')?.outerHTML).toBe(liveControls)
+    expect(document.querySelector('[data-provenance]')?.outerHTML).toBe(liveStamp)
+    expect(document.querySelector('[data-offline-snapshot]')?.closest('header')).toBeNull()
     expect(screen.getByText('Offline snapshot')).toBeTruthy()
     expect(screen.queryByRole('button', { name: 'Moments' })).toBeNull()
     expect(screen.getByRole('button', { name: 'Fixtures' })).toBeTruthy()

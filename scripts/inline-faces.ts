@@ -9,8 +9,8 @@ const root = fileURLToPath(new URL('..', import.meta.url))
 // and Inter are variable, so one pair of halves covers every weight that
 // pointed at the file. Kickoff Mono 400 stays on Kickoff Mono Text: a real
 // 400 on Kickoff Mono would replace the 500 the page gets as the nearest
-// weight. Caslon 400 and that 400 are for the offline page PR 2 renders.
-// Until that page selects them, the bytes are carried and unused.
+// weight. The offline page selects all six: its band's provenance line is
+// set in that 400, and its page foot and staleness banner in Caslon 400.
 const RENDERED = [
   './fonts/oswald/Oswald.woff2',
   './fonts/oswald/Oswald-ext.woff2',

@@ -1,9 +1,7 @@
 'use client'
 
 import pkg from '../../package.json'
-import { AppHeader } from '../../src/components/AppHeader'
-import { TabNav } from '../../src/components/TabNav'
-import { LensSwitcher } from '../../src/components/LensSwitcher'
+import { BandHeightBoot, ImprintBand } from '../../src/components/ImprintBand'
 import { StalenessBanner } from '../../src/components/StalenessBanner'
 import { ViewBoundary } from '../../src/components/ViewBoundary'
 import { MomentsRegion } from './moments/region'
@@ -11,6 +9,7 @@ import type { CatalogMode, MomentsPayload } from '../lib/catalog/types'
 import { FixturesPage } from '../../src/components/FixturesPage'
 import { TablePage } from '../../src/components/TablePage'
 import { DEFAULT_LENS, encodeLens, parseLens } from '../../src/lib/lens'
+import { useMotionController } from '../../src/lib/useMotionController'
 import { useThemeController } from '../../src/lib/useThemeController'
 import { useNow } from '../../src/lib/useNow'
 import { SearchProvider, useCanonicalSearch, useUrlState } from '../../src/lib/useUrlState'
@@ -46,6 +45,7 @@ function ShellInner({ moments, catalogMode }: { moments: MomentsPayload; catalog
   useCanonicalSearch(today)
   useIgnoredWatchScrub()
   const { toggle } = useThemeController(lens)
+  const { toggle: toggleMotion } = useMotionController()
   function onSelect(next: Tab) {
     const currentWatch = new URLSearchParams(window.location.search).get('watch')
     const enteringMoments = next === 'moments' && tab !== 'moments'
@@ -59,20 +59,30 @@ function ShellInner({ moments, catalogMode }: { moments: MomentsPayload; catalog
   }
 
   return (
-    <div className="mx-auto max-w-[780px] px-5 pt-7 pb-16">
-      <AppHeader
-        version={pkg.version}
-        onToggleTheme={toggle}
-        themeLabel={(
-          <>
-            <span className="dark:hidden">Dark mode</span>
-            <span className="hidden dark:inline">Light mode</span>
-          </>
-        )}
-      />
-      <TabNav tab={tab} onSelect={onSelect}>
-        <LensSwitcher lens={lens} onSelect={setLens} />
-      </TabNav>
+    <>
+    <ImprintBand
+      version={pkg.version}
+      tab={tab}
+      lens={lens}
+      onSelectTab={onSelect}
+      onSelectLens={setLens}
+      onToggleTheme={toggle}
+      themeLabel={(
+        <>
+          <span className="theme-when-light">Dark mode</span>
+          <span className="theme-when-dark">Light mode</span>
+        </>
+      )}
+      onToggleMotion={toggleMotion}
+      motionLabel={(
+        <>
+          <span className="motion-when-on">Stop motion</span>
+          <span className="motion-when-off">Start motion</span>
+        </>
+      )}
+    />
+    <BandHeightBoot />
+    <div className="page-measure" data-measure={tab === 'moments' ? 'moments' : tab === 'table' ? 'register' : 'poster'} data-ground={tab === 'table' || tab === 'moments' ? 'black' : lens === 'ledger' ? 'typescript' : 'pulp'}>
       {tab === 'moments' ? <ViewBoundary key={tab}><MomentsRegion moments={moments} catalogMode={catalogMode} search={liveSearch} /></ViewBoundary> : (
         <div data-moments-background="route"><ViewBoundary key={`${tab}:${lens}`}>
           <StalenessBanner />
@@ -81,5 +91,6 @@ function ShellInner({ moments, catalogMode }: { moments: MomentsPayload; catalog
       )}
       <PrivacyFoot />
     </div>
+    </>
   )
 }

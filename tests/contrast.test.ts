@@ -1,6 +1,6 @@
 import { globSync, readFileSync, readdirSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { bannerSource, css, contrastCases, measureContrast, ratio, rgb, scrimComposite, secondEditionPairs, secondEditionTokens } from './contrast'
+import { bannerPaint, bannerSource, css, contrastCases, measureContrast, ratio, rgb, scrimComposite, secondEditionPairs, secondEditionTokens } from './contrast'
 
 describe('measured semantic color contrast against rendered grounds', () => {
   it.each(contrastCases)('$theme $role on $ground', ({ ratio, minimum }) => {
@@ -20,7 +20,7 @@ it('keeps every floodlight tint site in the mounted inventory', () => {
       const count = [...readFileSync(new URL(p, root), 'utf8').matchAll(/\bbg-floodlight-bg\b/g)].length
       return count ? [[p, count]] : []
     })
-  expect(sites).toEqual([['components/MomentsEmpty.tsx', 1], ['components/StalenessBanner.tsx', 1], ['components/TablePage.tsx', 2]])
+  expect(sites).toEqual([['components/MomentsEmpty.tsx', 1], ['components/TablePage.tsx', 2]])
 })
 
 describe('second-edition pairs, read from the tokens', () => {
@@ -85,10 +85,11 @@ describe('second-edition pairs, read from the tokens', () => {
   })
 })
 
-it('no rendered file reads an fb- token yet', () => {
+it('fb tokens and stock render only from the chrome that owns them', () => {
+  const allowed = new Set(['components/ImprintBand.tsx', 'components/PageFoot.tsx', 'index.css'])
   const root = new URL('../src/', import.meta.url)
   const hits = globSync('**/*.{css,ts,tsx}', { cwd: root }).filter((file) => {
-    if (file === 'shell.css') return false
+    if (file === 'shell.css' || allowed.has(file)) return false
     return /--fb-|data-stock/.test(readFileSync(new URL(file, root), 'utf8'))
   })
   expect(hits).toEqual([])
@@ -98,9 +99,28 @@ it('reads changed token and component alphas instead of certifying yesterday’s
   const measured = (cases: typeof contrastCases, theme: string, role: string) => cases.find((c) => c.theme === theme && c.role === role)!.ratio
   const border = measureContrast(css.replace('rgb(22 33 27 / 0.12)', 'rgb(22 33 27 / 0.22)'))
   expect(measured(border, 'light', 'FT pill')).toBeLessThan(4.5)
-  const darkTint = measureContrast(css.replace('--floodlight-bg: rgb(247 201 72 / 0.14)', '--floodlight-bg: rgb(247 201 72 / 0.50)'))
-  expect(measured(darkTint, 'dark', '24h banner')).toBeLessThan(4.5)
-  const alarm = measureContrast(css, bannerSource.replace('bg-accent/10', 'bg-accent/15'))
+  const darkBanner = measureContrast(css.replace('--fb-amber: #F7C948', '--fb-amber: #2A2410'))
+  expect(measured(darkBanner, 'dark', '24h banner')).toBeLessThan(4.5)
+  const alarm = measureContrast(css.replace('--fb-alarm: #B3121B', '--fb-alarm: #F6C1C3'))
   expect(measured(alarm, 'light', '72h banner')).toBeLessThan(4.5)
-  expect(() => measureContrast(css, bannerSource.replace('bg-accent/10', 'bg-surface'))).toThrow('72h banner tint')
+  expect(() => measureContrast(css, bannerSource.replace('data-plane={plane}', 'data-plane="surface"'))).toThrow('72h banner tint')
+})
+
+it('measures the banner in the colours its own rules paint', () => {
+  expect(bannerPaint()).toEqual({ amber: 'fb-amber', alarm: 'fb-alarm', grounds: ['fb-pulp', 'fb-typescript'] })
+  const banner = contrastCases.filter((c) => c.role === '24h banner' || c.role === '72h banner')
+  // Two planes, two grounds, two themes.
+  expect(banner.map((c) => `${c.theme} ${c.role} on ${c.ground} ${c.ratio.toFixed(2)}`)).toEqual([
+    'light 24h banner on fb-pulp 5.85', 'light 72h banner on fb-pulp 5.17',
+    'light 24h banner on fb-typescript 6.48', 'light 72h banner on fb-typescript 5.73',
+    'dark 24h banner on fb-pulp 11.76', 'dark 72h banner on fb-pulp 6.86',
+    'dark 24h banner on fb-typescript 11.76', 'dark 72h banner on fb-typescript 6.86',
+  ])
+  const worst = (source: string, role: string) => Math.min(...measureContrast(source).filter((c) => c.role === role).map((c) => c.ratio))
+  // A plane painted in its own ink reads 1:1, on either ground.
+  expect(worst(css.replace("  border-left-width: 4px;\n  background: var(--fb-pulp);", "  border-left-width: 4px;\n  background: var(--fb-amber);"), '24h banner')).toBe(1)
+  expect(worst(css.replace("[data-ground='typescript'] .staleness {\n  background: var(--fb-typescript);", "[data-ground='typescript'] .staleness {\n  background: var(--fb-amber);"), '24h banner')).toBe(1)
+  expect(worst(css.replace(".staleness[data-plane='alarm'] {\n  border-color: var(--fb-alarm);\n  color: var(--fb-alarm);", ".staleness[data-plane='alarm'] {\n  border-color: var(--fb-alarm);\n  color: var(--fb-pulp);"), '72h banner')).toBe(1)
+  // A plane painted with a literal is not measured as a token, so it fails closed.
+  expect(() => measureContrast(css.replace("  border-left-width: 4px;\n  background: var(--fb-pulp);", "  border-left-width: 4px;\n  background: #6E4B00;"))).toThrow("The banner's background is not a token")
 })

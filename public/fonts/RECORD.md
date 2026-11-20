@@ -6,16 +6,36 @@ file name the pages already preload. The latin-ext half adds `-ext` before
 `.woff2`. The latin rule comes after the latin-ext rule so the browser tries
 latin first for characters in both ranges. The page heads preload latin files.
 
-Fixtures and Table load the latin halves of Oswald, Inter, and Kickoff Mono at
-500 and 600 (107,588 bytes). Moments loads the latin halves of Oswald and
-Inter, and preloads the latin half of Mono 500, which no text on that tab
+Fixtures and Table load six latin halves: Oswald, Inter, Kickoff Mono at 400,
+500 and 600, and Caslon 400 (149,208 bytes). The band's provenance line is
+set in Kickoff Mono Text, and that is what fetches Mono 400. The page foot is
+set in Caslon 400, and so is the staleness banner when it prints. Moments
+loads five (131,320 bytes): Oswald, Inter and Mono 400, and the latin halves
+of Mono 500 and Caslon 400, which the head preloads and no text on that tab
 selects. The fixture row prints the venue on its meta line. Four fixtures name
-Şükrü Saracoğlu Stadium, and that line is what fetches Inter's latin-ext half.
+Şükrü Saracoğlu Stadium, and that line is what fetches Inter's latin-ext half:
+Fixtures for the week of Mon 19 Oct 2026 loads seven files (232,876 bytes).
 Nothing else fetches a latin-ext file, and nothing fetches the faces the page
-does not render. The offline and single files inline both halves of six faces:
-Oswald, Inter, Kickoff Mono 400, 500 and 600, and Caslon 400. PR 2 has not
-merged, so the offline page does not select Caslon 400 or Kickoff Mono 400
-yet; the files carry them until it does.
+does not render: Kickoff Display, Chakra Petch and the two italics.
+
+Those figures are the files' own sizes. On the wire, with each response's
+headers, a cold load in headless Chrome on Thu 19 Nov 2026 read:
+
+| Page | Font files | `vite preview` | `next start` |
+| --- | --- | --- | --- |
+| Fixtures | 6 | 151,128 | 150,900 |
+| Table | 6 | 151,128 | 150,900 |
+| Moments | 5 | 132,920 | 132,730 |
+| Fixtures, week of Mon 19 Oct 2026 | 7 | 235,116 | 234,851 |
+
+Both lenses fetch the same files, at 390 and at 1000.
+
+The offline and single files inline both halves of the same six faces:
+Oswald, Inter, Kickoff Mono 400, 500 and 600, and Caslon 400. Fixtures and
+Table select all six in either file, and the browser decodes the latin half
+of each. The week of Mon 19 Oct 2026 decodes Inter's latin-ext half as well.
+The single file's Moments selects Oswald, Inter and Mono 400. The other five
+latin-ext halves are carried, and no page measured decodes one.
 
 The tool is `scripts/split-font-ranges.py`. It runs outside the build.
 `package.json` and the lockfile are unchanged. fontTools is 4.60.2 and brotli,

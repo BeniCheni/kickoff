@@ -23,7 +23,11 @@ const globals = readFileSync(path.join(root, 'web/app/globals.css'), 'utf8')
 const sources = [...globals.matchAll(/@source\s+"([^"]+)"/g)].map(match => match[1])
 assert.deepEqual(sources, [
   './',
-  '../../src/components/AppHeader.tsx',
+  '../../src/components/glyphs.tsx',
+  '../../src/components/ImprintBand.tsx',
+  '../../src/components/MotionControl.tsx',
+  '../../src/components/PageFoot.tsx',
+  '../../src/components/ProvenanceLine.tsx',
   '../../src/components/TabNav.tsx',
   '../../src/components/LensSwitcher.tsx',
   '../../src/components/StalenessBanner.tsx',

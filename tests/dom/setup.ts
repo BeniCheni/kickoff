@@ -20,6 +20,7 @@ afterEach(() => {
   window.localStorage.clear()
   delete document.documentElement.dataset.lens
   delete document.documentElement.dataset.theme
+  delete document.documentElement.dataset.motion
   document.documentElement.className = ''
   installMatchMedia()
 })

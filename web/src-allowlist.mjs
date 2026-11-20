@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url'
  *  src/main.tsx, src/App.tsx, Moments session/player/YouTube modules and studio/
  *  are absent on purpose. */
 export const SRC_ALLOWLIST = [
-  'src/components/AppHeader.tsx',
+  'src/components/ImprintBand.tsx',
   'src/components/CompetitionChip.tsx', // chip ink and competition colour, shared by the filter bar and the table
   'src/components/FilterBar.tsx', // the Fixtures competition filter
   'src/components/FixtureRow.tsx', // one fixture, including TBC and unsettled status
@@ -36,10 +36,12 @@ export const SRC_ALLOWLIST = [
   'src/lib/momentsSaved.ts', // kickoff-moments-saved-v1, the visit-only refusal included
   'src/lib/schema.ts', // fixture and standings validation
   'src/lib/standings.ts', // table rows from the committed standings snapshot
+  'src/lib/motion.ts',
   'src/lib/theme.ts',
   'src/lib/time.ts',
   'src/lib/urlCodecs.ts',
   'src/lib/useNow.ts',
+  'src/lib/useMotionController.ts',
   'src/lib/useThemeController.ts',
   'src/lib/useUrlState.ts',
   'tests/fixtures/edgeFixtures.ts', // synthetic in-play, postponed, suspended, missing-venue and TBC rows shared with the root test

@@ -9,7 +9,8 @@ import { edt, primeClock, tick } from './rig'
  * layout — the desktop NEXT lane, the collapsed mobile row, the expanded mobile card — and
  * the row's accessible name must draw opponent and state from the same fixture.
  */
-vi.mock('../../src/lib/fixtures', () => ({
+vi.mock('../../src/lib/fixtures', async (importOriginal) => ({
+  ...await importOriginal<typeof import('../../src/lib/fixtures')>(),
   FIXTURES: [
     {
       id: 'laliga:getafe-celta',
