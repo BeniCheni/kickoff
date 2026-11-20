@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { fixtureTimes, brooklynAbbrev, brooklynDate, startOfWeek, addDays, syncStamp, posterDayTitle, zonedParts } from '../src/lib/time'
+import { fixtureTimes, brooklynAbbrev, brooklynDate, startOfWeek, addDays, syncStamp, posterDayTitle, weekRange, zonedParts } from '../src/lib/time'
 
 describe('structured display time', () => {
   it.each([
@@ -100,5 +100,16 @@ describe('calendar helpers', () => {
     expect(addDays('2026-10-31', 1)).toBe('2026-11-01')
     expect(addDays('2026-11-01', -1)).toBe('2026-10-31')
     expect(addDays('2026-12-31', 1)).toBe('2027-01-01')
+  })
+})
+
+describe('Brooklyn week range', () => {
+  it.each([
+    ['2026-12-21', '2026-12-31', 'Dec 21–27'],
+    ['2026-12-28', '2026-12-31', 'Dec 28, 2026–Jan 3, 2027'],
+    ['2027-01-04', '2026-12-31', 'Jan 4–10, 2027'],
+    ['2027-01-04', '2027-01-01', 'Jan 4–10'],
+  ])('labels %s relative to %s', (start, today, expected) => {
+    expect(weekRange(start, today)).toBe(expected)
   })
 })

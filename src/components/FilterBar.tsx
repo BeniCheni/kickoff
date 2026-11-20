@@ -10,16 +10,6 @@ type Props = {
 
 export function FilterBar({ active, onToggle, onSetGroup, onSetAll }: Props) {
   return (
-    <details className="mb-4 rounded border border-line bg-surface">
-      <summary className="label-caps flex cursor-pointer items-center justify-between gap-2 px-3.5 py-3 text-[12.5px]">
-        <span>Filters</span>
-        <span className="font-sans text-[10.5px] font-normal tracking-normal normal-case text-ink-muted">
-          {active.size === COMPETITION_KEYS.length
-            ? `All ${COMPETITION_KEYS.length} competitions shown`
-            : `${active.size} of ${COMPETITION_KEYS.length} competitions shown`}
-        </span>
-      </summary>
-
       <div className="border-t border-line px-3.5 pt-3 pb-3.5">
         <div className="mb-3 flex items-center justify-between gap-2">
           <span className="text-[11px] leading-snug text-ink-muted">
@@ -61,6 +51,5 @@ export function FilterBar({ active, onToggle, onSetGroup, onSetAll }: Props) {
           )
         })}
       </div>
-    </details>
   )
 }

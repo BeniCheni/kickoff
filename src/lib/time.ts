@@ -133,6 +133,18 @@ export function shortDate(iso: string): string {
   return formatter('UTC', { month: 'short', day: 'numeric' }).format(new Date(`${iso}T12:00:00Z`))
 }
 
+/** The date arguments are Brooklyn calendar days, including today's year at midnight. */
+export function weekRange(start: string, today: string): string {
+  const end = addDays(start, 6)
+  const firstYear = start.slice(0, 4)
+  const lastYear = end.slice(0, 4)
+  const crossesYear = firstYear !== lastYear
+  const left = shortDate(start) + (crossesYear ? `, ${firstYear}` : '')
+  const right = start.slice(0, 7) === end.slice(0, 7) ? Number(end.slice(8)) : shortDate(end)
+  const year = crossesYear || lastYear !== today.slice(0, 4) ? `, ${lastYear}` : ''
+  return `${left}–${right}${year}`
+}
+
 export function weekdayShort(iso: string): string {
   return formatter('UTC', { weekday: 'short' }).format(new Date(`${iso}T12:00:00Z`))
 }

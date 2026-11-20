@@ -745,3 +745,24 @@ body:has(.page-measure[data-measure='moments']) {
 .fixture-unset, .fixture-note { margin-top: 3px; font: 400 12px/1.4 var(--fb-book); }
 .fixture-unset { font-style: italic; }
 .fixture-note { color: var(--fb-pulp-muted); overflow-wrap: anywhere; }
+
+.week-row {
+  display: flex; align-items: center; height: 44px; margin-top: 16px;
+  color: var(--fb-pulp-ink); background: var(--fb-typescript);
+  font: 600 12px/1 var(--fb-label); white-space: nowrap;
+  border-block: 1px solid var(--fb-rule);
+}
+.week-row[data-stock='black'] { background: var(--fb-cover-black); color: var(--fb-cover-ink); }
+.week-row button { display: inline-flex; align-items: center; justify-content: center; height: 44px; min-width: 44px; cursor: pointer; }
+.week-row button:disabled { color: var(--fb-pulp-muted); cursor: default; }
+.week-prev, .week-next { width: 44px; flex: none; }
+.week-prev .glyph { transform: rotate(90deg); }
+.week-next .glyph { transform: rotate(-90deg); }
+.week-range { padding-inline: 2px; font: 600 12px/1 var(--fb-label); text-transform: uppercase; }
+.week-today { color: var(--fb-pitch); padding-inline: 7px; text-transform: uppercase; }
+.week-filters { flex: 1; justify-content: flex-end !important; container-type: inline-size; padding-inline: 3px; }
+.week-filters .glyph { width: 15px; height: 15px; margin-inline: 3px; }
+.week-filters[aria-expanded='true'] .glyph-chevron { transform: rotate(180deg); }
+@container (width >= 78px) { .week-filters .glyph-filters { display: none; } }
+@container (width < 98px) { .filter-all { display: none; } }
+@container (width < 78px) { .filter-prefix { display: none; } }
