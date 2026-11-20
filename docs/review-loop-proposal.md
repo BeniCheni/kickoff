@@ -638,6 +638,19 @@ Cursor's hands this track seats no Cursor.
 - *Seventh fix brief:* [`review-loop-sprint-3-fix-7-prompt.md`](review-loop-sprint-3-fix-7-prompt.md),
   for Pass 2 again, as a re-read (Codex in the ChatGPT desktop app, `gpt-6.2-sol`, `xhigh`), in
   `~/code/review-seats/elenchus-pr8-pass2-r7`.
+- *Fixed a seventh time (Fri 20 Nov 2026):* the Pass 2 re-read's
+  [record](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7045908807): one commit to
+  `5b0fba2`, in `test/authorize.test.ts` only. 25-23 to 25-25 are fixed as the round reports
+  them: SM1 and SM1s fail under M1, SM5 under M5, and the top-level unknown-key row under M4.
+  Ruling 4's lists, taken from the code, added two carry rows (pass 0 and exec) and eight split
+  rows, one for each other `fields()` call, each failing under its own deletion. 33 of 33
+  non-equivalent deletions are caught, and Y3d and Y3e stay equivalent. In fresh exports, the
+  Planner re-ran the suite (377 of 377), M1, M4, M5 and the round's twelve new forms, each
+  matching the round's table by test name, and sixteen deletions of its own, all caught. Codex
+  read Kickoff's archive five minutes after it was pushed.
+- *Sixth re-read brief:* [`review-loop-sprint-3-synthesis-7-prompt.md`](review-loop-sprint-3-synthesis-7-prompt.md),
+  for the sixth Pass 2.5 re-read (Claude Code, `claude-opus-5-5`, `xhigh`), in
+  `~/code/review-seats/elenchus-pr8-pass25-r7`, with its sealed appendix as a second paste.
 - *Carried from Sprint 1's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are that
   comment's findings): 6, sequence by the order records were posted, not their presence; 7, every
   pass's `input_sha` is the previous recorded pass's `output_sha`, writing or not, and a head
