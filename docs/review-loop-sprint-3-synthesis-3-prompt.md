@@ -137,3 +137,9 @@ message:
 ````text
 Before the appendix, an answer on the missing folders. You're right that they're gone. ~/review-seats was re-created at 11:26:57 EST today, and the earlier seats' folders (elenchus-pr8-pass2-r2, elenchus-pr8-pass2-r3 and elenchus-pr8-pass25-r2) went with it. They aren't in the Trash and can't be recovered. In your comment, say the folders were deleted before you started, not that they don't exist on this Mac. Keep what they held under what you did not verify. The record of the round's deletions that survives is the list Codex published in #8's body. Your question 5 is answered here: drop it from the questions for Beni, or turn it into a line under what you did not verify. Change nothing else in your synthesis because of this message.
 ````
+
+*Corrected Thu 19 Nov 2026 (Planner):* `~/review-seats` was not re-created on 19 Nov. It was
+created on Wed 18 Nov at 11:26:57 EST, and the Planner's check on 19 Nov printed that time
+without its date. The three folders went at about 11:53 EST on 19 Nov, when the second re-read's
+folder was made. The note above is kept as it was sent, and so is the second re-read's comment,
+which repeats it.

@@ -574,6 +574,17 @@ Cursor's hands this track seats no Cursor.
 - *Third re-read brief:* [`review-loop-sprint-3-synthesis-4-prompt.md`](review-loop-sprint-3-synthesis-4-prompt.md),
   for the third Pass 2.5 re-read (Claude Code, `claude-opus-5-5`, `xhigh`), with its sealed
   appendix as a second paste.
+- *Re-read a third time (Thu 19 Nov 2026):* the third Pass 2.5 re-read
+  ([comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7021759818)) found the
+  fourth round did what Beni ruled, and no blocking finding open. It opened 25-17 and 25-18 as
+  contested notes, both from the round's change to `nextStep`, and 25-19 (should-fix), a rule no
+  test covers. The builder's folder was deleted two minutes after the re-read's was made. The
+  re-read rebuilt Codex's legacy-carry probe and re-ran all 15 listed deletions. The seal held.
+- *Ruled a fourth time:* another fix round, for 25-17, 25-18 and 25-19. The rulings are under
+  "Rulings received" ("Sprint 3's fourth Pass 3").
+- *Fifth fix brief:* [`review-loop-sprint-3-fix-5-prompt.md`](review-loop-sprint-3-fix-5-prompt.md),
+  for Pass 2 again, as a re-read (Codex in the ChatGPT desktop app, `gpt-6.2-sol`, `xhigh`), the
+  first seat to work under `~/code/review-seats/`.
 - *Carried from Sprint 1's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are that
   comment's findings): 6, sequence by the order records were posted, not their presence; 7, every
   pass's `input_sha` is the previous recorded pass's `output_sha`, writing or not, and a head
@@ -1397,9 +1408,51 @@ for Cursor (S7).
     and the first re-read's folders went with it, and they were not in the Trash. Codex's F7 probe
     and the round's deletion logs are lost; the deletion list in elenchus PR 8's body survived.
     The note Beni sent with the appendix is appended to the second re-read brief.
+    *Corrected Thu 19 Nov 2026 (Planner):* `~/review-seats` was not re-created on 19 Nov. It was
+    created on Wed 18 Nov at 11:26:57 EST, and the Planner's check on 19 Nov printed that time
+    without its date. The three folders went at about 11:53 EST on 19 Nov, when the second
+    re-read's folder was made. The posted comments that repeat the error stay as they are.
   - **Checked by the Planner:** the re-read's comment against GitHub, its record through the
     head's own code, the seal and the seat's limits in its transcripts, and the code paths of
     25-14 to 25-16. No probe was re-run.
+- **Sprint 3's fourth Pass 3 (Beni, Thu 19 Nov 2026, "Rule as recommended"; the comment,
+  "Approve and post").** The third Pass 2.5 re-read
+  ([comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7021759818)) found
+  rulings 1 to 6 of the third Pass 3 done, rulings 1 and 4 as clarified, and no blocking finding
+  open. It opened the notes 25-17 and 25-18 as contested and 25-19 as should-fix, and asked four
+  questions. Beni ruled on the Planner's five recommendations, numbered as the re-read's
+  questions. The Planner wrote and posted the record, a re-read of pass 3 at `addc77a`
+  ([comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7026819729)). The brief is
+  [`review-loop-sprint-3-fix-5-prompt.md`](review-loop-sprint-3-fix-5-prompt.md).
+  - **1, 25-17, raised to should-fix.** `status` never names a pass configured after a pass with
+    no valid record, whether absent, in progress or only rejected. The earlier pass comes first,
+    with its retry and escalation, as at `d4c32d8`. Mechanism: `d4c32d8`'s order condition in
+    `nextStep`, with the pass ruling 4 selects in place of the ruling pass.
+  - **2, 25-18, raised to should-fix.** `status` names a pass for its record's schema only where
+    `authorize` would read that record, which needs a configured gate. Mechanism: `nextStep`
+    skips `checkRuling`'s schema items when `config.gate` is absent.
+  - **3, ruling 5 of the third Pass 3.** Met, and finding 9 is fixed. The ruling asked only that
+    the list name U5 to U7 as equivalents. "In #8's body" was the fourth fix brief's mechanism,
+    and Beni replaced it with the record comment when the body was at GitHub's limit. From now
+    on, each round's receipts go in its record comment, and #8's body takes no new section.
+  - **4, the next step.** A fifth fix round, for 25-17, 25-18 and 25-19, rather than the
+    executor with them deferred. Sprint 4 ports `status` and `check`, so a deferral to Sprint 5
+    would port the wrong answers. For 25-19, one test of the re-read's SX7 shape, which fails
+    under the deletion X7.
+  - **5, the seat folders.** From the next round on, each seat works in a new folder of its own
+    under `~/code/review-seats/`, where the studio's rules keep receipts, not in the home folder.
+  - **25-17 and 25-18 were the Planner's.** Ruling 4 of the third Pass 3 said what `status`
+    names, not what it must not skip, and its condition, "while `authorize` would refuse", never
+    reached the mechanism.
+  - **The seat folders, a third time.** The fourth round's builder folder,
+    `elenchus-pr8-pass2-r4`, was deleted at 14:39:05 EST on 19 Nov, two minutes after the
+    re-read's folder was made. Codex's legacy-carry probe and the deletion logs went with it. The
+    list in the round's record comment survived.
+  - **Checked by the Planner:** the re-read's comment against GitHub, its record through the
+    head's own code, the seal and the seat's limits in its transcript, and the code paths of
+    25-17 to 25-19. The Planner re-ran one deletion, X7, which passes the full suite.
+  - **After this record**, `status` on PR 8 names `exec`, since no blocking finding is open.
+    `status` does not read a ruling's verdict.
 
 D8, D10 and D11 are not yet ruled. D4 is withdrawn, and D12 is Pilot (17 Nov).
 
