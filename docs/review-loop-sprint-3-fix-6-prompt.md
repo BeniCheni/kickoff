@@ -72,3 +72,10 @@ YOUR RECORD, as the last fenced json block of one new comment on #8 (not a reply
 
 STOP AND REPORT if: your folder is not as above; the model or effort is not gpt-6.2-sol at xhigh; anything in the start check differs; a fixture moves; a change under src/ would be needed; a new row fails at 818a946's src or passes under the deletion it is there to catch; a write would land outside the list above; a command would read the Keychain or post a status; a probe could reach GitHub as Beni; or a usage limit stops you. Your last message, in chat: the new head of sprint-3, each ruling with its commit, the deletion list's result, the receipts, what status names on #1, #6 and #8 after your record, your comment's URL, and what you did not do. Then stop. A fresh Pass 2.5 re-read on claude-opus-5-5 at xhigh, which writes only its comment, reads the round next, and Beni rules again at Pass 3.
 ````
+
+## A note on delivery (Thu 19 Nov 2026, Planner)
+
+This brief was pasted before the commit that archives it, `38c02c1`, was pushed at 22:22:22 EST.
+Codex read `docs/review-loop-plan` between 22:20:28 and 22:21:04, found no entry for the fifth
+Pass 3, and worked from the posted ruling, as the brief allows. From now on, the Planner pushes
+the archive before it delivers a brief that cites it.

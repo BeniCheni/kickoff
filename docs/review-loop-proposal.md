@@ -613,6 +613,18 @@ Cursor's hands this track seats no Cursor.
 - *Sixth fix brief:* [`review-loop-sprint-3-fix-6-prompt.md`](review-loop-sprint-3-fix-6-prompt.md),
   for Pass 2 again, as a re-read (Codex in the ChatGPT desktop app, `gpt-6.2-sol`, `xhigh`), in
   `~/code/review-seats/elenchus-pr8-pass2-r6`.
+- *Fixed a sixth time (Thu 19 Nov 2026):* the Pass 2 re-read's
+  [record](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7029515662): one commit to
+  `1549883`, in `test/authorize.test.ts` and `README.md` only. 25-19 to 25-22 are fixed as the
+  round reports them. Fifteen of fifteen deletions are caught, now including Z2, Y2, Y3 and Y3b.
+  In a fresh export, the Planner re-ran the suite (363 of 363) and all fifteen deletions, each
+  matching the round's report, plus two of its own (Y3d, Y3e), both equivalent. The brief was
+  pasted before its archive was pushed, so Codex worked from the posted ruling. The fourth
+  re-read's and the fifth round's folders went at about 22:40 EST, after this round had read
+  them, and `~/review-seats` went too.
+- *Fifth re-read brief:* [`review-loop-sprint-3-synthesis-6-prompt.md`](review-loop-sprint-3-synthesis-6-prompt.md),
+  for the fifth Pass 2.5 re-read (Claude Code, `claude-opus-5-5`, `xhigh`), in
+  `~/code/review-seats/elenchus-pr8-pass25-r6`, with its sealed appendix as a second paste.
 - *Carried from Sprint 1's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are that
   comment's findings): 6, sequence by the order records were posted, not their presence; 7, every
   pass's `input_sha` is the previous recorded pass's `output_sha`, writing or not, and a head
