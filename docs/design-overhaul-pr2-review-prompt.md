@@ -2098,3 +2098,172 @@ Approved, stages 1 and 2 together (Beni, Thu 19 Nov 2026, about 8:50 PM EST).
 - Stage 2. The tip's servers on 7473 to 7475 and the base's on 7673 to 7675, each started from its own worktree; the runner whole at b7dd65a in report mode and then with --enforce; the focus step against 3d44af1; and your red-then-green cases on real built pages, with any proxy or probe script you need written into /Users/benicheni/code/kickoff-receipts/pr342/pass25-sitting4/ and run from there.
 Write every log, temporary file and capture into that receipts folder. Stop each server by PID when you are done with it. Run nothing outside those two worktrees and that folder, start nothing on any other port, and install or change no package. Ask again before you write your comment's body, and again before you post it. Then revise your brief from what you ran.
 ```
+
+## The fourth sitting's rerun, Beni's ruling on its Low, and the squash message as drafted (Thu 19 Nov 2026, about 9:30 PM EST)
+
+Beni pasted the stage reply above as drafted. The fourth sitting built both trees, ran the
+servers and the runner, and replied at 9:05 PM EST with the brief below, ending its turn on a
+request for stage 3, the write of its comment body. The PM seat's checks at 9:19 PM EST, all
+mechanical:
+
+- `/Users/benicheni/code/kickoff-receipts/pr342/pass25-sitting4/` holds 137 MB: the eleven
+  tip logs, both base build logs, `report.log` (ending `exit=0`), `enforce.log` (ending "16
+  contrast pairs below the floor, 0 samples in a colour the sampler could not read",
+  `exit=1`), `report/receipt.json` and `enforce/receipt.json` (554,302 bytes each, not
+  identical), `focus-probes.ndjson` and its script, and `runner-51ad3c3/`.
+- `listener-shutdown.log` records the six listeners, PIDs 2810 to 2830, stopped by PID, and
+  nothing listened on 7473 to 7475 or 7673 to 7675 at the check.
+- `kickoff-pr342-sitting4` is at `b7dd65a` and `kickoff-pr342-sitting3-base` at `3d44af1`,
+  neither with a tracked change.
+- The PR was still at `b7dd65a`, MERGEABLE and CLEAN, with no review and auto-merge off.
+- Its correction to the fourth opener stands: `2fd2466` (#327) is on `main` and in
+  `overhaul/second-edition`'s first-parent history; `3733fd9` (#330) and `8173066` (#341) are
+  on the integration branch only.
+
+The fourth sitting's brief after its rerun, verbatim from its reply:
+
+~~~~markdown
+## Executive Summary Brief — PR #342 · Pass 2.5, fourth sitting · Thu 19 Nov 2026, EST
+
+**Decision — Escalated to Beni for the squash at `b7dd65a`.** All eleven local tip checks passed. The production rerun corroborates fix round 3, and enforcement failed only on the 16 Table loss pips already assigned to PR 4. I found one Low gap in the focus verifier and recommend addressing it in PR 4. The comment-body write is awaiting stage 3 approval. The fourth-sitting comment is still unposted. [PR #342](https://github.com/BeniCheni/kickoff/pull/342)
+
+### What ships
+
+- One imprint band brings together the lens, theme, motion and tab controls, with snapshot provenance in the band and feet.
+- The motion preference takes effect before paint. The Rack and decorative effects arrive in later PRs.
+- Table labels and zone dividers pin below the band, with clearance for keyboard focus on mobile rows.
+- Fixtures and Table retain their first-edition bodies. Moments takes the second-edition colours and retains its layout and playback.
+
+This is a non-release change into `overhaul/second-edition`. The manifest stays at `0.5.5`. The Ledger rows, Table skin, still Poster, Rack, imagery and decorative layer precede the public `v0.6.0` release. Step 0’s public transition belongs to that release. [Overhaul plan](https://github.com/BeniCheni/kickoff/blob/b7dd65a3a2ee4d427365aaf7511c461349978150/docs/design-overhaul-plan.md)
+
+### What the 360 found
+
+Pass 2 accepted all ten Pass 1 findings. I checked the fix history and reran the production runner against the resulting app.
+
+| Pass 1 finding | Pass 2 disposition and fourth-sitting evidence |
+|---|---|
+| Table labels, divider and focus hidden | `ca0cf74` fixed the pinned stack. `d0e743c` added mobile row clearance. The pins and focus steps passed. |
+| Partial Moments repaint | `2fe35cf` added the missing ground and inherited ink. The Moments paint checks passed. Fresh matched-base pixel parity was outside this rerun. |
+| Hit-area false greens | `d3cb613` added required controls, pitch and overlap checks. `e749b00` bound the current mark to the requested tab. The full matrix passed. |
+| Motion proof accepted a late assignment | `ea5242c` held app scripts. Both apps passed the first-frame and reload checks. |
+| Foot tests missed wrong provenance | `27eea9e` scoped the assertions to each foot. The root suites passed. |
+| Throwing-write test skipped the write | `76fad9b` made the test attempt a persisting write. The DOM suite passed. |
+| Banner test missed actual paint | `6040e69` bound the test to the CSS. All 16 rendered banner checks passed. |
+| Transitions under reduced motion | `aab1165` added the reduced-motion rules. All four chrome checks passed. |
+| Missing hover and press feedback | `60a3240` added the ink shifts. All 32 feedback checks passed. |
+| Unused Caslon preload in the Moments harness | `7a1e6b6` removed it. The harness checks passed. Beni deferred the two production Moments preloads separately. |
+
+The first and second sittings’ residual issues are covered by the pinned-row, gallery-width, tab-mark and observer-handoff fixes. The now-posted third sitting identified the remaining focus coverage gap. No vendor dispute remains in the published record. [Pass 1](https://github.com/BeniCheni/kickoff/pull/342#issuecomment-6985955898) · [Pass 2](https://github.com/BeniCheni/kickoff/pull/342#issuecomment-6989005652) · [Fix round 2](https://github.com/BeniCheni/kickoff/pull/342#issuecomment-7019420111) · [Third sitting](https://github.com/BeniCheni/kickoff/pull/342#issuecomment-7027363385)
+
+### Fix round 3 — real pages, before and after
+
+`b7dd65a` is one Claude commit directly after `51ad3c3`. The diff is **two files, +148/−43**, confined to the runner and its tests. I ran the exact old runner blob and the current runner against the same tip builds, changing the Table DOM only after React mounted. Every rejection below reproduced separately on Vite and Next. [Fix commit](https://github.com/BeniCheni/kickoff/commit/b7dd65a3a2ee4d427365aaf7511c461349978150) · [Browser probe receipts](/Users/benicheni/code/kickoff-receipts/pr342/pass25-sitting4/focus-probes.ndjson)
+
+| Changed Table | `51ad3c3` runner | `b7dd65a` runner |
+|---|---|---|
+| Madrid control moved into PSG’s row | Passed, 1,548 presses | Named Madrid’s empty row and PSG’s two controls |
+| Madrid row given PSG’s ID | Passed, 1,548 | Named Madrid’s missing row and PSG’s duplicate |
+| Nine desktop labels replaced with text | Passed, 1,476 | Required the nine controls |
+| Desktop picker alone reachable | Passed, 1,468 | Required the nine controls |
+| Nine desktop labels unreachable | Passed, 1,476 | Rejected all nine as unreachable |
+| Desktop `Pts` relabelled `Pl` | Passed, 1,548 | Reported missing `Pts` and duplicate `Pl` |
+| Extra row with an unknown club ID and no control | Passed, 1,548 | Rejected the unknown row |
+| Only desktop `PPG` made unreachable | Passed, 1,540 | Named `PPG` as unreachable |
+| Madrid control removed outright | Failed, 35 controls for 36 clubs | Failed and named Madrid |
+
+The restored builds passed **24 cells, 1,548 Tab presses and 984 scrolls**. At the matched base `3d44af1`, the tip sweep rejected the first UCL mobile cell on each app because it pressed zero keys and missed all 36 Table controls.
+
+The revised tests retain the empty-sweep and missed-target rules. They replace the mobile count examples with club-ID, row ownership and reachability assertions, and the permissive desktop examples with nine required labels and positive press coverage. They also reject an empty expectation. All **23 affected assertions** passed in the in-memory check. Removing the empty-expectation, unknown-row or duplicate-label guard failed its corresponding test. Restoring each guard passed all 23 again. Data-honesty assertions and production sources are outside the fix diff.
+
+**New Low — the desktop check can miss an incorrect accessible name.** At 1000 px on both apps, I left `Pts` visible and reachable and used `aria-labelledby` to make Chromium expose `Pl`. The tip sweep still passed all 24 cells and 1,548 presses. The unmodified pages exposed `PTS`. The verifier reads text or `aria-label`, so it misses the browser-computed name. **Later**, in PR 4, is my recommendation. Have Claude check computed names when that PR revises the desktop header inventory. The reproduced defect is in the verifier. [Name extraction](https://github.com/BeniCheni/kickoff/blob/b7dd65a3a2ee4d427365aaf7511c461349978150/web/scripts/evidence.mjs#L679)
+
+### Verification as rerun
+
+- **Hosted.** `verify`, `studio`, Vercel, Vercel Preview Comments and `vercel-smoke` were green. The two Actions jobs checked out generated merge `c21fe15571e4db857ff4455a7a7fb7376b8d7615`, whose tree `733d8550766c164eb87348448b5fd05db3f67095` equals the tip. The dedicated Studio job logged **242 passed and one skipped in 46 files**. I also matched the checkout tree to the reviewed commit for all eleven historical `verify` jobs from `d0e743c` through `51ad3c3`. [Verify](https://github.com/BeniCheni/kickoff/actions/runs/44635852377/job/135954032123) · [Studio](https://github.com/BeniCheni/kickoff/actions/runs/44635852438/job/135954031720)
+- **Local.** All eleven tip checks passed on Node `24.15.0`. Root node **918 tests / 62 files**, root DOM **258 / 31**, web **158 / 28**. Both matched-base builds passed. Each Next build took one attempt. The offline scan checked **22 markers**, the client scan checked **18 client files, 165 server files and 17 markers**, and CSS isolation passed.
+- **Chromium `157.0.8103.80`.** Report exited **0** in about **383 s**. Enforcement exited **1** in about **377 s** for exactly R2. Each ran **96 matrix, 72 week, 4 legacy, 24 cold-load, 4 offline and 8 harness cases**, plus motion **8**, reduced-motion chrome **4**, feedback **32**, banner **16**, pins and reveal **16**, focus **24**, and Next first frame **5**. Width assertions passed across both apps, all lenses, themes and tabs at **360, 375, 390 and 1000 px**. The receipts agree on **1,898 contrast samples, 16,032 pictographs and zero unread**. The 16 failures are white `L` on `#D85A30`, **3.871:1**, in every light Table matrix cell. Six Next Ledger cold loads differed by one byte in `other` transfers between modes. Font, style and script bytes matched.
+- **Geometry and first frame.** The band was **133 px at 360** and **118 px at 375, 390 and 1000**. Both rows measured **44 px**, and the drawn tabs measured **22 px**. At the five Next first-frame widths, the held script set the pinned offset and React took sole observer ownership after hydration. The stopped motion captures matched byte for byte within each app.
+- **Step 0 and smoke.** A lens change, Table navigation and Back preserved `?only=pl`, `&date=2026-11-21` and the fragment in both production apps. The stock smoke routine passed all four raw routes on the assigned Next listener and matched the committed snapshot digest. Local Next served the gallery-unavailable state.
+- **Receipts and cleanup.** I verified all six listener PIDs and working directories with `lsof`, stopped them by PID, and confirmed the ports clear. Both worktrees remain clean. [Report receipt](/Users/benicheni/code/kickoff-receipts/pr342/pass25-sitting4/report/receipt.json) · [Enforcement receipt](/Users/benicheni/code/kickoff-receipts/pr342/pass25-sitting4/enforce/receipt.json) · [Four 390 px captures](/Users/benicheni/code/kickoff-receipts/pr342/pass25-sitting4/fixtures-390-review-preview.png)
+
+### Squash corrections and remaining limits
+
+Replace the body’s `e820fd4` head and old measurement baseline with `b7dd65a` against `8173066`, using `3d44af1` for the snapshot-matched comparison. The diffs are **75 files, +6,701/−2,282** against the squash target and **64 files, +3,890/−263** against the matched base. Replace the sentence-case strap, old tab drawing, partial Moments repaint and font fallback wording with caps at `.12em`, the 22 px drawing, the ruled repaint, and both halves of six inlined faces.
+
+The current cold font transfers are **151,128 Vite / 150,900 Next** on Fixtures and Table and **132,920 / 132,730** on Moments. Fixtures and Table show zero unused preloads. Moments shows two. The rebuilt offline bundle is **1,442,614 bytes** with hash prefix `c3b38d9ed1754c67`. The single bundle is **1,493,138 bytes** with prefix `a7e626df6b769b8d`. Both match Claude’s published `51ad3c3` figures. I independently built the tip and compared the known prefixes. A separate `51ad3c3` build and a full cross-build byte comparison remain unverified. I also verified all **26** font record entries and identical generated inline face CSS across the fix boundary. [Fix round 3 receipt](https://github.com/BeniCheni/kickoff/pull/342#issuecomment-7024938245)
+
+Beni’s existing rulings stand, including String 34, the pinned band and inset, the deferred preloads, synthesized banner bold, copied stylesheet comments, and `W`, `D` and `L` in PR 4. The real-iPhone and visual H4 checks remain with Beni. The signed-out preview redirected to Vercel sign-in. Populated production Next, deployed transfer bytes and fresh matched-base Moments pixel parity were outside this rerun. [Exact preview](https://kickoff-d1iokcqko-beni-von-chenis-projects.vercel.app)
+
+The trailers credit Cursor and Claude as the code authors. One correction to the opener’s precedent description is that #327 landed on `main`. #330 and #341 landed on the integration branch. [#327](https://github.com/BeniCheni/kickoff/pull/327) · [#330](https://github.com/BeniCheni/kickoff/pull/330) · [#341](https://github.com/BeniCheni/kickoff/pull/341)
+
+### Merge gate
+
+| Clause | Result |
+|---|---|
+| Non-release and no numbering fork | Pass. No version bump, new CHANGELOG section or tag. |
+| Every High has a fix commit | Pass. The pinned Table and focus reruns corroborate the fixes. |
+| No remaining vendor contest | Pass. The new Low is a verifier finding for Beni’s disposition. |
+| Hosted `verify` at the tip | Pass on the matching tree. |
+| `?only=` / `&date=` contract | Pass in both built apps. |
+| `sync.yml` gates | Unchanged. |
+| `src/data/*.json` | The literal automatic gate trips against `8173066`. The three snapshot files match `4cf9caf` byte for byte. Beni accepted their inclusion as main’s sync. |
+| Landing authority | Escalated. Plan §3 and `--no-merge` reserve the squash to Beni. |
+
+### Handoff block
+
+````text
+PR #342 — squash b7dd65a3a2ee4d427365aaf7511c461349978150 into overhaul/second-edition on Beni’s word. Recommended disposition for the Low spoken-name verifier finding: Later, in PR 4. The fourth-sitting comment body and post still await separate approvals.
+
+Overhaul PR 2: chrome and the motion control
+
+Give Fixtures, Table and Moments the second edition’s shared imprint band, provenance and controls. Read the motion preference before paint, keep the Table’s pinned landmarks and focused rows visible, and carry the new feet, staleness treatment and Moments colours into the reader.
+
+Carry #341’s font split and main’s accepted 4cf9caf snapshot. The focus sweep checks each mobile club’s row and the expected desktop controls. All eleven local checks passed. The full report passed 96 matrix cells and 72 week cells. Enforcement found only the 16 R2 loss pips assigned to PR 4, with zero unread samples. The restored focus sweep passed 24 cells with 1,548 Tab presses.
+
+Cursor built on Grok 4.7 Extra High, confirmed by Beni. Codex ran Pass 1 on gpt-6.2-astra at xhigh and Pass 2.5 on gpt-6.2-sol at xhigh in read-only sessions. Claude Code ran Pass 2 and the fix rounds on claude-fable-5-2 at xhigh.
+
+Co-authored-by: Cursor <cursoragent@cursor.com>
+Co-authored-by: Claude <noreply@anthropic.com>
+````
+~~~~
+
+**Beni's ruling, about 9:25 PM EST.** The PM seat asked: "The fourth sitting found a new Low in
+the test runner only (no shipped byte): the desktop Table check reads each sort label's text or
+aria-label, not the name the browser actually computes. So a 'Pts' button that Chromium
+announces as 'Pl' through aria-labelledby still passes. PR 4 already reworks those same desktop
+headers (your W/D/L ruling). Where should the fix go?" Beni chose **"Later, in PR 4"**: PR 4
+checks the computed accessible name when it revises the desktop header list, and #342 squashes
+at `b7dd65a` once the comment posts, with no fix round 4. The other option was "Fix round 4
+now".
+
+So PR 4 now owes, from this PR's cycle: the desktop Table's W, D and L stops (plain text or a
+sort), the first row's focus-ring clearance under its zone divider, the R2 loss pips, and the
+runner's check of each desktop label's computed name. PR 7b owes the offline face trim. The two
+Moments preloads are "Later", with no PR named.
+
+The stage 3 reply, delivered in chat:
+
+```text
+Beni ruled "Later, in PR 4" on your Low (Thu 19 Nov 2026, about 9:25 PM EST), and your comment may record it as his: PR 4 checks the browser-computed name when it revises the desktop header inventory, and #342 takes no fix round 4.
+Stage 3 approved: write the comment body to /Users/benicheni/code/kickoff-receipts/pr342/pass25-sitting4/pr-comment.md, from that folder, and write nothing else. Then show Beni the exact text, and ask before you post it with gh pr comment 342 --repo BeniCheni/kickoff --body-file /Users/benicheni/code/kickoff-receipts/pr342/pass25-sitting4/pr-comment.md, run from that folder. Push nothing.
+```
+
+**The squash message, as the PM seat drafted it for Beni.** It starts from the fourth sitting's
+handoff and changes three things. It drops "#341's font split" from the second paragraph,
+because #341 is already on the base, `8173066`. It adds a deferrals line, and it gives the seats
+in the form of #341's squash, `8173066`. One line per paragraph:
+
+```text
+Overhaul PR 2: chrome and the motion control (#342)
+
+Give Fixtures, Table and Moments the second edition's shared imprint band, provenance and controls. Read the motion preference before paint, keep the Table's pinned landmarks and focused rows visible, and carry the new feet, staleness treatment and Moments colours into the reader.
+
+Carry main's 4cf9caf snapshot, accepted by Beni. The focus sweep checks each mobile club's row and the expected desktop controls. All eleven local checks passed. The full report passed 96 matrix cells and 72 week cells. Enforcement found only the 16 R2 loss pips assigned to PR 4, with zero unread samples. The restored focus sweep passed 24 cells with 1,548 Tab presses.
+
+Left for later on Beni's word: the two Moments preloads; in PR 4, the desktop Table's W, D and L stops, the first row's focus-ring clearance, the R2 loss pips and the runner's check of each label's computed name; in PR 7b, the offline face trim. No version, tag or CHANGELOG section.
+
+Built by Cursor on Grok 4.7 at Extra High. Beni re-routed the remaining seats per #328 on Wed 18 Nov 2026. Pass 1 and the Pass 2 brief: Codex (gpt-6.2-astra, xhigh), report-only. Pass 2, fix rounds 1 to 3 and the base refresh: Claude Code (claude-fable-5-2, xhigh). Pass 2.5's four sittings: Codex (gpt-6.2-sol, xhigh, read-only), which wrote nothing. Merged on Beni's word.
+
+Co-authored-by: Cursor <cursoragent@cursor.com>
+Co-authored-by: Claude <noreply@anthropic.com>
+```
