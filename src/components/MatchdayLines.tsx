@@ -7,8 +7,8 @@ export function MatchdayLines({ fixtures, className = '' }: { fixtures: readonly
   if (!lines.length) return null
   return <div className={className}>
     {lines.map(line => <div key={line.key} data-matchday-state={line.state}
-      className={`font-mono text-[10px] font-medium tracking-[0.06em] uppercase text-floodlight-strong${line.state === 'absent' ? ' italic' : ''}`}>
-      {line.text}
+      className="matchday-line" data-voice={line.state === 'computed' ? 'ink' : 'amber'}>
+      {line.text.replace(/(?<![·—]) /g, '\u00a0')}
     </div>)}
   </div>
 }

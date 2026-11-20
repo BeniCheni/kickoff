@@ -793,3 +793,14 @@ body:has(.page-measure[data-measure='moments']) {
 @media (prefers-reduced-motion: no-preference) {
   :root:not([data-motion='off']) .filter-disclosure { transition: grid-template-rows 180ms ease; }
 }
+
+.ledger-week {
+  background: var(--fb-typescript); color: var(--fb-pulp-ink);
+  font-family: var(--fb-mono);
+}
+.ledger-date { margin-top: 16px; padding-block: 4px; border-bottom: 1px solid var(--fb-rule-strong); text-transform: uppercase; font: 700 13px var(--fb-label); }
+.week-hidden, .week-gap, .week-count { color: var(--fb-pulp-muted); font: 400 11px/1.5 var(--fb-mono); }
+.week-gap, .week-count { border-bottom: 1px solid var(--fb-rule); padding-block: 9px; }
+.week-count { color: var(--fb-pulp-ink); }
+.matchday-line { color: var(--fb-pulp-ink); font: 400 10.5px/1.5 var(--fb-mono); }
+.matchday-line[data-voice='amber'] { color: var(--fb-amber); }

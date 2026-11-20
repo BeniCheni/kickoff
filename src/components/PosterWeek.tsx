@@ -37,7 +37,7 @@ export function PosterWeek({ blocks, stale = EMPTY, next, nowUtcIso }: { blocks:
               {block.hiddenTotal > 0 && (
                 <>
                   {' '}
-                  · <span aria-hidden>🔎</span> {block.hiddenTotal} hidden by filters
+                  · {block.hiddenTotal} hidden by filters
                 </>
               )}
             </div>
@@ -65,6 +65,7 @@ export function PosterWeek({ blocks, stale = EMPTY, next, nowUtcIso }: { blocks:
                 <div className="font-mono mt-1.5 text-[11px] font-medium tracking-[0.06em] text-ink-secondary">
                   {posterSubLine(block.fixtures)}
                 </div>
+                {!!block.hidden && <p className="week-hidden">{block.hidden} hidden by filters</p>}
                 <MatchdayLines fixtures={block.fixtures} className="mt-[3px]" />
               </div>
               <div className="mt-2.5 border-t border-line">
@@ -85,6 +86,7 @@ export function PosterWeek({ blocks, stale = EMPTY, next, nowUtcIso }: { blocks:
               <span className="font-mono text-[10px] font-medium tracking-[0.06em] text-ink-muted">
                 {block.fixtures.length} {block.fixtures.length === 1 ? 'MATCH' : 'MATCHES'}
               </span>
+              {!!block.hidden && <p className="week-hidden basis-full">{block.hidden} hidden by filters</p>}
               <MatchdayLines fixtures={block.fixtures} />
               {block.isToday && <TodayPill />}
             </div>

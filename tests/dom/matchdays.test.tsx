@@ -13,16 +13,16 @@ const f = fixtureSchema.parse(normalizeEvent(payload.events[0], 'ucl', '2026-09-
 describe('day-level matchday provenance', () => {
   it('labels the baseline computed and names the source window', () => {
     render(<MatchdayLines fixtures={[f]} />)
-    expect(screen.getByText('MATCHDAY 1 · COMPUTED — UEFA WINDOW 8–10 SEP')).toBeTruthy()
+    expect(screen.getByText('MATCHDAY 1 · COMPUTED — UEFA WINDOW 8–10 SEP').dataset.voice).toBe('ink')
   })
   it('a move into MD2 renders RESCHEDULED from MD1, never a computed MD2', () => {
     render(<MatchdayLines fixtures={[{ ...f, kickoffUtc: '2026-10-13T19:00:00Z' }]} />)
-    expect(screen.getByText('MATCHDAY 1 · RESCHEDULED — NOW OUTSIDE ITS UEFA WINDOW')).toBeTruthy()
+    expect(screen.getByText('MATCHDAY 1 · RESCHEDULED — NOW OUTSIDE ITS UEFA WINDOW').dataset.voice).toBe('amber')
     expect(screen.queryByText(/MATCHDAY 2/)).toBeNull()
   })
   it('admits the out-of-window first sighting and distinguishes its later in-window move', () => {
     const view = render(<MatchdayLines fixtures={[{ ...f, round: undefined, kickoffUtc: '2026-09-30T19:00:00Z' }]} />)
-    expect(screen.getByText("MATCHDAY — · DATE OUTSIDE UEFA'S PUBLISHED WINDOWS").className).toContain('italic')
+    expect(screen.getByText("MATCHDAY — · DATE OUTSIDE UEFA'S PUBLISHED WINDOWS").dataset.voice).toBe('amber')
     view.rerender(<MatchdayLines fixtures={[{ ...f, round: undefined, kickoffUtc: '2026-10-13T19:00:00Z' }]} />)
     expect(screen.getByText("MATCHDAY — · FIRST SEEN OUTSIDE UEFA'S PUBLISHED WINDOWS")).toBeTruthy()
   })
@@ -39,7 +39,7 @@ describe('day-level matchday provenance', () => {
       <PosterWeek blocks={[{ kind: 'big', date: '2026-09-08', fixtures: [f], isToday: false, dominant: 'ucl' }, { kind: 'small', date: '2026-09-09', fixtures: [f], isToday: false }]} />
     </>)
     expect(container.querySelectorAll('[data-matchday-state]')).toHaveLength(3)
-    expect(container.querySelector('.pb-\\[5px\\]')?.nextElementSibling?.classList.contains('border-t')).toBe(true)
+    expect(container.querySelector('.ledger-week [data-matchday-state]')?.parentElement?.nextElementSibling?.getAttribute('data-fixture-id')).toBe(f.id)
   })
   it('says competition for an entirely European day while preserving mixed/domestic wording', () => {
     expect(posterSubLine([f])).toContain('1 COMPETITION')

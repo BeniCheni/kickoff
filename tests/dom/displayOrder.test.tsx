@@ -4,7 +4,7 @@ import { WeekView } from '../../src/components/WeekView'
 import { COMPETITION_KEYS, competitionRank } from '../../src/lib/competitions'
 import { FIXTURES } from '../../src/lib/fixtures'
 import type { Fixture } from '../../src/lib/schema'
-import { brooklynDate, posterDayTitle, startOfWeek, weekdayShort } from '../../src/lib/time'
+import { brooklynDate, posterDayTitle, startOfWeek } from '../../src/lib/time'
 
 /**
  * One synthetic Saturday, in a file order that is not the display order. The committed
@@ -69,12 +69,7 @@ function sectionFor(container: HTMLElement, date: string, lens: 'poster' | 'ledg
       [...section.querySelectorAll('span')].some((span) => ownText(span) === title),
     ) ?? null
   }
-  const numeral = String(Number(date.slice(8)))
-  const weekday = weekdayShort(date)
-  return sections.find((section) => {
-    const texts = [...section.querySelectorAll('div')].map(ownText)
-    return texts.includes(weekday) && texts.includes(numeral)
-  }) ?? null
+  return sections.find(section => section.dataset.weekDate === date) ?? null
 }
 
 /** Longest contained pairing wins, so "Arsenal vs Chelsea" does not claim "Arsenal vs Chelsea B". */
