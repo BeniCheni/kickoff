@@ -81,10 +81,8 @@ export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
 
       <WeekRow start={weekStart} today={today} lens={lens} count={active.size} expanded={filtersOpen}
         onNavigate={nav} onToday={() => setAnchor(today)} onFilters={() => setFiltersOpen(!filtersOpen)} />
-      <div id="competition-filters" hidden={!filtersOpen}>
-        <FilterBar active={active} onToggle={onToggle} onSetGroup={onSetGroup}
-          onSetAll={(on) => setActive(on ? ALL : new Set())} />
-      </div>
+      <FilterBar active={active} lens={lens} open={filtersOpen} onToggle={onToggle}
+        onSetGroup={onSetGroup} onShowAll={() => setActive(ALL)} />
 
       <WeekView weekStart={weekStart} active={active} today={today} lens={lens} />
 

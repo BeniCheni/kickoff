@@ -23,4 +23,5 @@
 @source "../../src/components/CompetitionChip.tsx";
 @source "../../src/components/StatusPill.tsx";
 @source "../../src/components/WeekRow.tsx";
+@source "../../src/components/FilterToggle.tsx";
 @import "../../src/shell.css";

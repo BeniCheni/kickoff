@@ -86,7 +86,7 @@ describe('second-edition pairs, read from the tokens', () => {
 })
 
 it('fb tokens and stock render only from the named surfaces that own them', () => {
-  const allowed = new Set(['components/ImprintBand.tsx', 'components/PageFoot.tsx', 'index.css', 'components/WeekRow.tsx'])
+  const allowed = new Set(['components/ImprintBand.tsx', 'components/PageFoot.tsx', 'index.css', 'components/WeekRow.tsx', 'components/FilterBar.tsx'])
   const root = new URL('../src/', import.meta.url)
   const hits = globSync('**/*.{css,ts,tsx}', { cwd: root }).filter((file) => {
     if (file === 'shell.css' || allowed.has(file)) return false
