@@ -625,6 +625,19 @@ Cursor's hands this track seats no Cursor.
 - *Fifth re-read brief:* [`review-loop-sprint-3-synthesis-6-prompt.md`](review-loop-sprint-3-synthesis-6-prompt.md),
   for the fifth Pass 2.5 re-read (Claude Code, `claude-opus-5-5`, `xhigh`), in
   `~/code/review-seats/elenchus-pr8-pass25-r6`, with its sealed appendix as a second paste.
+- *Re-read a fifth time (Fri 20 Nov 2026):* the fifth Pass 2.5 re-read
+  ([comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7043767832)) found the
+  sixth round did what Beni ruled, with 25-19 to 25-22 fixed, no blocking finding open and
+  nothing contested. It opened 25-23 (should-fix), for an id an earlier re-read round named, and
+  two notes: 25-24, for an id first named outside the finding flow, and 25-25, for an unknown key
+  outside the gate. Each rests on a mutant that passes all 363 tests, as the Planner re-ran. The
+  seal held, and every appendix item was confirmed in its checkable part. Both seat folders were
+  still in place after the re-read posted.
+- *Ruled a sixth time:* a seventh fix round, tests only. The rulings are under "Rulings received"
+  ("Sprint 3's sixth Pass 3").
+- *Seventh fix brief:* [`review-loop-sprint-3-fix-7-prompt.md`](review-loop-sprint-3-fix-7-prompt.md),
+  for Pass 2 again, as a re-read (Codex in the ChatGPT desktop app, `gpt-6.2-sol`, `xhigh`), in
+  `~/code/review-seats/elenchus-pr8-pass2-r7`.
 - *Carried from Sprint 1's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are that
   comment's findings): 6, sequence by the order records were posted, not their presence; 7, every
   pass's `input_sha` is the previous recorded pass's `output_sha`, writing or not, and a head
@@ -1529,6 +1542,35 @@ for Cursor (S7).
     head's own code, the seal and the seat's limits in its transcript, and seven deletions
     re-run: Y2, Y3, Y3b and Z2 pass the full suite, 354 of 354. For the brief it also ran Y2r,
     the guard skipped for ruling items, which six tests catch.
+  - **After this record**, `status` on PR 8 names `exec`. `status` does not read a ruling's
+    verdict.
+- **Sprint 3's sixth Pass 3 (Beni, Fri 20 Nov 2026, the Planner's recommendation on each of the
+  re-read's four questions; the comment, "Approve and post").** The fifth Pass 2.5 re-read
+  ([comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7043767832)) found the
+  sixth round done as ruled: 25-19 to 25-22 fixed, and no blocking finding open. It opened 25-23
+  as should-fix and 25-24 and 25-25 as notes, and asked four questions. Beni answered each with
+  the Planner's recommendation. The Planner wrote and posted the record, a re-read of pass 3 at
+  `1549883` ([comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7045047868)).
+  The brief is [`review-loop-sprint-3-fix-7-prompt.md`](review-loop-sprint-3-fix-7-prompt.md).
+  - **1, 25-23, yes.** A standing synthesis or ruling may not drop an id that any earlier valid
+    round named, on time or a re-read. Two rows in SX7's shape with a third head, one for each
+    side, each failing under M1.
+  - **2, 25-24, yes.** "Whichever pass first named the id" includes passes 0, 1.5 and exec. An
+    SX7 row with `namedIn: ["1.5"]`, failing under M5.
+  - **3, 25-25, yes.** An unknown key anywhere never changes what `status` names. A split row
+    with an unknown top-level key, failing under M4.
+  - **4, the next step.** A seventh fix round, tests only, with two lists the builder takes from
+    the code. The first is every source of an id the carry must hold (`src/report.ts:338-363`).
+    The second is every place `parseConfig` collects an unknown key (the ten `fields()` calls in
+    `src/config.ts`). A case with no test gets a row and a deletion.
+  - **25-23 to 25-25 were the Planner's.** The fifth Pass 3's ruling 1 counted the ruling's own
+    rounds only through on-time rows, and named passes 1, 2 and 2.5 as sources. Its ruling 3
+    named an unknown key under `gate` only. This is the second round running in which a list was
+    narrower than its rule.
+  - **Checked by the Planner:** the re-read's comment against GitHub, its record through the
+    head's own code, and the seal and the seat's limits in its transcript. It also re-ran the
+    three mutants: M1, M4 and M5 each pass 363 of 363. The Planner's scratch folder was emptied
+    overnight, so "no comment edited" rests on GitHub's timestamps.
   - **After this record**, `status` on PR 8 names `exec`. `status` does not read a ruling's
     verdict.
 
