@@ -591,6 +591,16 @@ Cursor's hands this track seats no Cursor.
   mechanism still routed for schema. Beni answered that the gate's presence decides, and that
   `status` repeats none of `authorize`'s configuration checks. The answer is appended to the
   fifth fix brief.
+- *Fixed a fifth time (Thu 19 Nov 2026):* the Pass 2 re-read's
+  [record](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7027658851): one commit to
+  `818a946`. 25-17, 25-18 (as clarified) and 25-19 are fixed as the round reports them. 7, 12, 13,
+  14, 15 and 25-15 are left open as deferred, and eight of eight deletions are caught, X7 now by
+  SX7. The receipts are in the record comment, and #8's body is unchanged. In a fresh export, the
+  Planner re-ran the suite (354 of 354), every probe from the third re-read and all eight
+  deletions, and each matched the round's report.
+- *Fourth re-read brief:* [`review-loop-sprint-3-synthesis-5-prompt.md`](review-loop-sprint-3-synthesis-5-prompt.md),
+  for the fourth Pass 2.5 re-read (Claude Code, `claude-opus-5-5`, `xhigh`), in
+  `~/code/review-seats/elenchus-pr8-pass25-r5`, with its sealed appendix as a second paste.
 - *Carried from Sprint 1's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are that
   comment's findings): 6, sequence by the order records were posted, not their presence; 7, every
   pass's `input_sha` is the previous recorded pass's `output_sha`, writing or not, and a head
