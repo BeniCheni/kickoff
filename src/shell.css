@@ -678,3 +678,20 @@ body:has(.page-measure[data-measure='moments']) {
   background: var(--fb-pulp-ink);
   color: var(--fb-pulp);
 }
+
+/* Fixture states share a word and voice across the two layouts. */
+.fixture-status {
+  display: inline-flex;
+  align-items: center;
+  height: 16px;
+  white-space: nowrap;
+  font: 700 10px/1 var(--fb-label);
+  color: var(--fb-pulp-ink);
+}
+.fixture-status-poster { border: 1px solid; border-radius: 2px; padding-inline: 4px; }
+.fixture-status[data-voice='amber'], .fixture-score[data-voice='amber'] { color: var(--fb-amber); }
+.fixture-status[data-voice='alarm'] { color: var(--fb-alarm); }
+.fixture-status-poster[data-voice='alarm'] { color: var(--fb-cover-ink); background: var(--fb-blood); border-color: var(--fb-blood); }
+.fixture-status-poster[data-voice='pitch'] { color: var(--fb-on-pitch); background: var(--fb-pitch); border-color: var(--fb-pitch); }
+.fixture-score[data-voice='pitch'] { color: var(--fb-pitch); }
+.fixture-score[data-voice='ink'] { color: var(--fb-pulp-ink); }

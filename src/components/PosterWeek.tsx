@@ -20,7 +20,7 @@ function TodayPill() {
  * an inline header; consecutive empty days merge into one hairline line. Rows stay Ledger
  * rows — only the leading time grows (a `poster:` variant inside FixtureRow).
  */
-export function PosterWeek({ blocks, stale = EMPTY }: { blocks: PosterBlock[]; stale?: ReadonlySet<string> }) {
+export function PosterWeek({ blocks, stale = EMPTY, next, nowUtcIso }: { blocks: PosterBlock[]; next?: string | null; nowUtcIso?: string; stale?: ReadonlySet<string> }) {
   return (
     <div>
       {blocks.map((block) => {
@@ -69,7 +69,7 @@ export function PosterWeek({ blocks, stale = EMPTY }: { blocks: PosterBlock[]; s
               </div>
               <div className="mt-2.5 border-t border-line">
                 {block.fixtures.map((f) => (
-                  <FixtureRow key={f.id} fixture={f} stale={stale.has(f.id)} />
+                  <FixtureRow key={f.id} fixture={f} lens="poster" next={next === f.id} nowUtcIso={nowUtcIso} stale={stale.has(f.id)} />
                 ))}
               </div>
             </section>
@@ -90,7 +90,7 @@ export function PosterWeek({ blocks, stale = EMPTY }: { blocks: PosterBlock[]; s
             </div>
             <div className="mt-1.5 border-t border-line">
               {block.fixtures.map((f) => (
-                <FixtureRow key={f.id} fixture={f} stale={stale.has(f.id)} />
+                <FixtureRow key={f.id} fixture={f} lens="poster" next={next === f.id} nowUtcIso={nowUtcIso} stale={stale.has(f.id)} />
               ))}
             </div>
           </section>

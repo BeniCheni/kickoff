@@ -3,17 +3,9 @@ import { COMPETITIONS } from '../lib/competitions'
 import { fixtureTimes } from '../lib/time'
 import { unsettledStatus, type Fixture } from '../lib/schema'
 
-const STATUS_LABEL: Record<Fixture['status'], string | null> = {
-  scheduled: null,
-  in_play: 'LIVE',
-  full_time: 'FT',
-  postponed: 'POSTPONED',
-  cancelled: 'CANCELLED',
-  suspended: 'SUSPENDED',
-  abandoned: 'ABANDONED',
-  after_extra_time: 'AET',
-  after_penalties: 'PENS',
-}
+import { StatusPill } from './StatusPill'
+import { hasKickedOff } from '../lib/lensSelectors'
+import type { Lens } from '../lib/lens'
 
 /**
  * One fixture as a ledger row on hairlines: leading Brooklyn time in mono, teams, score,
@@ -26,12 +18,12 @@ const STATUS_LABEL: Record<Fixture['status'], string | null> = {
  * component takes no lens prop. `stale` is selected by the parent clock; `hot` marks the
  * LIVE/next-kickoff rows for the retained data marker.
  */
-export function FixtureRow({ fixture, hot = false, stale = false }: { fixture: Fixture; hot?: boolean; stale?: boolean }) {
+export function FixtureRow({ fixture, hot = false, stale = false, next = false, lens = 'ledger', nowUtcIso }: { fixture: Fixture; hot?: boolean; stale?: boolean; next?: boolean; lens?: Lens; nowUtcIso?: string }) {
   const comp = COMPETITIONS[fixture.competition]
   const t = fixtureTimes(fixture.kickoffUtc, fixture.venueTz)
   const marquee = comp.group !== 'domestic'
   const isStale = fixture.status === 'in_play' && stale
-  const status = isStale ? 'KICKED OFF' : STATUS_LABEL[fixture.status]
+  const pastScheduled = nowUtcIso !== undefined && hasKickedOff(fixture, nowUtcIso)
   const unsettled = unsettledStatus(fixture.status)
   const placeholder = fixture.timeConfidence !== 'exact'
   const [expanded, setExpanded] = useState(false)
@@ -58,36 +50,21 @@ export function FixtureRow({ fixture, hot = false, stale = false }: { fixture: F
         {/* spans with block/flex display — a <button> must not contain <div>s */}
         <span className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
           <span className="font-mono min-w-[58px] text-[13px] font-medium text-ink-secondary poster:min-w-[82px] poster:text-[20px] poster:font-semibold poster:text-ink">
-            {placeholder ? '—' : t.brooklyn.time}
+            {unsettled ? null : placeholder ? '—' : t.brooklyn.time}
           </span>
           <span className="text-[13.5px] font-semibold">
             {fixture.home.name}{' '}
             <span className="text-[12px] font-normal text-ink-muted">vs</span>{' '}
             {fixture.away.name}
           </span>
-          {fixture.result && (
-            <span className="font-mono text-[13px] font-semibold text-pitch">
+          {fixture.result && !pastScheduled && (
+            <span className="fixture-score font-mono text-[13px] font-semibold" data-voice={isStale ? 'amber' : fixture.status === 'in_play' ? 'ink' : 'pitch'}>
               {fixture.result.home}–{fixture.result.away}
               {fixture.shootout ? ` (${fixture.shootout.home}–${fixture.shootout.away})` : ''}
             </span>
           )}
-          {status && (
-            <span
-              className={[
-                'rounded px-1.5 text-[9px] font-bold tracking-wide uppercase',
-                isStale || unsettled ? 'border py-0' : 'py-px',
-                isStale
-                  ? 'border-floodlight-strong text-floodlight-strong'
-                  : fixture.status === 'in_play'
-                    ? 'bg-accent-strong text-white dark:text-bg'
-                    : unsettled
-                      ? 'border-accent-strong text-accent-strong'
-                      : 'bg-line text-ink-secondary',
-              ].join(' ')}
-            >
-              {status}
-            </span>
-          )}
+          <StatusPill status={fixture.status} kickedOff={isStale || pastScheduled}
+            next={next && !placeholder} lens={lens} />
         </span>
 
         <span className="mt-0.5 block pl-[66px] text-[11px] text-ink-muted poster:pl-[92px]">
@@ -97,7 +74,7 @@ export function FixtureRow({ fixture, hot = false, stale = false }: { fixture: F
           {fixture.venue && <> &middot; {fixture.venue}</>}
         </span>
 
-        {placeholder && (
+        {!unsettled && placeholder && (
           <span className="mt-0.5 block pl-[66px] text-[11px] text-floodlight-strong italic poster:pl-[92px]">
             {t.brooklyn.weekday} {t.brooklyn.isoDate} &mdash; kickoff time not yet set by the league
           </span>
@@ -112,7 +89,7 @@ export function FixtureRow({ fixture, hot = false, stale = false }: { fixture: F
       >
         <div className="min-h-0 overflow-hidden">
           <div className="pt-1.5 pl-[66px] poster:pl-[92px]">
-            {!placeholder && (
+            {!unsettled && !placeholder && (
               <div className="flex flex-wrap gap-x-2.5 gap-y-1 text-[11px] text-ink-secondary">
                 <span className={`inline-flex items-center gap-1 rounded-full border border-line bg-surface px-2 py-0.5${t.local ? '' : ' font-mono text-[10px] font-medium tracking-[0.06em] uppercase text-floodlight-strong'}`}>
                   {t.local ? <><span aria-hidden>{comp.flag}</span> {t.local.time} local</> : 'local time not known'}

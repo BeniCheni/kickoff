@@ -11,7 +11,7 @@ const EMPTY: ReadonlySet<string> = new Set()
  * the second column. Empty days collapse to a single hairline with a mono em-dash (or a
  * "hidden by filters" note).
  */
-export function LedgerWeek({ days, hot = EMPTY, stale = EMPTY }: { days: DayInfo[]; hot?: ReadonlySet<string>; stale?: ReadonlySet<string> }) {
+export function LedgerWeek({ days, hot = EMPTY, stale = EMPTY, nowUtcIso }: { days: DayInfo[]; nowUtcIso?: string; hot?: ReadonlySet<string>; stale?: ReadonlySet<string> }) {
   return (
     <div>
       {days.map(({ date, shown, total, isToday }) => {
@@ -62,7 +62,7 @@ export function LedgerWeek({ days, hot = EMPTY, stale = EMPTY }: { days: DayInfo
               <MatchdayLines fixtures={shown} className="pb-[5px]" />
               <div className="border-t border-line">
               {shown.map((f) => (
-                <FixtureRow key={f.id} fixture={f} hot={hot.has(f.id)} stale={stale.has(f.id)} />
+                <FixtureRow key={f.id} fixture={f} nowUtcIso={nowUtcIso} hot={hot.has(f.id)} stale={stale.has(f.id)} />
               ))}
               </div>
             </div>
