@@ -48,8 +48,22 @@ describe('day-level matchday provenance', () => {
   it('keeps the competition name in readable muted ink while the glyph retains its hue', () => {
     render(<FixtureRow fixture={f} />)
     const meta = screen.getByText(/Champions League/)
-    expect(meta.closest('.fixture-meta')).toBeTruthy()
+    expect(meta.closest('.fixture-meta')?.getAttribute('data-voice')).toBe('muted')
     expect(meta.getAttribute('style')).toBeNull()
     expect(meta.querySelector('i')!.style.backgroundColor).toBe('rgb(139, 111, 232)')
   })
+})
+
+it('starts each distinct UEFA line at its first governed row in a mixed day', () => {
+  const other = { ...f, id: 'other', competition: 'uel' as const }
+  const moved = { ...f, id: 'moved', kickoffUtc: '2026-10-13T19:00:00Z' }
+  const fixtures = [other, f, { ...f, id: 'same' }, moved]
+  const { container } = render(<>
+    <LedgerWeek days={[{ date: '2026-10-13', shown: fixtures, total: 4, isToday: false }]} />
+    <PosterWeek blocks={[{ kind: 'big', date: '2026-10-13', fixtures, isToday: false, dominant: 'ucl' }]} />
+  </>)
+  for (const section of container.querySelectorAll('section')) {
+    const lines = [...section.querySelectorAll('[data-matchday-state]')]
+    expect(lines.map(line => line.parentElement?.nextElementSibling?.getAttribute('data-fixture-id'))).toEqual([f.id, moved.id])
+  }
 })

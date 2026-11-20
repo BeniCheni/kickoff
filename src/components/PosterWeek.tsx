@@ -1,7 +1,7 @@
 import { COMPETITIONS } from '../lib/competitions'
 import { posterDayTitle, weekdayShort } from '../lib/time'
 import { posterSubLine, type PosterBlock } from '../lib/lensSelectors'
-import { FixtureRow } from './FixtureRow'
+import { FixtureRows } from './FixtureRow'
 import { MatchdayLines } from './MatchdayLines'
 
 const EMPTY: ReadonlySet<string> = new Set()
@@ -17,8 +17,7 @@ function TodayPill() {
 /**
  * Poster's week: loudness proportional to the slate. Big days (3+ shown matches) get the
  * full-bleed duotone header railed in the day's dominant competition colour; light days
- * an inline header; consecutive empty days merge into one hairline line. Rows stay Ledger
- * rows — only the leading time grows (a `poster:` variant inside FixtureRow).
+ * an inline header; consecutive empty days merge into one hairline line. Its fixture list uses the contents layout.
  */
 export function PosterWeek({ blocks, stale = EMPTY, next, nowUtcIso }: { blocks: PosterBlock[]; next?: string | null; nowUtcIso?: string; stale?: ReadonlySet<string> }) {
   return (
@@ -66,12 +65,10 @@ export function PosterWeek({ blocks, stale = EMPTY, next, nowUtcIso }: { blocks:
                   {posterSubLine(block.fixtures)}
                 </div>
                 {!!block.hidden && <p className="week-hidden">{block.hidden} hidden by filters</p>}
-                <MatchdayLines fixtures={block.fixtures} className="mt-[3px]" />
+                <MatchdayLines fixtures={block.fixtures.slice(0, 1)} className="mt-[3px]" />
               </div>
               <div className="mt-2.5 border-t border-line">
-                {block.fixtures.map((f) => (
-                  <FixtureRow key={f.id} fixture={f} lens="poster" next={next === f.id} nowUtcIso={nowUtcIso} stale={stale.has(f.id)} />
-                ))}
+                <FixtureRows fixtures={block.fixtures} lens="poster" next={next} nowUtcIso={nowUtcIso} stale={stale} />
               </div>
             </section>
           )
@@ -87,13 +84,11 @@ export function PosterWeek({ blocks, stale = EMPTY, next, nowUtcIso }: { blocks:
                 {block.fixtures.length} {block.fixtures.length === 1 ? 'MATCH' : 'MATCHES'}
               </span>
               {!!block.hidden && <p className="week-hidden basis-full">{block.hidden} hidden by filters</p>}
-              <MatchdayLines fixtures={block.fixtures} />
+              <MatchdayLines fixtures={block.fixtures.slice(0, 1)} />
               {block.isToday && <TodayPill />}
             </div>
             <div className="mt-1.5 border-t border-line">
-              {block.fixtures.map((f) => (
-                <FixtureRow key={f.id} fixture={f} lens="poster" next={next === f.id} nowUtcIso={nowUtcIso} stale={stale.has(f.id)} />
-              ))}
+              <FixtureRows fixtures={block.fixtures} lens="poster" next={next} nowUtcIso={nowUtcIso} stale={stale} />
             </div>
           </section>
         )

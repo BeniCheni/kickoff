@@ -1,7 +1,6 @@
 import { weekdayShort } from '../lib/time'
 import { groupWeekDays, type DayInfo } from '../lib/lensSelectors'
-import { FixtureRow } from './FixtureRow'
-import { MatchdayLines } from './MatchdayLines'
+import { FixtureRows } from './FixtureRow'
 
 const EMPTY: ReadonlySet<string> = new Set()
 
@@ -24,9 +23,7 @@ export function LedgerWeek({ days, hot = EMPTY, stale = EMPTY, nowUtcIso }: {
       return <section key={date} data-week-date={date} data-hidden={hidden}>
         <h3 className="ledger-date">{weekdayShort(date)} {Number(date.slice(8))} · {shown.length} {shown.length === 1 ? 'match' : 'matches'}{isToday && ' · Today'}</h3>
         {hidden > 0 && <p className="week-hidden">{hidden} hidden by filters</p>}
-        <MatchdayLines fixtures={shown} />
-        {shown.map(f => <FixtureRow key={f.id} fixture={f} nowUtcIso={nowUtcIso}
-          hot={hot.has(f.id)} stale={stale.has(f.id)} />)}
+        <FixtureRows fixtures={shown} lens="ledger" nowUtcIso={nowUtcIso} hot={hot} stale={stale} />
       </section>
     })}
     <p className="week-count">END OF WEEK · {count} {count === 1 ? 'FIXTURE' : 'FIXTURES'}

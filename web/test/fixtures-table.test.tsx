@@ -29,7 +29,7 @@ test('Fixtures and Table render from the shared pages', () => {
 
   const legacyView = html('?view=month&only=pl&date=2026-09-20')
   expect(legacyView).not.toContain('Monthly')
-  expect(legacyView).toContain('Today')
+  expect(legacyView).toMatch(/<button[^>]*class="week-today"[^>]*>Today<\/button>/)
   expect(legacyView).toMatch(/1 of \d+ competitions shown/)
   expect(legacyView).toContain('Premier League')
 

@@ -221,3 +221,12 @@ export function secondEditionPairs(cssSource = css): SecondEditionPair[] {
 export function scrimComposite(cssSource = css): RGB {
   return scrimGround(secondEditionTokens(cssSource).black)
 }
+
+/** PR 3's semantic pairs, using the same tokens the two row stocks resolve. */
+export function fixturePairs() {
+  const { paper, black } = secondEditionTokens()
+  return [paper, black].flatMap(tokens => ['fb-pulp', 'fb-typescript'].flatMap(stock =>
+    ['fb-pulp-ink', 'fb-pulp-muted', 'fb-pitch', 'fb-amber', 'fb-alarm'].map(voice => ({
+      stock, voice, ratio: ratio(opaqueToken(tokens, voice), opaqueToken(tokens, stock)),
+    }))))
+}

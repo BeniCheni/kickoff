@@ -1,3 +1,6 @@
+import { Fragment } from 'react'
+import { matchdayLines } from '../lib/matchdays'
+import { MatchdayText } from './MatchdayLines'
 import { COMPETITIONS } from '../lib/competitions'
 import type { Lens } from '../lib/lens'
 import { hasKickedOff } from '../lib/lensSelectors'
@@ -44,10 +47,10 @@ export function FixtureRow({ fixture, lens = 'ledger', hot, stale, next, nowUtcI
       <div className="fixture-first">
         {!poster && clock}
         <span className="fixture-names">{fixture.home.name} v {fixture.away.name}</span>
-        {poster && timed && <span aria-hidden="true" className="fixture-leader" />}
+        {poster && timed && <span aria-hidden="true" className="fixture-leader"><i /></span>}
         {poster ? !unsettled && clock : <span className="fixture-outcome">{result}{pill}</span>}
       </div>
-      <div className="fixture-meta">
+      <div className="fixture-meta" data-voice="muted">
         {poster && <span className="fixture-outcome">{result}{pill}</span>}
         <span className="fixture-competition"><i aria-hidden="true" style={{ backgroundColor: comp.color }} />{comp.name}</span>
         {fixture.venue && <span> · {fixture.venue}</span>}
@@ -61,4 +64,22 @@ export function FixtureRow({ fixture, lens = 'ledger', hot, stale, next, nowUtcI
       {fixture.note && <div className="fixture-note" data-voice="muted">{fixture.note}</div>}
     </div>
   )
+}
+
+/** Keep snapshot order. A distinct UEFA provenance line belongs to the first row it describes.
+ * Poster already prints the first fixture's line at the foot of its day header. */
+export function FixtureRows({ fixtures, lens, next, nowUtcIso, hot, stale }: {
+  fixtures: readonly Fixture[]; lens: Lens; next?: string | null; nowUtcIso?: string
+  hot?: ReadonlySet<string>; stale?: ReadonlySet<string>
+}) {
+  const printed = new Set<string>()
+  return fixtures.map((fixture, index) => {
+    const lines = matchdayLines([fixture]).filter(line => !printed.has(line.key))
+    for (const line of lines) printed.add(line.key)
+    return <Fragment key={fixture.id}>
+      {(lens !== 'poster' || index > 0) && <MatchdayText lines={lines} />}
+      <FixtureRow fixture={fixture} lens={lens} next={fixture.id === next} nowUtcIso={nowUtcIso}
+        hot={hot?.has(fixture.id)} stale={stale?.has(fixture.id)} />
+    </Fragment>
+  })
 }

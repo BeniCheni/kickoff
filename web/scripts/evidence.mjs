@@ -27,7 +27,8 @@ import path from 'node:path'
 import { pathToFileURL, fileURLToPath } from 'node:url'
 import puppeteer from 'puppeteer-core'
 import { decodePng } from '../../scripts/decode-png.mjs'
-import { chooseWeeks, matrixAnchor, readSnapshot } from '../../scripts/evidence-weeks.mjs'
+import { COMPETITIONS, COMPETITION_KEYS } from '../../src/lib/competitions.ts'
+import { addDays, brooklynDate, chooseWeeks, matrixAnchor, readSnapshot } from '../../scripts/evidence-weeks.mjs'
 import { BITMAP_GLYPH, createColdLoad, isLargeText, paintedColor, sampleContrast, unexpectedHost, unreadColors } from '../../scripts/rendered-contrast.mjs'
 
 const root = fileURLToPath(new URL('../..', import.meta.url))
@@ -1363,11 +1364,27 @@ export async function captureOffline(browser, out, result = { sizes: {}, cells: 
       cells.push({ id, theme, tab, scrollWidth: state.scrollWidth })
     } finally { await context.close() }
   }
+  const { window, fixtures } = readSnapshot(root)
+  const anchor = matrixAnchor(window, chooseWeeks(fixtures, window))
+  for (const [name, file] of Object.entries(files)) for (const lens of ['poster', 'ledger']) {
+    const id = `${name}-rows-${lens}`
+    const { context, page, escaped, errors } = await openPage(browser,
+      `${pathToFileURL(file).href}?lens=${lens}&date=${anchor}`, 'light', 390,
+      { waitUntil: 'domcontentloaded', offline: true })
+    try {
+      await page.waitForSelector(`.fixture-${lens} .stadium-clock`)
+      const clock = await page.$eval('.stadium-clock', el => el.textContent)
+      assert.match(clock, /\d{2}:\d{2} local|local time not known/, id)
+      assert.deepEqual(escaped, [], id)
+      assert.deepEqual(errors, [], id)
+      cells.push({ id, clock, requests: escaped.length })
+    } finally { await context.close() }
+  }
   return result
 }
 
 /** `cells` is filled as cells pass, so the caller's receipt keeps them if a later cell throws. */
-export async function captureHarness(browser, out, cells = []) {
+export async function captureHarness(browser, out, cells = [], contrasts = []) {
   const origin = process.env.KICKOFF_HARNESS_ORIGIN ?? 'http://127.0.0.1:5175'
   // 1000 is here for the Table: its desktop cell is display:none below 768, so at 360
   // and 390 the page holds its words without showing them.
@@ -1404,8 +1421,26 @@ export async function captureHarness(browser, out, cells = []) {
       )
       assert.match(table, width >= 768 ? /time TBC/i : /kickoff time not yet set/i, `${id} does not show the unset cell`)
       assert.match(table, /kicked off/i, `${id} does not show the kicked-off cell`)
-      await shoot(page, path.join(out, `${id}.png`), width)
-      cells.push({ id, theme, width, scrollWidth: state.scrollWidth })
+      const penalties = await page.$eval('.fixture-poster[data-fixture-id="pens"]', row => {
+        const score = row.querySelector('.fixture-score'), pill = row.querySelector('.fixture-status')
+        const leader = row.querySelector('.fixture-leader'), clock = row.querySelector('.fixture-clock')
+        return {
+          score: score.innerText, word: pill.innerText,
+          scoreWidth: score.getBoundingClientRect().width, pillHeight: pill.getBoundingClientRect().height,
+          leaderWidth: leader.getBoundingClientRect().width, clockWidth: clock.getBoundingClientRect().width,
+          fits: row.scrollWidth === row.clientWidth && score.getBoundingClientRect().right <= pill.getBoundingClientRect().left,
+        }
+      })
+      assert.equal(penalties.score, '3–3 (2–4)', id)
+      assert.equal(penalties.word, 'PENS', id)
+      assert.equal(penalties.pillHeight, 16, id)
+      assert.ok(penalties.fits && penalties.leaderWidth >= 12, id)
+      for (const lens of ['poster', 'ledger']) {
+        assert.equal(await page.$$eval(`[data-specimen-lens="${lens}"] [data-fixture-id]`, rows => rows.length), 16, id)
+      }
+      const shown = await shoot(page, path.join(out, `${id}.png`), width)
+      contrasts.push(await measureContrast(page, id, width, shown, '[data-specimen="rows"]'))
+      cells.push({ id, theme, width, scrollWidth: state.scrollWidth, penalties })
     } finally { await context.close() }
   }
   // The populated gallery. Production Vite is empty and local Next has no catalog, so
@@ -1939,6 +1974,85 @@ export async function proveMotion(browser, origins, out) {
   return cases
 }
 
+/** Measure the open disclosure, including its disabled action, in the actual page measure. */
+export async function proveWeekControls(browser, origins, date, out, contrastCells) {
+  const results = []
+  for (const [app, origin] of Object.entries(origins)) for (const lens of ['poster', 'ledger']) {
+    for (const theme of ['light', 'dark']) for (const width of [360, 390, 1000]) {
+      const id = `filters-${app}-${lens}-${theme}-${width}`
+      const { context, page, errors } = await openPage(browser, `${origin}/?lens=${lens}&date=${date}`, theme, width)
+      try {
+        await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'no-preference' }])
+        const disclosure = '.filter-disclosure'
+        assert.equal(await page.$eval(disclosure, el => getComputedStyle(el).transitionDuration), '0.18s', id)
+        await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }])
+        await page.click('.week-filters')
+        await page.waitForSelector('.filter-disclosure[data-open="true"]')
+        const metrics = await page.evaluate(() => {
+          function box(el) {
+            const { top, bottom, left, right, width: w, height: h } = el.getBoundingClientRect()
+            return { name: el.getAttribute('aria-label') ?? el.textContent.trim(), top, bottom, left, right, w, h }
+          }
+          const buttons = [...document.querySelectorAll('.week-row button, .filter-panel button')].map(box)
+          const toggles = [...document.querySelectorAll('.filter-toggle')]
+          return {
+            buttons, range: box(document.querySelector('.week-range')), week: box(document.querySelector('.week-row')),
+            frameHeights: toggles.map(el => box(el.firstElementChild).h),
+            panelWidth: box(document.querySelector('.filter-panel')).w,
+            duration: getComputedStyle(document.querySelector('.filter-disclosure')).transitionDuration,
+            outside: document.documentElement.scrollWidth !== innerWidth,
+          }
+        })
+        assert.equal(metrics.buttons.length, 22, id)
+        assert.equal(metrics.duration, '0s', id)
+        assert.equal(metrics.outside, false, id)
+        assert.deepEqual(hitAreaFaults(metrics.buttons), [], id)
+        assert.ok(metrics.buttons.every(box => !overlaps(box, metrics.range)), id)
+        assert.ok(metrics.frameHeights.every(h => near(h, 28)), id)
+        assert.ok(near(metrics.week.h, 44) && near(metrics.buttons[3].right, metrics.week.right), id)
+        assert.equal(metrics.panelWidth, Math.min(width - 32, 640), id)
+        await page.click('.filter-toggle[aria-pressed="true"]')
+        await page.waitForSelector('.filter-toggle[aria-pressed="false"]')
+        const shown = await shoot(page, path.join(out, `${id}.png`), width)
+        contrastCells.push(await measureContrast(page, id, width, shown, '.filter-panel'))
+        results.push({ id, ...metrics })
+        assert.deepEqual(errors, [], id)
+      } finally { await context.close() }
+    }
+  }
+  return results
+}
+
+export async function proveLedgerCounts(browser, origins, week, fixtures) {
+  const selections = {
+    all: COMPETITION_KEYS, three: ['pl', 'ucl', 'laliga'],
+    noSupercups: COMPETITION_KEYS.filter(key => COMPETITIONS[key].group !== 'supercup'),
+  }
+  const results = []
+  for (const [app, origin] of Object.entries(origins)) for (const [selection, keys] of Object.entries(selections)) {
+    const id = `counts-${app}-${selection}`
+    const { context, page, errors } = await openPage(browser, `${origin}/?lens=ledger&date=${week}&only=${keys.join(',')}`, 'light', 390)
+    try {
+      const days = await page.$$eval('[data-week-date]', elements => elements.map(el => ({
+        date: el.dataset.weekDate, hidden: Number(el.dataset.hidden),
+        ids: [...el.querySelectorAll('[data-fixture-id]')].map(row => row.dataset.fixtureId),
+      })))
+      assert.equal(days.length, 7, id)
+      for (const [i, day] of days.entries()) {
+        assert.equal(day.date, addDays(week, i), id)
+        const snapshot = fixtures.filter(f => brooklynDate(f.kickoffUtc) === day.date)
+        const listed = snapshot.filter(f => keys.includes(f.competition))
+        assert.deepEqual([...day.ids].sort(), listed.map(f => f.id).sort(), id)
+        assert.equal(day.ids.length + day.hidden, snapshot.length, id)
+      }
+      results.push({ id, days: days.map(({ date, ids, hidden }) => ({ date, listed: ids.length, hidden })) })
+      assert.deepEqual(errors, [], id)
+    } finally { await context.close() }
+  }
+  return results
+}
+
+
 async function main() {
   const args = process.argv.slice(2)
   const enforce = args.includes('--enforce')
@@ -1976,12 +2090,14 @@ async function main() {
     await runMatrix(browser, { origins, out, anchor, contrast: true }, matrix)
     assert.equal(matrix.cells.length, 96)
     await captureWeeks(browser, { origins, out, weeks, contrast: true }, weekRun)
+    steps.weekControls = await proveWeekControls(browser, origins, anchor, out, weekRun.contrast)
+    steps.ledgerCounts = await proveLedgerCounts(browser, origins, weeks.heavy.monday ?? anchor, fixtures)
     steps.requests = []
     await captureRequests(browser, origins, anchor, steps.requests)
     steps.offline = { sizes: {}, cells: [] }
     await captureOffline(browser, out, steps.offline)
     steps.harness = []
-    await captureHarness(browser, out, steps.harness)
+    await captureHarness(browser, out, steps.harness, weekRun.contrast)
     const done = receipt()
     writeFileSync(path.join(out, 'receipt.json'), JSON.stringify(done, null, 2))
     const failing = belowFloor(done.contrast.cells)

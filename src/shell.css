@@ -725,8 +725,8 @@ body:has(.page-measure[data-measure='moments']) {
   align-self: baseline;
   container-type: inline-size;
 }
-.fixture-leader::after { content: ''; display: block; border-bottom: 1px dotted var(--fb-pulp-muted); }
-@container (width < 12px) { .fixture-leader::after { visibility: hidden; } }
+.fixture-leader i { display: block; border-bottom: 1px dotted var(--fb-pulp-muted); }
+@container (width < 12px) { .fixture-leader i { visibility: hidden; } }
 .fixture-outcome { flex: none; white-space: nowrap; }
 .fixture-outcome:empty { display: none; }
 .fixture-meta {
@@ -815,3 +815,12 @@ body:has(.page-measure[data-measure='moments']) {
 .next-pairing, .next-more, .next-empty { font: 400 12px/1.4 var(--fb-book); overflow-wrap: anywhere; }
 .next-more, .next-empty { margin-top: 5px; }
 @media (max-width: 460px) { .next-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Only the new fixtures surfaces take the 16px gutter. The existing Poster blocks
+   still bleed by 20px and keep their original containing block. */
+.page-measure :is(.week-row, .filter-disclosure, .ledger-week, .next-up, .fixture-poster) {
+  width: min(calc(100% + 8px), var(--fb-measure));
+  margin-inline: max(-4px, calc((100% - var(--fb-measure)) / 2));
+}
+.week-prev .glyph, .week-next .glyph { width: 16px; height: 16px; }
+.week-filters { gap: 3px; }

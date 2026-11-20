@@ -1,8 +1,9 @@
 import { globSync, readFileSync, readdirSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { bannerPaint, bannerSource, css, contrastCases, measureContrast, ratio, rgb, scrimComposite, secondEditionPairs, secondEditionTokens } from './contrast'
+import { bannerPaint, bannerSource, css, contrastCases, fixturePairs, measureContrast, ratio, rgb, scrimComposite, secondEditionPairs, secondEditionTokens } from './contrast'
 
 describe('measured semantic color contrast against rendered grounds', () => {
+  it.each(fixturePairs())('$voice on $stock is readable for fixture text', ({ ratio }) => expect(ratio).toBeGreaterThanOrEqual(4.5))
   it.each(contrastCases)('$theme $role on $ground', ({ ratio, minimum }) => {
     expect(ratio).toBeGreaterThanOrEqual(minimum)
   })

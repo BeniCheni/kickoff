@@ -25,7 +25,7 @@ export const rowStates = [
   ['Next', edgeFixture({ id: 'next' }), 'NEXT'],
   ['Live', edgeFixture({ id: 'live', status: 'in_play', result: { home: 1, away: 0 } }), 'LIVE'],
   ['Last seen live', edgeFixture({ id: 'stale', status: 'in_play', result: { home: 1, away: 0 } }), 'KICKED OFF'],
-  ['Scheduled past kickoff', edgeFixture({ id: 'elapsed' }), 'KICKED OFF'],
+  ['Scheduled past kickoff', edgeFixture({ id: 'elapsed', result: { home: 0, away: 0 } }), 'KICKED OFF'],
   ['Full time', edgeFixture({ id: 'ft', status: 'full_time', result: { home: 2, away: 1 } }), 'FT'],
   ['Extra time', edgeFixture({ id: 'aet', status: 'after_extra_time', result: { home: 2, away: 1 } }), 'AET'],
   ['Penalties', edgeFixture({ id: 'pens', status: 'after_penalties', result: { home: 3, away: 3 }, shootout: { home: 2, away: 4 } }), 'PENS'],
@@ -35,7 +35,7 @@ export const rowStates = [
   ['Unknown stadium clock', edgeFixture({ id: 'no-zone', venueTz: undefined }), ''],
   ['Previous day', edgeFixture({ id: 'prev-day', kickoffUtc: '2026-11-22T23:30:00Z' }), ''],
   ['Next day', edgeFixture({ id: 'next-day', venueTz: 'America/Los_Angeles', kickoffUtc: '2026-11-22T05:30:00Z' }), ''],
-  ['Provider note', edgeFixture({ id: 'note', note: 'Illustrative provider note in full.' }), ''],
+  ['Fixture note', edgeFixture({ id: 'note', note: 'Illustrative fixture note in full.' }), ''],
 ] as const
 
 export function specimenRowProps(fixture: Fixture) {

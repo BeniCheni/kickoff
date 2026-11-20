@@ -20,6 +20,9 @@ it.each([
 ] as [string, CompetitionKey[]][])('accounts for every fixture with %s shown', (_name, keys) => {
   const active = new Set(keys)
   const { container } = render(<WeekView weekStart={week} today={week} lens="ledger" active={active} />)
+  for (const line of container.querySelectorAll('.ledger-date, .matchday-line, .week-hidden, .week-count, .week-gap')) {
+    expect(line.textContent).not.toMatch(/\b(?:EDT|EST|CET|CEST|GMT|UTC|BST|EET|EEST)\b|[+-]\d\d:\d\d/)
+  }
   const breakdown = []
   let count = 0
   for (let offset = 0; offset < 7; offset++) {
@@ -42,3 +45,15 @@ it.each([
   }
 })
 
+
+it('shows the hidden count below both sizes of Poster date line', async () => {
+  const { PosterWeek } = await import('../../src/components/PosterWeek')
+  const { planPosterWeek } = await import('../../src/lib/lensSelectors')
+  const fixtures = FIXTURES.slice(0, 3)
+  const blocks = planPosterWeek([
+    { date: week, shown: fixtures, total: 5, isToday: false },
+    { date: addDays(week, 1), shown: fixtures.slice(0, 1), total: 4, isToday: false },
+  ])
+  const { container } = render(<PosterWeek blocks={blocks} />)
+  expect([...container.querySelectorAll('.week-hidden')].map(el => el.textContent)).toEqual(['2 hidden by filters', '3 hidden by filters'])
+})
