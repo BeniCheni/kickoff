@@ -677,6 +677,62 @@ body:has(.page-measure[data-measure='register']) {
 :where(.register) [data-voice='amber'] { color: var(--fb-amber); }
 
 /*
+ * The Register's short cover. Full width: it outdents the column by the page
+ * gutter, as the black foot does, so a phone sees it edge to edge. It starts
+ * at the band's foot, so the page gives up its top padding unless a staleness
+ * banner or the offline file's label comes first. The art window is flat
+ * stock at 150px, the short end of the handoff's 150 to 250: its photograph
+ * is a later PR's, which sizes the window to the crop, and nothing decorative
+ * stands in for it meanwhile. The label is an Oswald caps label, the title is the
+ * display face in cover-ink with no foil, and the line is the date line's
+ * type: Kickoff Mono 500 11 on a 1.5 line, .04em, caps, breaking at a middot
+ * only. Black stock has its own two inks, so the cover names them.
+ */
+.page-measure[data-measure='register']:not(:has(.staleness, [data-offline-snapshot])) {
+  padding-top: 0;
+}
+.register-cover {
+  margin-inline: calc(-1 * var(--page-gutter));
+  background: var(--fb-cover-black);
+}
+.register-cover [data-voice='ink'] { color: var(--fb-cover-ink); }
+.register-cover [data-voice='muted'] { color: var(--fb-cover-muted); }
+.register-cover-art {
+  height: 150px;
+}
+.register-cover-block {
+  padding: 0 var(--page-gutter) 18px;
+}
+.register-cover-label {
+  margin: 0;
+  font-family: var(--fb-label);
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 1.5;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.register-cover-title {
+  margin: 4px 0 8px;
+  font-family: var(--fb-display);
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 1.05;
+}
+.register-cover-line {
+  margin: 0;
+  font-family: 'Kickoff Mono', ui-monospace, 'SF Mono', monospace;
+  font-weight: 500;
+  font-size: 11px;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.register-cover-line span {
+  white-space: nowrap;
+}
+
+/*
  * League tabs. A tab is drawn 30px tall inside a 44px hit area made by the
  * button around it; three share a row and the rows touch, so six leagues are
  * 88px with no gap for a tap to fall into. The current tab is a black plate,
@@ -740,15 +796,6 @@ body:has(.page-measure[data-measure='register']) {
  * the reader what the Pos column still means and warns of nothing. Neither
  * has a tint: the first edition's amber wash is not a second-edition ground.
  */
-.register-asof {
-  margin: 12px 0 0;
-  font-family: var(--fb-label);
-  font-weight: 600;
-  font-size: 10px;
-  line-height: 1.5;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
 .inhand-note {
   margin: 12px 0 0;
   padding: 1px 0 1px 10px;

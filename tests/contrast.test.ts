@@ -87,8 +87,9 @@ describe('second-edition pairs, read from the tokens', () => {
 })
 
 it('fb tokens and stock render only from the chrome that owns them', () => {
-  // LeagueTabs names black stock on its current tab, a black plate on the pulp page.
-  const allowed = new Set(['components/ImprintBand.tsx', 'components/PageFoot.tsx', 'components/LeagueTabs.tsx', 'index.css'])
+  // LeagueTabs names black stock on its current tab, a black plate on the pulp page, and
+  // RegisterCover on the Table's cover.
+  const allowed = new Set(['components/ImprintBand.tsx', 'components/PageFoot.tsx', 'components/LeagueTabs.tsx', 'components/RegisterCover.tsx', 'index.css'])
   const root = new URL('../src/', import.meta.url)
   const hits = globSync('**/*.{css,ts,tsx}', { cwd: root }).filter((file) => {
     if (file === 'shell.css' || allowed.has(file)) return false

@@ -153,3 +153,25 @@ describe('zone marks and the key, as painted', () => {
     expect(rule('.zones-key-chevron').transition).toBe('transform 180ms cubic-bezier(.2, .7, .2, 1)')
   })
 })
+
+describe('the cover, as painted', () => {
+  it('is black stock in its own two inks, edge to edge, with a window of flat stock inside 150 to 250px', () => {
+    const cover = rule('.register-cover')
+    expect(cover.background).toBe('var(--fb-cover-black)')
+    expect(cover['margin-inline']).toBe('calc(-1 * var(--page-gutter))')
+    expect(rule(".register-cover [data-voice='ink']")).toEqual({ color: 'var(--fb-cover-ink)' })
+    expect(rule(".register-cover [data-voice='muted']")).toEqual({ color: 'var(--fb-cover-muted)' })
+    // Flat stock and nothing else: a height, and no paint of its own.
+    expect(rule('.register-cover-art')).toEqual({ height: '150px' })
+    expect(pair('cover-ink on cover-black').ratio).toBeGreaterThanOrEqual(4.5)
+    expect(pair('cover-muted on cover-black').ratio).toBeGreaterThanOrEqual(4.5)
+  })
+
+  it('sets the line as a date line and never lets a unit break, and draws no foil and no motion', () => {
+    const line = rule('.register-cover-line')
+    expect([line['font-weight'], line['font-size'], line['line-height'], line['letter-spacing'], line['text-transform']]).toEqual(['500', '11px', '1.5', '0.04em', 'uppercase'])
+    expect(rule('.register-cover-line span')).toEqual({ 'white-space': 'nowrap' })
+    const block = css.slice(css.indexOf('.register-cover {'), css.indexOf('.league-tabs {'))
+    expect(block).not.toMatch(/fb-foil|animation|transition|background-image|url\(|gradient/)
+  })
+})

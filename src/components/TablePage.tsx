@@ -9,7 +9,6 @@ import {
 import {
   clubsInHand,
   groupTableRows,
-  hoursSinceStandingsSync,
   matchdayProgress,
   STANDINGS,
   tableFor,
@@ -24,6 +23,7 @@ import { LeagueTabs } from './LeagueTabs'
 import { NextFixtureCell } from './NextFixtureCell'
 import { ZoneMark, ZonesKey } from './ZonesKey'
 import { PageFoot } from './PageFoot'
+import { RegisterCover } from './RegisterCover'
 
 /**
  * The league table, built to the standings design reference (docs/Kickoff Standings.html):
@@ -55,13 +55,6 @@ function sortRows(rows: TableRow[], sort: SortKey): TableRow[] {
     : sort === 'ppg' ? (r.played ? r.pts / r.played : -1)
     : r.played
   return [...rows].sort((a, b) => key(b) - key(a) || a.rank - b.rank)
-}
-
-function syncedAgo(now: Date): string {
-  const h = hoursSinceStandingsSync(now)
-  if (h < 1) return 'synced under an hour ago'
-  if (h < 48) return `synced ${Math.round(h)}h ago`
-  return `synced ${Math.floor(h / 24)}d ago`
 }
 
 /* ------------------------------------ small pieces ------------------------------------ */
@@ -140,7 +133,9 @@ export function TablePage() {
 
   const picker = <LeagueTabs league={league} onPick={pickLeague} />
   if (!rows.length) {
-    return <div className="register">{picker}
+    return <div className="register">
+      <RegisterCover league={comp.name} asOf={null} />
+      {picker}
       <p className="register-note" data-voice="ink" data-empty-table="">
         No table in the snapshot for {comp.name} — {META.standingsDegraded?.includes(league)
           ? 'the provider no longer supplies the configured league-phase table.'
@@ -151,11 +146,11 @@ export function TablePage() {
 
   return (
     <div className="register">
+      <RegisterCover
+        league={comp.name}
+        asOf={progress ? `As of matchday ${progress.played} of ${progress.of}${meta.phase ? ` · ${meta.phase}` : ''}` : null}
+      />
       {picker}
-
-      <p className="register-asof" data-voice="muted">
-        {progress ? `As of matchday ${progress.played} of ${progress.of}${meta.phase ? ` · ${meta.phase}` : ''}` : 'League table'} · {syncedAgo(new Date(nowUtcIso))}
-      </p>
 
       {/* games in hand: amber heading and left rule, the sentence in ink */}
       {inHand > 0 && (
