@@ -140,3 +140,11 @@ A11. #8's body is byte-identical to the Planner's copy from before the round, at
 
 A12. With a wrapper allowing only GET first on PATH, the Planner's build of 818a946 ran status live on #1, which matches test/fixtures/replay-p9/status.txt byte for byte, and on #6, which names 3: its ruling precedes the standing synthesis.
 ````
+
+## A note on A3 (Thu 19 Nov 2026, Planner)
+
+A3 rests on Codex's session log under `~/.codex`, which this brief's limits barred the seat from
+reading. The seat rightly marked it not checked, so the appendix tested the seat on eleven items,
+not twelve. The appendix above is kept as it was sent. The relay also changed one character in an
+email address, and the seat compared against this archived copy. The fifth Pass 3 records both
+under "Corrections from the Planner".

@@ -601,6 +601,18 @@ Cursor's hands this track seats no Cursor.
 - *Fourth re-read brief:* [`review-loop-sprint-3-synthesis-5-prompt.md`](review-loop-sprint-3-synthesis-5-prompt.md),
   for the fourth Pass 2.5 re-read (Claude Code, `claude-opus-5-5`, `xhigh`), in
   `~/code/review-seats/elenchus-pr8-pass25-r5`, with its sealed appendix as a second paste.
+- *Re-read a fourth time (Thu 19 Nov 2026):* the fourth Pass 2.5 re-read
+  ([comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7028773562)) found the
+  fifth round did what Beni ruled, with 25-17 and 25-18 fixed and no blocking finding open. In
+  each of the 180 states it built, the code holds every rule; what is missing is tests and one
+  README sentence. It kept 25-19 open, for an id a carrying pass introduced, and opened 25-20
+  (should-fix) and the notes 25-21 and 25-22. The seal held. Appendix item A3 could not be
+  checked: it rested on Codex's session logs, which the brief barred the seat from reading.
+- *Ruled a fifth time:* a sixth fix round, tests and the README only. The rulings are under
+  "Rulings received" ("Sprint 3's fifth Pass 3").
+- *Sixth fix brief:* [`review-loop-sprint-3-fix-6-prompt.md`](review-loop-sprint-3-fix-6-prompt.md),
+  for Pass 2 again, as a re-read (Codex in the ChatGPT desktop app, `gpt-6.2-sol`, `xhigh`), in
+  `~/code/review-seats/elenchus-pr8-pass2-r6`.
 - *Carried from Sprint 1's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are that
   comment's findings): 6, sequence by the order records were posted, not their presence; 7, every
   pass's `input_sha` is the previous recorded pass's `output_sha`, writing or not, and a head
@@ -1476,6 +1488,37 @@ for Cursor (S7).
     25-17 to 25-19. The Planner re-ran one deletion, X7, which passes the full suite.
   - **After this record**, `status` on PR 8 names `exec`, since no blocking finding is open.
     `status` does not read a ruling's verdict.
+- **Sprint 3's fifth Pass 3 (Beni, Thu 19 Nov 2026, "Rule as recommended"; the comment,
+  "Approve and post").** The fourth Pass 2.5 re-read
+  ([comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7028773562)) found the
+  fifth round done as ruled: 25-17 and 25-18 fixed, 25-19 fixed in part, and no blocking finding
+  open. It opened 25-20 as should-fix and 25-21 and 25-22 as notes, and asked five questions.
+  Beni ruled on the Planner's five recommendations, numbered as the re-read's questions. The
+  Planner wrote and posted the record, a re-read of pass 3 at `818a946`
+  ([comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7029164869)). The brief is
+  [`review-loop-sprint-3-fix-6-prompt.md`](review-loop-sprint-3-fix-6-prompt.md).
+  - **1, 25-19, stays open.** "Every source of an id" includes an id a carrying pass introduced.
+    SX7 becomes an `it.each` with rows where pass 1, pass 2 and the synthesis introduce the id;
+    the pass 2 and synthesis rows fail under Z2.
+  - **2, 25-20.** Rule 1 holds whichever arm selects the pass. Its schema arm gets four rows,
+    the v1.1 twins of N1, N2, N3 and the in-progress test, each failing under Y2, and the round
+    deletes the guard once for each arm.
+  - **3, 25-21, four.** The split test covers `required_checks`, an unknown gate key,
+    `allowed_changes` and, on a live run against the suite's local App stub, `app_id`.
+  - **4, 25-22.** The README states the qualifier "after any earlier pass without a valid
+    record" once, for the schema sentence and the ruling-pass sentence.
+  - **5, the next step.** A sixth fix round, tests and the README only, rather than the
+    executor with them deferred. Any change under `src/` is a stop.
+  - **25-19, 25-20 and 25-22 were the Planner's.** The fourth Pass 3's ruling 4 named one test
+    for a rule that said "every source of an id". Its ruling 1 listed tests with v1.2 records
+    only, and named one README sentence where the rule covers two. Appendix item A3 rested on
+    logs the brief barred the seat from reading.
+  - **Checked by the Planner:** the re-read's comment against GitHub, its record through the
+    head's own code, the seal and the seat's limits in its transcript, and seven deletions
+    re-run: Y2, Y3, Y3b and Z2 pass the full suite, 354 of 354. For the brief it also ran Y2r,
+    the guard skipped for ruling items, which six tests catch.
+  - **After this record**, `status` on PR 8 names `exec`. `status` does not read a ruling's
+    verdict.
 
 D8, D10 and D11 are not yet ruled. D4 is withdrawn, and D12 is Pilot (17 Nov).
 
