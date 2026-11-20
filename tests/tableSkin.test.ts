@@ -87,3 +87,36 @@ describe('the Table’s files and the clock', () => {
     }
   })
 })
+
+describe('league tabs and the notes, as painted', () => {
+  it('draws a tab 30px tall in a 44px hit area, three to a row', () => {
+    const tab = rule('.league-tab')
+    expect([tab.height, tab['min-width'], tab.padding]).toEqual(['44px', '44px', '7px 0'])
+    expect(rule('.league-tab span').height).toBe('30px')
+    expect(rule('.league-tabs')['grid-template-columns']).toBe('repeat(3, auto)')
+  })
+
+  it('sets the current tab as a black plate with the pitch underline, and gives no tab a hue', () => {
+    expect(rule(".league-tab[aria-pressed='true'] span")).toEqual({
+      background: 'var(--fb-cover-black)',
+      color: 'var(--fb-cover-ink)',
+      'box-shadow': 'inset 0 -2.5px 0 var(--fb-pitch)',
+    })
+    expect(source('components/LeagueTabs.tsx')).toContain("data-stock={key === league ? 'black' : undefined}")
+    expect(pair('cover-ink on cover-black').ratio).toBeGreaterThanOrEqual(4.5)
+    expect(pair('pitch on cover-black').ratio).toBeGreaterThanOrEqual(3)
+    // No flag, no competition colour and no chip: the tab reads the league's name and nothing else.
+    expect(source('components/LeagueTabs.tsx')).not.toMatch(/\.flag|\.color|CompetitionChip|chipInk|style=/)
+    expect(source('components/TablePage.tsx')).not.toMatch(/CompetitionChip|chipInk/)
+  })
+
+  it('rules the games-in-hand note in amber and washes nothing', () => {
+    const note = rule('.inhand-note')
+    expect(note['border-left']).toBe('3px solid var(--fb-amber)')
+    expect(note.background).toBeUndefined()
+    expect(rule('.register-note')['border-left']).toBe('1px solid var(--fb-rule-strong)')
+    expect(rule('.register-note').background).toBeUndefined()
+    expect(rule('.inhand-chip').border).toBe('1px solid currentColor')
+    expect(source('components/TablePage.tsx')).not.toMatch(/bg-floodlight-bg|floodlight/)
+  })
+})

@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react'
 import {
   COMPETITIONS,
   LEAGUE_TABLES,
-  TABLE_LEAGUES,
   ZONES_SEASON,
   zoneRange,
   type CompetitionKey,
@@ -20,8 +19,8 @@ import { useUrlState } from '../lib/useUrlState'
 import { encodeLeague, parseLeague } from '../lib/urlCodecs'
 import { useNow } from '../lib/useNow'
 import { META } from '../lib/fixtures'
-import { CompetitionChip } from './CompetitionChip'
 import { FormPips } from './FormPips'
+import { LeagueTabs } from './LeagueTabs'
 import { NextFixtureCell } from './NextFixtureCell'
 import { PageFoot } from './PageFoot'
 
@@ -81,9 +80,10 @@ function gdText(gd: number): string {
   return gd > 0 ? `+${gd}` : String(gd)
 }
 
+/** Beside each club that has played fewer matches than the league's most-played: how many. */
 function InHandChip({ n }: { n: number }) {
   return (
-    <span className="flex-none rounded-[3px] border border-floodlight px-[3px] font-mono text-[8px] leading-normal font-semibold text-floodlight-strong">
+    <span className="inhand-chip" data-voice="amber">
       +{n}
     </span>
   )
@@ -137,13 +137,7 @@ export function TablePage() {
     setSort('pts')
   }
 
-  const picker = (
-    <div data-table-picker className="mb-2.5 flex flex-wrap gap-1.5">
-      {TABLE_LEAGUES.map((k) => (
-        <CompetitionChip key={k} competition={k} on={k === league} onClick={() => pickLeague(k)} />
-      ))}
-    </div>
-  )
+  const picker = <LeagueTabs league={league} onPick={pickLeague} />
   if (!rows.length) {
     return <div className="register">{picker}
       <div className="rounded border border-line bg-surface px-3.5 py-3 text-[13px] text-ink-muted">
@@ -158,26 +152,28 @@ export function TablePage() {
     <div className="register">
       {picker}
 
-      {/* freshness + games-in-hand callout */}
-      <div className="mb-2.5 rounded-[5px] border border-line border-l-3 border-l-floodlight bg-floodlight-bg px-2.5 py-2">
-        <div className="label-caps text-[9.5px] text-floodlight-strong">
-          {progress ? `As of matchday ${progress.played} of ${progress.of}${meta.phase ? ` · ${meta.phase}` : ''}` : 'League table'} · {syncedAgo(new Date(nowUtcIso))}
-        </div>
-        {inHand > 0 && (
-          <div className="mt-0.5 text-[11px] leading-normal text-ink-secondary">
+      <p className="register-asof" data-voice="muted">
+        {progress ? `As of matchday ${progress.played} of ${progress.of}${meta.phase ? ` · ${meta.phase}` : ''}` : 'League table'} · {syncedAgo(new Date(nowUtcIso))}
+      </p>
+
+      {/* games in hand: amber heading and left rule, the sentence in ink */}
+      {inHand > 0 && (
+        <div className="inhand-note" data-inhand-note="">
+          <p className="inhand-note-heading" data-voice="amber">{meta.phase ? 'Matches played' : 'Games in hand'}</p>
+          <p className="inhand-note-copy" data-voice="ink">
             {inHand === 1 ? 'One club has' : `${inHand} clubs have`}{meta.phase
               ? ' played fewer matches.'
               : <> a game in hand — sort by <b>PPG</b> to compare like with like.</>}
-          </div>
-        )}
-        {!zonesCurrent && (
-          <div className="mt-0.5 text-[11px] leading-normal text-ink-secondary">
-            Zone bands are hidden: the snapshot is the {STANDINGS.season}-
-            {(STANDINGS.season + 1) % 100} season but the zone metadata describes{' '}
-            {ZONES_SEASON}-{(ZONES_SEASON + 1) % 100}. Update <code className="font-mono">LEAGUE_TABLES</code>.
-          </div>
-        )}
-      </div>
+          </p>
+        </div>
+      )}
+      {!zonesCurrent && (
+        <p className="register-note" data-voice="ink">
+          Zone bands are hidden: the snapshot is the {STANDINGS.season}-
+          {(STANDINGS.season + 1) % 100} season but the zone metadata describes{' '}
+          {ZONES_SEASON}-{(ZONES_SEASON + 1) % 100}. Update <code>LEAGUE_TABLES</code>.
+        </p>
+      )}
 
       {/* zones & key toggle */}
       <button
@@ -292,10 +288,10 @@ export function TablePage() {
       {/* -------- desktop table -------- */}
       <div data-table="desktop" className="hidden md:block">
         {sort !== 'pts' && (
-          <div className="mb-1 rounded border border-line bg-floodlight-bg px-3 py-2 text-[11.5px] text-ink-secondary">
+          <p className="register-note" data-voice="ink" data-sorted-note="">
             Sorted by {SORT_LABEL[sort]}. The Pos column still shows league position, and zone
             bands are hidden because they only describe the canonical order.
-          </div>
+          </p>
         )}
         <div className={`sticky top-0 z-10 grid h-[34px] ${DESKTOP_COLS} register-labels register-labels-wide`}>
           <div />

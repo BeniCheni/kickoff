@@ -677,6 +677,119 @@ body:has(.page-measure[data-measure='register']) {
 :where(.register) [data-voice='amber'] { color: var(--fb-amber); }
 
 /*
+ * League tabs. A tab is drawn 30px tall inside a 44px hit area made by the
+ * button around it; three share a row and the rows touch, so six leagues are
+ * 88px with no gap for a tap to fall into. The current tab is a black plate,
+ * so it names its own stock and takes the black voices: cover-ink and the
+ * pitch that reads 8.73 on cover-black. Hover and pressed are ink shifts in
+ * 150ms, as on the band.
+ */
+.league-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+}
+.league-tab {
+  box-sizing: border-box;
+  min-width: 44px;
+  height: 44px;
+  padding: 7px 0;
+  border: 0;
+  box-shadow: inset 0 -1.5px 0 var(--fb-rule);
+  background: transparent;
+  color: var(--fb-pulp-ink);
+  cursor: pointer;
+  font-family: var(--fb-label);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: color 150ms ease;
+}
+.league-tab span {
+  display: grid;
+  place-items: center;
+  height: 30px;
+  padding-inline: 6px;
+  white-space: nowrap;
+  transition: background-color 150ms ease, box-shadow 150ms ease;
+}
+.league-tab[aria-pressed='true'] span {
+  background: var(--fb-cover-black);
+  color: var(--fb-cover-ink);
+  box-shadow: inset 0 -2.5px 0 var(--fb-pitch);
+}
+@media (hover: hover) {
+  .league-tab[aria-pressed='false']:hover {
+    color: var(--fb-pitch);
+  }
+}
+.league-tab[aria-pressed='false']:active {
+  color: var(--fb-pulp-muted);
+}
+@media (prefers-reduced-motion: reduce) {
+  .league-tab,
+  .league-tab span {
+    transition: none;
+  }
+}
+
+/*
+ * Notes above the table. Games in hand is one of amber's uses: an amber
+ * heading and left rule, the sentence in ink, and an amber "+1" beside each
+ * club that has played fewer. The sorted note is ink on a hairline; it tells
+ * the reader what the Pos column still means and warns of nothing. Neither
+ * has a tint: the first edition's amber wash is not a second-edition ground.
+ */
+.register-asof {
+  margin: 12px 0 0;
+  font-family: var(--fb-label);
+  font-weight: 600;
+  font-size: 10px;
+  line-height: 1.5;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.inhand-note {
+  margin: 12px 0 0;
+  padding: 1px 0 1px 10px;
+  border-left: 3px solid var(--fb-amber);
+}
+.inhand-note-heading {
+  margin: 0;
+  font-family: var(--fb-label);
+  font-weight: 600;
+  font-size: 10px;
+  line-height: 1.5;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.inhand-note-copy,
+.register-note {
+  margin: 0;
+  font-family: var(--fb-book);
+  font-size: 12px;
+  line-height: 1.4;
+}
+.register-note {
+  margin: 12px 0 0;
+  padding: 1px 0 1px 10px;
+  border-left: 1px solid var(--fb-rule-strong);
+}
+.register-note code {
+  font-family: var(--fb-mono);
+  font-size: 0.92em;
+}
+.inhand-chip {
+  flex: none;
+  padding: 0 3px;
+  border: 1px solid currentColor;
+  font-family: 'Kickoff Mono', ui-monospace, 'SF Mono', monospace;
+  font-weight: 600;
+  font-size: 10px;
+  line-height: 14px;
+}
+
+/*
  * Rows. Zone band 3px, position, the club's tile and name, form pips, next
  * fixture, GD over GF–GA, points over played. Team names are Caslon 16,
  * figures Kickoff Mono 500 13 on a 22px line, points 600 16, and nothing is
