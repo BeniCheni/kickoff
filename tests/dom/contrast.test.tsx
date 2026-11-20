@@ -16,15 +16,11 @@ afterEach(() => { if (originalUcl) STANDINGS.leagues.ucl = originalUcl; else del
 let release: (() => void) | undefined
 afterEach(() => { cleanup(); release?.(); release = undefined })
 
-// Class/inheritance inventory, not a jsdom contrast measurement. The node test locks the
-// three source sites; these mounts exercise both conditional Table callouts too.
-function checkTint(container: HTMLElement, count: number) {
-  const grounds = container.querySelectorAll('.bg-floodlight-bg')
-  expect(grounds).toHaveLength(count)
-  for (const ground of grounds) {
-    expect(ground.closest('[class*="text-ink-muted"]')).toBeNull()
-    expect(ground.querySelector('[class*="text-ink-muted"]')).toBeNull()
-  }
+// Voice inventory, not a jsdom contrast measurement. The Table's two notes were the first
+// edition's amber wash; they are flat now, each unit in a named voice on the page's ground.
+// tests/tableSkin.test.ts holds every voice to the pair the handoff measured for it.
+function voiceOf(element: Element | null) {
+  return element?.getAttribute('data-voice') ?? null
 }
 it('the 24h banner is the amber plane, and the 72h banner is the alarm plane', () => {
   release = primeClock(new Date(Date.parse(META.lastSyncAt) + 25 * 60 * 60 * 1000))
@@ -40,12 +36,25 @@ it('the 24h banner is the amber plane, and the 72h banner is the alarm plane', (
   expect(old.container.querySelector('.staleness')?.getAttribute('data-voice')).toBe('alarm')
   expect(old.container.textContent).toContain('Data is stale.')
 })
-it.each(TABLE_LEAGUES)('%s callouts and the sorted banner use readable roles on the tint', (league) => {
+it.each(TABLE_LEAGUES)('%s: the games-in-hand note and the sorted note are flat, in named voices', (league) => {
   window.history.replaceState(null, '', `/?league=${league}`)
   release = primeClock(new Date(META.lastSyncAt))
   const { container } = render(<TablePage />)
-  checkTint(container, 1)
+  const played = STANDINGS.leagues[league]!.map((row) => row.played)
+  const behind = played.filter((count) => count < Math.max(...played)).length
+
+  // Amber heading and left rule, the sentence in ink, and a chip per club behind, per layout.
+  const note = container.querySelector('[data-inhand-note]')
+  expect(Boolean(note)).toBe(behind > 0)
+  if (note) {
+    expect(voiceOf(note.querySelector('.inhand-note-heading'))).toBe('amber')
+    expect(voiceOf(note.querySelector('.inhand-note-copy'))).toBe('ink')
+  }
+  const chips = [...container.querySelectorAll('.inhand-chip')]
+  expect(chips).toHaveLength(behind * 2)
+  for (const chip of chips) expect(voiceOf(chip)).toBe('amber')
+
   fireEvent.click(screen.getByRole('button', { name: 'PPG' }))
-  checkTint(container, 2)
-  expect(screen.getByText(/Sorted by/)).toBeTruthy()
+  expect(voiceOf(screen.getByText(/Sorted by/))).toBe('ink')
+  expect(container.querySelector('.bg-floodlight-bg')).toBeNull()
 })

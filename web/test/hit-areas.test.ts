@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { DESKTOP_TABLE_CONTROLS, bandFaults, firstFrameFaults, focusFaults, handoffFaults, hitAreaFaults, momentsPaintFaults, pinFaults, revealFaults, sweepFaults, tabFaults } from '../scripts/evidence.mjs'
+import { DESKTOP_TABLE_CONTROLS, bandFaults, firstFrameFaults, focusFaults, handoffFaults, hitAreaFaults, momentsPaintFaults, pinFaults, revealFaults, sweepFaults, tabFaults, columnFaults, tableHitFaults, tableStateFaults } from '../scripts/evidence.mjs'
 
 const box = (name: string, left: number, top: number, w: number, h = 44) => ({ name, left, top, right: left + w, bottom: top + h, w, h })
 
@@ -226,7 +226,7 @@ test('pinned rows: flush under what pins above them, and topmost at their own ce
     band: { top: 0, bottom: 133 },
     labels: { name: 'labels', top: 133, bottom: 161, topmost: 'itself' },
     divider: { name: 'Knockout play-offs', top: 161, bottom: 188.5, topmost: 'itself' },
-    focus: { text: 'W', focusVisible: true, top: 127.4, topmost: 'itself' },
+    focus: { text: 'GF', focusVisible: true, top: 127.4, topmost: 'itself' },
   }
   expect(pinFaults(pinned)).toEqual([])
   expect(pinFaults({ ...pinned, divider: null, focus: undefined })).toEqual([])
@@ -235,12 +235,12 @@ test('pinned rows: flush under what pins above them, and topmost at their own ce
     band: { top: 0, bottom: 133 },
     labels: { name: 'labels', top: 0, bottom: 28, topmost: 'the band' },
     divider: { name: 'Knockout play-offs', top: 28, bottom: 55.5, topmost: 'the band' },
-    focus: { text: 'W', focusVisible: true, top: 9.4, topmost: 'the band' },
+    focus: { text: 'GF', focusVisible: true, top: 9.4, topmost: 'the band' },
   })).toEqual([
     'the labels are under the band',
     'the labels pin at 0.00, and the band ends at 133.00',
     'the Knockout play-offs divider is under the band',
-    'the focused W sort is under the band',
+    'the focused GF sort is under the band',
   ])
 })
 
@@ -253,17 +253,29 @@ test('a control focused behind the band is brought out to the band’s foot', ()
 test('a standings row that takes focus under the labels and a divider is a fault', () => {
   const row = {
     text: '16. LASK, 6 points from 4 played', active: '16. LASK, 6 points from 4 played', landed: true, row: true,
-    focusVisible: true, before: 119.06, top: 178.06, bottom: 232.06, points: 15, under: {}, ringUnder: {},
+    focusVisible: true, before: 119.06, top: 191.56, bottom: 245.56, points: 15, under: {},
+    // The row's ring is the page's 2px line, drawn inside the row.
+    ring: { offset: -2, width: 2 }, ringUnder: {},
   }
   expect(focusFaults(row)).toEqual([])
   // The reviewed head at 390: the browser counts the row as in view and leaves it where it is.
-  expect(focusFaults({ ...row, top: 119.06, bottom: 173.06, under: { 'the labels': 5, 'the Knockout play-offs divider': 10 }, ringUnder: { 'the band': 5 } })).toEqual([
+  expect(focusFaults({ ...row, top: 119.06, bottom: 173.06, under: { 'the labels': 5, 'the Knockout play-offs divider': 10 }, ringUnder: { 'the labels': 5 } })).toEqual([
     '"16. LASK, 6 points from 4 played" took focus at 119.06 and rests at 119.06 to 173.06, with 15 of 15 points under the labels and the Knockout play-offs divider',
-    'the focus ring above "16. LASK, 6 points from 4 played" is under the band',
+    'the focus ring of "16. LASK, 6 points from 4 played" is under the labels',
   ])
-  // Out from under the stack and no further: the row is whole and its ring's upper edge is not.
-  expect(focusFaults({ ...row, top: 173.06, bottom: 227.06, ringUnder: { 'the Knockout play-offs divider': 5 } }))
-    .toEqual(['the focus ring above "16. LASK, 6 points from 4 played" is under the Knockout play-offs divider'])
+  // The ring as PR 2's cycle left it: 2px drawn 2px outside the row. The row is whole, out
+  // from under the stack, and the upper edge of its ring is under the zone's header, which
+  // is positioned and paints over it whether or not it has pinned yet.
+  expect(focusFaults({ ...row, ring: { offset: 2, width: 2 }, ringUnder: { 'the Knockout play-offs divider': 5, 'another element': 5 } })).toEqual([
+    'the focus ring of "16. LASK, 6 points from 4 played" is drawn 4.00px outside its row, where a zone header paints over it',
+    'the focus ring of "16. LASK, 6 points from 4 played" is under the Knockout play-offs divider and another element',
+  ])
+  // Flush with the row's edge is inside it: nothing is drawn beyond the row.
+  expect(focusFaults({ ...row, ring: { offset: -2, width: 2 } })).toEqual([])
+  expect(focusFaults({ ...row, ring: { offset: -1, width: 2 } }))
+    .toEqual(['the focus ring of "16. LASK, 6 points from 4 played" is drawn 1.00px outside its row, where a zone header paints over it'])
+  // A control that is not a row carries no ring reading and is not held to one.
+  expect(focusFaults({ ...row, row: false, ring: undefined, ringUnder: undefined })).toEqual([])
   // One point is enough: 2.4.11 asks for not entirely hidden, and this asks for whole.
   expect(focusFaults({ ...row, top: 160, bottom: 214, under: { 'the Knockout play-offs divider': 1 } }))
     .toEqual(['"16. LASK, 6 points from 4 played" took focus at 119.06 and rests at 160.00 to 214.00, with 1 of 15 points under the Knockout play-offs divider'])
@@ -334,9 +346,12 @@ test('on the phone, each club in the standings has a row of its own that holds o
     .toEqual(['1 of the table’s 6 rows is for a club the standings do not hold: "99"'])
 })
 
-test('on the desktop, the table is owed its nine labels by name, each within reach and pressed', () => {
-  expect(DESKTOP_TABLE_CONTROLS).toEqual(['Pl', 'W', 'D', 'L', 'GF', 'GA', 'GD', 'Pts', 'PPG'])
-  // The desktop rows hold no control: the nine are in the pinned row above them.
+test('on the desktop, the table is owed its six sort controls by name, each within reach and pressed', () => {
+  // The names are the browser's: it folds the stylesheet's capitals into a name taken from
+  // text, so the labels written Pl and Pts are the controls named PL and PTS. W, D and L
+  // sort nothing, so they are text and no control carries their name.
+  expect(DESKTOP_TABLE_CONTROLS).toEqual(['PL', 'GF', 'GA', 'GD', 'PTS', 'PPG'])
+  // The desktop rows hold no control: the six are in the pinned row above them.
   const desk = {
     within: '.page-measure', named: DESKTOP_TABLE_CONTROLS, rows: clubs.map((club) => club.id),
     controls: DESKTOP_TABLE_CONTROLS.map((name) => ({ name, row: -1, reachable: true })),
@@ -344,23 +359,68 @@ test('on the desktop, the table is owed its nine labels by name, each within rea
   const all = [press(-1), ...DESKTOP_TABLE_CONTROLS.map((name, place) => press(place, name))]
   expect(sweepFaults(all, desk)).toEqual([])
   // The reviewed head: the table held no control, the league picker was pressed, and it passed.
-  expect(sweepFaults([press(-1)], { ...desk, controls: [] })).toEqual(['9 of the 9 controls owed by name are not in the table: "Pl", "W", "D", …'])
+  expect(sweepFaults([press(-1)], { ...desk, controls: [] })).toEqual(['6 of the 6 controls owed by name are not in the table: "PL", "GF", "GA", …'])
   // In the table and out of a keyboard's reach is not held either.
   expect(sweepFaults([press(-1)], { ...desk, controls: desk.controls.map((control) => ({ ...control, reachable: false })) }))
-    .toEqual(['9 of the 9 controls owed by name cannot be reached by a keyboard: "Pl", "W", "D", …'])
-  // Nine controls are not the nine: Pts reads Pl, and every one of them was pressed.
-  expect(sweepFaults(all, { ...desk, controls: desk.controls.map((control) => (control.name === 'Pts' ? { ...control, name: 'Pl' } : control)) })).toEqual([
-    '1 of the 9 controls owed by name is not in the table: "Pts"',
-    '1 of the 9 controls owed by name is in the table more than once: "Pl" (2)',
+    .toEqual(['6 of the 6 controls owed by name cannot be reached by a keyboard: "PL", "GF", "GA", …'])
+  // Six controls are not the six: PTS reads PL, and every one of them was pressed.
+  expect(sweepFaults(all, { ...desk, controls: desk.controls.map((control) => (control.name === 'PTS' ? { ...control, name: 'PL' } : control)) })).toEqual([
+    '1 of the 6 controls owed by name is not in the table: "PTS"',
+    '1 of the 6 controls owed by name is in the table more than once: "PL" (2)',
   ])
+  // The label as it is written is not the name: a runner that read the text would have
+  // passed "Pl" and "Pts", which no screen reader is handed.
+  expect(sweepFaults(all, { ...desk, controls: desk.controls.map((control) => ({ ...control, name: { PL: 'Pl', PTS: 'Pts' }[control.name] ?? control.name })) })).toEqual([
+    '2 of the 6 controls owed by name are not in the table: "PL", "PTS"',
+  ])
+  // W, D and L as the do-nothing buttons they were: three controls nothing owes, each a
+  // stop for a keyboard, so each is owed a press the sweep never aimed.
+  expect(sweepFaults(all, { ...desk, controls: [...desk.controls, ...['W', 'D', 'L'].map((name) => ({ name, row: -1, reachable: true }))] }))
+    .toEqual(['3 of the table’s 9 controls were never the target of a press: "W", "D", "L"'])
   // Each is owed a press, and so is a control the list does not name: a row's, if one arrives.
-  expect(sweepFaults(all.filter((seen) => seen.text !== 'Pts'), desk)).toEqual(['1 of the table’s 9 controls was never the target of a press: "Pts"'])
+  expect(sweepFaults(all.filter((seen) => seen.text !== 'PTS'), desk)).toEqual(['1 of the table’s 6 controls was never the target of a press: "PTS"'])
   expect(sweepFaults(all, { ...desk, controls: [...desk.controls, { name: '3. Club', row: 2, reachable: true }] }))
-    .toEqual(['1 of the table’s 10 controls was never the target of a press: "3. Club"'])
+    .toEqual(['1 of the table’s 7 controls was never the target of a press: "3. Club"'])
   expect(sweepFaults([], desk)).toEqual([
     'no Tab was pressed: nothing a keyboard can reach is inside .page-measure',
-    '9 of the table’s 9 controls were never the target of a press: "Pl", "W", "D", …',
+    '6 of the table’s 6 controls were never the target of a press: "PL", "GF", "GA", …',
   ])
+})
+
+test('a control a keyboard reaches and the browser cannot name is a fault', () => {
+  // A row that has lost its label and its text: it is in its row, within reach and pressed.
+  const unnamed = { ...phone, controls: phone.controls.map((control, place) => (place === 2 ? { ...control, name: '' } : control)) }
+  expect(sweepFaults(whole, unnamed)).toEqual(['1 of the table’s 5 controls has no name the browser computes'])
+  expect(sweepFaults(whole, { ...phone, controls: phone.controls.map((control) => ({ ...control, name: '' })) }))
+    .toEqual(['5 of the table’s 5 controls have no name the browser computes'])
+  // Out of a keyboard's reach it is not a stop, so it is not held to a name here.
+  expect(sweepFaults(whole.filter((seen) => seen.owed !== 2), { ...phone, clubs: null, named: ['1. Club'], controls: unnamed.controls.map((control, place) => (place === 2 ? { ...control, reachable: false } : control)) }))
+    .toEqual([])
+})
+
+test('the Table’s own hit areas: six tabs, the key, and a row for each club or six sorts', () => {
+  const at = (kind: string, name: string, left: number, top: number, w = 44, h = 44) => ({ kind, name: `${kind} ${name}`, left, right: left + w, top, bottom: top + h, w, h })
+  const tabs = ['La Liga', 'Premier League', 'Serie A', 'Ligue 1', 'Bundesliga', 'Champions League'].map((name, i) => at('tab', name, 20 + (i % 3) * 106, 300 + Math.floor(i / 3) * 44, 106))
+  const key = at('key', 'Zones & key', 20, 388, 320)
+  const rows = [0, 1, 2].map((n) => at('row', `${n + 1}0`, 0, 520 + n * 91, 360, 91))
+  const sorts = DESKTOP_TABLE_CONTROLS.map((name, i) => at('sort', name, 400 + i * 44, 432))
+  expect(tableHitFaults([...tabs, key, ...rows], { layout: 'mobile', clubs: 3 })).toEqual([])
+  expect(tableHitFaults([...tabs, key, ...sorts], { layout: 'desktop', clubs: 3 })).toEqual([])
+  // A control that is not there has no hit area to fail, so the count is held first.
+  expect(tableHitFaults([...tabs.slice(0, 5), key, ...rows.slice(0, 2)], { layout: 'mobile', clubs: 3 }))
+    .toEqual(['5 tab hit areas, expected 6', '2 row hit areas, expected 3'])
+  expect(tableHitFaults([...tabs, ...rows], { layout: 'mobile', clubs: 3 })).toEqual(['0 key hit areas, expected 1'])
+  // A row control on the desktop, or a seventh sort, is a control nothing owes.
+  expect(tableHitFaults([...tabs, key, ...sorts, rows[0]!], { layout: 'desktop', clubs: 3 })).toEqual(['1 row hit area, expected 0'])
+  expect(tableHitFaults([...tabs, key, ...sorts, at('sort', 'W', 444, 500)], { layout: 'desktop', clubs: 3 })).toEqual(['7 sort hit areas, expected 6'])
+  // The sort controls as the first edition drew them: a 15px line of text in a 34px row.
+  expect(tableHitFaults([...tabs, key, ...sorts.map((box) => ({ ...box, h: 15, bottom: box.top + 15 }))], { layout: 'desktop', clubs: 3 }))
+    .toEqual(DESKTOP_TABLE_CONTROLS.map((name) => `sort ${name} 44.00×15.00`))
+  // Two tabs that overlap, and a tab drawn 30 tall with no padding to make its 44.
+  expect(tableHitFaults([...tabs.slice(0, 5), { ...tabs[5]!, top: 330, bottom: 374 }, key, ...rows], { layout: 'mobile', clubs: 3 }))
+    .toEqual(['tab Serie A overlaps tab Champions League'])
+  expect(tableHitFaults([{ ...tabs[0]!, h: 30, bottom: 330 }, ...tabs.slice(1), key, ...rows], { layout: 'mobile', clubs: 3 }))
+    .toEqual(['tab La Liga 106.00×30.00'])
 })
 
 test('before the app runs, the pinned rows and the scroll padding already start at the band’s foot', () => {
@@ -440,4 +500,48 @@ test('Moments paint: pulp ground and pulp-ink pass; the first edition’s ground
     'heading ink rgb(22, 33, 27), expected pulp-ink rgb(28, 22, 17)',
   ])
   expect(momentsPaintFaults(null)).toEqual(['the Moments route is missing'])
+})
+
+test('the desktop table has fifteen columns, in order, inside the 780px measure', () => {
+  // The head as it is drawn at 1000: the table from 110 to 890, the club's column taking what is left.
+  const widths = [3, 34, 36, 131, 44, 26, 26, 26, 44, 44, 44, 44, 44, 88, 146]
+  const names = ['', 'Pos', '', 'Club', 'Pl', 'W', 'D', 'L', 'GF', 'GA', 'GD', 'Pts', 'PPG', 'Form →', 'Next']
+  let left = 110
+  const cells = widths.map((width, i) => { const cell = { name: names[i]!, left, right: left + width }; left += width; return cell })
+  const drawn = { cells, table: { right: 890, width: 780 }, overflow: [] as string[] }
+  expect(columnFaults(drawn)).toEqual([])
+  // A column gone, as a head that dropped W, D and L would be.
+  expect(columnFaults({ ...drawn, cells: cells.filter((cell) => !['W', 'D', 'L'].includes(cell.name)) })).toEqual(['12 columns in the head, expected 15'])
+  // The last column pushed past the table, and a column drawn over the one before it.
+  expect(columnFaults({ ...drawn, cells: cells.map((cell, i) => (i === 14 ? { ...cell, right: 902 } : cell)) }))
+    .toEqual(['the last column ends at 902.00, past the table’s edge at 890.00'])
+  expect(columnFaults({ ...drawn, cells: cells.map((cell, i) => (i === 8 ? { ...cell, left: cell.left - 6 } : cell)) }))
+    .toEqual(['column 9 (GF) starts at 430.00, inside column 8'])
+  // A table that has left the measure, and a row whose cell is wider than its column.
+  expect(columnFaults({ ...drawn, table: { right: 950, width: 900 } })).toEqual(['the table is 900.00 wide, past the 780px measure'])
+  expect(columnFaults({ ...drawn, overflow: ['359', '382', '360', '367'] })).toEqual(['4 rows have a cell wider than its column: 359, 382, 360, …'])
+  expect(columnFaults({ ...drawn, overflow: ['359'] })).toEqual(['1 row has a cell wider than its column: 359'])
+})
+
+test('a Table state on the harness shows what it is there to show, in the layout the width draws', () => {
+  const cells = 'GAMES IN HAND\n2 clubs have a game in hand\nSpecimen Unset +1\n2026-11-21 — kickoff time not yet set\nSat · S03 (H) KICKED OFF\nlocal time not known'
+  expect(tableStateFaults('cells', 'mobile', { text: cells, marks: 30, tables: 2 })).toEqual([])
+  // The desktop cell keeps its short words, so the phone's sentence does not answer for it.
+  expect(tableStateFaults('cells', 'desktop', { text: cells, marks: 30, tables: 2 })).toEqual(['cells does not show /time TBC/i'])
+  expect(tableStateFaults('cells', 'mobile', { text: cells.replace('KICKED OFF', '3:00 PM'), marks: 30, tables: 2 })).toEqual(['cells does not show /kicked off/i'])
+  // The sort is the desktop's: a phone is owed nothing by that state, and a desktop its note.
+  expect(tableStateFaults('ppg', 'mobile', { text: '', marks: 30, tables: 2 })).toEqual([])
+  expect(tableStateFaults('ppg', 'desktop', { text: '', marks: 30, tables: 2 })).toEqual(['ppg does not show /sorted by points per game\\./i'])
+  // A season the zone data does not describe: the note in the app's words, and no band anywhere.
+  const note = 'Zone bands are hidden: the snapshot is the 2025-26 season but the zone metadata describes 2026-27.'
+  expect(tableStateFaults('season', 'mobile', { text: note, marks: 0, tables: 2 })).toEqual([])
+  expect(tableStateFaults('season', 'mobile', { text: note, marks: 6, tables: 2 })).toEqual(['season draws 6 zone marks, and its bands are hidden'])
+  expect(tableStateFaults('season', 'desktop', { text: `${note} Update LEAGUE_TABLES.`.replace('2026-27.', '2026-27'), marks: 0, tables: 2 }))
+    .toEqual(['season does not show /zone bands are hidden: the snapshot is the 2025-26 season but the zone metadata describes 2026-27\\./i'])
+  // Every other state draws its bands, and an empty snapshot draws no table at all.
+  expect(tableStateFaults('key', 'mobile', { text: 'Qualification zones Columns How ties are broken', marks: 0, tables: 2 })).toEqual(['key draws no zone mark'])
+  expect(tableStateFaults('empty', 'mobile', { text: 'No table in the snapshot for Ligue 1 — run npm run sync.', marks: 0, tables: 0 })).toEqual([])
+  expect(tableStateFaults('empty', 'mobile', { text: 'No table in the snapshot for Ligue 1 — run npm run sync.', marks: 0, tables: 2 })).toEqual(['empty draws 2 tables, and the snapshot holds none'])
+  expect(tableStateFaults('opened', 'mobile', { text: 'W-D-L 1-1-2 PPG 1.00', marks: 30, tables: 1 })).toEqual(['opened draws 1 tables, expected the phone’s and the desktop’s'])
+  expect(tableStateFaults('nope', 'mobile', { text: '', marks: 0, tables: 0 })).toEqual(['nope is not a Table state the runner knows'])
 })

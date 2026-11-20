@@ -1,4 +1,4 @@
-import type { Fixture } from '../../src/lib/schema'
+import type { Fixture, StandingRow } from '../../src/lib/schema'
 
 /**
  * Statuses and venues the committed snapshot does not contain. Shared by the root
@@ -19,3 +19,12 @@ export function edgeFixture(patch: Partial<Fixture> = {}): Fixture {
     ...patch,
   }
 }
+
+/**
+ * The two clubs of edgeFixture as standings rows, so the Table can be asked for the row
+ * and the cell a synthetic fixture produces. Levante have played one match fewer.
+ */
+export const edgeStandingRows: StandingRow[] = [
+  { teamId: '1', name: 'Sevilla', shortName: 'Sevilla', abbrev: 'SEV', rank: 1, rankChange: 0, played: 12, w: 8, d: 2, l: 2, gf: 21, ga: 9, pts: 26 },
+  { teamId: '2', name: 'Levante', shortName: 'Levante', abbrev: 'LEV', rank: 2, rankChange: 0, played: 11, w: 6, d: 3, l: 2, gf: 15, ga: 10, pts: 21 },
+]
