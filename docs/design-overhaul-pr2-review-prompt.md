@@ -2281,3 +2281,31 @@ SHA-256 as the sitting's `fixtures-390-review.avif` (prefix `3766d0f7bb2bd7b8`).
 At 10:07 PM EST the PR was open at `b7dd65a`, MERGEABLE and CLEAN, with no review, auto-merge
 off and all five checks green. The cycle is done, and the squash is Beni's, with the message
 drafted in the section before this one.
+
+## The squash (Thu 19 Nov 2026, 10:23 PM EST)
+
+Beni merged #342 at 10:23 PM EST, from his terminal, with:
+
+```bash
+gh pr merge 342 --repo BeniCheni/kickoff --squash --match-head-commit b7dd65a3a2ee4d427365aaf7511c461349978150 --subject "Overhaul PR 2: chrome and the motion control (#342)" --body-file /Users/benicheni/code/kickoff-receipts/pr342/squash-body.txt
+```
+
+An attempt in the browser a few minutes earlier had not reached GitHub: the API and the PR page
+still read Open, and the two "Merged" badges on the page were the timeline's links to #341 and
+#344.
+
+The PM seat's checks at 10:24 PM EST:
+
+- The squash is `d9b97d402991328aed94f07f9d459815a58886d3`, the new tip of
+  `overhaul/second-edition`, with one parent, `8173066`. It is not on `main`, and no tag
+  contains it.
+- Its tree is `733d855`, the tree of `b7dd65a` that the fourth sitting reviewed. `src/data` is
+  tree `7439dcc`, main's `4cf9caf`, and `package.json` still says `0.5.5`.
+- Its message equals the drafted message in the section before last, byte for byte, with the
+  Cursor and Claude trailers. Beni's account authored it and GitHub committed it, as with
+  `8173066` and `3733fd9`.
+- The source branch `cursor/overhaul-pr2-chrome` was left in place at `b7dd65a`.
+
+The cycle's working folders are now safe to remove: the `kickoff-pr342-*` trees, the
+receipts under `/Users/benicheni/code/kickoff-receipts/pr342/`, and the local branch
+`local/pr342-base-after-341`. The record of every round is the PR's comments and this file.
