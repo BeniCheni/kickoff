@@ -74,3 +74,22 @@ YOUR RECORD, as the last fenced json block of one new comment on #8 (not a reply
 
 STOP AND REPORT if: your folder is not as above; the model or effort is not gpt-6.2-sol at xhigh; anything in the start check differs; a fixture moves; a write would land outside the list above; a command would read the Keychain or post a status; a probe could reach GitHub as Beni; a ruling's mechanism holds where its rule does not; or a usage limit stops you. Your last message, in chat: the new head of sprint-3, each ruling with its commit, the deletion list's result, the receipts, what status names on #1, #6 and #8 after your record, your comment's URL, and what you did not do. Then stop. A fresh Pass 2.5 re-read on claude-opus-5-5 at xhigh, which writes only its comment, reads the round next, and Beni rules again at Pass 3.
 ````
+
+## The answer on schema routing with a malformed gate (Thu 19 Nov 2026)
+
+Codex stopped on ruling 2 before editing anything. A configuration with a gate that omits
+`allowed_changes` parses, and `authorize --dry-run` refuses it at configuration, before it reads
+any record. Yet the brief's mechanism, which routes for schema whenever `config.gate` is present,
+still sent a v1.1 synthesis to pass 2.5. The same holds for every check `authorize` makes before
+reading records. Ruling 2's clause "which needs a configured gate" had treated a necessary
+condition as an equivalence. The Planner drafted this answer for Beni, who sent it ("Send it").
+
+````text
+Answered (Beni). Ruling 2's rule is clarified: status names a pass for its record's schema only when the configuration has a gate. A configured gate is the adopter's word that authorize governs the review. Whether that gate is well formed is authorize's to report, as its config failures already do, and status does not repeat any check authorize makes before it reads records: an unknown key, an empty required_checks, a missing allowed_changes, or, on a live run, a missing app_id.
+
+Why: whether authorize would read the record has no single answer, since a live run requires config.gate.app_id and a dry run does not. And once a malformed gate is fixed, authorize refuses the v1.1 record for its schema, so pass 2.5 is the review's next step either way. Mirroring authorize's checks would make status's answer change when only the configuration changes.
+
+The mechanism stands as the brief gives it: nextStep skips checkRuling's schema items when config.gate is absent. Tests: as the brief lists, plus one that pins the split: with a gate that omits allowed_changes and a v1.1 synthesis, status names 2.5 for schema, while authorize --dry-run refuses with "config.gate.allowed_changes is required". In the README, the sentence at lines 133-134 says that status names a pass for its schema when a gate is configured, and that only authorize checks the gate's own keys.
+
+Then carry on with the round, and record this stop and this answer in your comment.
+````

@@ -585,6 +585,12 @@ Cursor's hands this track seats no Cursor.
 - *Fifth fix brief:* [`review-loop-sprint-3-fix-5-prompt.md`](review-loop-sprint-3-fix-5-prompt.md),
   for Pass 2 again, as a re-read (Codex in the ChatGPT desktop app, `gpt-6.2-sol`, `xhigh`), the
   first seat to work under `~/code/review-seats/`.
+- *Stopped and answered (Thu 19 Nov 2026):* the round was interrupted once during its first
+  reads, and resumed in the same chat. Codex then stopped on ruling 2 before editing anything: a
+  gate that omits `allowed_changes` makes `authorize` refuse before it reads any record, yet the
+  mechanism still routed for schema. Beni answered that the gate's presence decides, and that
+  `status` repeats none of `authorize`'s configuration checks. The answer is appended to the
+  fifth fix brief.
 - *Carried from Sprint 1's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are that
   comment's findings): 6, sequence by the order records were posted, not their presence; 7, every
   pass's `input_sha` is the previous recorded pass's `output_sha`, writing or not, and a head
@@ -1430,7 +1436,14 @@ for Cursor (S7).
     `nextStep`, with the pass ruling 4 selects in place of the ruling pass.
   - **2, 25-18, raised to should-fix.** `status` names a pass for its record's schema only where
     `authorize` would read that record, which needs a configured gate. Mechanism: `nextStep`
-    skips `checkRuling`'s schema items when `config.gate` is absent.
+    skips `checkRuling`'s schema items when `config.gate` is absent. *Clarified Thu 19 Nov 2026
+    (Beni), after Codex stopped:* `status` names a pass for its schema only when the
+    configuration has a gate. Whether that gate is well formed is for `authorize` to report, and
+    `status` repeats none of the checks `authorize` makes before it reads records. A live run
+    requires `app_id` and a dry run does not, and once the gate is fixed, pass 2.5 is the next
+    step either way. The mechanism stands, with one more test: a gate without `allowed_changes`
+    and a v1.1 synthesis, where `status` names 2.5 and `authorize --dry-run` refuses at
+    configuration.
   - **3, ruling 5 of the third Pass 3.** Met, and finding 9 is fixed. The ruling asked only that
     the list name U5 to U7 as equivalents. "In #8's body" was the fourth fix brief's mechanism,
     and Beni replaced it with the record comment when the body was at GitHub's limit. From now
