@@ -14,7 +14,6 @@ import {
   matchdayProgress,
   STANDINGS,
   tableFor,
-  type FormResult,
   type TableRow,
 } from '../lib/standings'
 import { useUrlState } from '../lib/useUrlState'
@@ -22,6 +21,7 @@ import { encodeLeague, parseLeague } from '../lib/urlCodecs'
 import { useNow } from '../lib/useNow'
 import { META } from '../lib/fixtures'
 import { CompetitionChip } from './CompetitionChip'
+import { FormPips } from './FormPips'
 import { PageFoot } from './PageFoot'
 
 /**
@@ -76,31 +76,6 @@ function GdText({ gd, className = '' }: { gd: number; className?: string }) {
   return (
     <span className={`font-mono font-medium ${color} ${className}`}>
       {gd > 0 ? `+${gd}` : gd}
-    </span>
-  )
-}
-
-/** Lettered W/D/L pips, oldest -> newest, padded to five — legible without colour. */
-function FormPips({ form, size = 13 }: { form: FormResult[]; size?: number }) {
-  const cells: Array<FormResult | null> = [...form]
-  while (cells.length < 5) cells.push(null)
-  return (
-    <span className="flex gap-0.5">
-      {cells.map((c, i) => (
-        <span
-          key={i}
-          style={{ width: size, height: size }}
-          className={[
-            'inline-flex items-center justify-center rounded-[3px] text-[8px] leading-none font-bold',
-            c === 'W' ? 'bg-pitch text-white dark:text-bg'
-            : c === 'D' ? 'bg-ink-muted text-white dark:text-bg'
-            : c === 'L' ? 'bg-accent text-white dark:text-bg'
-            : 'bg-surface-alt text-ink-muted',
-          ].join(' ')}
-        >
-          {c ?? '·'}
-        </span>
-      ))}
     </span>
   )
 }
@@ -448,7 +423,7 @@ export function TablePage() {
                 <div className="font-display text-center text-[19px] leading-none font-bold">{r.pts}</div>
                 <div className="text-center font-mono text-[11.5px] text-ink-secondary">{r.ppg}</div>
                 <div className="pl-1.5">
-                  <FormPips form={r.form} size={16} />
+                  <FormPips form={r.form} />
                 </div>
                 <div className="min-w-0 pl-1.5">
                   {matchLane && (

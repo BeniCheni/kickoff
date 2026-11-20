@@ -606,6 +606,49 @@ body:has(.page-measure[data-measure='moments']) {
   background: var(--fb-cover-black);
 }
 
+/*
+ * The Register: the Table's skin. Its structure, sort, zones and data are the
+ * first edition's (D4); these rules repaint them.
+ *
+ * Form pips. 10px letters in 15px squares. W is filled in ink and its letter
+ * is the ground showing through; D is outlined; L is filled in blood with
+ * cover-ink, the pair the handoff measures at 5.86. The letter carries the
+ * result, so no pip is read by its fill. A dot in a hairline square is an
+ * empty slot. 500 and 600 are set in Kickoff Mono, the family the offline file
+ * carries at those weights; Kickoff Mono Text is its 400.
+ */
+.form-pips {
+  display: inline-flex;
+  gap: 2px;
+  vertical-align: top;
+}
+.form-pip {
+  box-sizing: border-box;
+  width: 15px;
+  height: 15px;
+  display: grid;
+  place-items: center;
+  border: 1.5px solid var(--fb-pulp-ink);
+  color: var(--fb-pulp-ink);
+  font-family: 'Kickoff Mono', ui-monospace, 'SF Mono', monospace;
+  font-weight: 600;
+  font-size: 10px;
+  line-height: 1;
+}
+.form-pip[data-result='W'] {
+  background: var(--fb-pulp-ink);
+  color: var(--fb-pulp);
+}
+.form-pip[data-result='L'] {
+  border-color: var(--fb-blood);
+  background: var(--fb-blood);
+  color: var(--fb-cover-ink);
+}
+.form-pip[data-result='none'] {
+  border: 1px solid var(--fb-rule-strong);
+  color: var(--fb-pulp-muted);
+}
+
 /* Flat planes. Amber from 24 hours, alarm from 72. The Ledger ground is typescript. */
 .staleness {
   margin-bottom: 16px;

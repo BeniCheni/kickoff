@@ -21,4 +21,5 @@
 @source "../../src/components/TonightSlate.tsx";
 @source "../../src/components/FilterBar.tsx";
 @source "../../src/components/CompetitionChip.tsx";
+@source "../../src/components/FormPips.tsx";
 @import "../../src/shell.css";
