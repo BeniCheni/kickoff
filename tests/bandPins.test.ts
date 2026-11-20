@@ -24,6 +24,8 @@ it('the Table’s pinned rows start at the band’s foot, at the height the band
   expect(dividers, 'the deep-zone divider').not.toBeNull()
   const mobile = px(mobileLabels![1]!)
   const desktop = px(desktopLabels![1]!)
+  // Both label rows are 44px: the desktop row holds the sort controls, and a hit area is 44.
+  expect([mobile, desktop]).toEqual([44, 44])
   expect(px(dividers![2]!), 'the mobile divider pins under the mobile labels').toBe(mobile)
   expect(px(dividers![1]!), 'the desktop divider pins under the desktop labels').toBe(desktop)
   expect(css).toContain(`[data-table='mobile'] [data-zone-divider].sticky {\n  top: calc(var(--band-height) + ${mobile}px);`)
@@ -49,12 +51,17 @@ it('a standings row the keyboard reaches stops below the labels, a pinned divide
   expect(label, 'the phone divider’s label').not.toBeNull()
   // The label names no line height, so it takes Tailwind's: 1.5.
   const divider = px(padding![1]!) + px(padding![2]!) + px(label![1]!) * 1.5
-  // The ring is the page's own, and a scroll is rounded to a whole pixel.
+  // The ring is the page's own, 2px drawn 2px outside its control. A Table row draws it
+  // inside itself instead, so it takes no room above the row: what is left to clear is the
+  // half pixel a scroll can lose when it is rounded to a whole one.
   const ring = css.match(/:focus-visible \{\s*outline: (\d+)px solid [^;]+;\s*outline-offset: (\d+)px;/)
   expect(ring, 'the focus ring').not.toBeNull()
-  const clear = Number(ring![1]) + Number(ring![2]) + 0.5
+  const inside = css.match(/\nbutton\.register-row:focus-visible,\n\.register-sort:focus-visible \{\n  outline-offset: (-\d+)px;\n\}/)
+  expect(inside, 'the Table’s own ring').not.toBeNull()
+  expect(Number(ring![1]) + Number(inside![1]), 'the ring’s outer edge is the row’s own edge').toBe(0)
+  const clear = Math.max(0, Number(ring![1]) + Number(inside![1])) + 0.5
 
-  expect([labels, divider, clear]).toEqual([44, 29, 4.5])
+  expect([labels, divider, clear]).toEqual([44, 29, 0.5])
   expect(css).toContain(`.imprint-band ~ .page-measure [data-table='mobile'] [data-table-row] > button {\n  scroll-margin-top: calc(${labels}px + ${clear}px);\n}`)
   expect(css).toContain(`.imprint-band ~ .page-measure [data-table='mobile'] [data-zone-divider].sticky ~ [data-table-row] > button {\n  scroll-margin-top: calc(${labels}px + ${divider}px + ${clear}px);\n}`)
 

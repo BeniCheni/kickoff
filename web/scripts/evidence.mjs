@@ -577,17 +577,45 @@ export async function proveTablePins(browser, origins, anchor = null) {
 // Focus under everything that is pinned: the band, and on the phone Table the labels and
 // a long zone's divider below it. Each control is put where a pinned row would cover it and
 // reached with a real Tab press from the control before it, as a keyboard reaches it.
-const FOCUS_RING = 3 // inside the 2px line a ring draws 2px off its control
 
-// The desktop table's controls, by the name each carries: the nine labels in its pinned
-// row, each a button a keyboard stops on. Six of them sort; W, D and L do nothing.
-export const DESKTOP_TABLE_CONTROLS = ['Pl', 'W', 'D', 'L', 'GF', 'GA', 'GD', 'Pts', 'PPG']
+// The desktop table's controls, by the name each carries: the six labels in its pinned
+// row that sort. W, D and L sort nothing and are text. Each name is the one the browser
+// computes, not the label as it is written: Chrome folds the stylesheet's capitals into a
+// name it takes from text, so the label written "Pl" is the control named "PL".
+export const DESKTOP_TABLE_CONTROLS = ['PL', 'GF', 'GA', 'GD', 'PTS', 'PPG']
+
+/**
+ * The name the browser computes for each element of `elements`, an array in the page, read
+ * from the browser's accessibility tree: what a screen reader is handed. It is not the
+ * element's text and not its aria-label. A name can come from either, from a label or a
+ * title, or from text the stylesheet has transformed. An element the tree leaves out has
+ * no name, and neither has one the tree holds without one.
+ */
+async function computedNames(page, elements) {
+  const client = await page.createCDPSession()
+  try {
+    const held = [...(await elements.getProperties())].sort(([a], [b]) => Number(a) - Number(b))
+    const names = []
+    for (const [, handle] of held) {
+      const element = handle.asElement()
+      if (!element) { names.push(''); continue }
+      const { nodes } = await client.send('Accessibility.getPartialAXTree', { backendNodeId: await element.backendNodeId(), fetchRelatives: false })
+      names.push(!nodes[0] || nodes[0].ignored ? '' : String(nodes[0].name?.value ?? ''))
+    }
+    return names
+  } finally { await client.detach() }
+}
+
+/** A name as a receipt and a fault print it. */
+const tidyName = (name) => name.replace(/\s+/g, ' ').trim().slice(0, 48)
 
 /**
  * What one Tab press left on the page. The control has to be the one the press was meant
- * for, show its ring, and have no sample point under anything pinned. `ringUnder` is read
- * only for a standings row, which runs the full width of the page: its ring shows above
- * and below it and nowhere else, so the upper edge has to clear the stack too.
+ * for, show its ring, and have no sample point under anything pinned. `ring` and
+ * `ringUnder` are read only for a standings row. It runs the full width of the page with
+ * its zone's header directly above it, and a header long enough to pin is positioned, so
+ * it paints over anything a row draws outside itself. The row's ring therefore has to be
+ * drawn inside the row, and every sample on the ring's own line has to be the row's.
  */
 export function focusFaults(seen) {
   const what = `"${seen.text}"`
@@ -599,8 +627,10 @@ export function focusFaults(seen) {
     const hidden = under.reduce((sum, [, points]) => sum + points, 0)
     faults.push(`${what} took focus at ${seen.before.toFixed(2)} and rests at ${seen.top.toFixed(2)} to ${seen.bottom.toFixed(2)}, with ${hidden} of ${seen.points} points under ${under.map(([name]) => name).join(' and ')}`)
   }
+  const outside = seen.ring ? seen.ring.offset + seen.ring.width : 0
+  if (outside > EPSILON) faults.push(`the focus ring of ${what} is drawn ${outside.toFixed(2)}px outside its row, where a zone header paints over it`)
   const ring = Object.keys(seen.ringUnder ?? {})
-  if (ring.length) faults.push(`the focus ring above ${what} is under ${ring.join(' and ')}`)
+  if (ring.length) faults.push(`the focus ring of ${what} is under ${ring.join(' and ')}`)
   return faults
 }
 
@@ -656,6 +686,9 @@ export function sweepFaults(seen, { within, rows, controls, clubs = null, named 
     tell(named.filter((name) => called(name).length > 1), 'is in the table more than once', 'are in the table more than once', (name) => `"${name}" (${called(name).length})`)
     tell(named.filter((name) => called(name).length === 1 && !called(name)[0].reachable), 'cannot be reached by a keyboard', 'cannot be reached by a keyboard')
   }
+  // A control a keyboard stops on and a screen reader cannot name is not held either.
+  const nameless = reachable.filter((control) => !control.name)
+  if (nameless.length) faults.push(`${nameless.length} of the table’s ${reachable.length} controls ${nameless.length === 1 ? 'has' : 'have'} no name the browser computes`)
   // Owed by a club, by a name or by neither: every control a keyboard can reach in the table.
   const pressed = new Set(seen.map((control) => control.owed))
   const missed = reachable.filter((control) => !pressed.has(control.place)).map((control) => `"${control.name}"`)
@@ -666,7 +699,8 @@ export function sweepFaults(seen, { within, rows, controls, clubs = null, named 
 /** Every control a Tab press can reach inside `within`, each placed by `place` first:
  *  { y } is its top in the viewport, { underFoot } that many pixels under the band's foot.
  *  `table` is the shown table as sweepFaults reads it: the club id on each of its rows,
- *  and each of its controls with the row it sits in and whether a keyboard can reach it. */
+ *  and each of its controls with the row it sits in and whether a keyboard can reach it.
+ *  Every name here, in a receipt and in a fault, is the one the browser computes. */
 async function sweepFocus(page, place, { within = '.page-measure', layout }) {
   const found = await page.evaluate((scope, shown) => {
     const reachable = (el) => el.tabIndex >= 0 && !el.disabled && !el.closest('[inert]')
@@ -676,15 +710,19 @@ async function sweepFocus(page, place, { within = '.page-measure', layout }) {
     // Not through `scope`: the table is owed its presses whether or not the wrapper is there.
     const table = every.filter((el) => el.closest(`[data-table="${shown}"]`))
     const rows = [...document.querySelectorAll(`[data-table="${shown}"] [data-table-row]`)]
-    const name = (el) => (el.getAttribute('aria-label') || el.textContent || el.tagName).replace(/\s+/g, ' ').trim().slice(0, 48)
-    window.__kickoffFocus = { list, table, targets: list.map((_, i) => i).filter((i) => i > 0 && list[i].closest(scope)) }
+    window.__kickoffFocus = { every, list, table, names: [], targets: list.map((_, i) => i).filter((i) => i > 0 && list[i].closest(scope)) }
     return {
       targets: window.__kickoffFocus.targets.length,
       rows: rows.map((row) => row.getAttribute('data-table-row')),
       // A control's row is the nearest one around it, by its place among `rows`, or -1.
-      controls: table.map((el) => ({ name: name(el), row: rows.indexOf(el.closest('[data-table-row]')), reachable: reachable(el) })),
+      controls: table.map((el) => ({ at: every.indexOf(el), row: rows.indexOf(el.closest('[data-table-row]')), reachable: reachable(el) })),
     }
   }, within, layout)
+  const every = await page.evaluateHandle(() => window.__kickoffFocus.every)
+  const names = (await computedNames(page, every)).map(tidyName)
+  await every.dispose()
+  await page.evaluate((computed) => { window.__kickoffFocus.names = computed }, names)
+  const controls = found.controls.map(({ at, ...control }) => ({ name: names[at], ...control }))
   const seen = []
   for (let n = 0; n < found.targets; n += 1) {
     const placed = await page.evaluate((index, where) => {
@@ -697,11 +735,12 @@ async function sweepFocus(page, place, { within = '.page-measure', layout }) {
       return { before: target.getBoundingClientRect().top }
     }, n, place)
     await page.keyboard.press('Tab')
-    seen.push({ ...placed, ...(await page.evaluate((index, ring) => {
-      const { list, table, targets: chosen } = window.__kickoffFocus
+    seen.push({ ...placed, ...(await page.evaluate((index) => {
+      const { every, list, table, names: computed, targets: chosen } = window.__kickoffFocus
       const target = list[chosen[index]]
       const active = document.activeElement
-      const name = (el) => (el?.getAttribute?.('aria-label') || el?.textContent || el?.tagName || 'nothing').replace(/\s+/g, ' ').trim().slice(0, 48)
+      // The browser's name for a control the sweep knows; what holds focus otherwise is no control.
+      const name = (el) => (every.includes(el) ? computed[every.indexOf(el)] : `<${el?.tagName?.toLowerCase() ?? 'nothing'}>`)
       const rect = target.getBoundingClientRect()
       // What covers a point, if it is pinned: anything else is the control's own ground.
       // A sticky element still in its own place in the flow is not pinned yet. A zone's
@@ -719,25 +758,40 @@ async function sweepFocus(page, place, { within = '.page-measure', layout }) {
         }
         return null
       }
-      const tally = (points) => points.reduce((under, [x, y]) => {
-        const by = pinned(x, y)
+      const tally = (points, what = pinned) => points.reduce((under, [x, y]) => {
+        const by = what(x, y)
         if (by) under[by] = (under[by] ?? 0) + 1
         return under
       }, {})
       const across = [0.1, 0.3, 0.5, 0.7, 0.9].map((fx) => rect.left + rect.width * fx)
       const body = across.flatMap((x) => [0.1, 0.5, 0.9].map((fy) => [x, rect.top + rect.height * fy]))
       const row = !!target.parentElement?.hasAttribute('data-table-row')
+      // The ring as the browser draws it. `reach` is the middle of its line, measured
+      // outward from the row's edge: negative is inside the row.
+      const style = getComputedStyle(target)
+      const ring = { offset: Number.parseFloat(style.outlineOffset), width: Number.parseFloat(style.outlineWidth) }
+      const reach = ring.offset + ring.width / 2
+      // On the ring's own line, anything that is not the row covers it, pinned or not. A
+      // header still in its place in the flow is positioned too, and paints over a ring.
+      const covering = (x, y) => {
+        const hit = document.elementFromPoint(x, y)
+        if (!hit || hit === target || target.contains(hit)) return null
+        if (hit.closest('header.imprint-band')) return 'the band'
+        const divider = hit.closest('[data-zone-divider]')
+        if (divider) return `the ${divider.getAttribute('data-zone-divider')} divider`
+        return hit.closest('[data-table] > .sticky') ? 'the labels' : 'another element'
+      }
       return {
         text: name(target), active: name(active), landed: active === target, row,
         // The control's place among the table's controls, or -1: a press is counted by its target.
         owed: table.indexOf(target),
         focusVisible: target.matches(':focus-visible'), top: rect.top, bottom: rect.bottom,
         points: body.length, under: tally(body),
-        ...(row ? { ringUnder: tally(across.map((x) => [x, rect.top - ring])) } : {}),
+        ...(row ? { ring, ringUnder: tally(across.flatMap((x) => [[x, rect.top - reach], [x, rect.bottom + reach]]), covering) } : {}),
       }
-    }, n, FOCUS_RING)) })
+    }, n)) })
   }
-  return { seen, table: { rows: found.rows, controls: found.controls } }
+  return { seen, table: { rows: found.rows, controls } }
 }
 
 /** The Table in both apps, and both files from disk, at every width of the matrix. Each
@@ -761,7 +815,8 @@ export async function proveFocus(browser, origins, out) {
       const layout = width >= 768 ? 'desktop' : 'mobile'
       // A club's row is a control on the phone: each club in the committed standings is
       // owed its own, matched by the id the row carries. The desktop rows hold none and
-      // the table is owed its labels by name; a row control arriving there is owed a press too.
+      // the table is owed its six sort controls by name; a row control arriving there is
+      // owed a press too.
       const clubs = layout === 'mobile' ? standings[league].map((club) => ({ id: club.teamId, name: club.name })) : null
       const named = layout === 'desktop' ? DESKTOP_TABLE_CONTROLS : null
       const row = { id, controls: 0, tableControls: 0, rowControls: 0, tableRows: 0, clubs: clubs?.length ?? null, named, pressed: 0, moved: 0 }
@@ -797,6 +852,192 @@ export async function proveFocus(browser, origins, out) {
     } finally { await context.close() }
   }
   return rows
+}
+
+// The Table's own controls, held to H1 and H2 as the band is: the six league tabs, Zones
+// & key, each club's row on a phone and the six sort controls on the desktop.
+/** `boxes` is every control the Table drew, each with its `kind`. A kind that is short of
+ *  what the Table owes is a fault before any box is measured: a control that is not there
+ *  has no hit area to fail. `clubs` is the count the committed standings hold. */
+export function tableHitFaults(boxes, { layout, clubs }) {
+  const owed = { tab: 6, key: 1, ...(layout === 'mobile' ? { row: clubs } : { sort: DESKTOP_TABLE_CONTROLS.length }) }
+  const faults = []
+  for (const kind of new Set([...Object.keys(owed), ...boxes.map((box) => box.kind)])) {
+    const drawn = boxes.filter((box) => box.kind === kind).length
+    if (drawn !== (owed[kind] ?? 0)) faults.push(`${drawn} ${kind} hit ${drawn === 1 ? 'area' : 'areas'}, expected ${owed[kind] ?? 0}`)
+  }
+  return [...faults, ...hitAreaFaults(boxes)]
+}
+
+/** The Table's controls on the page, in page coordinates, so a pinned row is read where it lies. */
+async function tableHitBoxes(page, layout) {
+  return page.evaluate((shown) => {
+    const box = (el, kind, name) => {
+      const rect = el.getBoundingClientRect()
+      return { kind, name: `${kind} ${name}`.replace(/\s+/g, ' ').trim(), left: rect.left, right: rect.right, top: rect.top + scrollY, bottom: rect.bottom + scrollY, w: rect.width, h: rect.height }
+    }
+    const all = (selector) => [...document.querySelectorAll(selector)]
+    return [
+      ...all('[data-table-picker] button').map((el) => box(el, 'tab', el.textContent)),
+      ...all('.zones-key-bar').map((el) => box(el, 'key', 'Zones & key')),
+      ...all(`[data-table="${shown}"] button`).map((el) => (
+        el.parentElement.hasAttribute('data-table-row') ? box(el, 'row', el.parentElement.getAttribute('data-table-row')) : box(el, 'sort', el.textContent)
+      )),
+    ]
+  }, layout)
+}
+
+/** The desktop table's head as drawn. `cells` is each label's left and right edge, in
+ *  order; `table` the table's own box; `overflow` each row with a cell whose content is
+ *  wider than its column. Fifteen columns, each starting where the one before it ends or
+ *  later, the last inside the table, and the table inside the 780px measure. */
+export function columnFaults({ cells, table, overflow }) {
+  const faults = []
+  if (cells.length !== 15) faults.push(`${cells.length} columns in the head, expected 15`)
+  cells.forEach((cell, i) => {
+    if (i > 0 && cell.left < cells[i - 1].right - EPSILON) faults.push(`column ${i + 1}${cell.name ? ` (${cell.name})` : ''} starts at ${cell.left.toFixed(2)}, inside column ${i}`)
+  })
+  const last = cells.at(-1)
+  if (last && last.right > table.right + EPSILON) faults.push(`the last column ends at ${last.right.toFixed(2)}, past the table’s edge at ${table.right.toFixed(2)}`)
+  if (table.width > 780 + EPSILON) faults.push(`the table is ${table.width.toFixed(2)} wide, past the 780px measure`)
+  if (overflow.length) faults.push(`${overflow.length} ${overflow.length === 1 ? 'row has' : 'rows have'} a cell wider than its column: ${overflow.slice(0, 3).join(', ')}${overflow.length > 3 ? ', …' : ''}`)
+  return faults
+}
+
+// The Table in each league it holds. The matrix shows the one a URL without a league
+// opens; a league's own zones, bands and length are drawn only here. Each cell is held to
+// the page's width, the cover's line, the Table's hit areas and, on the desktop, its
+// fifteen columns. Then the key is opened, and on a phone the first row, and the contrast
+// is sampled with both open, so the key's words and the opened row's are measured too.
+const TABLE_WIDTHS = [360, 390, 1000]
+
+export async function captureTable(browser, { origins, out, contrast = false }, result = { cells: [], contrast: [] }) {
+  const standings = JSON.parse(readFileSync(path.join(root, 'src/data/standings.json'), 'utf8')).leagues
+  const leagues = Object.keys(standings)
+  assert.equal(leagues.length, 6, `the standings hold ${leagues.length} leagues, expected 6`)
+  for (const [app, origin] of Object.entries(origins)) for (const league of leagues) {
+    for (const theme of ['light', 'dark']) for (const width of TABLE_WIDTHS) {
+      const id = `table-${app}-${league}-${theme}-${width}`
+      const { context, page, errors } = await openPage(browser, `${origin}/?tab=table&league=${league}`, theme, width)
+      try {
+        const layout = width >= 768 ? 'desktop' : 'mobile'
+        const state = await page.evaluate((shown) => {
+          const table = document.querySelector(`[data-table="${shown}"]`)
+          const head = table.querySelector(':scope > .sticky')
+          const edges = (el) => ({ name: el.textContent.trim(), left: el.getBoundingClientRect().left, right: el.getBoundingClientRect().right })
+          const wide = (el) => el.scrollWidth > el.clientWidth + 0.5
+          return {
+            scrollWidth: document.documentElement.scrollWidth, innerWidth,
+            theme: document.documentElement.dataset.theme,
+            current: document.querySelector('[data-table-picker] [aria-pressed="true"]')?.textContent ?? '',
+            line: document.querySelector('.register-cover-line')?.textContent ?? '',
+            rows: table.querySelectorAll('[data-table-row]').length,
+            cells: [...head.children].map(edges),
+            table: { right: table.getBoundingClientRect().right, width: table.getBoundingClientRect().width },
+            overflow: [...table.querySelectorAll('[data-table-row] > .register-row')]
+              .filter((row) => wide(row) || [...row.children].some(wide))
+              .map((row) => row.parentElement.getAttribute('data-table-row')),
+          }
+        }, layout)
+        assert.equal(state.scrollWidth, state.innerWidth, id)
+        assert.equal(state.theme, theme, id)
+        assert.deepEqual(errors, [], id)
+        assert.equal(state.rows, standings[league].length, `${id} draws ${state.rows} rows, and the standings hold ${standings[league].length} clubs`)
+        // The cover's line is the league a reader chose and the app's own matchday count.
+        assert.ok(state.current && state.line.startsWith(`${state.current} · As of matchday `), `${id} the cover reads "${state.line}" under the tab "${state.current}"`)
+        const hits = tableHitFaults(await tableHitBoxes(page, layout), { layout, clubs: standings[league].length })
+        assert.deepEqual(hits, [], `${id} ${hits.join('; ')}`)
+        if (layout === 'desktop') {
+          const columns = columnFaults(state)
+          assert.deepEqual(columns, [], `${id} ${columns.join('; ')}`)
+        } else assert.deepEqual(state.overflow, [], `${id} rows with a cell wider than its column: ${state.overflow.join(', ')}`)
+        await shoot(page, path.join(out, `${id}.png`), width)
+
+        await page.click('.zones-key-bar')
+        await page.waitForSelector('.zones-key-panel')
+        if (layout === 'mobile') {
+          await page.click('[data-table="mobile"] [data-table-row] > button')
+          await page.waitForSelector('[data-row-more]')
+        }
+        // Past the 180ms the key takes to open and the 150ms a row takes.
+        await new Promise((resolve) => setTimeout(resolve, 400))
+        const opened = await page.evaluate(() => ({ scrollWidth: document.documentElement.scrollWidth, innerWidth }))
+        assert.equal(opened.scrollWidth, opened.innerWidth, `${id} with the key opened`)
+        const shown = await shoot(page, path.join(out, `${id}-opened.png`), width)
+        if (contrast) result.contrast.push(await measureContrast(page, `${id}-opened`, width, shown))
+        assert.deepEqual(errors, [], `${id} with the key opened`)
+        result.cells.push({ id, rows: state.rows, line: state.line, columns: state.cells.length, table: state.table.width, scrollWidth: state.scrollWidth })
+      } finally { await context.close() }
+    }
+    console.log(`${app} table ${league}: ${2 * TABLE_WIDTHS.length} cells passed`)
+  }
+  return result
+}
+
+// The Table's states, each on its own harness page, on synthetic data. What a state has
+// to show is read from the layout the width draws: innerText leaves out what is hidden.
+const TABLE_STATES = {
+  cells: { mobile: [/kickoff time not yet set/i, /kicked off/i, /local time not known/i, /games in hand/i, /\+1/], desktop: [/time TBC/i, /kicked off/i, /local time not known/i, /games in hand/i, /\+1/] },
+  opened: { mobile: [/W-D-L \d+-\d+-\d+/i, /PPG \d\.\d\d/i], desktop: [] },
+  ppg: { mobile: [], desktop: [/sorted by points per game\./i] },
+  key: { mobile: [/qualification zones/i, /columns/i, /how ties are broken/i], desktop: [/qualification zones/i, /columns/i, /how ties are broken/i] },
+  season: { mobile: [/zone bands are hidden: the snapshot is the 2025-26 season but the zone metadata describes 2026-27\./i], desktop: [/zone bands are hidden: the snapshot is the 2025-26 season but the zone metadata describes 2026-27\./i] },
+  ucl: { mobile: [/as of matchday 4 of 8 · league phase/i, /knockout play-offs/i, /eliminated/i, /matches played/i], desktop: [/as of matchday 4 of 8 · league phase/i, /knockout play-offs/i, /eliminated/i, /matches played/i] },
+  empty: { mobile: [/no table in the snapshot for ligue 1/i], desktop: [/no table in the snapshot for ligue 1/i] },
+}
+
+/** What one state's page showed, against what that state is there to show. `marks` is
+ *  how many zone marks the page drew with a band; `tables` how many tables it drew. */
+export function tableStateFaults(name, layout, { text, marks, tables }) {
+  const owed = TABLE_STATES[name]
+  if (!owed) return [`${name} is not a Table state the runner knows`]
+  const faults = owed[layout].filter((needle) => !needle.test(text)).map((needle) => `${name} does not show ${needle}`)
+  // A season the zone data does not describe draws no band anywhere, in a row or in the key.
+  if (name === 'season' && marks) faults.push(`season draws ${marks} zone ${marks === 1 ? 'mark' : 'marks'}, and its bands are hidden`)
+  if (name !== 'season' && name !== 'empty' && !marks) faults.push(`${name} draws no zone mark`)
+  if (name === 'empty' && tables) faults.push(`empty draws ${tables} ${tables === 1 ? 'table' : 'tables'}, and the snapshot holds none`)
+  if (name !== 'empty' && tables !== 2) faults.push(`${name} draws ${tables} tables, expected the phone’s and the desktop’s`)
+  return faults
+}
+
+export async function captureTableStates(browser, out, cells = []) {
+  const origin = process.env.KICKOFF_HARNESS_ORIGIN ?? 'http://127.0.0.1:5175'
+  for (const name of Object.keys(TABLE_STATES)) for (const theme of ['light', 'dark']) for (const width of TABLE_WIDTHS) {
+    const id = `harness-table-${name}-${theme}-${width}`
+    // The dev server's HMR socket never goes idle, so this load waits for the page's own flag.
+    const { context, page, errors, status } = await openPage(
+      browser, `${origin}/tests/harness/table.html?state=${name}&theme=${theme}`, theme, width,
+      { waitUntil: 'load' },
+    )
+    try {
+      if (status >= 400) throw new Error(`${id} HTTP ${status}`)
+      if (await page.title() !== 'Table states harness') {
+        throw new Error(`${id}: ${origin} did not serve the Table harness. It needs the Vite dev server (KICKOFF_HARNESS_ORIGIN), not the built preview.`)
+      }
+      await page.waitForFunction(
+        () => document.documentElement.dataset.statesReady === 'true' || document.documentElement.dataset.statesError,
+        { timeout: 15_000 },
+      )
+      const failure = await page.evaluate(() => document.documentElement.dataset.statesError ?? '')
+      if (failure) throw new Error(`${id}: ${failure}`)
+      const state = await page.evaluate(() => ({
+        scrollWidth: document.documentElement.scrollWidth, innerWidth,
+        theme: document.documentElement.dataset.theme,
+        // The page as a reader sees it: innerText leaves out the layout the width hides.
+        text: document.querySelector('.register')?.innerText ?? '',
+        marks: document.querySelectorAll('.zone-mark[data-band]').length,
+        tables: document.querySelectorAll('[data-table]').length,
+      }))
+      assert.equal(state.scrollWidth, state.innerWidth, id)
+      assert.equal(state.theme, theme, id)
+      assert.deepEqual(errors, [], id)
+      const faults = tableStateFaults(name, width >= 768 ? 'desktop' : 'mobile', state)
+      assert.deepEqual(faults, [], `${id} ${faults.join('; ')}`)
+      await shoot(page, path.join(out, `${id}.png`), width)
+      cells.push({ id, state: name, theme, width, scrollWidth: state.scrollWidth, marks: state.marks })
+    } finally { await context.close() }
+  }
+  return cells
 }
 
 // The first frame of a shell the server renders. Its HTML is laid out before the app
@@ -1955,13 +2196,15 @@ async function main() {
   // holds every step and cell that passed before it.
   const matrix = emptyMatrix()
   const weekRun = { cells: [], contrast: [] }
-  const steps = { motion: null, chrome: null, feedback: null, banner: null, pins: null, focus: null, first: null, requests: null, offline: null, harness: null }
+  const tableRun = { cells: [], contrast: [] }
+  const steps = { motion: null, chrome: null, feedback: null, banner: null, pins: null, focus: null, first: null, requests: null, offline: null, harness: null, tableStates: null }
   const receipt = () => {
-    const contrastCells = [...matrix.contrast, ...weekRun.contrast]
+    const contrastCells = [...matrix.contrast, ...weekRun.contrast, ...tableRun.contrast]
     return {
       origins, anchor, window, weeks, enforce,
       matrix: { cells: matrix.cells.length, legacy: matrix.legacy, measurements: matrix.measurements },
       weeksCaptured: weekRun.cells.length,
+      table: tableRun.cells,
       contrast: { mode: enforce ? 'enforce' : 'report', summary: contrastSummary(contrastCells), cells: contrastCells },
       ...steps,
     }
@@ -1977,12 +2220,16 @@ async function main() {
     await runMatrix(browser, { origins, out, anchor, contrast: true }, matrix)
     assert.equal(matrix.cells.length, 96)
     await captureWeeks(browser, { origins, out, weeks, contrast: true }, weekRun)
+    await captureTable(browser, { origins, out, contrast: true }, tableRun)
+    assert.equal(tableRun.cells.length, 72)
     steps.requests = []
     await captureRequests(browser, origins, anchor, steps.requests)
     steps.offline = { sizes: {}, cells: [] }
     await captureOffline(browser, out, steps.offline)
     steps.harness = []
     await captureHarness(browser, out, steps.harness)
+    steps.tableStates = []
+    await captureTableStates(browser, out, steps.tableStates)
     const done = receipt()
     writeFileSync(path.join(out, 'receipt.json'), JSON.stringify(done, null, 2))
     const failing = belowFloor(done.contrast.cells)
@@ -1990,6 +2237,8 @@ async function main() {
       cells: matrix.cells.length,
       weeks,
       weeksCaptured: weekRun.cells.length,
+      table: tableRun.cells.length,
+      tableStates: steps.tableStates.length,
       contrast: done.contrast.summary,
       requests: steps.requests.map((row) => ({ id: row.id, bytes: row.bytes, hosts: row.hosts.map((host) => host.host) })),
       offline: steps.offline.sizes,

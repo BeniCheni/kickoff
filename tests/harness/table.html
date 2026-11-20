@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Table states harness</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" />
+<!-- Caslon is drawn on first paint here: the club names, the notes and the Table foot. -->
+<link rel="preload" href="/fonts/libre-caslon-text/LibreCaslonText-Regular.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="stylesheet" href="/faces.css" />
+<script>
+  const q = new URLSearchParams(location.search)
+  document.documentElement.dataset.theme = q.get('theme') === 'dark' ? 'dark' : 'light'
+  document.documentElement.dataset.lens = q.get('lens') === 'poster' ? 'poster' : 'ledger'
+</script>
+<style>
+  html, body { margin: 0; }
+  /* The caption is the harness's, not the app's: a fixed strip that reads the same in both themes. */
+  .harness-caption { margin: 0; padding: 6px 20px; background: #111; color: #fff; font: 600 11px/1.4 ui-sans-serif, system-ui, sans-serif; letter-spacing: 0.08em; text-transform: uppercase; }
+</style>
+</head><body><div id="root"></div><script type="module" src="./table.tsx"></script></body></html>

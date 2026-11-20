@@ -41,6 +41,13 @@ const MOBILE_COLS = 'grid-cols-[3px_36px_minmax(0,1fr)_48px_48px]'
 const DESKTOP_COLS =
   'grid-cols-[3px_34px_36px_minmax(0,1fr)_44px_26px_26px_26px_44px_44px_44px_44px_44px_88px_146px]'
 
+/* The nine figure columns of the desktop table, in order, each with the key it sorts by.
+ * W, D and L have none: the sort has never read them, and the repaint does not add one. */
+const DESKTOP_HEADS: ReadonlyArray<readonly [SortKey | null, string]> = [
+  ['pl', 'Pl'], [null, 'W'], [null, 'D'], [null, 'L'],
+  ['gf', 'GF'], ['ga', 'GA'], ['gd', 'GD'], ['pts', 'Pts'], ['ppg', 'PPG'],
+]
+
 const SORT_LABEL: Record<SortKey, string> = {
   pts: 'points', pl: 'matches played', gf: 'goals for', ga: 'goals against',
   gd: 'goal difference', ppg: 'points per game',
@@ -91,7 +98,7 @@ function ZoneDivider({
   wide?: boolean
 }) {
   return (
-    <div data-zone-divider={zone.name} className={['register-zone flex items-center gap-2', wide ? 'pt-2.5 pb-1.5' : 'px-3.5 pt-2 pb-1.5', zone.to - zone.from + 1 > 8 ? `sticky z-[1] ${wide ? 'top-[34px]' : 'top-11'}` : ''].join(' ')}>
+    <div data-zone-divider={zone.name} className={['register-zone flex items-center gap-2', wide ? 'pt-2.5 pb-1.5' : 'px-3.5 pt-2 pb-1.5', zone.to - zone.from + 1 > 8 ? `sticky z-[1] ${wide ? 'top-[44px]' : 'top-11'}` : ''].join(' ')}>
       <ZoneMark zone={zone} shape="square" />
       <span className="register-zone-name text-[10px]">{zone.name}</span>
       <span className="register-zone-range" data-voice="muted">· {zoneRange(zone)}</span>
@@ -248,27 +255,27 @@ export function TablePage() {
             bands are hidden because they only describe the canonical order.
           </p>
         )}
-        <div className={`sticky top-0 z-10 grid h-[34px] ${DESKTOP_COLS} register-labels register-labels-wide`}>
+        <div className={`sticky top-0 z-10 grid h-[44px] ${DESKTOP_COLS} register-labels register-labels-wide`}>
           <div />
           <div className="pl-2">Pos</div>
           <div />
-          <div>Club</div>
-          {(
-            [
-              ['pl', 'Pl'], [null, 'W'], [null, 'D'], [null, 'L'],
-              ['gf', 'GF'], ['ga', 'GA'], ['gd', 'GD'], ['pts', 'Pts'], ['ppg', 'PPG'],
-            ] as Array<[SortKey | null, string]>
-          ).map(([key, label], i) => (
+          <div className="register-head-club">Club</div>
+          {/* Six columns sort, and each of those is a button. W, D and L do not, so they are
+              text: a button that does nothing is a stop on the way that leads nowhere. */}
+          {DESKTOP_HEADS.map(([key, label]) => key ? (
             <button
-              key={i}
-              onClick={key ? () => setSort(key) : undefined}
-              className={['register-sort', key ? 'cursor-pointer' : 'cursor-default'].join(' ')}
-              data-sorted={key && sort === key ? '' : undefined}
+              key={label}
+              type="button"
+              onClick={() => setSort(key)}
+              className="register-sort"
+              data-sorted={sort === key ? '' : undefined}
             >
               {label}
             </button>
+          ) : (
+            <div key={label} className="register-head">{label}</div>
           ))}
-          <div className="pl-1.5">Form →</div>
+          <div className="pl-1">Form →</div>
           <div className="pl-1.5">Next</div>
         </div>
 
@@ -301,7 +308,8 @@ export function TablePage() {
                 <div className="register-num">{gdText(r.gd)}</div>
                 <div className="register-num register-points">{r.pts}</div>
                 <div className="register-num">{r.ppg}</div>
-                <div className="pl-1.5">
+                {/* Five 15px pips and four 2px gaps are 83px, in an 88px column. */}
+                <div className="pl-1">
                   <FormPips form={r.form} />
                 </div>
                 <div className="min-w-0 pl-1.5">

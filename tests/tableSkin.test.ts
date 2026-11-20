@@ -175,3 +175,32 @@ describe('the cover, as painted', () => {
     expect(block).not.toMatch(/fb-foil|animation|transition|background-image|url\(|gradient/)
   })
 })
+
+describe('the desktop head and the Table’s focus ring, as painted', () => {
+  it('gives each sort control the whole 44px row, with the rule drawn inside it', () => {
+    const wide = rule('.register-labels-wide')
+    expect([wide['border-bottom'], wide['box-shadow']]).toEqual(['0', 'inset 0 -1.5px 0 var(--fb-pulp-ink)'])
+    const sort = rule('.register-sort')
+    expect([sort['align-self'], sort.padding, sort.border, sort.cursor]).toEqual(['stretch', '0', '0', 'pointer'])
+    // The six sort columns are 44px wide and the row is 44px tall: W, D and L are 26px and text.
+    const page = readFileSync(new URL('../src/components/TablePage.tsx', import.meta.url), 'utf8')
+    expect(page).toContain("'grid-cols-[3px_34px_36px_minmax(0,1fr)_44px_26px_26px_26px_44px_44px_44px_44px_44px_88px_146px]'")
+    expect(page).toContain('sticky top-0 z-10 grid h-[44px] ${DESKTOP_COLS} register-labels register-labels-wide')
+    expect(page).toContain("['pl', 'Pl'], [null, 'W'], [null, 'D'], [null, 'L'],")
+  })
+
+  it('draws a row’s ring, and a sort control’s, inside the control', () => {
+    expect(css).toContain('\nbutton.register-row:focus-visible,\n.register-sort:focus-visible {\n  outline-offset: -2px;\n}')
+    // The page's ring is unchanged: the same 2px line, in the same ink.
+    expect(css).toMatch(/:focus-visible \{\s*outline: 2px solid var\(--accent-lead-strong\);\s*outline-offset: 2px;/)
+  })
+
+  it('leaves no first-edition colour, face or label utility in the Table’s files', () => {
+    const files = ['TablePage', 'FormPips', 'NextFixtureCell', 'LeagueTabs', 'ZonesKey', 'RegisterCover']
+    for (const file of files) {
+      const source = readFileSync(new URL(`../src/components/${file}.tsx`, import.meta.url), 'utf8')
+      const classes = [...source.matchAll(/className=(?:"([^"]*)"|\{`([^`]*)`\}|\{\[([^\]]*)\])/g)].map((match) => match[1] ?? match[2] ?? match[3] ?? '').join(' ')
+      expect(classes, file).not.toMatch(/\b(?:text-ink|text-accent|text-pitch|text-floodlight|bg-bg|bg-surface|bg-accent|bg-floodlight|border-line|border-accent|font-display|font-mono|font-sans|label-caps|rounded|shadow)\b/)
+    }
+  })
+})
