@@ -17,8 +17,8 @@ it('the Table’s pinned rows start at the band’s foot, at the height the band
   // The offsets below are the Table's own figures. If its label row or its divider
   // moves, this fails here and names the stylesheet that has to move with it.
   const mobileLabels = table.match(/sticky top-0 z-10 grid (h-\d+) /)
-  const desktopLabels = table.match(/sticky top-0 z-10 bg-bg grid (h-\[\d+px\]) /)
-  const dividers = table.match(/sticky z-\[1\] bg-bg \$\{wide \? '(top-\[\d+px\])' : '(top-\d+)'\}/)
+  const desktopLabels = table.match(/sticky top-0 z-10 grid (h-\[\d+px\]) /)
+  const dividers = table.match(/sticky z-\[1\] \$\{wide \? '(top-\[\d+px\])' : '(top-\d+)'\}/)
   expect(mobileLabels, 'the mobile label row').not.toBeNull()
   expect(desktopLabels, 'the desktop label row').not.toBeNull()
   expect(dividers, 'the deep-zone divider').not.toBeNull()
@@ -28,6 +28,9 @@ it('the Table’s pinned rows start at the band’s foot, at the height the band
   expect(px(dividers![1]!), 'the desktop divider pins under the desktop labels').toBe(desktop)
   expect(css).toContain(`[data-table='mobile'] [data-zone-divider].sticky {\n  top: calc(var(--band-height) + ${mobile}px);`)
   expect(css).toContain(`[data-table='desktop'] [data-zone-divider].sticky {\n  top: calc(var(--band-height) + ${desktop}px);`)
+  // A pinned divider covers the rows that pass under it, so it carries the page's ground.
+  expect(table).toContain("className={['register-zone flex items-center gap-2'")
+  expect(css).toContain('.register-zone.sticky {\n  background: var(--fb-pulp);\n}')
 })
 
 it('the band stays pinned, above the rows that pin below it', () => {
@@ -41,7 +44,7 @@ it('a standings row the keyboard reaches stops below the labels, a pinned divide
   // What pins above a phone row, below the band, from the Table's own classes.
   const labels = px(table.match(/sticky top-0 z-10 grid (h-\d+) /)![1]!)
   const padding = table.match(/wide \? 'pt-[\d.]+ pb-[\d.]+' : 'px-[\d.]+ (pt-[\d.]+) (pb-[\d.]+)'/)
-  const label = table.match(/wide \? 'text-\[[\d.]+px\]' : '(text-\[[\d.]+px\])'/)
+  const label = table.match(/register-zone-name (text-\[[\d.]+px\])/)
   expect(padding, 'the phone divider’s padding').not.toBeNull()
   expect(label, 'the phone divider’s label').not.toBeNull()
   // The label names no line height, so it takes Tailwind's: 1.5.
@@ -51,7 +54,7 @@ it('a standings row the keyboard reaches stops below the labels, a pinned divide
   expect(ring, 'the focus ring').not.toBeNull()
   const clear = Number(ring![1]) + Number(ring![2]) + 0.5
 
-  expect([labels, divider, clear]).toEqual([28, 27.5, 4.5])
+  expect([labels, divider, clear]).toEqual([44, 29, 4.5])
   expect(css).toContain(`.imprint-band ~ .page-measure [data-table='mobile'] [data-table-row] > button {\n  scroll-margin-top: calc(${labels}px + ${clear}px);\n}`)
   expect(css).toContain(`.imprint-band ~ .page-measure [data-table='mobile'] [data-zone-divider].sticky ~ [data-table-row] > button {\n  scroll-margin-top: calc(${labels}px + ${divider}px + ${clear}px);\n}`)
 

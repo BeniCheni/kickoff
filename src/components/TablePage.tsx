@@ -22,6 +22,7 @@ import { useNow } from '../lib/useNow'
 import { META } from '../lib/fixtures'
 import { CompetitionChip } from './CompetitionChip'
 import { FormPips } from './FormPips'
+import { NextFixtureCell } from './NextFixtureCell'
 import { PageFoot } from './PageFoot'
 
 /**
@@ -36,9 +37,9 @@ import { PageFoot } from './PageFoot'
 type SortKey = 'pts' | 'pl' | 'gf' | 'ga' | 'gd' | 'ppg'
 
 /* One source of truth per breakpoint — the header row and every body row must agree. */
-const MOBILE_COLS = 'grid-cols-[3px_30px_34px_1fr_38px_38px]'
+const MOBILE_COLS = 'grid-cols-[3px_36px_minmax(0,1fr)_48px_48px]'
 const DESKTOP_COLS =
-  'grid-cols-[3px_42px_32px_minmax(150px,1fr)_34px_28px_28px_28px_36px_36px_42px_46px_48px_100px_120px]'
+  'grid-cols-[3px_34px_36px_minmax(0,1fr)_44px_26px_26px_26px_44px_44px_44px_44px_44px_88px_146px]'
 
 const SORT_LABEL: Record<SortKey, string> = {
   pts: 'points', pl: 'matches played', gf: 'goals for', ga: 'goals against',
@@ -65,19 +66,19 @@ function syncedAgo(now: Date): string {
 
 /* ------------------------------------ small pieces ------------------------------------ */
 
+/** Up is pitch, down is ink and level is muted ink; the glyph says which, not the colour. */
 function Movement({ change }: { change: number }) {
   const glyph = change > 0 ? '▲' : change < 0 ? '▼' : '–'
-  const color = change > 0 ? 'text-pitch' : change < 0 ? 'text-accent-strong' : 'text-ink-muted'
-  return <span className={`text-[8px] leading-none ${color}`}>{glyph}</span>
-}
-
-function GdText({ gd, className = '' }: { gd: number; className?: string }) {
-  const color = gd > 0 ? 'text-pitch' : gd < 0 ? 'text-accent-strong' : 'text-ink-secondary'
   return (
-    <span className={`font-mono font-medium ${color} ${className}`}>
-      {gd > 0 ? `+${gd}` : gd}
+    <span className="register-move" data-voice={change > 0 ? 'pitch' : change < 0 ? 'ink' : 'muted'}>
+      {glyph}
     </span>
   )
+}
+
+/** The sign carries the direction. The second edition has no hue for a goal difference. */
+function gdText(gd: number): string {
+  return gd > 0 ? `+${gd}` : String(gd)
 }
 
 function InHandChip({ n }: { n: number }) {
@@ -96,16 +97,11 @@ function ZoneDivider({
   wide?: boolean
 }) {
   return (
-    <div data-zone-divider={zone.name} className={['flex items-center gap-2', wide ? 'pt-2.5 pb-1.5' : 'px-3.5 pt-2 pb-1.5', zone.to - zone.from + 1 > 8 ? `sticky z-[1] bg-bg ${wide ? 'top-[34px]' : 'top-7'}` : ''].join(' ')}>
-      <span
-        className={['h-[3px] rounded-[2px]', wide ? 'w-4' : 'w-3.5'].join(' ')}
-        style={{ background: zone.color }}
-      />
-      <span className={['label-caps text-ink-secondary', wide ? 'text-[9.5px]' : 'text-[9px]'].join(' ')}>
-        {zone.name}
-      </span>
-      <span className="font-mono text-[9px] font-medium text-ink-muted">· {zoneRange(zone)}</span>
-      <span className="h-px flex-1 opacity-35" style={{ background: zone.color }} />
+    <div data-zone-divider={zone.name} className={['register-zone flex items-center gap-2', wide ? 'pt-2.5 pb-1.5' : 'px-3.5 pt-2 pb-1.5', zone.to - zone.from + 1 > 8 ? `sticky z-[1] ${wide ? 'top-[34px]' : 'top-11'}` : ''].join(' ')}>
+      <span className="register-zone-square" style={{ background: zone.color }} />
+      <span className="register-zone-name text-[10px]">{zone.name}</span>
+      <span className="register-zone-range" data-voice="muted">· {zoneRange(zone)}</span>
+      <span className="register-zone-rule" />
     </div>
   )
 }
@@ -149,7 +145,7 @@ export function TablePage() {
     </div>
   )
   if (!rows.length) {
-    return <div>{picker}
+    return <div className="register">{picker}
       <div className="rounded border border-line bg-surface px-3.5 py-3 text-[13px] text-ink-muted">
         No table in the snapshot for {comp.name} — {META.standingsDegraded?.includes(league)
           ? 'the provider no longer supplies the configured league-phase table.'
@@ -159,7 +155,7 @@ export function TablePage() {
   }
 
   return (
-    <div>
+    <div className="register">
       {picker}
 
       {/* freshness + games-in-hand callout */}
@@ -227,13 +223,12 @@ export function TablePage() {
 
       {/* -------- mobile table -------- */}
       <div data-table="mobile" className="-mx-5 md:hidden">
-        <div className={`sticky top-0 z-10 grid h-7 ${MOBILE_COLS} items-center border-y border-t-line border-b-line-strong bg-surface-alt pr-3.5`}>
+        <div className={`sticky top-0 z-10 grid h-11 ${MOBILE_COLS} register-labels`}>
           <div />
-          <div className="label-caps pl-2 text-[9px] text-ink-muted">Pos</div>
-          <div />
-          <div className="label-caps text-[9px] text-ink-muted">Club</div>
-          <div className="label-caps text-right text-[9px] text-ink-muted">GD</div>
-          <div className="label-caps text-right text-[9px] text-ink">Pts</div>
+          <div className="pl-2">Pos</div>
+          <div>Club · Form · Next</div>
+          <div className="register-labels-pair"><span>GD</span><span>GF–GA</span></div>
+          <div className="register-labels-pair"><span data-voice="ink">Pts</span><span>Played</span></div>
         </div>
 
         {groupTableRows(rows, zonesCurrent).map((band) => (
@@ -256,97 +251,37 @@ export function TablePage() {
                 onClick={() => setOpenRow(open ? null : r.teamId)}
                 aria-expanded={open}
                 aria-label={`${r.rank}. ${r.name}, ${r.pts} points from ${r.played} played, ${matchLabel}`}
-                className={`grid min-h-[54px] w-full cursor-pointer ${MOBILE_COLS} items-center border-b border-line bg-surface pr-3.5 text-left`}
+                className={`grid w-full ${MOBILE_COLS} register-row`}
               >
-                <div className="self-stretch" style={{ background: zonesCurrent ? (r.zone?.color ?? 'transparent') : 'transparent' }} />
-                <div className="flex flex-col items-center justify-center gap-px pl-2">
-                  <span className="font-display text-[15px] leading-none font-semibold">{r.rank}</span>
+                <span className="register-band" style={{ background: zonesCurrent ? (r.zone?.color ?? 'transparent') : 'transparent' }} />
+                <span className="register-pos">
+                  <span>{r.rank}</span>
                   <Movement change={r.rankChange} />
-                </div>
-                <div className="flex justify-center">
-                  <span className="flex size-6 items-center justify-center rounded-[5px] bg-surface-alt font-mono text-[8.5px] font-semibold text-ink-secondary">
-                    {r.abbrev}
-                  </span>
-                </div>
-                <div className="min-w-0 pr-1.5">
-                  <div className="flex items-center gap-1.5">
-                    <span className="truncate text-[13.5px] font-semibold">{r.shortName}</span>
+                </span>
+                <span className="register-main">
+                  <span className="register-club">
+                    <span className="register-tile">{r.abbrev}</span>
+                    <span className="register-name">{r.shortName}</span>
                     {r.gamesInHand > 0 && <InHandChip n={r.gamesInHand} />}
-                  </div>
-                  <div className="mt-1 flex items-center gap-1.5">
-                    <FormPips form={r.form} />
-                    {matchLane && (
-                      <span className="truncate text-[10px] text-ink-muted">
-                        {matchLane.weekday} · {matchLane.opponentAbbrev} ({matchLane.home ? 'H' : 'A'})
-                      </span>
-                    )}
-                  </div>
-                </div>
-                <GdText gd={r.gd} className="text-right text-[11.5px]" />
-                <div className="text-right">
-                  <div className="font-display text-[19px] leading-none font-bold">{r.pts}</div>
-                  <div className="mt-0.5 font-mono text-[8.5px] text-ink-muted">{r.played} pl</div>
-                </div>
+                  </span>
+                  <span className="register-form"><FormPips form={r.form} /></span>
+                  {matchLane && <NextFixtureCell lane={matchLane} kickedOff={Boolean(r.underway)} />}
+                  {open && (
+                    <span className="register-more" data-row-more="">
+                      <span><span className="register-more-label" data-voice="muted">W-D-L</span> {r.w}-{r.d}-{r.l}</span>
+                      <span><span className="register-more-label" data-voice="muted">PPG</span> {r.ppg}</span>
+                    </span>
+                  )}
+                </span>
+                <span className="register-figures">
+                  <span>{gdText(r.gd)}</span>
+                  <span className="register-sub" data-voice="muted">{r.gf}–{r.ga}</span>
+                </span>
+                <span className="register-figures">
+                  <span className="register-points">{r.pts}</span>
+                  <span className="register-sub" data-voice="muted">{r.played}</span>
+                </span>
               </button>
-
-              {open && (
-                <div className="border-b border-line-strong bg-surface-alt px-3.5 pt-3 pb-3.5">
-                  <div className="text-[12.5px] font-semibold">{r.name}</div>
-                  <div className="mt-0.5 text-[10.5px] text-ink-secondary">
-                    {r.zone
-                      ? `${r.zone.name} place (${zoneRange(r.zone)}). ${r.zone.note}`
-                      : 'No qualification or relegation consequence at this position.'}
-                  </div>
-                  <div className="mt-2.5 grid grid-cols-4 gap-px overflow-hidden rounded-[5px] border border-line bg-line">
-                    {(
-                      [
-                        ['W-D-L', `${r.w}-${r.d}-${r.l}`],
-                        ['GF-GA', `${r.gf}-${r.ga}`],
-                        ['PPG', r.ppg],
-                        ['Played', r.gamesInHand > 0 ? `${r.played} of ${r.played + r.gamesInHand}` : String(r.played)],
-                      ] as const
-                    ).map(([label, value]) => (
-                      <div key={label} className="bg-surface px-1 py-2 text-center">
-                        <div className="label-caps text-[8.5px] text-ink-muted">{label}</div>
-                        <div className="mt-0.5 font-mono text-[12px] font-semibold">{value}</div>
-                      </div>
-                    ))}
-                  </div>
-                  {r.underway && (
-                    <div className="mt-2.5 rounded-[5px] border border-line border-l-3 border-l-pitch bg-surface px-2.5 py-2">
-                      <div className="label-caps text-[8.5px] text-ink-muted">Current {meta.phase ? 'competition' : 'league'} match</div>
-                      <div className="mt-0.5 text-[12px] font-semibold">
-                        {r.underway.home ? 'vs' : 'away at'} {r.underway.opponent} · {r.underway.weekday}
-                      </div>
-                      <div className="mt-px text-[10.5px] text-ink-secondary">
-                        <span className="font-mono text-[10.5px] font-medium text-floodlight-strong">
-                          KICKED OFF
-                        </span>
-                      </div>
-                    </div>
-                  )}
-                  {r.next && !r.underway && (
-                    <div className="mt-2.5 rounded-[5px] border border-line border-l-3 border-l-pitch bg-surface px-2.5 py-2">
-                      <div className="label-caps text-[8.5px] text-ink-muted">Next {meta.phase ? 'competition' : 'league'} match</div>
-                      <div className="mt-0.5 text-[12px] font-semibold">
-                        {r.next.home ? 'vs' : 'away at'} {r.next.opponent} · {r.next.weekday}
-                      </div>
-                      <div className="mt-px text-[10.5px] text-ink-secondary">
-                        {r.next.timeConfidence === 'exact' ? (
-                          <>
-                            🗽 {r.next.times.brooklyn.time} {r.next.times.abbrev}
-                            {r.next.times.local && <> · {r.next.times.local.time} local</>}
-                          </>
-                        ) : (
-                          <i className="text-floodlight-strong">
-                            {r.next.times.brooklyn.isoDate} — kickoff time not yet set
-                          </i>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
             </div>
           )
             })}
@@ -362,11 +297,11 @@ export function TablePage() {
             bands are hidden because they only describe the canonical order.
           </div>
         )}
-        <div className={`sticky top-0 z-10 bg-bg grid h-[34px] ${DESKTOP_COLS} items-center border-b border-line-strong`}>
+        <div className={`sticky top-0 z-10 grid h-[34px] ${DESKTOP_COLS} register-labels register-labels-wide`}>
           <div />
-          <div className="label-caps pl-2 text-[9.5px] text-ink-muted">Pos</div>
+          <div className="pl-2">Pos</div>
           <div />
-          <div className="label-caps text-[9.5px] text-ink-muted">Club</div>
+          <div>Club</div>
           {(
             [
               ['pl', 'Pl'], [null, 'W'], [null, 'D'], [null, 'L'],
@@ -376,19 +311,14 @@ export function TablePage() {
             <button
               key={i}
               onClick={key ? () => setSort(key) : undefined}
-              className={[
-                'label-caps border-0 bg-transparent p-0 text-center text-[9.5px]',
-                key ? 'cursor-pointer' : 'cursor-default',
-                key && sort === key
-                  ? 'text-ink underline decoration-pitch decoration-2 underline-offset-[5px]'
-                  : 'text-ink-muted',
-              ].join(' ')}
+              className={['register-sort', key ? 'cursor-pointer' : 'cursor-default'].join(' ')}
+              data-sorted={key && sort === key ? '' : undefined}
             >
               {label}
             </button>
           ))}
-          <div className="label-caps pl-1.5 text-[9.5px] text-ink-muted">Form →</div>
-          <div className="label-caps pl-1.5 text-[9.5px] text-ink-muted">Next</div>
+          <div className="pl-1.5">Form →</div>
+          <div className="pl-1.5">Next</div>
         </div>
 
         {groupTableRows(sorted, showZonesDesktop).map((band) => (
@@ -398,48 +328,33 @@ export function TablePage() {
           const matchLane = r.underway ?? r.next // same precedence as the mobile rows above
           return (
             <div key={r.teamId} data-table-row={r.teamId}>
-              <div className={`grid min-h-[46px] ${DESKTOP_COLS} items-center border-b border-line bg-surface hover:bg-surface-alt`}>
-                <div className="self-stretch" style={{ background: showZonesDesktop ? (r.zone?.color ?? 'transparent') : 'transparent' }} />
-                <div className="flex items-center gap-1 pl-2">
-                  <span className="font-display text-[16px] leading-none font-semibold">{r.rank}</span>
+              <div className={`grid min-h-[46px] ${DESKTOP_COLS} register-row register-row-wide`}>
+                <div className="register-band" style={{ background: showZonesDesktop ? (r.zone?.color ?? 'transparent') : 'transparent' }} />
+                <div className="register-pos register-pos-wide">
+                  <span>{r.rank}</span>
                   <Movement change={r.rankChange} />
                 </div>
                 <div className="flex justify-center">
-                  <span className="flex size-[26px] items-center justify-center rounded-[5px] bg-surface-alt font-mono text-[9px] font-semibold text-ink-secondary">
-                    {r.abbrev}
-                  </span>
+                  <span className="register-tile">{r.abbrev}</span>
                 </div>
-                <div className="flex min-w-0 items-center gap-1.5 pr-2.5">
-                  <span className="truncate text-[14px] font-semibold">{r.name}</span>
+                <div className="register-club pr-2.5">
+                  <span className="register-name">{r.name}</span>
                   {r.gamesInHand > 0 && <InHandChip n={r.gamesInHand} />}
                 </div>
-                <div className="text-center font-mono text-[12px] text-ink-secondary">{r.played}</div>
-                <div className="text-center font-mono text-[12px] text-ink-secondary">{r.w}</div>
-                <div className="text-center font-mono text-[12px] text-ink-secondary">{r.d}</div>
-                <div className="text-center font-mono text-[12px] text-ink-secondary">{r.l}</div>
-                <div className="text-center font-mono text-[12px] text-ink-secondary">{r.gf}</div>
-                <div className="text-center font-mono text-[12px] text-ink-secondary">{r.ga}</div>
-                <GdText gd={r.gd} className="text-center text-[12.5px] font-semibold" />
-                <div className="font-display text-center text-[19px] leading-none font-bold">{r.pts}</div>
-                <div className="text-center font-mono text-[11.5px] text-ink-secondary">{r.ppg}</div>
+                <div className="register-num">{r.played}</div>
+                <div className="register-num">{r.w}</div>
+                <div className="register-num">{r.d}</div>
+                <div className="register-num">{r.l}</div>
+                <div className="register-num">{r.gf}</div>
+                <div className="register-num">{r.ga}</div>
+                <div className="register-num">{gdText(r.gd)}</div>
+                <div className="register-num register-points">{r.pts}</div>
+                <div className="register-num">{r.ppg}</div>
                 <div className="pl-1.5">
                   <FormPips form={r.form} />
                 </div>
                 <div className="min-w-0 pl-1.5">
-                  {matchLane && (
-                    <>
-                      <div className="truncate text-[11.5px] font-semibold">
-                        {matchLane.weekday} · {matchLane.opponentAbbrev} ({matchLane.home ? 'H' : 'A'})
-                      </div>
-                      <div className="mt-px font-mono text-[9.5px] text-ink-muted">
-                        {r.underway
-                          ? <span className="text-floodlight-strong">KICKED OFF</span>
-                          : r.next?.timeConfidence === 'exact'
-                            ? `${r.next.times.brooklyn.time} ${r.next.times.abbrev}`
-                            : 'time TBC'}
-                      </div>
-                    </>
-                  )}
+                  {matchLane && <NextFixtureCell lane={matchLane} kickedOff={Boolean(r.underway)} compact />}
                 </div>
               </div>
             </div>

@@ -57,3 +57,33 @@ describe('form pips, as painted', () => {
     expect(JSON.stringify(rule(".form-pip[data-result='L']"))).not.toMatch(/--accent|#d85a30/i)
   })
 })
+
+describe('voices, as painted', () => {
+  it('colours a unit by the voice it names, and by nothing else', () => {
+    expect(rule(":where(.register) [data-voice='ink']")).toEqual({ color: 'var(--fb-pulp-ink)' })
+    expect(rule(":where(.register) [data-voice='muted']")).toEqual({ color: 'var(--fb-pulp-muted)' })
+    expect(rule(":where(.register) [data-voice='pitch']")).toEqual({ color: 'var(--fb-pitch)' })
+    expect(rule(":where(.register) [data-voice='amber']")).toEqual({ color: 'var(--fb-amber)' })
+    // The cell's own rules set type and never a colour, so the attribute is the only paint.
+    for (const selector of ['.next-cell', '.next-cell-state', '.next-cell-unset']) expect(rule(selector).color, selector).toBeUndefined()
+    for (const name of ['pitch on pulp', 'pitch on dark pulp', 'amber on pulp', 'amber on dark pulp', 'pulp-muted on pulp', 'pulp-muted on dark pulp']) {
+      expect(pair(name).ratio, name).toBeGreaterThanOrEqual(4.5)
+    }
+  })
+
+  it('sets the stadium clock smaller than the Brooklyn clock, and keeps each clock whole', () => {
+    expect(rule('.next-cell')['font-size']).toBe('12px')
+    expect(rule('.next-cell > *')).toEqual({ 'white-space': 'nowrap' })
+    expect(css).toMatch(/\.next-cell-local,\s*\.next-cell-unset \{[^}]*font-size: 11px;/)
+    expect(rule('.next-cell')['flex-wrap']).toBe('wrap')
+  })
+})
+
+describe('the Table’s files and the clock', () => {
+  it('build no Date from a kickoff: every clock a cell prints is the pure layer’s', () => {
+    for (const file of ['components/TablePage.tsx', 'components/NextFixtureCell.tsx', 'components/FormPips.tsx']) {
+      const text = source(file)
+      expect(text, file).not.toMatch(/new Date\([^)]*kickoff|Date\.parse\([^)]*kickoff|toLocale(Time|Date)?String|Intl\.DateTimeFormat/)
+    }
+  })
+})

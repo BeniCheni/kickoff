@@ -224,7 +224,7 @@
  * provenance wraps. Where the server renders the band, a script directly after
  * it measures it before the app runs, so 118px is only what a page reads
  * before its band exists. The Table's label row and its deep-zone divider are
- * PR 4's markup, so their offsets are written here. 28px and 34px are that
+ * the Table's markup, so their offsets are written here. 44px and 34px are that
  * label row's height in its two layouts; tests/bandPins.test.ts holds the two
  * files together. A page without the band, such as the states harness, is
  * untouched.
@@ -237,7 +237,7 @@ html {
   top: var(--band-height);
 }
 .imprint-band ~ .page-measure [data-table='mobile'] [data-zone-divider].sticky {
-  top: calc(var(--band-height) + 28px);
+  top: calc(var(--band-height) + 44px);
 }
 .imprint-band ~ .page-measure [data-table='desktop'] [data-zone-divider].sticky {
   top: calc(var(--band-height) + 34px);
@@ -246,9 +246,9 @@ html {
  * The scroll padding stops at the band, and on the phone layout the Table pins
  * two more rows under it. A standings row that takes focus while it lies under
  * them counts as in view, so the browser leaves it there. Each row's scroll
- * margin is what pins above it, below the band: the labels (28px), and the
- * divider in a zone long enough to pin one (27.5px: 8 and 6 of padding, and a
- * 9px label on a 1.5 line). The last 4.5px is the focus ring, 2px drawn 2px
+ * margin is what pins above it, below the band: the labels (44px), and the
+ * divider in a zone long enough to pin one (29px: 8 and 6 of padding, and a
+ * 10px label on a 1.5 line). The last 4.5px is the focus ring, 2px drawn 2px
  * off the row, and the half pixel a browser can lose when it rounds a scroll
  * to a whole one. A row runs the full width of the page, so its ring shows
  * above and below it and nowhere else; with the upper edge under the divider,
@@ -256,10 +256,10 @@ html {
  * no control in its rows; its sort buttons are in the pinned labels.
  */
 .imprint-band ~ .page-measure [data-table='mobile'] [data-table-row] > button {
-  scroll-margin-top: calc(28px + 4.5px);
+  scroll-margin-top: calc(44px + 4.5px);
 }
 .imprint-band ~ .page-measure [data-table='mobile'] [data-zone-divider].sticky ~ [data-table-row] > button {
-  scroll-margin-top: calc(28px + 27.5px + 4.5px);
+  scroll-margin-top: calc(44px + 29px + 4.5px);
 }
 .imprint-band[data-stock='black'] {
   background: var(--fb-cover-black);
@@ -647,6 +647,273 @@ body:has(.page-measure[data-measure='moments']) {
 .form-pip[data-result='none'] {
   border: 1px solid var(--fb-rule-strong);
   color: var(--fb-pulp-muted);
+}
+
+/*
+ * The page. The Register is set on pulp, and the ground is the page behind the
+ * column, as ruling 19 made it for Moments: a pulp column on the first
+ * edition's page would show the old ground on both sides at 1000. The offline
+ * file's "Offline snapshot" label sits on that ground, so it takes muted ink,
+ * which reads 7.00 on pulp where the first edition's muted ink reads 4.05.
+ *
+ * A voice is an attribute. [data-voice] names the ink a unit is set in and the
+ * rule below is the only thing that colours it, so a test that reads the
+ * attribute reads the paint. :where() keeps the rule as light as one class.
+ */
+body:has(.page-measure[data-measure='register']) {
+  background: var(--fb-pulp);
+}
+.page-measure[data-measure='register'] [data-offline-snapshot] {
+  color: var(--fb-pulp-muted);
+}
+.register {
+  background: var(--fb-pulp);
+  color: var(--fb-pulp-ink);
+  font-family: var(--fb-book);
+}
+:where(.register) [data-voice='ink'] { color: var(--fb-pulp-ink); }
+:where(.register) [data-voice='muted'] { color: var(--fb-pulp-muted); }
+:where(.register) [data-voice='pitch'] { color: var(--fb-pitch); }
+:where(.register) [data-voice='amber'] { color: var(--fb-amber); }
+
+/*
+ * Rows. Zone band 3px, position, the club's tile and name, form pips, next
+ * fixture, GD over GF–GA, points over played. Team names are Caslon 16,
+ * figures Kickoff Mono 500 13 on a 22px line, points 600 16, and nothing is
+ * under 10px. A phone row is one button and the whole row is its hit area;
+ * tapped, it opens in 150ms to W-D-L and PPG on one line under the next
+ * fixture. A desktop row holds no control.
+ */
+.register-labels {
+  align-items: end;
+  padding: 0 16px 6px 0;
+  background: var(--fb-pulp);
+  border-bottom: 1.5px solid var(--fb-pulp-ink);
+  color: var(--fb-pulp-muted);
+  font-family: var(--fb-label);
+  font-weight: 600;
+  font-size: 10px;
+  line-height: 1.5;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.register-labels-pair {
+  display: grid;
+  justify-items: end;
+}
+.register-labels-wide {
+  align-items: center;
+  padding: 0;
+}
+.register-sort {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  text-align: center;
+}
+.register-sort[data-sorted] {
+  color: var(--fb-pulp-ink);
+  text-decoration: underline 2px var(--fb-pitch);
+  text-underline-offset: 5px;
+}
+.register-zone-square {
+  flex: none;
+  width: 8px;
+  height: 8px;
+}
+.register-zone-name {
+  font-family: var(--fb-label);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.register-zone-range {
+  font-family: 'Kickoff Mono', ui-monospace, 'SF Mono', monospace;
+  font-weight: 500;
+  font-size: 10px;
+}
+.register-zone-rule {
+  flex: 1;
+  height: 1px;
+  background: var(--fb-rule-strong);
+}
+.register-zone.sticky {
+  background: var(--fb-pulp);
+}
+.register-row {
+  align-items: start;
+  padding: 0 16px 0 0;
+  border: 0;
+  border-bottom: 1px solid var(--fb-rule);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+button.register-row {
+  cursor: pointer;
+}
+.register-row > :not(.register-band) {
+  padding-block: 8px;
+}
+.register-row-wide {
+  align-items: center;
+  padding: 0;
+}
+.register-band {
+  align-self: stretch;
+}
+.register-pos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-left: 8px;
+  font-family: 'Kickoff Mono', ui-monospace, 'SF Mono', monospace;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 22px;
+}
+.register-pos-wide {
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 4px;
+}
+.register-move {
+  font-size: 10px;
+  line-height: 1;
+}
+.register-main {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+  padding-right: 8px;
+}
+.register-club {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.register-tile {
+  flex: none;
+  box-sizing: border-box;
+  min-width: 32px;
+  padding: 1px 3px;
+  border: 1.5px solid var(--fb-pulp-ink);
+  border-radius: 3px;
+  font-family: 'Kickoff Mono', ui-monospace, 'SF Mono', monospace;
+  font-weight: 600;
+  font-size: 10px;
+  line-height: 15px;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+.register-name {
+  min-width: 0;
+  font-size: 16px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+.register-form {
+  display: block;
+  height: 15px;
+}
+.register-figures {
+  display: grid;
+  justify-items: end;
+}
+.register-figures,
+.register-num {
+  font-family: 'Kickoff Mono', ui-monospace, 'SF Mono', monospace;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 22px;
+  font-variant-numeric: tabular-nums;
+}
+.register-num {
+  text-align: center;
+}
+.register-sub {
+  font-size: 11px;
+  line-height: 16px;
+}
+.register-points {
+  font-weight: 600;
+  font-size: 16px;
+}
+.register-more {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 14px;
+  overflow: hidden;
+  font-family: 'Kickoff Mono', ui-monospace, 'SF Mono', monospace;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+  animation: register-open 150ms ease;
+}
+.register-more-label {
+  font-family: var(--fb-label);
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+@keyframes register-open {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: 40px;
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .register-more {
+    animation: none;
+  }
+}
+
+/*
+ * The next-fixture cell. Kickoff Mono 500 12 for the day, the opponent and
+ * the Brooklyn clock; the stadium clock is Kickoff Mono Text 400 11, always
+ * the smaller of the two. Every unit is a no-break unit and the line wraps
+ * between them, so a clock drops under the opponent where the line is short.
+ * The not-set line is the one unit that may wrap: it is a sentence.
+ */
+.next-cell {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 8px;
+  font-family: 'Kickoff Mono', ui-monospace, 'SF Mono', monospace;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.next-cell > * {
+  white-space: nowrap;
+}
+.next-cell-local,
+.next-cell-unset {
+  font-family: var(--fb-mono);
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 1.4;
+}
+.next-cell-unset {
+  font-style: italic;
+  white-space: normal;
+}
+.next-cell-state {
+  letter-spacing: 0.04em;
 }
 
 /* Flat planes. Amber from 24 hours, alarm from 72. The Ledger ground is typescript. */
