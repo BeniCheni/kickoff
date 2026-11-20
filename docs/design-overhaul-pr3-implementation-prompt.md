@@ -11,8 +11,8 @@ writes Passes 0 and 1.5, a fresh Claude Code session on `claude-fable-5-2` at `x
 Codex answers Pass 2 and runs every fix round, a fresh Claude Code session on `claude-opus-5-5`
 at `xhigh` sits Pass 2.5 and writes nothing, and Beni's word merges.
 
-**Beside PR 4, or before it, is Beni's word** (#328's builders table, PR 4's row). This brief
-works either way. The fresh read found what the two would share if built at once:
+**PR 4 builds beside this one: Beni's "Beside PR 3", Fri 20 Nov 2026 at about 12:10 PM EST**
+(#328's builders table, PR 4's row). The fresh read found what the two share:
 - one real change, a 24-hour field on `ZonedParts` in `src/lib/time.ts`, which both need for
   "20:30 local". The brief gives it as a contract, word for word the same in PR 4's brief;
 - one component to retire, `CompetitionChip.tsx`, which the filter bar and the Table's league
@@ -79,7 +79,7 @@ The PM seat (Claude Code, Opus 5.5) wrote this brief on Fri 20 Nov 2026 at about
 BEFORE YOU START. Any of these stops you.
 - origin/overhaul/second-edition contains d9b97d4. Check with git merge-base --is-ancestor d9b97d4 origin/overhaul/second-edition.
 - This session runs on gpt-6.2-astra at xhigh. If you cannot confirm it from your own session record, say so in the PR and ask Beni in one word.
-- PR 4 (the Table's skin, built by Claude Code) is [BESIDE: building at the same time | AFTER: not building until this PR merges]. The PM seat sets this line from Beni's ruling before the brief is pasted. If it is building, follow IF PR 4 IS BUILDING AT THE SAME TIME below, and stay inside FILES YOU OWN.
+- PR 4 (the Table's skin, built by Claude Code) is building at the same time, by Beni's "Beside PR 3" (Fri 20 Nov 2026, about 12:10 PM EST). Follow IF PR 4 IS BUILDING AT THE SAME TIME below, and stay inside FILES YOU OWN. Before you merge the integration branch in, check whether PR 4 has merged, and follow that section's rule for whichever merges second.
 - Merge origin/main into your branch and run the suite before your evidence run (the plan review's adjustment 1). The daily sync moves main. After any merge, src/data/*.json must equal the tree of a commit on main, named in the PR. Never hand-merge a generated file, and never run npm run sync.
 
 WHERE TO WORK. Work in a git worktree of your own, never in Beni's checkout at /Users/benicheni/code/kickoff (it holds untracked files of his) and never in another session's worktree. PR 4 may be building at the same time in its own worktree.

@@ -1,6 +1,6 @@
 # Kickoff design overhaul, PR 4 — the Table's skin (build brief, drafted Fri 20 Nov 2026, TZ=America/New_York)
 
-Written by the PM seat (Claude Code, Opus 5.5) on Fri 20 Nov 2026 at about 12:30 PM EST, from
+Written by the PM seat (Claude Code, Opus 5.5) on Fri 20 Nov 2026 at about noon EST, from
 `overhaul/second-edition` at `d9b97d4` (#342, PR 2's squash) and `main` at `4257bcc` (#347). This
 is rung 3 of the ladder for PR 4, the PR that repaints the Table without moving its structure (D4).
 
@@ -12,9 +12,10 @@ answers Pass 2 and runs every fix round, Codex on `gpt-6.2-sol` at `xhigh` with
 `--sandbox read-only` sits every Pass 2.5 sitting, and Beni's word merges. Codex reviews PR 4
 having already reviewed PR 2, the PR it stands on.
 
-**Beside PR 3, or after it, is Beni's word** (#328's builders table, PR 4's row: "It stands on PRs
-1 and 2 only, so Claude can take it while Codex builds PR 3"). This brief works either way. The
-fresh read found what the two would share, and PR 3's brief names the same three things:
+**This PR builds beside PR 3: Beni's "Beside PR 3", Fri 20 Nov 2026 at about 12:10 PM EST**
+(#328's builders table, PR 4's row: "It stands on PRs 1 and 2 only, so Claude can take it while
+Codex builds PR 3"). The fresh read found what the two share, and PR 3's brief names the same
+three things:
 - the 24-hour field on `ZonedParts` in `src/lib/time.ts`, given as a contract word for word the
   same in both briefs;
 - `CompetitionChip.tsx` and `src/lib/chipInk.ts`, which the Table's league picker and the filter
@@ -81,12 +82,12 @@ You are building one PR in github.com/BeniCheni/kickoff: PR 4 of the overhaul th
 - docs/design/5-handoff/gap-18-addendum.md: "Section 5 · The Table, after 'Controls'", which opens "Zones & key, opened", and "Section 11, as it reads after the rows pass". The addendum is the later word on every section it names;
 - R2 near the end of docs/design-overhaul-pr0-review-prompt.md;
 - docs/design-overhaul-pr2-review-prompt.md, which is on main (#347) and reaches your branch only when you merge origin/main; read it first with git show origin/main:docs/design-overhaul-pr2-review-prompt.md. The paragraph that begins "So PR 4 now owes" lists what PR 2's cycle left you, and the three rulings above it say why.
-The PM seat (Claude Code, Opus 5.5) wrote this brief on Fri 20 Nov 2026 at about 12:30 PM EST, from overhaul/second-edition at d9b97d4 (#342) and main at 4257bcc (#347). Treat the repository as ground truth and this brief as a map of it. The plan's line numbers are from 9b0417e and have moved. Where the repository and this brief disagree, the repository wins: say so in the PR and carry on. Run TZ=America/New_York date before writing any date.
+The PM seat (Claude Code, Opus 5.5) wrote this brief on Fri 20 Nov 2026 at about noon EST, from overhaul/second-edition at d9b97d4 (#342) and main at 4257bcc (#347). Treat the repository as ground truth and this brief as a map of it. The plan's line numbers are from 9b0417e and have moved. Where the repository and this brief disagree, the repository wins: say so in the PR and carry on. Run TZ=America/New_York date before writing any date.
 
 BEFORE YOU START. Any of these stops you.
 - Your worktree's HEAD is on claude/overhaul-pr4-table, and origin/overhaul/second-edition contains d9b97d4. Check with git merge-base --is-ancestor d9b97d4 origin/overhaul/second-edition.
 - This session runs on claude-fable-5-2 at xhigh. If you cannot confirm it from your own session record, say so in the PR and ask Beni in one word.
-- PR 3 (the Ledger's rows, built by Codex) is [BESIDE: building at the same time | AFTER: merged into overhaul/second-edition before this build starts]. The PM seat sets this line from Beni's ruling before the brief is pasted. If it is building, follow IF PR 3 IS BUILDING AT THE SAME TIME below, and stay inside FILES YOU OWN.
+- PR 3 (the Ledger's rows, built by Codex) is building at the same time, by Beni's "Beside PR 3" (Fri 20 Nov 2026, about 12:10 PM EST). Follow IF PR 3 IS BUILDING AT THE SAME TIME below, and stay inside FILES YOU OWN. Before you merge the integration branch in, check whether PR 3 has merged, and follow that section's rule for whichever merges second.
 - Merge origin/main into your branch and run the suite before your evidence run (the plan review's adjustment 1). The daily sync moves main. After any merge, src/data/*.json must equal the tree of a commit on main, named in the PR. Never hand-merge a generated file, and never run npm run sync.
 
 WHERE TO WORK. This worktree only: never Beni's checkout at /Users/benicheni/code/kickoff (it holds untracked files of his), and never another session's worktree. PR 3 may be building at the same time in its own worktree.
