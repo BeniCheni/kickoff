@@ -20,6 +20,8 @@ export type ZonedParts = {
   /** Display pieces from Intl, so components never have to split a formatted string. */
   clock: string
   meridiem: string
+  /** "20:30", "09:05" — the zone's 24-hour clock, zero-padded. A stadium clock prints this, then " local". */
+  clock24: string
   /** "2026-08-21" — the calendar date *in that zone*, which may differ from the UTC date. */
   isoDate: string
   /** "Fri" */
@@ -48,10 +50,16 @@ export function zonedParts(instant: Date, tz: string): ZonedParts {
   )
   const clock = `${parts.hour}:${parts.minute}`
   const meridiem = parts.dayPeriod ?? ''
+  const h23 = Object.fromEntries(
+    formatter(tz, { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
+      .formatToParts(instant)
+      .map((p) => [p.type, p.value]),
+  )
   return {
     time: meridiem ? `${clock} ${meridiem}` : clock,
     clock,
     meridiem,
+    clock24: `${h23.hour}:${h23.minute}`,
     isoDate: `${parts.year}-${parts.month}-${parts.day}`,
     weekday: parts.weekday ?? '',
   }
