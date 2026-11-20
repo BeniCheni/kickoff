@@ -911,16 +911,25 @@ export function columnFaults({ cells, table, overflow }) {
 // is sampled with both open, so the key's words and the opened row's are measured too.
 const TABLE_WIDTHS = [360, 390, 1000]
 
-export async function captureTable(browser, { origins, out, contrast = false }, result = { cells: [], contrast: [] }) {
+/**
+ * With `files`, the same cells run on the two files a reader opens from disk, and the
+ * network is off: openPage fails a cell whose file asks for any host at all.
+ */
+export async function captureTable(browser, { origins = {}, out, contrast = false, files = false }, result = { cells: [], contrast: [] }) {
   const standings = JSON.parse(readFileSync(path.join(root, 'src/data/standings.json'), 'utf8')).leagues
   const leagues = Object.keys(standings)
   assert.equal(leagues.length, 6, `the standings hold ${leagues.length} leagues, expected 6`)
-  for (const [app, origin] of Object.entries(origins)) for (const league of leagues) {
+  const disk = { offline: path.join(root, 'dist-offline/index.html'), single: path.join(root, 'dist-single/index.html') }
+  const apps = files
+    ? Object.entries(disk).map(([app, file]) => ({ app, url: (league) => `${pathToFileURL(file).href}?tab=table&league=${league}`, open: { waitUntil: 'domcontentloaded', offline: true } }))
+    : Object.entries(origins).map(([app, origin]) => ({ app, url: (league) => `${origin}/?tab=table&league=${league}`, open: {} }))
+  for (const { app, url, open } of apps) for (const league of leagues) {
     for (const theme of ['light', 'dark']) for (const width of TABLE_WIDTHS) {
       const id = `table-${app}-${league}-${theme}-${width}`
-      const { context, page, errors } = await openPage(browser, `${origin}/?tab=table&league=${league}`, theme, width)
+      const { context, page, errors } = await openPage(browser, url(league), theme, width, open)
       try {
         const layout = width >= 768 ? 'desktop' : 'mobile'
+        await page.waitForSelector(`[data-table="${layout}"] [data-table-row]`, { timeout: 15_000 })
         const state = await page.evaluate((shown) => {
           const table = document.querySelector(`[data-table="${shown}"]`)
           const head = table.querySelector(':scope > .sticky')
@@ -2226,6 +2235,9 @@ async function main() {
     await captureRequests(browser, origins, anchor, steps.requests)
     steps.offline = { sizes: {}, cells: [] }
     await captureOffline(browser, out, steps.offline)
+    // The Table's cells again, on the offline and single files, from disk with the network off.
+    await captureTable(browser, { out, contrast: true, files: true }, tableRun)
+    assert.equal(tableRun.cells.length, 144)
     steps.harness = []
     await captureHarness(browser, out, steps.harness)
     steps.tableStates = []
