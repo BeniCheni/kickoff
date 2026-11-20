@@ -1292,6 +1292,66 @@ button.register-row {
   letter-spacing: 0.04em;
 }
 
+/*
+ * The foot of the page. The Table ends on black stock: the page gives up its
+ * bottom padding, the foot starts where the scorch ends and carries the
+ * page's last 40px itself. A Table with no rows has no foot, so it keeps
+ * room under its message.
+ *
+ * The scorch is the burnt bottom edge of the page, drawn from
+ * docs/design/shaders/scorch.glsl in gradients alone: no canvas, no image
+ * and no script. It is one empty element under the last row, with no text on
+ * it or under it. It is static: nothing here animates or transitions, so it
+ * is the same still with motion on or off. Top to bottom, the paper is
+ * clear, browns in soft blotches, and chars to black along a ragged edge,
+ * with a few burnt pinholes above the edge and a trace of rift light in the
+ * char. The edge is three rows of ellipses tiled at 97, 173 and 251px; the
+ * three never line up again inside a screen, so the edge does not repeat at
+ * any width. The char is the cover's black, so the strip runs into the foot
+ * with no seam. The brown and the rift light are the shader file's own
+ * defaults: materials of the effect, which no text takes.
+ */
+.page-measure[data-measure='register'] {
+  padding-bottom: 0;
+}
+.register:not(:has(.page-foot)) {
+  padding-bottom: 64px;
+}
+.register .page-foot[data-stock='black'] {
+  margin-top: 0;
+  padding-bottom: 40px;
+}
+.register-scorch {
+  --scorch-char: var(--fb-cover-black);
+  --scorch-brown: 58 36 16;
+  --scorch-glow: 157 255 200;
+  height: 72px;
+  margin: 0 calc(-1 * var(--page-gutter));
+  background:
+    /* A trace of rift light inside the char, gone again before the foot. */
+    linear-gradient(to top, transparent 0, rgb(var(--scorch-glow) / 0.05) 12px, transparent 26px),
+    /* Pinholes, burnt through just above the edge. */
+    radial-gradient(circle at 23px 33px, var(--scorch-char) 0 1.3px, transparent 2.1px) 0 0 / 139px 100% repeat-x,
+    radial-gradient(circle at 96px 27px, var(--scorch-char) 0 1px, transparent 1.8px) 0 0 / 227px 100% repeat-x,
+    radial-gradient(circle at 171px 36px, var(--scorch-char) 0 1.6px, transparent 2.4px) 0 0 / 313px 100% repeat-x,
+    /* The ragged edge: ellipses standing on the char line, in three periods. */
+    radial-gradient(ellipse 18px 7px at 20px 45px, var(--scorch-char) 96%, transparent) 0 0 / 97px 100% repeat-x,
+    radial-gradient(ellipse 13px 11px at 66px 45px, var(--scorch-char) 96%, transparent) 0 0 / 97px 100% repeat-x,
+    radial-gradient(ellipse 30px 12px at 31px 45px, var(--scorch-char) 96%, transparent) 0 0 / 173px 100% repeat-x,
+    radial-gradient(ellipse 22px 6px at 104px 45px, var(--scorch-char) 96%, transparent) 0 0 / 173px 100% repeat-x,
+    radial-gradient(ellipse 16px 14px at 150px 45px, var(--scorch-char) 96%, transparent) 0 0 / 173px 100% repeat-x,
+    radial-gradient(ellipse 44px 9px at 40px 45px, var(--scorch-char) 96%, transparent) 0 0 / 251px 100% repeat-x,
+    radial-gradient(ellipse 26px 15px at 121px 45px, var(--scorch-char) 96%, transparent) 0 0 / 251px 100% repeat-x,
+    radial-gradient(ellipse 34px 7px at 190px 45px, var(--scorch-char) 96%, transparent) 0 0 / 251px 100% repeat-x,
+    radial-gradient(ellipse 12px 11px at 236px 45px, var(--scorch-char) 96%, transparent) 0 0 / 251px 100% repeat-x,
+    /* The char itself, from the edge down. */
+    linear-gradient(to bottom, transparent 45px, var(--scorch-char) 45px),
+    /* The browning, mottled: darker blotches in two periods over an even burn. */
+    radial-gradient(ellipse 58px 20px at 60px 36px, rgb(var(--scorch-brown) / 0.34), transparent) 0 0 / 211px 100% repeat-x,
+    radial-gradient(ellipse 40px 16px at 150px 32px, rgb(var(--scorch-brown) / 0.26), transparent) 0 0 / 337px 100% repeat-x,
+    linear-gradient(to bottom, transparent 0, rgb(var(--scorch-brown) / 0.08) 14px, rgb(var(--scorch-brown) / 0.38) 30px, rgb(var(--scorch-brown) / 0.9) 45px, transparent 45px);
+}
+
 /* Flat planes. Amber from 24 hours, alarm from 72. The Ledger ground is typescript. */
 .staleness {
   margin-bottom: 16px;

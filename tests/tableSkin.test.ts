@@ -204,3 +204,40 @@ describe('the desktop head and the Table’s focus ring, as painted', () => {
     }
   })
 })
+
+describe('the scorch and the page’s end, as painted', () => {
+  const scorch = css.slice(css.indexOf('.register-scorch {'), css.indexOf('}', css.indexOf('.register-scorch {')) + 1)
+
+  it('is static: gradients alone, with nothing that moves, fetches or draws on a canvas', () => {
+    expect(scorch).toContain('height: 72px;')
+    expect(scorch).not.toMatch(/animation|transition|url\(|filter|will-change|transform/)
+    expect(css).not.toMatch(/@keyframes[^{]*scorch/)
+    // No rule changes it with the motion control, the theme or a media query: one still.
+    expect([...css.matchAll(/\.register-scorch\b/g)]).toHaveLength(1)
+    expect((scorch.match(/gradient\(/g) ?? []).length).toBeGreaterThanOrEqual(12)
+  })
+
+  it('chars to the cover’s black, so it runs into the foot, and names its own materials', () => {
+    expect(scorch).toContain('--scorch-char: var(--fb-cover-black);')
+    // The shader file's defaults: scorch #3a2410 and rift light #9dffc8, as channels.
+    expect(scorch).toContain('--scorch-brown: 58 36 16;')
+    expect(scorch).toContain('--scorch-glow: 157 255 200;')
+    expect(readFileSync(new URL('../docs/design/shaders/scorch.glsl', import.meta.url), 'utf8')).toMatch(/@default #3a2410[\s\S]*@default #9dffc8/)
+    expect(scorch).toContain('linear-gradient(to bottom, transparent 45px, var(--scorch-char) 45px)')
+    // No ink of the page is spent on it, and no first-edition colour.
+    expect(scorch).not.toMatch(/--fb-(?:pulp|pitch|amber|alarm|blood|foil)|--accent|--floodlight/)
+  })
+
+  it('tiles its ragged edge at three periods that never line up inside a screen', () => {
+    const periods = [...new Set([...scorch.matchAll(/ellipse [\d.]+px [\d.]+px at [\d.]+px 45px[^/]*\/ (\d+)px 100% repeat-x/g)].map((match) => Number(match[1])))]
+    expect(periods).toEqual([97, 173, 251])
+    const gcd = (a: number, b: number): number => (b ? gcd(b, a % b) : a)
+    expect(periods.reduce((common, period) => (common * period) / gcd(common, period))).toBeGreaterThan(4_000_000)
+  })
+
+  it('ends the Table on black stock, and leaves room under a Table with no rows', () => {
+    expect(css).toContain(".page-measure[data-measure='register'] {\n  padding-bottom: 0;\n}")
+    expect(rule(".register .page-foot[data-stock='black']")).toEqual({ 'margin-top': '0', 'padding-bottom': '40px' })
+    expect(rule('.register:not(:has(.page-foot))')).toEqual({ 'padding-bottom': '64px' })
+  })
+})

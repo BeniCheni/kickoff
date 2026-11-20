@@ -41,6 +41,14 @@ const MOBILE_COLS = 'grid-cols-[3px_36px_minmax(0,1fr)_48px_48px]'
 const DESKTOP_COLS =
   'grid-cols-[3px_34px_36px_minmax(0,1fr)_44px_26px_26px_26px_44px_44px_44px_44px_44px_88px_146px]'
 
+/* The foot's paragraphs after its first. The key's Columns paragraph is where "results
+ * oldest to newest" is written, and FormPips pads a club's form to five slots with dots, so
+ * both halves of this sentence are the app's own. The photograph's sentence joins this list
+ * ahead of it when the cover has a photograph. */
+const FOOT_MORE = [
+  'Zones & key, opened, reads: form runs oldest to newest. A dot is an empty slot: the snapshot holds fewer than five finished results for that club.',
+] as const
+
 /* The nine figure columns of the desktop table, in order, each with the key it sorts by.
  * W, D and L have none: the sort has never read them, and the repaint does not add one. */
 const DESKTOP_HEADS: ReadonlyArray<readonly [SortKey | null, string]> = [
@@ -323,7 +331,10 @@ export function TablePage() {
         ))}
       </div>
 
-      <PageFoot kind="table">
+      {/* The burnt foot of the page: an empty strip under the last row. No text is on it. */}
+      <div className="register-scorch" aria-hidden="true" />
+
+      <PageFoot kind="table" more={FOOT_MORE}>
         Table read from ESPN's standings feed by npm run sync, never recomputed locally. Form and next fixture join to the fixtures snapshot.
       </PageFoot>
     </div>
