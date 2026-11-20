@@ -14,7 +14,8 @@ paths:
 
 # Scheduled sync (v0.2.0, amended v0.2.2)
 
-Moved out of `CLAUDE.md` on 19 Nov 2026, unchanged, so only the sessions that need it load it.
+Moved out of `CLAUDE.md` on 19 Nov 2026. The [Step 0 preflight](../../CLAUDE.md#scheduled-sync-v020-amended-v022)
+stays there so it applies before a session reads any matching path.
 
 
 **Since v0.2.5, fixtures + standings are one authoritative snapshot boundary.** A fetch or
@@ -37,12 +38,8 @@ Since v0.4.1, a red run says which half failed: **DATA FAILED** means nothing wa
 a snapshot PR exists but was not seen merged; **DELIVERY FAILED** means the snapshot is on main
 but its Pages request failed, so the live site may lag.
 
-**Adjudicated 5 Sep 2026 (Beni).** The boundary ships as built; the reader is a *procedure*, not
-an app component, and it lives in `../Sportsbooks/CLAUDE.md` ("Check the sync run succeeded BEFORE
-trusting the app") — that is the owning copy, do not restate the rule here. In short: before any
-Step 0 that a position depends on, confirm the latest `sync.yml` run on `main` succeeded; a failed
-run means every open position gets independent primary-source re-verification rather than a re-read
-of this app. The basis for deferring the built reader: 30 sync runs since 1 Sep 2026, zero
+**Adjudicated 5 Sep 2026 (Beni).** The boundary ships as built with the Step 0 procedure
+referenced in `CLAUDE.md`. The basis for deferring the built reader: 30 sync runs since 1 Sep 2026, zero
 failures — an in-product surface would be designed against an event with no observed base rate.
 `docs/v0.2.6-ideas.md` row 15 holds that work until the rate justifies it.
 

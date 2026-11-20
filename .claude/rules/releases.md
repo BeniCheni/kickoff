@@ -10,15 +10,15 @@ paths:
 
 # Release management — semver, the CHANGELOG, and who decides what (added 3 Sep 2026)
 
-Moved out of `CLAUDE.md` on 19 Nov 2026, unchanged, so only the sessions that need it load it.
+Moved out of `CLAUDE.md` on 19 Nov 2026 so sessions can load it when they need it.
 
 
-The prompt ladder above says how a version gets *built*. This section says how one gets *scoped*,
-because the roles are now explicit: Beni is CEO, Claude Design is the designer, a Claude Code
+The prompt ladder in [`CLAUDE.md`](../../CLAUDE.md) says how a version gets *built*. The roles for
+scoping a release are explicit: Beni is CEO, Claude Design is the designer, a Claude Code
 session in this repo is the CTO, and the Cowork session running `/anthropic-skills:football-soccer-deity` is
 Product Manager / TPM. Since PR #24 (5 Sep 2026) implementation is routed per task shape between
 Claude Code, Codex and (since the Moments work) Cursor — the seats table in `README.md`'s "How it
-gets built" section is the owning copy of that routing, and the six-pass 360 above is how a
+gets built" section is the owning copy of that routing, and the six-pass 360 in `CLAUDE.md` is how a
 release built by one vendor is reviewed by the other. Beni has said plainly that he has not read
 the generated `docs/` logs in detail and is relying on those roles to have read them — so
 nothing here is answerable from recollection.

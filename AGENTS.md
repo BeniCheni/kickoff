@@ -11,12 +11,13 @@ it first, whatever tool you are. It covers:
   data-honesty test assertions that are never weakened to make a change pass;
 - commit authorship conventions.
 
-Since 19 Nov 2026 four topics live outside `CLAUDE.md`, unchanged. Claude Code loads the
-three rules files only when a session touches their paths; every other agent reads the one
-for its area before starting:
+Since 19 Nov 2026 `CLAUDE.md` points to four topic files. Claude Code can load the three
+rules files when a tool reads or edits a matching path. Read the file for your area before
+starting:
 
 - [`.claude/rules/sync.md`](.claude/rules/sync.md) — the scheduled sync, the snapshot
-  boundary, the merge policy and the Step 0 contract with the betting pipeline;
+  boundary, the merge policy and the Step 0 contract with the betting pipeline. The Step 0
+  preflight is in `CLAUDE.md`;
 - [`.claude/rules/design-system.md`](.claude/rules/design-system.md) — Fergie Time and the
   public design record;
 - [`.claude/rules/releases.md`](.claude/rules/releases.md) — semver, the CHANGELOG, the seven

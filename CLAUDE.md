@@ -74,9 +74,14 @@ existing wrapped style.
 
 ## Scheduled sync (v0.2.0, amended v0.2.2)
 
-Moved to [`.claude/rules/sync.md`](.claude/rules/sync.md), unchanged. Claude Code loads it when a
-session touches the sync paths; every other agent reads it before touching the sync workflow,
-its scripts, the generated snapshot or the Step 0 contract.
+Read [`.claude/rules/sync.md`](.claude/rules/sync.md) before working on the workflow, its scripts,
+the generated snapshot or the rolling `sync/scheduled` PR.
+
+**Step 0 starts with the sync check.** Before any Step 0 that a position depends on, confirm the
+latest `sync.yml` run on `main` succeeded and read the Step 0 contract in the sync rules. A failed
+run means every open position gets independent primary-source re-verification rather than a re-read
+of this app. The owning procedure is in `../Sportsbooks/CLAUDE.md` ("Check the sync run succeeded
+BEFORE trusting the app").
 
 ## Fergie Time (the design system)
 
@@ -85,8 +90,8 @@ before design-system, token or UI work.
 
 ## Release management — semver, the CHANGELOG, and who decides what (added 3 Sep 2026)
 
-Moved to [`.claude/rules/releases.md`](.claude/rules/releases.md), unchanged. Read it before
-scoping, numbering or cutting a release.
+Read [`.claude/rules/releases.md`](.claude/rules/releases.md) before scoping, numbering or cutting
+a release. Escalate numbering forks to Beni. Each release merge and tag remains Beni's.
 
 ## Roadmap pointers
 
