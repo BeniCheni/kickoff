@@ -53,3 +53,59 @@ PARTICULARS YOUR BRIEF MUST CARRY. These are rulings and arrangements, not findi
 ````
 
 Codex's Pass 0 reply and its Pass 1 brief join this file when Beni brings them back.
+
+## Pass 1 posted (Sat 21 Nov 2026, 12:09 PM EST)
+
+Codex's Pass 1 posted at 12:09 PM EST:
+https://github.com/BeniCheni/kickoff/pull/352#issuecomment-7066252100. Its first line names
+`gpt-6.2-astra` at `xhigh`, and its heading reads "Not mergeable at `ebd5331`". At about 12:35 PM
+the PM seat read the comment from GitHub. The head was still `ebd5331`, with 21 commits and no
+review, so the pass pushed nothing. Beni relayed its report in chat: all 132 per-commit gates
+passed on the committed data; the head's contrast enforcement found no failure and no unread
+sample; both detached review worktrees were left clean; and #349 was still open, so the combined
+tree is unverified.
+
+Its eleven findings for Claude's fix round, by Pass 1's own titles:
+1. High. A successful sync can fail the new provenance gate.
+2. High. New tests require a nonempty UCL table and at least one incomplete form strip.
+3. Medium. The computed name can belong to the wrong action.
+4. Medium. An invisible focus ring passes the runner.
+5. Medium. A La Liga proof can display Serie A.
+6. Medium. A KICKED OFF club can acquire a clock and a score without failing the state proof.
+7. Medium. The foot's unqualified explanation of a dot can be false.
+8. Medium. The unset cell abbreviates approved string 24.
+9. Medium. The active league has lost the board's competition dot.
+10. Medium. Inherited Next history mismatch.
+11. Low. The historical "identical, row for row" claim goes beyond the receipts.
+
+It recommended an answer to each of the PR body's ten questions: Text (1); yes to the last place,
+with the words qualified (2); Keep the cover's standings age (3); Yes (4, 5, 6, 7); Local (8);
+yes to removal (9); yes to ink (10). Beni has answered none of them. Its receipts are under
+`~/code/kickoff-receipts/pr352-pass1/run-01/`. It could not open the local Fergie Time
+design-system templates, so it compared the committed boards 07 and 08 directly.
+
+Codex's Pass 0 reply and the Pass 1 brief it wrote have still not been brought back, so this file
+does not yet hold them.
+
+## The Pass 1.5 handoff to Codex (Sat 21 Nov 2026, about 12:40 PM EST)
+
+Under #328's "When Claude builds" column, Pass 1.5 is Codex's, on `gpt-6.2-astra`. As for #342,
+the PM seat recommended the Codex session that ran Pass 0, which has already read the PR, or a
+fresh session on the same model if that one is gone. The handoff is as neutral as the Pass 0
+opener, under the same ruling ("Yes, neutral opener"): it gives the comment, the counts by
+severity, the seats and the arrangements, and nothing the PM seat thinks of the findings. Pass 2
+goes to PR 4's builder, the seat that built the PR and holds its worktree. Its worktree holds a
+four-line comment the builder left uncommitted for Beni beside question 1, and an untracked
+`.agents/skills/kickoff-pr-review/`; the handoff names both so that no fix round commits them.
+
+````text
+Pass 1 has posted on #352: https://github.com/BeniCheni/kickoff/pull/352#issuecomment-7066252100 (Sat 21 Nov 2026, 12:09 PM EST), from a fresh Codex session on gpt-6.2-astra at xhigh. Its verdict is not mergeable at ebd5331, with eleven findings: two High, eight Medium and one Low. The head has not moved, and the PR has no review. You hold Pass 1.5 under #328's "When Claude builds" column, so write the Pass 2 brief now. If you are not the session that ran Pass 0, first read the Pass 0 opener in docs/design-overhaul-pr4-review-prompt.md on the local branch claude/track-a-archive-7 (git show claude/track-a-archive-7:docs/design-overhaul-pr4-review-prompt.md), then the Pass 1 comment. The Pass 1 brief that Pass 0 wrote is not archived yet; if you do not have it, say so beside your brief.
+
+WHO PASS 2 IS. PR 4's builder: the Claude Code session on claude-fable-5-2 at xhigh that built #352 in /Users/benicheni/code/kickoff-pr4, on claude/overhaul-pr4-table, or a fresh Claude Code session on the same model and effort in that worktree if Beni cannot resume it. It answers Pass 2 and runs every fix round. The skill's 1.5 row says what the brief carries: every finding for the builder to accept, contest, or accept while contesting its characterisation, with what it needs to reproduce each, and Beni's rulings so far, named as his. The PR body asks Beni ten questions, and Pass 1 recommended an answer to each; Beni has answered none of them. Carry them as open. Pass 2 recommends; it does not settle them.
+
+ARRANGEMENTS, NOT FINDINGS. The builder's worktree holds two changes that are not the PR's: an uncommitted four-line comment in src/components/TablePage.tsx, which the builder left for Beni beside question 1, and an untracked .agents/skills/kickoff-pr-review/. Pass 2 commits by path, never with git add -A or git commit -a, and leaves both as they are unless Beni says otherwise. PR 3 (#349) is still open on the same base, so the two build briefs' rules for whichever merges second still apply, and the combined tree is still unverified. Pass 1's receipts are under /Users/benicheni/code/kickoff-receipts/pr352-pass1/run-01/, for Pass 2 to read; Pass 2 writes its own under /Users/benicheni/code/kickoff-receipts/pr4/. The builder's ports stay 7373 to 7475.
+
+WHAT YOU LEAVE BEHIND. The same as Pass 0: one brief in chat in a four-backtick fenced block, one line per paragraph and never hand-wrapped, ready for Beni to paste, with a short note beside it. Change nothing: no commit, no push, no PR comment, and no file outside a scratch directory. Beni brings your brief to the PM seat, which archives it word for word.
+````
+
+Codex's Pass 2 brief joins this file when Beni brings it back.
