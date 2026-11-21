@@ -754,7 +754,7 @@ body:has(.page-measure[data-measure='moments']) {
 }
 .week-row[data-stock='black'] { background: var(--fb-cover-black); color: var(--fb-cover-ink); }
 .week-row button { display: inline-flex; align-items: center; justify-content: center; height: 44px; min-width: 44px; cursor: pointer; }
-.week-row button:disabled { color: var(--fb-pulp-muted); cursor: default; }
+.week-row button[aria-disabled='true'] { color: var(--fb-pulp-muted); cursor: default; }
 .week-prev, .week-next { width: 44px; flex: none; }
 .week-prev .glyph { transform: rotate(90deg); }
 .week-next .glyph { transform: rotate(-90deg); }
@@ -780,7 +780,7 @@ body:has(.page-measure[data-measure='moments']) {
 .filter-heading p { font: 400 13px/1.4 var(--fb-book); letter-spacing: normal; text-transform: none; }
 .filter-panel button { cursor: pointer; min-height: 44px; min-width: 44px; }
 .filter-heading button { flex: none; text-decoration: underline; text-underline-offset: 2px; text-transform: uppercase; }
-.filter-heading button:disabled { color: var(--fb-pulp-muted); cursor: default; }
+.filter-heading button[aria-disabled='true'] { color: var(--fb-pulp-muted); cursor: default; }
 .filter-options { display: flex; flex-wrap: wrap; }
 .filter-toggle { padding-inline: 4px; font: inherit; text-transform: inherit; letter-spacing: inherit; }
 .filter-frame {

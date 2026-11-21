@@ -12,13 +12,14 @@ type Props = {
 }
 
 export function FilterBar({ active, lens, open, onToggle, onSetGroup, onShowAll }: Props) {
+  const allShown = active.size === COMPETITION_KEYS.length
   return <div id="competition-filters" data-open={open} className="filter-disclosure"
     aria-hidden={!open} inert={!open}>
     <div className="filter-clip">
       <div className="filter-panel" data-lens={lens} data-stock="paper">
         <div className="filter-heading">
           <p>Hide a competition here and it disappears everywhere below.</p>
-          <button type="button" disabled={active.size === COMPETITION_KEYS.length} onClick={onShowAll}>Show all</button>
+          <button type="button" aria-disabled={allShown} onClick={allShown ? undefined : onShowAll}>Show all</button>
         </div>
         {GROUP_LABELS.map(({ group, label }) => {
           const keys = COMPETITION_KEYS.filter(key => COMPETITIONS[key].group === group)

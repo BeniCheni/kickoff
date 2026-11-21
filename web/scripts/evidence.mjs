@@ -550,7 +550,7 @@ export async function proveTablePins(browser, origins, anchor = null) {
     const { context, page, errors } = await openPage(browser, `${origin}/?lens=ledger${anchor ? `&date=${anchor}` : ''}`, 'light', width)
     try {
       const reveal = await page.evaluate(() => {
-        const row = document.querySelector('button[aria-label="Previous"]:enabled') ?? document.querySelector('button[aria-label="Next"]:enabled')
+        const row = document.querySelector('button[aria-label="Previous"]:enabled:not([aria-disabled="true"])') ?? document.querySelector('button[aria-label="Next"]:enabled:not([aria-disabled="true"])')
         if (!row) return null
         window.scrollTo(0, row.getBoundingClientRect().top + window.scrollY - 20)
         const before = row.getBoundingClientRect().top
@@ -558,13 +558,14 @@ export async function proveTablePins(browser, origins, anchor = null) {
         const rect = row.getBoundingClientRect()
         const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2)
         return {
-          text: row.textContent.replace(/\s+/g, ' ').trim().slice(0, 40), before, top: rect.top,
+          text: row.getAttribute('aria-label'), before, top: rect.top,
           band: document.querySelector('header.imprint-band').getBoundingClientRect().bottom,
           topmost: hit === row || row.contains(hit) ? 'itself' : hit?.closest('header') ? 'the band' : 'another element',
         }
       })
       assert.ok(reveal, `${id} found no enabled week stepper to focus`)
       assert.ok(reveal.before < reveal.band, `${id} the row was not behind the band before it took focus`)
+      assert.ok(['Previous', 'Next'].includes(reveal.text), id)
       const faults = revealFaults(reveal)
       assert.deepEqual(faults, [], `${id} ${faults.join('; ')}`)
       assert.deepEqual(errors, [], id)
