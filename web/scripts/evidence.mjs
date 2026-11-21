@@ -28,7 +28,7 @@ import { pathToFileURL, fileURLToPath } from 'node:url'
 import puppeteer from 'puppeteer-core'
 import { decodePng } from '../../scripts/decode-png.mjs'
 import { chooseWeeks, matrixAnchor, readSnapshot } from '../../scripts/evidence-weeks.mjs'
-import { BITMAP_GLYPH, createColdLoad, isLargeText, paintedColor, sampleContrast, unexpectedHost, unreadColors } from '../../scripts/rendered-contrast.mjs'
+import { BITMAP_GLYPH, contrastRatio, createColdLoad, isLargeText, paintedColor, sampleContrast, unexpectedHost, unreadColors } from '../../scripts/rendered-contrast.mjs'
 
 const root = fileURLToPath(new URL('../..', import.meta.url))
 const chrome = process.env.CHROME_PATH ?? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
@@ -583,7 +583,20 @@ export async function proveTablePins(browser, origins, anchor = null) {
 // row that sort. W, D and L sort nothing and are text. Each name is the one the browser
 // computes, not the label as it is written: Chrome folds the stylesheet's capitals into a
 // name it takes from text, so the label written "Pl" is the control named "PL".
-export const DESKTOP_TABLE_CONTROLS = ['PL', 'GF', 'GA', 'GD', 'PTS', 'PPG']
+//
+// A name is bound to its control twice over (the review of PR #352, finding 3). That the
+// six names are in the table once each is not enough: two controls that had exchanged
+// names passed it. So each name has the column of the head it stands in, 1 to 15, and the
+// figure of the snapshot a press on it orders the table by. Pts is the league's own order.
+export const DESKTOP_TABLE_SORTS = [
+  { name: 'PL', column: 5, by: 'matches played', figure: (row) => row.played },
+  { name: 'GF', column: 9, by: 'goals for', figure: (row) => row.gf },
+  { name: 'GA', column: 10, by: 'goals against', figure: (row) => -row.ga },
+  { name: 'GD', column: 11, by: 'goal difference', figure: (row) => row.gf - row.ga },
+  { name: 'PTS', column: 12, by: 'league position', figure: null },
+  { name: 'PPG', column: 13, by: 'points per game', figure: (row) => (row.played ? row.pts / row.played : -1) },
+]
+export const DESKTOP_TABLE_CONTROLS = DESKTOP_TABLE_SORTS.map((sort) => sort.name)
 
 /** The six leagues the Table has a tab for, in the tabs' order. A tab carries its key. */
 export const TABLE_LEAGUE_KEYS = ['laliga', 'pl', 'seriea', 'ligue1', 'bundesliga', 'ucl']
@@ -602,6 +615,38 @@ export function longestLeague(standings) {
 
 /** The committed standings, by league. */
 const committedStandings = () => JSON.parse(readFileSync(path.join(root, 'src/data/standings.json'), 'utf8')).leagues
+
+/** The club ids of `rows`, the committed standings of one league, in the order a press on
+ *  `sort` owes: the figure, best first, and league position between equals. */
+export function sortOrder(rows, sort) {
+  const order = sort.figure ? [...rows].sort((a, b) => sort.figure(b) - sort.figure(a) || a.rank - b.rank) : rows
+  return order.map((row) => row.teamId)
+}
+
+/**
+ * What a press on each sort control did, against what its name owes. `presses` holds one
+ * entry per name, each found by the name the browser computes and not by its place: the
+ * head's column that control stands in, the columns marked as sorted after the press, and
+ * the club ids of the rows in the order they were then drawn. A control that computes
+ * another's name stands in the wrong column, marks the wrong one, and where the two
+ * figures differ, orders the table by the other's.
+ */
+export function sortFaults(presses, rows, sorts = DESKTOP_TABLE_SORTS) {
+  const faults = []
+  const begins = (ids) => ids.slice(0, 3).join(', ')
+  for (const sort of sorts) {
+    const press = presses.find((each) => each.name === sort.name)
+    if (!press?.found) {
+      faults.push(`no control is named "${sort.name}", so its sort was never pressed`)
+      continue
+    }
+    if (press.column !== sort.column) faults.push(`the control named "${sort.name}" stands in column ${press.column || 'none'} of the head, and that name’s column is ${sort.column}`)
+    if (press.marked.length !== 1 || press.marked[0] !== sort.column) faults.push(`a press on "${sort.name}" marked ${press.marked.length ? `column ${press.marked.join(' and ')}` : 'no column'} as sorted, expected column ${sort.column}`)
+    const owed = sortOrder(rows, sort)
+    if (press.order.length !== owed.length || owed.some((id, i) => press.order[i] !== id)) faults.push(`a press on "${sort.name}" did not order the table by ${sort.by}: it begins ${begins(press.order)}, and the snapshot’s order begins ${begins(owed)}`)
+  }
+  return faults
+}
 
 /**
  * The name the browser computes for each element of `elements`, an array in the page, read
@@ -650,6 +695,73 @@ export function focusFaults(seen) {
   if (outside > EPSILON) faults.push(`the focus ring of ${what} is drawn ${outside.toFixed(2)}px outside its row, where a zone header paints over it`)
   const ring = Object.keys(seen.ringUnder ?? {})
   if (ring.length) faults.push(`the focus ring of ${what} is under ${ring.join(' and ')}`)
+  // A control of the table draws its ring inside itself, so its ring is read from the page
+  // as it was painted. A press the sweep counted for the table and did not sample is no pass.
+  if (seen.paint) faults.push(...ringPaintFaults(what, seen.paint))
+  else if (Number.isInteger(seen.owed) && seen.owed >= 0) faults.push(`the focus ring of ${what} was not sampled`)
+  return faults
+}
+
+/**
+ * Where a control's ring is in two captures of the control's own box, `focused` and
+ * `rested`: the same pixels with focus on the control and after focus has left it. The
+ * ring's line is `width` deep and starts where `offset` puts it, measured in from the box's
+ * edge. At five points along each edge the line is read across its depth and one pixel
+ * either side, and a pixel is the ring's where it is the ring's own colour with focus and
+ * another colour without. `edges` is that count at each point. `ground` is the colour the
+ * ring's line most often has without focus, and `contrast` the ring against it.
+ */
+export function ringPixels({ focused, rested, ring, width, offset }) {
+  const at = (image, x, y) => {
+    const i = 4 * (y * image.width + x)
+    return { r: image.data[i], g: image.data[i + 1], b: image.data[i + 2] }
+  }
+  const same = (p, q) => Math.abs(p.r - q.r) <= 2 && Math.abs(p.g - q.g) <= 2 && Math.abs(p.b - q.b) <= 2
+  const w = Math.min(focused.width, rested.width)
+  const h = Math.min(focused.height, rested.height)
+  const inset = Math.round(-(offset + width))
+  const depth = Array.from({ length: Math.ceil(width) + 2 }, (_, i) => inset - 1 + i).filter((d) => d >= 0)
+  const along = [0.1, 0.3, 0.5, 0.7, 0.9]
+  const lines = {
+    top: along.map((f) => depth.map((d) => [Math.floor((w - 1) * f), d])),
+    bottom: along.map((f) => depth.map((d) => [Math.floor((w - 1) * f), h - 1 - d])),
+    left: along.map((f) => depth.map((d) => [d, Math.floor((h - 1) * f)])),
+    right: along.map((f) => depth.map((d) => [w - 1 - d, Math.floor((h - 1) * f)])),
+  }
+  const inside = ([x, y]) => x >= 0 && y >= 0 && x < w && y < h
+  /** @type {Record<string, number[]>} */
+  const edges = {}
+  const grounds = new Map()
+  for (const [edge, points] of Object.entries(lines)) {
+    edges[edge] = points.map((line) => line.filter((point) => inside(point) && same(at(focused, ...point), ring) && !same(at(rested, ...point), ring)).length)
+    for (const point of points.flat().filter(inside)) {
+      const pixel = at(rested, ...point)
+      const key = `${pixel.r}, ${pixel.g}, ${pixel.b}`
+      grounds.set(key, (grounds.get(key) ?? 0) + 1)
+    }
+  }
+  const [most] = [...grounds].sort((a, b) => b[1] - a[1])
+  if (!most) return { edges, ground: null, contrast: 0 }
+  const [r, g, b] = most[0].split(', ').map(Number)
+  return { edges, ground: `rgb(${most[0]})`, contrast: contrastRatio(ring, { r, g, b }) }
+}
+
+/**
+ * The ring as it was painted, held to what a reader has to see (the review of PR #352,
+ * finding 4): a colour that paints, the whole of the control in view, the ring's own
+ * pixels at every point read on each of its four edges, and 3:1 against what it is drawn
+ * on. A transparent ring has the right width, the right offset and nothing over its line.
+ */
+export function ringPaintFaults(what, paint) {
+  if (paint.alpha === 0) return [`the focus ring of ${what} is ${paint.color}, which paints nothing`]
+  const faults = []
+  if (paint.alpha < 1) faults.push(`the focus ring of ${what} is ${paint.color}, which the page shows through`)
+  if (paint.cut.length) faults.push(`the focus ring of ${what} is cut off at the ${paint.cut.join(' and ')} of the page`)
+  for (const [edge, counts] of Object.entries(paint.edges)) {
+    const bare = counts.filter((count) => count < 1).length
+    if (bare) faults.push(`the focus ring of ${what} is not painted at ${bare} of ${counts.length} points on its ${edge} edge`)
+  }
+  if (paint.contrast < 3) faults.push(`the focus ring of ${what} is ${paint.color}, ${paint.contrast.toFixed(2)}:1 against the ${paint.ground ?? 'ground'} it is drawn on`)
   return faults
 }
 
@@ -665,16 +777,20 @@ export function focusFaults(seen) {
  * the desktop the rows hold none: each of `named` is in the table once, within reach.
  * Every control a keyboard can reach in the table has to have been the target of a press.
  *
+ * A name is also owed its place: each of `placed` is a name and the column of the head its
+ * control stands in, so two controls that exchange names are two faults and not a pass.
+ *
  * @param {{ owed: number }[]} seen  each press, by its target's place in `controls`, or -1
  * @param {{
  *   within: string,
  *   rows: string[],
- *   controls: { name: string, row: number, reachable: boolean }[],
+ *   controls: { name: string, row: number, reachable: boolean, column?: number }[],
  *   clubs?: { id: string, name: string }[] | null,
  *   named?: string[] | null,
+ *   placed?: { name: string, column: number }[] | null,
  * }} expected
  */
-export function sweepFaults(seen, { within, rows, controls, clubs = null, named = null }) {
+export function sweepFaults(seen, { within, rows, controls, clubs = null, named = null, placed = null }) {
   const faults = []
   if (!seen.length) faults.push(`no Tab was pressed: nothing a keyboard can reach is inside ${within}`)
   if (!clubs?.length && !named?.length) faults.push('the sweep was not told what the table is owed: no club and no named control')
@@ -704,6 +820,8 @@ export function sweepFaults(seen, { within, rows, controls, clubs = null, named 
     tell(named.filter((name) => called(name).length === 0), 'is not in the table', 'are not in the table')
     tell(named.filter((name) => called(name).length > 1), 'is in the table more than once', 'are in the table more than once', (name) => `"${name}" (${called(name).length})`)
     tell(named.filter((name) => called(name).length === 1 && !called(name)[0].reachable), 'cannot be reached by a keyboard', 'cannot be reached by a keyboard')
+    const astray = (placed ?? []).filter(({ name, column }) => called(name).length === 1 && called(name)[0].column !== column)
+    tell(astray, 'is not in the column of that name', 'are not in the column of that name', ({ name, column }) => `"${name}" (in column ${called(name)[0].column || 'none'}, and its column is ${column})`)
   }
   // A control a keyboard stops on and a screen reader cannot name is not held either.
   const nameless = reachable.filter((control) => !control.name)
@@ -729,12 +847,15 @@ async function sweepFocus(page, place, { within = '.page-measure', layout }) {
     // Not through `scope`: the table is owed its presses whether or not the wrapper is there.
     const table = every.filter((el) => el.closest(`[data-table="${shown}"]`))
     const rows = [...document.querySelectorAll(`[data-table="${shown}"] [data-table-row]`)]
+    // The head's column a control stands in, 1 to 15, or 0 for a control outside the head.
+    const head = document.querySelector(`[data-table="${shown}"] > .sticky`)
+    const column = (el) => (head ? [...head.children].findIndex((cell) => cell === el || cell.contains(el)) + 1 : 0)
     window.__kickoffFocus = { every, list, table, names: [], targets: list.map((_, i) => i).filter((i) => i > 0 && list[i].closest(scope)) }
     return {
       targets: window.__kickoffFocus.targets.length,
       rows: rows.map((row) => row.getAttribute('data-table-row')),
       // A control's row is the nearest one around it, by its place among `rows`, or -1.
-      controls: table.map((el) => ({ at: every.indexOf(el), row: rows.indexOf(el.closest('[data-table-row]')), reachable: reachable(el) })),
+      controls: table.map((el) => ({ at: every.indexOf(el), row: rows.indexOf(el.closest('[data-table-row]')), column: column(el), reachable: reachable(el) })),
     }
   }, within, layout)
   const every = await page.evaluateHandle(() => window.__kickoffFocus.every)
@@ -809,8 +930,125 @@ async function sweepFocus(page, place, { within = '.page-measure', layout }) {
         ...(row ? { ring, ringUnder: tally(across.flatMap((x) => [[x, rect.top - reach], [x, rect.bottom + reach]]), covering) } : {}),
       }
     }, n)) })
+    // A control of the table: its ring is read from the page as painted. Focus leaves it.
+    const pressed = seen.at(-1)
+    if (pressed.landed && pressed.owed >= 0) pressed.paint = await ringPaint(page)
   }
   return { seen, table: { rows: found.rows, controls } }
+}
+
+/**
+ * The ring of the control that holds focus, as it was painted (the review of PR #352,
+ * finding 4). The sweep read the ring's width and offset from the stylesheet and asked
+ * which element lay over its line. Neither is a pixel, and a transparent ring passed both.
+ * So the control's box is captured with focus and again once focus has left it, and
+ * ringPixels reads the ring's line from the two. Focus is not put back: the sweep places
+ * it before every press.
+ */
+async function ringPaint(page) {
+  const box = await page.evaluate(() => {
+    const rect = document.activeElement.getBoundingClientRect()
+    const style = getComputedStyle(document.activeElement)
+    return {
+      left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom, scrollX, scrollY, innerWidth, innerHeight,
+      color: style.outlineColor, width: Number.parseFloat(style.outlineWidth), offset: Number.parseFloat(style.outlineOffset),
+    }
+  })
+  const [r, g, b, alpha = 1] = box.color.match(/[\d.]+/g).map(Number)
+  const cut = [box.left < -EPSILON && 'left', box.top < -EPSILON && 'top', box.right > box.innerWidth + EPSILON && 'right', box.bottom > box.innerHeight + EPSILON && 'bottom'].filter(Boolean)
+  // The box as the browser snaps it to whole pixels, in the page's coordinates.
+  const left = Math.max(0, Math.round(box.left))
+  const top = Math.max(0, Math.round(box.top))
+  const clip = {
+    x: left + box.scrollX, y: top + box.scrollY,
+    width: Math.min(box.innerWidth, Math.round(box.right)) - left, height: Math.min(box.innerHeight, Math.round(box.bottom)) - top,
+  }
+  const bare = { top: [0, 0, 0, 0, 0], bottom: [0, 0, 0, 0, 0], left: [0, 0, 0, 0, 0], right: [0, 0, 0, 0, 0] }
+  if (clip.width < 1 || clip.height < 1) return { color: box.color, alpha, cut: ['top', 'bottom', 'left', 'right'], edges: bare, ground: null, contrast: 0 }
+  const focused = decodePng(await page.screenshot({ clip, captureBeyondViewport: false }))
+  await page.evaluate(() => document.activeElement.blur())
+  const rested = decodePng(await page.screenshot({ clip, captureBeyondViewport: false }))
+  return { color: box.color, alpha, cut, ...ringPixels({ focused, rested, ring: { r, g, b }, width: box.width, offset: box.offset }) }
+}
+
+/**
+ * Each sort control of the desktop table, found by the name the browser computes for it,
+ * pressed, and what the press did: the head's column the control stands in, the columns
+ * marked as sorted, and the rows' club ids in the order then drawn. The names are read
+ * again before each press, and a last press on Pts returns the table to league order.
+ */
+async function pressSorts(page) {
+  const head = '[data-table="desktop"] > .sticky'
+  const names = async () => {
+    const buttons = await page.evaluateHandle((selector) => [...document.querySelectorAll(`${selector} button`)], head)
+    try { return (await computedNames(page, buttons)).map(tidyName) } finally { await buttons.dispose() }
+  }
+  const press = async (sort) => {
+    const at = (await names()).indexOf(sort.name)
+    if (at < 0) return { name: sort.name, found: false }
+    await page.evaluate((selector, index) => document.querySelectorAll(`${selector} button`)[index].click(), head, at)
+    return { name: sort.name, found: true, ...(await page.evaluate((selector, index) => {
+      const cells = [...document.querySelector(selector).children]
+      const column = (el) => cells.findIndex((cell) => cell === el || cell.contains(el)) + 1
+      const buttons = [...document.querySelectorAll(`${selector} button`)]
+      return {
+        column: column(buttons[index]),
+        marked: buttons.filter((button) => button.hasAttribute('data-sorted')).map(column),
+        order: [...document.querySelectorAll('[data-table="desktop"] [data-table-row]')].map((row) => row.getAttribute('data-table-row')),
+      }
+    }, head, at)) }
+  }
+  const presses = []
+  for (const sort of DESKTOP_TABLE_SORTS) presses.push(await press(sort))
+  await press(DESKTOP_TABLE_SORTS.find((sort) => !sort.figure))
+  return presses
+}
+
+/** What a cell's sampled rings came to: how many, the fewest ring pixels read at a point on each edge, the lowest contrast, and each ring colour with the ground it was read on. */
+function ringSummary(seen, into = { sampled: 0, least: { top: Infinity, bottom: Infinity, left: Infinity, right: Infinity }, contrast: Infinity, drawn: [] }) {
+  for (const { paint } of seen.filter((control) => control.paint)) {
+    into.sampled += 1
+    for (const edge of Object.keys(into.least)) into.least[edge] = Math.min(into.least[edge], ...paint.edges[edge])
+    into.contrast = Math.min(into.contrast, paint.contrast)
+    const drawn = `${paint.color} on ${paint.ground}`
+    if (!into.drawn.includes(drawn)) into.drawn.push(drawn)
+  }
+  return into
+}
+
+/**
+ * The ring in the dark theme (the review of PR #352, finding 4). proveFocus presses every
+ * control in the light theme, where the ring is one green on one ground. The dark theme
+ * draws another green on another ground, and a ring that reads in one need not read in the
+ * other. So each served app's longest table is swept once more in the dark theme, on a
+ * phone and at 1000, and every table control's ring is held to the same reading.
+ */
+export async function proveRings(browser, origins) {
+  const standings = committedStandings()
+  const league = longestLeague(standings)
+  const within = '.page-measure'
+  const rows = []
+  for (const [app, origin] of Object.entries(origins)) for (const width of [390, 1000]) {
+    const id = `rings-${app}-${league}-${width}-dark`
+    const layout = width >= 768 ? 'desktop' : 'mobile'
+    const { context, page, errors } = await openPage(browser, `${origin}/?tab=table&league=${league}`, 'dark', width)
+    try {
+      await page.waitForSelector(`[data-table="${layout}"] [data-table-row]`, { timeout: 15_000 })
+      assert.equal(await page.evaluate(() => document.documentElement.dataset.theme), 'dark', id)
+      const { seen, table } = await sweepFocus(page, { underFoot: 1.06 }, { within, layout })
+      const owed = layout === 'mobile'
+        ? { clubs: standings[league].map((club) => ({ id: club.teamId, name: club.name })) }
+        : { named: DESKTOP_TABLE_CONTROLS, placed: DESKTOP_TABLE_SORTS }
+      const faults = [...sweepFaults(seen, { within, ...table, ...owed }), ...seen.flatMap(focusFaults)]
+      assert.deepEqual(faults, [], `${id} ${faults.join('; ')}`)
+      const rings = ringSummary(seen)
+      const controls = table.controls.filter((control) => control.reachable).length
+      assert.ok(controls > 0 && rings.sampled === controls, `${id} sampled ${rings.sampled} rings of ${controls} table controls`)
+      assert.deepEqual(errors, [], id)
+      rows.push({ id, theme: 'dark', tableControls: controls, rings })
+    } finally { await context.close() }
+  }
+  return rows
 }
 
 /** The Table in both apps, and both files from disk, at every width of the matrix. Each
@@ -853,15 +1091,17 @@ export async function proveFocus(browser, origins, out) {
       }
       // A club's row is a control on the phone: each club in the committed standings is
       // owed its own, matched by the id the row carries. The desktop rows hold none and
-      // the table is owed its six sort controls by name; a row control arriving there is
-      // owed a press too.
+      // the table is owed its six sort controls by name, each in the column of that name;
+      // a row control arriving there is owed a press too.
       const clubs = layout === 'mobile' ? held.map((club) => ({ id: club.teamId, name: club.name })) : null
       const named = layout === 'desktop' ? DESKTOP_TABLE_CONTROLS : null
-      const row = { id, controls: 0, tableControls: 0, rowControls: 0, tableRows: 0, clubs: clubs?.length ?? null, named, pressed: 0, moved: 0 }
+      const placed = layout === 'desktop' ? DESKTOP_TABLE_SORTS : null
+      const row = { id, controls: 0, tableControls: 0, rowControls: 0, tableRows: 0, clubs: clubs?.length ?? null, named, pressed: 0, moved: 0, rings: ringSummary([]) }
       for (const place of places) {
         const { seen, table } = await sweepFocus(page, place, { within, layout })
-        const faults = [...sweepFaults(seen, { within, ...table, clubs, named }), ...seen.flatMap(focusFaults)]
+        const faults = [...sweepFaults(seen, { within, ...table, clubs, named, placed }), ...seen.flatMap(focusFaults)]
         assert.deepEqual(faults, [], `${id} ${place.name}: ${faults.join('; ')}`)
+        ringSummary(seen, row.rings)
         const reachable = table.controls.filter((control) => control.reachable)
         row.controls = seen.length
         row.tableControls = reachable.length
@@ -882,6 +1122,14 @@ export async function proveFocus(browser, origins, out) {
           await page.keyboard.press('Tab')
           await page.screenshot({ path: path.join(out, `${id}.png`), captureBeyondViewport: false })
         }
+      }
+      // Every table control's ring was read, and no reading is left at its starting value.
+      assert.equal(row.rings.sampled, row.pressed === 0 ? 0 : places.length * row.tableControls, `${id} sampled ${row.rings.sampled} rings`)
+      if (layout === 'desktop') {
+        // Each name sorts by its own figure (finding 3): the six are pressed by name.
+        const sorts = sortFaults(await pressSorts(page), held)
+        assert.deepEqual(sorts, [], `${id} ${sorts.join('; ')}`)
+        row.sorts = DESKTOP_TABLE_SORTS.map((sort) => `${sort.name} by ${sort.by}`)
       }
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth === innerWidth), true, id)
       assert.deepEqual(errors, [], id)
@@ -2309,7 +2557,7 @@ async function main() {
   const matrix = emptyMatrix()
   const weekRun = { cells: [], contrast: [] }
   const tableRun = { cells: [], contrast: [] }
-  const steps = { motion: null, chrome: null, feedback: null, banner: null, pins: null, focus: null, first: null, requests: null, offline: null, harness: null, tableStates: null }
+  const steps = { motion: null, chrome: null, feedback: null, banner: null, pins: null, focus: null, rings: null, first: null, requests: null, offline: null, harness: null, tableStates: null }
   const receipt = () => {
     const contrastCells = [...matrix.contrast, ...weekRun.contrast, ...tableRun.contrast]
     return {
@@ -2328,6 +2576,7 @@ async function main() {
     steps.banner = await proveBanner(browser, origins, out)
     steps.pins = await proveTablePins(browser, origins, anchor)
     steps.focus = await proveFocus(browser, origins, out)
+    steps.rings = await proveRings(browser, origins)
     steps.first = await proveFirstFrame(browser, origins)
     await runMatrix(browser, { origins, out, anchor, contrast: true }, matrix)
     assert.equal(matrix.cells.length, 96)

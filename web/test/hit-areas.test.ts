@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { DESKTOP_TABLE_CONTROLS, TABLE_LEAGUE_KEYS, bandFaults, firstFrameFaults, focusFaults, handoffFaults, hitAreaFaults, leagueFaults, longestLeague, momentsPaintFaults, pinFaults, revealFaults, sweepFaults, tabFaults, columnFaults, tableHitFaults, tableStateFaults } from '../scripts/evidence.mjs'
+import { DESKTOP_TABLE_CONTROLS, DESKTOP_TABLE_SORTS, TABLE_LEAGUE_KEYS, bandFaults, firstFrameFaults, focusFaults, handoffFaults, hitAreaFaults, leagueFaults, longestLeague, momentsPaintFaults, pinFaults, revealFaults, ringPaintFaults, ringPixels, sortFaults, sortOrder, sweepFaults, tabFaults, columnFaults, tableHitFaults, tableStateFaults } from '../scripts/evidence.mjs'
 
 const box = (name: string, left: number, top: number, w: number, h = 44) => ({ name, left, top, right: left + w, bottom: top + h, w, h })
 
@@ -544,6 +544,114 @@ test('a Table state on the harness shows what it is there to show, in the layout
   expect(tableStateFaults('empty', 'mobile', { text: 'No table in the snapshot for Ligue 1 — run npm run sync.', marks: 0, tables: 2 })).toEqual(['empty draws 2 tables, and the snapshot holds none'])
   expect(tableStateFaults('opened', 'mobile', { text: 'W-D-L 1-1-2 PPG 1.00', marks: 30, tables: 1 })).toEqual(['opened draws 1 tables, expected the phone’s and the desktop’s'])
   expect(tableStateFaults('nope', 'mobile', { text: '', marks: 0, tables: 0 })).toEqual(['nope is not a Table state the runner knows'])
+})
+
+// The review of PR #352, finding 3: Played and Points exchanged names, and the six names were still there once each.
+test('a sort control’s name is bound to its column and to what a press on it does', () => {
+  expect(DESKTOP_TABLE_SORTS.map((sort) => [sort.name, sort.column])).toEqual([['PL', 5], ['GF', 9], ['GA', 10], ['GD', 11], ['PTS', 12], ['PPG', 13]])
+  const desk = {
+    within: '.page-measure', named: DESKTOP_TABLE_CONTROLS, placed: DESKTOP_TABLE_SORTS, rows: clubs.map((club) => club.id),
+    controls: DESKTOP_TABLE_SORTS.map((sort) => ({ name: sort.name, row: -1, column: sort.column, reachable: true })),
+  }
+  const all = [press(-1), ...DESKTOP_TABLE_CONTROLS.map((name, place) => press(place, name))]
+  expect(sweepFaults(all, desk)).toEqual([])
+  // The two-way swap: each name is in the table once, within reach and pressed, in the other's column.
+  const swapped = desk.controls.map((control) => ({ ...control, name: ({ PL: 'PTS', PTS: 'PL' } as Record<string, string>)[control.name] ?? control.name }))
+  expect(sweepFaults(all, { ...desk, controls: swapped })).toEqual(['2 of the 6 controls owed by name are not in the column of that name: "PL" (in column 12, and its column is 5), "PTS" (in column 5, and its column is 12)'])
+  // Without the binding it passed, which is the review's finding.
+  expect(sweepFaults(all, { ...desk, placed: null, controls: swapped })).toEqual([])
+  // A named control outside the head stands in no column.
+  expect(sweepFaults(all, { ...desk, controls: desk.controls.map((control) => (control.name === 'GD' ? { ...control, column: 0 } : control)) }))
+    .toEqual(['1 of the 6 controls owed by name is not in the column of that name: "GD" (in column none, and its column is 11)'])
+
+  // Four clubs whose figures all order them differently, so every press is its own order.
+  const table = [
+    { teamId: 'a', rank: 1, played: 10, gf: 20, ga: 12, pts: 24 },
+    { teamId: 'b', rank: 2, played: 11, gf: 14, ga: 6, pts: 23 },
+    { teamId: 'c', rank: 3, played: 9, gf: 25, ga: 20, pts: 20 },
+    { teamId: 'd', rank: 4, played: 10, gf: 9, ga: 9, pts: 12 },
+  ]
+  const order = (name: string) => sortOrder(table, DESKTOP_TABLE_SORTS.find((sort) => sort.name === name)!)
+  expect([order('PL'), order('GF'), order('GA'), order('GD'), order('PTS'), order('PPG')]).toEqual([
+    ['b', 'a', 'd', 'c'], ['c', 'a', 'b', 'd'], ['b', 'd', 'a', 'c'], ['a', 'b', 'c', 'd'], ['a', 'b', 'c', 'd'], ['a', 'c', 'b', 'd'],
+  ])
+  // Equal figures fall back to league position: three clubs level on goal difference.
+  expect(sortOrder([{ teamId: 'x', rank: 2, gf: 5, ga: 3 }, { teamId: 'y', rank: 1, gf: 4, ga: 2 }, { teamId: 'z', rank: 3, gf: 9, ga: 1 }], DESKTOP_TABLE_SORTS[3]!)).toEqual(['z', 'y', 'x'])
+  const clean = DESKTOP_TABLE_SORTS.map((sort) => ({ name: sort.name, found: true, column: sort.column, marked: [sort.column], order: sortOrder(table, sort) }))
+  expect(sortFaults(clean, table)).toEqual([])
+  // The swap as a press sees it: the control named PL is the Points control, and the other way about.
+  const crossed = clean.map((each) => (each.name === 'PL' ? { ...each, column: 12, marked: [12], order: order('PTS') } : each.name === 'PTS' ? { ...each, column: 5, marked: [5], order: order('PL') } : each))
+  expect(sortFaults(crossed, table)).toEqual([
+    'the control named "PL" stands in column 12 of the head, and that name’s column is 5',
+    'a press on "PL" marked column 12 as sorted, expected column 5',
+    'a press on "PL" did not order the table by matches played: it begins a, b, c, and the snapshot’s order begins b, a, d',
+    'the control named "PTS" stands in column 5 of the head, and that name’s column is 12',
+    'a press on "PTS" marked column 5 as sorted, expected column 12',
+    'a press on "PTS" did not order the table by league position: it begins b, a, d, and the snapshot’s order begins a, b, c',
+  ])
+  // A press that sorts by nothing, a name no control computes, and a press that marked nothing.
+  expect(sortFaults(clean.map((each) => (each.name === 'GA' ? { ...each, order: order('PTS') } : each)), table))
+    .toEqual(['a press on "GA" did not order the table by goals against: it begins a, b, c, and the snapshot’s order begins b, d, a'])
+  expect(sortFaults(clean.filter((each) => each.name !== 'PPG'), table)).toEqual(['no control is named "PPG", so its sort was never pressed'])
+  expect(sortFaults(clean.map((each) => (each.name === 'GF' ? { ...each, marked: [] } : each)), table)).toEqual(['a press on "GF" marked no column as sorted, expected column 9'])
+})
+
+// The review of PR #352, finding 4: a transparent ring has the right width and offset, and nothing lies over it.
+test('a focus ring is read as painted: its own colour on every edge with focus, and something else without', () => {
+  const pulp = { r: 239, g: 234, b: 217 }
+  const pitch = { r: 44, g: 122, b: 75 }
+  // A 60 by 44 box, the height of a control. `ringed` draws a line `width` deep inside every edge but the ones in `bare`.
+  const [W, H] = [60, 44]
+  const image = (paint: (x: number, y: number) => { r: number; g: number; b: number }) => {
+    const data = new Uint8Array(W * H * 4)
+    for (let y = 0; y < H; y += 1) for (let x = 0; x < W; x += 1) data.set([paint(x, y).r, paint(x, y).g, paint(x, y).b, 255], 4 * (y * W + x))
+    return { width: W, height: H, data }
+  }
+  const rested = image(() => pulp)
+  const ringed = (colour = pitch, bare: string[] = [], width = 2) => image((x, y) => {
+    const on = (y < width && !bare.includes('top')) || (y >= H - width && !bare.includes('bottom')) || (x < width && !bare.includes('left')) || (x >= W - width && !bare.includes('right'))
+    return on ? colour : pulp
+  })
+  const read = (focused: ReturnType<typeof image>, ring = pitch) => ringPixels({ focused, rested, ring, width: 2, offset: -2 })
+  const whole = read(ringed())
+  expect(whole.edges).toEqual({ top: [2, 2, 2, 2, 2], bottom: [2, 2, 2, 2, 2], left: [2, 2, 2, 2, 2], right: [2, 2, 2, 2, 2] })
+  expect(whole.ground).toBe('rgb(239, 234, 217)')
+  expect(whole.contrast).toBeGreaterThan(4)
+  const paint = { color: 'rgb(44, 122, 75)', alpha: 1, cut: [] as string[], ...whole }
+  expect(ringPaintFaults('"1. Club"', paint)).toEqual([])
+
+  // Transparent: the two captures are the same picture, and the colour says so first.
+  const clear = read(rested, { r: 0, g: 0, b: 0 })
+  expect(clear.edges).toEqual({ top: [0, 0, 0, 0, 0], bottom: [0, 0, 0, 0, 0], left: [0, 0, 0, 0, 0], right: [0, 0, 0, 0, 0] })
+  expect(ringPaintFaults('"1. Club"', { color: 'rgba(0, 0, 0, 0)', alpha: 0, cut: [], ...clear })).toEqual(['the focus ring of "1. Club" is rgba(0, 0, 0, 0), which paints nothing'])
+  // A zone header over the row's upper edge: three edges are the ring's and the top is the header's.
+  expect(ringPaintFaults('"9. Club"', { ...paint, ...read(ringed(pitch, ['top'])) })).toEqual(['the focus ring of "9. Club" is not painted at 5 of 5 points on its top edge'])
+  // A ring in the colour of the page it is on changes no pixel, so no point is the ring's.
+  expect(ringPaintFaults('"1. Club"', { ...paint, color: 'rgb(239, 234, 217)', ...read(rested, pulp) })).toEqual([
+    'the focus ring of "1. Club" is not painted at 5 of 5 points on its top edge',
+    'the focus ring of "1. Club" is not painted at 5 of 5 points on its bottom edge',
+    'the focus ring of "1. Club" is not painted at 5 of 5 points on its left edge',
+    'the focus ring of "1. Club" is not painted at 5 of 5 points on its right edge',
+    'the focus ring of "1. Club" is rgb(239, 234, 217), 1.00:1 against the rgb(239, 234, 217) it is drawn on',
+  ])
+  // Painted, and too close to the page to be seen: 3:1 is the floor for a ring.
+  const faint = { r: 200, g: 196, b: 180 }
+  const pale = read(ringed(faint), faint)
+  expect(pale.edges.top).toEqual([2, 2, 2, 2, 2])
+  expect(ringPaintFaults('"1. Club"', { ...paint, color: 'rgb(200, 196, 180)', ...pale })).toEqual([`the focus ring of "1. Club" is rgb(200, 196, 180), ${pale.contrast.toFixed(2)}:1 against the rgb(239, 234, 217) it is drawn on`])
+  expect(ringPaintFaults('"1. Club"', { ...paint, alpha: 0.5, color: 'rgba(44, 122, 75, 0.5)' })).toEqual(['the focus ring of "1. Club" is rgba(44, 122, 75, 0.5), which the page shows through'])
+  expect(ringPaintFaults('"1. Club"', { ...paint, cut: ['bottom'] })).toEqual(['the focus ring of "1. Club" is cut off at the bottom of the page'])
+
+  // Through the press: a table control carries its reading, and one that was not sampled is no pass.
+  const row = {
+    text: '1. Club', active: '1. Club', landed: true, row: true, owed: 0, focusVisible: true, before: 163, top: 163, bottom: 254, points: 15, under: {},
+    ring: { offset: -2, width: 2 }, ringUnder: {},
+  }
+  expect(focusFaults({ ...row, paint })).toEqual([])
+  expect(focusFaults({ ...row, paint: { color: 'rgba(0, 0, 0, 0)', alpha: 0, cut: [], ...clear } })).toEqual(['the focus ring of "1. Club" is rgba(0, 0, 0, 0), which paints nothing'])
+  expect(focusFaults(row)).toEqual(['the focus ring of "1. Club" was not sampled'])
+  // A control outside the table is not held to a reading: its ring is the page's, drawn outside it.
+  expect(focusFaults({ ...row, row: false, owed: -1, ring: undefined, ringUnder: undefined })).toEqual([])
 })
 
 // The review of PR #352, findings 5 and 2: a La Liga capture that showed Serie A, and a league the snapshot holds no table for.
