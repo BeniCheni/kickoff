@@ -1508,6 +1508,99 @@ export async function captureTableStates(browser, out, cells = [], contrast = nu
   return cells
 }
 
+/**
+ * The verifiers, shown to fail (the review of PR #352, findings 3 to 6). Each of four gates
+ * passed a page that was wrong, so each is run here on a page that is right, then on the
+ * same page broken the way the review broke it, and the run stops unless the first is
+ * clean and the second is not. A receipt that says a gate passed says nothing until the
+ * gate has been seen to fail.
+ */
+export async function proveVerifiers(browser, origins) {
+  const standings = committedStandings()
+  const [origin] = Object.values(origins)
+  const harness = process.env.KICKOFF_HARNESS_ORIGIN ?? 'http://127.0.0.1:5175'
+  const within = '.page-measure'
+  const controls = []
+  const record = (name, clean, broken, extra = {}) => {
+    assert.deepEqual(clean, [], `the verifier for "${name}" faults a clean page: ${clean.join('; ')}`)
+    assert.ok(broken.length > 0, `the verifier for "${name}" passed the broken page`)
+    controls.push({ name, clean: clean.length, faults: broken.length, first: broken[0], ...extra })
+  }
+
+  // Finding 3: Played and Points exchange accessible names. Each keeps its text, its place and its press.
+  {
+    const { context, page } = await openPage(browser, `${origin}/?tab=table&league=pl`, 'light', 1000)
+    try {
+      await page.waitForSelector('[data-table="desktop"] [data-table-row]', { timeout: 15_000 })
+      const judge = async () => {
+        const { seen, table } = await sweepFocus(page, { underFoot: 1.06 }, { within, layout: 'desktop' })
+        return [...sweepFaults(seen, { within, ...table, named: DESKTOP_TABLE_CONTROLS, placed: DESKTOP_TABLE_SORTS }), ...seen.flatMap(focusFaults), ...sortFaults(await pressSorts(page), standings.pl)]
+      }
+      const clean = await judge()
+      await page.evaluate(() => {
+        const buttons = [...document.querySelectorAll('[data-table="desktop"] > .sticky button')]
+        const [played, points] = [buttons[0], buttons[4]]
+        for (const [id, label] of [['verifier-label-pl', 'PL'], ['verifier-label-pts', 'PTS']]) {
+          const span = document.createElement('span')
+          span.hidden = true
+          span.id = id
+          span.textContent = label
+          document.body.append(span)
+        }
+        played.setAttribute('aria-labelledby', 'verifier-label-pts')
+        points.setAttribute('aria-labelledby', 'verifier-label-pl')
+      })
+      record('two sort controls exchange accessible names', clean, await judge())
+    } finally { await context.close() }
+  }
+
+  // Finding 4: the row's focus ring is made transparent. Width, offset and what lies over it are unchanged.
+  {
+    const league = longestLeague(standings)
+    const clubs = standings[league].map((club) => ({ id: club.teamId, name: club.name }))
+    const { context, page } = await openPage(browser, `${origin}/?tab=table&league=${league}`, 'light', 390)
+    try {
+      await page.waitForSelector('[data-table="mobile"] [data-table-row]', { timeout: 15_000 })
+      const judge = async () => {
+        const { seen, table } = await sweepFocus(page, { underFoot: 1.06 }, { within, layout: 'mobile' })
+        return { rows: seen.filter((control) => control.row).length, faults: [...sweepFaults(seen, { within, ...table, clubs }), ...seen.flatMap(focusFaults)] }
+      }
+      const clean = await judge()
+      await page.addStyleTag({ content: 'button.register-row:focus-visible { outline-color: transparent !important }' })
+      const broken = await judge()
+      assert.equal(broken.faults.length, clean.rows, `a transparent ring faulted ${broken.faults.length} of ${clean.rows} rows`)
+      record('a transparent focus ring on the standings rows', clean.faults, broken.faults, { league, rows: clean.rows })
+    } finally { await context.close() }
+  }
+
+  // Finding 5: a capture asked for La Liga and the page that opened is Serie A's.
+  {
+    const ids = (league) => standings[league].map((club) => club.teamId)
+    const { context, page } = await openPage(browser, `${origin}/?tab=table&league=seriea`, 'light', 390)
+    try {
+      await page.waitForSelector('[data-table="mobile"] [data-table-row]', { timeout: 15_000 })
+      const shown = await readLeague(page, 'mobile')
+      record('a capture of La Liga that shows Serie A', leagueFaults('seriea', ids('seriea'), shown), leagueFaults('laliga', ids('laliga'), shown))
+    } finally { await context.close() }
+  }
+
+  // Finding 6: a clock and a score are added to the KICKED OFF cell, in each layout.
+  for (const width of [360, 1000]) {
+    const layout = width >= 768 ? 'desktop' : 'mobile'
+    const { context, page } = await openPage(browser, `${harness}/tests/harness/table.html?state=cells&theme=light`, 'light', width, { waitUntil: 'load' })
+    try {
+      await page.waitForFunction(() => document.documentElement.dataset.statesReady === 'true' || document.documentElement.dataset.statesError, { timeout: 15_000 })
+      const clean = tableStateFaults('cells', layout, await readTableState(page, layout))
+      await page.evaluate((shown) => {
+        const row = [...document.querySelectorAll(`[data-table="${shown}"] [data-table-row]`)].find((each) => each.querySelector('.register-name')?.textContent === 'Specimen Kicked')
+        row.querySelector('[data-next-cell]').append(' 3:00 PM · 2–1')
+      }, layout)
+      record(`a clock and a score beside KICKED OFF (${layout})`, clean, tableStateFaults('cells', layout, await readTableState(page, layout)))
+    } finally { await context.close() }
+  }
+  return controls
+}
+
 // The first frame of a shell the server renders. Its HTML is laid out before the app
 // runs, so what pins below the band has to start at the band's foot by then.
 /** `state` is the scrolled Table with the app's scripts held. The pinned rows are held to
@@ -2665,7 +2758,7 @@ async function main() {
   const matrix = emptyMatrix()
   const weekRun = { cells: [], contrast: [] }
   const tableRun = { cells: [], contrast: [] }
-  const steps = { motion: null, chrome: null, feedback: null, banner: null, pins: null, focus: null, rings: null, first: null, requests: null, offline: null, harness: null, tableStates: null }
+  const steps = { motion: null, chrome: null, feedback: null, banner: null, pins: null, focus: null, rings: null, verifiers: null, first: null, requests: null, offline: null, harness: null, tableStates: null }
   const receipt = () => {
     const contrastCells = [...matrix.contrast, ...weekRun.contrast, ...tableRun.contrast]
     return {
@@ -2685,6 +2778,7 @@ async function main() {
     steps.pins = await proveTablePins(browser, origins, anchor)
     steps.focus = await proveFocus(browser, origins, out)
     steps.rings = await proveRings(browser, origins)
+    steps.verifiers = await proveVerifiers(browser, origins)
     steps.first = await proveFirstFrame(browser, origins)
     await runMatrix(browser, { origins, out, anchor, contrast: true }, matrix)
     assert.equal(matrix.cells.length, 96)
