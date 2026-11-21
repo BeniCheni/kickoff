@@ -497,7 +497,8 @@ export function revealFaults(reveal) {
 
 export async function proveTablePins(browser, origins, anchor = null) {
   const rows = []
-  for (const [app, origin] of Object.entries(origins)) for (const league of ['ucl', 'pl']) for (const width of [360, 390, 1000]) {
+  const leagues = [...new Set([longestLeague(committedStandings()), 'pl'])]
+  for (const [app, origin] of Object.entries(origins)) for (const league of leagues) for (const width of [360, 390, 1000]) {
     const id = `pins-${app}-${league}-${width}`
     const { context, page, errors } = await openPage(browser, `${origin}/?tab=table&league=${league}`, 'light', width)
     try {
@@ -583,6 +584,24 @@ export async function proveTablePins(browser, origins, anchor = null) {
 // computes, not the label as it is written: Chrome folds the stylesheet's capitals into a
 // name it takes from text, so the label written "Pl" is the control named "PL".
 export const DESKTOP_TABLE_CONTROLS = ['PL', 'GF', 'GA', 'GD', 'PTS', 'PPG']
+
+/** The six leagues the Table has a tab for, in the tabs' order. A tab carries its key. */
+export const TABLE_LEAGUE_KEYS = ['laliga', 'pl', 'seriea', 'ligue1', 'bundesliga', 'ucl']
+
+/**
+ * The league with the longest table the snapshot holds: the Champions League's 36 while the
+ * provider supplies it, and the first of the longest domestic tables once it does not. The
+ * proofs that need rows under a pinned head open this one, so a snapshot without a
+ * Champions League table (the review of PR #352, finding 2) is proved and not skipped.
+ */
+export function longestLeague(standings) {
+  const held = TABLE_LEAGUE_KEYS.filter((league) => standings[league]?.length)
+  if (!held.length) throw new Error('the snapshot holds no table for any league, so no Table proof can run')
+  return held.reduce((longest, league) => (standings[league].length > standings[longest].length ? league : longest))
+}
+
+/** The committed standings, by league. */
+const committedStandings = () => JSON.parse(readFileSync(path.join(root, 'src/data/standings.json'), 'utf8')).leagues
 
 /**
  * The name the browser computes for each element of `elements`, an array in the page, read
@@ -799,11 +818,12 @@ async function sweepFocus(page, place, { within = '.page-measure', layout }) {
  *  divider cover a row, and 20px from the top of the page, behind the band itself. Each
  *  placement is held to sweepFaults first, so a cell that pressed nothing cannot pass. */
 export async function proveFocus(browser, origins, out) {
-  const standings = JSON.parse(readFileSync(path.join(root, 'src/data/standings.json'), 'utf8')).leagues
+  const standings = committedStandings()
+  const long = longestLeague(standings)
   const files = { offline: path.join(root, 'dist-offline/index.html'), single: path.join(root, 'dist-single/index.html') }
   const shells = [
-    ...Object.entries(origins).map(([app, origin]) => ({ app, url: (league) => `${origin}/?tab=table&league=${league}`, leagues: ['ucl', 'pl'], open: {} })),
-    ...Object.entries(files).map(([app, file]) => ({ app, url: (league) => `${pathToFileURL(file).href}?tab=table&league=${league}`, leagues: ['ucl'], open: { waitUntil: 'domcontentloaded', offline: true } })),
+    ...Object.entries(origins).map(([app, origin]) => ({ app, url: (league) => `${origin}/?tab=table&league=${league}`, leagues: [...new Set(['ucl', long, 'pl'])], open: {} })),
+    ...Object.entries(files).map(([app, file]) => ({ app, url: (league) => `${pathToFileURL(file).href}?tab=table&league=${league}`, leagues: [...new Set(['ucl', long])], open: { waitUntil: 'domcontentloaded', offline: true } })),
   ]
   const places = [{ name: 'under the band’s foot', underFoot: 1.06 }, { name: 'behind the band', y: 20 }]
   const rows = []
@@ -813,15 +833,32 @@ export async function proveFocus(browser, origins, out) {
     try {
       await page.waitForSelector('[data-table-picker]', { timeout: 15_000 })
       const layout = width >= 768 ? 'desktop' : 'mobile'
+      const within = '.page-measure'
+      const held = standings[league] ?? []
+      if (!held.length) {
+        // A snapshot may hold no table for a league (the review of PR #352, finding 2):
+        // the page owes the empty page, and the sweep owes it no table and no row.
+        const state = await page.evaluate(() => ({ empty: !!document.querySelector('[data-empty-table]'), tables: document.querySelectorAll('[data-table]').length, scroll: document.documentElement.scrollWidth === innerWidth }))
+        assert.deepEqual(state, { empty: true, tables: 0, scroll: true }, `${id} the snapshot holds no ${league} table`)
+        const { seen, table } = await sweepFocus(page, places[0], { within, layout })
+        const faults = [
+          ...(seen.length ? [] : [`no Tab was pressed: nothing a keyboard can reach is inside ${within}`]),
+          ...(table.rows.length || table.controls.length ? [`the page draws ${table.rows.length} rows and ${table.controls.length} table controls for a league the snapshot holds no table for`] : []),
+          ...seen.flatMap(focusFaults),
+        ]
+        assert.deepEqual(faults, [], `${id} ${faults.join('; ')}`)
+        assert.deepEqual(errors, [], id)
+        rows.push({ id, empty: true, controls: seen.length, tableControls: 0, rowControls: 0, tableRows: 0, clubs: 0, named: null, pressed: seen.length, moved: 0 })
+        continue
+      }
       // A club's row is a control on the phone: each club in the committed standings is
       // owed its own, matched by the id the row carries. The desktop rows hold none and
       // the table is owed its six sort controls by name; a row control arriving there is
       // owed a press too.
-      const clubs = layout === 'mobile' ? standings[league].map((club) => ({ id: club.teamId, name: club.name })) : null
+      const clubs = layout === 'mobile' ? held.map((club) => ({ id: club.teamId, name: club.name })) : null
       const named = layout === 'desktop' ? DESKTOP_TABLE_CONTROLS : null
       const row = { id, controls: 0, tableControls: 0, rowControls: 0, tableRows: 0, clubs: clubs?.length ?? null, named, pressed: 0, moved: 0 }
       for (const place of places) {
-        const within = '.page-measure'
         const { seen, table } = await sweepFocus(page, place, { within, layout })
         const faults = [...sweepFaults(seen, { within, ...table, clubs, named }), ...seen.flatMap(focusFaults)]
         assert.deepEqual(faults, [], `${id} ${place.name}: ${faults.join('; ')}`)
@@ -860,7 +897,8 @@ export async function proveFocus(browser, origins, out) {
  *  what the Table owes is a fault before any box is measured: a control that is not there
  *  has no hit area to fail. `clubs` is the count the committed standings hold. */
 export function tableHitFaults(boxes, { layout, clubs }) {
-  const owed = { tab: 6, key: 1, ...(layout === 'mobile' ? { row: clubs } : { sort: DESKTOP_TABLE_CONTROLS.length }) }
+  // A league the snapshot holds no table for draws the six tabs and no other control.
+  const owed = { tab: 6, ...(layout === 'empty' ? {} : { key: 1, ...(layout === 'mobile' ? { row: clubs } : { sort: DESKTOP_TABLE_CONTROLS.length }) }) }
   const faults = []
   for (const kind of new Set([...Object.keys(owed), ...boxes.map((box) => box.kind)])) {
     const drawn = boxes.filter((box) => box.kind === kind).length
@@ -912,13 +950,66 @@ export function columnFaults({ cells, table, overflow }) {
 const TABLE_WIDTHS = [360, 390, 1000]
 
 /**
+ * A capture of one league's Table is that league's (the review of PR #352, finding 5). The
+ * cover's line beginning with the pressed tab's words says only that the page agrees with
+ * itself: a page asked for La Liga that opened Serie A passed, both having twenty clubs.
+ * So the tab pressed has to carry the key that was asked for, and the rows have to be the
+ * provider's clubs for that key, by id, in the provider's order. `clubs` is those ids from
+ * the committed standings. With none, the snapshot holds no table for the league (finding
+ * 2), and the page owes the empty page: its note, no table and no row.
+ *
+ * @param {string} league  the key the capture asked for
+ * @param {string[]} clubs
+ * @param {{ tabs: string[], pressed: string[], ids: string[], empty: string | null, tables: number }} seen
+ */
+export function leagueFaults(league, clubs, { tabs, pressed, ids, empty, tables }) {
+  const faults = []
+  if (tabs.join() !== TABLE_LEAGUE_KEYS.join()) faults.push(`the tabs are ${tabs.join(', ') || 'none'}, expected ${TABLE_LEAGUE_KEYS.join(', ')}`)
+  if (pressed.join() !== league) faults.push(`asked for ${league}, and the tab pressed is ${pressed.join(' and ') || 'none'}`)
+  if (!clubs.length) {
+    if (empty === null) faults.push(`the snapshot holds no ${league} table, and the page does not say so`)
+    if (tables || ids.length) faults.push(`the snapshot holds no ${league} table, and the page draws ${tables} ${tables === 1 ? 'table' : 'tables'} and ${ids.length} ${ids.length === 1 ? 'row' : 'rows'}`)
+    return faults
+  }
+  if (empty !== null) faults.push(`the snapshot holds ${clubs.length} ${league} clubs, and the page says it has no table`)
+  const at = clubs.findIndex((id, i) => ids[i] !== id)
+  if (ids.length !== clubs.length) faults.push(`the page draws ${ids.length} rows, and the snapshot holds ${clubs.length} ${league} clubs`)
+  else if (at >= 0) faults.push(`row ${at + 1} is club "${ids[at]}", and the snapshot’s ${league} table has "${clubs[at]}" there`)
+  return faults
+}
+
+/** What a Table page shows of its league, in the layout the width draws. */
+function readLeague(page, layout) {
+  return page.evaluate((shown) => {
+    const table = document.querySelector(`[data-table="${shown}"]`)
+    const tabs = [...document.querySelectorAll('[data-table-picker] button')]
+    const pressed = tabs.filter((tab) => tab.getAttribute('aria-pressed') === 'true')
+    return {
+      scrollWidth: document.documentElement.scrollWidth, innerWidth,
+      theme: document.documentElement.dataset.theme,
+      tabs: tabs.map((tab) => tab.getAttribute('data-league') ?? ''),
+      pressed: pressed.map((tab) => tab.getAttribute('data-league') ?? ''),
+      current: pressed[0]?.textContent ?? '',
+      line: document.querySelector('.register-cover-line')?.textContent ?? '',
+      empty: document.querySelector('[data-empty-table]')?.textContent ?? null,
+      tables: document.querySelectorAll('[data-table]').length,
+      ids: table ? [...table.querySelectorAll('[data-table-row]')].map((row) => row.getAttribute('data-table-row')) : [],
+    }
+  }, layout)
+}
+
+/**
  * With `files`, the same cells run on the two files a reader opens from disk, and the
  * network is off: openPage fails a cell whose file asks for any host at all.
  */
 export async function captureTable(browser, { origins = {}, out, contrast = false, files = false }, result = { cells: [], contrast: [] }) {
-  const standings = JSON.parse(readFileSync(path.join(root, 'src/data/standings.json'), 'utf8')).leagues
-  const leagues = Object.keys(standings)
-  assert.equal(leagues.length, 6, `the standings hold ${leagues.length} leagues, expected 6`)
+  const standings = committedStandings()
+  const degraded = JSON.parse(readFileSync(path.join(root, 'src/data/meta.json'), 'utf8')).standingsDegraded ?? []
+  // The six leagues the Table has a tab for, whether or not the snapshot holds a table for
+  // each: a sync may write none for a league, and that league's cells are the empty page.
+  const leagues = TABLE_LEAGUE_KEYS
+  const strangers = Object.keys(standings).filter((key) => !leagues.includes(key))
+  assert.deepEqual(strangers, [], `the standings hold a league the Table has no tab for: ${strangers.join(', ')}`)
   const disk = { offline: path.join(root, 'dist-offline/index.html'), single: path.join(root, 'dist-single/index.html') }
   const apps = files
     ? Object.entries(disk).map(([app, file]) => ({ app, url: (league) => `${pathToFileURL(file).href}?tab=table&league=${league}`, open: { waitUntil: 'domcontentloaded', offline: true } }))
@@ -929,32 +1020,44 @@ export async function captureTable(browser, { origins = {}, out, contrast = fals
       const { context, page, errors } = await openPage(browser, url(league), theme, width, open)
       try {
         const layout = width >= 768 ? 'desktop' : 'mobile'
-        await page.waitForSelector(`[data-table="${layout}"] [data-table-row]`, { timeout: 15_000 })
-        const state = await page.evaluate((shown) => {
-          const table = document.querySelector(`[data-table="${shown}"]`)
+        const clubs = (standings[league] ?? []).map((club) => club.teamId)
+        await page.waitForSelector(`[data-table="${layout}"] [data-table-row], [data-empty-table]`, { timeout: 15_000 })
+        const shown = await readLeague(page, layout)
+        assert.equal(shown.scrollWidth, shown.innerWidth, id)
+        assert.equal(shown.theme, theme, id)
+        assert.deepEqual(errors, [], id)
+        const bound = leagueFaults(league, clubs, shown)
+        assert.deepEqual(bound, [], `${id} ${bound.join('; ')}`)
+        if (!clubs.length) {
+          // The empty page: the league's name on the cover, the reason in the app's words,
+          // the six tabs as the only controls, and the page's contrast as drawn.
+          assert.equal(shown.line, shown.current, `${id} the cover reads "${shown.line}" under the tab "${shown.current}"`)
+          const reason = degraded.includes(league) ? 'the provider no longer supplies the configured league-phase table.' : 'run npm run sync.'
+          assert.equal(shown.empty, `No table in the snapshot for ${shown.current} — ${reason}`, id)
+          const hits = tableHitFaults(await tableHitBoxes(page, layout), { layout: 'empty', clubs: 0 })
+          assert.deepEqual(hits, [], `${id} ${hits.join('; ')}`)
+          const drawn = await shoot(page, path.join(out, `${id}.png`), width)
+          if (contrast) result.contrast.push(await measureContrast(page, id, width, drawn))
+          assert.deepEqual(errors, [], id)
+          result.cells.push({ id, rows: 0, empty: true, line: shown.line, columns: 0, table: 0, scrollWidth: shown.scrollWidth })
+          continue
+        }
+        const state = { ...shown, rows: shown.ids.length, ...(await page.evaluate((layoutShown) => {
+          const table = document.querySelector(`[data-table="${layoutShown}"]`)
           const head = table.querySelector(':scope > .sticky')
           const edges = (el) => ({ name: el.textContent.trim(), left: el.getBoundingClientRect().left, right: el.getBoundingClientRect().right })
           const wide = (el) => el.scrollWidth > el.clientWidth + 0.5
           return {
-            scrollWidth: document.documentElement.scrollWidth, innerWidth,
-            theme: document.documentElement.dataset.theme,
-            current: document.querySelector('[data-table-picker] [aria-pressed="true"]')?.textContent ?? '',
-            line: document.querySelector('.register-cover-line')?.textContent ?? '',
-            rows: table.querySelectorAll('[data-table-row]').length,
             cells: [...head.children].map(edges),
             table: { right: table.getBoundingClientRect().right, width: table.getBoundingClientRect().width },
             overflow: [...table.querySelectorAll('[data-table-row] > .register-row')]
               .filter((row) => wide(row) || [...row.children].some(wide))
               .map((row) => row.parentElement.getAttribute('data-table-row')),
           }
-        }, layout)
-        assert.equal(state.scrollWidth, state.innerWidth, id)
-        assert.equal(state.theme, theme, id)
-        assert.deepEqual(errors, [], id)
-        assert.equal(state.rows, standings[league].length, `${id} draws ${state.rows} rows, and the standings hold ${standings[league].length} clubs`)
+        }, layout)) }
         // The cover's line is the league a reader chose and the app's own matchday count.
         assert.ok(state.current && state.line.startsWith(`${state.current} · As of matchday `), `${id} the cover reads "${state.line}" under the tab "${state.current}"`)
-        const hits = tableHitFaults(await tableHitBoxes(page, layout), { layout, clubs: standings[league].length })
+        const hits = tableHitFaults(await tableHitBoxes(page, layout), { layout, clubs: clubs.length })
         assert.deepEqual(hits, [], `${id} ${hits.join('; ')}`)
         if (layout === 'desktop') {
           const columns = columnFaults(state)
@@ -972,8 +1075,8 @@ export async function captureTable(browser, { origins = {}, out, contrast = fals
         await new Promise((resolve) => setTimeout(resolve, 400))
         const opened = await page.evaluate(() => ({ scrollWidth: document.documentElement.scrollWidth, innerWidth }))
         assert.equal(opened.scrollWidth, opened.innerWidth, `${id} with the key opened`)
-        const shown = await shoot(page, path.join(out, `${id}-opened.png`), width)
-        if (contrast) result.contrast.push(await measureContrast(page, `${id}-opened`, width, shown))
+        const drawn = await shoot(page, path.join(out, `${id}-opened.png`), width)
+        if (contrast) result.contrast.push(await measureContrast(page, `${id}-opened`, width, drawn))
         assert.deepEqual(errors, [], `${id} with the key opened`)
         result.cells.push({ id, rows: state.rows, line: state.line, columns: state.cells.length, table: state.table.width, scrollWidth: state.scrollWidth })
       } finally { await context.close() }
@@ -1147,7 +1250,7 @@ export async function proveFirstFrame(browser, origins) {
       await page.evaluateOnNewDocument(() => localStorage.setItem('kickoff-theme', 'light'))
       await page.evaluateOnNewDocument(watchBand)
       const scripts = await holdScripts(page)
-      const loaded = page.goto(`${origins.next}/?tab=table&league=ucl`, { waitUntil: 'load', timeout: 30_000 })
+      const loaded = page.goto(`${origins.next}/?tab=table&league=${longestLeague(committedStandings())}`, { waitUntil: 'load', timeout: 30_000 })
       loaded.catch(() => {})
       await until(() => scripts.count() > 0, `${id}: the app's scripts`)
       await until(() => page.evaluate(() => !!document.querySelector('[data-table] [data-table-row]')).catch(() => false), `${id}: the server-rendered table`)

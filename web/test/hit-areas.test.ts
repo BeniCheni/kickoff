@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { DESKTOP_TABLE_CONTROLS, bandFaults, firstFrameFaults, focusFaults, handoffFaults, hitAreaFaults, momentsPaintFaults, pinFaults, revealFaults, sweepFaults, tabFaults, columnFaults, tableHitFaults, tableStateFaults } from '../scripts/evidence.mjs'
+import { DESKTOP_TABLE_CONTROLS, TABLE_LEAGUE_KEYS, bandFaults, firstFrameFaults, focusFaults, handoffFaults, hitAreaFaults, leagueFaults, longestLeague, momentsPaintFaults, pinFaults, revealFaults, sweepFaults, tabFaults, columnFaults, tableHitFaults, tableStateFaults } from '../scripts/evidence.mjs'
 
 const box = (name: string, left: number, top: number, w: number, h = 44) => ({ name, left, top, right: left + w, bottom: top + h, w, h })
 
@@ -544,4 +544,57 @@ test('a Table state on the harness shows what it is there to show, in the layout
   expect(tableStateFaults('empty', 'mobile', { text: 'No table in the snapshot for Ligue 1 — run npm run sync.', marks: 0, tables: 2 })).toEqual(['empty draws 2 tables, and the snapshot holds none'])
   expect(tableStateFaults('opened', 'mobile', { text: 'W-D-L 1-1-2 PPG 1.00', marks: 30, tables: 1 })).toEqual(['opened draws 1 tables, expected the phone’s and the desktop’s'])
   expect(tableStateFaults('nope', 'mobile', { text: '', marks: 0, tables: 0 })).toEqual(['nope is not a Table state the runner knows'])
+})
+
+// The review of PR #352, findings 5 and 2: a La Liga capture that showed Serie A, and a league the snapshot holds no table for.
+test('a capture of a league is that league’s: the tab pressed and the provider’s clubs in order, or the empty page', () => {
+  expect(TABLE_LEAGUE_KEYS).toEqual(['laliga', 'pl', 'seriea', 'ligue1', 'bundesliga', 'ucl'])
+  const laliga = ['86', '83', '1068']
+  const seriea = ['110', '103', '111']
+  const page = { tabs: TABLE_LEAGUE_KEYS, pressed: ['laliga'], ids: laliga, empty: null, tables: 2 }
+  expect(leagueFaults('laliga', laliga, page)).toEqual([])
+  // Asked for La Liga, and Serie A opened: the same number of rows, and a cover that agrees with its own tab.
+  expect(leagueFaults('laliga', laliga, { ...page, pressed: ['seriea'], ids: seriea })).toEqual([
+    'asked for laliga, and the tab pressed is seriea',
+    'row 1 is club "110", and the snapshot’s laliga table has "86" there',
+  ])
+  // The right tab over another league's rows, the right clubs out of the provider's order, and a row short.
+  expect(leagueFaults('laliga', laliga, { ...page, ids: seriea })).toEqual(['row 1 is club "110", and the snapshot’s laliga table has "86" there'])
+  expect(leagueFaults('laliga', laliga, { ...page, ids: ['86', '1068', '83'] })).toEqual(['row 2 is club "1068", and the snapshot’s laliga table has "83" there'])
+  expect(leagueFaults('laliga', laliga, { ...page, ids: laliga.slice(0, 2) })).toEqual(['the page draws 2 rows, and the snapshot holds 3 laliga clubs'])
+  expect(leagueFaults('laliga', laliga, { ...page, pressed: [] })).toEqual(['asked for laliga, and the tab pressed is none'])
+  expect(leagueFaults('laliga', laliga, { ...page, pressed: ['laliga', 'pl'] })).toEqual(['asked for laliga, and the tab pressed is laliga and pl'])
+  expect(leagueFaults('laliga', laliga, { ...page, tabs: TABLE_LEAGUE_KEYS.slice(0, 5) })).toEqual(['the tabs are laliga, pl, seriea, ligue1, bundesliga, expected laliga, pl, seriea, ligue1, bundesliga, ucl'])
+  expect(leagueFaults('laliga', laliga, { ...page, empty: 'No table in the snapshot for La Liga — run npm run sync.', tables: 0, ids: [] })).toEqual([
+    'the snapshot holds 3 laliga clubs, and the page says it has no table',
+    'the page draws 0 rows, and the snapshot holds 3 laliga clubs',
+  ])
+
+  // The snapshot holds no Champions League table: the page owes its note, no table and no row.
+  const none = { tabs: TABLE_LEAGUE_KEYS, pressed: ['ucl'], ids: [] as string[], empty: 'No table in the snapshot for Champions League — the provider no longer supplies the configured league-phase table.', tables: 0 }
+  expect(leagueFaults('ucl', [], none)).toEqual([])
+  expect(leagueFaults('ucl', [], { ...none, empty: null })).toEqual(['the snapshot holds no ucl table, and the page does not say so'])
+  expect(leagueFaults('ucl', [], { ...none, tables: 2, ids: ['160'] })).toEqual(['the snapshot holds no ucl table, and the page draws 2 tables and 1 row'])
+  expect(leagueFaults('ucl', [], { ...none, pressed: ['laliga'] })).toEqual(['asked for ucl, and the tab pressed is laliga'])
+})
+
+test('the proofs that need rows open the longest table the snapshot holds', () => {
+  const rows = (count: number) => Array.from({ length: count }, (_, i) => ({ teamId: String(i) }))
+  const domestic = { laliga: rows(20), pl: rows(20), seriea: rows(20), ligue1: rows(18), bundesliga: rows(18) }
+  expect(longestLeague({ ...domestic, ucl: rows(36) })).toBe('ucl')
+  // Once the provider supplies no Champions League table: the first of the longest, in the tabs' order.
+  expect(longestLeague(domestic)).toBe('laliga')
+  expect(longestLeague({ ...domestic, ucl: [] })).toBe('laliga')
+  expect(longestLeague({ pl: rows(20), ligue1: rows(18) })).toBe('pl')
+  expect(() => longestLeague({})).toThrow('the snapshot holds no table for any league')
+})
+
+test('the empty page’s hit areas are its six tabs and nothing else', () => {
+  const at = (kind: string, name: string, left: number, top: number, w = 44, h = 44) => ({ kind, name: `${kind} ${name}`, left, right: left + w, top, bottom: top + h, w, h })
+  const tabs = ['La Liga', 'Premier League', 'Serie A', 'Ligue 1', 'Bundesliga', 'Champions League'].map((name, i) => at('tab', name, 20 + (i % 3) * 106, 300 + Math.floor(i / 3) * 44, 106))
+  expect(tableHitFaults(tabs, { layout: 'empty', clubs: 0 })).toEqual([])
+  expect(tableHitFaults(tabs.slice(0, 5), { layout: 'empty', clubs: 0 })).toEqual(['5 tab hit areas, expected 6'])
+  // A key bar or a row on a page with no table is a control nothing owes.
+  expect(tableHitFaults([...tabs, at('key', 'Zones & key', 20, 388, 320)], { layout: 'empty', clubs: 0 })).toEqual(['1 key hit area, expected 0'])
+  expect(tableHitFaults([...tabs, at('row', '160', 0, 520, 360, 91)], { layout: 'empty', clubs: 0 })).toEqual(['1 row hit area, expected 0'])
 })
