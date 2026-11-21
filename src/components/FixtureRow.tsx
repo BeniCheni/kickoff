@@ -52,9 +52,9 @@ export function FixtureRow({ fixture, lens = 'ledger', hot, stale, next, nowUtcI
       </div>
       <div className="fixture-meta" data-voice="muted">
         {poster && <span className="fixture-outcome">{result}{pill}</span>}
-        <span className="fixture-competition"><i aria-hidden="true" style={{ backgroundColor: comp.color }} />{comp.name}</span>
-        {fixture.venue && <span> · {fixture.venue}</span>}
-        {timed && <span> · <span className="stadium-clock" data-voice={times.local ? 'muted' : 'amber'}>
+        <span className="fixture-competition"><i aria-hidden="true" style={{ backgroundColor: comp.color }} />{comp.name}{(fixture.venue || timed) && ' · '}</span>
+        {fixture.venue && <span>{fixture.venue}{timed && ' · '}</span>}
+        {timed && <span><span className="stadium-clock" data-voice={times.local ? 'muted' : 'amber'}>
           {times.local ? `${times.local.clock24} local` : 'local time not known'}
         </span></span>}
       </div>

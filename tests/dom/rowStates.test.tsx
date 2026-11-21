@@ -64,3 +64,18 @@ it('a caller asking for NEXT cannot put it on a clockless Poster row', () => {
   expect(view.container.textContent).toContain('POSTPONED')
   expect(view.container.textContent).not.toContain('NEXT')
 })
+
+it.each(['poster', 'ledger'] as const)('%s keeps each metadata separator with its preceding unit', lens => {
+  const fixture = edgeFixture()
+  const view = render(<FixtureRow lens={lens} fixture={fixture} />)
+  const units = () => [...view.container.querySelectorAll('.fixture-meta > span')]
+    .map(el => el.textContent).filter(Boolean)
+  expect(units()).toEqual(['La Liga · ', 'Ramón Sánchez-Pizjuán · ', '21:00 local'])
+  expect(units().join('')).toBe('La Liga · Ramón Sánchez-Pizjuán · 21:00 local')
+  view.rerender(<FixtureRow lens={lens} fixture={{ ...fixture, venue: undefined }} />)
+  expect(units()).toEqual(['La Liga · ', '21:00 local'])
+  view.rerender(<FixtureRow lens={lens} fixture={{ ...fixture, timeConfidence: 'tbd' }} />)
+  expect(units()).toEqual(['La Liga · ', 'Ramón Sánchez-Pizjuán'])
+  view.rerender(<FixtureRow lens={lens} fixture={{ ...fixture, venue: undefined, timeConfidence: 'tbd' }} />)
+  expect(units()).toEqual(['La Liga'])
+})

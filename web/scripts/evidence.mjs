@@ -233,6 +233,29 @@ function cellReceipt(id, state, errors) {
   return { id, ...rest, errors }
 }
 
+// Check what the cascaded row styles request against the faces this shell declares.
+// FontFaceSet.check() alone succeeds when the browser can synthesize a missing face.
+export function missingFixtureFaces() {
+  const faces = [...document.fonts]
+  const missing = new Set()
+  for (const el of document.querySelectorAll('.fixture-row *, .next-up *')) {
+    if (![...el.childNodes].some(node => node.nodeType === Node.TEXT_NODE && node.textContent.trim())) continue
+    const style = getComputedStyle(el)
+    const family = style.fontFamily.split(',')[0].trim().replace(/["']/g, '')
+    const weight = Number(style.fontWeight)
+    const supported = faces.some(face => {
+      const [low, high = low] = face.weight.split(' ').map(Number)
+      return face.family.replace(/["']/g, '') === family && face.style === style.fontStyle && low <= weight && weight <= high
+    })
+    // Beni's six-face file set carries Caslon regular. The unset line's italic is
+    // its one known synthesis, pending the seventh-face ruling.
+    const unsetItalic = location.protocol === 'file:' && el.matches('.fixture-unset')
+      && family === 'Libre Caslon Text' && style.fontStyle === 'italic' && weight === 400
+    if (!supported && !unsetItalic) missing.add(`${el.className}: ${family} ${style.fontStyle} ${weight}`)
+  }
+  return [...missing]
+}
+
 /** `result` is filled as cells pass, so the caller's receipt keeps them if a later cell throws. */
 export function emptyMatrix() {
   return { cells: [], legacy: [], measurements: [], contrast: [] }
@@ -1088,6 +1111,7 @@ export async function captureWeeks(browser, { origins, out, weeks, contrast }, r
           )
           try {
             const state = await inspect(page)
+            assert.deepEqual(await page.evaluate(missingFixtureFaces), [], id)
             assertCell(state, errors, { id, lens, theme, tab: 'fixtures' })
             await assertBand(page, id, 'fixtures')
             const shown = await shoot(page, path.join(out, `${id}.png`), width)
@@ -1374,6 +1398,7 @@ export async function captureOffline(browser, out, result = { sizes: {}, cells: 
       { waitUntil: 'domcontentloaded', offline: true })
     try {
       await page.waitForSelector(`.fixture-${lens} .stadium-clock`)
+      assert.deepEqual(await page.evaluate(missingFixtureFaces), [], id)
       const clock = await page.$eval('.stadium-clock', el => el.textContent)
       assert.match(clock, /\d{2}:\d{2} local|local time not known/, id)
       assert.deepEqual(escaped, [], id)
@@ -1422,6 +1447,20 @@ export async function captureHarness(browser, out, cells = [], contrasts = []) {
       )
       assert.match(table, width >= 768 ? /time TBC/i : /kickoff time not yet set/i, `${id} does not show the unset cell`)
       assert.match(table, /kicked off/i, `${id} does not show the kicked-off cell`)
+      assert.deepEqual(await page.evaluate(missingFixtureFaces), [], id)
+      const longName = await page.$eval('[data-fixture-id="long-day-note"]', row => {
+        const names = row.querySelector('.fixture-names')
+        const node = [...names.childNodes].find(n => n.textContent.includes('Mönchengladbach'))
+        const start = node.textContent.indexOf('Mönchengladbach')
+        const range = document.createRange()
+        range.setStart(node, start)
+        range.setEnd(node, start + 'Mönchengladbach'.length)
+        const boxes = [...range.getClientRects()].filter(rect => rect.width)
+        const bounds = row.getBoundingClientRect()
+        return boxes.length === 1 && boxes[0].left >= bounds.left && boxes[0].right <= bounds.right
+          && row.scrollWidth === row.clientWidth
+      })
+      assert.ok(longName, `${id} split or clipped the club name beside a day note and penalties`)
       const penalties = await page.$eval('.fixture-poster[data-fixture-id="pens"]', row => {
         const score = row.querySelector('.fixture-score'), pill = row.querySelector('.fixture-status')
         const leader = row.querySelector('.fixture-leader'), clock = row.querySelector('.fixture-clock')

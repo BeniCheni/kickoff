@@ -181,6 +181,16 @@ function Harness() {
               </div>)}
           </Section>
         })}
+        <Section title="Day note with a shootout">
+          <div style={{ maxWidth: 640 }}>
+            <FixtureRow lens="ledger" fixture={row('long-day-note', {
+              status: 'after_penalties', result: { home: 3, away: 3 }, shootout: { home: 2, away: 4 },
+              kickoffUtc: '2026-12-12T23:30:00Z', venueTz: 'Europe/Istanbul',
+              home: { name: 'Borussia Mönchengladbach', sourceId: 'illustrative-home' },
+              away: { name: 'Eintracht Frankfurt', sourceId: 'illustrative-away' },
+            })} />
+          </div>
+        </Section>
         <Section title="Matchday line">
           <MatchdayLines fixtures={matchdays} />
         </Section>
