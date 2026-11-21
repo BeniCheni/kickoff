@@ -16,14 +16,19 @@ function expectUnavailable(button: HTMLButtonElement) {
   const url = location.href
   const state = document.querySelector('.week-range')?.textContent
   const filters = document.querySelector('.week-filters')?.getAttribute('aria-label')
-  // Native buttons dispatch a detail-zero click on Enter. jsdom lacks that default action.
-  for (const detail of [0, 1]) {
-    fireEvent.click(button, { detail })
+  const stillUnavailable = () => {
     expect(document.activeElement).toBe(button)
     expect(location.href).toBe(url)
     expect(document.querySelector('.week-range')?.textContent).toBe(state)
     expect(document.querySelector('.week-filters')?.getAttribute('aria-label')).toBe(filters)
   }
+  fireEvent.click(button, { detail: 1 })
+  stillUnavailable()
+  const enter = { key: 'Enter', code: 'Enter' }
+  // jsdom dispatches key events but omits the native button's keyboard-generated click.
+  if (fireEvent.keyDown(button, enter)) fireEvent.click(button, { detail: 0 })
+  fireEvent.keyUp(button, enter)
+  stillUnavailable()
 }
 
 it.each(['ledger', 'poster'] as const)('%s filters expose the action and toggle states', lens => {
@@ -71,7 +76,6 @@ it('stops at the last week in the snapshot', () => {
   expect(screen.getByRole<HTMLButtonElement>('button', { name: 'Previous' }).disabled).toBe(false)
   expect(screen.getByRole('button', { name: 'Previous' }).getAttribute('aria-disabled')).toBe('false')
 })
-
 
 it('the unavailable Show all never calls the action, even if setting all again would look identical', () => {
   const onShowAll = vi.fn()
