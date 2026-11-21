@@ -55,3 +55,12 @@ it('selects the first credible time for NEXT and the day’s first kickoff', () 
   expect(nextKickoffId(day, '2026-11-01T12:00:00Z')).toBe(later.id)
   expect(kickoffBounds(day)).toEqual({ first: later, last: later })
 })
+
+it('a caller asking for NEXT cannot put it on a clockless Poster row', () => {
+  const unset = edgeFixture({ timeConfidence: 'tbd' })
+  const view = render(<FixtureRow lens="poster" fixture={unset} next />)
+  expect(view.container.textContent).not.toContain('NEXT')
+  view.rerender(<FixtureRow lens="poster" fixture={edgeFixture({ status: 'postponed' })} next />)
+  expect(view.container.textContent).toContain('POSTPONED')
+  expect(view.container.textContent).not.toContain('NEXT')
+})

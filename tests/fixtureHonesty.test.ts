@@ -5,8 +5,21 @@ const src = new URL('../src/', import.meta.url)
 const components = globSync('components/**/*.{ts,tsx,css}', { cwd: src })
 const read = (file: string) => readFileSync(new URL(file, src), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '')
 
-it('components never construct a Date from a kickoff instant', () => {
-  for (const file of components) expect(read(file), file).not.toMatch(/new\s+Date\s*\([^)]*\bkickoffUtc\b/)
+it('components leave instant parsing and clock formatting to the time helpers', () => {
+  for (const file of components) {
+    let source = read(file)
+    if (file === 'components/StalenessBanner.tsx') {
+      // Snapshot age uses the app clock, never a fixture kickoff. Consume only this call.
+      const age = 'hoursSinceSync(new Date(nowUtcIso))'
+      expect(source).toContain(age)
+      source = source.replace(age, '')
+    }
+    if (file === 'components/TablePage.tsx') {
+      // The first-edition Table also computes snapshot age from now. A second call still fails.
+      source = source.replace('syncedAgo(new Date(nowUtcIso))', '')
+    }
+    expect(source, file).not.toMatch(/\b(?:new\s+Date|Date\s*\.\s*parse|Intl\s*\.\s*DateTimeFormat|toLocale(?:Date|Time)?String)\s*\(/)
+  }
 })
 
 // Match the expression and its purpose. Consume each site exactly once so even a second
@@ -18,6 +31,7 @@ const sites: [string, string, RegExp][] = [
   ['TonightSlate', '2 · unset cover', /text-floodlight-strong italic">TBC/],
   ['FixtureRow', '3 · last live score', /className="fixture-score" data-voice=\{isStale \? 'amber'/],
   ['StatusPill', '3 · kicked off', /const voice = kickedOff \? 'amber'/],
+  ['StalenessBanner', '5 · age banner ground', /className="staleness" data-plane=\{plane\} data-voice=\{plane\}/],
   ['StalenessBanner', '5 · snapshot age', /const plane = stale \? 'alarm' : 'amber'/],
   ['MatchdayLines', '7 · outside or rescheduled', /line.state === 'computed' \? 'ink' : 'amber'/],
   ['FixtureRow', '8 · unknown stadium clock', /className="stadium-clock" data-voice=\{times.local \? 'muted' : 'amber'/],
@@ -41,6 +55,7 @@ it('accounts for amber by component and reason', () => {
     remaining.set(file, source.replace(pattern, ''))
   }
   for (const [file, source] of remaining) {
+    expect(source, file).not.toMatch(/(?:^|["'`\s])(?:fixture-unset|provenance|staleness)(?=[\s"'`])/)
     expect(source, file).not.toMatch(/\b(?:amber|floodlight)\b|#(?:6e4b00|f7c948)\b/i)
   }
 })

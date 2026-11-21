@@ -16,7 +16,10 @@ it.each(['ledger', 'poster'] as const)('%s filters expose the action and toggle 
   expect(screen.getByRole<HTMLButtonElement>('button', { name: 'Next' }).disabled).toBe(false)
   const filters = screen.getByRole('button', { name: 'Filters, 14 of 14 competitions shown' })
   expect(filters.getAttribute('aria-expanded')).toBe('false')
+  const disclosure = document.getElementById(filters.getAttribute('aria-controls')!)!
+  expect(disclosure.hasAttribute('inert')).toBe(true)
   fireEvent.click(filters)
+  expect(disclosure.hasAttribute('inert')).toBe(false)
   expect(filters.getAttribute('aria-expanded')).toBe('true')
   const panel = within(document.getElementById(filters.getAttribute('aria-controls')!)!)
   const showAll = panel.getByRole<HTMLButtonElement>('button', { name: 'Show all' })
@@ -37,6 +40,7 @@ it.each(['ledger', 'poster'] as const)('%s filters expose the action and toggle 
   fireEvent.click(showAll)
   expect(showAll.disabled).toBe(true)
   fireEvent.click(filters)
+  expect(disclosure.hasAttribute('inert')).toBe(true)
   expect(screen.queryByRole('button', { name: 'Premier League' })).toBeNull()
 })
 
