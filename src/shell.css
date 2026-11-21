@@ -738,7 +738,9 @@ body:has(.page-measure[data-measure='register']) {
  * 88px with no gap for a tap to fall into. The current tab is a black plate,
  * so it names its own stock and takes the black voices: cover-ink and the
  * pitch that reads 8.73 on cover-black. Hover and pressed are ink shifts in
- * 150ms, as on the band.
+ * 150ms, as on the band. The current tab also carries its competition's 8px
+ * dot ahead of the name (boards 07 and 08). The hue is handed over as
+ * --comp-hue and fills the dot alone: never a label, never the plate.
  */
 .league-tabs {
   display: grid;
@@ -762,8 +764,10 @@ body:has(.page-measure[data-measure='register']) {
   transition: color 150ms ease;
 }
 .league-tab span {
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 6px;
   height: 30px;
   padding-inline: 6px;
   white-space: nowrap;
@@ -773,6 +777,13 @@ body:has(.page-measure[data-measure='register']) {
   background: var(--fb-cover-black);
   color: var(--fb-cover-ink);
   box-shadow: inset 0 -2.5px 0 var(--fb-pitch);
+}
+.league-tab-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--comp-hue);
 }
 @media (hover: hover) {
   .league-tab[aria-pressed='false']:hover {

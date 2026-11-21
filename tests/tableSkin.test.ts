@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { secondEditionPairs } from './contrast'
+import { COMPETITIONS, TABLE_LEAGUES } from '../src/lib/competitions'
+import { ratio, rgb, secondEditionPairs } from './contrast'
 
 /**
  * The Table's paint, read from the stylesheet that paints it. A dom test can say which
@@ -128,9 +129,26 @@ describe('league tabs and the notes, as painted', () => {
     expect(source('components/LeagueTabs.tsx')).toContain("data-stock={key === league ? 'black' : undefined}")
     expect(pair('cover-ink on cover-black').ratio).toBeGreaterThanOrEqual(4.5)
     expect(pair('pitch on cover-black').ratio).toBeGreaterThanOrEqual(3)
-    // No flag, no competition colour and no chip: the tab reads the league's name and nothing else.
-    expect(source('components/LeagueTabs.tsx')).not.toMatch(/\.flag|\.color|CompetitionChip|chipInk|style=/)
+    // No flag and no chip. The competition's colour has one use, below.
+    expect(source('components/LeagueTabs.tsx')).not.toMatch(/\.flag|CompetitionChip|chipInk/)
     expect(source('components/TablePage.tsx')).not.toMatch(/CompetitionChip|chipInk/)
+  })
+
+  // Boards 07 and 08 draw the competition's dot on the current tab (the review of PR #352,
+  // finding 9). The handoff's rule for a competition hue is "an 8 px dot, a zone band. Never
+  // text, never a tint", so what is forbidden is the hue anywhere but in that dot.
+  it('gives the current tab its competition’s 8px dot, and the hue no other use', () => {
+    expect(rule('.league-tab-dot')).toEqual({ flex: 'none', width: '8px', height: '8px', 'border-radius': '50%', background: 'var(--comp-hue)' })
+    const tabs = source('components/LeagueTabs.tsx')
+    // The colour is read once, for the pressed tab's dot, and handed to the stylesheet as --comp-hue.
+    expect(tabs.match(/\.color\b/g)).toHaveLength(1)
+    expect(tabs.match(/style=/g)).toHaveLength(1)
+    expect(tabs).toContain(`{key === league && <i className="league-tab-dot" aria-hidden="true" style={{ '--comp-hue': COMPETITIONS[key].color } as CSSProperties} />}`)
+    // In the stylesheet the hue fills the dot and is in no other declaration: no ink, no plate, no rule.
+    const uses = [...css.matchAll(/^.*var\(--comp-hue\).*$/gm)].map(([line]) => line.trim())
+    expect(uses).toEqual(['background: var(--comp-hue);'])
+    // Every table league's hue is a graphic a reader can see on the black plate.
+    for (const key of TABLE_LEAGUES) expect(ratio(rgb(COMPETITIONS[key].color), rgb('#0A0A0C')), key).toBeGreaterThanOrEqual(3)
   })
 
   it('rules the games-in-hand note in amber and washes nothing', () => {
