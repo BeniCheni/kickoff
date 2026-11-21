@@ -651,6 +651,21 @@ Cursor's hands this track seats no Cursor.
 - *Sixth re-read brief:* [`review-loop-sprint-3-synthesis-7-prompt.md`](review-loop-sprint-3-synthesis-7-prompt.md),
   for the sixth Pass 2.5 re-read (Claude Code, `claude-opus-5-5`, `xhigh`), in
   `~/code/review-seats/elenchus-pr8-pass25-r7`, with its sealed appendix as a second paste.
+- *Re-read a sixth time (Fri 20 Nov 2026):* the sixth Pass 2.5 re-read
+  ([comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7048766133)) found the
+  seventh round did what Beni ruled, with 25-23 to 25-25 fixed, no blocking finding open and
+  nothing contested. It opened 25-26 (should-fix), for a ruling posting before the standing
+  synthesis of a kind other than on time, and two notes: 25-27, for a carried id that is a note
+  or marked fixed, and 25-28, for an unknown key once every pass is recorded. Each rests on a
+  narrowed deletion that passes all 377 tests, as the Planner re-ran. The seal held, although
+  the entry above, pushed with the re-read's brief, summed up the Planner's own deletion runs:
+  the seat downloaded this file before the paste and printed none of those lines. The seat also
+  removed scratch it had made inside its own folder, and said so.
+- *Ruled a seventh time:* an eighth fix round, tests only. The rulings are under "Rulings
+  received" ("Sprint 3's seventh Pass 3").
+- *Eighth fix brief:* [`review-loop-sprint-3-fix-8-prompt.md`](review-loop-sprint-3-fix-8-prompt.md),
+  for Pass 2 again, as a re-read (Codex in the ChatGPT desktop app, `gpt-6.2-sol`, `xhigh`), in
+  `~/code/review-seats/elenchus-pr8-pass2-r8`.
 - *Carried from Sprint 1's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are that
   comment's findings): 6, sequence by the order records were posted, not their presence; 7, every
   pass's `input_sha` is the previous recorded pass's `output_sha`, writing or not, and a head
@@ -1584,6 +1599,40 @@ for Cursor (S7).
     head's own code, and the seal and the seat's limits in its transcript. It also re-ran the
     three mutants: M1, M4 and M5 each pass 363 of 363. The Planner's scratch folder was emptied
     overnight, so "no comment edited" rests on GitHub's timestamps.
+  - **After this record**, `status` on PR 8 names `exec`. `status` does not read a ruling's
+    verdict.
+- **Sprint 3's seventh Pass 3 (Beni, Sat 21 Nov 2026, the Planner's recommendation on each of
+  the re-read's four questions; the comment, "Yes, post it").** The sixth Pass 2.5 re-read
+  ([comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7048766133)) found the
+  seventh round done as ruled: 25-23 to 25-25 fixed, and no blocking finding open. It opened
+  25-26 as should-fix and 25-27 and 25-28 as notes, and asked four questions. Beni answered each
+  with the Planner's recommendation. The Planner wrote and posted the record, a re-read of pass 3
+  at `5b0fba2` ([comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7065545030)).
+  The brief is [`review-loop-sprint-3-fix-8-prompt.md`](review-loop-sprint-3-fix-8-prompt.md).
+  - **1, 25-26, yes.** A standing synthesis may not drop an id that any earlier valid ruling
+    round named before it, on time or a re-read, a v1.1 record, or a posting a later correction
+    replaced. Three synthesis-side rows in SX7's table, failing under O1, O6 and O7.
+  - **2, 25-27, yes.** Only an explicit kill removes an id, whatever its severity or status: a
+    note binds, and so does an id marked fixed. Two rows in SM1's shape, failing under O2 and O3.
+  - **3, 25-28, yes.** An unknown key never changes what `status` names, in every state,
+    including the one where it names `authorize`. One row with every pass recorded at v1.2,
+    failing under O5.
+  - **4, the next step.** An eighth fix round, tests only. The carry's list becomes a table: the
+    four inputs the carry reads (`src/report.ts:317-352`) by the kinds of round the code tells
+    apart. The ruling also says when the search stops. A narrowed deletion is a finding only
+    when it removes a distinction the code already draws, and a scenario shows `check`,
+    `status` or `authorize` answering differently. A deletion that special-cases an index or a
+    name, like the re-read's O4, is not.
+  - **25-26 was the Planner's.** The sixth Pass 3's list asked for "each value, not each
+    combination", and the synthesis's carry reads two inputs, its own earlier rounds and the
+    rulings before it. This is the third round running in which a list was narrower than its
+    rule, and this time the list's own words allowed it. 25-27 and 25-28 fall outside both of
+    the sixth ruling's lists.
+  - **Checked by the Planner:** the re-read's comment against GitHub and the seat's file, its
+    record through the head's own code, and the seal and the seat's limits in its transcript. It
+    re-ran the seven narrowed deletions: O1 to O7 each pass 377 of 377, and N-S-rulings fails
+    A16 alone. The Planner's scratch folder was emptied again before the ruling was posted, and
+    the draft was rebuilt from the session's transcript to the same length, 32,111 characters.
   - **After this record**, `status` on PR 8 names `exec`. `status` does not read a ruling's
     verdict.
 
