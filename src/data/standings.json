@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-11-21T18:07:47.670Z",
+  "fetchedAt": "2026-11-21T20:10:53.678Z",
   "provider": "espn",
   "season": 2026,
   "leagues": {
@@ -598,13 +598,13 @@
         "abbrev": "BET",
         "rank": 4,
         "rankChange": 0,
-        "played": 12,
+        "played": 13,
         "w": 8,
-        "d": 2,
+        "d": 3,
         "l": 2,
-        "gf": 20,
-        "ga": 15,
-        "pts": 26
+        "gf": 21,
+        "ga": 16,
+        "pts": 27
       },
       {
         "teamId": "89",
@@ -628,13 +628,13 @@
         "abbrev": "SEV",
         "rank": 6,
         "rankChange": 0,
-        "played": 12,
+        "played": 13,
         "w": 5,
-        "d": 3,
+        "d": 4,
         "l": 4,
-        "gf": 17,
-        "ga": 19,
-        "pts": 18
+        "gf": 18,
+        "ga": 20,
+        "pts": 19
       },
       {
         "teamId": "93",
@@ -855,13 +855,13 @@
         "abbrev": "ARS",
         "rank": 1,
         "rankChange": 0,
-        "played": 10,
+        "played": 11,
         "w": 9,
-        "d": 0,
+        "d": 1,
         "l": 1,
-        "gf": 15,
-        "ga": 5,
-        "pts": 27
+        "gf": 17,
+        "ga": 7,
+        "pts": 28
       },
       {
         "teamId": "331",
@@ -1020,13 +1020,13 @@
         "abbrev": "NEW",
         "rank": 12,
         "rankChange": 0,
-        "played": 10,
+        "played": 11,
         "w": 3,
-        "d": 3,
+        "d": 4,
         "l": 4,
-        "gf": 13,
-        "ga": 16,
-        "pts": 12
+        "gf": 15,
+        "ga": 18,
+        "pts": 13
       },
       {
         "teamId": "388",
@@ -1166,11 +1166,26 @@
         "pts": 32
       },
       {
+        "teamId": "104",
+        "name": "AS Roma",
+        "shortName": "AS Roma",
+        "abbrev": "ROMA",
+        "rank": 2,
+        "rankChange": 0,
+        "played": 12,
+        "w": 9,
+        "d": 3,
+        "l": 0,
+        "gf": 36,
+        "ga": 11,
+        "pts": 30
+      },
+      {
         "teamId": "110",
         "name": "Internazionale",
         "shortName": "Inter Milan",
         "abbrev": "INT",
-        "rank": 2,
+        "rank": 3,
         "rankChange": 0,
         "played": 11,
         "w": 9,
@@ -1179,21 +1194,6 @@
         "gf": 28,
         "ga": 13,
         "pts": 28
-      },
-      {
-        "teamId": "104",
-        "name": "AS Roma",
-        "shortName": "AS Roma",
-        "abbrev": "ROMA",
-        "rank": 3,
-        "rankChange": 0,
-        "played": 11,
-        "w": 8,
-        "d": 3,
-        "l": 0,
-        "gf": 31,
-        "ga": 10,
-        "pts": 27
       },
       {
         "teamId": "2572",
@@ -1376,26 +1376,11 @@
         "pts": 9
       },
       {
-        "teamId": "115",
-        "name": "Parma",
-        "shortName": "Parma",
-        "abbrev": "PAR",
-        "rank": 16,
-        "rankChange": 0,
-        "played": 11,
-        "w": 2,
-        "d": 2,
-        "l": 7,
-        "gf": 9,
-        "ga": 17,
-        "pts": 8
-      },
-      {
         "teamId": "3997",
         "name": "Sassuolo",
         "shortName": "Sassuolo",
         "abbrev": "SAS",
-        "rank": 17,
+        "rank": 16,
         "rankChange": 0,
         "played": 11,
         "w": 2,
@@ -1403,6 +1388,21 @@
         "l": 7,
         "gf": 16,
         "ga": 29,
+        "pts": 8
+      },
+      {
+        "teamId": "115",
+        "name": "Parma",
+        "shortName": "Parma",
+        "abbrev": "PAR",
+        "rank": 17,
+        "rankChange": 0,
+        "played": 12,
+        "w": 2,
+        "d": 2,
+        "l": 8,
+        "gf": 10,
+        "ga": 22,
         "pts": 8
       },
       {
@@ -1459,13 +1459,13 @@
         "abbrev": "PSG",
         "rank": 1,
         "rankChange": 0,
-        "played": 10,
-        "w": 7,
+        "played": 11,
+        "w": 8,
         "d": 2,
         "l": 1,
-        "gf": 22,
-        "ga": 10,
-        "pts": 23
+        "gf": 25,
+        "ga": 12,
+        "pts": 26
       },
       {
         "teamId": "166",
@@ -1534,12 +1534,12 @@
         "abbrev": "NICE",
         "rank": 6,
         "rankChange": 0,
-        "played": 10,
+        "played": 11,
         "w": 5,
         "d": 2,
-        "l": 3,
-        "gf": 15,
-        "ga": 12,
+        "l": 4,
+        "gf": 17,
+        "ga": 15,
         "pts": 17
       },
       {
@@ -1830,11 +1830,26 @@
         "pts": 15
       },
       {
+        "teamId": "134",
+        "name": "VfB Stuttgart",
+        "shortName": "Stuttgart",
+        "abbrev": "VFB",
+        "rank": 8,
+        "rankChange": 0,
+        "played": 10,
+        "w": 4,
+        "d": 1,
+        "l": 5,
+        "gf": 15,
+        "ga": 15,
+        "pts": 13
+      },
+      {
         "teamId": "10388",
         "name": "SV Elversberg",
         "shortName": "Elversberg",
         "abbrev": "ELV",
-        "rank": 8,
+        "rank": 9,
         "rankChange": 0,
         "played": 10,
         "w": 4,
@@ -1843,21 +1858,6 @@
         "gf": 17,
         "ga": 19,
         "pts": 13
-      },
-      {
-        "teamId": "134",
-        "name": "VfB Stuttgart",
-        "shortName": "Stuttgart",
-        "abbrev": "VFB",
-        "rank": 9,
-        "rankChange": 0,
-        "played": 9,
-        "w": 4,
-        "d": 0,
-        "l": 5,
-        "gf": 15,
-        "ga": 15,
-        "pts": 12
       },
       {
         "teamId": "7911",
@@ -1950,11 +1950,26 @@
         "pts": 9
       },
       {
+        "teamId": "133",
+        "name": "Schalke 04",
+        "shortName": "Schalke",
+        "abbrev": "S04",
+        "rank": 16,
+        "rankChange": 0,
+        "played": 10,
+        "w": 1,
+        "d": 4,
+        "l": 5,
+        "gf": 5,
+        "ga": 11,
+        "pts": 7
+      },
+      {
         "teamId": "598",
         "name": "1. FC Union Berlin",
         "shortName": "Union Berlin",
         "abbrev": "FCU",
-        "rank": 16,
+        "rank": 17,
         "rankChange": 0,
         "played": 10,
         "w": 1,
@@ -1963,21 +1978,6 @@
         "gf": 8,
         "ga": 26,
         "pts": 7
-      },
-      {
-        "teamId": "133",
-        "name": "Schalke 04",
-        "shortName": "Schalke",
-        "abbrev": "S04",
-        "rank": 17,
-        "rankChange": 0,
-        "played": 9,
-        "w": 1,
-        "d": 3,
-        "l": 5,
-        "gf": 5,
-        "ga": 11,
-        "pts": 6
       },
       {
         "teamId": "268",
