@@ -35,7 +35,8 @@ function mount(league: CompetitionKey) {
 }
 
 const FIRST = 'Table read from ESPN\'s standings feed by npm run sync, never recomputed locally. Form and next fixture join to the fixtures snapshot.'
-const LAST = 'Zones & key, opened, reads: form runs oldest to newest. A dot is an empty slot: the snapshot holds fewer than five finished results for that club.'
+// String 8's third sentence, less the clause that is not true of the app (see the cross-competition case below).
+const LAST = 'Zones & key, opened, reads: form runs oldest to newest. A dot is an empty slot.'
 
 describe('the Table’s foot', () => {
   it('is black stock: the provenance line, then its paragraphs, the last being string 8’s third sentence', () => {
@@ -192,6 +193,42 @@ describe('what the foot’s last sentence says of the page', () => {
     expect(strip(container, 3)).toEqual(['W', 'D', 'L', 'W', 'D'])
     // Seven results: the latest five, still oldest to newest, and no slot left over.
     expect(strip(container, 4)).toEqual(['W', 'D', 'L', 'W', 'W'])
+  })
+
+  // The review of PR #352, finding 7. On the snapshot it read, 59 of 132 rows drew a dot for a
+  // club the snapshot held five or more finished results for, Arsenal in both of its tables.
+  it('counts a slot against this competition alone: six finished results across two competitions still draw three dots', () => {
+    restore = holdSnapshot()
+    STANDINGS.leagues.pl = specimenTable('pl')
+    STANDINGS.leagues.ucl = specimenTable('ucl')
+    FIXTURES.splice(0, FIXTURES.length,
+      ...finishedFor(specimenId(5), 'pl', ['W', 'W']),
+      ...finishedFor(specimenId(5), 'ucl', ['L', 'D', 'L', 'L']),
+    )
+    const club = (fixture: (typeof FIXTURES)[number]) => [fixture.home.sourceId, fixture.away.sourceId].includes(specimenId(5))
+    expect(FIXTURES.filter((fixture) => club(fixture) && fixture.status === 'full_time' && fixture.result)).toHaveLength(6)
+
+    const league = mount('pl')
+    expect(strip(league.container, 5)).toEqual(['W', 'W', '·', '·', '·'])
+    expect(league.container.querySelector(`[data-table="mobile"] [data-table-row="${specimenId(5)}"] .form-pips`)!.getAttribute('aria-label')).toBe('Form, oldest to newest: won, won. 3 empty slots.')
+    // So the foot may not say the snapshot holds fewer than five for that club: it holds six.
+    const foot = league.container.querySelector('footer.page-foot')!.textContent!
+    expect(foot).toContain('A dot is an empty slot.')
+    expect(foot).not.toMatch(/fewer than five finished results for that club(?! in this competition)/)
+    unmount()
+
+    // The same club in its other table: four letters from that competition's results, in order, and one dot.
+    expect(strip(mount('ucl').container, 5)).toEqual(['L', 'D', 'L', 'L', '·'])
+  })
+
+  it('says nothing of the snapshot for a club with no result in this competition and four in another', () => {
+    restore = holdSnapshot()
+    STANDINGS.leagues.pl = specimenTable('pl')
+    FIXTURES.splice(0, FIXTURES.length, ...finishedFor(specimenId(6), 'ucl', ['W', 'W', 'W', 'W']))
+    const { container } = mount('pl')
+    const pips = container.querySelector(`[data-table="mobile"] [data-table-row="${specimenId(6)}"] .form-pips`)!
+    expect(pips.getAttribute('aria-label')).toBe('Form: 5 empty slots.')
+    expect(container.textContent).not.toMatch(/no finished results in the snapshot/)
   })
 })
 

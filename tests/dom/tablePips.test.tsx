@@ -31,7 +31,8 @@ describe('form pips', () => {
   })
 
   it('words the alternative from the results alone', () => {
-    expect(formLabel([])).toBe('Form: no finished results in the snapshot.')
+    // No claim about the snapshot: the club may have finished results in another competition.
+    expect(formLabel([])).toBe('Form: 5 empty slots.')
     expect(formLabel(['D'])).toBe('Form, oldest to newest: drew. 4 empty slots.')
     expect(formLabel(['W', 'W', 'D', 'L', 'W'])).toBe('Form, oldest to newest: won, won, drew, lost, won.')
   })

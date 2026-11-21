@@ -43,10 +43,15 @@ const DESKTOP_COLS =
 
 /* The foot's paragraphs after its first. The key's Columns paragraph is where "results
  * oldest to newest" is written, and FormPips pads a club's form to five slots with dots, so
- * both halves of this sentence are the app's own. The photograph's sentence joins this list
- * ahead of it when the cover has a photograph. */
+ * both halves of this sentence are the app's own. String 8 went on to say why a slot is
+ * empty: "the snapshot holds fewer than five finished results for that club". That is not
+ * true of the app. A strip joins to this competition's fixtures alone, so a club with five
+ * finished results across two competitions still draws dots in each table (the review of
+ * PR #352, finding 7). The clause is left out, as the build brief allows; words that
+ * qualify it wait for an approved string. The photograph's sentence joins this list ahead
+ * of it when the cover has a photograph. */
 const FOOT_MORE = [
-  'Zones & key, opened, reads: form runs oldest to newest. A dot is an empty slot: the snapshot holds fewer than five finished results for that club.',
+  'Zones & key, opened, reads: form runs oldest to newest. A dot is an empty slot.',
 ] as const
 
 /* The nine figure columns of the desktop table, in order, each with the key it sorts by.
