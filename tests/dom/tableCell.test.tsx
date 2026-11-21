@@ -71,12 +71,28 @@ describe('the Table’s next-fixture cell', () => {
     const lane = sevilla({ timeConfidence: 'tbd' }).next!
     const phone = drawn(lane)
     expect(phone.state).toBe('unset')
-    expect(phone.units).toEqual(['Sun · LEV (H)', '2026-11-22 — kickoff time not yet set'])
+    // String 24, word for word: the weekday, the date, an em dash, and who has not set it.
+    expect(phone.units).toEqual(['Sun · LEV (H)', 'Sun 2026-11-22 — kickoff time not yet set by the league'])
     expect(phone.voices).toEqual(['ink', 'amber'])
     const desktop = drawn(lane, { compact: true })
     expect(desktop.units).toEqual(['Sun · LEV (H)', 'time TBC'])
     expect(desktop.voices).toEqual(['ink', 'amber'])
     for (const cell of [phone, desktop]) expect(cell.text.replace('2026-11-22', '')).not.toMatch(CLOCK)
+  })
+
+  it('takes the not-set line’s weekday and date from the fixture’s own instant, in Brooklyn, and prints neither clock', () => {
+    // 01:00 UTC on Monday 23 Nov is 8:00 PM on Sunday 22 Nov in Brooklyn and 02:00 on Monday in Madrid.
+    const fixture = edgeFixture({ kickoffUtc: '2026-11-23T01:00:00.000Z', timeConfidence: 'tbd' })
+    const times = fixtureTimes(fixture.kickoffUtc, fixture.venueTz)
+    expect([times.brooklyn.weekday, times.brooklyn.isoDate, times.brooklyn.time, times.local!.clock24]).toEqual(['Sun', '2026-11-22', '8:00 PM', '02:00'])
+    const phone = drawn(sevilla({ kickoffUtc: fixture.kickoffUtc, timeConfidence: 'tbd' }).next!)
+    expect(phone.units[1]).toBe(`${times.brooklyn.weekday} ${times.brooklyn.isoDate} — kickoff time not yet set by the league`)
+    expect(phone.units[1]).toBe('Sun 2026-11-22 — kickoff time not yet set by the league')
+    // Neither clock of that instant, in any form, and no stadium date.
+    for (const cell of [phone, drawn(sevilla({ kickoffUtc: fixture.kickoffUtc, timeConfidence: 'tbd' }).next!, { compact: true })]) {
+      expect(cell.text).not.toMatch(/8:00|20:00|02:00|2:00|local|Mon|2026-11-23/)
+      expect(cell.text.replace('2026-11-22', '')).not.toMatch(CLOCK)
+    }
   })
 
   it('says KICKED OFF in amber with no clock and no score once the kickoff has passed', () => {

@@ -11,6 +11,12 @@ import type { TableLane } from '../lib/standings'
  * What it will not print: a clock for a kickoff the league has not set (an amber line takes
  * both clocks' place); a clock or a score beside KICKED OFF; a zone abbreviation or an offset;
  * a stadium clock where the venue's zone is not known ("local time not known" stands there).
+ *
+ * The amber line is string 24, the words Fixtures uses for the same fixture: the fixture's own
+ * Brooklyn weekday and date, then "kickoff time not yet set by the league". The first edition's
+ * phone line stopped at "set" and gave no weekday (the review of PR #352, finding 8). The
+ * desktop column keeps "time TBC": the build brief lists it as not drawn, to follow the tokens,
+ * and PR 0's test pins it. Whether that column takes the full line is not this file's to rule.
  */
 export function NextFixtureCell({
   lane,
@@ -20,7 +26,7 @@ export function NextFixtureCell({
   lane: TableLane
   /** The lane is the match underway: its league-set kickoff has passed and no result is in. */
   kickedOff: boolean
-  /** The desktop column is narrow, so it keeps the first edition's short words for "not set". */
+  /** The desktop column: narrow, so it keeps the first edition's short words for "not set". */
   compact?: boolean
 }) {
   const { brooklyn, local } = lane.times
@@ -45,7 +51,7 @@ export function NextFixtureCell({
       )}
       {state === 'unset' && (
         <span className="next-cell-unset" data-voice="amber">
-          {compact ? 'time TBC' : `${brooklyn.isoDate} — kickoff time not yet set`}
+          {compact ? 'time TBC' : `${brooklyn.weekday} ${brooklyn.isoDate} — kickoff time not yet set by the league`}
         </span>
       )}
     </span>
