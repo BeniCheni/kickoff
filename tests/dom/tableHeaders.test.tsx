@@ -2,10 +2,11 @@ import { afterEach, describe, expect, it } from 'vitest'
 import { cleanup, fireEvent, render, within } from '@testing-library/react'
 import { LEAGUE_TABLES, type CompetitionKey } from '../../src/lib/competitions'
 import { META } from '../../src/lib/fixtures'
-import { tableFor, type TableRow } from '../../src/lib/standings'
+import { STANDINGS, tableFor, type TableRow } from '../../src/lib/standings'
 import { todayIso } from '../../src/lib/time'
 import { TablePage } from '../../src/components/TablePage'
 import { primeClock } from './rig'
+import { holdSnapshot, specimenTable, withoutUclTable } from './tableSnapshots'
 
 /**
  * The desktop table's head. Fifteen columns; six of them sort and each of those is a button;
@@ -13,7 +14,8 @@ import { primeClock } from './rig'
  * computes none, and the Pos column keeps the league position while it does.
  */
 let release: (() => void) | undefined
-afterEach(() => { cleanup(); release?.(); release = undefined })
+let restore: (() => void) | undefined
+afterEach(() => { cleanup(); release?.(); release = undefined; restore?.(); restore = undefined })
 
 function mount(league: CompetitionKey) {
   window.history.replaceState(null, '', `/?league=${league}`)
@@ -60,9 +62,24 @@ describe('the desktop table’s head', () => {
     }
   })
 
-  it('holds no control in a desktop row', () => {
-    const { desktop } = mount('ucl')
+  // The long table is a specimen of 36: a snapshot without a Champions League table is a valid
+  // one (the review of PR #352, finding 2), and this is a claim about the rows, not the provider.
+  it.each(['pl', 'ucl'] as const)('holds no control in a desktop row (%s)', (league) => {
+    restore = holdSnapshot()
+    if (league === 'ucl') STANDINGS.leagues.ucl = specimenTable('ucl')
+    const { desktop } = mount(league)
+    expect(desktop.querySelectorAll('[data-table-row]')).toHaveLength(league === 'ucl' ? 36 : 20)
     expect(desktop.querySelector('[data-table-row] button, [data-table-row] a, [data-table-row] [tabindex]')).toBeNull()
+  })
+
+  it('draws no desktop table, and so no head, where the provider no longer supplies one', () => {
+    restore = holdSnapshot()
+    withoutUclTable()
+    window.history.replaceState(null, '', '/?league=ucl')
+    release = primeClock(new Date(META.lastSyncAt))
+    const { container } = render(<TablePage />)
+    expect(container.querySelector('[data-table], button.register-sort')).toBeNull()
+    expect(container.querySelector('[data-empty-table]')).not.toBeNull()
   })
 })
 
