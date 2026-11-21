@@ -28,7 +28,7 @@ import { pathToFileURL, fileURLToPath } from 'node:url'
 import puppeteer from 'puppeteer-core'
 import { decodePng } from '../../scripts/decode-png.mjs'
 import { COMPETITIONS, COMPETITION_KEYS } from '../../src/lib/competitions.ts'
-import { addDays, brooklynDate, chooseWeeks, matrixAnchor, readSnapshot } from '../../scripts/evidence-weeks.mjs'
+import { addDays, brooklynDate, chooseWeeks, matrixAnchor, readSnapshot, startOfWeek } from '../../scripts/evidence-weeks.mjs'
 import { BITMAP_GLYPH, createColdLoad, isLargeText, paintedColor, sampleContrast, unexpectedHost, unreadColors } from '../../scripts/rendered-contrast.mjs'
 
 const root = fileURLToPath(new URL('../..', import.meta.url))
@@ -1101,7 +1101,7 @@ export async function captureWeeks(browser, { origins, out, weeks, contrast }, r
   const { cells, contrast: contrastCells } = result
   for (const kind of ['heavy', 'quiet', 'uefa']) {
     const week = weeks[kind]
-    if (!week?.monday) continue
+    assert.ok(week?.monday, `Missing ${kind} evidence week: ${week?.missing ?? 'no pick'}`)
     for (const [app, origin] of Object.entries(origins)) {
       for (const lens of ['poster', 'ledger']) for (const theme of ['light', 'dark']) {
         for (const width of WEEK_WIDTHS) {
@@ -2063,13 +2063,20 @@ export async function proveWeekControls(browser, origins, date, out, contrastCel
   return results
 }
 
-export async function proveLedgerCounts(browser, origins, week, fixtures) {
+export async function proveLedgerCounts(browser, origins, heavy, fixtures) {
   const selections = {
     all: COMPETITION_KEYS, three: ['pl', 'ucl', 'laliga'],
     noSupercups: COMPETITION_KEYS.filter(key => COMPETITIONS[key].group !== 'supercup'),
   }
+  const [firstCupDay] = fixtures.filter(f => COMPETITIONS[f.competition].group === 'supercup')
+    .map(f => brooklynDate(f.kickoffUtc)).sort()
+  assert.ok(firstCupDay, 'No evidence week contains a Domestic Supercup fixture')
+  const cupWeek = startOfWeek(firstCupDay)
+  const cases = Object.entries(selections).map(([selection, keys]) => ({ selection, keys, week: heavy }))
+  cases.push({ selection: 'cupWeek-all', keys: selections.all, week: cupWeek },
+    { selection: 'cupWeek-noSupercups', keys: selections.noSupercups, week: cupWeek })
   const results = []
-  for (const [app, origin] of Object.entries(origins)) for (const [selection, keys] of Object.entries(selections)) {
+  for (const [app, origin] of Object.entries(origins)) for (const { selection, keys, week } of cases) {
     const id = `counts-${app}-${selection}`
     const { context, page, errors } = await openPage(browser, `${origin}/?lens=ledger&date=${week}&only=${keys.join(',')}`, 'light', 390)
     try {
@@ -2085,7 +2092,8 @@ export async function proveLedgerCounts(browser, origins, week, fixtures) {
         assert.deepEqual([...day.ids].sort(), listed.map(f => f.id).sort(), id)
         assert.equal(day.ids.length + day.hidden, snapshot.length, id)
       }
-      results.push({ id, days: days.map(({ date, ids, hidden }) => ({ date, listed: ids.length, hidden })) })
+      if (selection === 'cupWeek-noSupercups') assert.ok(days.some(day => day.hidden > 0), id)
+      results.push({ id, week, days: days.map(({ date, ids, hidden }) => ({ date, listed: ids.length, hidden })) })
       assert.deepEqual(errors, [], id)
     } finally { await context.close() }
   }
@@ -2131,7 +2139,7 @@ async function main() {
     assert.equal(matrix.cells.length, 96)
     await captureWeeks(browser, { origins, out, weeks, contrast: true }, weekRun)
     steps.weekControls = await proveWeekControls(browser, origins, anchor, out, weekRun.contrast)
-    steps.ledgerCounts = await proveLedgerCounts(browser, origins, weeks.heavy.monday ?? anchor, fixtures)
+    steps.ledgerCounts = await proveLedgerCounts(browser, origins, weeks.heavy.monday, fixtures)
     steps.requests = []
     await captureRequests(browser, origins, anchor, steps.requests)
     steps.offline = { sizes: {}, cells: [] }
