@@ -666,6 +666,17 @@ Cursor's hands this track seats no Cursor.
 - *Eighth fix brief:* [`review-loop-sprint-3-fix-8-prompt.md`](review-loop-sprint-3-fix-8-prompt.md),
   for Pass 2 again, as a re-read (Codex in the ChatGPT desktop app, `gpt-6.2-sol`, `xhigh`), in
   `~/code/review-seats/elenchus-pr8-pass2-r8`.
+- *Fixed an eighth time (Sat 21 Nov 2026):* the Pass 2 re-read's
+  [record](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7067280478): one commit to
+  `a61d6e8`, in `test/authorize.test.ts` only. 25-26 to 25-28 are fixed as the round reports
+  them: SM26, SM29a and SM29b fail under O1, O6 and O7, SM27a and SM27b under O2 and O3, and
+  SM28 under O5. Ruling 4's table gives each reachable cell a test and a deletion. It adds six
+  rows beyond the minimum, each failing under its own deletion, which passes every test at
+  `5b0fba2`, and it names the two opener cells the code cannot reach. Of the round's 47
+  required deletions, 45 are caught, and Y3d and Y3e stay equivalent.
+- *Seventh re-read brief:* [`review-loop-sprint-3-synthesis-8-prompt.md`](review-loop-sprint-3-synthesis-8-prompt.md),
+  for the seventh Pass 2.5 re-read (Claude Code, `claude-opus-5-5`, `xhigh`), in
+  `~/code/review-seats/elenchus-pr8-pass25-r8`, with its sealed appendix as a second paste.
 - *Carried from Sprint 1's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are that
   comment's findings): 6, sequence by the order records were posted, not their presence; 7, every
   pass's `input_sha` is the previous recorded pass's `output_sha`, writing or not, and a head
