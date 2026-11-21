@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { DESKTOP_TABLE_CONTROLS, DESKTOP_TABLE_SORTS, TABLE_LEAGUE_KEYS, bandFaults, firstFrameFaults, focusFaults, handoffFaults, hitAreaFaults, leagueFaults, longestLeague, momentsPaintFaults, pinFaults, revealFaults, ringPaintFaults, ringPixels, sortFaults, sortOrder, sweepFaults, tabFaults, columnFaults, tableHitFaults, tableStateFaults } from '../scripts/evidence.mjs'
+import { DESKTOP_TABLE_CONTROLS, DESKTOP_TABLE_SORTS, TABLE_LEAGUE_KEYS, bandFaults, firstFrameFaults, focusFaults, handoffFaults, hitAreaFaults, leagueFaults, longestLeague, momentsPaintFaults, nextCellFaults, pinFaults, revealFaults, ringPaintFaults, ringPixels, sortFaults, sortOrder, sweepFaults, tabFaults, columnFaults, tableHitFaults, tableStateFaults } from '../scripts/evidence.mjs'
 
 const box = (name: string, left: number, top: number, w: number, h = 44) => ({ name, left, top, right: left + w, bottom: top + h, w, h })
 
@@ -523,27 +523,123 @@ test('the desktop table has fifteen columns, in order, inside the 780px measure'
   expect(columnFaults({ ...drawn, overflow: ['359'] })).toEqual(['1 row has a cell wider than its column: 359'])
 })
 
+// The next-fixture cells of the harness's cells state, as the runner reads them off the page.
+const lead = 'Sat · S03 (H)'
+const cell = (club: string, state: string, ...rest: string[]) => ({ club, state, units: [lead, ...rest], text: [lead, ...rest].join(' ') })
+const phoneCells = [
+  cell('Specimen Unset', 'unset', 'Sat 2026-11-21 — kickoff time not yet set by the league'),
+  cell('Specimen Kicked', 'kicked-off', 'KICKED OFF'),
+  cell('Specimen Nozone', 'set', '2:30 PM', 'local time not known'),
+  cell('Specimen 04', 'set', '3:00 PM', '21:00 local'),
+]
+const deskCells = phoneCells.map((each) => (each.state === 'unset' ? cell(each.club, 'unset', 'time TBC') : each))
+
 test('a Table state on the harness shows what it is there to show, in the layout the width draws', () => {
-  const cells = 'GAMES IN HAND\n2 clubs have a game in hand\nSpecimen Unset +1\n2026-11-21 — kickoff time not yet set\nSat · S03 (H) KICKED OFF\nlocal time not known'
-  expect(tableStateFaults('cells', 'mobile', { text: cells, marks: 30, tables: 2 })).toEqual([])
+  const words = 'GAMES IN HAND\n2 clubs have a game in hand\nSpecimen Unset +1\nSat 2026-11-21 — kickoff time not yet set by the league\nSat · S03 (H) KICKED OFF\nlocal time not known'
+  const drawn = { marks: 30, tables: 2, cells: phoneCells }
+  expect(tableStateFaults('cells', 'mobile', { text: words, ...drawn })).toEqual([])
   // The desktop cell keeps its short words, so the phone's sentence does not answer for it.
-  expect(tableStateFaults('cells', 'desktop', { text: cells, marks: 30, tables: 2 })).toEqual(['cells does not show /time TBC/i'])
-  expect(tableStateFaults('cells', 'mobile', { text: cells.replace('KICKED OFF', '3:00 PM'), marks: 30, tables: 2 })).toEqual(['cells does not show /kicked off/i'])
+  expect(tableStateFaults('cells', 'desktop', { text: words, ...drawn, cells: deskCells })).toEqual(['cells does not show /time TBC/i'])
+  expect(tableStateFaults('cells', 'mobile', { text: words.replace('KICKED OFF', '3:00 PM'), ...drawn })).toEqual(['cells does not show /kicked off/i'])
+  // The first edition's phone line, without the weekday and without "by the league", is not string 24.
+  expect(tableStateFaults('cells', 'mobile', { text: words.replace('Sat 2026-11-21 — kickoff time not yet set by the league', '2026-11-21 — kickoff time not yet set'), ...drawn }))
+    .toEqual(['cells does not show /kickoff time not yet set by the league/i'])
   // The sort is the desktop's: a phone is owed nothing by that state, and a desktop its note.
-  expect(tableStateFaults('ppg', 'mobile', { text: '', marks: 30, tables: 2 })).toEqual([])
-  expect(tableStateFaults('ppg', 'desktop', { text: '', marks: 30, tables: 2 })).toEqual(['ppg does not show /sorted by points per game\\./i'])
+  expect(tableStateFaults('ppg', 'mobile', { text: '', ...drawn })).toEqual([])
+  expect(tableStateFaults('ppg', 'desktop', { text: '', ...drawn, cells: deskCells })).toEqual(['ppg does not show /sorted by points per game\\./i'])
   // A season the zone data does not describe: the note in the app's words, and no band anywhere.
   const note = 'Zone bands are hidden: the snapshot is the 2025-26 season but the zone metadata describes 2026-27.'
-  expect(tableStateFaults('season', 'mobile', { text: note, marks: 0, tables: 2 })).toEqual([])
-  expect(tableStateFaults('season', 'mobile', { text: note, marks: 6, tables: 2 })).toEqual(['season draws 6 zone marks, and its bands are hidden'])
-  expect(tableStateFaults('season', 'desktop', { text: `${note} Update LEAGUE_TABLES.`.replace('2026-27.', '2026-27'), marks: 0, tables: 2 }))
+  expect(tableStateFaults('season', 'mobile', { text: note, ...drawn, marks: 0 })).toEqual([])
+  expect(tableStateFaults('season', 'mobile', { text: note, ...drawn, marks: 6 })).toEqual(['season draws 6 zone marks, and its bands are hidden'])
+  expect(tableStateFaults('season', 'desktop', { text: `${note} Update LEAGUE_TABLES.`.replace('2026-27.', '2026-27'), ...drawn, marks: 0, cells: deskCells }))
     .toEqual(['season does not show /zone bands are hidden: the snapshot is the 2025-26 season but the zone metadata describes 2026-27\\./i'])
   // Every other state draws its bands, and an empty snapshot draws no table at all.
-  expect(tableStateFaults('key', 'mobile', { text: 'Qualification zones Columns How ties are broken', marks: 0, tables: 2 })).toEqual(['key draws no zone mark'])
+  expect(tableStateFaults('key', 'mobile', { text: 'Qualification zones Columns How ties are broken', ...drawn, marks: 0 })).toEqual(['key draws no zone mark'])
   expect(tableStateFaults('empty', 'mobile', { text: 'No table in the snapshot for Ligue 1 — run npm run sync.', marks: 0, tables: 0 })).toEqual([])
   expect(tableStateFaults('empty', 'mobile', { text: 'No table in the snapshot for Ligue 1 — run npm run sync.', marks: 0, tables: 2 })).toEqual(['empty draws 2 tables, and the snapshot holds none'])
-  expect(tableStateFaults('opened', 'mobile', { text: 'W-D-L 1-1-2 PPG 1.00', marks: 30, tables: 1 })).toEqual(['opened draws 1 tables, expected the phone’s and the desktop’s'])
+  const open = [{ club: 'Specimen Kicked', more: 'W-D-L 1-1-2 PPG 1.00', expanded: 'true', owed: { wdl: '1-1-2', ppg: '1.00' } }]
+  expect(tableStateFaults('opened', 'mobile', { text: 'W-D-L 1-1-2 PPG 1.00', ...drawn, tables: 1, opened: open })).toEqual(['opened draws 1 tables, expected the phone’s and the desktop’s'])
   expect(tableStateFaults('nope', 'mobile', { text: '', marks: 0, tables: 0 })).toEqual(['nope is not a Table state the runner knows'])
+  // A state that draws a table and was handed no cells was not read, and that is not a pass.
+  expect(tableStateFaults('key', 'mobile', { text: 'Qualification zones Columns How ties are broken', marks: 30, tables: 2 })).toEqual(['key: the next-fixture cells were not read'])
+})
+
+// The review of PR #352, finding 6. The state passed with "3:00 PM · 2–1" added to the
+// KICKED OFF cell: every word it was owed was still somewhere on the page.
+test('a next-fixture cell is held whole: its units and nothing more, and no clock or score its state forbids', () => {
+  expect(nextCellFaults(phoneCells, 'mobile')).toEqual([])
+  expect(nextCellFaults(deskCells, 'desktop')).toEqual([])
+  const kicked = phoneCells[1]!
+  // Text added to the cell beside its units, as the review added it.
+  expect(nextCellFaults([{ ...kicked, text: `${kicked.text} 3:00 PM · 2–1` }], 'mobile')).toEqual([
+    'Specimen Kicked’s cell shows "Sat · S03 (H) KICKED OFF 3:00 PM · 2–1", and its units read "Sat · S03 (H) KICKED OFF"',
+    'Specimen Kicked’s cell prints a score: "Sat · S03 (H) KICKED OFF 3:00 PM · 2–1"',
+    'Specimen Kicked has kicked off and the cell prints a clock: "Sat · S03 (H) KICKED OFF 3:00 PM · 2–1"',
+  ])
+  // The same clock as a unit of its own, and a kicked-off cell that kept its stadium clock.
+  expect(nextCellFaults([cell('Specimen Kicked', 'kicked-off', 'KICKED OFF', '3:00 PM')], 'mobile')).toEqual([
+    'Specimen Kicked has kicked off and the cell reads "KICKED OFF 3:00 PM", expected KICKED OFF alone',
+    'Specimen Kicked has kicked off and the cell prints a clock: "Sat · S03 (H) KICKED OFF 3:00 PM"',
+  ])
+  expect(nextCellFaults([cell('Specimen Kicked', 'kicked-off', 'KICKED OFF', 'local time not known')], 'desktop')).toEqual([
+    'Specimen Kicked has kicked off and the cell reads "KICKED OFF local time not known", expected KICKED OFF alone',
+    'Specimen Kicked has kicked off and the cell prints a clock: "Sat · S03 (H) KICKED OFF local time not known"',
+  ])
+  // A kickoff the league has not set: the date in its line is not a clock, and a clock is.
+  expect(nextCellFaults([cell('Specimen Unset', 'unset', 'Sat 2026-11-21 — kickoff time not yet set by the league', '8:00 PM')], 'mobile')).toEqual([
+    'Specimen Unset’s kickoff is not set and the cell reads "Sat 2026-11-21 — kickoff time not yet set by the league 8:00 PM", expected the weekday, the date and “kickoff time not yet set by the league”',
+    'Specimen Unset’s kickoff is not set and the cell prints a clock: "Sat · S03 (H) Sat 2026-11-21 — kickoff time not yet set by the league 8:00 PM"',
+  ])
+  // Each layout has its own words for it: the phone's are string 24 and the desktop's "time TBC".
+  expect(nextCellFaults([cell('Specimen Unset', 'unset', '2026-11-21 — kickoff time not yet set')], 'mobile'))
+    .toEqual(['Specimen Unset’s kickoff is not set and the cell reads "2026-11-21 — kickoff time not yet set", expected the weekday, the date and “kickoff time not yet set by the league”'])
+  expect(nextCellFaults([cell('Specimen Unset', 'unset', 'time TBC')], 'mobile')).toHaveLength(1)
+  expect(nextCellFaults([cell('Specimen Unset', 'unset', 'Sat 2026-11-21 — kickoff time not yet set by the league')], 'desktop'))
+    .toEqual(['Specimen Unset’s kickoff is not set and the cell reads "Sat 2026-11-21 — kickoff time not yet set by the league", expected “time TBC”'])
+  // A set cell is two clocks, or one and the words that stand for the other; never a score.
+  expect(nextCellFaults([cell('Specimen 04', 'set', '3:00 PM')], 'mobile')).toEqual(['Specimen 04’s cell reads "3:00 PM", expected the Brooklyn clock and the stadium’s'])
+  expect(nextCellFaults([cell('Specimen 04', 'set', '3:00 PM', '21:00 local', '2–1')], 'mobile')).toEqual([
+    'Specimen 04’s cell prints a score: "Sat · S03 (H) 3:00 PM 21:00 local 2–1"',
+    'Specimen 04’s cell reads "3:00 PM 21:00 local 2–1", expected the Brooklyn clock and the stadium’s',
+  ])
+  expect(nextCellFaults([{ club: 'Specimen 05', state: 'live', units: [lead], text: lead }], 'mobile')).toEqual(['Specimen 05’s cell is in the state "live", which is none of set, unset and kicked-off'])
+  expect(nextCellFaults([{ club: 'Specimen 05', state: 'set', units: ['3:00 PM', '21:00 local'], text: '3:00 PM 21:00 local' }], 'mobile')).toEqual([
+    'Specimen 05’s cell begins "3:00 PM", expected a day, an opponent and (H) or (A)',
+    'Specimen 05’s cell reads "21:00 local", expected the Brooklyn clock and the stadium’s',
+  ])
+})
+
+test('the cells state names three clubs, each in its own state, and the opened state one row with its own figures', () => {
+  const words = 'Games in hand +1 Sat 2026-11-21 — kickoff time not yet set by the league KICKED OFF local time not known'
+  const drawn = { text: words, marks: 30, tables: 2 }
+  expect(tableStateFaults('cells', 'mobile', { ...drawn, cells: phoneCells })).toEqual([])
+  // The review's case, through the state: the page still held every word it was owed.
+  const tampered = phoneCells.map((each) => (each.club === 'Specimen Kicked' ? { ...each, text: `${each.text} 3:00 PM · 2–1` } : each))
+  expect(tableStateFaults('cells', 'mobile', { ...drawn, cells: tampered })).toEqual([
+    'cells: Specimen Kicked’s cell shows "Sat · S03 (H) KICKED OFF 3:00 PM · 2–1", and its units read "Sat · S03 (H) KICKED OFF"',
+    'cells: Specimen Kicked’s cell prints a score: "Sat · S03 (H) KICKED OFF 3:00 PM · 2–1"',
+    'cells: Specimen Kicked has kicked off and the cell prints a clock: "Sat · S03 (H) KICKED OFF 3:00 PM · 2–1"',
+  ])
+  // The words are on the page and the named club's cell is another club's state.
+  expect(tableStateFaults('cells', 'mobile', { ...drawn, cells: phoneCells.map((each) => (each.club === 'Specimen Kicked' ? cell('Specimen Kicked', 'set', '3:00 PM', '21:00 local') : each)) }))
+    .toEqual(['cells: Specimen Kicked’s cell is "set", expected "kicked-off"'])
+  expect(tableStateFaults('cells', 'mobile', { ...drawn, cells: phoneCells.filter((each) => each.club !== 'Specimen Unset') })).toEqual(['cells: Specimen Unset has no next-fixture cell'])
+  expect(tableStateFaults('cells', 'mobile', { ...drawn, cells: phoneCells.map((each) => (each.club === 'Specimen Nozone' ? cell('Specimen Nozone', 'set', '2:30 PM', '20:30 local') : each)) }))
+    .toEqual(['cells: Specimen Nozone’s cell ends "20:30 local", expected “local time not known”'])
+
+  const open = { club: 'Specimen Kicked', more: 'W-D-L 1-1-2 PPG 1.00', expanded: 'true', owed: { wdl: '1-1-2', ppg: '1.00' } }
+  const opened = { text: 'W-D-L 1-1-2 PPG 1.00', marks: 30, tables: 2, cells: phoneCells }
+  expect(tableStateFaults('opened', 'mobile', { ...opened, opened: [open] })).toEqual([])
+  expect(tableStateFaults('opened', 'mobile', opened)).toEqual(['opened: the opened rows were not read'])
+  // The count, the club, the figures and the state a screen reader is told.
+  expect(tableStateFaults('opened', 'mobile', { ...opened, opened: [] })).toEqual(['opened draws 0 opened rows, expected one'])
+  expect(tableStateFaults('opened', 'mobile', { ...opened, opened: [open, { ...open, club: 'Specimen 04' }] })).toEqual(['opened draws 2 opened rows, expected one', 'opened opens Specimen 04, expected Specimen Kicked'])
+  expect(tableStateFaults('opened', 'mobile', { ...opened, opened: [{ ...open, more: 'W-D-L 2-1-1 PPG 1.75' }] })).toEqual(['opened: Specimen Kicked reads "W-D-L 2-1-1 PPG 1.75", and its row holds W-D-L 1-1-2 and PPG 1.00'])
+  expect(tableStateFaults('opened', 'mobile', { ...opened, opened: [{ ...open, expanded: 'false' }] })).toEqual(['opened: Specimen Kicked’s row is drawn open and says aria-expanded="false"'])
+  expect(tableStateFaults('opened', 'mobile', { ...opened, opened: [{ ...open, owed: null }] })).toEqual(['opened: Specimen Kicked is not a club of the specimen'])
+  // The desktop's rows hold no control, so none of them is open there.
+  expect(tableStateFaults('opened', 'desktop', { ...opened, cells: deskCells, opened: [] })).toEqual([])
+  expect(tableStateFaults('opened', 'desktop', { ...opened, cells: deskCells, opened: [open] })).toEqual(['opened draws 1 opened row on the desktop, whose rows hold no control'])
 })
 
 // The review of PR #352, finding 3: Played and Points exchanged names, and the six names were still there once each.

@@ -1337,7 +1337,7 @@ export async function captureTable(browser, { origins = {}, out, contrast = fals
 // The Table's states, each on its own harness page, on synthetic data. What a state has
 // to show is read from the layout the width draws: innerText leaves out what is hidden.
 const TABLE_STATES = {
-  cells: { mobile: [/kickoff time not yet set/i, /kicked off/i, /local time not known/i, /games in hand/i, /\+1/], desktop: [/time TBC/i, /kicked off/i, /local time not known/i, /games in hand/i, /\+1/] },
+  cells: { mobile: [/kickoff time not yet set by the league/i, /kicked off/i, /local time not known/i, /games in hand/i, /\+1/], desktop: [/time TBC/i, /kicked off/i, /local time not known/i, /games in hand/i, /\+1/] },
   opened: { mobile: [/W-D-L \d+-\d+-\d+/i, /PPG \d\.\d\d/i], desktop: [] },
   ppg: { mobile: [], desktop: [/sorted by points per game\./i] },
   key: { mobile: [/qualification zones/i, /columns/i, /how ties are broken/i], desktop: [/qualification zones/i, /columns/i, /how ties are broken/i] },
@@ -1346,12 +1346,91 @@ const TABLE_STATES = {
   empty: { mobile: [/no table in the snapshot for ligue 1/i], desktop: [/no table in the snapshot for ligue 1/i] },
 }
 
-/** What one state's page showed, against what that state is there to show. `marks` is
- *  how many zone marks the page drew with a band; `tables` how many tables it drew. */
-export function tableStateFaults(name, layout, { text, marks, tables }) {
+// The three clubs the cells state is there for, each with the state its cell has to be in.
+const NAMED_CELLS = { 'Specimen Unset': 'unset', 'Specimen Kicked': 'kicked-off', 'Specimen Nozone': 'set' }
+const CELL_CLOCK = /\b\d{1,2}:\d{2}\b/
+const CELL_SCORE = /\b\d+\s*[–—-]\s*\d+\b/
+const CELL_LEAD = /^[A-Z][a-z]{2} · \S+ \((?:H|A)\)$/
+
+/**
+ * Every next-fixture cell the shown table drew, held to its own state (the review of PR
+ * #352, finding 6). A state's words being somewhere on the page is not the cell: a clock
+ * and a score added beside KICKED OFF passed. `cells` is each cell as a reader sees it:
+ * the club, the state the cell carries, the text of each of its units, and the whole
+ * cell's text. The whole text has to be its units and nothing more. A kicked-off cell is
+ * the fixture and KICKED OFF, with no clock and no score. A cell whose kickoff is not set
+ * is the fixture and the not-set words of its layout, with neither clock. A set cell is
+ * the fixture, the Brooklyn clock and the stadium's, or the words that stand for it.
+ */
+export function nextCellFaults(cells, layout) {
+  const faults = []
+  for (const cell of cells) {
+    const who = cell.club || 'a row'
+    // A date is not a clock or a score, and the not-set line carries one.
+    const said = cell.text.replace(/\d{4}-\d{2}-\d{2}/g, '')
+    const rest = cell.units.slice(1).join(' ')
+    if (cell.text !== cell.units.join(' ')) faults.push(`${who}’s cell shows "${cell.text}", and its units read "${cell.units.join(' ')}"`)
+    if (!CELL_LEAD.test(cell.units[0] ?? '')) faults.push(`${who}’s cell begins "${cell.units[0] ?? ''}", expected a day, an opponent and (H) or (A)`)
+    if (CELL_SCORE.test(said)) faults.push(`${who}’s cell prints a score: "${cell.text}"`)
+    if (cell.state === 'kicked-off') {
+      if (cell.units.length !== 2 || !/^kicked off$/i.test(cell.units[1])) faults.push(`${who} has kicked off and the cell reads "${rest}", expected KICKED OFF alone`)
+      if (CELL_CLOCK.test(said) || /local/i.test(said)) faults.push(`${who} has kicked off and the cell prints a clock: "${cell.text}"`)
+    } else if (cell.state === 'unset') {
+      const owed = layout === 'mobile' ? /^[A-Z][a-z]{2} \d{4}-\d{2}-\d{2} — kickoff time not yet set by the league$/ : /^time TBC$/
+      if (cell.units.length !== 2 || !owed.test(cell.units[1])) faults.push(`${who}’s kickoff is not set and the cell reads "${rest}", expected ${layout === 'mobile' ? 'the weekday, the date and “kickoff time not yet set by the league”' : '“time TBC”'}`)
+      if (CELL_CLOCK.test(said) || /local/i.test(said)) faults.push(`${who}’s kickoff is not set and the cell prints a clock: "${cell.text}"`)
+    } else if (cell.state === 'set') {
+      if (cell.units.length !== 3 || !/^\d{1,2}:\d{2} [AP]M$/.test(cell.units[1]) || !/^(?:\d{2}:\d{2} local|local time not known)$/i.test(cell.units[2])) faults.push(`${who}’s cell reads "${rest}", expected the Brooklyn clock and the stadium’s`)
+    } else faults.push(`${who}’s cell is in the state "${cell.state}", which is none of set, unset and kicked-off`)
+  }
+  return faults
+}
+
+/**
+ * What one state's page showed, against what that state is there to show. `marks` is how
+ * many zone marks the page drew with a band; `tables` how many tables it drew; `cells`
+ * every next-fixture cell of the shown table, held to nextCellFaults in every state that
+ * draws a table; `opened` each row of the shown table that is open, with what it reads and
+ * the figures the specimen holds for that club.
+ *
+ * @param {string} name
+ * @param {string} layout  'mobile' or 'desktop'
+ * @param {{
+ *   text: string, marks: number, tables: number,
+ *   cells?: { club: string, state: string | null, units: string[], text: string }[],
+ *   opened?: { club: string, more: string, expanded: string | null, owed: { wdl: string, ppg: string } | null }[],
+ * }} seen
+ */
+export function tableStateFaults(name, layout, { text, marks, tables, cells, opened }) {
   const owed = TABLE_STATES[name]
   if (!owed) return [`${name} is not a Table state the runner knows`]
   const faults = owed[layout].filter((needle) => !needle.test(text)).map((needle) => `${name} does not show ${needle}`)
+  if (name !== 'empty') {
+    if (!Array.isArray(cells)) faults.push(`${name}: the next-fixture cells were not read`)
+    else faults.push(...nextCellFaults(cells, layout).map((fault) => `${name}: ${fault}`))
+  }
+  if (name === 'cells' && Array.isArray(cells)) {
+    for (const [club, state] of Object.entries(NAMED_CELLS)) {
+      const cell = cells.find((each) => each.club === club)
+      if (!cell) faults.push(`cells: ${club} has no next-fixture cell`)
+      else if (cell.state !== state) faults.push(`cells: ${club}’s cell is "${cell.state}", expected "${state}"`)
+      else if (club === 'Specimen Nozone' && !/^local time not known$/i.test(cell.units.at(-1) ?? '')) faults.push(`cells: ${club}’s cell ends "${cell.units.at(-1)}", expected “local time not known”`)
+    }
+  }
+  if (name === 'opened') {
+    if (!Array.isArray(opened)) faults.push('opened: the opened rows were not read')
+    else if (layout === 'desktop') {
+      if (opened.length) faults.push(`opened draws ${opened.length} opened ${opened.length === 1 ? 'row' : 'rows'} on the desktop, whose rows hold no control`)
+    } else {
+      if (opened.length !== 1) faults.push(`opened draws ${opened.length} opened rows, expected one`)
+      for (const row of opened) {
+        if (row.club !== 'Specimen Kicked') faults.push(`opened opens ${row.club}, expected Specimen Kicked`)
+        if (row.expanded !== 'true') faults.push(`opened: ${row.club}’s row is drawn open and says aria-expanded="${row.expanded}"`)
+        if (!row.owed) faults.push(`opened: ${row.club} is not a club of the specimen`)
+        else if (row.more.toUpperCase() !== `W-D-L ${row.owed.wdl} PPG ${row.owed.ppg}`) faults.push(`opened: ${row.club} reads "${row.more}", and its row holds W-D-L ${row.owed.wdl} and PPG ${row.owed.ppg}`)
+      }
+    }
+  }
   // A season the zone data does not describe draws no band anywhere, in a row or in the key.
   if (name === 'season' && marks) faults.push(`season draws ${marks} zone ${marks === 1 ? 'mark' : 'marks'}, and its bands are hidden`)
   if (name !== 'season' && name !== 'empty' && !marks) faults.push(`${name} draws no zone mark`)
@@ -1360,7 +1439,39 @@ export function tableStateFaults(name, layout, { text, marks, tables }) {
   return faults
 }
 
-export async function captureTableStates(browser, out, cells = []) {
+/** One harness page as a reader sees it, in the layout the width draws: what tableStateFaults holds it to. */
+function readTableState(page, layout) {
+  return page.evaluate((shown) => {
+    const tidy = (text) => (text ?? '').replace(/\s+/g, ' ').trim()
+    const table = document.querySelector(`[data-table="${shown}"]`)
+    const rows = table ? [...table.querySelectorAll('[data-table-row]')] : []
+    const club = (row) => tidy(row.querySelector('.register-name')?.textContent)
+    const specimen = new Map((globalThis.__kickoffSpecimen?.rows ?? []).map((row) => [row.teamId, row]))
+    return {
+      scrollWidth: document.documentElement.scrollWidth, innerWidth,
+      theme: document.documentElement.dataset.theme,
+      // The page as a reader sees it: innerText leaves out the layout the width hides.
+      text: document.querySelector('.register')?.innerText ?? '',
+      marks: document.querySelectorAll('.zone-mark[data-band]').length,
+      tables: document.querySelectorAll('[data-table]').length,
+      cells: rows.flatMap((row) => {
+        const cell = row.querySelector('[data-next-cell]')
+        return cell ? [{ club: club(row), state: cell.getAttribute('data-next-cell'), units: [...cell.children].map((unit) => tidy(unit.innerText)), text: tidy(cell.innerText) }] : []
+      }),
+      opened: rows.filter((row) => row.querySelector('[data-row-more]')).map((row) => {
+        const held = specimen.get(row.getAttribute('data-table-row'))
+        return {
+          club: club(row), more: tidy(row.querySelector('[data-row-more]').innerText),
+          expanded: row.querySelector('[aria-expanded]')?.getAttribute('aria-expanded') ?? null,
+          owed: held ? { wdl: `${held.w}-${held.d}-${held.l}`, ppg: held.played ? (held.pts / held.played).toFixed(2) : '—' } : null,
+        }
+      }),
+    }
+  }, layout)
+}
+
+/** `contrast`, when it is given, takes each state's rendered contrast, in both themes. */
+export async function captureTableStates(browser, out, cells = [], contrast = null) {
   const origin = process.env.KICKOFF_HARNESS_ORIGIN ?? 'http://127.0.0.1:5175'
   for (const name of Object.keys(TABLE_STATES)) for (const theme of ['light', 'dark']) for (const width of TABLE_WIDTHS) {
     const id = `harness-table-${name}-${theme}-${width}`
@@ -1380,21 +1491,18 @@ export async function captureTableStates(browser, out, cells = []) {
       )
       const failure = await page.evaluate(() => document.documentElement.dataset.statesError ?? '')
       if (failure) throw new Error(`${id}: ${failure}`)
-      const state = await page.evaluate(() => ({
-        scrollWidth: document.documentElement.scrollWidth, innerWidth,
-        theme: document.documentElement.dataset.theme,
-        // The page as a reader sees it: innerText leaves out the layout the width hides.
-        text: document.querySelector('.register')?.innerText ?? '',
-        marks: document.querySelectorAll('.zone-mark[data-band]').length,
-        tables: document.querySelectorAll('[data-table]').length,
-      }))
+      const layout = width >= 768 ? 'desktop' : 'mobile'
+      const state = await readTableState(page, layout)
       assert.equal(state.scrollWidth, state.innerWidth, id)
       assert.equal(state.theme, theme, id)
       assert.deepEqual(errors, [], id)
-      const faults = tableStateFaults(name, width >= 768 ? 'desktop' : 'mobile', state)
+      const faults = tableStateFaults(name, layout, state)
       assert.deepEqual(faults, [], `${id} ${faults.join('; ')}`)
-      await shoot(page, path.join(out, `${id}.png`), width)
-      cells.push({ id, state: name, theme, width, scrollWidth: state.scrollWidth, marks: state.marks })
+      const drawn = await shoot(page, path.join(out, `${id}.png`), width)
+      // The named states' inks as rendered: amber on the row, the opened row's labels, the note.
+      if (contrast) contrast.push(await measureContrast(page, id, width, drawn))
+      assert.deepEqual(errors, [], id)
+      cells.push({ id, state: name, theme, width, scrollWidth: state.scrollWidth, marks: state.marks, nextCells: state.cells.length, openedRows: state.opened.length })
     } finally { await context.close() }
   }
   return cells
@@ -2593,7 +2701,7 @@ async function main() {
     steps.harness = []
     await captureHarness(browser, out, steps.harness)
     steps.tableStates = []
-    await captureTableStates(browser, out, steps.tableStates)
+    await captureTableStates(browser, out, steps.tableStates, tableRun.contrast)
     const done = receipt()
     writeFileSync(path.join(out, 'receipt.json'), JSON.stringify(done, null, 2))
     const failing = belowFloor(done.contrast.cells)
