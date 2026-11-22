@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { DESKTOP_TABLE_CONTROLS, DESKTOP_TABLE_SORTS, TABLE_LEAGUE_KEYS, bandFaults, firstFrameFaults, focusFaults, handoffFaults, hitAreaFaults, leagueFaults, longestLeague, momentsPaintFaults, nextCellFaults, pinFaults, revealFaults, ringPaintFaults, ringPixels, sortFaults, sortOrder, sweepFaults, tabFaults, columnFaults, tableHitFaults, tableStateFaults } from '../scripts/evidence.mjs'
+import { DESKTOP_TABLE_CONTROLS, DESKTOP_TABLE_SORTS, TABLE_FOOT_LAST, TABLE_LEAGUE_KEYS, bandFaults, dotFaults, firstFrameFaults, focusFaults, handoffFaults, heldResults, hitAreaFaults, leagueFaults, longestLeague, momentsPaintFaults, nextCellFaults, pinFaults, revealFaults, ringPaintFaults, ringPixels, sortFaults, sortOrder, sweepFaults, tabFaults, columnFaults, tableHitFaults, tableStateFaults } from '../scripts/evidence.mjs'
 
 const box = (name: string, left: number, top: number, w: number, h = 44) => ({ name, left, top, right: left + w, bottom: top + h, w, h })
 
@@ -780,6 +780,73 @@ test('a capture of a league is that league’s: the tab pressed and the provider
   expect(leagueFaults('ucl', [], { ...none, empty: null })).toEqual(['the snapshot holds no ucl table, and the page does not say so'])
   expect(leagueFaults('ucl', [], { ...none, tables: 2, ids: ['160'] })).toEqual(['the snapshot holds no ucl table, and the page draws 2 tables and 1 row'])
   expect(leagueFaults('ucl', [], { ...none, pressed: ['laliga'] })).toEqual(['asked for ucl, and the tab pressed is laliga'])
+})
+
+/** One fixture as the snapshot holds it: two clubs by id, a day, a status, and a score when it has one. */
+const played = (competition: string, day: number, home: string, away: string, score: [number, number] | null, status = 'full_time') => ({
+  competition, status, kickoffUtc: `2026-11-${String(day).padStart(2, '0')}T15:00:00.000Z`,
+  home: { sourceId: home }, away: { sourceId: away }, ...(score ? { result: { home: score[0], away: score[1] } } : {}),
+})
+
+// The review of PR #352, question 11: the dot sentence as approved on 21 Nov 2026, bound to what it says.
+test('the foot’s dot sentence is on the page as approved, and every dot is a result the snapshot does not hold for that club in that competition', () => {
+  const fixtures = [
+    played('pl', 3, 'a', 'b', [2, 0]),
+    played('pl', 1, 'b', 'a', [1, 1]),
+    played('pl', 5, 'a', 'c', [0, 3]),
+    // Another competition's result, a match not played, and a score on a match that has not ended.
+    played('ucl', 4, 'a', 'z', [4, 0]),
+    played('pl', 7, 'a', 'b', null, 'scheduled'),
+    played('pl', 6, 'c', 'b', [1, 0], 'suspended'),
+  ]
+  // Counted from the fixtures: this competition's alone, oldest to newest, for the clubs of this table.
+  const held = heldResults('pl', ['a', 'b', 'c'], fixtures)
+  expect(Object.fromEntries(held)).toEqual({
+    a: { letters: ['D', 'W', 'L'], finished: 3 },
+    b: { letters: ['D', 'L'], finished: 2 },
+    c: { letters: ['W'], finished: 1 },
+  })
+  const page = {
+    foot: ['Table read from the standings feed.', TABLE_FOOT_LAST],
+    strips: [{ id: 'a', pips: ['D', 'W', 'L', '·', '·'] }, { id: 'b', pips: ['D', 'L', '·', '·', '·'] }, { id: 'c', pips: ['W', '·', '·', '·', '·'] }],
+  }
+  expect(dotFaults('pl', held, page)).toEqual([])
+
+  // The words: the sentence before it was approved, string 8's clause with no qualifier, no foot, and the sentence anywhere but last.
+  const short = 'Zones & key, opened, reads: form runs oldest to newest. A dot is an empty slot.'
+  expect(TABLE_FOOT_LAST).toBe('Zones & key, opened, reads: form runs oldest to newest. A dot is an empty slot: the snapshot holds fewer than five finished results for that club in this competition.')
+  expect(dotFaults('pl', held, { ...page, foot: [page.foot[0]!, short] })).toEqual([`the foot ends "${short}", and the approved sentence is "${TABLE_FOOT_LAST}"`])
+  expect(dotFaults('pl', held, { ...page, foot: [page.foot[0]!, TABLE_FOOT_LAST.replace(' in this competition', '')] })).toHaveLength(1)
+  expect(dotFaults('pl', held, { ...page, foot: [] })).toEqual([`the foot ends with no paragraph, and the approved sentence is "${TABLE_FOOT_LAST}"`])
+  expect(dotFaults('pl', held, { ...page, foot: [TABLE_FOOT_LAST, page.foot[0]!] })).toHaveLength(1)
+
+  // The dots. A dot where the snapshot holds a result, and a letter where it holds none.
+  const withStrip = (id: string, pips: string[]) => ({ ...page, strips: page.strips.map((strip) => (strip.id === id ? { id, pips } : strip)) })
+  expect(dotFaults('pl', held, withStrip('a', ['D', 'W', '·', '·', '·']))).toEqual(['club "a" draws DW···, and the snapshot’s pl fixtures give DWL··'])
+  expect(dotFaults('pl', held, withStrip('c', ['W', 'W', '·', '·', '·']))).toEqual(['club "c" draws WW···, and the snapshot’s pl fixtures give W····'])
+  // The other competition's win joined to this table's strip, the results newest first, and a strip of four slots.
+  expect(dotFaults('pl', held, withStrip('a', ['D', 'W', 'W', 'L', '·']))).toHaveLength(1)
+  expect(dotFaults('pl', held, withStrip('a', ['L', 'W', 'D', '·', '·']))).toHaveLength(1)
+  expect(dotFaults('pl', held, withStrip('b', ['D', 'L', '·', '·']))).toHaveLength(1)
+  // A row whose strip is not shown, a club with no row, and a club with two.
+  expect(dotFaults('pl', held, withStrip('b', []))).toEqual(['club "b" draws no strip, and the snapshot’s pl fixtures give DL···'])
+  expect(dotFaults('pl', held, { ...page, strips: page.strips.slice(0, 2) })).toEqual(['the page draws 2 strips, and the snapshot holds 3 pl clubs', 'club "c" has 0 rows with a strip'])
+  expect(dotFaults('pl', held, { ...page, strips: [...page.strips, page.strips[0]!] })).toEqual(['the page draws 4 strips, and the snapshot holds 3 pl clubs', 'club "a" has 2 rows with a strip'])
+
+  // Seven results: the latest five, oldest to newest, and no dot. The oldest five are a fault.
+  const seven = heldResults('pl', ['a'], [1, 2, 3, 4, 5, 6, 7].map((day) => played('pl', day, 'a', `visitor-${day}`, [day % 3, 1])))
+  expect(seven.get('a')).toEqual({ letters: ['D', 'W', 'L', 'D', 'W', 'L', 'D'], finished: 7 })
+  expect(dotFaults('pl', seven, { foot: page.foot, strips: [{ id: 'a', pips: ['L', 'D', 'W', 'L', 'D'] }] })).toEqual([])
+  expect(dotFaults('pl', seven, { foot: page.foot, strips: [{ id: 'a', pips: ['D', 'W', 'L', 'D', 'W'] }] })).toHaveLength(1)
+
+  // What the sentence says cannot be: a dot beside five finished results. A strip has a letter for a
+  // full-time result alone, so four of those and a fifth after extra time is a dot the sentence is not true of.
+  const ended = [...[1, 2, 3, 4].map((day) => played('pl', day, 'a', `visitor-${day}`, [1, 0])), played('pl', 5, 'a', 'visitor-5', [2, 1], 'after_extra_time')]
+  expect(dotFaults('pl', heldResults('pl', ['a'], ended), { foot: page.foot, strips: [{ id: 'a', pips: ['W', 'W', 'W', 'W', '·'] }] })).toEqual(['club "a" draws a dot, and the snapshot holds 5 finished results for it in pl'])
+  // Three and one on penalties is four finished results: fewer than five, and the dots stand.
+  const four = [...ended.slice(1, 4), played('pl', 6, 'visitor-6', 'a', [0, 0], 'after_penalties')]
+  expect(heldResults('pl', ['a'], four).get('a')).toEqual({ letters: ['W', 'W', 'W'], finished: 4 })
+  expect(dotFaults('pl', heldResults('pl', ['a'], four), { foot: page.foot, strips: [{ id: 'a', pips: ['W', 'W', 'W', '·', '·'] }] })).toEqual([])
 })
 
 test('the proofs that need rows open the longest table the snapshot holds', () => {

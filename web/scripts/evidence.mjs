@@ -1226,6 +1226,82 @@ export function leagueFaults(league, clubs, { tabs, pressed, ids, empty, tables 
   return faults
 }
 
+/** The foot's last paragraph: string 8's third sentence, ending on the dot sentence as approved
+ *  on 21 Nov 2026 (the review of PR #352, question 11). The runner's own copy, letter for letter. */
+export const TABLE_FOOT_LAST = 'Zones & key, opened, reads: form runs oldest to newest. A dot is an empty slot: the snapshot holds fewer than five finished results for that club in this competition.'
+
+/** The statuses under which a match has ended with a score. A strip draws a letter for the first
+ *  alone; the foot's "finished results" is read as widely as a reader could, as all three. */
+const ENDED = new Set(['full_time', 'after_extra_time', 'after_penalties'])
+
+/**
+ * What the committed fixtures hold for each club of one league's table, counted here and not
+ * read from the page: the club's full-time results in that competition as letters, oldest to
+ * newest, and how many of its matches there have ended with a score, however they ended.
+ *
+ * @param {string} league
+ * @param {string[]} clubs  the club ids of the committed standings, in order
+ * @param {{ competition: string, status: string, kickoffUtc: string, result?: { home: number, away: number }, home: { sourceId?: string }, away: { sourceId?: string } }[]} fixtures
+ * @returns {Map<string, { letters: string[], finished: number }>}
+ */
+export function heldResults(league, clubs, fixtures) {
+  const held = new Map(clubs.map((id) => [id, { letters: [], finished: 0 }]))
+  const scored = fixtures
+    .filter((fixture) => fixture.competition === league && fixture.result && ENDED.has(fixture.status))
+    .sort((a, b) => a.kickoffUtc.localeCompare(b.kickoffUtc))
+  for (const fixture of scored) for (const [us, them] of [['home', 'away'], ['away', 'home']]) {
+    const club = held.get(fixture[us].sourceId)
+    if (!club) continue
+    club.finished += 1
+    if (fixture.status !== 'full_time') continue
+    club.letters.push(fixture.result[us] > fixture.result[them] ? 'W' : fixture.result[us] === fixture.result[them] ? 'D' : 'L')
+  }
+  return held
+}
+
+/**
+ * The foot's dot sentence is on the page as approved, and it is true of the page (the review
+ * of PR #352, question 11). A strip is five slots: a letter for each of the club's latest
+ * full-time results in this competition, oldest to newest, then a dot for each slot it has
+ * none for. So a dot the snapshot holds a result for is a fault, and so is a letter it holds
+ * none for, and so is a club that draws a dot while the snapshot holds five finished results
+ * for it here, which is the one thing the sentence says cannot be.
+ *
+ * @param {string} league
+ * @param {Map<string, { letters: string[], finished: number }>} held  from heldResults
+ * @param {{ foot: string[], strips: { id: string, pips: string[] }[] }} seen  the foot's paragraphs, and each row's pips as drawn
+ */
+export function dotFaults(league, held, { foot, strips }) {
+  const faults = []
+  const last = foot[foot.length - 1]
+  if (last !== TABLE_FOOT_LAST) faults.push(`the foot ends ${last === undefined ? 'with no paragraph' : `"${last}"`}, and the approved sentence is "${TABLE_FOOT_LAST}"`)
+  if (strips.length !== held.size) faults.push(`the page draws ${strips.length} strips, and the snapshot holds ${held.size} ${league} clubs`)
+  for (const [id, { letters, finished }] of held) {
+    const mine = strips.filter((strip) => strip.id === id)
+    if (mine.length !== 1) {
+      faults.push(`club "${id}" has ${mine.length} rows with a strip`)
+      continue
+    }
+    const latest = letters.slice(-5)
+    const owed = [...latest, ...Array(5 - latest.length).fill('·')].join('')
+    const drawn = mine[0].pips.join('')
+    if (drawn !== owed) faults.push(`club "${id}" draws ${drawn || 'no strip'}, and the snapshot’s ${league} fixtures give ${owed}`)
+    else if (latest.length < 5 && finished >= 5) faults.push(`club "${id}" draws a dot, and the snapshot holds ${finished} finished results for it in ${league}`)
+  }
+  return faults
+}
+
+/** The foot's paragraphs, and each row's pips in the layout the width draws: the ones a reader is shown. */
+function readDots(page, layout) {
+  return page.evaluate((shown) => ({
+    foot: [...document.querySelectorAll('footer.page-foot p.page-foot-copy')].filter((paragraph) => paragraph.checkVisibility()).map((paragraph) => paragraph.textContent),
+    strips: [...document.querySelectorAll(`[data-table="${shown}"] [data-table-row]`)].map((row) => ({
+      id: row.getAttribute('data-table-row'),
+      pips: [...row.querySelectorAll('.form-pips .form-pip')].filter((pip) => pip.checkVisibility()).map((pip) => pip.textContent),
+    })),
+  }), layout)
+}
+
 /** What a Table page shows of its league, in the layout the width draws. */
 function readLeague(page, layout) {
   return page.evaluate((shown) => {
@@ -1252,6 +1328,7 @@ function readLeague(page, layout) {
  */
 export async function captureTable(browser, { origins = {}, out, contrast = false, files = false }, result = { cells: [], contrast: [] }) {
   const standings = committedStandings()
+  const { fixtures } = readSnapshot(root)
   const degraded = JSON.parse(readFileSync(path.join(root, 'src/data/meta.json'), 'utf8')).standingsDegraded ?? []
   // The six leagues the Table has a tab for, whether or not the snapshot holds a table for
   // each: a sync may write none for a league, and that league's cells are the empty page.
@@ -1305,6 +1382,10 @@ export async function captureTable(browser, { origins = {}, out, contrast = fals
         }, layout)) }
         // The cover's line is the league a reader chose and the app's own matchday count.
         assert.ok(state.current && state.line.startsWith(`${state.current} · As of matchday `), `${id} the cover reads "${state.line}" under the tab "${state.current}"`)
+        // The foot's last paragraph as approved, and every dot a result the snapshot does not hold.
+        const dots = await readDots(page, layout)
+        const said = dotFaults(league, heldResults(league, clubs, fixtures), dots)
+        assert.deepEqual(said, [], `${id} ${said.join('; ')}`)
         const hits = tableHitFaults(await tableHitBoxes(page, layout), { layout, clubs: clubs.length })
         assert.deepEqual(hits, [], `${id} ${hits.join('; ')}`)
         if (layout === 'desktop') {
@@ -1326,7 +1407,7 @@ export async function captureTable(browser, { origins = {}, out, contrast = fals
         const drawn = await shoot(page, path.join(out, `${id}-opened.png`), width)
         if (contrast) result.contrast.push(await measureContrast(page, `${id}-opened`, width, drawn))
         assert.deepEqual(errors, [], `${id} with the key opened`)
-        result.cells.push({ id, rows: state.rows, line: state.line, columns: state.cells.length, table: state.table.width, scrollWidth: state.scrollWidth })
+        result.cells.push({ id, rows: state.rows, line: state.line, columns: state.cells.length, table: state.table.width, scrollWidth: state.scrollWidth, strips: dots.strips.length, dots: dots.strips.reduce((sum, strip) => sum + strip.pips.filter((pip) => pip === '·').length, 0) })
       } finally { await context.close() }
     }
     console.log(`${app} table ${league}: ${2 * TABLE_WIDTHS.length} cells passed`)
@@ -1513,7 +1594,9 @@ export async function captureTableStates(browser, out, cells = [], contrast = nu
  * passed a page that was wrong, so each is run here on a page that is right, then on the
  * same page broken the way the review broke it, and the run stops unless the first is
  * clean and the second is not. A receipt that says a gate passed says nothing until the
- * gate has been seen to fail.
+ * gate has been seen to fail. The foot's dot sentence (question 11) is held the same way:
+ * once with its qualifier taken out, and once with a strip that no longer matches the
+ * snapshot.
  */
 export async function proveVerifiers(browser, origins) {
   const standings = committedStandings()
@@ -1582,6 +1665,34 @@ export async function proveVerifiers(browser, origins) {
       const shown = await readLeague(page, 'mobile')
       record('a capture of La Liga that shows Serie A', leagueFaults('seriea', ids('seriea'), shown), leagueFaults('laliga', ids('laliga'), shown))
     } finally { await context.close() }
+  }
+
+  // Question 11: the foot's sentence loses "in this competition", and then one slot of one
+  // strip is drawn as what the snapshot does not hold: a dot as a win, or a letter as a dot.
+  {
+    const league = longestLeague(standings)
+    const held = heldResults(league, standings[league].map((club) => club.teamId), readSnapshot(root).fixtures)
+    const breaks = [
+      ['the foot’s dot sentence without “in this competition”', () => {
+        const paragraphs = [...document.querySelectorAll('footer.page-foot p.page-foot-copy')]
+        const last = paragraphs[paragraphs.length - 1]
+        last.textContent = last.textContent.replace(' in this competition', '')
+      }],
+      ['a strip’s last slot drawn as what the snapshot does not hold', () => {
+        const pips = document.querySelectorAll('[data-table="mobile"] [data-table-row] .form-pips .form-pip')
+        const pip = pips[4]
+        pip.textContent = pip.textContent === '·' ? 'W' : '·'
+      }],
+    ]
+    for (const [name, spoil] of breaks) {
+      const { context, page } = await openPage(browser, `${origin}/?tab=table&league=${league}`, 'light', 390)
+      try {
+        await page.waitForSelector('[data-table="mobile"] [data-table-row]', { timeout: 15_000 })
+        const clean = dotFaults(league, held, await readDots(page, 'mobile'))
+        await page.evaluate(spoil)
+        record(name, clean, dotFaults(league, held, await readDots(page, 'mobile')), { league })
+      } finally { await context.close() }
+    }
   }
 
   // Finding 6: a clock and a score are added to the KICKED OFF cell, in each layout.
