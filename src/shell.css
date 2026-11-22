@@ -686,7 +686,9 @@ body:has(.page-measure[data-measure='register']) {
  * stands in for it meanwhile. The label is an Oswald caps label, the title is the
  * display face in cover-ink with no foil, and the line is the date line's
  * type: Kickoff Mono 500 11 on a 1.5 line, .04em, caps, breaking at a middot
- * only. Black stock has its own two inks, so the cover names them.
+ * only. The offline and single files do not carry the display face, so there
+ * the title is Georgia, the fallback the stack names; no face is inlined for
+ * it. Black stock has its own two inks, so the cover names them.
  */
 .page-measure[data-measure='register']:not(:has(.staleness, [data-offline-snapshot])) {
   padding-top: 0;
