@@ -927,3 +927,142 @@ DELIVERABLE. One PR comment whose first line is "<model> · <effort> · Base ref
 
 When the refresh posts, the PM seat moves Pass 2.5's tip and base trees to the new head and to
 `52fe62b`, and sends the sitting's Codex session a neutral note to resume.
+
+## The second refresh posts, Beni's "Keep" and "Later", and the note that resumes Pass 2.5's first sitting (Sun 22 Nov 2026, about 12:45 PM EST)
+
+**The second refresh** posted at 12:02 PM EST, as `issuecomment-7082527734`. Its first line reads
+"claude-fable-5-2 · xhigh · Base refresh 2 — #359 merged in with no conflict and no follow-up
+commit; mergeable, with gates and hosted checks green; ready for Pass 2.5 to resume at
+96240169ee19c466e0296ef106565ccf41e72d70". Beni pasted its report into the PM seat's session by
+12:05 PM EST. Its figures are the builder's, so they are claims here:
+- 11 of 11 gates at the merge, with 1,364 root tests in 109 files and 171 web tests in 28;
+- a report run and an `--enforce` run of the runner at the tip, from 10:47:01 to 11:13:33 AM EST
+  under the 24-hour banner, each measuring 3,549 rows with none below the floor;
+- a control run of `fefc391` and `9624016` back to back, 3,537 rows each, with no row different;
+- eleven mutations, all caught and restored;
+- a body of 64,508 characters;
+- receipts in `~/code/kickoff-receipts/pr4/refresh2/` (635 MB), to keep until #352 merges or
+  closes.
+
+One control run failed and was not counted. The report says its stillness step's two captures,
+two seconds apart, straddled the 11:15 AM kickoff.
+
+**The PM seat's checks,** at 12:05 PM EST:
+- The base branch ref reads `52fe62b`. This time the PR record agrees: base `52fe62b`, head
+  `9624016`, open, not a draft, MERGEABLE and CLEAN, auto-merge off, no review.
+- At `9624016`, all four checks succeeded: `verify` (completed 11:21:16 AM EST), Vercel Preview
+  Comments (11:17:55 AM), the Vercel status (11:17:54 AM) and `vercel-smoke` (11:18:20 AM).
+- The PR's one new commit is `9624016`, with parents `fefc391` and `52fe62b`, authored and
+  committed `Claude <noreply@anthropic.com>` at 10:41:20 AM EST. Its tree is `d24bc80`, the same
+  tree the trial merge gives (`git merge-tree --write-tree --name-only fefc391 52fe62b` exits 0
+  and lists no file). So the merge holds no hand edit.
+- `git diff 52fe62b 9624016 -- src/data` is empty. No `package.json` or `package-lock.json`
+  changed between `fefc391` and `9624016`, or between `1e09592` and `52fe62b`.
+- The body measures 64,513 characters by `gh pr view 352 --repo BeniCheni/kickoff --json body
+  --jq '.body|length'`, five more than the report's 64,508. Either way, about 1,000 remain under
+  GitHub's 65,536.
+- #352 is the only open PR into `overhaul/second-edition`. #358 is open on `main` at `99757f3`
+  and MERGEABLE, and #360 and #361 are open.
+- The shared `.git/config` still reads `core.bare=false` and `Cursor <cursoragent@cursor.com>`.
+
+**The clock,** from the snapshot at `9624016`. The command is `git show
+9624016:src/data/fixtures.json`, filtered to `kickoffUtc` from 17:00Z on 22 Nov to 05:00Z on 23
+Nov and shown in America/New_York. It gives kickoffs at 12:00 PM (one), 12:30 PM (one), 2:45 PM
+(two) and 3:00 PM EST (one), and none later that night. `lastSyncAt` plus 72 hours is 2:33:56 PM
+EST. So a sitting resumed after 12:30 PM has two quiet windows: 12:30 to 2:33 PM under the 24-hour
+banner, and after 3:00 PM under the alarm.
+
+**Beni's answers,** at 12:34:56 PM EST, to the second refresh's two questions:
+1. **Keep**: the PR body's two corrected receipts lines stay. They say that fix round 1's and the
+   first refresh's receipt folders are gone.
+2. **Later**: a pinned clock for the runner's stillness step goes to a later PR, as a carry-over.
+   Nothing changes in #352, and no issue is opened.
+
+**A correction.** The previous section says Beni answered "Yes, me" at about 10:40 AM EST. The PM
+seat's session transcript records his message at 10:32:14 AM EST. "Refresh" arrived at 10:26:07
+AM, which "about 10:25 AM" covers.
+
+**The sitting's session.** Its file is
+`~/.codex/sessions/2026/11/22/rollout-2026-11-22T09-12-13-01a20399-b108-75e1-bd90-4120bd86bba6.jsonl`
+(originator `codex-tui`, source `cli`). It ends with `task_complete` at 14:15:51Z, which is 9:15:51
+AM EST, and a guardian subagent's file (`…-b177-…`) ends at 9:14:09 AM. Its gate logs in
+`pass25-sitting1/tip-gates/` are from 9:14 AM. At 12:35 PM EST no Codex TUI process was running,
+and no process had its working directory in the three trees. So the sitting resumes by `codex
+resume` with its session id.
+
+**The trees,** moved in place at 12:36 PM EST with `git checkout --detach` and the sandbox off:
+- `kickoff-pr352-pass25`: `fefc391` → `9624016`, tree `d24bc80`;
+- `kickoff-pr352-pass25-base`: `1e09592` → `52fe62b`, tree `d23fce0`;
+- `kickoff-pr352-pass25-prev`: unchanged at `f9cc527`, tree `421223a`.
+
+Each was clean before and after. The tip tree still held the first sitting's 9:14 AM build output
+from `fefc391`: `dist/`, `dist-offline/`, `dist-single/`, `web/.next/`, `web/generated/`,
+`web/public/faces.css`, `web/public/fonts/`, `web/next-env.d.ts`, `web/tsconfig.tsbuildinfo` and
+three root `tsconfig.*.tsbuildinfo` files. The PM seat removed them. No tree now holds anything
+ignored except `node_modules`. The installs stand: the root and `web/` lockfile blobs (`264b624`
+and `8c23805`) are the same at both new heads as at the heads they were installed from, and both
+trees' installed `.package-lock.json` files hash alike.
+
+**Folders,** at 12:37 PM EST:
+- `kickoff-pr352-pass25`, `-base` and `-prev`;
+- `kickoff-pr352-refresh2`, where a Claude Code session is still open;
+- `kickoff-pr359-review-base`;
+- `kickoff-pr4`, `kickoff-pr4-review` and `kickoff-pr4-review-base`;
+- under `kickoff-receipts/pr4/`, `pass25-sitting1/` (6.5 MB) and `refresh2/` (635 MB).
+
+The Mac had 13 GiB free at 12:05 PM.
+
+**The note.** Claude wrote both refreshes, so the note is neutral, like the opener: state, seats,
+Beni's rulings, trees and limits, and no reading of the refresh. It opens by pointing the sitting
+at this archived copy. It was delivered in chat in a fenced block, one line per paragraph, with
+this launch:
+
+```bash
+/Applications/ChatGPT.app/Contents/Resources/codex-cli/bin/codex resume 01a20399-b108-75e1-bd90-4120bd86bba6 -C /Users/benicheni/code/kickoff-pr352-pass25 -m gpt-6.2-sol -c model_reasoning_effort=xhigh -s read-only -a on-request
+```
+
+```text
+PR #352 — Pass 2.5, first sitting, resumed: overhaul PR 4, the Table's skin, at 9624016 against 52fe62b
+
+FIRST, READ THIS NOTE FROM ITS ARCHIVE. Run git show claude/track-a-archive-7:docs/design-overhaul-pr4-review-prompt.md | sed -n '/^## The second refresh posts/,$p' and read it whole. The note is there in full; if this paste and that copy differ, the archived copy is the note. Your opener is in the same file, in the section headed "The base refresh posted, Beni's five answers, and the Pass 2.5 opener". It still binds wherever this note does not replace a fact.
+
+WHY YOU ARE RESUMING. You stopped before posting, at 9:15:51 AM EST on Sun 22 Nov 2026, because #359 had moved overhaul/second-edition from 1e09592 to 52fe62b. Beni ruled "Refresh". The second base refresh, Claude Code on claude-fable-5-2 at xhigh in the builder's seat, has posted. This note is from the PM seat (Claude Code, Opus 5.5, in another session), under the same "Yes, neutral opener" ruling as your opener. It gives you the state, the seats, Beni's rulings, the trees and the limits, and no reading of the refresh or its comment. What you judge, you find. Where this note disagrees with the repository or GitHub, they win, and you say so beside your brief.
+
+READ THE BASE AND THE HEAD FIRST, from their branch refs, not from the PR record: gh api repos/BeniCheni/kickoff/branches/overhaul%2Fsecond-edition --jq .commit.sha and gh api repos/BeniCheni/kickoff/branches/claude%2Foverhaul-pr4-table --jq .commit.sha. This morning, GitHub's baseRefOid and mergeable fields for #352 kept naming the old base after it moved. If the base is not 52fe62b00cdf6716ca2ef6e5eb2610c94bea5158, or the head is not 96240169ee19c466e0296ef106565ccf41e72d70, say so first in your brief and stop for Beni's word. Read both again before you post. At the PM seat's read, #352 was the only open PR into overhaul/second-edition.
+
+YOUR SEAT is unchanged: the "When Claude builds" column of #328, gpt-6.2-sol at xhigh with --sandbox read-only, writing nothing but your one comment. The method is /kickoff-pr-review with --pass 2.5 and --no-merge, from the skill files in the tip worktree. This session's file is ~/.codex/sessions/2026/11/22/rollout-2026-11-22T09-12-13-01a20399-b108-75e1-bd90-4120bd86bba6.jsonl. Name the model, effort and sandbox on your comment's first line from its turn_context lines for the resumed turns, not from memory. Your opener's paragraphs on the sandbox, Git's environment, what you must not do and the tool message stand as written, and so does the squash-trailer precedent. Your deliverables are unchanged: the Executive Summary Brief in your reply to Beni, ending with the handoff block, and one PR comment. Push nothing.
+
+WHAT CHANGED SINCE YOU STOPPED (re-check all of it).
+- #359 merged into overhaul/second-edition at 9:05:51 AM EST as squash 52fe62b00cdf6716ca2ef6e5eb2610c94bea5158, parent 1e09592, on Beni's word.
+- The second refresh: https://github.com/BeniCheni/kickoff/pull/352#issuecomment-7082527734. One commit was pushed as a fast-forward of fefc391: the merge 9624016, with parents fefc391 and 52fe62b, authored and committed Claude <noreply@anthropic.com>. The rules for that merge are the build brief's section "IF PR 3 IS BUILDING AT THE SAME TIME". The PM seat's brief for the refresh is in the archive file, in the section headed "Pass 2.5's first sitting stops on #359's merge". The refresh also edited the PR body, and its comment put two questions to Beni, which he has answered (below).
+- At the PM seat's read (12:05 PM EST), the PR was open, not a draft, MERGEABLE and CLEAN, with base 52fe62b, head 9624016, auto-merge off and no review. verify, the Vercel deployment, Vercel Preview Comments and vercel-smoke were green at 9624016. git diff 52fe62b 9624016 -- src/data was empty. No package.json or package-lock.json changed between fefc391 and 9624016, or between 1e09592 and 52fe62b.
+- Your first sitting's checks ran at fefc391. The tip is now 9624016.
+
+WHERE TO WORK.
+- At 12:36 PM EST the PM seat moved two of your trees in place, detached: /Users/benicheni/code/kickoff-pr352-pass25 to 9624016 (tree d24bc80), and /Users/benicheni/code/kickoff-pr352-pass25-base to 52fe62b (tree d23fce0). /Users/benicheni/code/kickoff-pr352-pass25-prev is unchanged at f9cc527 (tree 421223a). Each was clean before and after the move.
+- The PM seat then removed the build output that your 9:14 AM gates had left in the tip tree at fefc391: dist/, dist-offline/, dist-single/, web/.next/, web/generated/, web/public/faces.css, web/public/fonts/, web/next-env.d.ts, web/tsconfig.tsbuildinfo and the three root tsconfig.*.tsbuildinfo files. No tree now holds anything ignored except node_modules. The installs were not re-run: the root and web/ lockfile blobs at each new head are the ones each tree was installed from. Confirm each HEAD, a clean status and that the installs match the lockfiles before you build.
+- For per-commit checkouts, use -prev by SHA and return it to f9cc527 when you finish. Your ports, your receipts folder /Users/benicheni/code/kickoff-receipts/pr4/pass25-sitting1/ (it still holds your npm-cache, tip-gates and tmp), and your opener's folder rules stand as written.
+- Disk: 13 GiB free at 12:05 PM EST. The 3 GiB stop stands.
+- Folders that left the disk between 7:18 and 10:21 AM EST, in a tidy-up Beni confirmed as his own ("Yes, me"): kickoff-pr352-refresh, kickoff-pr358-review, kickoff-pr359-review, kickoff-pr3-followup and kickoff-pr3-followup-base; and under kickoff-receipts, every folder but yours, including the pr4/fix1/, pr4/refresh/ and pr4/pm-setup-pass25/ folders your opener cites. Their comments and the archive file are their record.
+- The second refresh's receipts are in /Users/benicheni/code/kickoff-receipts/pr4/refresh2/. They are recipes, not your evidence; change nothing there.
+- Add to the workspaces you must not touch: /Users/benicheni/code/kickoff-pr352-refresh2, the second refresh's tree, where a Claude Code session is still open. The rest of your opener's list stands. Of it, only kickoff-pr4, kickoff-pr4-review, kickoff-pr4-review-base and kickoff-pr359-review-base are still on disk, besides Beni's checkout and .claude/worktrees/.
+
+THE CLOCK. The page turns to the 72-hour state at 2:33:56 PM EST today: lastSyncAt is 2026-11-19T19:33:56.613Z, and src/components/StalenessBanner.tsx line 14 is unchanged at 9624016. After 12:30 PM, the snapshot at 9624016 has kickoffs today at 2:45 PM (two) and 3:00 PM EST (one), and none later tonight. Check that with git show 9624016:src/data/fixtures.json, filtered on kickoffUtc. The second refresh's comment reports that runner row counts change when a kickoff passes, and that a check comparing two captures two seconds apart failed across one. Read those as claims. Run every runner pass you compare with no kickoff and no 2:33:56 PM between them. Record each run's start and end in Brooklyn time, lastSyncAt and the banner state, and say for each figure you compare which window it was measured in.
+
+WHAT BENI RULED SINCE YOUR OPENER, named as his.
+- Sun 22 Nov 2026, 10:26 AM EST: "Refresh" (#352's base is refreshed to 52fe62b before Pass 2.5 resumes).
+- Sun 22 Nov 2026, 10:32 AM EST: "Yes, me" (this morning's folder tidy-up was his own).
+- Sun 22 Nov 2026, 12:35 PM EST, on the second refresh's two questions: 1 Keep (the PR body's two corrected receipts lines stay); 2 Later (a pinned clock for the runner's stillness step goes to a later PR; nothing changes in #352).
+Every ruling your opener lists stands. At the PM seat's last word from him, he had ruled on nothing else in this PR.
+
+WHAT YOUR PASS MUST SHOW. Your opener's seven items stand, at the new head and base:
+1. Green at 9624016: the build brief's eleven commands; then typecheck and npm test at each SHA from cb1451d to the tip, now including 9624016; then scripts/vercel-smoke.mjs and scripts/n6b-proof.mjs against a local Next production build, on every route.
+2. As written.
+3. The refreshes, each read on its own: the first (0280073 against both its parents, then f5ef791, 78e393b and fefc391), and the second (9624016 against both its parents and against "IF PR 3 IS BUILDING AT THE SAME TIME"). For each, give every assertion it adds, changes or removes, against that assertion's prior rule.
+4. The runner, whole, at 9624016: in report mode and then with --enforce, compared with the builder's figures and with fefc391 and 52fe62b measured the same way, under THE CLOCK above.
+5. Beni's questions: each question this PR's comments put to him is answered above. Add any of your own, each answerable in one word, with your recommendation and its evidence.
+6. The squash body as it now stands, after the second refresh's edit: which of its lines the tip makes false, with corrected ones from what you ran, and the trailers. GitHub caps a body at 65,536 characters. At the PM seat's read it measured 64,513: gh pr view 352 --repo BeniCheni/kickoff --json body --jq '.body|length'.
+7. The merge gate, clause by clause, ending in escalation.
+```
+
+When the sitting posts, its Executive Summary Brief goes to Beni for Pass 3.
