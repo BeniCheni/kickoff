@@ -1056,3 +1056,12 @@ From the PM seat, read only:
 - P3: .git/config in Beni's checkout still holds user.name = Fixture, user.email = fixture@example.invalid, maintenance.auto = false and gc.auto = 0, last written at 8:58 PM. Before that, the reflogs show Cursor <cursoragent@cursor.com> as the identity. No commit carries the fixture identity. Confirm by reading only, and leave the repair to Beni.
 - P4: Keep makes an all-hidden week about eleven times taller on the Poster. Beni ruled Keep without seeing that height. Put the figure in the brief beside the ruling, not as a finding against it.
 ```
+
+**The config repair (Sat 21 Nov 2026, 10:24 PM EST).** Beni said "Restore it". The PM seat copied
+`.git/config` to `~/code/kickoff-receipts/git-config-repair-2026-11-21/config.before`. It then
+set `user.name` and `user.email` back to `Cursor` and `cursoragent@cursor.com`, the identity
+the reflogs show up to 8:49 PM, and removed the `[maintenance]` and `[gc]` sections. Those two
+were the file's last sections, appended after its newest branch entries, while `[user]` sat near
+the top and had been overwritten in place. `core.bare` was already `false`. `config.after` sits
+beside the copy. The delivered opener's P3 was written before this repair, so it no longer
+reproduces, and the review should say so. The test's leak itself is still in the code.
