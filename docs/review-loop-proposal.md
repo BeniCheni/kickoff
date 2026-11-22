@@ -695,6 +695,19 @@ Cursor's hands this track seats no Cursor.
   `~/code/review-seats/elenchus-pr8-pass2-r9`. Its forms and scenarios are in
   [`review-loop-sprint-3-fix-9-forms.md`](review-loop-sprint-3-fix-9-forms.md), since no seat
   folder that held them survived.
+- *Fixed a ninth time (Sun 22 Nov 2026):* the Pass 2 re-read's
+  [record](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7081284607): one commit to
+  `75fada0`, in `test/authorize.test.ts` only. As the round reports it, 25-29, 25-30 and 25-33
+  are fixed, and so is 25-32's first half. It adds twenty carry rows and five `status` rows, and
+  each fails under its own deletion, which passes every test at `a61d6e8`. The eleven forms the
+  ruling names are caught, and the six deferred forms pass. The table names a test and a deletion
+  for each of the 38 reachable carry cells and the seven arms of `nextStep`. 25-31 and 25-32's
+  second half stay open for Sprint 5.
+- *Eighth re-read brief:* [`review-loop-sprint-3-synthesis-9-prompt.md`](review-loop-sprint-3-synthesis-9-prompt.md),
+  for the eighth Pass 2.5 re-read (Claude Code, `claude-opus-5-5`, `xhigh`), in
+  `~/code/review-seats/elenchus-pr8-pass25-r9`, with its sealed appendix as a second paste. By
+  ruling 4's closing rule it checks the closed list only. Codex's case file is in
+  [`review-loop-sprint-3-synthesis-9-forms.md`](review-loop-sprint-3-synthesis-9-forms.md).
 - *Carried from Sprint 1's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are that
   comment's findings): 6, sequence by the order records were posted, not their presence; 7, every
   pass's `input_sha` is the previous recorded pass's `output_sha`, writing or not, and a head
