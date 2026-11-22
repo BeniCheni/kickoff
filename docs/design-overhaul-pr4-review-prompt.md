@@ -844,7 +844,8 @@ In the paste, "Gate results" carries no link. The sitting's receipts folder,
   install logs the Pass 2.5 opener cites), `pr3-followup/`, `pr359-review/` and
   `git-config-repair-2026-11-21/`.
 
-The disk went from 6.6 to 14 GiB free. #358's review had not started (it had no receipts folder at
+The disk went from 6.6 to 14 GiB free. Asked whether the tidy-up was his, Beni answered
+**"Yes, me"** at about 10:40 AM EST. #358's review had not started (it had no receipts folder at
 7:16 AM), so its brief needs a new tree when Beni wants that review.
 
 **Beni's ruling**, at about 10:25 AM EST, to the PM seat's question in its session, with the trial
