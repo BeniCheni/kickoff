@@ -36,13 +36,13 @@ const sites: [string, string, RegExp][] = [
   ['MatchdayLines', '7 · outside or rescheduled', /line.state === 'computed' \? 'ink' : 'amber'/],
   ['FixtureRow', '8 · unknown stadium clock', /className="stadium-clock" data-voice=\{times.local \? 'muted' : 'amber'/],
   ['NextUpStrip', '8 · unknown stadium clock', /className="stadium-clock" data-voice=\{local \? 'muted' : 'amber'/],
-  ['TablePage', '4 · games in hand', /border-floodlight [^"]*text-floodlight-strong">\s*\+\{n\}/],
-  ['TablePage', '1, 4 · freshness and games in hand', /border-l-floodlight bg-floodlight-bg[^"]*">\s*<div className="[^"]*text-floodlight-strong">\s*\{progress/],
-  ['TablePage', '3 · mobile underway', /text-floodlight-strong">\s+KICKED OFF/],
-  ['TablePage', '2 · unset next fixture', /text-floodlight-strong">\s*\{r.next.times.brooklyn.isoDate\} — kickoff time not yet set/],
-  ['TablePage', '3 · desktop underway', /text-floodlight-strong">KICKED OFF/],
+  // The Table's second edition. One cell component draws both layouts, so each state is one site.
+  ['TablePage', '4 · games in hand chip', /className="inhand-chip" data-voice="amber">\s*\+\{n\}/],
+  ['TablePage', '4 · games in hand note', /className="inhand-note-heading" data-voice="amber">\{meta\.phase \? 'Matches played' : 'Games in hand'\}/],
+  ['NextFixtureCell', '3 · kicked off', /className="next-cell-state" data-voice="amber">KICKED OFF/],
+  ['NextFixtureCell', '8 · unknown stadium clock', /className="next-cell-local" data-voice="amber">local time not known/],
+  ['NextFixtureCell', '2 · unset next fixture', /className="next-cell-unset" data-voice="amber">\s*\{compact \? 'time TBC' : `\$\{brooklyn\.weekday\} \$\{brooklyn\.isoDate\} — kickoff time not yet set by the league`\}/],
   // First-edition stock, retained verbatim until its owning surface is repainted.
-  ['TablePage', 'existing noncanonical sort ground', /bg-floodlight-bg[^"]*">\s*Sorted by/],
   ['MomentsEmpty', 'existing Moments rights notice', /border-l-floodlight bg-floodlight-bg[^"]*">\s*<p className="[^"]*text-floodlight-strong">Hand-curated/],
 ]
 
@@ -62,7 +62,8 @@ it('accounts for amber by component and reason', () => {
 
 it('allows the amber token only on its named grounds and text selectors', () => {
   const permitted = [
-    ".imprint-band[data-stock='black']", ".imprint-band[data-stock='paper']", '.provenance', '.staleness',
+    ".imprint-band[data-stock='black']", ".imprint-band[data-stock='paper']", '.provenance',
+    ":where(.register) [data-voice='amber']", '.inhand-note', '.staleness',
     ".fixture-status[data-voice='amber'], .fixture-score[data-voice='amber']",
     ".stadium-clock[data-voice='amber'], .fixture-unset",
     ".matchday-line[data-voice='amber']", ".next-card .stadium-clock[data-voice='amber']",
