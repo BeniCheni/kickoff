@@ -20,6 +20,7 @@ export type ZonedParts = {
   /** Display pieces from Intl, so components never have to split a formatted string. */
   clock: string
   meridiem: string
+  clock24: string
   /** "2026-08-21" — the calendar date *in that zone*, which may differ from the UTC date. */
   isoDate: string
   /** "Fri" */
@@ -52,6 +53,7 @@ export function zonedParts(instant: Date, tz: string): ZonedParts {
     time: meridiem ? `${clock} ${meridiem}` : clock,
     clock,
     meridiem,
+    clock24: formatter(tz, { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(instant),
     isoDate: `${parts.year}-${parts.month}-${parts.day}`,
     weekday: parts.weekday ?? '',
   }
@@ -129,6 +131,18 @@ export function niceDate(iso: string): string {
 
 export function shortDate(iso: string): string {
   return formatter('UTC', { month: 'short', day: 'numeric' }).format(new Date(`${iso}T12:00:00Z`))
+}
+
+/** The date arguments are Brooklyn calendar days, including today's year at midnight. */
+export function weekRange(start: string, today: string): string {
+  const end = addDays(start, 6)
+  const firstYear = start.slice(0, 4)
+  const lastYear = end.slice(0, 4)
+  const crossesYear = firstYear !== lastYear
+  const left = shortDate(start) + (crossesYear ? `, ${firstYear}` : '')
+  const right = start.slice(0, 7) === end.slice(0, 7) ? Number(end.slice(8)) : shortDate(end)
+  const year = crossesYear || lastYear !== today.slice(0, 4) ? `, ${lastYear}` : ''
+  return `${left}–${right}${year}`
 }
 
 export function weekdayShort(iso: string): string {

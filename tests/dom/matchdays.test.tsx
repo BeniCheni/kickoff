@@ -13,16 +13,16 @@ const f = fixtureSchema.parse(normalizeEvent(payload.events[0], 'ucl', '2026-09-
 describe('day-level matchday provenance', () => {
   it('labels the baseline computed and names the source window', () => {
     render(<MatchdayLines fixtures={[f]} />)
-    expect(screen.getByText('MATCHDAY 1 · COMPUTED — UEFA WINDOW 8–10 SEP')).toBeTruthy()
+    expect(screen.getByText('MATCHDAY 1 · COMPUTED — UEFA WINDOW 8–10 SEP').dataset.voice).toBe('ink')
   })
   it('a move into MD2 renders RESCHEDULED from MD1, never a computed MD2', () => {
     render(<MatchdayLines fixtures={[{ ...f, kickoffUtc: '2026-10-13T19:00:00Z' }]} />)
-    expect(screen.getByText('MATCHDAY 1 · RESCHEDULED — NOW OUTSIDE ITS UEFA WINDOW')).toBeTruthy()
+    expect(screen.getByText('MATCHDAY 1 · RESCHEDULED — NOW OUTSIDE ITS UEFA WINDOW').dataset.voice).toBe('amber')
     expect(screen.queryByText(/MATCHDAY 2/)).toBeNull()
   })
   it('admits the out-of-window first sighting and distinguishes its later in-window move', () => {
     const view = render(<MatchdayLines fixtures={[{ ...f, round: undefined, kickoffUtc: '2026-09-30T19:00:00Z' }]} />)
-    expect(screen.getByText("MATCHDAY — · DATE OUTSIDE UEFA'S PUBLISHED WINDOWS").className).toContain('italic')
+    expect(screen.getByText("MATCHDAY — · DATE OUTSIDE UEFA'S PUBLISHED WINDOWS").dataset.voice).toBe('amber')
     view.rerender(<MatchdayLines fixtures={[{ ...f, round: undefined, kickoffUtc: '2026-10-13T19:00:00Z' }]} />)
     expect(screen.getByText("MATCHDAY — · FIRST SEEN OUTSIDE UEFA'S PUBLISHED WINDOWS")).toBeTruthy()
   })
@@ -39,7 +39,7 @@ describe('day-level matchday provenance', () => {
       <PosterWeek blocks={[{ kind: 'big', date: '2026-09-08', fixtures: [f], isToday: false, dominant: 'ucl' }, { kind: 'small', date: '2026-09-09', fixtures: [f], isToday: false }]} />
     </>)
     expect(container.querySelectorAll('[data-matchday-state]')).toHaveLength(3)
-    expect(container.querySelector('.pb-\\[5px\\]')?.nextElementSibling?.classList.contains('border-t')).toBe(true)
+    expect(container.querySelector('.ledger-week [data-matchday-state]')?.parentElement?.nextElementSibling?.getAttribute('data-fixture-id')).toBe(f.id)
   })
   it('says competition for an entirely European day while preserving mixed/domestic wording', () => {
     expect(posterSubLine([f])).toContain('1 COMPETITION')
@@ -48,8 +48,22 @@ describe('day-level matchday provenance', () => {
   it('keeps the competition name in readable muted ink while the glyph retains its hue', () => {
     render(<FixtureRow fixture={f} />)
     const meta = screen.getByText(/Champions League/)
-    expect(meta.className).toBe('text-ink-muted')
+    expect(meta.closest('.fixture-meta')?.getAttribute('data-voice')).toBe('muted')
     expect(meta.getAttribute('style')).toBeNull()
-    expect(meta.querySelector('span')!.style.color).toBe('rgb(139, 111, 232)')
+    expect(meta.querySelector('i')!.style.backgroundColor).toBe('rgb(139, 111, 232)')
   })
+})
+
+it('starts each distinct UEFA line at its first governed row in a mixed day', () => {
+  const other = { ...f, id: 'other', competition: 'uel' as const }
+  const moved = { ...f, id: 'moved', kickoffUtc: '2026-10-13T19:00:00Z' }
+  const fixtures = [other, f, { ...f, id: 'same' }, moved]
+  const { container } = render(<>
+    <LedgerWeek days={[{ date: '2026-10-13', shown: fixtures, total: 4, isToday: false }]} />
+    <PosterWeek blocks={[{ kind: 'big', date: '2026-10-13', fixtures, isToday: false, dominant: 'ucl' }]} />
+  </>)
+  for (const section of container.querySelectorAll('section')) {
+    const lines = [...section.querySelectorAll('[data-matchday-state]')]
+    expect(lines.map(line => line.parentElement?.nextElementSibling?.getAttribute('data-fixture-id'))).toEqual([f.id, moved.id])
+  }
 })

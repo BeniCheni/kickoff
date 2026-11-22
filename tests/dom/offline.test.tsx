@@ -35,7 +35,7 @@ describe('offline Fixtures and Table', () => {
     release = primeClock(edt('2026-09-14T12:00:00'))
     window.history.replaceState(null, '', '/?tab=moments&watch=clip#keep')
     render(<OfflineApp />)
-    expect(screen.getByText('Filters')).toBeTruthy()
+    expect(screen.getByRole('button', { name: /^Filters, / })).toBeTruthy()
     expect(screen.queryByRole('button', { name: 'Moments' })).toBeNull()
     expect(window.location.search).toBe('?tab=moments&watch=clip')
     expect(window.location.hash).toBe('#keep')
@@ -46,7 +46,7 @@ describe('offline Fixtures and Table', () => {
     const restore = throwingStorage()
     try {
       expect(() => render(<OfflineApp />)).not.toThrow()
-      expect(screen.getByText('Filters')).toBeTruthy()
+      expect(screen.getByRole('button', { name: /^Filters, / })).toBeTruthy()
     } finally {
       restore()
     }

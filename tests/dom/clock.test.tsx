@@ -16,8 +16,8 @@ afterEach(() => {
   release = null
 })
 
-const WEEK_OF_SEP_7 = 'Sep 7 – September 13, 2026'
-const WEEK_OF_SEP_14 = 'Sep 14 – September 20, 2026'
+const WEEK_OF_SEP_7 = 'Sep 7–13'
+const WEEK_OF_SEP_14 = 'Sep 14–20'
 
 describe('useNow reads the clock the test drives (affordance 1)', () => {
   it('a minute tick across Sunday midnight re-anchors an unpinned view to the new week', () => {
@@ -77,13 +77,13 @@ describe('the pinned-date rollover (v0.2.0 review; the effect tests the URL, not
     expect(screen.getByText(WEEK_OF_SEP_7)).toBeTruthy()
   })
 
-  it('"Jump to today" un-pins it again', () => {
+  it('"Today" un-pins it again', () => {
     release = primeClock(edt('2026-09-14T09:00:00'))
     window.history.replaceState(null, '', '/?date=2026-09-12')
     render(<App />)
     expect(screen.getByText(WEEK_OF_SEP_7)).toBeTruthy()
 
-    fireEvent.click(screen.getByRole('button', { name: 'Jump to today' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Today' }))
 
     expect(window.location.search).toBe('')
     expect(screen.getByText(WEEK_OF_SEP_14)).toBeTruthy()

@@ -99,6 +99,8 @@ export default defineConfig(({ mode }) => ({
         test: {
           name: 'dom',
           environment: 'jsdom',
+          // A viewer in Kathmandu shares no UTC offset with Brooklyn or a venue in the window.
+          env: { TZ: 'Asia/Kathmandu' },
           include: ['tests/dom/**/*.test.{ts,tsx}'],
           setupFiles: ['tests/dom/setup.ts'],
           testTimeout: 20_000,

@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { addDays } from '../lib/time'
 import { useNow } from '../lib/useNow'
 import { FIXTURES, fixturesOn, totalOn } from '../lib/fixtures'
-import { hotFixtureIds, staleLiveIds, planPosterWeek, type DayInfo } from '../lib/lensSelectors'
+import { hotFixtureIds, nextKickoffId, staleLiveIds, planPosterWeek, type DayInfo } from '../lib/lensSelectors'
 import { LedgerWeek } from './LedgerWeek'
 import { PosterWeek } from './PosterWeek'
 import type { CompetitionKey } from '../lib/competitions'
@@ -33,6 +33,7 @@ export function WeekView({
   const stale = useMemo(() => staleLiveIds(FIXTURES, nowUtcIso), [nowUtcIso])
   const hot = useMemo(() => hotFixtureIds(FIXTURES, nowUtcIso), [nowUtcIso])
 
-  if (lens === 'poster') return <PosterWeek blocks={planPosterWeek(days)} stale={stale} />
-  return <LedgerWeek days={days} hot={hot} stale={stale} />
+  const next = useMemo(() => nextKickoffId(FIXTURES, nowUtcIso), [nowUtcIso])
+  if (lens === 'poster') return <PosterWeek blocks={planPosterWeek(days)} stale={stale} next={next} nowUtcIso={nowUtcIso} />
+  return <LedgerWeek days={days} hot={hot} stale={stale} nowUtcIso={nowUtcIso} />
 }
