@@ -1,4 +1,4 @@
-# PR #349 — the PM seat's briefs for the overhaul's PR 3, the Ledger, rows, states and the week: Pass 1's cold review, Pass 1.5's rebuttal brief and Pass 2.5's synthesis opener (archived Fri 20 and Sat 21 Nov 2026, TZ=America/New_York)
+# PR #349 — the PM seat's briefs for the overhaul's PR 3, the Ledger, rows, states and the week: Pass 1's cold review, Pass 1.5's rebuttal brief, Pass 2.5's synthesis opener and its result (archived Fri 20 and Sat 21 Nov 2026, TZ=America/New_York)
 
 Written by the PM seat (Claude Code, Opus 5.5) in the Track A planning session, after Codex opened
 PR #349 from
@@ -674,3 +674,87 @@ From the PM seat, read only, nothing run but one git merge-tree:
 - P21: D3's ranges and C16's built-scale ranges differ (Poster at 360: 2,257–9,374 against 956–9,193). They come from different trees (7c6e230 against bbd3370's) and different week sets (24 weeks against 26 calendar weeks). Say which rows account for the difference: the fix commits, the week set or the clock.
 - P22: the five fix commits add five root tests in all (1,251 → 1,256), while Pass 2 describes new DOM cases in three files and a replaced honesty test. Count the tests added and replaced in each commit. For each of weekControls.test.tsx's six original .disabled assertions, say which assertion replaced it, and whether it is at least as strong.
 ````
+
+## Pass 2.5's result and Beni's questions (Sat 21 Nov 2026, about 7:50 PM EST)
+
+Pass 2.5 posted at 3:19 PM EST:
+https://github.com/BeniCheni/kickoff/pull/349#issuecomment-7068665745. Its first line is "Pass
+2.5 · Claude Code, the PM seat's synthesis · claude-opus-5-5 at xhigh (from this session's own
+file)", which follows the skill's table: `.claude/skills/kickoff-pr-review/SKILL.md` line 42 gives
+Pass 2.5 to "the PM seat". Its verdict: mergeable into `overhaul/second-edition` as built, and
+escalated, because plan §3 gives Beni every overhaul merge and the all-hidden day is still
+contested. It reached the PM seat at about 7:45 PM as Beni's paste of the session's recap. The
+brief as delivered in chat was extracted from that session's file to
+`~/code/kickoff-receipts/pr349-pass25/brief-delivered.md`. `brief.md` beside it is the template
+with its placeholders unfilled.
+
+What Pass 2.5 found:
+- **All ten findings corroborated.** Findings 1, 2, 4–8 and 9(a)–(c) went red then green in that
+  session. Finding 3's sizes are still the build's and its weights the handoff's.
+- **Finding 10 settled for Pass 2.** Vite 8.3.8 and Next 16.4.6, read from `node_modules`, both
+  start at Safari 16.4, and the repo overrides neither.
+- **The all-hidden day still contested.** Pass 2.5 sides with Pass 2: the addendum names this
+  PR's controls section and outranks the build brief's line 161.
+- **Three new lows and two nits,** all for Codex (row 143 below). 9(d) measured (row 142
+  below).
+- **The runner, six runs from 3:01 to 3:15 PM under the amber banner.** 1,807 samples at the tip
+  and at `7c6e230`, 1,946 on the matched base, zero unread. Every `--enforce` exit 1 is R2's 16
+  loss pips.
+
+The PM seat read the comment, the delivered brief and the squash message between 7:45 and
+7:55 PM, and ran:
+- `gh pr view 349` and `gh pr checks 349`: the head is still `39d4dd7`, CLEAN, with auto-merge
+  off and no review. `verify` (run 44936998749), Vercel and `vercel-smoke` pass.
+  `codex/pr349-pass2-handoff-scale` is still `ea6b72c`, and the four `kickoff-pr349-pass25*`
+  worktrees are clean. Pass 2.5 wrote nothing, as asked.
+- `git merge-tree --write-tree 39d4dd7 origin/main`: **`main` moved again**, to `b2206cf` (the
+  6:28 PM sync), after the brief's `444428f`. The merge is still clean (`f91e025`).
+- `git merge-tree --write-tree --merge-base d9b97d4 39d4dd7 3325ca0`: #352's head is unchanged,
+  and the same six files conflict.
+- The handoff block's branch checks out. The local `overhaul/second-edition` tracks origin. It is
+  six commits behind and none ahead, and no worktree has it checked out.
+  `~/code/kickoff-second-edition` does not exist yet. The subject matches the branch's earlier
+  squashes, `(#341)` and `(#342)`.
+- `git show 39d4dd7:tests/dom/nextUpWindows.test.tsx`: the "+N more today" fixture kicks off at
+  `20:00Z`, as Pass 2.5 says.
+
+That read turned up five things:
+- **The opener had a wrong premise.** `~/code/kickoff-receipts/pr349-pass1/` and `pr349-pass2/`
+  do not exist, so Pass 2.5 could not check Pass 2's paired phone captures. Pass 1's worktrees,
+  `kickoff-pr349-review` and `-review-base`, are gone from disk too, and git lists them as
+  prunable. Nobody prunes them.
+- **Questions 5 to 9 carry no recommendation of Pass 2.5's,** though the opener's item 8 asked for
+  one on each. Both vendors gave theirs on the body's five: approve, approve, keep, keep, keep.
+- **String 33 prints a raw ISO date.** NEXT UP reads "No upcoming fixtures through 2027-04-18, the
+  end of this snapshot." The build brief said to use `META.window.to` and said nothing of its
+  format. Everywhere else the page prints a date in words.
+- **The squash body's "Left for later on Beni's word" line holds only if Beni merges before he
+  rules.** Once he rules, that line should name the rulings.
+- **A Keep ruling does not fit PR 5.** PR 5's row in plan §3 leaves out the Ledger, and Pass 2's
+  Keep covers both lenses. Keep, Handoff or a reworded string 33 is therefore a small follow-up
+  for Codex on the integration branch, not a fold into PR 5.
+
+Rows for `docs/v0.2.6-ideas.md`, filed as 142 and 143 when this branch takes `main`. `main` has
+rows up to 141; this branch stops at 138 and lacks `main`'s three, so filing them here would put
+two branches' rows at the same spot.
+
+| 142 | **The evidence runner reads the wall clock, so its page heights, wrap counts and contrast samples move between runs.** (New, [PR #349 Pass 1](https://github.com/BeniCheni/kickoff/pull/349#issuecomment-7066441855) finding 9(d), measured by [Pass 2.5](https://github.com/BeniCheni/kickoff/pull/349#issuecomment-7068665745), 21 Nov 2026.) `web/scripts/evidence.mjs` renders its pages against the real clock, and so does the Next server. At 1000 px the Fixtures page measured 4,193 px (Poster) and 3,165 px (Ledger) at 3:10 PM EST, and 3,775 and 3,187 pinned to 1:35 PM. Across three pins, Poster meta wraps ran 285–294 and Ledger name wraps 213–224, and the contrast count moves with the staleness banner. Pin one instant across the browser pages and the Next server, keep a real-clock run beside it, and write both clocks and the banner state into the receipt. | Two reviewers of one tree report different figures and spend a pass reconciling them; PR 3's 291 against 292 was this. | S |
+| 143 | **Three of PR 3's rules are guarded only by the runner or a browser.** (New, [PR #349 Pass 2.5](https://github.com/BeniCheni/kickoff/pull/349#issuecomment-7068665745), 21 Nov 2026.) (1) `tests/dom/nextUpWindows.test.tsx` kicks off at `20:00Z`, so `f.kickoffUtc.slice(0, 10) === today` in `NextUpStrip.tsx` passes all 1,256 root tests. A kickoff between `00:00Z` and `05:00Z` separates the UTC date from Brooklyn's. (2) No vitest test covers the muted look of an unavailable control, so moving the rule back to `:disabled` stays green. (3) A return to weight 700 on the clock and score passes every unit test. Only `missingFixtureFaces` in `web/scripts/evidence.mjs` flags it, and `verify` does not run the runner. Two nits ride along: a Space-only key handler gets past the new Enter helper, and a class name built by concatenation gets past the amber scan. | A regression in any of the three ships green through `verify`. | S |
+
+Beni's questions, as Pass 2.5 numbered them. Each line gives that pass's recommendation, then the
+PM seat's where it differs or where Pass 2.5 gave none:
+1. Merge #349 at `39d4dd7` now, with any ruling below landing as a Codex follow-up? Yes.
+2. All-hidden days: Keep (Pass 2 and Pass 2.5) or Merge (as built; Pass 1 read the sentence as
+   PR 5's).
+3. Row sizes: Handoff (by precedence) or Built. The study is local only, so no preview shows it on
+   a phone.
+4. Offline italic: Six.
+5. String 33 as built: none given. The vendors approved the words. The PM seat leans No, keeping
+   the words and printing the date as the rest of the page does.
+6. The fixture note as a muted line: none given. The vendors said approve.
+7. Keep the evidence-week selector: none given. The vendors said keep.
+8. Keep the artifact boundary: none given. The vendors said keep.
+9. The phone layout as built (Filters to the content edge, two NEXT UP columns at 360, the 502 px
+   panel): none given. The vendors said keep.
+10. Merge `main` before the squash: No. It is still clean against `b2206cf`, and the branch takes
+    `main` through its own merge PRs (#334, #336).
