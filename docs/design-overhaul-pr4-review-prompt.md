@@ -194,4 +194,145 @@ D. The builder says the cover may drop “synced Nh ago” because the band and 
 E. Resolve the builder’s ten choices against the sources: W/D/L as text; string 8 last and complete; removal of the cover’s age; the additional flat-ink title; “Games in hand” and “Matches played” headings; omission of string 31’s played line; inset focus rings; the scorch’s local brown; removal of the desktop zone-square strip; signed GD in ink. Also check the dedicated harness page, contrast coverage outside tests/contrast.ts, and the optional PageFoot prop against their callers. For each material choice, identify the ruling that settles it or the precise question still belonging to Beni.
 ````
 
-Codex's Pass 2 brief joins this file when Beni brings it back.
+## Pass 1.5: Codex's Pass 2 brief, read from its session file (Sat 21 Nov 2026, 12:39 PM EST)
+
+Beni pasted the Pass 1.5 handoff above into a fresh Codex session, not the one that ran Pass 0. It
+ran in Beni's checkout from 12:35 to 12:39 PM EST on `gpt-6.2-astra` at `xhigh`, by its session's
+`turn_context` record, before the Pass 1 brief was archived. As the handoff asked, it says so: "I do
+not have the unarchived Pass 1 brief that Pass 0 wrote." The one-line note offering it that brief
+was never pasted. Its reply did not reach the PM seat either, so under the same word from Beni
+("Read Codex's log") the PM seat read it from Codex's session file,
+`~/.codex/sessions/2026/11/21/rollout-2026-11-21T12-35-53-01a1ff2d-cae7-7f71-8f0c-a784ed19b286.jsonl`,
+as that session's final answer. It is archived below word for word, without its two progress notes
+or its hidden memory-citation block. The PM seat did not vet or edit it: Pass 2 had already used it.
+
+Delivered by Codex in chat. This copy is the archive.
+
+Codex Pass 1.5 ran on `gpt-6.2-astra` at `xhigh`, confirmed from this session’s record. I read the archived Pass 0 opener and the [posted Pass 1 comment](https://github.com/BeniCheni/kickoff/pull/352#issuecomment-7066252100). I do not have the unarchived Pass 1 brief that Pass 0 wrote. I confirmed the head, base, zero formal reviews, and both local worktree changes. I made no changes or posts.
+
+Paste this into the original builder session. If it cannot be resumed, start its replacement with `cd /Users/benicheni/code/kickoff-pr4 && claude --model claude-fable-5-2 --effort xhigh`.
+
+````text
+Kickoff #352 — Pass 2, the builder’s rebuttal and fix round for the Table’s skin
+
+You are PR 4’s builder, Claude Code on claude-fable-5-2 at xhigh, in /Users/benicheni/code/kickoff-pr4 on claude/overhaul-pr4-table. Resume the session that built #352 if available. A fresh session in that worktree uses the same model and effort. Confirm both from your own session record and put them on the first line of your Pass 2 comment. If you cannot confirm them, ask Beni before doing builder work. You own Pass 2 and every fix round. Under #328’s “When Claude builds” column, Codex owns Passes 0 and 1.5, fresh Codex Astra xhigh ran Pass 1 report-only, and Codex gpt-6.2-sol at xhigh with --sandbox read-only takes every Pass 2.5 and writes nothing. Beni holds Pass 3 and landing authority.
+
+Read AGENTS.md, CLAUDE.md, .claude/skills/kickoff-pr-review/SKILL.md and its pr-comment.md. Read the live #352 body, its diff, and the complete Pass 1 comment at https://github.com/BeniCheni/kickoff/pull/352#issuecomment-7066252100. The build contract is docs/design-overhaul-pr4-implementation-prompt.md, including FILES YOU OWN, RULINGS THAT BIND IT and VERIFICATION, GREEN AT EVERY COMMIT. Read #328’s amendment with `git show origin/docs/review-loop-plan:docs/design-overhaul-plan.md`. Run `TZ=America/New_York date` before dating your record.
+
+Pin the starting point. Pass 1 reported “Not mergeable” at H = ebd5331e076c7a31804a137577fc793243558160 against B = d9b97d402991328aed94f07f9d459815a58886d3 on overhaul/second-edition. At handoff #352 is open there with 21 reachable commits and zero formal reviews. Check the physical worktree, local branch and HEAD, remote PR head and base, diff and status before editing. Reconcile any movement explicitly. The eleven findings below are Pass 1’s claims at H. For each, record “accept”, “contest”, or “accept, contest the characterisation”. Give your reproduction or contrary evidence, your assessment of severity and ownership where they differ, and a fix SHA or an explicit disposition. Fix reproduced defects within PR 4’s scope. Carry disputed wording, scope and owner choices to Beni with a recommendation.
+
+Worktree and receipts
+
+The four uncommitted lines beginning `// TODO(human)` in src/components/TablePage.tsx belong beside Beni’s Q1. The untracked .agents/skills/kickoff-pr-review/ also stays exactly as found. Preserve both through every fix. Stage explicit paths. If a fix touches TablePage.tsx, stage only the fix hunks and inspect `git diff --cached` before committing the index. A path argument to `git commit` can take the whole working copy of that file. Never use `git add -A` or `git commit -a`. At handoff confirm the four lines are still an unstaged diff and the directory is still untracked.
+
+Read Pass 1’s evidence under /Users/benicheni/code/kickoff-receipts/pr352-pass1/run-01/. Its `mutations/`, `receipts/`, `browser/` and `logs/` contain exact changes, comparisons, captures and exits. Some scripts write relative to their own location or name the reviewer’s paths. Read them there and adapt copies for your own run. Write fresh evidence to a new round directory under /Users/benicheni/code/kickoff-receipts/pr4/, preserving the builder’s historical receipts as well. Use kickoff-pr4 and the builder’s detached kickoff-pr4-base for evidence. Head Vite preview, production Next and harness use 7373, 7374, 7375 respectively. Base uses 7473, 7474, 7475. Set KICKOFF_VITE_ORIGIN, KICKOFF_NEXT_ORIGIN and KICKOFF_HARNESS_ORIGIN explicitly. Check each listener with `lsof -nP -iTCP:<port> -sTCP:LISTEN` and its PID’s cwd with `lsof -a -p <pid> -d cwd`. Stop only your own processes. Leave Beni’s checkout and 5173, PR 3’s worktrees and ports, and both reviewers’ worktrees and ports alone.
+
+Beni’s rulings already in force
+
+D4 preserves the Table’s structure, provider standings, canonical positions and zone ranges. Beni’s “Branch”, “Ten” and “Six” put PR 4 into overhaul/second-edition and the v0.6.0 release at PR 9. Main and Pages wait for the release. PR 4 carries no CHANGELOG edit, version bump or tag. Beni’s ruling 17 approved the listed §10.4 copy, including strings 8, 15, 22, 24 and 31 as allocated. Read docs/design-overhaul-plan-review.md and plan §10.5 for precedence, boards 07/08 and the second-edition handoff for the design, and the later gap-18 addendum for the sections it amends. PR 7 owns the photograph, caption and photograph sentence. PR 8 owns foil and decorative motion.
+
+Beni’s handoff rulings 6, 7, 10, 11 and 12 give the form strip an ink-filled W, outlined D, blood-filled L and empty dot, limit amber to its eight uses, set the 1000 px Table measure to 780 px, and require the stadium clock as zero-padded 24-hour “HH:MM local” from the same instant as Brooklyn’s clock. League tabs have 44 px targets and the phone pips get their own line. Rulings 22/23 keep destination bands solid, play-offs broken 4 px on/3 px off in the destination hue or relegation blood, relegation solid blood and Eliminated solid muted ink. Ruling 26 puts the two actual seasons first in the opened key on mismatch, hides the bands and squares, and omits the maintainer instruction. Ruling 29 keeps both clocks on Fixtures under KICKED OFF. The Table’s KICKED OFF cell has neither clock nor score. Preserve the standing data-honesty rules, including no invented kickoff or matchday.
+
+Beni confirmed PR 0’s R2 with “Yes”. PR 4 owns the loss pip and its head must pass contrast enforcement. From PR 2, Beni’s “All five as recommended” gives PR 4 the visible upper focus edge on the first row under its own long-zone divider. “Yes, in PR 4” requires W/D/L to be real sorts on provider figures or plain text, with six controls if text. “Later, in PR 4” requires each remaining header’s browser-computed accessible name to identify its action. These rulings bind the result. Q1 and Q7 below still ask Beni about the builder’s chosen implementations.
+
+Eleven findings to answer in Pass 1 order
+
+1. High — A successful sync can fail the provenance test. At tests/tableProvenance.test.ts:15, compare the asserted `< 60000` with the writer in scripts/providers/espn-standings.ts:64 and scripts/sync.ts:209 and the cover in src/components/RegisterCover.tsx:12. In the intercepted-I/O tests/uclSync.test.ts harness, advance fake time by 75,000 ms during a successful UCL fetch. Inspect all three serialized writes. Pass 1 got exit 0, 36 UCL rows and a 75,000 ms gap between standings.fetchedAt and META.lastSyncAt. Apply that interval to the test’s imported metadata and run the provenance test. See `mutations/slow-writer*` and `slow-provenance*`. The historical 520 ms maximum over 60 snapshots did reproduce, but ddd9a37 crosses a displayed minute even within that range. Establish which stamp the band publishes and test the writer/consumer promise without an elapsed-time assumption. Give Beni the separate standings-age choice under Q3.
+
+2. High — Valid snapshots can have no UCL table or no incomplete form strip. See tests/dom/tableFoot.test.tsx:55,76,104, tests/dom/tableHeaders.test.tsx:64, web/scripts/evidence.mjs:921 and the provider’s post-phase branch at scripts/providers/espn-standings.ts:120. In test memory delete `STANDINGS.leagues.ucl`, set `STANDINGS.degraded` and `META.standingsDegraded` to `['ucl']`, and run both DOM files. Check the runner’s exactly-six-keys prerequisite against the same state. Separately add five finished round-robin rounds per competition with `edgeFixture` and each club’s test ID. Pass 1’s per-club strip checks passed, then `expect(short).toBeGreaterThan(0)` failed. See `mutations/missing-ucl-*` and `all-five.*`. Exercise both cases independently. Keep per-club comparisons for available provider rows, prove the legitimate empty page, and use deterministic specimens for the short and full strips. Keep generated JSON untouched.
+
+3. Medium — Two actions can exchange accessible names and pass. At web/scripts/evidence.mjs:678, use Chromium at 1000 px. Give Played and Points separate hidden label nodes and cross-reference them with `aria-labelledby`, leaving visible labels, positions and handlers intact. Pass 1 read `PTS, GF, GA, GD, PL, PPG` from the accessibility tree and got zero faults from the real keyboard sweep and `sweepFaults`. The one-way duplicate-name control already fails on H. See `receipts/drive.mjs` and `browser/head-drive/drive.json`. Bind each computed name to its own column/sort action and show the two-way swap fails while the clean actions pass.
+
+4. Medium — A transparent focus ring passes enforcement. At web/scripts/evidence.mjs:772,790, open UCL at 390 px and inject `button.register-row:focus-visible { outline-color: transparent !important }`. Tab through the real rows. Pass 1 counted 36 with zero faults. On clean H it measured pitch pixels along all four edges in both themes, including Arsenal and Club Brugge, UCL row 9, when each row met its own divider. See `receipts/drive.mjs` and `browser/head-drive/`. Prove the rendered edges under the divider and make the transparent negative control fail. Keep the verdict on the shipped ring distinct from the verdict on its verifier.
+
+5. Medium — A La Liga capture can show Serie A. At web/scripts/evidence.mjs:940,954–957, wrap Vite navigation so `league=laliga` opens `league=seriea`, then run `captureTable`. Both have 20 clubs. All 36 cases passed for Pass 1, including six labelled La Liga with a Serie A cover. See `receipts/challenge.mjs` and `browser/head-challenges/results.json`. Bind the pressed league and ordered provider row IDs to the requested key. Exercise the supported absent-league case from finding 2. The independent 144-cell check found the shipped selection and rows correct.
+
+6. Medium — The state proof accepts a clock and score in KICKED OFF. At web/scripts/evidence.mjs:1000,1031 and tests/harness/table.tsx:180, open `tests/harness/table.html?state=cells` at 360 and 1000. Append `3:00 PM · 2–1` to Specimen Kicked’s visible next cell and pass the visible register text, mark count and table count to `tableStateFaults('cells', layout, …)`. Pass 1 got no fault at either width. Hiding “local time not known” only in the visible layout did trigger a fault. See `receipts/challenge.mjs` and its `browser/head-challenges/results.json`. Check the named club’s whole visible cell, forbidden clocks and score, and the opened-row count and figures in their applicable states. Sample rendered contrast on the named states in both themes. The 42 stock harness captures supplied no contrast minima. The clean KICKED OFF cell passed independent inspection.
+
+7. Medium — The foot gives the wrong denominator for a dot. At src/components/TablePage.tsx:49 and tests/dom/tableFoot.test.tsx:92, inspect Arsenal, ID 359. Pass 1 found two eligible UCL finishes and three dots, with five finished results across competitions. Its `receipts/form-denominator.py` found 59 club/competition rows with dots despite five or more results overall. Preserve the join, ordering and five slots. Add a cross-competition case. The build brief permits omitting an untrue clause. If recommending new words, put “in this competition” to Beni under Q2 and distinguish that recommendation from his approval of string 8.
+
+8. Medium — The unset cell abbreviates string 24. At src/components/NextFixtureCell.tsx:48, inspect Specimen Unset in the cells harness. At 360 Pass 1 read `Sat · S01 (H)` over `2026-11-21 — kickoff time not yet set`. At 1000 it read `time TBC`. Both correctly omitted clocks. Compare ruling 17 and §10.4 string 24, “Sun 2026-12-06 — kickoff time not yet set by the league”, with the build brief’s reference to the inherited compact wording. Verify the approved form using the fixture’s actual weekday and date in both layouts, or put the precise short variants to Beni for an explicit exception. Check fit and the absence of both clocks.
+
+9. Medium — The active tab omits the board’s competition dot. At src/components/LeagueTabs.tsx:31 and tests/tableSkin.test.ts:132, select Premier League at 360/390 and compare the active tab against boards 08/07. Pass 1 saw the black plate, label and pitch underline on H. Both boards also show a small competition dot. Handoff §2 permits hue on an 8 px dot. The brief forbids hue fill, tint and flag. Demonstrate your reading against the boards. If accepted, restore the dot, retain the label and plate treatments, and narrow the test to the forbidden hue uses. An intentional waiver goes to Beni.
+
+10. Medium — Next restores the URL and the wrong visible league on Forward. At src/lib/useUrlState.ts:32, start on Fixtures at `/?lens=ledger&only=pl,uel&date=2026-11-25#read`, open Table, select Premier League, go Back, then Forward and wait for the UI to settle. On both B and H, Next restored `league=pl` in the address and displayed La Liga. Vite displayed Premier League. Direct links worked and both apps preserved parsed filters, date and fragment. See `receipts/urls-settled.mjs`, `base-settled-history.json` and `head-settled-history.json`. Reproduce on both refs and report ownership and reader impact. The URL-state owner is outside this skin’s file scope. Give Beni a disposition and a browser regression case for that owner before expanding the PR.
+
+11. Low — The historical “identical, row for row” claim overstates the receipts. In the PR body find “The two runs are 45 rows apart”. Join the builder’s `pr4/base-matched/receipt.json` and `pr4/head-report/receipt.json` by cell ID, then `(ink,large)`. Pass 1 found identical key sets and 1,450 minima on each side across 136 controls. Sampled text differed in 124 records across 84 cells, with ground or ratio also differing in 26. Check `next-ledger-dark-fixtures-1000` for ESTAC Troyes versus Bayern Munich. The retired black minimum was the active La Liga label at 5.425:1, while the sampler set the flag aside. Reproduce from the historical JSON and correct the PR body where warranted. Attribute the separate frozen result to its own run: at a common instant all 1,450 control minima matched. Preserve the evidence for the 45 clock-driven additions.
+
+Ten questions for Beni — all open
+
+For each numbered question, give your recommendation and reason alongside Pass 1’s. Keep all ten open unless Beni himself answers. In particular, the earlier ruling allowing plain text or real W/D/L sorts leaves him the choice, and removing the 60-second test does not decide which timestamp the cover should show.
+
+Q1. W/D/L headers, Text or Sort? Pass 1 recommends Text. Six other controls sort real figures. If recommending Sort, identify the direction question for draws and losses. Preserve the local comment.
+
+Q2. String 8, last paragraph or Move, and is any clause omitted? Pass 1 recommends Yes to last place, after PR 7’s future photo sentence, with the empty-slot clause qualified by competition or the unsupported part omitted. See finding 7.
+
+Q3. Keep “synced Nh ago” off the cover, Yes or Keep? Pass 1 recommends Keep the standings’ own age on the cover. The band gives the publication stamp. State exactly which fact the reader gets under each choice. See finding 1.
+
+Q4. “The Register” as the cover title in flat cover ink, Yes or Drop? Pass 1 recommends Yes. It found board 07 and string 13 support the title, with string 15 supplying the label and line. It saw Georgia in the offline files on its Mac. Disclose the fallback under the six-face offline decision.
+
+Q5. “Games in hand” for domestic leagues and “Matches played” for a phase competition, Yes or Reword? Pass 1 recommends Yes. The headings distinguish the cases and the sentence and club marks remain snapshot-derived.
+
+Q6. Omit string 31’s separate played line, Yes or Ship? Pass 1 recommends Yes to omission. The rows show played and mark the clubs behind, and the note and Zones & key remain.
+
+Q7. Draw the row and sort-control focus ring inside, Yes or No? Pass 1 recommends Yes. It measured all four edges clear under the divider. Finding 4 concerns how later regressions get caught.
+
+Q8. Keep the scorch’s `#3a2410` Local or make it a Token? Pass 1 recommends Local. The scorch is decorative, carries no text and stays static with either motion preference.
+
+Q9. Remove the desktop strip of zone squares, Yes or Restore? Pass 1 recommends Yes to removal. The opened key supplies destination, range and note, and the zone headers remain in canonical order.
+
+Q10. Signed goal difference in ink, Yes or Colour? Pass 1 recommends Yes to ink. The signed provider figure conveys direction in both themes.
+
+Integration, verification and handoff
+
+Beni ruled “Beside PR 3”. At handoff #349 was open at 7c6e23045b148694fb5d8a48f0789cbd0ec7714a against the same B. The combined tree is unverified. Recheck #349 before refreshing the integration base. Follow both implementation briefs’ “IF PR 3/4 IS BUILDING AT THE SAME TIME” sections. The second builder merges the updated integration branch into its own branch, keeps the first’s single cached `clock24` implementation with `hourCycle: 'h23'`, preserves PR 3’s time/venue tests and PR 4’s cell tests, combines both sides’ harness, runner, contrast, edge-fixture and Next scan lists, consolidates the kickoff-date scan and updates PR 3’s amber inventory to the final Table sites. Once both consumers have gone, the second builder removes CompetitionChip.tsx, src/lib/chipInk.ts and the chip cases in tests/europeanContrast.test.ts, records the assertion retirement and checks hue only on a dot or zone band. Rerun suite and evidence on the actual combined head when that obligation falls to you. Until then these are merge-order arrangements.
+
+Pass 1 reported 132/132 gates green on the committed snapshots, 16 baseline loss-pip failures, and zero below-floor or unread samples in H enforcement. Its frozen comparison used base code with H’s generated snapshot, a clock of 2026-11-20 19:20:00 UTC and week anchor 2026-11-21. Those are Pass 1 receipts. For your comparisons name code and data SHAs, use matching snapshots and clocks for causal claims, and distinguish native, matched and historical runs. Keep any base-data overlay unstaged in the builder’s detached evidence tree and restore it afterward. Never hand-edit generated JSON or run sync. Pass 1 could compare the committed boards but could not open the editable Fergie Time templates. Record what you can inspect yourself.
+
+Use small Claude-authored fix commits and fast-forward pushes to `origin HEAD:claude/overhaul-pr4-table`. At each new committed SHA run the build brief’s eleven gates sequentially on the committed tree: root typecheck, full tests, build, build:single, build:offline and offline scan, then web typecheck, tests, production build, check:client and check:css. Apply the conditional Studio gate if triggered. For each rule touched, record the before/after assertion, the mutation that breaks it, the named failure and restored green. Preserve the original receipts. On the final head run report and --enforce into separate directories, the 96-cell Vite/production Next matrix including 32 Table cells, the league and named-state cases in both themes, real keyboard and rendered focus/contrast checks, and both file builds from disk with the network off. Set the viewport before capture, assert scrollWidth equals innerWidth, and run the local production smoke and n6b proof. Record the hosted checks at the pushed SHA. List anything unverified and why.
+
+Post one Pass 2 issue comment on #352 in the skill’s table shape. Put the actual model and effort first, then your verdict, starting and final SHAs, one numbered disposition for each of the eleven findings with evidence and fix SHA or reason outstanding, the ten open recommendations, precedence decisions, matrix as run and receipt paths. Identify separately any PR-body correction, inherited defect, or choice awaiting Beni. Check the final branch and protected local items. Return the comment link and exact tip for Codex Pass 2.5. Beni alone authorizes landing. Stop at the handoff without a formal approval, merge, auto-merge, release edit or tag.
+````
+
+## Pass 2 posted (Sat 21 Nov 2026, 3:16 PM EST)
+
+The builder's Pass 2 posted at 3:16 PM EST:
+https://github.com/BeniCheni/kickoff/pull/352#issuecomment-7068635362. Its first line names
+`claude-fable-5-2` at `xhigh`. At about 7:45 PM EST the PM seat read it from GitHub. The head was
+`3325ca0`, 30 commits, nine of them new in this round and all committed as Claude. The base was
+still `d9b97d4`. All four checks passed. There was no review and auto-merge was off. #349 was
+still open, at `39d4dd7`.
+
+Its heading: all eleven findings accepted, nine fixed on the branch, one inherited, one a body
+correction. Finding 8 is accepted while contesting its characterisation. Finding 10 reproduces
+at the base and at `main`, in Next only, and is left as inherited. Finding 11 is answered by
+correcting the PR body. It also reports two things outside the eleven:
+- A, inherited, medium: under a snapshot with no UCL table, `tests/sync.test.ts:84` expects
+  `standings-degraded=none` and fails, on `main` as on this branch. By the builder's reading, the
+  first sync after the provider drops the league-phase table would fail `verify` on `main`.
+- B, this PR's, low: `public/faces.css` and `public/fonts/RECORD.md` still say nothing renders
+  Kickoff Display, though the cover's title now draws it in both served apps. Left for question 4.
+
+It leaves Beni thirteen questions, none answered: the ten in the PR body and three new ones. Its
+recommendations, beside Pass 1's:
+
+| # | Choice | Pass 1 | Pass 2 |
+|---|---|---|---|
+| 1 | Text · Sort | Text | Text |
+| 2 | Yes · Move | Yes, words qualified | Yes; the words are 11 |
+| 3 | Yes · Keep | Keep | Yes, said as publication time |
+| 4 | Yes · Drop | Yes | Yes; or "Inline" to carry the face in the file builds |
+| 5 | Yes · Reword | Yes | Yes |
+| 6 | Yes · Ship | Yes | Yes |
+| 7 | Yes · No | Yes | Yes |
+| 8 | Local · Token | Local | Local |
+| 9 | Yes · Restore | Yes | Yes |
+| 10 | Yes · Colour | Yes | Yes |
+| 11 | Omit · Qualify | (new) | Qualify |
+| 12 | Keep · Full | (new) | Keep |
+| 13 | Now · Later | (new) | Now, in its own PR on `main` |
+
+It also asks whether finding 10 and item A are tracked as issues. Its receipts are under
+`~/code/kickoff-receipts/pr4/pass2-run-02/`, with a keep note until the PR merges or closes.
+
+The Pass 2.5 opener joins this file once Beni has seen the thirteen questions.
