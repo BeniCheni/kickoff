@@ -70,8 +70,12 @@ claims to check, not a verdict.
 
 ## `unreleased.ts`
 
-1. It finds the latest tag with `git describe --tags --abbrev=0`, from the checkout you run it in.
-   Run `git fetch origin --tags` first, or an old tag will pull released PRs back into the draft.
+1. It finds the latest tag with `git describe --tags --abbrev=0`, which looks back from your
+   checkout's `HEAD`. So run it from a checkout that holds the release you mean, such as an
+   up-to-date `main` or a branch on top of it. `git fetch origin --tags` brings the tags down, but
+   it doesn't move `HEAD`. A stale or detached checkout still finds an older tag, and released PRs
+   come back into the draft. Codex's cold read saw this: after the fetch, describing v0.5.5's
+   parent still picked v0.5.4. The first line of the output names the tag it used, so check it.
 2. It asks GitHub for the PRs merged into `main` from a day before the tag, then keeps those whose
    merge commit is **not** an ancestor of the tag (`git merge-base --is-ancestor`). The date only
    narrows the search, and git decides what the release holds. A date cut would get the boundary
