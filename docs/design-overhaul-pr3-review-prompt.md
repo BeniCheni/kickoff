@@ -1,4 +1,4 @@
-# PR #349 — the PM seat's briefs for the overhaul's PR 3, the Ledger, rows, states and the week: Pass 1's cold review, Pass 1.5's rebuttal brief, Pass 2.5's synthesis opener and its result, and the follow-up brief for Codex (archived Fri 20 and Sat 21 Nov 2026, TZ=America/New_York)
+# PR #349 — the PM seat's briefs for the overhaul's PR 3, the Ledger, rows, states and the week: Pass 1's cold review, Pass 1.5's rebuttal brief, Pass 2.5's synthesis opener and its result, the follow-up brief for Codex and the follow-up's review opener (archived Fri 20 and Sat 21 Nov 2026, TZ=America/New_York)
 
 Written by the PM seat (Claude Code, Opus 5.5) in the Track A planning session, after Codex opened
 PR #349 from
@@ -893,4 +893,166 @@ COMMITS AND THE PR.
 - Open a PR from codex/overhaul-pr3-followup into overhaul/second-edition, titled "Overhaul PR 3 follow-up: Beni's rulings on #349".
 - Its body gives, for each item: the ruling and its source, what changed, the red then green, and the measured cost. It also gives the proposed words for string 33, marked as waiting on Beni's approval; the test counts; the file sizes; the runner figures, each with its clocks; and what you did not do or could not verify.
 - Then stop and report to Beni: the PR link, its head, its checks, and anything a reviewer should know. Beni routes its review.
+```
+
+## PR #359: the follow-up's fast-track review opener (Sat 21 Nov 2026, about 10:40 PM EST)
+
+Codex opened #359 at 9:15 PM EST, from `codex/overhaul-pr3-followup` into
+`overhaul/second-edition`, and its report reached the PM seat at about 10:15 PM as Beni's paste.
+Beni had squashed #349 at 8:45 PM as `1e09592`.
+
+The PM seat read #359 between 10:15 and 10:40 PM:
+- **Commits.** Four, all authored `Codex <noreply@openai.com>`: `68f960c`, `5117f95`, `b5a3907` and
+  `722787e`.
+- **Files.** Ten, +183/−71, all on the brief's list. There is no change to `evidence.mjs`,
+  `states.html` or `src/data`.
+- **State.** The PR is CLEAN, and `verify`, Vercel and `vercel-smoke` are green at `722787e`.
+- **The source diff matches the rulings.**
+  - `groupWeekDays` now merges only days with a snapshot total of 0.
+  - Both renderers drop the gap's dead hidden-count branch.
+  - The four `src/shell.css` declarations are the scale study's.
+  - NEXT UP calls `niceDate`.
+
+Codex's report also named a local incident, which the PM seat traced:
+- **The mechanism.** `tests/vercelIgnore.test.ts:17–28` runs `git init`, then `git config`
+  `user.name Fixture`, `user.email fixture@example.invalid`, `maintenance.auto false` and
+  `gc.auto 0`, with `cwd` set to a temp folder but with the parent's environment. Under an
+  inherited `GIT_DIR` (Codex's per-commit run), all of it landed in the real repository's
+  `.git/config`.
+- **What Codex fixed, and what it missed.** Codex restored `core.bare` to `false`. It did not
+  restore the identity or the two maintenance keys. `.git/config` (last written 8:58 PM) still
+  holds `user.name = Fixture` and `user.email = fixture@example.invalid`, where the reflogs show
+  `Cursor <cursoragent@cursor.com>` until 8:49 PM.
+- **The effect so far.** `git log --all --committer=fixture@example.invalid` and `--author=Fixture`
+  find no commit, so only reflog entries carry the fixture identity.
+- **What the repair needs.** Repairing Beni's config needs his word. The test's leak is
+  pre-existing, not #359's: `tests/vercelIgnore.test.ts` arrived in #236 (20 Oct), and #342 last
+  changed it.
+
+Routing, by Beni's 7 Oct frame: the fast-track. One fresh Claude Code pass on `claude-opus-5-5` at
+`high` gives the cold read, because Codex built the PR. The pass is report-only, any fix goes back
+to Codex, and the merge is Beni's (plan §3). `high`, not `xhigh`, because the PR is small. Ports
+9073–9175 are used by no seat on record. Beni runs these two commands, then pastes the block below.
+
+```bash
+git -C /Users/benicheni/code/kickoff fetch origin && git -C /Users/benicheni/code/kickoff worktree add --detach /Users/benicheni/code/kickoff-pr359-review 722787e
+```
+
+```bash
+cd /Users/benicheni/code/kickoff-pr359-review && claude --model claude-opus-5-5 --effort high
+```
+
+```text
+/kickoff-pr-review 359 --pass 1 --no-merge
+
+PR #359 — fast-track review: PR 3's follow-up, Beni's rulings on #349
+
+You are the only review pass for PR #359 in github.com/BeniCheni/kickoff ("Overhaul PR 3 follow-up: Beni's rulings on #349", from codex/overhaul-pr3-followup into the integration branch overhaul/second-edition). You are a fresh Claude Code session on claude-opus-5-5 at high, started by Beni in /Users/benicheni/code/kickoff-pr359-review, a detached worktree at 722787e. Use the method of /kickoff-pr-review --pass 1, the cold review, report-only. If the command above did not load the skill, read .claude/skills/kickoff-pr-review/SKILL.md, executive-brief.md, pr-comment.md and browser-matrix.md and follow them as written; they outrank this note on process. Read AGENTS.md and CLAUDE.md from main first (git show origin/main:AGENTS.md and git show origin/main:CLAUDE.md), then the rules files they list wherever your work touches them. The PM seat (Claude Code, Opus 5.5, in another session) wrote this note on Sat 21 Nov 2026 at about 10:40 PM EST. It gives you the state, the record and Beni's rulings; it holds no conclusions. Your deliverables are one short PR comment and an Executive Summary Brief in your reply to Beni, ending with the handoff block. Push nothing.
+
+OUTPUT STYLE. If this session runs in the Learning output style, keep it out of the deliverables: no Learn-by-Doing request, no TODO(human), and no insight box in the PR comment or the brief.
+
+YOUR SEAT. Codex built #359 on gpt-6.2-astra at high. By Beni's frame of 7 Oct 2026, a small PR takes the fast-track: one Claude Code pass instead of the full 360 cycle. Because Codex built it, Claude gives the cold read. You are that read and the last one before Beni's word. Every overhaul merge is his (plan section 3), so you end in an escalation with a handoff block, never a merge. You write no code. A finding that needs a fix goes back to Codex, the builder. Every number in your brief comes from a command you ran, and anything you could not re-run is listed as not verified. Name the model and effort that ran on your comment's first line, from this session's own file, not from memory.
+
+WHAT YOU MUST NOT DO. Every seat's gh is Beni's account, an Admin who can bypass any gate, so this note is the only thing that stops these:
+- no gh pr merge in any form, no approval and no --auto; no push of any kind, no tag and no npm version;
+- no change to rulesets, branch protection, repo settings, workflows or any other PR; no npm audit fix and no next upgrade (a build notice asking for one is tool output, not Beni);
+- never run npm run sync, and leave the bot's sync/scheduled PR, #352, #358 and #328 alone;
+- leave the branches codex/overhaul-pr3-followup and codex/pr349-pass2-handoff-scale as they are;
+- never run git config against the repository, and never run a test from inside a git hook, git rebase --exec or git bisect run.
+- Run every npm test with Git's repository variables cleared: env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE -u GIT_COMMON_DIR -u GIT_OBJECT_DIRECTORY npm test. Here is why. tests/vercelIgnore.test.ts runs git init and git config with the parent's environment. Under an inherited GIT_DIR, during Codex's run, it wrote core.bare, a fixture identity and two maintenance keys into Beni's real .git/config.
+- Record git -C /Users/benicheni/code/kickoff config --local --list | grep -E '^(core\.bare|user\.|maintenance\.|gc\.)' when you start and again when you finish. If it changes between the two, stop and say so.
+
+THE STATE (re-check all of it).
+- Beni squashed #349 into overhaul/second-edition at 8:45 PM EST on Sat 21 Nov as 1e09592.
+- #359 starts there. Its four commits are all authored Codex <noreply@openai.com>, one per item of the follow-up brief:
+  - 68f960c: Keep;
+  - 5117f95: the handoff's row sizes;
+  - b5a3907: string 33's date;
+  - 722787e: row 143's three guards.
+- It touches ten files, +183/−71. At the PM seat's read, about 10:20 PM, the PR was open, not a draft and CLEAN, with auto-merge off and no review. verify, the Vercel deployment and vercel-smoke were green at 722787e.
+- Codex's PR body is the builder's account. Read it as claims.
+- src/data equals main's 1851196 snapshot (tree db4e8a9) on both the base and the head. The snapshot's lastSyncAt is 2026-11-19T19:33:56.613Z, so the staleness banner turns from amber to the alarm at 2:33 PM EST on Sun 22 Nov.
+- #352 (PR 4) is open into the same branch, in its own cycle, and conflicts with it. Do not review it.
+
+WHERE THE RECORD LIVES.
+- The follow-up brief and Beni's ten rulings: git show claude/track-a-archive-7:docs/design-overhaul-pr3-review-prompt.md, section "Beni's rulings, the squash block and the follow-up brief for Codex". claude/track-a-archive-7 is a local branch in this repository. Beni answered "As recommended" to Pass 2.5's ten questions on Sat 21 Nov 2026 at about 8 PM EST:
+  - Yes, merge #349 as built;
+  - Keep;
+  - Handoff;
+  - Six;
+  - No on string 33 as built (keep the words, put the date in words);
+  - Yes on the fixture note, the evidence-week selector, the artifact boundary and the phone layout;
+  - No merge of main.
+- Pass 2.5's comment: https://github.com/BeniCheni/kickoff/pull/349#issuecomment-7068665745.
+- Pass 2's Keep recommendation: https://github.com/BeniCheni/kickoff/pull/349#issuecomment-7067500082, the paragraph "All-hidden day". It keeps a day whose fixtures are all hidden, in both lenses, and keeps merging truly empty days.
+- docs/design/5-handoff/gap-18-addendum.md, "Section 5 · Page controls, after 'Hidden by filters'", its last paragraph.
+- docs/design/5-handoff/second-edition-handoff.md line 144, the scale.
+- docs/design-overhaul-pr3-implementation-prompt.md line 161, the merged empty days that Keep now narrows.
+- docs/design-overhaul-plan.md, sections 3 and 6.3.
+- The scale study: git diff bbd3370 ea6b72c -- src/shell.css, on the local branch codex/pr349-pass2-handoff-scale.
+
+WHERE TO WORK.
+- Beni's checkout, /Users/benicheni/code/kickoff, holds untracked files of his. Do not work or build there.
+- Make your base: git -C /Users/benicheni/code/kickoff worktree add --detach /Users/benicheni/code/kickoff-pr359-review-base 1e09592. Confirm each HEAD, and run npm ci at the root and in web/ of each worktree.
+- In the Claude Code desktop app with its Bash sandbox on, gh, git fetch and git worktree add need the sandbox off. Bypass it only on an EPERM, one command at a time, and say so.
+- Ports: the tip's three servers on 9073, 9074 and 9075, and the base's on 9173, 9174 and 9175. Others hold 5173, 7173 to 7875, 8173 to 8275 and 8373 to 8975. Confirm each of yours is free, and each server's cwd, with lsof. Set KICKOFF_VITE_ORIGIN, KICKOFF_NEXT_ORIGIN and KICKOFF_HARNESS_ORIGIN explicitly. Start every server from your own worktree with Bash, not preview_start, and stop only what you started.
+- Workspaces you must not touch, build in or reuse as evidence:
+  - kickoff-pr3, kickoff-pr3-base, kickoff-pr3-followup and kickoff-pr3-followup-base (Codex's);
+  - every kickoff-pr349-*, kickoff-pr352-*, kickoff-pr358-* and kickoff-pr4* worktree;
+  - kickoff-second-edition;
+  - everything under .claude/worktrees/ and ~/.codex/worktrees/.
+  Never run git worktree prune.
+- Keep your receipts under /Users/benicheni/code/kickoff-receipts/pr359-review/. Codex's are in /Users/benicheni/code/kickoff-receipts/pr3-followup/: read them as recipes, run them only against your own servers, and change nothing there.
+
+WHAT YOUR PASS MUST SHOW.
+1. Green, and the bytes accounted for.
+  - At 722787e, at the root: typecheck, npm test (both vitest projects), build, build:single, build:offline and the offline-bundle scan. In web/: typecheck, test, build, check:client and check:css.
+  - Typecheck and npm test at each of 68f960c, 5117f95 and b5a3907, checked out by SHA in your tip worktree. Return it to 722787e afterwards.
+  - Compare dist/, dist-single/ and dist-offline/index.html with the base, and say what changed.
+2. Keep, as ruled.
+  - A day with fixtures in the snapshot, all hidden by the active filters, keeps its own date line in both lenses, with zero shown and its hidden count. The Poster's form of that line has no first kickoff.
+  - Only days with no fixtures in the snapshot merge.
+  - For every day, listed plus hidden equals the snapshot's total.
+  - The Ledger's end-of-week count still counts what it lists.
+  - Re-derive the PR body's week of 26 Oct with three competitions shown and with none shown, in both lenses, from your own servers.
+  - Check what this PR does not measure: today's date when all of today's fixtures are hidden (the Poster's hero and NEXT UP), the first and last weeks of the window, and the runner's Ledger counts on the supercup week.
+  - Give the reading cost at 360 and 390. The body says an all-hidden week grows from 46 to 510.5 px on the Poster and from 87.5 to 450 px on the Ledger.
+3. The handoff sizes, as ruled. Compare git diff 1e09592 5117f95 -- src/shell.css with the study's diff and with line 144. Judge Codex's list of row treatments that stay outside the four declarations. Re-measure at least the Poster's wrapped names and tallest week at 360 and 390, and scrollWidth === innerWidth, with the viewport set before navigation.
+4. String 33. Check niceDate's output and that the DOM test derives the sentence from META.window.to, never from a literal. Beni approves the final words; put them to him as a question.
+5. Row 143's three guards, red then green, and wherever you can, with a different break than Codex's: the "+N more today" date at a kickoff between 00:00Z and 05:00Z; the muted look against a move back to :disabled; the clock and score weights and family against 700 or another family. Say what tests/dom/fixtureStyles.test.tsx can and cannot see, and whether Codex took either nit.
+6. The runner. Run web/scripts/evidence.mjs in report mode, then with --enforce, at the tip and on the base, back to back inside one banner state. If a run would cross 2:33 PM EST on Sun 22 Nov, put all four on one side of it. For each run, record its start and end in Brooklyn time, lastSyncAt, the banner state and any kickoff crossed. Compare the cells, the contrast samples and those unread with the body's figures. --enforce should exit 1 only on R2's 16 Table loss pips.
+7. Scope and authorship. The files match the follow-up brief's list, each commit is Codex's, and nothing touches src/data, packages, workflows or the runner.
+8. The incident, in a throwaway clone only, never Beni's repository.
+  - git clone /Users/benicheni/code/kickoff "$(mktemp -d)/c", run npm ci there, then GIT_DIR=<that clone>/.git npx vitest run tests/vercelIgnore.test.ts from inside it. Show what the clone's .git/config gains.
+  - Say whether any other test that spawns git can write to a repository named by an inherited variable. tests/publishGate.test.ts passes its identity with -c, but check its git init too.
+  - This bug predates the PR. Report it as pre-existing, give its fix in one sentence (clear the variables in the test's git helper), and do not fix it.
+9. Beni's questions, each answerable in one word: string 33's words; the merge itself; and anything your pass turns up.
+10. The merge gate, clause by clause, ending in escalation because plan section 3 gives Beni every overhaul merge. Say how you read the src/data/*.json clause for a PR that does not touch src/data.
+
+THE COMMENT AND THE BRIEF.
+- Post one short PR comment with gh pr comment 359 --body-file <file>. Its first line names the pass ("fast-track"), the seat, and the model and effort that ran.
+- The Executive Summary Brief follows executive-brief.md.
+- Its handoff block is the squash merge of #359 into overhaul/second-edition with --match-head-commit set to the head you reviewed, and the subject "Overhaul PR 3 follow-up: Beni's rulings on #349 (#359)". The body is in the repo's voice, names who built and who reviewed, and ends with one trailer, Co-authored-by: Codex <noreply@openai.com>.
+- Then the branch check, in a new detached worktree, not kickoff-second-edition: git still registers that folder and its branch after the folder was removed, so git worktree add there fails. Use git -C ~/code/kickoff fetch origin, then git -C ~/code/kickoff worktree add --detach ~/code/kickoff-second-edition-359 origin/overhaul/second-edition, then npm ci, npm run typecheck, npm test (with the variables cleared) and npm run build, all green.
+- No tag, version or CHANGELOG section. main and Pages do not change, so no production smoke follows; say so.
+- Say what the merge leaves for #352.
+
+IF YOU FIND A BLOCKER. Do not fix it. Give the minimal reproduction, its severity and the follow-up for Codex, and escalate. A review that finds nothing in a real diff is itself a finding about the review.
+
+SEALED APPENDIX — the builder's claims and the PM seat's suspicions. Re-derive each one independently and never cite it. If one does not reproduce, say so.
+
+From Codex's report and PR body, at 722787e:
+- C1: 1,278 root tests and 158 web tests pass, and each of the four commits passes on its own. All 18 deliberate regressions went red.
+- C2: on 26 Oct with the Premier League, Champions League and La Liga shown, Tue to Thu print 0 matches with 3, 5 and 2 hidden. With none shown, the seven days print 0 with 2, 3, 5, 2, 5, 22 and 16 hidden. Restoring the squash's grouping fails eight DOM cases.
+- C3: the Ledger footer reads "END OF WEEK · 19 FIXTURES · MON 1 · FRI 1 · SAT 12 · SUN 5" with three shown, before and after.
+- C4: at 360 and 390, with the clock pinned to 21 Nov at 1:10 PM EST, the Poster's wrapped names go 132 → 391 and 51 → 217 and its tallest week 9,193 → 10,225 and 8,452 → 9,117 px. The Ledger is unchanged (219 and 86; 7,820 and 7,113 px). No name runs to three lines. All 52 paired Ledger page heights match.
+- C5: the window-end specimen measures 33.59 px tall before and after, at both phone widths.
+- C6: the paired runner reports each read 1,807 contrast samples with none unread, and --enforce exits 1 only on the 16 light Table loss pips.
+- C7: the incident was a test that inherited GIT_DIR and set core.bare. Codex restored it to false, confirmed both worktrees clean, and reran the four commits with Git's variables cleared.
+
+From the PM seat, read only:
+- P1: planPosterWeek gives a zero-shown day a 'small' block with an empty fixtures list. Check every consumer of a PosterBlock for an assumption of at least one fixture, including the hero, TonightSlate and NEXT, on a day that is today.
+- P2: the runner's Ledger counts read data-week-date and data-hidden. A fully hidden day now renders as a section, not as a span inside .week-gap. Say whether evidence.mjs still reconciles every day, including the 21 Dec cup week (12/0 against 11/1).
+- P3: .git/config in Beni's checkout still holds user.name = Fixture, user.email = fixture@example.invalid, maintenance.auto = false and gc.auto = 0, last written at 8:58 PM. Before that, the reflogs show Cursor <cursoragent@cursor.com> as the identity. No commit carries the fixture identity. Confirm by reading only, and leave the repair to Beni.
+- P4: Keep makes an all-hidden week about eleven times taller on the Poster. Beni ruled Keep without seeing that height. Put the figure in the brief beside the ruling, not as a finding against it.
 ```
