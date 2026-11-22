@@ -727,13 +727,29 @@ export function focusFaults(seen) {
 }
 
 /**
+ * How many pixels deep a capture shows a ring whose outline is `width` CSS pixels, where one
+ * capture pixel is one CSS pixel. That is the runner's scale: openPage sets the device scale
+ * factor to 1, and ringPaint stops the run at any other. A browser draws an outline in whole
+ * pixels, as it does a border: a width under one pixel is drawn as one, and any other is
+ * rounded down. Chromium 157 was measured to do so (Pass 2.5 of PR #352, fix round 2): it
+ * drew 0.25px, 0.5px and 0.75px one pixel deep, 1.5px and 1.9px one, 2.5px and 2.99px two,
+ * and 3.5px three, and it had already rounded the width it computes the same way, so the
+ * width ringPaint reads from the page is a whole number and this returns it unchanged.
+ */
+export function ringDepth(width) {
+  if (!(width > 0)) return 0
+  return width < 1 ? 1 : Math.floor(width)
+}
+
+/**
  * Where a control's ring is in two captures of the control's own box, `focused` and
  * `rested`: the same pixels with focus on the control and after focus has left it. The
  * ring's line is `width` deep and starts where `offset` puts it, measured in from the box's
  * edge. At five points along each edge the line is read across its depth and one pixel
  * either side, and a pixel is the ring's where it is the ring's own colour with focus and
- * another colour without. `edges` is that count at each point. `ground` is the colour the
- * ring's line most often has without focus, and `contrast` the ring against it.
+ * another colour without. `edges` is that count at each point, and `depth` the count a
+ * whole ring gives: ringDepth of its width. `ground` is the colour the ring's line most
+ * often has without focus, and `contrast` the ring against it.
  */
 export function ringPixels({ focused, rested, ring, width, offset }) {
   const at = (image, x, y) => {
@@ -764,10 +780,11 @@ export function ringPixels({ focused, rested, ring, width, offset }) {
       grounds.set(key, (grounds.get(key) ?? 0) + 1)
     }
   }
+  const depthOwed = ringDepth(width)
   const [most] = [...grounds].sort((a, b) => b[1] - a[1])
-  if (!most) return { edges, ground: null, contrast: 0 }
+  if (!most) return { edges, depth: depthOwed, ground: null, contrast: 0 }
   const [r, g, b] = most[0].split(', ').map(Number)
-  return { edges, ground: `rgb(${most[0]})`, contrast: contrastRatio(ring, { r, g, b }) }
+  return { edges, depth: depthOwed, ground: `rgb(${most[0]})`, contrast: contrastRatio(ring, { r, g, b }) }
 }
 
 /**
@@ -775,15 +792,26 @@ export function ringPixels({ focused, rested, ring, width, offset }) {
  * finding 4): a colour that paints, the whole of the control in view, the ring's own
  * pixels at every point read on each of its four edges, and 3:1 against what it is drawn
  * on. A transparent ring has the right width, the right offset and nothing over its line.
+ *
+ * A point is held to the ring's whole depth, `paint.depth`, and not to one pixel (Pass 2.5
+ * of PR #352): a ring drawn two pixels deep with one of them painted over still had a pixel
+ * of its own at every point, and passed. A point with none of the ring's pixels is not
+ * painted. A point with some and fewer than the depth is clipped, and the fault gives the
+ * thinnest of them. A reading that carries no depth cannot be held to one, so it is a fault
+ * and not a pass.
  */
 export function ringPaintFaults(what, paint) {
   if (paint.alpha === 0) return [`the focus ring of ${what} is ${paint.color}, which paints nothing`]
   const faults = []
   if (paint.alpha < 1) faults.push(`the focus ring of ${what} is ${paint.color}, which the page shows through`)
   if (paint.cut.length) faults.push(`the focus ring of ${what} is cut off at the ${paint.cut.join(' and ')} of the page`)
+  const deep = Number.isInteger(paint.depth) && paint.depth >= 1
+  if (!deep) faults.push(`the focus ring of ${what} has no depth to be held to: its line’s depth was read as ${String(paint.depth)}`)
   for (const [edge, counts] of Object.entries(paint.edges)) {
     const bare = counts.filter((count) => count < 1).length
     if (bare) faults.push(`the focus ring of ${what} is not painted at ${bare} of ${counts.length} points on its ${edge} edge`)
+    const thin = deep ? counts.filter((count) => count >= 1 && count < paint.depth) : []
+    if (thin.length) faults.push(`the focus ring of ${what} is painted ${Math.min(...thin)} of its ${paint.depth}px deep at ${thin.length} of ${counts.length} points on its ${edge} edge`)
   }
   if (paint.contrast < 3) faults.push(`the focus ring of ${what} is ${paint.color}, ${paint.contrast.toFixed(2)}:1 against the ${paint.ground ?? 'ground'} it is drawn on`)
   return faults
@@ -968,6 +996,10 @@ async function sweepFocus(page, place, { within = '.page-measure', layout }) {
  * So the control's box is captured with focus and again once focus has left it, and
  * ringPixels reads the ring's line from the two. Focus is not put back: the sweep places
  * it before every press.
+ *
+ * The line's depth is taken from the outline width the browser computes, and that is a
+ * count of capture pixels only where one capture pixel is one CSS pixel. The page says
+ * whether it is, and the run stops if it is not.
  */
 async function ringPaint(page) {
   const box = await page.evaluate(() => {
@@ -976,8 +1008,10 @@ async function ringPaint(page) {
     return {
       left: rect.left, top: rect.top, right: rect.right, bottom: rect.bottom, scrollX, scrollY, innerWidth, innerHeight,
       color: style.outlineColor, width: Number.parseFloat(style.outlineWidth), offset: Number.parseFloat(style.outlineOffset),
+      scale: devicePixelRatio,
     }
   })
+  assert.equal(box.scale, 1, `a ring is read at one capture pixel to a CSS pixel, and this page draws ${box.scale}`)
   const [r, g, b, alpha = 1] = box.color.match(/[\d.]+/g).map(Number)
   const cut = [box.left < -EPSILON && 'left', box.top < -EPSILON && 'top', box.right > box.innerWidth + EPSILON && 'right', box.bottom > box.innerHeight + EPSILON && 'bottom'].filter(Boolean)
   // The box as the browser snaps it to whole pixels, in the page's coordinates.
@@ -988,7 +1022,7 @@ async function ringPaint(page) {
     width: Math.min(box.innerWidth, Math.round(box.right)) - left, height: Math.min(box.innerHeight, Math.round(box.bottom)) - top,
   }
   const bare = { top: [0, 0, 0, 0, 0], bottom: [0, 0, 0, 0, 0], left: [0, 0, 0, 0, 0], right: [0, 0, 0, 0, 0] }
-  if (clip.width < 1 || clip.height < 1) return { color: box.color, alpha, cut: ['top', 'bottom', 'left', 'right'], edges: bare, ground: null, contrast: 0 }
+  if (clip.width < 1 || clip.height < 1) return { color: box.color, alpha, cut: ['top', 'bottom', 'left', 'right'], edges: bare, depth: ringDepth(box.width), ground: null, contrast: 0 }
   const focused = decodePng(await page.screenshot({ clip, captureBeyondViewport: false }))
   await page.evaluate(() => document.activeElement.blur())
   const rested = decodePng(await page.screenshot({ clip, captureBeyondViewport: false }))
@@ -1028,11 +1062,12 @@ async function pressSorts(page) {
   return presses
 }
 
-/** What a cell's sampled rings came to: how many, the fewest ring pixels read at a point on each edge, the lowest contrast, and each ring colour with the ground it was read on. */
-function ringSummary(seen, into = { sampled: 0, least: { top: Infinity, bottom: Infinity, left: Infinity, right: Infinity }, contrast: Infinity, drawn: [] }) {
+/** What a cell's sampled rings came to: how many, the fewest ring pixels read at a point on each edge, each depth a ring was held to, the lowest contrast, and each ring colour with the ground it was read on. */
+function ringSummary(seen, into = { sampled: 0, least: { top: Infinity, bottom: Infinity, left: Infinity, right: Infinity }, depth: [], contrast: Infinity, drawn: [] }) {
   for (const { paint } of seen.filter((control) => control.paint)) {
     into.sampled += 1
     for (const edge of Object.keys(into.least)) into.least[edge] = Math.min(into.least[edge], ...paint.edges[edge])
+    if (!into.depth.includes(paint.depth)) into.depth.push(paint.depth)
     into.contrast = Math.min(into.contrast, paint.contrast)
     const drawn = `${paint.color} on ${paint.ground}`
     if (!into.drawn.includes(drawn)) into.drawn.push(drawn)
@@ -1620,7 +1655,7 @@ export async function captureTableStates(browser, out, cells = [], contrast = nu
  * clean and the second is not. A receipt that says a gate passed says nothing until the
  * gate has been seen to fail. The foot's dot sentence (question 11) is held the same way:
  * once with its qualifier taken out, and once with a strip that no longer matches the
- * snapshot.
+ * snapshot. So is the ring's depth (Pass 2.5): once with one of its two pixels painted over.
  */
 export async function proveVerifiers(browser, origins) {
   const standings = committedStandings()
@@ -1677,6 +1712,34 @@ export async function proveVerifiers(browser, origins) {
       const broken = await judge()
       assert.equal(broken.faults.length, clean.rows, `a transparent ring faulted ${broken.faults.length} of ${clean.rows} rows`)
       record('a transparent focus ring on the standings rows', clean.faults, broken.faults, { league, rows: clean.rows })
+    } finally { await context.close() }
+  }
+
+  // Pass 2.5: one pixel is painted over the upper edge of the focused row, in the dark theme.
+  // The ring keeps its colour, width and offset. The mask takes no pointer, so nothing is
+  // found lying over the ring's line, and one of the ring's pixels is left at every point.
+  {
+    const league = longestLeague(standings)
+    const clubs = standings[league].map((club) => ({ id: club.teamId, name: club.name }))
+    const { context, page } = await openPage(browser, `${origin}/?tab=table&league=${league}`, 'dark', 390)
+    try {
+      await page.waitForSelector('[data-table="mobile"] [data-table-row]', { timeout: 15_000 })
+      const judge = async () => {
+        const { seen, table } = await sweepFocus(page, { underFoot: 1.06 }, { within, layout: 'mobile' })
+        const rows = seen.filter((control) => control.row)
+        return { rows: rows.length, depth: rows.map((control) => control.paint?.depth), faults: [...sweepFaults(seen, { within, ...table, clubs }), ...seen.flatMap(focusFaults)] }
+      }
+      const clean = await judge()
+      assert.deepEqual(clean.faults, [], `the unmasked rows fault before the mask is drawn: ${clean.faults.join('; ')}`)
+      const [depth] = clean.depth
+      assert.ok(depth >= 2 && clean.depth.every((each) => each === depth), `the mask needs a ring at least two pixels deep, the same on every row, and the rows’ rings were read ${[...new Set(clean.depth)].join(' and ')}px deep`)
+      const row = '[data-table="mobile"] [data-table-row] button.register-row'
+      await page.addStyleTag({ content: `${row} { position: relative } ${row}:focus-visible::before { content: ""; position: absolute; z-index: 100; top: 0; left: 9px; right: 9px; height: 1px; padding: 0; background: var(--fb-pulp); pointer-events: none }` })
+      const broken = await judge()
+      const clipped = broken.faults.filter((fault) => fault.endsWith(` is painted ${depth - 1} of its ${depth}px deep at 5 of 5 points on its top edge`))
+      assert.equal(clipped.length, clean.rows, `a ring masked to ${depth - 1} of its ${depth}px along its top edge faulted so on ${clipped.length} of ${clean.rows} rows`)
+      assert.equal(broken.faults.length, clean.rows, `the mask over the top edge brought ${broken.faults.length} faults on ${clean.rows} rows: ${broken.faults.filter((fault) => !clipped.includes(fault)).slice(0, 3).join('; ')}`)
+      record('a focus ring with one pixel of its depth painted over along the top of the standings rows', clean.faults, broken.faults, { league, rows: clean.rows, theme: 'dark', depth })
     } finally { await context.close() }
   }
 

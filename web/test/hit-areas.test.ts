@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { DESKTOP_TABLE_CONTROLS, DESKTOP_TABLE_SORTS, TABLE_FOOT_LAST, TABLE_LEAGUE_KEYS, bandFaults, dotFaults, firstFrameFaults, focusFaults, handoffFaults, heldResults, hitAreaFaults, leagueFaults, longestLeague, momentsPaintFaults, nextCellFaults, pinFaults, revealFaults, ringPaintFaults, ringPixels, sortFaults, sortOrder, sweepFaults, tabFaults, columnFaults, tableHitFaults, tableStateFaults } from '../scripts/evidence.mjs'
+import { DESKTOP_TABLE_CONTROLS, DESKTOP_TABLE_SORTS, TABLE_FOOT_LAST, TABLE_LEAGUE_KEYS, bandFaults, dotFaults, firstFrameFaults, focusFaults, handoffFaults, heldResults, hitAreaFaults, leagueFaults, longestLeague, momentsPaintFaults, nextCellFaults, pinFaults, revealFaults, ringDepth, ringPaintFaults, ringPixels, sortFaults, sortOrder, sweepFaults, tabFaults, columnFaults, tableHitFaults, tableStateFaults } from '../scripts/evidence.mjs'
 
 const box = (name: string, left: number, top: number, w: number, h = 44) => ({ name, left, top, right: left + w, bottom: top + h, w, h })
 
@@ -748,6 +748,86 @@ test('a focus ring is read as painted: its own colour on every edge with focus, 
   expect(focusFaults(row)).toEqual(['the focus ring of "1. Club" was not sampled'])
   // A control outside the table is not held to a reading: its ring is the page's, drawn outside it.
   expect(focusFaults({ ...row, row: false, owed: -1, ring: undefined, ringUnder: undefined })).toEqual([])
+})
+
+// Pass 2.5 of PR #352: a ring with one of its two pixels painted over kept a pixel at every point read, and passed.
+test('a focus ring is held to its whole depth: two pixels drawn and one of them painted over is a fault', () => {
+  const pulp = { r: 239, g: 234, b: 217 }
+  const pitch = { r: 44, g: 122, b: 75 }
+  // The same 60 by 44 box. `ringed` draws a line `width` deep inside every edge, less the pixels `over` covers.
+  const [W, H] = [60, 44]
+  const image = (paint: (x: number, y: number) => { r: number; g: number; b: number }) => {
+    const data = new Uint8Array(W * H * 4)
+    for (let y = 0; y < H; y += 1) for (let x = 0; x < W; x += 1) data.set([paint(x, y).r, paint(x, y).g, paint(x, y).b, 255], 4 * (y * W + x))
+    return { width: W, height: H, data }
+  }
+  const rested = image(() => pulp)
+  const ringed = (over: (x: number, y: number) => boolean = () => false, width = 2) => image((x, y) => {
+    const on = y < width || y >= H - width || x < width || x >= W - width
+    return on && !over(x, y) ? pitch : pulp
+  })
+  const read = (focused: ReturnType<typeof image>, width = 2) => ringPixels({ focused, rested, ring: pitch, width, offset: -width })
+  const paint = (reading: ReturnType<typeof read>) => ({ color: 'rgb(44, 122, 75)', alpha: 1, cut: [] as string[], ...reading })
+  const all = (count: number) => [count, count, count, count, count]
+
+  // The control: one pixel painted over the outer line of the top edge, from end to end.
+  const masked = read(ringed((_x, y) => y === 0))
+  expect(masked.edges).toEqual({ top: all(1), bottom: all(2), left: all(2), right: all(2) })
+  expect(ringPaintFaults('"1. Club"', paint(masked))).toEqual(['the focus ring of "1. Club" is painted 1 of its 2px deep at 5 of 5 points on its top edge'])
+  expect(masked.depth).toBe(2)
+  // The whole ring is held to the same depth and gives no fault.
+  expect(read(ringed()).depth).toBe(2)
+  expect(ringPaintFaults('"1. Club"', paint(read(ringed())))).toEqual([])
+
+  // Each edge on its own, by its outer pixel and then by its inner one: that edge faults and no other.
+  const lines: Record<string, [(x: number, y: number) => boolean, (x: number, y: number) => boolean]> = {
+    top: [(_x, y) => y === 0, (_x, y) => y === 1],
+    bottom: [(_x, y) => y === H - 1, (_x, y) => y === H - 2],
+    left: [(x) => x === 0, (x) => x === 1],
+    right: [(x) => x === W - 1, (x) => x === W - 2],
+  }
+  for (const [edge, overs] of Object.entries(lines)) for (const over of overs) {
+    expect(ringPaintFaults('"1. Club"', paint(read(ringed(over)))), edge).toEqual([`the focus ring of "1. Club" is painted 1 of its 2px deep at 5 of 5 points on its ${edge} edge`])
+  }
+  // The mask as the browser control draws it, 9px short of each end: in a box this narrow, three of the five points are under it.
+  const inset = read(ringed((x, y) => y === 0 && x >= 9 && x < W - 9))
+  expect(inset.edges.top).toEqual([2, 1, 1, 1, 2])
+  expect(ringPaintFaults('"1. Club"', paint(inset))).toEqual(['the focus ring of "1. Club" is painted 1 of its 2px deep at 3 of 5 points on its top edge'])
+  // Both of the ring's pixels gone at the left of the edge and one at the right: not painted, and clipped, each said once.
+  const both = read(ringed((x, y) => (x < 30 ? y < 2 : y === 0)))
+  expect(both.edges.top).toEqual([0, 0, 0, 1, 1])
+  expect(ringPaintFaults('"1. Club"', paint(both))).toEqual([
+    'the focus ring of "1. Club" is not painted at 3 of 5 points on its top edge',
+    'the focus ring of "1. Club" is painted 1 of its 2px deep at 2 of 5 points on its top edge',
+  ])
+  // A ring three pixels deep: one pixel short is a fault, and the fault gives the thinnest point.
+  expect(read(ringed(() => false, 3), 3).edges.bottom).toEqual(all(3))
+  expect(ringPaintFaults('"1. Club"', paint(read(ringed(() => false, 3), 3)))).toEqual([])
+  expect(ringPaintFaults('"1. Club"', paint(read(ringed((_x, y) => y === H - 1, 3), 3)))).toEqual(['the focus ring of "1. Club" is painted 2 of its 3px deep at 5 of 5 points on its bottom edge'])
+  expect(ringPaintFaults('"1. Club"', paint(read(ringed((x, y) => y === H - 1 || (x < 30 && y === H - 2), 3), 3)))).toEqual(['the focus ring of "1. Club" is painted 1 of its 3px deep at 5 of 5 points on its bottom edge'])
+  // Two pixels painted where the stylesheet asks for three is the same fault, on every edge.
+  expect(ringPaintFaults('"1. Club"', paint(read(ringed(), 3)))).toEqual(['top', 'bottom', 'left', 'right'].map((edge) => `the focus ring of "1. Club" is painted 2 of its 3px deep at 5 of 5 points on its ${edge} edge`))
+
+  // The depth a width is held to, as Chromium was measured to paint it at one capture pixel to a CSS pixel.
+  expect([0.25, 0.5, 0.75, 1, 1.5, 1.9, 2, 2.5, 2.99, 3, 3.5].map(ringDepth)).toEqual([1, 1, 1, 1, 1, 1, 2, 2, 2, 3, 3])
+  expect([0, -2, Number.NaN].map(ringDepth)).toEqual([0, 0, 0])
+  // A reading with no depth is not a pass: nothing was there to hold it to.
+  for (const depth of [undefined, 0, Number.NaN, 1.5]) {
+    expect(ringPaintFaults('"1. Club"', { ...paint(read(ringed())), depth })).toEqual([`the focus ring of "1. Club" has no depth to be held to: its line’s depth was read as ${String(depth)}`])
+  }
+  // A ring with no width paints nothing, and says both.
+  expect(ringPaintFaults('"1. Club"', paint(read(rested, 0)))).toEqual([
+    'the focus ring of "1. Club" has no depth to be held to: its line’s depth was read as 0',
+    ...['top', 'bottom', 'left', 'right'].map((edge) => `the focus ring of "1. Club" is not painted at 5 of 5 points on its ${edge} edge`),
+  ])
+
+  // Through the press: the row's reading carries its depth, and a clipped ring faults the press.
+  const row = {
+    text: '1. Club', active: '1. Club', landed: true, row: true, owed: 0, focusVisible: true, before: 163, top: 163, bottom: 254, points: 15, under: {},
+    ring: { offset: -2, width: 2 }, ringUnder: {},
+  }
+  expect(focusFaults({ ...row, paint: paint(read(ringed())) })).toEqual([])
+  expect(focusFaults({ ...row, paint: paint(masked) })).toEqual(['the focus ring of "1. Club" is painted 1 of its 2px deep at 5 of 5 points on its top edge'])
 })
 
 // The review of PR #352, findings 5 and 2: a La Liga capture that showed Serie A, and a league the snapshot holds no table for.
