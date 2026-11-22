@@ -247,7 +247,9 @@ export async function runUnreleased(argv: readonly string[], deps: UnreleasedDep
   }
   deps.out(renderSelection(info, since, selection))
   if (selection.unreleased.length === 0) {
-    deps.out(`Nothing to draft: only the sync bot has merged into main since ${info.tag}. No model call was made.`)
+    deps.out(selection.sync.length === 0
+      ? `Nothing to draft: no PR has merged into main since ${info.tag}. No model call was made.`
+      : `Nothing to draft: only the sync bot has merged into main since ${info.tag}. No model call was made.`)
     return 0
   }
   const numbers = selection.unreleased.map((pr) => pr.number)

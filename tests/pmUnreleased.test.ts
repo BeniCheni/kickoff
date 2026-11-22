@@ -226,6 +226,16 @@ describe('runUnreleased', () => {
     expect(h.out.at(-1)).toBe('Nothing to draft: only the sync bot has merged into main since v1.2.3. No model call was made.')
   })
 
+  it('says nothing merged at all, rather than blame the sync bot, when nothing did', async () => {
+    const onlyReleased = JSON.stringify(JSON.parse(listJson).filter((pr: { number: number }) => [499, 500].includes(pr.number)))
+    for (const list of ['[]', onlyReleased]) {
+      const h = harness({ list })
+      expect(await runUnreleased([], h.deps)).toBe(0)
+      expect(h.modelCalls).toEqual([])
+      expect(h.out.at(-1)).toBe('Nothing to draft: no PR has merged into main since v1.2.3. No model call was made.')
+    }
+  })
+
   it('prints the list and one failure line, and exits 1, when the model part fails', async () => {
     for (const model of [
       readFileSync('tests/fixtures/pm/claude-signed-out.json', 'utf8'),
