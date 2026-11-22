@@ -1437,3 +1437,153 @@ button.register-row {
   background: var(--fb-pulp-ink);
   color: var(--fb-pulp);
 }
+
+/* Fixture states share a word and voice across the two layouts. */
+.fixture-status {
+  display: inline-flex;
+  align-items: center;
+  height: 16px;
+  white-space: nowrap;
+  font: 700 10px/1 var(--fb-label);
+  color: var(--fb-pulp-ink);
+}
+.fixture-status-poster { border: 1px solid; border-radius: 2px; padding-inline: 4px; }
+.fixture-status[data-voice='amber'], .fixture-score[data-voice='amber'] { color: var(--fb-amber); }
+.fixture-status[data-voice='alarm'] { color: var(--fb-alarm); }
+.fixture-status-poster[data-voice='alarm'] { color: var(--fb-cover-ink); background: var(--fb-blood); border-color: var(--fb-blood); }
+.fixture-status-poster[data-voice='pitch'] { color: var(--fb-on-pitch); background: var(--fb-pitch); border-color: var(--fb-pitch); }
+.fixture-score[data-voice='pitch'] { color: var(--fb-pitch); }
+.fixture-score[data-voice='ink'] { color: var(--fb-pulp-ink); }
+
+.fixture-row {
+  padding: 9px 0;
+  border-bottom: 1px solid var(--fb-rule);
+  color: var(--fb-pulp-ink);
+  background: var(--fb-typescript);
+}
+.fixture-poster { background: var(--fb-pulp); }
+.fixture-first, .fixture-outcome, .fixture-meta, .fixture-clock {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+.fixture-clock, .fixture-score {
+  flex: none;
+  white-space: nowrap;
+  color: var(--fb-pitch);
+  font: 600 12px/1.4 var(--font-mono);
+}
+.fixture-clock[data-voice='ink'] { color: var(--fb-pulp-ink); }
+.fixture-ledger .fixture-clock { min-width: 62px; }
+.fixture-day-note { font: 400 10px/1.2 var(--fb-mono); color: var(--fb-pulp-muted); }
+.fixture-names { min-width: 0; overflow-wrap: anywhere; font: 400 15px/1.3 var(--fb-book); }
+.fixture-ledger .fixture-first { flex-wrap: wrap; }
+.fixture-ledger .fixture-outcome { margin-left: auto; }
+/* Reserve the longest word when collecting a flex line. A word wider than a whole
+   row can still shrink and wrap on its own line. */
+.fixture-ledger .fixture-names { flex: 1 1 min-content; overflow-wrap: break-word; font-family: var(--fb-mono); font-size: 13px; }
+.fixture-poster .fixture-clock { margin-left: auto; font-weight: 500; }
+.fixture-leader {
+  flex: 1 1 12px;
+  align-self: baseline;
+  container-type: inline-size;
+}
+.fixture-leader i { display: block; border-bottom: 1px dotted var(--fb-pulp-muted); }
+@container (width < 12px) { .fixture-leader i { visibility: hidden; } }
+.fixture-outcome { flex: none; white-space: nowrap; }
+.fixture-outcome:empty { display: none; }
+.fixture-meta {
+  flex-wrap: wrap;
+  gap: 2px 5px;
+  margin-top: 3px;
+  font: 400 10px/1.5 var(--fb-mono);
+  color: var(--fb-pulp-muted);
+}
+.fixture-meta > span { white-space: nowrap; }
+.fixture-ledger .fixture-meta { text-transform: uppercase; }
+.fixture-competition i, .competition-dot {
+  display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px;
+}
+.stadium-clock[data-voice='amber'], .fixture-unset { color: var(--fb-amber); }
+.fixture-unset, .fixture-note { margin-top: 3px; font: 400 12px/1.4 var(--fb-book); }
+.fixture-unset { font-style: italic; }
+.fixture-note { color: var(--fb-pulp-muted); overflow-wrap: anywhere; }
+
+.week-row {
+  display: flex; align-items: center; height: 44px; margin-top: 16px;
+  color: var(--fb-pulp-ink); background: var(--fb-typescript);
+  font: 600 12px/1 var(--fb-label); white-space: nowrap;
+  border-block: 1px solid var(--fb-rule);
+}
+.week-row[data-stock='black'] { background: var(--fb-cover-black); color: var(--fb-cover-ink); }
+.week-row button { display: inline-flex; align-items: center; justify-content: center; height: 44px; min-width: 44px; cursor: pointer; }
+.week-row button[aria-disabled='true'] { color: var(--fb-pulp-muted); cursor: default; }
+.week-prev, .week-next { width: 44px; flex: none; }
+.week-prev .glyph { transform: rotate(90deg); }
+.week-next .glyph { transform: rotate(-90deg); }
+.week-range { padding-inline: 2px; font: 600 12px/1 var(--fb-label); text-transform: uppercase; }
+.week-today { color: var(--fb-pitch); padding-inline: 7px; text-transform: uppercase; }
+.week-filters { flex: 1; justify-content: flex-end !important; container-type: inline-size; padding-inline: 3px; }
+.week-filters .glyph { width: 15px; height: 15px; margin-inline: 3px; }
+.week-filters[aria-expanded='true'] .glyph-chevron { transform: rotate(180deg); }
+@container (width >= 78px) { .week-filters .glyph-filters { display: none; } }
+@container (width < 98px) { .filter-all { display: none; } }
+@container (width < 78px) { .filter-prefix { display: none; } }
+
+.filter-disclosure { display: grid; grid-template-rows: 0fr; }
+.filter-disclosure[data-open='true'] { grid-template-rows: 1fr; }
+.filter-clip { min-height: 0; overflow: hidden; }
+.filter-panel {
+  padding: 4px 8px 9px;
+  background: var(--fb-pulp); color: var(--fb-pulp-ink);
+  font: 600 10px/1.4 var(--fb-label); letter-spacing: .12em; text-transform: uppercase;
+}
+.filter-panel[data-lens='ledger'] { background: var(--fb-typescript); border-bottom: 1px solid var(--fb-rule); }
+.filter-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; border-top: 1px solid var(--fb-rule); }
+.filter-heading p { font: 400 13px/1.4 var(--fb-book); letter-spacing: normal; text-transform: none; }
+.filter-panel button { cursor: pointer; min-height: 44px; min-width: 44px; }
+.filter-heading button { flex: none; text-decoration: underline; text-underline-offset: 2px; text-transform: uppercase; }
+.filter-heading button[aria-disabled='true'] { color: var(--fb-pulp-muted); cursor: default; }
+.filter-options { display: flex; flex-wrap: wrap; }
+.filter-toggle { padding-inline: 4px; font: inherit; text-transform: inherit; letter-spacing: inherit; }
+.filter-frame {
+  display: flex; align-items: center; white-space: nowrap;
+  height: 28px; padding-inline: 7px; border: 1px solid; border-radius: 2px;
+}
+.filter-toggle[aria-pressed='false'] { color: var(--fb-pulp-muted); }
+.filter-toggle[aria-pressed='false'] .filter-frame { border-style: dashed; }
+.filter-toggle[aria-pressed='false'] .competition-dot { border: 1px solid; }
+@media (prefers-reduced-motion: no-preference) {
+  :root:not([data-motion='off']) .filter-disclosure { transition: grid-template-rows 180ms ease; }
+}
+
+.ledger-week {
+  background: var(--fb-typescript); color: var(--fb-pulp-ink);
+  font-family: var(--fb-mono);
+}
+.ledger-date { margin-top: 16px; padding-block: 4px; border-bottom: 1px solid var(--fb-rule-strong); text-transform: uppercase; font: 700 13px var(--fb-label); }
+.week-hidden, .week-gap, .week-count { color: var(--fb-pulp-muted); font: 400 11px/1.5 var(--fb-mono); }
+.week-gap, .week-count { border-bottom: 1px solid var(--fb-rule); padding-block: 9px; }
+.week-count { color: var(--fb-pulp-ink); }
+.matchday-line { color: var(--fb-pulp-ink); font: 400 10.5px/1.5 var(--fb-mono); }
+.matchday-line[data-voice='amber'] { color: var(--fb-amber); }
+
+.next-up { background: var(--fb-typescript); color: var(--fb-pulp-ink); padding: 8px 0; }
+.next-heading, .next-day { font: 700 11px/1.4 var(--fb-label); letter-spacing: .1em; text-transform: uppercase; }
+.next-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 5px; }
+.next-card { min-width: 0; padding: 5px; border: 1px solid var(--fb-rule); }
+.next-clocks { display: flex; flex-wrap: wrap; align-items: baseline; gap: 1px 5px; }
+.next-card .stadium-clock { color: var(--fb-pulp-muted); font: 400 10px/1.3 var(--fb-mono); }
+.next-card .stadium-clock[data-voice='amber'] { color: var(--fb-amber); }
+.next-pairing, .next-more, .next-empty { font: 400 12px/1.4 var(--fb-book); overflow-wrap: anywhere; }
+.next-more, .next-empty { margin-top: 5px; }
+@media (max-width: 460px) { .next-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* Only the new fixtures surfaces take the 16px gutter. The existing Poster blocks
+   still bleed by 20px and keep their original containing block. */
+.page-measure :is(.week-row, .filter-disclosure, .ledger-week, .next-up, .fixture-poster) {
+  width: min(calc(100% + 8px), var(--fb-measure));
+  margin-inline: max(-4px, calc((100% - var(--fb-measure)) / 2));
+}
+.week-prev .glyph, .week-next .glyph { width: 16px; height: 16px; }
+.week-filters { gap: 3px; }

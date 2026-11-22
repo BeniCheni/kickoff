@@ -1,8 +1,9 @@
 import { globSync, readFileSync, readdirSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { bannerPaint, bannerSource, css, contrastCases, measureContrast, ratio, rgb, scrimComposite, secondEditionPairs, secondEditionTokens } from './contrast'
+import { bannerPaint, bannerSource, css, contrastCases, fixturePairs, measureContrast, ratio, rgb, scrimComposite, secondEditionPairs, secondEditionTokens } from './contrast'
 
 describe('measured semantic color contrast against rendered grounds', () => {
+  it.each(fixturePairs())('$voice on $stock is readable for fixture text', ({ ratio }) => expect(ratio).toBeGreaterThanOrEqual(4.5))
   it.each(contrastCases)('$theme $role on $ground', ({ ratio, minimum }) => {
     expect(ratio).toBeGreaterThanOrEqual(minimum)
   })
@@ -86,10 +87,10 @@ describe('second-edition pairs, read from the tokens', () => {
   })
 })
 
-it('fb tokens and stock render only from the chrome that owns them', () => {
+it('fb tokens and stock render only from the named surfaces that own them', () => {
   // LeagueTabs names black stock on its current tab, a black plate on the pulp page, and
   // RegisterCover on the Table's cover.
-  const allowed = new Set(['components/ImprintBand.tsx', 'components/PageFoot.tsx', 'components/LeagueTabs.tsx', 'components/RegisterCover.tsx', 'index.css'])
+  const allowed = new Set(['components/ImprintBand.tsx', 'components/PageFoot.tsx', 'components/LeagueTabs.tsx', 'components/RegisterCover.tsx', 'index.css', 'components/WeekRow.tsx', 'components/FilterBar.tsx'])
   const root = new URL('../src/', import.meta.url)
   const hits = globSync('**/*.{css,ts,tsx}', { cwd: root }).filter((file) => {
     if (file === 'shell.css' || allowed.has(file)) return false

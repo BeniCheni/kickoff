@@ -27,7 +27,8 @@ import path from 'node:path'
 import { pathToFileURL, fileURLToPath } from 'node:url'
 import puppeteer from 'puppeteer-core'
 import { decodePng } from '../../scripts/decode-png.mjs'
-import { chooseWeeks, matrixAnchor, readSnapshot } from '../../scripts/evidence-weeks.mjs'
+import { COMPETITIONS, COMPETITION_KEYS } from '../../src/lib/competitions.ts'
+import { addDays, brooklynDate, chooseWeeks, matrixAnchor, readSnapshot, startOfWeek } from '../../scripts/evidence-weeks.mjs'
 import { BITMAP_GLYPH, contrastRatio, createColdLoad, isLargeText, paintedColor, sampleContrast, unexpectedHost, unreadColors } from '../../scripts/rendered-contrast.mjs'
 
 const root = fileURLToPath(new URL('../..', import.meta.url))
@@ -230,6 +231,29 @@ async function measureContrast(page, id, width, shown, scope = null) {
 function cellReceipt(id, state, errors) {
   const { text, ...rest } = state
   return { id, ...rest, errors }
+}
+
+// Check what the cascaded row styles request against the faces this shell declares.
+// FontFaceSet.check() alone succeeds when the browser can synthesize a missing face.
+export function missingFixtureFaces() {
+  const faces = [...document.fonts]
+  const missing = new Set()
+  for (const el of document.querySelectorAll('.fixture-row *, .next-up *')) {
+    if (![...el.childNodes].some(node => node.nodeType === Node.TEXT_NODE && node.textContent.trim())) continue
+    const style = getComputedStyle(el)
+    const family = style.fontFamily.split(',')[0].trim().replace(/["']/g, '')
+    const weight = Number(style.fontWeight)
+    const supported = faces.some(face => {
+      const [low, high = low] = face.weight.split(' ').map(Number)
+      return face.family.replace(/["']/g, '') === family && face.style === style.fontStyle && low <= weight && weight <= high
+    })
+    // Beni's six-face file set carries Caslon regular. The unset line's italic is
+    // its one known synthesis, pending the seventh-face ruling.
+    const unsetItalic = location.protocol === 'file:' && el.matches('.fixture-unset')
+      && family === 'Libre Caslon Text' && style.fontStyle === 'italic' && weight === 400
+    if (!supported && !unsetItalic) missing.add(`${el.className}: ${family} ${style.fontStyle} ${weight}`)
+  }
+  return [...missing]
 }
 
 /** `result` is filled as cells pass, so the caller's receipt keeps them if a later cell throws. */
@@ -544,14 +568,13 @@ export async function proveTablePins(browser, origins, anchor = null) {
     } finally { await context.close() }
   }
   // Focus on a control that lies behind the band, on Fixtures, where the band is the only
-  // thing pinned. A fixture row is scrolled to 20px from the top of the page, then focused.
+  // thing pinned. The Previous week button is scrolled to 20px from the top of the page, then focused.
   for (const [app, origin] of Object.entries(origins)) for (const width of [360, 1000]) {
     const id = `reveal-${app}-${width}`
     const { context, page, errors } = await openPage(browser, `${origin}/?lens=ledger${anchor ? `&date=${anchor}` : ''}`, 'light', width)
     try {
       const reveal = await page.evaluate(() => {
-        const all = [...document.querySelectorAll('button[aria-expanded]')]
-        const row = all[Math.min(all.length - 1, 12)]
+        const row = document.querySelector('button[aria-label="Previous"]:enabled:not([aria-disabled="true"])') ?? document.querySelector('button[aria-label="Next"]:enabled:not([aria-disabled="true"])')
         if (!row) return null
         window.scrollTo(0, row.getBoundingClientRect().top + window.scrollY - 20)
         const before = row.getBoundingClientRect().top
@@ -559,13 +582,14 @@ export async function proveTablePins(browser, origins, anchor = null) {
         const rect = row.getBoundingClientRect()
         const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2)
         return {
-          text: row.textContent.replace(/\s+/g, ' ').trim().slice(0, 40), before, top: rect.top,
+          text: row.getAttribute('aria-label'), before, top: rect.top,
           band: document.querySelector('header.imprint-band').getBoundingClientRect().bottom,
           topmost: hit === row || row.contains(hit) ? 'itself' : hit?.closest('header') ? 'the band' : 'another element',
         }
       })
-      assert.ok(reveal, `${id} found no fixture row to focus`)
+      assert.ok(reveal, `${id} found no enabled week stepper to focus`)
       assert.ok(reveal.before < reveal.band, `${id} the row was not behind the band before it took focus`)
+      assert.ok(['Previous', 'Next'].includes(reveal.text), id)
       const faults = revealFaults(reveal)
       assert.deepEqual(faults, [], `${id} ${faults.join('; ')}`)
       assert.deepEqual(errors, [], id)
@@ -1954,9 +1978,9 @@ export async function runMatrix(browser, { origins, out, anchor, contrast = fals
             assert.deepEqual(faults, [], `${id} ${faults.join('; ')}`)
           }
           if (width === 390 && tab === 'fixtures' && theme === 'light') {
-            const row = await page.$('button[aria-expanded]')
+            const row = await page.$('[data-fixture-id]')
             assert.ok(row, id)
-            measurements.push({ app, lens, top: await row.evaluate((el) => el.parentElement.getBoundingClientRect().top) })
+            measurements.push({ app, lens, top: await row.evaluate((el) => el.getBoundingClientRect().top) })
           }
           const shown = await shoot(page, path.join(out, `${id}.png`), width)
           if (contrast) contrastCells.push(await measureContrast(page, id, width, shown))
@@ -1990,7 +2014,7 @@ export async function captureWeeks(browser, { origins, out, weeks, contrast }, r
   const { cells, contrast: contrastCells } = result
   for (const kind of ['heavy', 'quiet', 'uefa']) {
     const week = weeks[kind]
-    if (!week?.monday) continue
+    assert.ok(week?.monday, `Missing ${kind} evidence week: ${week?.missing ?? 'no pick'}`)
     for (const [app, origin] of Object.entries(origins)) {
       for (const lens of ['poster', 'ledger']) for (const theme of ['light', 'dark']) {
         for (const width of WEEK_WIDTHS) {
@@ -2000,6 +2024,7 @@ export async function captureWeeks(browser, { origins, out, weeks, contrast }, r
           )
           try {
             const state = await inspect(page)
+            assert.deepEqual(await page.evaluate(missingFixtureFaces), [], id)
             assertCell(state, errors, { id, lens, theme, tab: 'fixtures' })
             await assertBand(page, id, 'fixtures')
             const shown = await shoot(page, path.join(out, `${id}.png`), width)
@@ -2277,11 +2302,28 @@ export async function captureOffline(browser, out, result = { sizes: {}, cells: 
       cells.push({ id, theme, tab, scrollWidth: state.scrollWidth })
     } finally { await context.close() }
   }
+  const { window, fixtures } = readSnapshot(root)
+  const anchor = matrixAnchor(window, chooseWeeks(fixtures, window))
+  for (const [name, file] of Object.entries(files)) for (const lens of ['poster', 'ledger']) {
+    const id = `${name}-rows-${lens}`
+    const { context, page, escaped, errors } = await openPage(browser,
+      `${pathToFileURL(file).href}?lens=${lens}&date=${anchor}`, 'light', 390,
+      { waitUntil: 'domcontentloaded', offline: true })
+    try {
+      await page.waitForSelector(`.fixture-${lens} .stadium-clock`)
+      assert.deepEqual(await page.evaluate(missingFixtureFaces), [], id)
+      const clock = await page.$eval('.stadium-clock', el => el.textContent)
+      assert.match(clock, /\d{2}:\d{2} local|local time not known/, id)
+      assert.deepEqual(escaped, [], id)
+      assert.deepEqual(errors, [], id)
+      cells.push({ id, clock, requests: escaped.length })
+    } finally { await context.close() }
+  }
   return result
 }
 
 /** `cells` is filled as cells pass, so the caller's receipt keeps them if a later cell throws. */
-export async function captureHarness(browser, out, cells = []) {
+export async function captureHarness(browser, out, cells = [], contrasts = []) {
   const origin = process.env.KICKOFF_HARNESS_ORIGIN ?? 'http://127.0.0.1:5175'
   // 1000 is here for the Table: its desktop cell is display:none below 768, so at 360
   // and 390 the page holds its words without showing them.
@@ -2318,8 +2360,40 @@ export async function captureHarness(browser, out, cells = []) {
       )
       assert.match(table, width >= 768 ? /time TBC/i : /kickoff time not yet set/i, `${id} does not show the unset cell`)
       assert.match(table, /kicked off/i, `${id} does not show the kicked-off cell`)
-      await shoot(page, path.join(out, `${id}.png`), width)
-      cells.push({ id, theme, width, scrollWidth: state.scrollWidth })
+      assert.deepEqual(await page.evaluate(missingFixtureFaces), [], id)
+      const longName = await page.$eval('[data-fixture-id="long-day-note"]', row => {
+        const names = row.querySelector('.fixture-names')
+        const node = [...names.childNodes].find(n => n.textContent.includes('Mönchengladbach'))
+        const start = node.textContent.indexOf('Mönchengladbach')
+        const range = document.createRange()
+        range.setStart(node, start)
+        range.setEnd(node, start + 'Mönchengladbach'.length)
+        const boxes = [...range.getClientRects()].filter(rect => rect.width)
+        const bounds = row.getBoundingClientRect()
+        return boxes.length === 1 && boxes[0].left >= bounds.left && boxes[0].right <= bounds.right
+          && row.scrollWidth === row.clientWidth
+      })
+      assert.ok(longName, `${id} split or clipped the club name beside a day note and penalties`)
+      const penalties = await page.$eval('.fixture-poster[data-fixture-id="pens"]', row => {
+        const score = row.querySelector('.fixture-score'), pill = row.querySelector('.fixture-status')
+        const leader = row.querySelector('.fixture-leader'), clock = row.querySelector('.fixture-clock')
+        return {
+          score: score.innerText, word: pill.innerText,
+          scoreWidth: score.getBoundingClientRect().width, pillHeight: pill.getBoundingClientRect().height,
+          leaderWidth: leader.getBoundingClientRect().width, clockWidth: clock.getBoundingClientRect().width,
+          fits: row.scrollWidth === row.clientWidth && score.getBoundingClientRect().right <= pill.getBoundingClientRect().left,
+        }
+      })
+      assert.equal(penalties.score, '3–3 (2–4)', id)
+      assert.equal(penalties.word, 'PENS', id)
+      assert.equal(penalties.pillHeight, 16, id)
+      assert.ok(penalties.fits && penalties.leaderWidth >= 12, id)
+      for (const lens of ['poster', 'ledger']) {
+        assert.equal(await page.$$eval(`[data-specimen-lens="${lens}"] [data-fixture-id]`, rows => rows.length), 16, id)
+      }
+      const shown = await shoot(page, path.join(out, `${id}.png`), width)
+      contrasts.push(await measureContrast(page, id, width, shown, '[data-specimen="rows"]'))
+      cells.push({ id, theme, width, scrollWidth: state.scrollWidth, penalties })
     } finally { await context.close() }
   }
   // The populated gallery. Production Vite is empty and local Next has no catalog, so
@@ -2853,6 +2927,93 @@ export async function proveMotion(browser, origins, out) {
   return cases
 }
 
+/** Measure the open disclosure, including its disabled action, in the actual page measure. */
+export async function proveWeekControls(browser, origins, date, out, contrastCells) {
+  const results = []
+  for (const [app, origin] of Object.entries(origins)) for (const lens of ['poster', 'ledger']) {
+    for (const theme of ['light', 'dark']) for (const width of [360, 390, 1000]) {
+      const id = `filters-${app}-${lens}-${theme}-${width}`
+      const { context, page, errors } = await openPage(browser, `${origin}/?lens=${lens}&date=${date}`, theme, width)
+      try {
+        await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'no-preference' }])
+        const disclosure = '.filter-disclosure'
+        assert.equal(await page.$eval(disclosure, el => getComputedStyle(el).transitionDuration), '0.18s', id)
+        await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }])
+        await page.click('.week-filters')
+        await page.waitForSelector('.filter-disclosure[data-open="true"]')
+        const metrics = await page.evaluate(() => {
+          function box(el) {
+            const { top, bottom, left, right, width: w, height: h } = el.getBoundingClientRect()
+            return { name: el.getAttribute('aria-label') ?? el.textContent.trim(), top, bottom, left, right, w, h }
+          }
+          const buttons = [...document.querySelectorAll('.week-row button, .filter-panel button')].map(box)
+          const toggles = [...document.querySelectorAll('.filter-toggle')]
+          return {
+            buttons, range: box(document.querySelector('.week-range')), week: box(document.querySelector('.week-row')),
+            frameHeights: toggles.map(el => box(el.firstElementChild).h),
+            panelWidth: box(document.querySelector('.filter-panel')).w,
+            duration: getComputedStyle(document.querySelector('.filter-disclosure')).transitionDuration,
+            outside: document.documentElement.scrollWidth !== innerWidth,
+          }
+        })
+        assert.equal(metrics.buttons.length, 22, id)
+        assert.equal(metrics.duration, '0s', id)
+        assert.equal(metrics.outside, false, id)
+        assert.deepEqual(hitAreaFaults(metrics.buttons), [], id)
+        assert.ok(metrics.buttons.every(box => !overlaps(box, metrics.range)), id)
+        assert.ok(metrics.frameHeights.every(h => near(h, 28)), id)
+        assert.ok(near(metrics.week.h, 44) && near(metrics.buttons[3].right, metrics.week.right), id)
+        assert.equal(metrics.panelWidth, Math.min(width - 32, 640), id)
+        await page.click('.filter-toggle[aria-pressed="true"]')
+        await page.waitForSelector('.filter-toggle[aria-pressed="false"]')
+        const shown = await shoot(page, path.join(out, `${id}.png`), width)
+        contrastCells.push(await measureContrast(page, id, width, shown, '.filter-panel'))
+        results.push({ id, ...metrics })
+        assert.deepEqual(errors, [], id)
+      } finally { await context.close() }
+    }
+  }
+  return results
+}
+
+export async function proveLedgerCounts(browser, origins, heavy, fixtures) {
+  const selections = {
+    all: COMPETITION_KEYS, three: ['pl', 'ucl', 'laliga'],
+    noSupercups: COMPETITION_KEYS.filter(key => COMPETITIONS[key].group !== 'supercup'),
+  }
+  const [firstCupDay] = fixtures.filter(f => COMPETITIONS[f.competition].group === 'supercup')
+    .map(f => brooklynDate(f.kickoffUtc)).sort()
+  assert.ok(firstCupDay, 'No evidence week contains a Domestic Supercup fixture')
+  const cupWeek = startOfWeek(firstCupDay)
+  const cases = Object.entries(selections).map(([selection, keys]) => ({ selection, keys, week: heavy }))
+  cases.push({ selection: 'cupWeek-all', keys: selections.all, week: cupWeek },
+    { selection: 'cupWeek-noSupercups', keys: selections.noSupercups, week: cupWeek })
+  const results = []
+  for (const [app, origin] of Object.entries(origins)) for (const { selection, keys, week } of cases) {
+    const id = `counts-${app}-${selection}`
+    const { context, page, errors } = await openPage(browser, `${origin}/?lens=ledger&date=${week}&only=${keys.join(',')}`, 'light', 390)
+    try {
+      const days = await page.$$eval('[data-week-date]', elements => elements.map(el => ({
+        date: el.dataset.weekDate, hidden: Number(el.dataset.hidden),
+        ids: [...el.querySelectorAll('[data-fixture-id]')].map(row => row.dataset.fixtureId),
+      })))
+      assert.equal(days.length, 7, id)
+      for (const [i, day] of days.entries()) {
+        assert.equal(day.date, addDays(week, i), id)
+        const snapshot = fixtures.filter(f => brooklynDate(f.kickoffUtc) === day.date)
+        const listed = snapshot.filter(f => keys.includes(f.competition))
+        assert.deepEqual([...day.ids].sort(), listed.map(f => f.id).sort(), id)
+        assert.equal(day.ids.length + day.hidden, snapshot.length, id)
+      }
+      if (selection === 'cupWeek-noSupercups') assert.ok(days.some(day => day.hidden > 0), id)
+      results.push({ id, week, days: days.map(({ date, ids, hidden }) => ({ date, listed: ids.length, hidden })) })
+      assert.deepEqual(errors, [], id)
+    } finally { await context.close() }
+  }
+  return results
+}
+
+
 async function main() {
   const args = process.argv.slice(2)
   const enforce = args.includes('--enforce')
@@ -2894,6 +3055,8 @@ async function main() {
     await runMatrix(browser, { origins, out, anchor, contrast: true }, matrix)
     assert.equal(matrix.cells.length, 96)
     await captureWeeks(browser, { origins, out, weeks, contrast: true }, weekRun)
+    steps.weekControls = await proveWeekControls(browser, origins, anchor, out, weekRun.contrast)
+    steps.ledgerCounts = await proveLedgerCounts(browser, origins, weeks.heavy.monday, fixtures)
     await captureTable(browser, { origins, out, contrast: true }, tableRun)
     assert.equal(tableRun.cells.length, 72)
     steps.requests = []
@@ -2904,7 +3067,7 @@ async function main() {
     await captureTable(browser, { out, contrast: true, files: true }, tableRun)
     assert.equal(tableRun.cells.length, 144)
     steps.harness = []
-    await captureHarness(browser, out, steps.harness)
+    await captureHarness(browser, out, steps.harness, weekRun.contrast)
     steps.tableStates = []
     await captureTableStates(browser, out, steps.tableStates, tableRun.contrast)
     const done = receipt()

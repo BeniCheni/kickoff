@@ -14,9 +14,9 @@ import { clockSnapshotAt, type Clock } from '../../src/lib/clock'
 import { hoursSinceSync, META } from '../../src/lib/fixtures'
 import type { CompetitionKey } from '../../src/lib/competitions'
 import type { Fixture, StandingRow } from '../../src/lib/schema'
-import { todayIso } from '../../src/lib/time'
+import { addDays, brooklynDate, todayIso } from '../../src/lib/time'
 import { ClockContext } from '../../src/lib/useNow'
-import { edgeFixture } from '../fixtures/edgeFixtures'
+import { edgeFixture, rowStates, specimenRowProps } from '../fixtures/edgeFixtures'
 import '../../src/index.css'
 
 // Dev server only. Tailwind scans src/ and not tests/, so the captions and the page
@@ -40,21 +40,13 @@ function row(id: string, patch: Partial<Fixture>): Fixture {
   })
 }
 
-const rows: { title: string; fixture: Fixture; stale?: boolean }[] = [
-  { title: 'Kickoff not set', fixture: row('unset', { timeConfidence: 'tbd' }) },
-  { title: 'Full time', fixture: row('ft', { status: 'full_time', result: { home: 2, away: 1 } }) },
-  { title: 'After extra time', fixture: row('aet', { status: 'after_extra_time', result: { home: 2, away: 1 } }) },
-  { title: 'Penalties', fixture: row('pens', { status: 'after_penalties', result: { home: 3, away: 3 }, shootout: { home: 2, away: 4 } }) },
-  { title: 'Postponed', fixture: row('postponed', { status: 'postponed' }) },
-  { title: 'Cancelled', fixture: row('cancelled', { status: 'cancelled' }) },
-  { title: 'Suspended', fixture: row('suspended', { status: 'suspended' }) },
-  { title: 'Abandoned', fixture: row('abandoned', { status: 'abandoned' }) },
-  { title: 'Live', fixture: row('live', { status: 'in_play', result: { home: 1, away: 0 } }) },
-  { title: 'Kicked off', fixture: row('stale', { status: 'in_play', result: { home: 1, away: 0 } }), stale: true },
-  { title: 'Local time not known', fixture: row('no-zone', { venue: undefined, venueTz: undefined }) },
-  // Madrid is already the next calendar day; Brooklyn is still the 22nd. The row derives both from one instant.
-  { title: 'Day note', fixture: row('day-note', { kickoffUtc: '2026-11-22T23:30:00.000Z', venueTz: 'Europe/Madrid' }) },
-]
+// Keep the original states sheet in order, then append the later rulings.
+const rowTitles = [
+  ['unset', 'Kickoff not set'], ['ft', 'Full time'], ['aet', 'After extra time'], ['pens', 'Penalties'],
+  ['postponed', 'Postponed'], ['cancelled', 'Cancelled'], ['suspended', 'Suspended'], ['abandoned', 'Abandoned'],
+  ['live', 'Live'], ['stale', 'Kicked off'], ['no-zone', 'Local time not known'], ['prev-day', 'Day note'],
+  ['next', 'Next'], ['elapsed', 'Scheduled past kickoff'], ['next-day', 'Next day'], ['note', 'Fixture note'],
+] as const
 
 const matchdays = [
   row('md-computed', { competition: 'ucl', phase: 'league-phase', season: 2026, round: '5', kickoffUtc: '2026-11-24T18:00:00.000Z' }),
@@ -143,7 +135,8 @@ const NEEDLES = [
   'DATE OUTSIDE',
   'Data may have moved.',
   'Data is stale.',
-  'No upcoming fixtures match your filters.',
+  'Your filters hide every upcoming fixture.',
+  'the end of this snapshot.',
   'hidden by filters',
 ]
 
@@ -156,9 +149,6 @@ function Harness() {
   const none = new Set<CompetitionKey>()
   useEffect(() => {
     const outer = window.setTimeout(() => {
-      for (const button of document.querySelectorAll<HTMLButtonElement>('[data-specimen="rows"] button[aria-expanded="false"]')) {
-        button.click()
-      }
       // The Table opens one row at a time, so each copy opens the one club it is there for.
       for (const table of document.querySelectorAll<HTMLElement>('[data-specimen="table"] [data-open]')) {
         for (const button of table.querySelectorAll<HTMLButtonElement>('button[aria-expanded="false"]')) {
@@ -166,7 +156,7 @@ function Harness() {
         }
       }
       window.setTimeout(() => {
-        const text = document.body.textContent ?? ''
+        const text = (document.body.textContent ?? '').replace(/\s+/g, ' ')
         const table = document.querySelector('[data-specimen="table"]')?.textContent ?? ''
         const missing = [
           ...NEEDLES.filter((needle) => !text.includes(needle)),
@@ -182,11 +172,25 @@ function Harness() {
     <>
       <p style={{ ...caption, marginBottom: 4 }}>Synthetic specimens · ILLUSTRATIVE</p>
       <div data-specimen="rows">
-        {rows.map((item) => (
-          <Section key={item.fixture.id} title={item.title}>
-            <FixtureRow fixture={item.fixture} stale={item.stale ?? false} />
+        {rowTitles.map(([id, title]) => {
+          const fixture = rowStates.find(([, f]) => f.id === id)![1]
+          return <Section key={id} title={title}>
+            {(['poster', 'ledger'] as const).map(lens =>
+              <div key={lens} data-specimen-lens={lens}>
+                <FixtureRow {...specimenRowProps(fixture)} lens={lens} />
+              </div>)}
           </Section>
-        ))}
+        })}
+        <Section title="Day note with a shootout">
+          <div style={{ maxWidth: 640 }}>
+            <FixtureRow lens="ledger" fixture={row('long-day-note', {
+              status: 'after_penalties', result: { home: 3, away: 3 }, shootout: { home: 2, away: 4 },
+              kickoffUtc: '2026-12-12T23:30:00Z', venueTz: 'Europe/Istanbul',
+              home: { name: 'Borussia Mönchengladbach', sourceId: 'illustrative-home' },
+              away: { name: 'Eintracht Frankfurt', sourceId: 'illustrative-away' },
+            })} />
+          </div>
+        </Section>
         <Section title="Matchday line">
           <MatchdayLines fixtures={matchdays} />
         </Section>
@@ -198,10 +202,15 @@ function Harness() {
         <ClockContext.Provider value={frozenClock(72)}><StalenessBanner /></ClockContext.Provider>
       </Section>
       <Section title="Filtered week, nothing left">
-        <NextUpStrip today={today} active={none} />
+        <ClockContext.Provider value={frozenClock(0)}>
+          <NextUpStrip today={brooklynDate(META.lastSyncAt)} active={none} />
+        </ClockContext.Provider>
         <div style={{ height: 12 }} />
         <TonightSlate today={today} active={none} />
         <LedgerWeek days={[{ date: '2026-11-22', shown: [], total: 1, isToday: false }]} />
+      </Section>
+      <Section title="Window's end">
+        <NextUpStrip today={addDays(META.window.to, 1)} active={none} />
       </Section>
       {/* The query is a second module instance. The serve-only plugin passes the specimen into
           tableFor. Two copies, because a phone's Table shows one club's card at a time. */}

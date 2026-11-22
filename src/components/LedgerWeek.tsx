@@ -1,74 +1,34 @@
 import { weekdayShort } from '../lib/time'
-import { FixtureRow } from './FixtureRow'
-import { MatchdayLines } from './MatchdayLines'
-import type { DayInfo } from '../lib/lensSelectors'
+import { groupWeekDays, type DayInfo } from '../lib/lensSelectors'
+import { FixtureRows } from './FixtureRow'
 
 const EMPTY: ReadonlySet<string> = new Set()
 
-/**
- * The Ledger date spine — the Table's quiet language extended to fixtures. A 56px margin
- * column carries the weekday cap and a 30px Oswald day numeral; rows sit on hairlines in
- * the second column. Empty days collapse to a single hairline with a mono em-dash (or a
- * "hidden by filters" note).
- */
-export function LedgerWeek({ days, hot = EMPTY, stale = EMPTY }: { days: DayInfo[]; hot?: ReadonlySet<string>; stale?: ReadonlySet<string> }) {
-  return (
-    <div>
-      {days.map(({ date, shown, total, isToday }) => {
-        const numeral = Number(date.slice(8))
-
-        if (shown.length === 0) {
-          return (
-            <section
-              key={date}
-              className="mt-3.5 grid grid-cols-[56px_1fr] items-baseline gap-x-3"
-            >
-              <div className="flex items-baseline gap-1.5">
-                <span className="label-caps text-[10px] text-ink-muted">{weekdayShort(date)}</span>
-                <span className="font-display text-[16px] font-semibold text-ink-muted">{numeral}</span>
-              </div>
-              <div className="font-mono border-b border-line py-1.5 text-[11px] font-medium text-ink-muted">
-                {total > 0 ? (
-                  <>
-                    <span aria-hidden>🔎</span> {total} hidden by filters
-                  </>
-                ) : (
-                  '—'
-                )}
-              </div>
-            </section>
-          )
-        }
-
-        return (
-          <section key={date} className="mt-5 grid grid-cols-[56px_1fr] gap-x-3">
-            <div>
-              <div className="label-caps text-[10px] text-ink-muted">{weekdayShort(date)}</div>
-              <div
-                className={[
-                  'font-display mt-0.5 text-[30px] leading-none font-semibold',
-                  isToday ? 'text-accent-lead-strong' : 'text-ink',
-                ].join(' ')}
-              >
-                {numeral}
-              </div>
-              {isToday && (
-                <span className="font-display mt-1.5 inline-block rounded-full bg-accent-lead px-[7px] py-[2px] text-[8.5px] font-semibold tracking-[0.1em] text-on-accent-lead uppercase">
-                  Today
-                </span>
-              )}
-            </div>
-            <div className="min-w-0">
-              <MatchdayLines fixtures={shown} className="pb-[5px]" />
-              <div className="border-t border-line">
-              {shown.map((f) => (
-                <FixtureRow key={f.id} fixture={f} hot={hot.has(f.id)} stale={stale.has(f.id)} />
-              ))}
-              </div>
-            </div>
-          </section>
-        )
-      })}
-    </div>
-  )
+export function LedgerWeek({ days, hot = EMPTY, stale = EMPTY, nowUtcIso }: {
+  days: DayInfo[]; hot?: ReadonlySet<string>; stale?: ReadonlySet<string>; nowUtcIso?: string
+}) {
+  const count = days.reduce((sum, day) => sum + day.shown.length, 0)
+  return <div className="ledger-week">
+    {groupWeekDays(days).map(group => {
+      const { date, shown, total, isToday } = group[0]!
+      if (!shown.length) {
+        const hidden = group.reduce((sum, day) => sum + day.total, 0)
+        return <p key={date} className="week-gap">
+          {group.map((day, i) => <span key={day.date} data-week-date={day.date} data-hidden={day.total}>
+            {i > 0 && ' · '}{weekdayShort(day.date).toUpperCase()} {Number(day.date.slice(8))}
+          </span>)} — NO FIXTURES{hidden > 0 && ` · ${hidden} hidden by filters`}
+        </p>
+      }
+      const hidden = total - shown.length
+      return <section key={date} data-week-date={date} data-hidden={hidden}>
+        <h3 className="ledger-date">{weekdayShort(date)} {Number(date.slice(8))} · {shown.length} {shown.length === 1 ? 'match' : 'matches'}{isToday && ' · Today'}</h3>
+        {hidden > 0 && <p className="week-hidden">{hidden} hidden by filters</p>}
+        <FixtureRows fixtures={shown} lens="ledger" nowUtcIso={nowUtcIso} hot={hot} stale={stale} />
+      </section>
+    })}
+    <p className="week-count">END OF WEEK · {count} {count === 1 ? 'FIXTURE' : 'FIXTURES'}
+      {days.filter(day => day.shown.length).map(day =>
+        <span key={day.date}> · {weekdayShort(day.date).toUpperCase()} {day.shown.length}</span>)}
+    </p>
+  </div>
 }

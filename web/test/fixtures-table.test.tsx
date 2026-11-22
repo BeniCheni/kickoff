@@ -25,13 +25,13 @@ function checkedLens(markup: string): string {
 test('Fixtures and Table render from the shared pages', () => {
   const fixtures = html('')
   expect(fixtures).toContain('Filters')
-  expect(fixtures).toContain('All ')
+  expect(fixtures).toContain('Filters, 14 of 14 competitions shown')
   expect(fixtures).not.toContain('data-ticker')
   expect(fixtures).not.toContain('data-table-picker')
 
   const legacyView = html('?view=month&only=pl&date=2026-09-20')
   expect(legacyView).not.toContain('Monthly')
-  expect(legacyView).toContain('Jump to today')
+  expect(legacyView).toMatch(/<button[^>]*class="week-today"[^>]*>Today<\/button>/)
   expect(legacyView).toMatch(/1 of \d+ competitions shown/)
   expect(legacyView).toContain('Premier League')
 

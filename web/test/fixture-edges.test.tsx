@@ -23,9 +23,8 @@ describe('FixtureRow on Next\'s compiled React', () => {
 
   it('prints the stadium time and the word local from the same instant', () => {
     const row = edgeFixture({ venueTz: 'Europe/Madrid' })
-    // Today's 12-hour form. PR 3 prints the 24-hour stadium clock and moves this assertion.
     const { local } = fixtureTimes(row.kickoffUtc, 'Europe/Madrid')
-    expect(html(row)).toContain(`${local.time} local`)
+    expect(html(row)).toContain(`${local.clock24} local`)
   })
 
   it.each([

@@ -111,7 +111,7 @@ describe('App normalizes once on load', () => {
     expect(window.location.pathname + window.location.search + window.location.hash).toBe('/kickoff/?only=&ref=friend#fixtures')
     expect(window.history.length).toBe(before)
     expect(document.documentElement.dataset.lens).toBe('poster')
-    expect(screen.getByText(`0 of ${COMPETITION_KEYS.length} competitions shown`)).toBeTruthy()
+    expect(screen.getByRole('button', { name: `Filters, 0 of ${COMPETITION_KEYS.length} competitions shown` })).toBeTruthy()
   })
 
   it('?date=<today> unpins on load and follows the next midnight', () => {
@@ -120,7 +120,7 @@ describe('App normalizes once on load', () => {
     render(<App />)
     expect(window.location.search).toBe('')
     tick(61_000)
-    expect(screen.getByText('Sep 14 – September 20, 2026')).toBeTruthy()
+    expect(screen.getByText('Sep 14–20')).toBeTruthy()
     expect(window.location.hash).toBe('#keep')
   })
 
@@ -129,11 +129,11 @@ describe('App normalizes once on load', () => {
     render(<App />)
     wake(edt('2026-09-14T08:00:00'))
     act(() => popTo('/?date=2026-10-07'))
-    expect(screen.getByText('Oct 5 – October 11, 2026')).toBeTruthy()
+    expect(screen.getByText('Oct 5–11')).toBeTruthy()
     act(() => popTo('/?date=bad'))
-    expect(screen.getByText('Sep 14 – September 20, 2026')).toBeTruthy()
+    expect(screen.getByText('Sep 14–20')).toBeTruthy()
     act(() => popTo('/'))
-    expect(screen.getByText('Sep 14 – September 20, 2026')).toBeTruthy()
+    expect(screen.getByText('Sep 14–20')).toBeTruthy()
   })
 })
 
@@ -142,28 +142,30 @@ describe('the ?date= crash (v0.1.0 review, e253a45)', () => {
     release = primeClock(edt('2026-09-05T12:00:00'))
     window.history.replaceState(null, '', '/?date=2026-13-45')
     expect(() => render(<App />)).not.toThrow()
-    expect(screen.getByText('Aug 31 – September 6, 2026')).toBeTruthy()
+    expect(screen.getByText('Aug 31–Sep 6')).toBeTruthy()
   })
 
   it('an impossible calendar date falls back the same way', () => {
     release = primeClock(edt('2026-09-05T12:00:00'))
     window.history.replaceState(null, '', '/?date=2026-02-30')
     expect(() => render(<App />)).not.toThrow()
-    expect(screen.getByText('Aug 31 – September 6, 2026')).toBeTruthy()
+    expect(screen.getByText('Aug 31–Sep 6')).toBeTruthy()
   })
 })
 
 describe('the Step 0 contract: ?only= and &date= arriving without a reload', () => {
-  it('&date= re-anchors the week and ?only= narrows the filter on one popstate', () => {
+  it.each(['poster', 'ledger'])('%s re-anchors the week and narrows the filter on one popstate', lens => {
+    window.history.replaceState(null, '', `/?lens=${lens}`)
     release = primeClock(edt('2026-09-05T12:00:00'))
     render(<App />)
-    expect(screen.getByText('Aug 31 – September 6, 2026')).toBeTruthy()
-    expect(screen.getByText(`All ${COMPETITION_KEYS.length} competitions shown`)).toBeTruthy()
+    expect(screen.getByText('Aug 31–Sep 6')).toBeTruthy()
+    expect(screen.getByRole('button', { name: `Filters, ${COMPETITION_KEYS.length} of ${COMPETITION_KEYS.length} competitions shown` })).toBeTruthy()
 
-    act(() => popTo('/?only=laliga&date=2026-10-07'))
+    act(() => popTo(`/?lens=${lens}&only=laliga&date=2026-10-07`))
 
-    expect(screen.getByText('Oct 5 – October 11, 2026')).toBeTruthy()
-    expect(screen.getByText(`1 of ${COMPETITION_KEYS.length} competitions shown`)).toBeTruthy()
+    expect(document.documentElement.dataset.lens).toBe(lens)
+    expect(screen.getByText('Oct 5–11')).toBeTruthy()
+    expect(screen.getByRole('button', { name: `Filters, 1 of ${COMPETITION_KEYS.length} competitions shown` })).toBeTruthy()
   })
 
   it('a popstate to ?tab=table swaps the page — Back reaches the Table without a click', () => {
@@ -174,6 +176,6 @@ describe('the Step 0 contract: ?only= and &date= arriving without a reload', () 
     act(() => popTo('/?tab=table'))
 
     expect(screen.getByRole('button', { name: 'Table' }).getAttribute('aria-current')).toBe('page')
-    expect(screen.queryByRole('button', { name: 'Jump to today' })).toBeNull()
+    expect(screen.queryByRole('button', { name: 'Today' })).toBeNull()
   })
 })
