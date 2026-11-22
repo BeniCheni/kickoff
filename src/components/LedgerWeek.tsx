@@ -11,12 +11,11 @@ export function LedgerWeek({ days, hot = EMPTY, stale = EMPTY, nowUtcIso }: {
   return <div className="ledger-week">
     {groupWeekDays(days).map(group => {
       const { date, shown, total, isToday } = group[0]!
-      if (!shown.length) {
-        const hidden = group.reduce((sum, day) => sum + day.total, 0)
+      if (total === 0) {
         return <p key={date} className="week-gap">
           {group.map((day, i) => <span key={day.date} data-week-date={day.date} data-hidden={day.total}>
             {i > 0 && ' · '}{weekdayShort(day.date).toUpperCase()} {Number(day.date.slice(8))}
-          </span>)} — NO FIXTURES{hidden > 0 && ` · ${hidden} hidden by filters`}
+          </span>)} — NO FIXTURES
         </p>
       }
       const hidden = total - shown.length
