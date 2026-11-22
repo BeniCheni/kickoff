@@ -111,6 +111,11 @@ fails validation, the chore still prints its plain-code part. It then prints one
 is a file or a pipe. It never prints part of a model result. A signed-out CLI exits 1 with
 `"subtype": "success"` and `"is_error": true`, so the check reads `is_error` first.
 
+The five-minute timeout is bounded at both ends. At five minutes the child gets SIGTERM, and two
+seconds later SIGKILL. If a grandchild still holds its output open two seconds after that, the
+script stops waiting and reports the timeout. So a run that hangs ends within five minutes and
+four seconds, however the child treats TERM.
+
 Exit codes: `0` when the result is complete, `1` when the model part failed, and `2` when the
 plain part could not be built (a bad argument, `gh` or `git` failing, or a list that may have been
 cut short).
