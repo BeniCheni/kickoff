@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-11-22T18:37:43.043Z",
+  "fetchedAt": "2026-11-22T20:24:58.798Z",
   "provider": "espn",
   "season": 2026,
   "leagues": {
@@ -727,11 +727,26 @@
         "pts": 15
       },
       {
+        "teamId": "97",
+        "name": "Osasuna",
+        "shortName": "Osasuna",
+        "abbrev": "OSA",
+        "rank": 13,
+        "rankChange": 0,
+        "played": 13,
+        "w": 4,
+        "d": 3,
+        "l": 6,
+        "gf": 13,
+        "ga": 23,
+        "pts": 15
+      },
+      {
         "teamId": "85",
         "name": "Celta Vigo",
         "shortName": "Celta Vigo",
         "abbrev": "CEL",
-        "rank": 13,
+        "rank": 14,
         "rankChange": 0,
         "played": 13,
         "w": 2,
@@ -746,7 +761,7 @@
         "name": "Rayo Vallecano",
         "shortName": "Rayo",
         "abbrev": "RAY",
-        "rank": 14,
+        "rank": 15,
         "rankChange": 0,
         "played": 12,
         "w": 3,
@@ -761,7 +776,7 @@
         "name": "Getafe",
         "shortName": "Getafe",
         "abbrev": "GET",
-        "rank": 15,
+        "rank": 16,
         "rankChange": 0,
         "played": 12,
         "w": 3,
@@ -769,21 +784,6 @@
         "l": 6,
         "gf": 8,
         "ga": 18,
-        "pts": 12
-      },
-      {
-        "teamId": "97",
-        "name": "Osasuna",
-        "shortName": "Osasuna",
-        "abbrev": "OSA",
-        "rank": 16,
-        "rankChange": 0,
-        "played": 12,
-        "w": 3,
-        "d": 3,
-        "l": 6,
-        "gf": 12,
-        "ga": 23,
         "pts": 12
       },
       {
@@ -838,12 +838,12 @@
         "abbrev": "MCF",
         "rank": 20,
         "rankChange": 0,
-        "played": 12,
+        "played": 13,
         "w": 0,
         "d": 5,
-        "l": 7,
+        "l": 8,
         "gf": 9,
-        "ga": 23,
+        "ga": 24,
         "pts": 5
       }
     ],
@@ -1196,11 +1196,26 @@
         "pts": 28
       },
       {
+        "teamId": "103",
+        "name": "AC Milan",
+        "shortName": "Milan",
+        "abbrev": "MIL",
+        "rank": 4,
+        "rankChange": 0,
+        "played": 12,
+        "w": 8,
+        "d": 3,
+        "l": 1,
+        "gf": 28,
+        "ga": 14,
+        "pts": 27
+      },
+      {
         "teamId": "2572",
         "name": "Como",
         "shortName": "Como",
         "abbrev": "COMO",
-        "rank": 4,
+        "rank": 5,
         "rankChange": 0,
         "played": 12,
         "w": 8,
@@ -1209,21 +1224,6 @@
         "gf": 20,
         "ga": 10,
         "pts": 26
-      },
-      {
-        "teamId": "103",
-        "name": "AC Milan",
-        "shortName": "Milan",
-        "abbrev": "MIL",
-        "rank": 5,
-        "rankChange": 0,
-        "played": 11,
-        "w": 7,
-        "d": 3,
-        "l": 1,
-        "gf": 23,
-        "ga": 13,
-        "pts": 24
       },
       {
         "teamId": "111",
@@ -1247,12 +1247,12 @@
         "abbrev": "FRO",
         "rank": 7,
         "rankChange": 0,
-        "played": 11,
+        "played": 12,
         "w": 6,
         "d": 2,
-        "l": 3,
-        "gf": 24,
-        "ga": 15,
+        "l": 4,
+        "gf": 25,
+        "ga": 20,
         "pts": 20
       },
       {
