@@ -1161,3 +1161,22 @@ EOF
 ```bash
 git -C ~/code/kickoff fetch origin && git -C ~/code/kickoff worktree add --detach ~/code/kickoff-second-edition-359 origin/overhaul/second-edition && cd ~/code/kickoff-second-edition-359 && npm ci && npm run typecheck && env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE npm test && npm run build
 ```
+
+**The browser pass (Sun 22 Nov 2026, 7:16 to 7:44 AM EST).** Beni said "Finish first", and the
+review session ran both items. Its follow-up comment:
+https://github.com/BeniCheni/kickoff/pull/359#issuecomment-7079349511.
+- **The runner.** Four back-to-back runs, tip and base, report then `--enforce`, all amber at
+  64.7–65.2 hours, with no kickoff crossed. Each read 1,807 samples with zero unread. Report exited
+  0, and `--enforce` exited 1 on R2's 16 loss pips alone, at the base as at the tip. There were 96
+  matrix cells and 72 week cells, and the Ledger's counts were identical on the two trees,
+  including the cup week's 12/0 and 11/1.
+- **The 26-week sweep.** It matches C4 exactly. `scrollWidth === innerWidth` holds in all 208 cells,
+  and all 52 paired Ledger heights are equal.
+- **Its corrections.** Its reflog times now match the PM seat's: it had read the commits' own
+  dates. Its all-hidden heights are now Codex's 46 → 510.5 px (Poster) and 87.5 → 450 px (Ledger).
+- **Re-run that morning.** 1,278 root tests with Git's variables cleared.
+
+At 7:50 AM the PM seat confirmed that `722787e` is still the head. The PR is CLEAN, all four checks
+pass, the base is still `1e09592`, and `git merge-tree --write-tree origin/overhaul/second-edition
+722787e` is clean. The corrected squash block above stands as written, provided Beni approves
+string 33.
