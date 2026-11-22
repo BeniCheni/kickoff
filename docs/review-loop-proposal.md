@@ -720,6 +720,13 @@ Cursor's hands this track seats no Cursor.
   Planner's 3-3 go into Sprint 4's brief. The rulings are under "Rulings received" ("Sprint 3's
   ninth Pass 3"), and the Planner's forms are in
   [`review-loop-sprint-3-ruling-9-forms.md`](review-loop-sprint-3-ruling-9-forms.md).
+- *Executor brief:* [`review-loop-sprint-3-exec-prompt.md`](review-loop-sprint-3-exec-prompt.md),
+  for the executor, pass `exec` (Codex in the ChatGPT desktop app, `gpt-6.2-sol`, `xhigh`, Beni's
+  word of 22 Nov), in `~/code/review-seats/elenchus-pr8-exec`. Once Beni has re-created both
+  Keychain items and rotated both credentials, it runs T6 and T1 in full and T7's red-head
+  refusal and seat-token attempt live at `75fada0`, and posts the exec record. T7's forge paths
+  that test only the rulesets stand from 17 Nov, since the rulesets and `gate-test` are
+  unchanged. Beni merges PR 8 afterwards.
 - *Carried from Sprint 1's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are that
   comment's findings): 6, sequence by the order records were posted, not their presence; 7, every
   pass's `input_sha` is the previous recorded pass's `output_sha`, writing or not, and a head
