@@ -677,6 +677,24 @@ Cursor's hands this track seats no Cursor.
 - *Seventh re-read brief:* [`review-loop-sprint-3-synthesis-8-prompt.md`](review-loop-sprint-3-synthesis-8-prompt.md),
   for the seventh Pass 2.5 re-read (Claude Code, `claude-opus-5-5`, `xhigh`), in
   `~/code/review-seats/elenchus-pr8-pass25-r8`, with its sealed appendix as a second paste.
+- *Re-read a seventh time (Sat 21 Nov 2026):* the seventh Pass 2.5 re-read
+  ([comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7073176308)) found the
+  eighth round did what Beni ruled, with 25-26 to 25-28 fixed and no blocking or should-fix
+  finding open. It opened four notes, 25-29 to 25-33 without 25-31, and contested 25-31: each
+  ruling's rule reached cells its mechanism left out. Each rests on narrowed deletions that pass
+  all 389 tests, as the Planner re-ran. The seat's folder and the builder's were emptied mid-pass,
+  a minute after the sealed appendix was pasted. The seat stopped, rebuilt on Beni's word, and
+  said the rebuild is not sealed. Its transcript shows the first draft held the same findings,
+  except P13 and P15, before the paste. It also removed scratch it had made inside its own
+  folder.
+- *Ruled an eighth time:* a ninth fix round, tests only, from a closed list, and the last of
+  Sprint 3's carry and `status` tests. The rulings are under "Rulings received" ("Sprint 3's
+  eighth Pass 3").
+- *Ninth fix brief:* [`review-loop-sprint-3-fix-9-prompt.md`](review-loop-sprint-3-fix-9-prompt.md),
+  for Pass 2 again, as a re-read (Codex in the ChatGPT desktop app, `gpt-6.2-sol`, `xhigh`), in
+  `~/code/review-seats/elenchus-pr8-pass2-r9`. Its forms and scenarios are in
+  [`review-loop-sprint-3-fix-9-forms.md`](review-loop-sprint-3-fix-9-forms.md), since no seat
+  folder that held them survived.
 - *Carried from Sprint 1's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are that
   comment's findings): 6, sequence by the order records were posted, not their presence; 7, every
   pass's `input_sha` is the previous recorded pass's `output_sha`, writing or not, and a head
@@ -1644,6 +1662,45 @@ for Cursor (S7).
     re-ran the seven narrowed deletions: O1 to O7 each pass 377 of 377, and N-S-rulings fails
     A16 alone. The Planner's scratch folder was emptied again before the ruling was posted, and
     the draft was rebuilt from the session's transcript to the same length, 32,111 characters.
+  - **After this record**, `status` on PR 8 names `exec`. `status` does not read a ruling's
+    verdict.
+- **Sprint 3's eighth Pass 3 (Beni, Sun 22 Nov 2026, the Planner's recommendation on each of
+  the re-read's four questions; the comment, "Yes, post it").** The seventh Pass 2.5 re-read
+  ([comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7073176308)) found the
+  eighth round done as ruled, opened four notes and contested 25-31, and asked four questions.
+  Beni answered each with the Planner's recommendation. The Planner wrote and posted the record,
+  a re-read of pass 3 at `a61d6e8`
+  ([comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7078983411)). The brief is
+  [`review-loop-sprint-3-fix-9-prompt.md`](review-loop-sprint-3-fix-9-prompt.md).
+  - **1, 25-31, the deferral.** The carry is tested for every posting outside the standing
+    synthesis's and the standing ruling's own chains of replacements. What those chains replaced
+    waits for Sprint 5, by the 18 Nov ruling.
+  - **2, pairs, no.** Every value the table names has a test that fails when a carry of that
+    value alone is lost. A carry lost only where a source differs from the default in two or
+    more distinctions is not owed a test in Sprint 3. The default is an on-time v1.2 posting that
+    no correction replaced, at a range the chain does not return to, naming the id blocking and
+    open.
+  - **3, the table's columns, yes.** The table and the stopping rule list the same
+    distinctions, so a complete table ends the search. The carry's table crosses the four inputs
+    with ten columns: on time, five kinds of round, two severities (should-fix, note) and two
+    statuses (fixed, contested). Each cell's test differs from the default in that cell's value
+    alone, unless the code forces a second, as for a returning range, which must be v1.1.
+    `status`'s table has one row for each of `nextStep`'s seven arms, each comparing a world with
+    an unknown key with the same world without it.
+  - **4, the next step.** A ninth fix round, tests only, from a closed list: 25-29's severity
+    and status cells, 25-30's five new `status` rows, 25-32's two v1.1 cells, and 25-33's tables.
+    The closing rule: the next re-read checks only that list and that no test fails. A new note
+    goes on Sprint 5's list, and only a blocking or should-fix finding, a missing cell or a
+    failing test sends PR 8 back to Pass 2.
+  - **25-33 was the Planner's.** The seventh ruling's stopping rule named severity, status and
+    `nextStep`'s branch, but its table's columns were kinds of round only. This is the fourth
+    ruling in a row whose mechanism was narrower than its rule.
+  - **Checked by the Planner:** the re-read's comment against GitHub and the seat's file, its
+    record through the head's own code, and the seal and the seat's limits in its transcript. It
+    re-ran the re-read's forms and one of its own, P6d, which isolates the arm over the retry
+    cap. Each passes 389 of 389 at `a61d6e8` and 377 of 377 at `5b0fba2`. It also ran the
+    re-read's scenarios, with one of its own, at the head and under each form, and each form's
+    scenario answers differently.
   - **After this record**, `status` on PR 8 names `exec`. `status` does not read a ruling's
     verdict.
 
