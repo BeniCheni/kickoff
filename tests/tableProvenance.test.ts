@@ -12,13 +12,26 @@ import { syncStamp } from '../src/lib/time'
 /**
  * The Register's cover does not say when the table was synced. The band's provenance line,
  * directly above it, prints one stamp, and that stamp is meta.json's `lastSyncAt`. What makes
- * the line the Table's as well is a promise the writer keeps, and it is not how close two
- * clocks happen to be:
+ * the line the Table's as well is what one sync run checks before it writes, and what the
+ * workflow publishes. It is not how close two clocks happen to be:
  *
- *   1. one sync run writes fixtures, meta and standings together, or it writes none of them;
- *   2. that run stamps the standings as it starts fetching them (`fetchedAt`) and the snapshot
+ *   1. Before its first write, one run has fetched and validated the fixtures and the
+ *      standings, built meta and serialized all three files. A failure up to there (a provider
+ *      that fails, a row or a table the schema rejects, a competition that shrank
+ *      implausibly) ends the run with exit 2 and nothing written.
+ *   2. That run stamps the standings as it starts fetching them (`fetchedAt`) and the snapshot
  *      once every fetch is back (`lastSyncAt`), so the band's stamp is never older than the
  *      standings under it, and both stamps fall inside the one run.
+ *   3. The three writes that follow are sequential and local: fixtures, then meta, then
+ *      standings. They are not one transaction. A write that fails ends the run with exit 2
+ *      after the writes before it have completed, so a working copy can then hold a new
+ *      fixtures file, or new fixtures and meta files, beside the old standings (Pass 2.5 of
+ *      PR #352).
+ *   4. What a reader is served is the committed snapshot, and that is the boundary the band's
+ *      stamp relies on. sync.yml stops on exit 2 before it commits anything ("Fail loudly on a
+ *      hard sync failure"), and a run that goes on stages the three files into one commit. So
+ *      one publication carries fixtures, meta and standings from one run, or nothing is
+ *      published.
  *
  * How long the fetch took is no part of that. The gate this file used to hold, "the two stamps
  * are under a minute apart", failed a run that exited 0 because the provider took 75 seconds
@@ -26,10 +39,13 @@ import { syncStamp } from '../src/lib/time'
  * provider moves, and the gap is asserted to be the fetch, whatever it was.
  *
  * What the committed files cannot show is which run wrote them: an older standings file beside
- * a newer meta file has its stamps in the right order too. That is the writer's first promise,
- * and it is tested on the writer.
+ * a newer meta file has its stamps in the right order too. So 1 and 2 are tested on the
+ * writer, here, with its writes intercepted: a run that succeeds writes all three, and a
+ * failed standings fetch writes none. No test here fails a write, so 3 is a description of
+ * scripts/sync.ts and not a promise this file holds. 4 is the workflow's, and
+ * tests/syncPublication.test.ts holds its gate.
  *
- * If one of these fails, the band's line is no longer the Table's: the cover has to state the
+ * If 1, 2 or 4 fails, the band's line is no longer the Table's: the cover has to state the
  * standings' own stamp again.
  */
 const mocks = vi.hoisted(() => ({ write: vi.fn(), fixtures: vi.fn() }))
@@ -90,7 +106,7 @@ describe('the writer: one sync run stamps and writes the whole snapshot', () => 
     expect(files['meta.json'].standingsDegraded).toEqual(files['standings.json'].degraded ?? [])
   })
 
-  it('writes none of the three when the standings fetch fails, so a newer fixtures stamp never sits over an older table', async () => {
+  it('writes none of the three when the standings fetch fails: the run ends before its first write', async () => {
     providerTakes = 75_000
     provider = () => ({ ok: false, status: 503 })
     expect(await runSync()).toBe(2)
