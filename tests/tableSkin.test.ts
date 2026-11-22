@@ -84,9 +84,10 @@ describe('voices, as painted', () => {
 })
 
 /*
- * Section 6's source scan, for the Table's files. PR 3 builds beside this PR and its
- * tests/fixtureHonesty.test.ts holds the same first pattern over every component; whichever
- * merges second leaves one scan covering both. The Table's rule is the stricter one, and it
+ * Section 6's source scan, for the Table's files. PR 3's tests/fixtureHonesty.test.ts holds
+ * every component, these six among them, to no `new Date(` call, which contains the first
+ * rule here. Both scans stand now that one branch holds both PRs, since neither contains the
+ * other: that one reaches every component, and the second rule here is the stricter one. It
  * is what NextFixtureCell's own comment says: the lane brings both clocks, already formatted
  * from one UTC instant by fixtureTimes, and no Table file formats or builds a time.
  */
