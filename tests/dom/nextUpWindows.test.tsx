@@ -30,7 +30,7 @@ it('the fifth upcoming fixture contributes to more today only on its Brooklyn da
   const today = '2026-11-22'
   release = primeClock(new Date('2026-11-22T12:00:00Z'))
   const four = Array.from({ length: 4 }, (_, i) => edgeFixture({ id: String(i) }))
-  const fifth = edgeFixture({ id: 'fifth' })
+  const fifth = edgeFixture({ id: 'fifth', kickoffUtc: '2026-11-23T02:00:00Z' })
   const tomorrow = edgeFixture({ id: 'sixth', kickoffUtc: '2026-11-23T20:00:00Z' })
   const selected = vi.spyOn(fixtures, 'upcoming').mockReturnValue([...four, tomorrow])
   try {
