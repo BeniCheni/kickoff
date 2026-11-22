@@ -8,7 +8,6 @@ import { fileURLToPath } from 'node:url'
  *  are absent on purpose. */
 export const SRC_ALLOWLIST = [
   'src/components/ImprintBand.tsx',
-  'src/components/CompetitionChip.tsx', // chip ink and competition colour, shared by the filter bar and the table
   'src/components/FilterBar.tsx', // the Fixtures competition filter
   'src/components/FixtureRow.tsx', // one fixture, including TBC and unsettled status
   'src/components/FixturesPage.tsx', // the Fixtures tab
@@ -25,7 +24,6 @@ export const SRC_ALLOWLIST = [
   'src/components/ViewBoundary.tsx',
   'src/components/WeekView.tsx', // week dispatch into Ledger or Poster
   'src/lib/RequestClock.tsx',
-  'src/lib/chipInk.ts', // readable text colour on a competition chip
   'src/lib/clock.ts',
   'src/lib/competitions.ts', // competition names, colours, groups and table leagues
   'src/lib/fixtures.ts',

@@ -43,7 +43,6 @@ assert.deepEqual(sources, [
   '../../src/components/NextUpStrip.tsx',
   '../../src/components/TonightSlate.tsx',
   '../../src/components/FilterBar.tsx',
-  '../../src/components/CompetitionChip.tsx',
   '../../src/components/StatusPill.tsx',
   '../../src/components/WeekRow.tsx',
   '../../src/components/FilterToggle.tsx',
