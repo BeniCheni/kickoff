@@ -72,16 +72,25 @@ describe('the sync entry point — fixtures + standings are one authoritative sn
     expect(vi.mocked(console.error).mock.calls.flat().join('\n')).toContain('fetchedAt')
   })
 
-  it('waits for standings validation before the first write, then writes the complete snapshot', async () => {
+  // The committed snapshot is generated, so its degraded list is not this test's to assume:
+  // once the UCL league phase ends, a legitimate sync writes `degraded: ['ucl']` with no UCL
+  // table. Each case states its own availability, built from the committed rows, and the
+  // report must name exactly that list.
+  const { degraded: _committed, ...available } = table
+  const { ucl: _ucl, ...withoutUcl } = available.leagues
+  it.each([
+    { state: 'every table available', standings: available, degraded: 'none' },
+    { state: 'UCL degraded after its league phase', standings: { ...available, leagues: withoutUcl, degraded: ['ucl'] }, degraded: 'ucl' },
+  ])('waits for standings validation before the first write, then writes the complete snapshot ($state)', async ({ standings, degraded }) => {
     mocks.standings.mockImplementation(async () => {
       expect(mocks.write).not.toHaveBeenCalled()
-      return table
+      return structuredClone(standings)
     })
     expect(await runSync()).toBe(0)
     expect(mocks.write.mock.calls.map(([path]) => path.split('/').at(-1))).toEqual(['fixtures.json', 'meta.json', 'standings.json'])
     expect(JSON.parse(mocks.write.mock.calls[0]![1])).toEqual([fixture])
-    expect(JSON.parse(mocks.write.mock.calls[2]![1])).toEqual(table)
-    expect(vi.mocked(console.log).mock.calls.at(-1)?.[0]).toMatch(/report: changed=true changes=1 urgent=0 standings=changed rank-moves=0 merge=auto zones-unknown=0 standings-degraded=none$/)
+    expect(JSON.parse(mocks.write.mock.calls[2]![1])).toEqual(standings)
+    expect(vi.mocked(console.log).mock.calls.at(-1)?.[0]).toMatch(new RegExp(`report: changed=true changes=1 urgent=0 standings=changed rank-moves=0 merge=auto zones-unknown=0 standings-degraded=${degraded}$`))
   })
 
   it('with no --from/--to, fetches the 30-day-back .. 150-day-forward window by default', async () => {
