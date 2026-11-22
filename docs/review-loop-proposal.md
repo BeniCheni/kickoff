@@ -708,6 +708,18 @@ Cursor's hands this track seats no Cursor.
   `~/code/review-seats/elenchus-pr8-pass25-r9`, with its sealed appendix as a second paste. By
   ruling 4's closing rule it checks the closed list only. Codex's case file is in
   [`review-loop-sprint-3-synthesis-9-forms.md`](review-loop-sprint-3-synthesis-9-forms.md).
+- *Re-read an eighth time (Sun 22 Nov 2026):* the eighth Pass 2.5 re-read
+  ([comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7083733004)) found the
+  closed list closed. 25-29, 25-30 and 25-33 are fixed, and so is 25-32's first half. 414 of 414
+  tests pass at `75fada0`, and nothing sends PR 8 back. It opened one note, 25-34: the
+  schema-routing row is not in SM28's shape, so `status`'s seat, role and options there go
+  unchecked under an unknown key. The seal held: everything outside its appendix section matches
+  the draft it saved before the paste. It found that the appendix's A10 left out a one-line
+  change to `docs/README.md`.
+- *Ruled a ninth time:* the closed list is closed, and the executor is next. 25-34 and the
+  Planner's 3-3 go into Sprint 4's brief. The rulings are under "Rulings received" ("Sprint 3's
+  ninth Pass 3"), and the Planner's forms are in
+  [`review-loop-sprint-3-ruling-9-forms.md`](review-loop-sprint-3-ruling-9-forms.md).
 - *Carried from Sprint 1's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are that
   comment's findings): 6, sequence by the order records were posted, not their presence; 7, every
   pass's `input_sha` is the previous recorded pass's `output_sha`, writing or not, and a head
@@ -748,6 +760,18 @@ Cursor's hands this track seats no Cursor.
   21 of Sprint 2's Pass 1). From the Planner's re-read of the fix round: the block takes the
   base branch from the pull request instead of naming `main`, and tags the pull request's own
   merge commit (`gh pr view --json mergeCommit`) instead of `origin/main`'s tip.
+- *Carried from Sprint 3* (Beni, 22 Nov, under "Rulings received"; the numbers are PR 8's
+  findings): 25-34 and 3-3, tests of what `status` names, before or with its port. Each of
+  `nextStep`'s arms has a test that pins the whole `next` it names (step, seat, role, blocked
+  reason and options) to values taken from the test's own input, not only to another run of the
+  same code. At `75fada0` that is two changes to `test/authorize.test.ts`'s split table:
+  - for 3-3, one line after `:977`:
+    `expect([next.seat, next.role]).toEqual(replayPasses.includes(next.step) ? [next.step, next.step] : [null, null]);`
+  - for 25-34, the legacy branch builds the keyless control and compares the whole `next`, after
+    `:983`, as the eighth re-read ran it.
+  - The review runs the Planner's R- forms in
+    [`review-loop-sprint-3-ruling-9-forms.md`](review-loop-sprint-3-ruling-9-forms.md) and the
+    re-read's Q1 and Q2 against the ported tests, and each must fail at least one test.
 - *Review:* all six passes. It changes the method every later review reads.
 - *Rollback:* revert the merge; seats stop posting the block.
 - *Number:* D8.
@@ -1716,6 +1740,33 @@ for Cursor (S7).
     scenario answers differently.
   - **After this record**, `status` on PR 8 names `exec`. `status` does not read a ruling's
     verdict.
+- **Sprint 3's ninth Pass 3 (Beni, Sun 22 Nov 2026; "Sprint 4's brief", then "Yes, post it").**
+  The eighth Pass 2.5 re-read
+  ([comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7083733004)) found the
+  closed list closed and opened one note, 25-34. The Planner's own runs found a wider gap, 3-3.
+  Asked where the two notes go, Beni answered "Sprint 4's brief". The Planner wrote and posted the
+  record, a re-read of pass 3 at `75fada0`
+  ([comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7084629459)).
+  - **1, the closed list is closed.** 25-29, 25-30 and 25-33 are fixed. 25-32's first half is
+    fixed, and its second half waits for Sprint 5. 25-31 stays deferred.
+  - **2, 25-34 and 3-3, into Sprint 4's brief.** The closing rule put new notes on Sprint 5's
+    list unless Beni said otherwise, and Sprint 4 ports `status`. Before or with the port, each
+    of `nextStep`'s arms has a test that pins the whole `next` to values taken from the test's
+    input. Both changes are written into Sprint 4 above.
+  - **3, the next step.** The executor, pass `exec`, once Beni has re-created both Keychain items
+    and rotated the App's key and the seats' token. Its model is Beni's word when it starts; the
+    Planner recommends Codex on `gpt-6.2-sol` at `xhigh`.
+  - **3-3 was the Planner's.** Ruling 3 of the eighth Pass 3 counted a change to what `status`
+    names as a finding, but its one mechanism compares two runs of the same code. Nulling the
+    seat in four arms, or the role in the ruling arm, each passed all 414 tests. On PR 8's own
+    comments, the ruling-arm change drops "Beni, adjudication". This is the fifth ruling in a row
+    whose mechanism was narrower than its rule.
+  - **Checked by the Planner:** the re-read's comment against GitHub and the seat's file, its
+    record through the head's own code, and the seal and the seat's limits in its transcript. Its
+    own forms are archived in
+    [`review-loop-sprint-3-ruling-9-forms.md`](review-loop-sprint-3-ruling-9-forms.md), with a
+    one-line test change that catches all five.
+  - **After this record**, `status` on PR 8 names `exec`, "no record for pass exec".
 
 D8, D10 and D11 are not yet ruled. D4 is withdrawn, and D12 is Pilot (17 Nov).
 
