@@ -8,6 +8,10 @@ releases.
 
 ## [Unreleased]
 
+### Added
+
+- Claude Code sessions show the Step 0 sync status, Git worktrees and the current branch's PR.
+
 ### Changed
 
 - The preview smoke's Fixtures landmark is now the week stepper's Previous button.
