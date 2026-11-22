@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { prSchema, type PullRequest } from '../scripts/pm/github'
 import { jsonSchemaFor, type ModelRunner } from '../scripts/pm/model'
 import {
-  APPENDIX_HEADING, authorCell, authorshipRows, claimBlocks, claimsSchema, isVerbatim, renderAppendix,
+  APPENDIX_HEADING, authorCell, authorshipRows, claimBlocks, claimsSchema, locateExcerpt, renderAppendix,
   renderSkeleton, runPass0, vendorOf,
 } from '../scripts/pm/pass0'
 import { fakeGitHub, withCommits, type FakeGitHubOptions } from './fixtures/pm/fakeGitHub'
@@ -132,10 +132,25 @@ describe('the claims call', () => {
     expect(JSON.stringify(jsonSchemaFor(schema))).toContain('"enum":["PR body","commit 1111111"')
   })
 
-  it('checks each quote against what was sent, whitespace aside', () => {
-    expect(isVerbatim('real counts:  82 files\n/ 1,040 tests', pr.body)).toBe(true)
-    expect(isVerbatim('1,041 tests', pr.body)).toBe(false)
-    expect(isVerbatim('   ', pr.body)).toBe(false)
+  // The two misses Codex found on #365: the model turned the newline after "Real runs:" and the
+  // one after "#320," into spaces. Equal words with other spacing is not the same text.
+  const source = 'npm test 84 files / 1,093 tests. Real runs:\npass0 on #350 and unreleased.\nv0.5.5\'s own PR,\n#320, shows it.'
+
+  it('finds an exact quote as it is', () => {
+    expect(locateExcerpt('1,093 tests.', source)).toEqual({ found: 'exact', text: '1,093 tests.' })
+  })
+
+  it('returns the source\'s own text when only the spacing differs, never the model\'s', () => {
+    expect(locateExcerpt('Real runs: pass0 on #350', source)).toEqual({ found: 'respaced', text: 'Real runs:\npass0 on #350' })
+    expect(locateExcerpt('PR, #320, shows', source)).toEqual({ found: 'respaced', text: 'PR,\n#320, shows' })
+    expect(locateExcerpt('84  files', source)).toEqual({ found: 'respaced', text: '84 files' })
+  })
+
+  it('does not find changed words, punctuation or an empty quote', () => {
+    expect(locateExcerpt('1,094 tests', source)).toEqual({ found: 'no' })
+    expect(locateExcerpt('Real runs pass0', source)).toEqual({ found: 'no' })
+    expect(locateExcerpt('   ', source)).toEqual({ found: 'no' })
+    expect(locateExcerpt('(#350)', source)).toEqual({ found: 'no' })
   })
 })
 
@@ -152,7 +167,19 @@ describe('renderAppendix', () => {
     expect(APPENDIX_HEADING).toBe('## Sealed appendix: claims to verify independently, never conclusions')
     expect(text).toContain('- PR body: "No data change: nothing under `src/data/` moved."\n')
     expect(text).toContain('- commit 1111111: "Every link resolves."\n')
-    expect(text).toContain('- commit 2222222: "Verified with 1,041 tests." (not found word for word in this source, so check the wording too)')
+    expect(text).toContain('- commit 2222222: "Verified with 1,041 tests." (not found in this source, so this is the model\'s copy: check the wording)')
+  })
+
+  it('prints a quote that spans lines as the source has it, in a fence the excerpt cannot close', () => {
+    const multi = { ...pr, body: 'Proved:\n- `npm test` ``` 82 files\n  / 1,040 tests' }
+    const text = renderAppendix({ claims: [{ source: 'PR body', quote: '`npm test` ``` 82 files / 1,040 tests' }] }, claimBlocks(multi))
+    expect(text).toContain('- PR body:\n\n````text\n`npm test` ``` 82 files\n  / 1,040 tests\n````')
+    expect(text.endsWith('````')).toBe(true)
+  })
+
+  it('keeps the model\'s copy exact too when it is not found', () => {
+    const text = renderAppendix({ claims: [{ source: 'PR body', quote: 'Made up\nacross  lines' }] }, blocks)
+    expect(text).toContain('- PR body (not found in this source, so this is the model\'s copy: check the wording):\n\n```text\nMade up\nacross  lines\n```')
   })
 
   it('says when there was nothing to collect', () => {

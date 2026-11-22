@@ -50,8 +50,11 @@ Plain code prints:
 
 The model call gets the PR body and each commit message, and returns the builder's checkable
 claims as exact quotes, each tagged with the block it came from. Only labels this code wrote can
-be cited, and the schema enforces that. Plain code then looks for each quote in its source. A
-quote it cannot find word for word is flagged, never silently kept. The quotes print under
+be cited, and the schema enforces that. Plain code then looks for each quote in its source and
+prints the source's own text, whitespace included. Where the model's copy has the same words but
+different spacing, such as a newline turned into a space, the source's text prints instead. An
+excerpt that spans lines prints in a fenced block. A quote that isn't in its source prints
+exactly as the model gave it, flagged as the model's copy, never silently kept. The quotes print under
 **Sealed appendix: claims to verify independently, never conclusions**, so a reviewer gets
 claims to check, not a verdict.
 

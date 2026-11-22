@@ -135,12 +135,38 @@ Collect every claim the builder makes that a reviewer could check against the re
 Keep the builder's wording even where you doubt it: you are collecting claims, not judging them. Leave out statements of intent or motivation that nothing could check. If the same claim appears in several blocks, keep each occurrence. Return an empty list if there are no checkable claims.
 `
 
-const squash = (text: string) => text.replace(/\s+/g, ' ').trim()
+export type Located =
+  | { found: 'exact' | 'respaced'; text: string }
+  | { found: 'no' }
 
-/** Plain code checks each quote against the text that was sent; the model's word is not enough. */
-export function isVerbatim(quote: string, source: string): boolean {
-  const needle = squash(quote)
-  return needle.length > 0 && squash(source).includes(needle)
+const escapeRegExp = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+/**
+ * Plain code finds each quote in the text that was sent; the model's word is not enough. A copy
+ * whose words match but whose spacing differs (a newline the model turned into a space, say)
+ * comes back as the source's own text, whitespace and all, so the printed excerpt is always the
+ * builder's, character for character. Anything else is not found.
+ */
+export function locateExcerpt(quote: string, source: string): Located {
+  if (quote.length > 0 && source.includes(quote)) return { found: 'exact', text: quote }
+  const words = quote.split(/\s+/).filter(Boolean)
+  if (words.length === 0) return { found: 'no' }
+  const match = source.match(new RegExp(words.map(escapeRegExp).join('\\s+')))
+  return match ? { found: 'respaced', text: match[0] } : { found: 'no' }
+}
+
+/** A fence longer than any backtick run inside, so the excerpt cannot close it. */
+function fenced(text: string): string {
+  const longest = Math.max(0, ...[...text.matchAll(/`+/g)].map((run) => run[0].length))
+  const fence = '`'.repeat(Math.max(3, longest + 1))
+  return [`${fence}text`, text, fence].join('\n')
+}
+
+/** One line in quotes when it fits on one line; otherwise a fenced block, so no character moves. */
+function excerptLines(label: string, text: string, note = ''): string[] {
+  return text.includes('\n') || text.includes('\r')
+    ? [`- ${label}${note}:`, '', fenced(text), '']
+    : [`- ${label}: "${text}"${note}`]
 }
 
 export const APPENDIX_HEADING = '## Sealed appendix: claims to verify independently, never conclusions'
@@ -150,15 +176,17 @@ export function renderAppendix(claims: Claims, blocks: readonly UntrustedBlock[]
   const lines = [
     APPENDIX_HEADING,
     '',
-    'These are the builder\'s own words from the PR body and commit messages, picked out by one model call. Each is a claim to check against the repo. None is a finding.',
+    'These are the builder\'s own words from the PR body and commit messages, picked out by one model call and printed exactly as the source has them. Each is a claim to check against the repo. None is a finding.',
     '',
   ]
   if (claims.claims.length === 0) lines.push('No checkable claims were found.')
   for (const claim of claims.claims) {
-    const note = isVerbatim(claim.quote, textOf.get(claim.source) ?? '') ? '' : ' (not found word for word in this source, so check the wording too)'
-    lines.push(`- ${claim.source}: "${squash(claim.quote)}"${note}`)
+    const located = locateExcerpt(claim.quote, textOf.get(claim.source) ?? '')
+    lines.push(...(located.found === 'no'
+      ? excerptLines(claim.source, claim.quote, ' (not found in this source, so this is the model\'s copy: check the wording)')
+      : excerptLines(claim.source, located.text)))
   }
-  return lines.join('\n')
+  return lines.join('\n').replace(/\n+$/, '')
 }
 
 export interface Pass0Deps {
