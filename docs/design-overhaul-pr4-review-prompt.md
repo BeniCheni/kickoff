@@ -448,7 +448,8 @@ DELIVERABLE. One PR comment whose first line is "<model> · <effort> · Fix roun
 Question 13's fix goes to its own Claude Code session on Opus 5.5 at high effort, the global
 default for a build, in a fresh worktree off `main`. Beni's "Now" is the word to open that PR, not
 to merge it. Its review is one Codex fast-track pass, whose brief the PM seat writes once the PR
-is open. The PM seat started the session at about 8:00 PM EST with this brief:
+is open. The PM seat sent this brief at about 8:00 PM EST. The session failed to start: its
+worktree needed 5.4 GB and the disk had 3.3 GB free, so it never received the brief.
 
 ````text
 Kickoff — the sync test's standings-degraded assertion, in its own PR on main (Beni's ruling 13 on #352, "Now")
