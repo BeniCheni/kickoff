@@ -1,33 +1,31 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
+import { prSchema, type PullRequest } from '../scripts/pm/github'
 import { jsonSchemaFor, type ModelRunner } from '../scripts/pm/model'
 import {
-  APPENDIX_HEADING, PR_FIELDS, authorshipRows, claimBlocks, claimsSchema, isVerbatim, prSchema, renderAppendix,
+  APPENDIX_HEADING, authorshipRows, claimBlocks, claimsSchema, isVerbatim, renderAppendix,
   renderSkeleton, runPass0, vendorOf,
 } from '../scripts/pm/pass0'
-import type { CommandRunner } from '../scripts/pm/process'
+import { fakeGitHub, withCommits, type FakeGitHubOptions } from './fixtures/pm/fakeGitHub'
 
 // No test here calls GitHub or Claude: gh and the model are fakes fed from tests/fixtures/pm.
-const raw = readFileSync('tests/fixtures/pm/pr-view.json', 'utf8')
-const pr = prSchema.parse(JSON.parse(raw))
+const pr = prSchema.parse(JSON.parse(readFileSync('tests/fixtures/pm/pr-view.json', 'utf8')))
 const signedOut = readFileSync('tests/fixtures/pm/claude-signed-out.json', 'utf8')
 const answer = (structured: unknown) => JSON.stringify({ type: 'result', subtype: 'success', is_error: false, structured_output: structured })
 
-function harness(modelStdout: string, ghStdout = raw, stdoutIsTerminal = true) {
+function harness(modelStdout: string, options: { stdoutIsTerminal?: boolean; pr?: PullRequest; gh?: FakeGitHubOptions } = {}) {
   const out: string[] = []
   const err: string[] = []
-  const ghCalls: (readonly string[])[] = []
   const modelCalls: { args: readonly string[]; stdin: string }[] = []
-  const gh: CommandRunner = async (command, args) => {
-    expect(command).toBe('gh')
-    ghCalls.push(args)
-    return { status: ghStdout ? 0 : 1, stdout: ghStdout, stderr: ghStdout ? '' : 'GraphQL: Could not resolve to a PullRequest' }
-  }
+  const github = fakeGitHub(options.pr ?? pr, options.gh)
   const model: ModelRunner = async (args, stdin) => {
     modelCalls.push({ args, stdin })
     return { status: 0, stdout: modelStdout, stderr: '' }
   }
-  return { out, err, ghCalls, modelCalls, deps: { gh, model, out: (t: string) => out.push(t), err: (t: string) => err.push(t), stdoutIsTerminal } }
+  return {
+    out, err, ghCalls: github.calls, modelCalls,
+    deps: { gh: github.run, model, out: (t: string) => out.push(t), err: (t: string) => err.push(t), stdoutIsTerminal: options.stdoutIsTerminal ?? true },
+  }
 }
 
 describe('vendorOf', () => {
@@ -82,12 +80,6 @@ describe('renderSkeleton', () => {
     expect(text).toContain('| `scripts/table.ts` | MODIFIED | +80 | −5 |')
     expect(text).toContain('| `docs/a\\|b.md` | MODIFIED | +2 | −3 |')
     expect(text).toContain('| **3 files** | | **+120** | **−8** |')
-    expect(text).not.toContain('incomplete')
-  })
-
-  it('says so when gh listed fewer files than the PR changed', () => {
-    expect(renderSkeleton({ ...pr, changedFiles: 140, additions: 900 }))
-      .toContain('gh listed 3 of the PR\'s 140 changed files (+120 −8 of +900 −8), so this table is incomplete.')
   })
 
   it('never includes the PR body, so nothing untrusted is printed as the skeleton', () => {
@@ -144,13 +136,10 @@ describe('renderAppendix', () => {
 })
 
 describe('runPass0', () => {
-  it('reads the PR with the brief\'s fields, prints the skeleton, then the appendix', async () => {
+  it('reads the whole PR, prints the skeleton, then the appendix', async () => {
     const h = harness(answer({ claims: [{ source: 'commit 1111111', quote: 'Every link resolves.' }] }))
     expect(await runPass0(['4242'], h.deps)).toBe(0)
-    expect(h.ghCalls).toEqual([['pr', 'view', '4242', '--json', PR_FIELDS]])
-    for (const field of ['number', 'title', 'url', 'headRefName', 'headRefOid', 'baseRefName', 'files', 'commits', 'body']) {
-      expect(PR_FIELDS.split(',')).toContain(field)
-    }
+    expect(h.ghCalls.map((call) => call.slice(1, 3).join(' '))).toEqual(['pr view', 'api graphql', 'api graphql'])
     expect(h.out).toEqual([renderSkeleton(pr), expect.stringContaining(APPENDIX_HEADING)])
     expect(h.err).toEqual([])
     expect(h.modelCalls).toHaveLength(1)
@@ -169,7 +158,7 @@ describe('runPass0', () => {
   })
 
   it('also sends the failure line to stderr when stdout is a file or pipe', async () => {
-    const h = harness(signedOut, raw, false)
+    const h = harness(signedOut, { stdoutIsTerminal: false })
     expect(await runPass0(['4242'], h.deps)).toBe(1)
     expect(h.err).toEqual([h.out[1]])
   })
@@ -204,9 +193,25 @@ describe('runPass0', () => {
   })
 
   it('exits 2 without a model call when gh cannot read the PR', async () => {
-    const h = harness(answer({ claims: [] }), '')
+    const h = harness(answer({ claims: [] }), { stdoutIsTerminal: false, gh: { viewFails: 'GraphQL: Could not resolve to a PullRequest' } })
     expect(await runPass0(['4242'], h.deps)).toBe(2)
     expect(h.modelCalls).toEqual([])
-    expect(h.err[0]).toBe('Could not read PR 4242: gh pr failed: GraphQL: Could not resolve to a PullRequest')
+    expect(h.out).toEqual(['Could not read PR 4242 completely: gh pr failed: GraphQL: Could not resolve to a PullRequest. No skeleton was printed.'])
+    expect(h.err).toEqual(h.out)
+  })
+
+  it('counts a 101st commit by another vendor in the shares', async () => {
+    const h = harness(answer({ claims: [] }), { pr: withCommits(pr, 101) })
+    expect(await runPass0(['4242'], h.deps)).toBe(0)
+    expect(h.out[0]).toContain('- Totals: 101 commits, 3 files, +120 −8')
+    expect(h.out[0]).toContain('| Claude | Claude <noreply@anthropic.com> | 100 | 99% | 0 |')
+    expect(h.out[0]).toContain('| Codex | Codex <noreply@openai.com> | 1 | 1% | 0 |')
+  })
+
+  it('prints no skeleton at all when GitHub returns fewer commits than the PR has', async () => {
+    const h = harness(answer({ claims: [] }), { pr: withCommits(pr, 101), gh: { commitCap: 100 } })
+    expect(await runPass0(['4242'], h.deps)).toBe(2)
+    expect(h.out).toEqual(['Could not read PR 4242 completely: GitHub returned 100 of the PR\'s 101 commits, so the skeleton would be incomplete. No skeleton was printed.'])
+    expect(h.modelCalls).toEqual([])
   })
 })

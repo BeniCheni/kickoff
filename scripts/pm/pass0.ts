@@ -1,44 +1,16 @@
 import { resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { z } from 'zod'
+import { readPullRequest, type Author, type PullRequest } from './github'
 import { callModel, failureLine, spawnClaude, type ModelRunner, type UntrustedBlock } from './model'
-import { runCommand, runOk, type CommandRunner } from './process'
+import { runCommand, type CommandRunner } from './process'
 
 /**
  * `npx tsx scripts/pm/pass0.ts <PR number>` prints the Pass 0 skeleton for one PR: who wrote which
  * commit, which files changed, and the builder's checkable claims sealed for a cold reviewer.
  * Everything but the sealed appendix is plain code; the appendix is one tool-less model call.
+ * `github.ts` reads the PR whole or refuses, so no table here can be a silent first page.
  */
-
-// The brief's fields, plus the PR's own totals, so a truncated file list is caught, not trusted.
-export const PR_FIELDS = [
-  'number', 'title', 'url', 'headRefName', 'headRefOid', 'baseRefName', 'files', 'commits', 'body',
-  'changedFiles', 'additions', 'deletions',
-].join(',')
-
-const count = z.number().int().nonnegative()
-const authorSchema = z.object({ name: z.string(), email: z.string() })
-export const prSchema = z.object({
-  number: z.number().int().positive(),
-  title: z.string(),
-  url: z.string(),
-  headRefName: z.string(),
-  headRefOid: z.string().regex(/^[0-9a-f]{40}$/),
-  baseRefName: z.string(),
-  body: z.string(),
-  files: z.array(z.object({ path: z.string(), additions: count, deletions: count, changeType: z.string().optional() })),
-  commits: z.array(z.object({
-    oid: z.string().regex(/^[0-9a-f]{40}$/),
-    messageHeadline: z.string(),
-    messageBody: z.string(),
-    authors: z.array(authorSchema).min(1),
-  })),
-  changedFiles: count,
-  additions: count,
-  deletions: count,
-})
-export type PullRequest = z.infer<typeof prSchema>
-type Author = z.infer<typeof authorSchema>
 
 export type Vendor = 'Claude' | 'Codex' | 'Cursor' | 'bot' | 'person'
 
@@ -123,12 +95,10 @@ export function renderSkeleton(pr: PullRequest): string {
     '| --- | --- | ---: | ---: |',
     ...pr.files.map((f) => `| \`${cell(f.path)}\` | ${f.changeType ?? ''} | +${f.additions} | −${f.deletions} |`),
   )
+  // readPullRequest has already checked these against the PR's own totals.
   const listedAdds = pr.files.reduce((sum, f) => sum + f.additions, 0)
   const listedDels = pr.files.reduce((sum, f) => sum + f.deletions, 0)
   lines.push(`| **${plural(pr.files.length, 'file')}** | | **+${listedAdds}** | **−${listedDels}** |`, '')
-  if (pr.files.length !== pr.changedFiles || listedAdds !== pr.additions || listedDels !== pr.deletions) {
-    lines.push(`gh listed ${pr.files.length} of the PR's ${pr.changedFiles} changed files (+${listedAdds} −${listedDels} of +${pr.additions} −${pr.deletions}), so this table is incomplete.`, '')
-  }
   return lines.join('\n')
 }
 
@@ -203,10 +173,12 @@ export async function runPass0(argv: readonly string[], deps: Pass0Deps): Promis
   }
   let pr: PullRequest
   try {
-    const raw = await runOk(deps.gh, 'gh', ['pr', 'view', arg, '--json', PR_FIELDS])
-    pr = prSchema.parse(JSON.parse(raw))
+    pr = await readPullRequest(deps.gh, Number(arg))
   } catch (error) {
-    deps.err(`Could not read PR ${arg}: ${error instanceof Error ? error.message : String(error)}`)
+    // The same shape as the model's failure line: said once on stdout, and on stderr when piped.
+    const line = `Could not read PR ${arg} completely: ${error instanceof Error ? error.message : String(error)}. No skeleton was printed.`
+    deps.out(line)
+    if (!deps.stdoutIsTerminal) deps.err(line)
     return 2
   }
   deps.out(renderSkeleton(pr))

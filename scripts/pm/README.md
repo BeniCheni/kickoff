@@ -21,9 +21,20 @@ and `claude` need the network.
 
 ## `pass0.ts <PR number>`
 
-It reads `gh pr view <N> --json number,title,url,headRefName,headRefOid,baseRefName,files,commits,body,changedFiles,additions,deletions`.
-The last three fields are the PR's own totals. If `gh` listed fewer files than the PR changed,
-the skeleton says its file table is incomplete instead of passing it off as complete.
+The authorship table decides who may cold-review a PR, so Pass 0 reads the whole PR or prints
+nothing. The PR's own fields come from
+`gh pr view <N> --json number,title,url,headRefName,headRefOid,baseRefName,body,changedFiles,additions,deletions`.
+Commits and files do not come from `gh pr view`, because gh 2.105.0 asks GitHub for the first 100
+of each and says nothing when there are more. `github.ts` reads them through `gh api graphql`
+instead, 100 at a time, following GitHub's cursor. Each list must reach its connection's
+`totalCount`, the head must not move during the read, and the files must match the PR's
+`changedFiles`, `additions` and `deletions`. If any check fails, the script prints one
+`Could not read PR <N> completely:` line with the reason and exits 2.
+
+GitHub ends a PR's commit list at 250 even through GraphQL. On 22 Nov 2026, nodejs/node#66667
+reported `totalCount: 340`, and GitHub stopped at 250 with `hasNextPage: false`. So a PR with more
+than 250 commits stops with that reason, and you can't get a skeleton for it from this script.
+Pages past 100 do work: nodejs/node#66684 read all 106 commits and all 331 files.
 
 Plain code prints:
 
