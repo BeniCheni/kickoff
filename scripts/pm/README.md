@@ -73,8 +73,11 @@ claims to check, not a verdict.
 4. The model call gets each remaining PR's title, branch and body, plus the current `[Unreleased]`
    section, so the draft matches its voice. The draft follows the shape in
    `.claude/rules/releases.md`: one lead sentence, then Added, Changed and Fixed, then
-   **Deliberately not done**, with every line citing its PRs. A line can cite only a PR that was
-   sent. Any PR the draft leaves out is named under it, so a person decides whether it belongs.
+   **Deliberately not done**, with every line, the lead included, citing its PRs. A line can
+   cite only a PR that was sent. The lead must be exactly one sentence, checked in plain code
+   (it ends in `.`, `!` or `?`, and no such mark followed by a space comes before the end). A
+   draft that breaks either rule is a model failure, not a printed draft. Any PR the draft leaves
+   out is named under it, so a person decides whether it belongs.
 
 It prints the draft inside a fence. Wrap it to the file's style when you paste it into
 `CHANGELOG.md`.

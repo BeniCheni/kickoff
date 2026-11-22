@@ -1,10 +1,10 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import type { ModelRunner } from '../scripts/pm/model'
+import { jsonSchemaFor, type ModelRunner } from '../scripts/pm/model'
 import type { CommandRunner, ProcessResult } from '../scripts/pm/process'
 import {
-  LIST_FIELDS, LIST_LIMIT, brooklynStamp, citeLine, currentUnreleased, draftBlocks, draftSchema, isSyncPr,
-  mergedPrSchema, renderDraft, runUnreleased, searchSince, splitPrs, uncited, type Draft,
+  LIST_FIELDS, LIST_LIMIT, brooklynStamp, citeLine, currentUnreleased, draftBlocks, draftSchema, isOneSentence,
+  isSyncPr, mergedPrSchema, renderDraft, runUnreleased, searchSince, splitPrs, uncited, type Draft,
 } from '../scripts/pm/unreleased'
 
 // No test here calls GitHub, git or Claude: every runner is a scripted fake.
@@ -16,7 +16,7 @@ const IN_TAG = new Set(['a'.repeat(40), 'b'.repeat(40)])
 const NOT_LOCAL = new Set(['e'.repeat(40)])
 const CHANGELOG = '# Changelog\n\nIntro.\n\n## [Unreleased]\n\n### Changed\n\n- The preview smoke\'s landmark moved.\n\n## [1.2.3] — 2026-11-14\n\nOld news.\n'
 const draft: Draft = {
-  lead: 'The standings table learns to fit a phone.',
+  lead: { text: 'The standings table learns to fit a phone.', prs: [502] },
   added: [],
   changed: [{ text: 'The standings table fits a 360 px phone.', prs: [502] }],
   fixed: [],
@@ -136,11 +136,32 @@ describe('the draft', () => {
     expect(citeLine('Spread\n  over lines?', [7])).toBe('Spread over lines (#7)?')
   })
 
+  it('holds the lead to one sentence that cites its PRs', () => {
+    expect(schema.safeParse({ ...draft, lead: { text: 'One. Two.', prs: [502] } }).success).toBe(false)
+    expect(schema.safeParse({ ...draft, lead: { text: 'A lead without its PRs.', prs: [] } }).success).toBe(false)
+    expect(schema.safeParse({ ...draft, lead: 'A bare string lead.' }).success).toBe(false)
+    expect(schema.safeParse({ ...draft, lead: { text: 'Cites one never sent.', prs: [320] } }).success).toBe(false)
+    const lead = (jsonSchemaFor(schema).properties as Record<string, { properties: Record<string, object> }>).lead!
+    expect(lead.properties.prs).toMatchObject({ minItems: 1, items: { enum: [502, 504] } })
+    expect(lead.properties.text).toMatchObject({ description: expect.stringContaining('Exactly one sentence') })
+  })
+
+  it('counts one sentence the strict way', () => {
+    expect(isOneSentence('Kickoff v0.5.5 picks up Next.js 16.4.6 and Vite 8.3.8.')).toBe(true)
+    expect(isOneSentence('The table fits a phone (at 360 px).')).toBe(true)
+    expect(isOneSentence('Does it fit?')).toBe(true)
+    expect(isOneSentence('One. Two.')).toBe(false)
+    expect(isOneSentence('It fits.\nAnd it shrinks.')).toBe(false)
+    expect(isOneSentence('It said "done." Then it stopped.')).toBe(false)
+    expect(isOneSentence('No closing mark')).toBe(false)
+    expect(isOneSentence('Strict on e.g. abbreviations.')).toBe(false)
+  })
+
   it('renders the releases.md shape and skips empty sections', () => {
     expect(renderDraft(draft)).toBe([
       '## [Unreleased]',
       '',
-      'The standings table learns to fit a phone.',
+      'The standings table learns to fit a phone (#502).',
       '',
       '### Changed',
       '',
@@ -152,8 +173,9 @@ describe('the draft', () => {
     ].join('\n'))
   })
 
-  it('names the PRs the draft left out', () => {
+  it('names the PRs the draft left out, counting the lead as a citation', () => {
     expect(uncited(draft, [502, 504])).toEqual([504])
+    expect(uncited({ ...draft, lead: { text: 'Both.', prs: [502, 504] } }, [502, 504])).toEqual([])
   })
 
   it('sends each unreleased PR and the current section, and nothing from a sync PR', () => {
@@ -205,7 +227,14 @@ describe('runUnreleased', () => {
   })
 
   it('prints the list and one failure line, and exits 1, when the model part fails', async () => {
-    for (const model of [readFileSync('tests/fixtures/pm/claude-signed-out.json', 'utf8'), 'not json', answer({ ...draft, fixed: [{ text: 'x', prs: [999] }] })]) {
+    for (const model of [
+      readFileSync('tests/fixtures/pm/claude-signed-out.json', 'utf8'),
+      'not json',
+      answer({ ...draft, fixed: [{ text: 'x', prs: [999] }] }),
+      // The live draft Codex saw: a two-sentence lead with no citation.
+      answer({ ...draft, lead: 'These changes leave what a reader sees untouched. The groundwork is laid.' }),
+      answer({ ...draft, lead: { text: 'One. Two.', prs: [502] } }),
+    ]) {
       const h = harness({ model, terminal: false })
       expect(await runUnreleased([], h.deps)).toBe(1)
       expect(h.out).toHaveLength(2)

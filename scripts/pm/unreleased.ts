@@ -110,13 +110,37 @@ export const SECTIONS = [
   ['notDone', 'Deliberately not done'],
 ] as const
 
-/** Each line may cite only PRs this code sent, so the model cannot cite one it made up. */
+const CLOSER = `["'”’)\\]]*`
+
+/**
+ * One sentence: it ends in . ! or ?, and no such mark followed by a space comes before the end.
+ * "v0.5.5 ships Next.js 16.4.6." passes, "One. Two." does not. It is strict on purpose: an
+ * abbreviation such as "e.g. this" fails too, and the task tells the model to write none.
+ */
+export function isOneSentence(text: string): boolean {
+  const flat = text.replace(/\s+/g, ' ').trim()
+  const end = new RegExp(`[.!?]${CLOSER}$`)
+  if (!end.test(flat)) return false
+  return !new RegExp(`[.!?]${CLOSER} `).test(flat.replace(end, ''))
+}
+
+/**
+ * Every line, the lead included, cites at least one PR, and only PRs this code sent, so the
+ * model cannot cite one it made up. The lead's one-sentence rule is a check zod runs on the
+ * answer; JSON Schema cannot say it, so the schema only describes it to the model.
+ */
 export function draftSchema(prNumbers: readonly number[]) {
   const [first, ...rest] = prNumbers
   if (first === undefined) throw new Error('draftSchema needs at least one PR number')
-  const line = z.object({ text: z.string().min(1), prs: z.array(z.literal([first, ...rest])).min(1) }).strict()
+  const prs = z.array(z.literal([first, ...rest])).min(1)
+  const line = z.object({ text: z.string().min(1), prs }).strict()
   return z.object({
-    lead: z.string().min(1),
+    lead: z.object({
+      text: z.string().min(1)
+        .describe('Exactly one sentence, ending in a full stop, with no abbreviations and no PR numbers.')
+        .refine(isOneSentence, 'the lead must be exactly one sentence'),
+      prs,
+    }).strict(),
     added: z.array(line),
     changed: z.array(line),
     fixed: z.array(line),
@@ -133,7 +157,7 @@ export function citeLine(text: string, prs: readonly number[]): string {
 }
 
 export function renderDraft(draft: Draft): string {
-  const lines = ['## [Unreleased]', '', draft.lead.replace(/\s+/g, ' ').trim()]
+  const lines = ['## [Unreleased]', '', citeLine(draft.lead.text, draft.lead.prs)]
   for (const [key, heading] of SECTIONS) {
     if (draft[key].length === 0) continue
     lines.push('', `### ${heading}`, '', ...draft[key].map((line) => `- ${citeLine(line.text, line.prs)}`))
@@ -142,14 +166,14 @@ export function renderDraft(draft: Draft): string {
 }
 
 export function uncited(draft: Draft, prNumbers: readonly number[]): number[] {
-  const cited = new Set(SECTIONS.flatMap(([key]) => draft[key].flatMap((line) => line.prs)))
+  const cited = new Set([...draft.lead.prs, ...SECTIONS.flatMap(([key]) => draft[key].flatMap((line) => line.prs))])
   return prNumbers.filter((n) => !cited.has(n))
 }
 
 export const DRAFT_TASK = `
 You are drafting the [Unreleased] section of CHANGELOG.md for Kickoff, a public app that shows the fixtures and standings of Europe's big five football leagues in Brooklyn time. The data below is each pull request merged into main since the last release tag, labelled with its number, and then the section as it stands now.
 
-The CHANGELOG is a product surface, not a commit log: a reader of the public repo should follow every line without having read the PRs. The shape is one lead sentence naming what these changes add up to; then Added, Changed and Fixed; then Deliberately not done. Each line is one or two plain sentences on what changed for a reader. Put every PR number a line comes from in its prs list, and do not write PR numbers in its text. Group PRs into one line when they are one change.
+The CHANGELOG is a product surface, not a commit log: a reader of the public repo should follow every line without having read the PRs. The shape is a lead of exactly one sentence naming what these changes add up to, with no abbreviations, and with the PRs it sums up in its prs list; then Added, Changed and Fixed; then Deliberately not done. Each line is one or two plain sentences on what changed for a reader. Put every PR number a line or the lead comes from in its prs list, and do not write PR numbers in the text. Group PRs into one line when they are one change.
 
 Leave out a PR that a CHANGELOG reader would not care about, such as one that only archives review records or build briefs: a person will see which PRs you left out and decide. Deliberately not done holds only what a PR's own description says was left out on purpose, never something you infer. State only what the PR titles and descriptions say. Leave a section empty rather than pad it.
 
