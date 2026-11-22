@@ -239,7 +239,7 @@ describe('planPosterWeek', () => {
     fx({ competition: 'laliga' }),
   ]
 
-  it('classifies by slate size: >2 big, 1–2 small, 0 gap', () => {
+  it('classifies by slate size: >2 big, 1–2 small, empty snapshot day a gap', () => {
     const blocks = planPosterWeek([
       day(big, { date: '2026-08-30' }),
       day([fx({ competition: 'pl' }), fx({ competition: 'pl' })], { date: '2026-08-31' }),
@@ -253,19 +253,18 @@ describe('planPosterWeek', () => {
     expect(blocks[0]).toMatchObject({ kind: 'big', dominant: 'pl' })
   })
 
-  it('merges consecutive empty days into one gap and sums the filtered-away count', () => {
+  it('keeps a filtered day between two snapshot gaps', () => {
     const blocks = planPosterWeek([
       day(big, { date: '2026-08-30' }),
       day([], { date: '2026-08-31', total: 0 }),
-      day([], { date: '2026-09-01', total: 3 }),
-      day(big, { date: '2026-09-02' }),
+      day([], { date: '2026-09-01', total: 0 }),
+      day([], { date: '2026-09-02', total: 3 }),
       day([], { date: '2026-09-03', total: 0 }),
     ])
-    expect(blocks.map((b) => b.kind)).toEqual(['big', 'gap', 'big', 'gap'])
+    expect(blocks.map((b) => b.kind)).toEqual(['big', 'gap', 'small', 'gap'])
     expect(blocks[1]).toMatchObject({
       kind: 'gap',
       dates: ['2026-08-31', '2026-09-01'],
-      hiddenTotal: 3,
     })
   })
 })

@@ -33,12 +33,6 @@ export function PosterWeek({ blocks, stale = EMPTY, next, nowUtcIso }: { blocks:
               className="font-mono mt-3.5 border-b border-line py-1.5 text-[11px] font-medium text-ink-muted uppercase"
             >
               {label} — no fixtures
-              {block.hiddenTotal > 0 && (
-                <>
-                  {' '}
-                  · {block.hiddenTotal} hidden by filters
-                </>
-              )}
             </div>
           )
         }

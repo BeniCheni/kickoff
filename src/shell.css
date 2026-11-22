@@ -1474,7 +1474,7 @@ button.register-row {
   font: 600 12px/1.4 var(--font-mono);
 }
 .fixture-clock[data-voice='ink'] { color: var(--fb-pulp-ink); }
-.fixture-ledger .fixture-clock { min-width: 62px; }
+.fixture-ledger .fixture-clock { min-width: 62px; font-size: 11.5px; line-height: 1.25; }
 .fixture-day-note { font: 400 10px/1.2 var(--fb-mono); color: var(--fb-pulp-muted); }
 .fixture-names { min-width: 0; overflow-wrap: anywhere; font: 400 15px/1.3 var(--fb-book); }
 .fixture-ledger .fixture-first { flex-wrap: wrap; }
@@ -1482,7 +1482,9 @@ button.register-row {
 /* Reserve the longest word when collecting a flex line. A word wider than a whole
    row can still shrink and wrap on its own line. */
 .fixture-ledger .fixture-names { flex: 1 1 min-content; overflow-wrap: break-word; font-family: var(--fb-mono); font-size: 13px; }
-.fixture-poster .fixture-clock { margin-left: auto; font-weight: 500; }
+.fixture-poster .fixture-names { font-size: 17px; line-height: 1.25; }
+.fixture-poster .fixture-clock { margin-left: auto; font-weight: 500; font-size: 16px; line-height: 1.25; }
+.fixture-poster .stadium-clock { font-size: 11px; line-height: 1.4; }
 .fixture-leader {
   flex: 1 1 12px;
   align-self: baseline;

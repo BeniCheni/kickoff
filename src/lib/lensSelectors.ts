@@ -201,21 +201,20 @@ export function hotFixtureIds(
 
 /**
  * Poster's proportional-loudness fold: days with more than two shown matches get the
- * full-bleed duotone header, one or two matches an inline header, and consecutive empty
- * days merge into a single hairline line (carrying the filtered-away count so a merged
- * gap never lies about hidden matches).
+ * full-bleed duotone header, lighter and fully filtered days keep an inline header.
+ * Only consecutive days without fixtures in the snapshot share a hairline line.
  */
 export type PosterBlock =
   | { kind: 'big'; date: string; isToday: boolean; hidden?: number; fixtures: Fixture[]; dominant: CompetitionKey }
   | { kind: 'small'; date: string; isToday: boolean; hidden?: number; fixtures: Fixture[] }
-  | { kind: 'gap'; dates: string[]; hiddenTotal: number }
+  | { kind: 'gap'; dates: string[] }
 
-/** One group per visible day, or per uninterrupted run of empty days. */
+/** One group per fixture-bearing day, or per uninterrupted run of empty days. */
 export function groupWeekDays(days: readonly DayInfo[]): DayInfo[][] {
   const groups: DayInfo[][] = []
   for (const day of days) {
     const previous = groups.at(-1)
-    if (!day.shown.length && previous && !previous[0]!.shown.length) previous.push(day)
+    if (day.total === 0 && previous?.[0]?.total === 0) previous.push(day)
     else groups.push([day])
   }
   return groups
@@ -224,8 +223,8 @@ export function groupWeekDays(days: readonly DayInfo[]): DayInfo[][] {
 export function planPosterWeek(days: readonly DayInfo[]): PosterBlock[] {
   return groupWeekDays(days).map(group => {
     const day = group[0]!
-    if (!day.shown.length) {
-      return { kind: 'gap', dates: group.map(d => d.date), hiddenTotal: group.reduce((sum, d) => sum + d.total, 0) }
+    if (day.total === 0) {
+      return { kind: 'gap', dates: group.map(d => d.date) }
     }
     const fields = { date: day.date, isToday: day.isToday, fixtures: day.shown, hidden: day.total - day.shown.length }
     const dominant = dominantCompetition(day.shown)
