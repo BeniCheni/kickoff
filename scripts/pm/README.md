@@ -39,11 +39,12 @@ Pages past 100 do work: nodejs/node#66684 read all 106 commits and all 331 files
 Plain code prints:
 
 - the PR line, its branch and base, and the head SHA;
-- an authorship table by author name and email, with each identity's share of the commits. The
-  vendor comes from the email: `noreply@anthropic.com` is Claude, `noreply@openai.com` is Codex,
-  `cursoragent@cursor.com` is Cursor, a `[bot]` address is a bot and anyone else is a person.
-  GitHub lists a commit's author first and its `Co-authored-by` trailers after, so those are
-  counted in a separate column;
+- an authorship table with each identity's share of the commits. The vendor comes from the email:
+  `noreply@anthropic.com` is Claude, `noreply@openai.com` is Codex, `cursoragent@cursor.com` is
+  Cursor, a `[bot]` address is a bot and anyone else is a person. Only the three seats' shared
+  noreply addresses print. A person or a bot prints as the bucket and the name. The email still
+  sorts them into rows, but it never reaches the output. GitHub lists a commit's author first and
+  its `Co-authored-by` trailers after, so those are counted in a separate column;
 - one row for each commit, giving its short SHA, author and headline;
 - every file with its additions and deletions, and a total row.
 

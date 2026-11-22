@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { prSchema, type PullRequest } from '../scripts/pm/github'
 import { jsonSchemaFor, type ModelRunner } from '../scripts/pm/model'
 import {
-  APPENDIX_HEADING, authorshipRows, claimBlocks, claimsSchema, isVerbatim, renderAppendix,
+  APPENDIX_HEADING, authorCell, authorshipRows, claimBlocks, claimsSchema, isVerbatim, renderAppendix,
   renderSkeleton, runPass0, vendorOf,
 } from '../scripts/pm/pass0'
 import { fakeGitHub, withCommits, type FakeGitHubOptions } from './fixtures/pm/fakeGitHub'
@@ -73,7 +73,32 @@ describe('renderSkeleton', () => {
   it('shows each vendor\'s share and who wrote which commit', () => {
     expect(text).toContain('| Codex | Codex <noreply@openai.com> | 2 | 40% | 0 |')
     expect(text).toContain('| Claude | Claude <noreply@anthropic.com> | 1 | 20% | 1 |')
+    expect(text).toContain('| Cursor | Cursor Agent <cursoragent@cursor.com> | 1 | 20% | 0 |')
     expect(text).toContain('| `4444444` | person: A Person | Pair on the copy |')
+  })
+
+  it('prints a person as the bucket and name, never their email', () => {
+    expect(text).toContain('| person | A Person | 1 | 20% | 0 |')
+    expect(text).not.toContain('person@example.com')
+  })
+
+  it('keeps a co-author-only person\'s email out too, and still counts them by it', () => {
+    const coAuthored = {
+      ...pr,
+      commits: [
+        { ...pr.commits[0]!, authors: [pr.commits[0]!.authors[0]!, { name: 'Sam', email: 'sam@example.org' }] },
+        { ...pr.commits[1]!, authors: [pr.commits[1]!.authors[0]!, { name: 'Sam', email: 'other-sam@example.org' }] },
+      ],
+    }
+    const rendered = renderSkeleton(coAuthored)
+    expect(rendered).not.toMatch(/@example\.org/)
+    // Two addresses, one name: still two identities, each credited once.
+    expect(rendered.match(/\| person \| Sam \| 0 \| 0% \| 1 \|/g)).toHaveLength(2)
+  })
+
+  it('prints a bot by name only', () => {
+    expect(authorCell({ vendor: 'bot', name: 'github-actions[bot]', email: '41898282+github-actions[bot]@users.noreply.github.com' }))
+      .toBe('github-actions[bot]')
   })
 
   it('lists every file with its counts and a total row', () => {

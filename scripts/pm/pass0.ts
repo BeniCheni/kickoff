@@ -65,6 +65,11 @@ export function authorshipRows(commits: PullRequest['commits']): AuthorRow[] {
 const short = (oid: string) => oid.slice(0, 7)
 /** Table cells only: a pipe or newline in untrusted text must not break the table. */
 const cell = (text: string) => text.replace(/\r?\n/g, ' ').replace(/\|/g, '\\|')
+/** A seat's shared noreply address may print. Anyone else prints as their bucket and name only:
+ * the email still decides the bucket and the row, but a cold reviewer needs no contact address. */
+const SEATS: ReadonlySet<Vendor> = new Set(['Claude', 'Codex', 'Cursor'])
+export const authorCell = (row: Pick<AuthorRow, 'vendor' | 'name' | 'email'>) =>
+  SEATS.has(row.vendor) ? `${cell(row.name)} <${cell(row.email)}>` : cell(row.name)
 const percent = (part: number, whole: number) => (whole === 0 ? '0%' : `${Math.round((part / whole) * 100)}%`)
 const plural = (n: number, noun: string) => `${n} ${noun}${n === 1 ? '' : 's'}`
 
@@ -83,7 +88,7 @@ export function renderSkeleton(pr: PullRequest): string {
     '',
     '| Vendor | Author | Commits | Share | Co-authored |',
     '| --- | --- | ---: | ---: | ---: |',
-    ...rows.map((r) => `| ${r.vendor} | ${cell(r.name)} <${cell(r.email)}> | ${r.authored} | ${percent(r.authored, pr.commits.length)} | ${r.coAuthored} |`),
+    ...rows.map((r) => `| ${r.vendor} | ${authorCell(r)} | ${r.authored} | ${percent(r.authored, pr.commits.length)} | ${r.coAuthored} |`),
     '',
     '| Commit | Author | Headline |',
     '| --- | --- | --- |',
