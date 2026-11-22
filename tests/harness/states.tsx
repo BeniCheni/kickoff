@@ -14,7 +14,7 @@ import { clockSnapshotAt, type Clock } from '../../src/lib/clock'
 import { hoursSinceSync, META } from '../../src/lib/fixtures'
 import type { CompetitionKey } from '../../src/lib/competitions'
 import type { Fixture, StandingRow } from '../../src/lib/schema'
-import { addDays, brooklynDate, todayIso } from '../../src/lib/time'
+import { addDays, brooklynDate, niceDate, todayIso } from '../../src/lib/time'
 import { ClockContext } from '../../src/lib/useNow'
 import { edgeFixture, rowStates, specimenRowProps } from '../fixtures/edgeFixtures'
 import '../../src/index.css'
@@ -136,7 +136,7 @@ const NEEDLES = [
   'Data may have moved.',
   'Data is stale.',
   'Your filters hide every upcoming fixture.',
-  'the end of this snapshot.',
+  `No upcoming fixtures through ${niceDate(META.window.to)}, the end of this snapshot.`,
   'hidden by filters',
 ]
 

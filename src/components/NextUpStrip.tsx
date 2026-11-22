@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { COMPETITIONS, COMPETITION_KEYS, type CompetitionKey } from '../lib/competitions'
-import { brooklynDate, daysUntil, fixtureTimes } from '../lib/time'
+import { brooklynDate, daysUntil, fixtureTimes, niceDate } from '../lib/time'
 import { useNow } from '../lib/useNow'
 import { META, upcoming } from '../lib/fixtures'
 import type { Fixture } from '../lib/schema'
@@ -39,7 +39,7 @@ export function NextUpStrip({ today, active }: { today: string; active: Readonly
       {cards.map(f => <Card key={f.id} fixture={f} today={today} />)}
     </div> : <p className="next-empty">{filtered
       ? 'Your filters hide every upcoming fixture.'
-      : `No upcoming fixtures through ${META.window.to}, the end of this snapshot.`}</p>}
+      : `No upcoming fixtures through ${niceDate(META.window.to)}, the end of this snapshot.`}</p>}
     {nextMore && <p className="next-more">
       +{moreToday.length} more today · {nextMore.home.name} v {nextMore.away.name}
       {nextMore.timeConfidence === 'exact' && `, ${fixtureTimes(nextMore.kickoffUtc, nextMore.venueTz).brooklyn.time}`}

@@ -3,7 +3,7 @@ import { render } from '@testing-library/react'
 import { NextUpStrip } from '../../src/components/NextUpStrip'
 import { META, FIXTURES } from '../../src/lib/fixtures'
 import { COMPETITION_KEYS } from '../../src/lib/competitions'
-import { addDays, brooklynDate } from '../../src/lib/time'
+import { addDays, brooklynDate, niceDate } from '../../src/lib/time'
 import { primeClock } from './rig'
 import * as fixtures from '../../src/lib/fixtures'
 import { edgeFixture } from '../fixtures/edgeFixtures'
@@ -20,9 +20,9 @@ it('distinguishes filtered kickoffs from the end of the snapshot', () => {
   view.rerender(<NextUpStrip today={brooklynDate(next.kickoffUtc)} active={new Set()} />)
   expect(view.container.textContent).toContain('Your filters hide every upcoming fixture.')
   view.rerender(<NextUpStrip today={addDays(META.window.to, 1)} active={new Set(COMPETITION_KEYS)} />)
-  expect(view.container.textContent).toContain(`No upcoming fixtures through ${META.window.to}, the end of this snapshot.`)
+  expect(view.container.textContent).toContain(`No upcoming fixtures through ${niceDate(META.window.to)}, the end of this snapshot.`)
   view.rerender(<NextUpStrip today={addDays(META.window.to, 1)} active={new Set()} />)
-  expect(view.container.textContent).toContain(`through ${META.window.to}`)
+  expect(view.container.textContent).toContain(`through ${niceDate(META.window.to)}`)
 })
 
 
@@ -30,7 +30,7 @@ it('the fifth upcoming fixture contributes to more today only on its Brooklyn da
   const today = '2026-11-22'
   release = primeClock(new Date('2026-11-22T12:00:00Z'))
   const four = Array.from({ length: 4 }, (_, i) => edgeFixture({ id: String(i) }))
-  const fifth = edgeFixture({ id: 'fifth' })
+  const fifth = edgeFixture({ id: 'fifth', kickoffUtc: '2026-11-23T02:00:00Z' })
   const tomorrow = edgeFixture({ id: 'sixth', kickoffUtc: '2026-11-23T20:00:00Z' })
   const selected = vi.spyOn(fixtures, 'upcoming').mockReturnValue([...four, tomorrow])
   try {
