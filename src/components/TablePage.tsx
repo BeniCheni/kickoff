@@ -47,11 +47,12 @@ const DESKTOP_COLS =
  * empty: "the snapshot holds fewer than five finished results for that club". That is not
  * true of the app. A strip joins to this competition's fixtures alone, so a club with five
  * finished results across two competitions still draws dots in each table (the review of
- * PR #352, finding 7). The clause is left out, as the build brief allows; words that
- * qualify it wait for an approved string. The photograph's sentence joins this list ahead
- * of it when the cover has a photograph. */
+ * PR #352, finding 7). "In this competition" is what makes it true, and the sentence is
+ * set here as approved on 21 Nov 2026 (question 11 of that review), word for word.
+ * tests/dom/tableFoot.test.tsx holds every dot the snapshot draws to it. The photograph's
+ * sentence joins this list ahead of it when the cover has a photograph. */
 const FOOT_MORE = [
-  'Zones & key, opened, reads: form runs oldest to newest. A dot is an empty slot.',
+  'Zones & key, opened, reads: form runs oldest to newest. A dot is an empty slot: the snapshot holds fewer than five finished results for that club in this competition.',
 ] as const
 
 /* The nine figure columns of the desktop table, in order, each with the key it sorts by.
