@@ -1,4 +1,4 @@
-# PR #349 — the PM seat's briefs for the overhaul's PR 3, the Ledger, rows, states and the week: Pass 1's cold review, Pass 1.5's rebuttal brief, Pass 2.5's synthesis opener and its result, the follow-up brief for Codex and the follow-up's review opener (archived Fri 20 and Sat 21 Nov 2026, TZ=America/New_York)
+# PR #349 — the PM seat's briefs for the overhaul's PR 3, the Ledger, rows, states and the week: Pass 1's cold review, Pass 1.5's rebuttal brief, Pass 2.5's synthesis opener and its result, the follow-up brief for Codex and the follow-up's review (archived Fri 20 to Sun 22 Nov 2026, TZ=America/New_York)
 
 Written by the PM seat (Claude Code, Opus 5.5) in the Track A planning session, after Codex opened
 PR #349 from
@@ -1065,3 +1065,99 @@ were the file's last sections, appended after its newest branch entries, while `
 the top and had been overwritten in place. `core.bare` was already `false`. `config.after` sits
 beside the copy. The delivered opener's P3 was written before this repair, so it no longer
 reproduces, and the review should say so. The test's leak itself is still in the code.
+
+## #359's review result, the corrected handoff and the message that finishes it (Sun 22 Nov 2026, about 7:15 AM EST)
+
+The fast-track pass posted at 10:59 PM EST on Sat 21 Nov:
+https://github.com/BeniCheni/kickoff/pull/359#issuecomment-7073913406. Its first line names
+`claude-opus-5-5` at `high`, "Fast-track cold read, Pass 1 method, report only. No commits, no
+pushes." The brief reached the PM seat at about 6:50 AM on Sun 22 Nov as Beni's paste. It
+recommends the merge, finds no high or medium finding, and raises two lows.
+
+**Finding 1, low.** On the Poster, a today whose fixtures are all hidden puts its TODAY pill on its
+own line, under "N hidden by filters". Before #359 that day had no pill at all. The Poster's day
+blocks are PR 5's (the build brief: "covers, parts, 'more' and the shelf are PR 5's"), so this goes
+into PR 5's brief and is not fixed here.
+
+**Finding 2, low, pre-existing.** `tests/vercelIgnore.test.ts` and `tests/publishGate.test.ts` run
+git with whatever environment they inherit. Under `git rebase --exec` that environment names the
+real repository. The first test then writes the four keys found in Beni's config, and the second
+could make a commit there. The fix, for Codex: clear the `GIT_*` variables in both helpers.
+
+The brief re-derives C1 to C3 and C7, and P1 to P4:
+- 1,266, 1,270, 1,270 and 1,278 root tests at the four commits, and 158 web tests.
+- Eight mutations red.
+- The 26 Oct counts and the Ledger footer exact.
+- No consumer of a zero-fixture Poster block outside the week renderer.
+- The runner's per-day records still reconcile, including 12/0 against 11/1 on 21 Dec.
+- The config repaired at 10:24 PM.
+- The all-hidden Poster week at 510.5 px against a 43.5 px gap line.
+
+It leaves gaps:
+- C4 only partly checked;
+- C5 and C6 not verified;
+- the runner and the 96-cell matrix not run;
+- no Safari, Firefox or phone.
+
+The PM seat read the brief and the PR between 6:50 and 7:15 AM, and ran these:
+- `gh pr view 359`: still `722787e` and CLEAN, with no review and auto-merge off. #352 is at
+  `fefc391`, refreshed onto `1e09592`, and also CLEAN.
+- `git merge-tree --write-tree --merge-base 1e09592 722787e fefc391`: clean. The two PRs share only
+  `src/shell.css`, which merges on its own, so the order between them costs nothing.
+- `git config --local --list`: `Cursor`, `core.bare = false`, and no `maintenance` or `gc` key.
+- The Fixture identity in `.git/logs` and the worktrees' logs: entries at 9:01, 9:25 and 9:37 PM
+  EST on Sat 21 Nov, not the brief's 8:42 and 9:00 PM.
+
+Four things from that read:
+- **About 84 lines of the opener never reached the pass.** The pass says they "showed only as
+  hidden". What it missed fits what it skipped. It did not run item 6, the runner. Its handoff
+  block also leaves out `--match-head-commit`, adds a Claude trailer although Claude wrote no code,
+  and runs `git switch overhaul/second-edition` in no named folder. In Beni's checkout, that command
+  would fail, because git still registers the branch to the missing `kickoff-second-edition`
+  worktree. It would also move the checkout off `main`.
+- **No independent seat has run the browser pass on #359.** CLAUDE.md asks for it whenever a diff
+  touches `src/`, so the PM seat recommends finishing it before the merge, and before the banner's
+  alarm at 2:33 PM today.
+- **A later opener should begin by pointing the session at its archived copy.** A paste that loses
+  its middle can then be recovered.
+- **The handoff block below replaces the pass's.** It holds if the browser pass changes no figure,
+  and if Beni approves string 33.
+
+The message for the review session, which Beni pastes there:
+
+```text
+Two things before Beni merges #359.
+
+First, about 84 lines of the opener never reached you. Read the whole opener from its archive: git show claude/track-a-archive-7:docs/design-overhaul-pr3-review-prompt.md, the section "PR #359: the follow-up's fast-track review opener". Its WHAT YOU MUST NOT DO and WHERE TO WORK sections bind you from here on. In particular, run npm test only with Git's repository variables cleared (env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE -u GIT_COMMON_DIR -u GIT_OBJECT_DIRECTORY npm test), and push nothing.
+
+Second, finish the two items your brief lists as not verified. No independent seat has run the browser pass on #359, and CLAUDE.md requires it for a diff under src/.
+- Item 6, the runner. Run web/scripts/evidence.mjs in report mode, then with --enforce, at 722787e and on the base 1e09592, back to back, on your own servers: 9073 to 9075 for the tip, 9173 to 9175 for the base. The base worktree is kickoff-pr359-review-base; make it if it does not exist.
+  - Finish all four runs before 2:33 PM EST today, Sun 22 Nov, when 1851196's banner turns from amber to the alarm.
+  - For each run, record its start and end in Brooklyn time, lastSyncAt, the banner state and any kickoff crossed.
+  - Compare the cells, the contrast samples and those unread with C6. --enforce should exit 1 only on R2's 16 Table loss pips.
+- Item 3's comparison: the 26-week Poster and Ledger sweep at 360 and 390, tip against base. Measure wrapped names, names on three lines, the tallest week, and scrollWidth === innerWidth, with the viewport set before navigation (C4).
+
+One correction to your brief: the Fixture identity appears in reflog entries at 9:01, 9:25 and 9:37 PM EST on Sat 21 Nov, not at 8:42 and 9:00 PM. Re-derive it from .git/logs and say which you find.
+
+Beni will not run your handoff block. The PM seat has issued a corrected one: it adds --match-head-commit, carries one trailer because Claude wrote no code, and checks the branch in a new detached worktree. Do not rewrite it. Say only whether anything you find changes one of its figures: 1,278 root tests and 158 web tests, and the all-hidden Poster week at 510.5 px.
+
+Then post one short follow-up comment on #359 with gh pr comment 359 --body-file <file>. Its first line names the pass ("fast-track, browser pass"), the seat, and the model and effort that ran. Reply to Beni with the results and any change to your recommendation.
+```
+
+The corrected handoff block, for after the browser pass:
+
+```bash
+gh pr merge 359 -R BeniCheni/kickoff --squash --match-head-commit 722787e7165fc408c567472a47d835be50dd0fd3 --subject "Overhaul PR 3 follow-up: Beni's rulings on #349 (#359)" --body-file - <<'EOF'
+Apply Beni's rulings on #349. A day whose fixtures the filters all hide keeps its own date line in both lenses, with zero shown and its hidden count, so Step 0 can read every day's listed and hidden pair again. Only days with no fixtures in the snapshot share a "NO FIXTURES" line, and that line no longer carries a hidden count. The Poster's rows take the handoff's scale: Caslon names at 17/1.25, the Brooklyn clock at 500 16/1.25 and the stadium clock at 11/1.4, with the Ledger's clock at 11.5. NEXT UP prints the snapshot's last date in words: "No upcoming fixtures through April 18, 2027, the end of this snapshot.", approved by Beni. Three tests now catch a late Brooklyn kickoff, the muted ink of an unavailable control and the clock and score faces.
+
+At 722787e, 1,278 root tests and 158 web tests passed. An all-hidden week on the Poster is now 510.5 px tall at 360 and 390, where it was one line before. A today whose fixtures are all hidden puts its TODAY pill on its own line, which PR 5's day blocks replace. No version, tag or CHANGELOG section.
+
+Built by Codex (gpt-6.2-astra, high). Fast-track cold read: Claude Code (claude-opus-5-5, high), which wrote nothing. Merged on Beni's word.
+
+Co-authored-by: Codex <noreply@openai.com>
+EOF
+```
+
+```bash
+git -C ~/code/kickoff fetch origin && git -C ~/code/kickoff worktree add --detach ~/code/kickoff-second-edition-359 origin/overhaul/second-edition && cd ~/code/kickoff-second-edition-359 && npm ci && npm run typecheck && env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE npm test && npm run build
+```
