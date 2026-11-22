@@ -9,11 +9,21 @@ the repo, posts to GitHub or edits `CHANGELOG.md`.
 | Pass 0 skeleton | `npx tsx scripts/pm/pass0.ts 352` | Who wrote which commit, which files changed, and the builder's claims sealed for a cold reviewer |
 | `[Unreleased]` draft | `npx tsx scripts/pm/unreleased.ts` | The PRs merged since the last tag, and a draft `[Unreleased]` section that cites them |
 
-**Each run uses Claude Max usage.** Every run makes at most one model call, on
-`claude-sonnet-5-5`, through your signed-in `claude` CLI. `unreleased.ts` makes no call when only
-the sync bot has merged since the tag. On a Max plan the call counts against Max usage. There is
-no API key and nothing is billed per token. Neither chore has a `package.json` script, because
-`package.json` is a release file.
+**Each run makes at most one model call, and who pays depends on how `claude` signs in.** The call
+uses `claude-sonnet-5-5` through your `claude` CLI, and the child inherits your environment. The
+chore never chooses the credentials. `unreleased.ts` makes no call when nothing but the sync bot
+has merged since the tag. Before a run, check with `claude auth status`, from the same shell:
+
+- `"authMethod": "claude.ai"` with `"subscriptionType": "max"`: the call counts against your
+  Claude Max usage and isn't billed per token. On 22 Nov 2026 this Mac reported `claude.ai` even
+  with a dummy `ANTHROPIC_API_KEY` in the environment, and a real `claude -p` call from that shell
+  ran on the subscription.
+- `"authMethod": "api_key"` (`"apiKeySource": "ANTHROPIC_API_KEY"`, for one): the call is billed
+  per token to that key's API account. That's what a key with no claude.ai login reports. Anthropic
+  explains the variable's effect in
+  [Manage API key environment variables in Claude Code](https://support.claude.com/en/articles/12304248-manage-api-key-environment-variables-in-claude-code).
+
+Neither chore has a `package.json` script, because `package.json` is a release file.
 
 You need `gh` signed in to GitHub with read access to the repo, and `claude` signed in. Inside a
 Claude Code sandbox, run both outside the sandbox: `tsx` has to open a local IPC pipe, and `gh`
