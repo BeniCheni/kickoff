@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { jsonSchemaFor, type ModelRunner } from '../scripts/pm/model'
 import type { CommandRunner, ProcessResult } from '../scripts/pm/process'
 import {
-  LIST_FIELDS, LIST_LIMIT, UNPARSED_FORM, UNREAD, brooklynStamp, citeLine, citesInProse, currentUnreleased, draftBlocks, draftSchema, hasWords, isOneSentence,
+  CODE_SPAN_FORMS, LINK_SYNTAX, LIST_FIELDS, LIST_LIMIT, brooklynStamp, citeLine, citesInProse, currentUnreleased, draftBlocks, draftSchema, hasWords, isOneSentence,
   isSyncPr, mergedPrSchema, proseReference, renderDraft, runUnreleased, searchSince, splitPrs, uncited, type Draft,
 } from '../scripts/pm/unreleased'
 
@@ -169,8 +169,10 @@ describe('the draft', () => {
     expect(citesInProse('It fits (#999).')).toBe(true)
     expect(citesInProse('It fits (# 999).')).toBe(true)
     expect(citesInProse('Built in PRs 7 and 9.')).toBe(true)
-    // Words inside a URL are not read, and a number glued to a word is not a reference.
-    expect(citesInProse('The notes are at https://example.com/page#123 for now.')).toBe(false)
+    // A URL is refused as a link, its address in a code span is not a reference, and a number
+    // glued to a word is not a reference.
+    expect(citesInProse('The notes are at https://example.com/page#123 for now.')).toBe(true)
+    expect(citesInProse('The notes are at `https://example.com/page#123` for now.')).toBe(false)
     expect(citesInProse('The fix landed in issue10047.go upstream.')).toBe(false)
     expect(hasWords('It fits.')).toBe(true)
     expect(hasWords('Ça marche.')).toBe(true)
@@ -333,227 +335,249 @@ describe('a draft that cites a PR in its own text', () => {
     return { h, code }
   }
   const changelogLink = 'https://github.com/BeniCheni/kickoff/blob/main/CHANGELOG.md'
-  const forms: [string, string][] = [
-    // Link targets: refused only when they are an issue or pull request address.
-    ['an issue or pull request URL', 'The table fits, as [the change](https://github.com/BeniCheni/kickoff/pull/327) shows.'],
-    ['an issue or pull request URL', 'The table fits, as https://github.com/BeniCheni/kickoff/pull/327 shows.'],
-    ['an issue or pull request URL', 'The table fits, as [the issue](https://github.com/BeniCheni/kickoff/issues/361) asked.'],
-    ['an issue or pull request URL', 'The table fits, as [the change](../pull/327) shows.'],
-    ['an issue or pull request URL', 'The table fits, as [the change](https://redirect.github.com/BeniCheni/kickoff/pull/327) shows.'],
-    ['an issue or pull request URL', 'The Go [bug](https://github.com/golang/go/issues/10047) is fixed upstream.'],
-    // Visible text, link labels included: GitHub's short forms and the words, as whole tokens.
-    ['an owner/repo#N reference', 'The table fits, as BeniCheni/kickoff#327 shows.'],
-    ['a #N reference', 'The table fits small screens (#999).'],
-    ['a #N reference', `The table fits, as [#327](${changelogLink}) shows.`],
-    ['a GH-N reference', 'The table fits, as GH-327 shows.'],
-    ['a GH-N reference', 'The table fits, as gh-327 shows.'],
-    ['a PR or issue named by number', 'The table fits, per pull request 999.'],
-    ['a PR or issue named by number', 'The table fits, as issue 361 asked.'],
-    ['a PR or issue named by number', `The table fits, as [issue 361](${changelogLink}) asked.`],
+  const cites = (form: string) => `cites ${form} in its text, where only prs may cite`
+  const linked = (form: string) => `holds ${form} outside a code span, where a draft may hold no link`
+  const unpaired = (form: string) => `holds ${form}, so its code spans cannot be read`
+  const forms: [message: string, text: string][] = [
+    // Link targets. Since fix round 6 ("Drop links from drafts") each is refused as a link.
+    [linked('a square bracket'), 'The table fits, as [the change](https://github.com/BeniCheni/kickoff/pull/327) shows.'],
+    [linked('a URL'), 'The table fits, as https://github.com/BeniCheni/kickoff/pull/327 shows.'],
+    [linked('a square bracket'), 'The table fits, as [the issue](https://github.com/BeniCheni/kickoff/issues/361) asked.'],
+    [linked('a square bracket'), 'The table fits, as [the change](../pull/327) shows.'],
+    [linked('a square bracket'), 'The table fits, as [the change](https://redirect.github.com/BeniCheni/kickoff/pull/327) shows.'],
+    [linked('a square bracket'), 'The Go [bug](https://github.com/golang/go/issues/10047) is fixed upstream.'],
+    // Visible text: GitHub's short forms and the words.
+    [cites('an owner/repo#N reference'), 'The table fits, as BeniCheni/kickoff#327 shows.'],
+    [cites('a #N reference'), 'The table fits small screens (#999).'],
+    [linked('a square bracket'), `The table fits, as [#327](${changelogLink}) shows.`],
+    [cites('a GH-N reference'), 'The table fits, as GH-327 shows.'],
+    [cites('a GH-N reference'), 'The table fits, as gh-327 shows.'],
+    [cites('a PR or issue named by number'), 'The table fits, per pull request 999.'],
+    [cites('a PR or issue named by number'), 'The table fits, as issue 361 asked.'],
+    [linked('a square bracket'), `The table fits, as [issue 361](${changelogLink}) asked.`],
     // True, but refused on purpose: each can be told without the number, as the README says.
-    ['a PR or issue named by number', 'Overhaul PR 0 pinned the honesty rules.'],
-    ['a PR or issue named by number', 'PR 7b trims the fonts.'],
-    ['a PR or issue named by number', 'Pass 0 can issue 3 GitHub reads for one small pull request.'],
-    ['a PR or issue named by number', 'Pass 0 reads each pull request 100 commits at a time.'],
+    [cites('a PR or issue named by number'), 'Overhaul PR 0 pinned the honesty rules.'],
+    [cites('a PR or issue named by number'), 'PR 7b trims the fonts.'],
+    [cites('a PR or issue named by number'), 'Pass 0 can issue 3 GitHub reads for one small pull request.'],
+    [cites('a PR or issue named by number'), 'Pass 0 reads each pull request 100 commits at a time.'],
   ]
   const positions = ['lead', 'added', 'changed', 'fixed', 'notDone'] as const
   const placed = (key: (typeof positions)[number], text: string) =>
     key === 'lead' ? { ...draft, lead: { text, prs: [502] } } : { ...draft, [key]: [{ text, prs: [502] }] }
+  const refusesEverywhere = async (message: string, text: string, label = text) => {
+    for (const key of positions) {
+      const { h, code } = await run(placed(key, text))
+      expect(code, `${label}, ${key}`).toBe(1)
+      expect(h.out).toHaveLength(2)
+      expect(h.out[1], `${label}, ${key}`).toContain(message)
+      expect(h.out.join('\n')).not.toContain('## Draft')
+    }
+  }
+  const printsEverywhere = async (text: string, label = text) => {
+    for (const key of positions) {
+      const { h, code } = await run(placed(key, text))
+      expect(code, `${label}, ${key}`).toBe(0)
+      expect(h.out.join('\n')).toContain(citeLine(text, [502]))
+    }
+  }
 
   it('agrees with the README\'s table of true lines that fail, and their rewordings', () => {
     const readme = readFileSync('scripts/pm/README.md', 'utf8').split('\n')
-    const header = readme.findIndex((line) => line.includes('| Fails ("a PR or issue named by number") | Passes |'))
+    const header = readme.findIndex((line) => line.includes('| Fails | Refused for | Passes |'))
+    expect(header).toBeGreaterThan(0)
     const rows: string[][] = []
     for (const line of readme.slice(header + 2)) {
       if (!line.trim().startsWith('|')) break
       rows.push(line.split('|').slice(1, -1).map((cell) => cell.trim()))
     }
-    expect(rows).toHaveLength(4)
-    for (const [fails, passes] of rows) {
-      expect(proseReference(fails!)).toBe('a PR or issue named by number')
-      expect(proseReference(passes!)).toBeUndefined()
+    expect(rows).toHaveLength(9)
+    for (const [fails, refusedFor, passes] of rows) {
+      expect(proseReference(fails!), fails).toBe(refusedFor)
+      expect(proseReference(passes!), passes).toBeUndefined()
     }
   })
 
   it('refuses each form in the lead and in every section, and says which form it found', async () => {
-    for (const [form, text] of forms) {
-      for (const key of positions) {
-        const { h, code } = await run(placed(key, text))
-        expect(code, `${key}: ${text}`).toBe(1)
-        expect(h.out).toHaveLength(2)
-        expect(h.out[1]).toContain(`cites ${form} in its text, where only prs may cite`)
-        expect(h.out.join('\n')).not.toContain('## Draft')
-      }
-    }
+    for (const [message, text] of forms) await refusesEverywhere(message, text)
   })
 
-  it('still prints true lines that hold other numbers, other links, or the overhaul without its name', async () => {
+  it('still prints true lines that hold other numbers, an address in a code span, or the overhaul without its name', async () => {
     for (const text of [
       'Kickoff v0.5.5 picks up Vitest 4.1.12 and fits a 390 px phone.',
       'The demo at `https://benicheni.github.io/kickoff/` redeploys on every push.',
       'The overhaul pinned the honesty rules.',
       // Codex's third re-read: a source file named issue10047.go is not issue 10047.
-      'The [regression test](https://github.com/golang/go/blob/go1.23.0/test/fixedbugs/issue10047.go) is a Go source file.',
-      // Its other controls, and the rewordings that keep the facts of the refused prose above.
-      `The [changelog](${changelogLink}) keeps the release notes.`,
-      'The [preview run](https://github.com/BeniCheni/kickoff/actions/runs/45104332843/job/137462044178) passed.',
-      'The [overhaul brief](https://github.com/BeniCheni/kickoff/blob/main/docs/design-overhaul-pr0-implementation-prompt.md) is public.',
+      'The regression test at `https://github.com/golang/go/blob/go1.23.0/test/fixedbugs/issue10047.go` is a Go source file.',
+      // Its other controls, each address now in a code span, and the rewordings that keep the
+      // facts of the refused prose above.
+      `The changelog at \`${changelogLink}\` keeps the release notes.`,
+      'The preview run at `https://github.com/BeniCheni/kickoff/actions/runs/45104332843/job/137462044178` passed.',
+      'The overhaul brief at `https://github.com/BeniCheni/kickoff/blob/main/docs/design-overhaul-pr0-implementation-prompt.md` is public.',
       'Pass 0 can make three GitHub reads for one small pull request.',
       'Pass 0 reads commits in pages of 100.',
-    ]) {
-      for (const key of positions) {
-        const { h, code } = await run(placed(key, text))
-        expect(code, `${key}: ${text}`).toBe(0)
-        expect(h.out.join('\n')).toContain(citeLine(text, [502]))
-      }
+    ]) await printsEverywhere(text)
+  })
+
+  // Fix round 6, Beni's ruling "Drop links from drafts": the link controls of rounds 4 and 5 are
+  // refused as links now, and each prints with its address in a code span.
+  const linkControls: [message: string, link: string, code: string][] = [
+    [linked('a URL'), 'The demo at https://benicheni.github.io/kickoff/ redeploys on every push.', 'The demo at `https://benicheni.github.io/kickoff/` redeploys on every push.'],
+    [linked('a square bracket'), `The [changelog](${changelogLink}) keeps the release notes.`, `The changelog at \`${changelogLink}\` keeps the release notes.`],
+    [linked('a square bracket'), 'The [preview run](https://github.com/BeniCheni/kickoff/actions/runs/45104332843/job/137462044178) passed.', 'The preview run at `https://github.com/BeniCheni/kickoff/actions/runs/45104332843/job/137462044178` passed.'],
+    [linked('a square bracket'), 'The [regression test](https://github.com/golang/go/blob/go1.23.0/test/fixedbugs/issue10047.go) is a Go source file.', 'The regression test at `https://github.com/golang/go/blob/go1.23.0/test/fixedbugs/issue10047.go` is a Go source file.'],
+    [linked('a square bracket'), 'The [overhaul brief](https://github.com/BeniCheni/kickoff/blob/main/docs/design-overhaul-pr0-implementation-prompt.md) is public.', 'The overhaul brief at `https://github.com/BeniCheni/kickoff/blob/main/docs/design-overhaul-pr0-implementation-prompt.md` is public.'],
+    [linked('a square bracket'), 'See the [docs](https://example.org/docs?example=/pull/327) for details.', 'See the docs at `https://example.org/docs?example=/pull/327` for details.'],
+    [linked('a square bracket'), 'See the [docs](https://example.org/docs#/issues/361) for details.', 'See the docs at `https://example.org/docs#/issues/361` for details.'],
+  ]
+
+  it('refuses each former link control as a link, and prints it with its address in a code span', async () => {
+    for (const [message, link, code] of linkControls) {
+      await refusesEverywhere(message, link)
+      await printsEverywhere(code)
     }
   })
 
-  // Fix round 5: the check reads a closed list of constructs and refuses the rest by name, so each
-  // construct it reads, and each it refuses unread, has a line it refuses and a line it prints.
-  const cites = (form: string) => `cites ${form} in its text, where only prs may cite`
-  const holds = (form: string) => `holds ${form}, which the citation check does not read`
-  const constructs: { construct: string; refused: [message: string, text: string][]; prints: string[] }[] = [
+  // Each part of the rule has lines it refuses and lines it prints. Re-read 5's lines are marked.
+  // Round 5's link lines stay refused, now as links.
+  const rules: { rule: string; refused: [message: string, text: string][]; prints: string[] }[] = [
     {
-      construct: 'code spans, read as plain text without their backticks',
-      refused: [[cites('a #N reference'), 'The table fits, as `#327` says.']],
-      prints: ['The parser leaves `\\`, `&amp;`, `[x]` and `<main>` as they are.', 'The sync PR comes from `github-actions[bot]`.'],
-    },
-    {
-      construct: 'inline links and images, whose labels and titles are visible text',
+      rule: 'code spans: single backticks that pair, whose text the reference rule still reads',
       refused: [
-        // In a PR or issue body, a bare 327 resolves to /pull/327 or /issues/327.
-        [cites('an issue or pull request URL'), 'See [the change](327) for details.'],
-        [cites('an issue or pull request URL'), 'See the [change](/BeniCheni/kickoff/pull/327) for details.'],
-        [cites('a #N reference'), 'The badge ![#327](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml/badge.svg) is green.'],
-        [cites('a PR or issue named by number'), `See [the notes](${changelogLink} "issue 361") for details.`],
+        [cites('a #N reference'), 'The table fits, as `#327` says.'],
+        // Re-read 5: the URL in the span had swallowed the citation after it.
+        [cites('a #N reference'), 'See `https://example.org/docs`(#327) for details.'],
+        [unpaired('a run of backticks'), 'The table fits, as ``#327`` says.'],
+        [unpaired('an unpaired backtick'), 'The table fits a `390 px phone.'],
       ],
       prints: [
-        'The badge ![build status](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml/badge.svg) is green.',
-        `See [the notes](${changelogLink} "the release notes") for details.`,
-        `See [the notes](<${changelogLink}>) for details.`,
+        'The parser leaves `\\`, `&amp;`, `[x]`, `<main>` and `ops@example.org` as they are.',
+        'The heading stays `[Unreleased]` and dates read `<today>` until the sync runs.',
+        'The sync PR comes from `github-actions[bot]`.',
+        // Re-read 5: GitHub keeps the literal selector.
+        'The selector is `#_327`.',
       ],
     },
     {
-      construct: 'autolinks and bare URLs',
+      rule: 'a square bracket outside a code span',
       refused: [
-        [cites('an issue or pull request URL'), 'See <https://github.com/BeniCheni/kickoff/pull/327> for details.'],
-        [cites('an issue or pull request URL'), 'See www.github.com/BeniCheni/kickoff/issues/361 for details.'],
+        // Re-read 5: backticks in two titles had hidden the link between them.
+        [linked('a square bracket'), 'See [syntax](notes.md "Type ` to open") and [the change](/BeniCheni/kickoff/pull/327) and [help](help.md "Type ` to close").'],
+        // Re-read 5: a link labelled #327.
+        [linked('a square bracket'), 'See Note[#327](docs.md) for details.'],
+        [linked('a square bracket'), 'The table fits[^1] a phone.'],
+        // Round 5's refused link lines.
+        [linked('a square bracket'), 'See [the change](327) for details.'],
+        [linked('a square bracket'), 'See the [change](/BeniCheni/kickoff/pull/327) for details.'],
+        [linked('a square bracket'), 'The badge ![#327](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml/badge.svg) is green.'],
+        [linked('a square bracket'), `See [the notes](${changelogLink} "issue 361") for details.`],
+        [linked('a square bracket'), 'See the [API URL for that PR](https://api.github.com/repos/BeniCheni/kickoff/pulls/327) for details.'],
+        [linked('a square bracket'), 'See the [API URL for that issue](https://api.github.com/repos/BeniCheni/kickoff/issues/361) for details.'],
+        [linked('a square bracket'), 'See the [change](https://github.com/BeniCheni/kickoff/p%75ll/327) for details.'],
+        [linked('a square bracket'), 'See the [change](https://github.com/BeniCheni/kickoff/pull/327.diff) for details.'],
+        [linked('a square bracket'), `See [the **issue** 361](${changelogLink}) for details.`],
+        [linked('a square bracket'), 'See the [change](https://github.com/BeniCheni/kickoff/pull&#47;327) for details.'],
+        [linked('a square bracket'), 'See the [[Unreleased] changes](/BeniCheni/kickoff/pull/327) for details.'],
+        [linked('a square bracket'), 'See [the change][327] for details.'],
+        [linked('a square bracket'), 'The sync PR comes from github-actions[bot].'],
+        [linked('a square bracket'), 'See the [change](https://github.com/BeniCheni/kickoff/pull%2/327) for details.'],
+        [linked('a square bracket'), 'See the [change](https://[327]/) for details.'],
+        // Round 5's printed link lines, refused now.
+        [linked('a square bracket'), 'The badge ![build status](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml/badge.svg) is green.'],
+        [linked('a square bracket'), `See [the notes](${changelogLink} "the release notes") for details.`],
+        [linked('a square bracket'), `See [the notes](<${changelogLink}>) for details.`],
+        [linked('a square bracket'), 'See the [notes](https://github.com/BeniCheni/kickoff/blob/main/docs/release%20notes.md) for details.'],
       ],
-      prints: ['See <https://benicheni.github.io/kickoff/> for the demo.', 'See www.example.org/docs for details.'],
+      prints: ['The notes live at `https://github.com/BeniCheni/kickoff/blob/main/docs/release%20notes.md` for now.'],
     },
     {
-      construct: 'link destinations, judged by their percent-decoded pathname alone',
+      rule: 'an angle bracket outside a code span',
       refused: [
-        // Codex's fifth re-read: the API's address for a PR, and its issue twin.
-        [cites('an issue or pull request URL'), 'See the [API URL for that PR](https://api.github.com/repos/BeniCheni/kickoff/pulls/327) for details.'],
-        [cites('an issue or pull request URL'), 'See the [API URL for that issue](https://api.github.com/repos/BeniCheni/kickoff/issues/361) for details.'],
-        [cites('an issue or pull request URL'), 'See the [change](https://github.com/BeniCheni/kickoff/p%75ll/327) for details.'],
-        [cites('an issue or pull request URL'), 'See the [change](https://github.com/BeniCheni/kickoff/pull/327.diff) for details.'],
+        [linked('an angle bracket'), 'See <https://github.com/BeniCheni/kickoff/pull/327> for details.'],
+        [linked('an angle bracket'), 'See <https://benicheni.github.io/kickoff/> for the demo.'],
+        [linked('an angle bracket'), 'See the <a href="https://github.com/BeniCheni/kickoff/pull/327">change</a> for details.'],
+        [linked('an angle bracket'), 'The table fits<!-- issue 361 --> a phone.'],
+        [linked('an angle bracket'), 'The table fits every width < 400 px.'],
+      ],
+      prints: ['The page keeps its `<main>` landmark.', 'The table fits every width under 400 px.'],
+    },
+    {
+      rule: 'a URL outside a code span',
+      refused: [
+        [linked('a URL'), 'See www.github.com/BeniCheni/kickoff/issues/361 for details.'],
+        [linked('a URL'), 'See www.example.org/docs for details.'],
+        [linked('a URL'), 'The notes are at ftp://example.org/notes for now.'],
+      ],
+      prints: ['See `www.example.org/docs` for details.'],
+    },
+    {
+      rule: 'an at sign outside a code span',
+      refused: [
+        // GitHub renders a bare email address as a mailto link.
+        [linked('an at sign'), 'Mail ops@example.org for access.'],
+        [linked('an at sign'), 'Thanks to @reviewer for the review.'],
+      ],
+      prints: ['Mail `ops@example.org` for access.'],
+    },
+    {
+      rule: 'a character reference or a backslash outside a code span',
+      refused: [
+        [linked('a character reference'), 'Fixtures &amp; standings share one clock.'],
+        [linked('a character reference'), 'See https&#58;//github.com/BeniCheni/kickoff/pull/327 for details.'],
+        [linked('a backslash'), 'The table fits \\*every\\* phone.'],
+      ],
+      prints: ['Fixtures & standings share one clock.', 'The entity `&amp;` prints as it is.', 'The path separator is `\\` on Windows.'],
+    },
+    {
+      rule: 'emphasis markers stay in place, as breaks between words',
+      refused: [
+        // Re-read 5: GitHub links #327 inside the strong, and the a after it is plain text.
+        [cites('a #N reference'), 'See **#327**a for context.'],
+        // Re-read 5.
+        [cites('a #N reference'), 'Compare ref**#327** with the earlier change.'],
+        [cites('a #N reference'), 'The table fits, as _#327_ shows.'],
+        [cites('a PR or issue named by number'), 'The table fits, as **issue** 361 asked.'],
+        // A false refusal taken on purpose: GitHub renders #327_ as plain text.
+        [cites('a #N reference'), 'The selector is #327_.'],
       ],
       prints: [
-        // Codex's fifth re-read: both pathnames are /docs.
-        'See the [docs](https://example.org/docs?example=/pull/327) for details.',
-        'See the [docs](https://example.org/docs#/issues/361) for details.',
-        'See the [notes](https://github.com/BeniCheni/kickoff/blob/main/docs/release%20notes.md) for details.',
+        // Re-read 5: GitHub keeps the literal selector.
+        'The selector is #_327.',
+        'The table **fits** a *390 px* phone, ~~mostly~~ always.',
+        // Round 5 refused this. GitHub renders no link, as for #_327.
+        'The table fits, as ~~#~~327 shows.',
       ],
     },
     {
-      construct: 'emphasis and strikethrough markers, dropped before the text is judged',
-      refused: [
-        // Codex's fifth re-read.
-        [cites('a PR or issue named by number'), `See [the **issue** 361](${changelogLink}) for details.`],
-        [cites('a #N reference'), 'The table fits, as ~~#~~327 shows.'],
-      ],
-      prints: ['The table **fits** a *390 px* phone, ~~mostly~~ always.'],
-    },
-    {
-      construct: 'plain text, normalized, with a token boundary after a short form',
+      rule: 'plain text, normalized, with a short form bounded on both sides of its number',
       refused: [
         [cites('a #N reference'), 'The table fits, as #​327 shows.'],
         [cites('a #N reference'), 'The table fits, as #３２７ shows.'],
         [cites('a #N reference'), 'The table fits, as &#327 shows.'],
-        // Codex's fifth re-read: GitHub links these, so they stay refused.
         [cites('a #N reference'), 'The table fits, per #327, on a phone.'],
         [cites('a #N reference'), 'The table fits a phone (#327).'],
         [cites('a GH-N reference'), 'The table fits, as GH-327.'],
         [cites('a PR or issue named by number'), 'The table fits, as issue 361: it asked.'],
       ],
-      // Codex's fifth re-read: GitHub renders the first two as plain text.
-      prints: ['The color is #327b.', 'The part is GH-327b.', 'Fixtures & standings share one clock.'],
-    },
-    {
-      construct: 'unread: a private-use character',
-      refused: [[holds('a private-use character'), 'The table fits a phone.']],
-      prints: ['The table fits ⚽ every phone.'],
-    },
-    {
-      construct: 'unread: a backslash escape',
-      refused: [[holds('a backslash escape'), 'The table fits \\*every\\* phone.']],
-      prints: ['The path separator is `\\` on Windows.'],
-    },
-    {
-      construct: 'unread: a character reference',
-      refused: [
-        // Codex's fifth re-read: GitHub decodes &#47; to a slash and links PR 327.
-        [holds('a character reference'), 'See the [change](https://github.com/BeniCheni/kickoff/pull&#47;327) for details.'],
-        [holds('a character reference'), 'Fixtures &amp; standings share one clock.'],
+      prints: [
+        'The color is #327b.',
+        'The part is GH-327b.',
+        'The table fits ⚽ every phone.',
+        // Round 5 refused a private-use character, which the check no longer uses for bookkeeping.
+        'The table fits a phone.',
       ],
-      prints: ['The entity `&amp;` prints as it is.'],
-    },
-    {
-      construct: 'unread: raw HTML',
-      refused: [
-        [holds('raw HTML'), 'See the <a href="https://github.com/BeniCheni/kickoff/pull/327">change</a> for details.'],
-        [holds('raw HTML'), 'The table fits<!-- issue 361 --> a phone.'],
-      ],
-      prints: ['The table fits every width < 400 px.', 'The page keeps its `<main>` landmark.'],
-    },
-    {
-      construct: 'unread: a bracket outside a plain inline link',
-      refused: [
-        // Codex's fifth re-read: GitHub links a balanced label to /BeniCheni/kickoff/pull/327.
-        [holds('a bracket outside a plain inline link'), 'See the [[Unreleased] changes](/BeniCheni/kickoff/pull/327) for details.'],
-        [holds('a bracket outside a plain inline link'), 'See [the change][327] for details.'],
-        // A true line, refused because a reference definition could make [bot] a link.
-        [holds('a bracket outside a plain inline link'), 'The sync PR comes from github-actions[bot].'],
-      ],
-      prints: [`See the [changelog](${changelogLink}) for details.`],
-    },
-    {
-      construct: 'unread: a link the check cannot parse',
-      refused: [
-        [holds('a link the check cannot parse'), 'See the [change](https://github.com/BeniCheni/kickoff/pull%2/327) for details.'],
-        [holds('a link the check cannot parse'), 'See the [change](https://[327]/) for details.'],
-      ],
-      prints: ['See the [notes](https://github.com/BeniCheni/kickoff/blob/main/docs/release%20notes.md) for details.'],
     },
   ]
 
-  it('reads each construct on its closed list, and refuses each it does not read, in every position', async () => {
-    for (const { construct, refused, prints } of constructs) {
-      for (const [message, text] of refused) {
-        for (const key of positions) {
-          const { h, code } = await run(placed(key, text))
-          expect(code, `${construct}, ${key}: ${text}`).toBe(1)
-          expect(h.out).toHaveLength(2)
-          expect(h.out[1], `${construct}, ${key}: ${text}`).toContain(message)
-          expect(h.out.join('\n')).not.toContain('## Draft')
-        }
-      }
-      for (const text of prints) {
-        for (const key of positions) {
-          const { h, code } = await run(placed(key, text))
-          expect(code, `${construct}, ${key}: ${text}`).toBe(0)
-          expect(h.out.join('\n')).toContain(citeLine(text, [502]))
-        }
-      }
+  it('refuses each part of the rule in every position, and prints its controls', async () => {
+    for (const { rule, refused, prints } of rules) {
+      for (const [message, text] of refused) await refusesEverywhere(message, text, `${rule}: ${text}`)
+      for (const text of prints) await printsEverywhere(text, `${rule}: ${text}`)
     }
   })
 
-  it('names in the README every construct it refuses unread', () => {
+  it('names in the README every form of link syntax and every code-span fault it refuses', () => {
     const readme = readFileSync('scripts/pm/README.md', 'utf8')
-    for (const form of [...UNREAD.map(({ form }) => form), UNPARSED_FORM]) {
+    for (const form of [...LINK_SYNTAX.map(({ form }) => form), ...Object.values(CODE_SPAN_FORMS)]) {
       expect(readme).toContain(`**${form}**`)
     }
   })

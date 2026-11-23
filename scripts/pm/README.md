@@ -114,77 +114,66 @@ claims to check, not a verdict.
    [Autolinked references and URLs](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/autolinked-references-and-urls#issues-and-pull-requests)
    (read 22 Nov 2026).
 
-   **The check fails closed.** It reads the constructs below and no others, and it refuses a
-   line holding anything else that could change what GitHub renders. A false refusal costs one
-   retry, but a construct the check misread would let a citation nothing checked into the
-   CHANGELOG. The text is flattened first, as the draft prints it. Then the check reads, in this
-   order:
-   1. **Code spans.** GitHub reads nothing inside one as Markdown, so its text skips the refusals
-      below and comes back, without its backticks, as plain text: `` `<main>` ``, `` `\` `` and
-      `` `github-actions[bot]` `` pass, and `` `#327` `` is refused like `#327`.
-   2. **Inline links and images**, `[label](destination)` or `[label](destination "title")`,
-      with no bracket in the label and no space or parenthesis in a bare destination
-      (`<…>` around one is fine). The label and title are visible text, and the destination is
-      an address.
-   3. **Autolinks** `<https://…>`, and **bare URLs** from `https://`, `http://` or `www.` up to a
-      space or `<`. Each is an address.
-   4. **Emphasis and strikethrough markers** `*`, `_` and `~`, dropped from the visible text, so
-      `[the **issue** 361](…)` reads as "the issue 361".
-   5. **Plain text**: the rest, NFKC-normalized and with invisible format characters dropped, so
-      a fullwidth `#３２７` or a zero-width space after `#` still reads as `#327`.
-
-   Outside a code span, anything else is refused by name, never guessed at:
-   - **a private-use character**, which the check keeps for its own bookkeeping;
-   - **a backslash escape**: any `\`;
-   - **a character reference**, such as `&#47;` or `&amp;`, which GitHub decodes, so
-     `pull&#47;327` links PR 327;
-   - **raw HTML**: `<` followed by a letter, `/`, `!` or `?`, other than an autolink;
-   - **a bracket outside a plain inline link**: a nested label such as
-     `[[Unreleased] changes](…)`, a reference link such as `[the change][327]`, a footnote, or a
-     bare `github-actions[bot]`, which a reference definition could turn into a link. Put that
-     name in a code span;
-   - **a link the check cannot parse**: a destination that the WHATWG `URL` class rejects, or
-     whose pathname cannot be percent-decoded.
-
-   Then the check judges what it read:
-   - **An address** is refused when it's an issue or pull request address. Each destination is
-     parsed with the WHATWG `URL` class twice: against the `CHANGELOG.md` page on GitHub, and
-     against a PR page, where a relative `327` lands on `/pull/327`. Only the pathname is
-     judged, after percent-decoding: an `/issues/N`, `/pull/N` or `/pulls/N` path (the last is
-     the API's `/repos/<owner>/<repo>/pulls/N`) on any host, `redirect.github.com` included. A
-     query or a fragment is never read, so `https://example.org/docs?example=/pull/327` and
-     `https://example.org/docs#/issues/361` pass. So does a link to
-     `https://github.com/golang/go/blob/go1.23.0/test/fixedbugs/issue10047.go` or to
-     `docs/design-overhaul-pr0-implementation-prompt.md`, and the demo site the way
-     `CHANGELOG.md` names it.
-   - **The visible text**, labels and titles included, is refused for GitHub's short forms:
-     `#327`, `owner/repo#327` and `GH-327` (in either case). Each needs a token boundary before
-     and after its number, so `#327,`, `(#327)` and `GH-327.` are refused, while `#327b` and
-     `GH-327b`, which GitHub renders as plain text, pass. A reference in words is refused too,
-     where a keyword and a number are separate tokens: `PR 999`, `PR #999`, `pull request 999`,
-     `issue 361`, `issue 361:`. A number glued to a word, as in `issue10047`, isn't a reference.
+   **A draft line holds no link.** Beni ruled on 23 Nov 2026, "Drop links from drafts". Each
+   review round had found a new way for code spans, links and emphasis to hide a citation, so the
+   check reads no link syntax at all. An address that must appear goes in a code span, where
+   GitHub renders it as code and never as a link, and the person who applies the draft adds any
+   link the CHANGELOG needs. The text is flattened first, as the draft prints it. Then:
+   1. **Code spans** are single backticks that pair. Inside one, anything may stand:
+      `` `https://benicheni.github.io/kickoff/` ``, `` `[Unreleased]` ``, `` `<today>` ``,
+      `` `\` `` and `` `github-actions[bot]` `` all pass. A line with **an unpaired backtick** or
+      **a run of backticks** (two or more together) is refused, because the check can't tell
+      its code spans apart.
+   2. **Outside a code span**, each piece of link syntax is refused by name, without being read:
+      - **a square bracket**, `[` or `]`, which covers links, images, reference links, footnotes
+        and a bare `github-actions[bot]`;
+      - **an angle bracket**, `<`, which covers autolinks and raw HTML;
+      - **a URL**, meaning `://` or `www.`;
+      - **an at sign**, `@`, because GitHub links an email address as `mailto:` and a mention to
+        a profile;
+      - **a character reference** such as `&amp;` or `&#47;`, and **a backslash**, because either
+        could spell the syntax above without showing it.
+   3. **The text**, code spans included, is then judged for a reference. Emphasis markers (`*`,
+      `_`, `~`) and backticks stay where they are, as breaks between words. So `**#327**a` holds
+      `#327` and is refused, because GitHub links `#327` there, while `#_327` and `~~#~~327`,
+      where GitHub links nothing, pass. GitHub's short forms are refused: `#327`,
+      `owner/repo#327` and `GH-327` (in either case). Each needs a letter-or-digit boundary
+      before and after its number. So `#327,`, `(#327)`, `GH-327.` and `` `#327` `` are refused,
+      while `#327b` and `GH-327b`, which GitHub renders as plain text, pass. A reference in words
+      is refused too, where a keyword and a number are separate tokens, reading markers and
+      backticks as spaces: `PR 999`, `PR #999`, `pull request 999`, `issue 361`, `issue 361:` and
+      `**issue** 361`. A number glued to a word, as in `issue10047`, isn't a reference. The text is
+      NFKC-normalized with invisible format characters dropped, so a fullwidth `#３２７` or a
+      zero-width space after `#` still reads as `#327`.
 
    Every text also needs words: at least one run of two letters, so `.` alone is not a line. The
    lead must be exactly one sentence, also checked in plain code (it ends in `.`, `!` or `?`, and
    no such mark followed by a space comes before the end). A draft that breaks any of these rules
-   is a model failure, not a printed draft. The failure line names the rule and, for a reference,
-   its form, or the construct the check does not read. Any PR the draft leaves out is named under
-   it, so a person decides whether it belongs.
+   is a model failure, not a printed draft. The failure line names the rule, and the reference
+   form or the syntax it found. Any PR the draft leaves out is named under it, so a person
+   decides whether it belongs.
 
    **A true line can fail too.** The word rule can't tell a reference from prose that happens to
-   put a number after one of its keywords, so these fail on purpose. Each says the same thing
-   reworded:
+   put a number after one of its keywords, and the link rule refuses an address or a name that
+   isn't in a code span. So these fail on purpose. Each says the same thing reworded:
 
-   | Fails ("a PR or issue named by number") | Passes |
-   | --- | --- |
-   | Overhaul PR 0 pinned the honesty rules. | The overhaul pinned the honesty rules. |
-   | PR 7b trims the fonts. | The overhaul trims the fonts. |
-   | Pass 0 can issue 3 GitHub reads for one small pull request. | Pass 0 can make three GitHub reads for one small pull request. |
-   | Pass 0 reads each pull request 100 commits at a time. | Pass 0 reads commits in pages of 100. |
+   | Fails | Refused for | Passes |
+   | --- | --- | --- |
+   | Overhaul PR 0 pinned the honesty rules. | a PR or issue named by number | The overhaul pinned the honesty rules. |
+   | PR 7b trims the fonts. | a PR or issue named by number | The overhaul trims the fonts. |
+   | Pass 0 can issue 3 GitHub reads for one small pull request. | a PR or issue named by number | Pass 0 can make three GitHub reads for one small pull request. |
+   | Pass 0 reads each pull request 100 commits at a time. | a PR or issue named by number | Pass 0 reads commits in pages of 100. |
+   | The demo at https://benicheni.github.io/kickoff/ redeploys on every push. | a URL | The demo at `https://benicheni.github.io/kickoff/` redeploys on every push. |
+   | The [changelog](https://github.com/BeniCheni/kickoff/blob/main/CHANGELOG.md) keeps the release notes. | a square bracket | The changelog keeps the release notes. |
+   | The sync PR comes from github-actions[bot]. | a square bracket | The sync PR comes from `github-actions[bot]`. |
+   | Widths < 400 px keep one column. | an angle bracket | Widths under 400 px keep one column. |
+   | Mail ops@example.org for access. | an at sign | Mail `ops@example.org` for access. |
 
-   The citation comes from `prs` either way. If a run fails on "a PR or issue named by number",
-   look for a number after "PR", "pull request" or "issue", then run it again or write that line
-   yourself.
+   The citation comes from `prs` either way. If a run fails, find what the failure line names:
+   a number after "PR", "pull request" or "issue", or an address or name outside a code span.
+   Then run it again, or write that line yourself. One false refusal has no rewording in a code
+   span, because the reference rule reads code spans too: `#327_` is refused, though GitHub
+   renders it as plain text.
 
 It prints the draft inside a fence. Wrap it to the file's style when you paste it into
 `CHANGELOG.md`.
