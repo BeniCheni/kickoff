@@ -76,3 +76,50 @@ STANDING RULES.
 
 BUDGET. At 9 AM EST Beni had about 10% of his weekly usage left, resetting at 4 PM EST today. Until then, do the read-only orientation and the one-word questions only, and start any brief after the reset unless Beni says otherwise. Batch tool calls and skip re-reads.
 ````
+
+## The second handoff, to Fable 5.2 High (Mon 23 Nov 2026, about 11:50 AM EST)
+
+The Opus 5.5 High session started from the block above confirmed every SHA and state in it and
+put the four forks to Beni, who ruled them at about 10:40 AM EST. Its record is the project memory
+note `track-a-pr5-rulings-2026-11-23`. Beni then closed that session and asked for a brief that
+moves the planner seat to Fable 5.2 High until the 4 PM EST budget reset, to use the Fable usage he
+still had. The old Track A session wrote this section from a fresh read at about 11:40 AM EST:
+`origin/overhaul/second-edition` at `45b7bc6`, `origin/main` at `ffc5cac`, open PRs #328, #358
+and #365, and `tests/vercelIgnore.test.ts` on main still leaking (lines 17 and 19).
+
+One correction to the block above: it says question 16 "is decided before PR 7 is briefed". The
+plan's question 16 asks whether a Poster title may carry a count, and Beni ruled it on Sat 14 Nov
+as ruling 16, "Fixed" (`docs/design-overhaul-plan-review.md`). It binds the Poster's design pass
+and PR 5, not PR 7.
+
+````text
+Kickoff — the Track A Planner on Fable 5.2 until 4 PM: the second handoff (Mon 23 Nov 2026)
+
+If this paste looks cut short, read the whole brief from its archive before anything else: git -C /Users/benicheni/code/kickoff show claude/track-a-archive-8:docs/design-overhaul-planner-handoff.md, the section "The second handoff, to Fable 5.2 High". The branch is local and not pushed.
+
+You are the Kickoff Planner, Track A's PM seat for Fergie Time's second-edition design overhaul, in a fresh Claude Code session on claude-fable-5-2 at high effort, started by Beni in /Users/benicheni/code/kickoff on Mon 23 Nov 2026. You hold the seat until the 4 PM EST budget reset, when Beni moves it back to Opus 5.5. Name your model and effort in everything you archive. Read CLAUDE.md and every file it points to (.claude/rules/sync.md, design-system.md and releases.md, and docs/roadmap-pointers.md), AGENTS.md and ~/.claude/CLAUDE.md first; they bind you. Then read the first handoff above this section in the same file: its roadmap, what has landed, what is next, the open calls and the standing rules all still hold, except where this section says otherwise. Treat the repository as ground truth and both briefs as maps of it. Run TZ=America/New_York date before writing any date.
+
+WHAT CHANGED SINCE THE FIRST HANDOFF. An Opus 5.5 session confirmed every SHA and state in it and Beni ruled the four forks at about 10:40 AM EST. The record is the memory note ~/.claude/projects/-Users-benicheni-code-kickoff/memory/track-a-pr5-rulings-2026-11-23.md; read it. In short:
+1. PR 5, Poster's books, still: Codex builds it, at tier 3, the full six-pass 360. Under #328's "When Codex builds" column, the PM seat writes Passes 0 and 1.5, Pass 1 is a fresh Claude Code session on claude-fable-5-2 at xhigh, and Pass 2.5 is a fresh Claude Code session on claude-opus-5-5 at xhigh that writes nothing. Claude also runs the browser verification. Name #328's builders table as stale in PR 5's brief.
+2. "Keep" stands on both lenses, and 510.5 px is a ceiling, not the expected result. Every hidden day keeps its date line, its zero shown and its hidden count. PR 5 may make that line slimmer in the Poster's day blocks, and an all-hidden week must not exceed 510.5 px at 360 and 390 px on the Poster (450 px on the Ledger).
+3. The tests/vercelIgnore.test.ts leak is fixed now, in a small PR on main built by Codex, before PR 5's build starts.
+4. The order is "Leak, then Design": the Codex prompt for the leak fix first, then the Claude Design brief for the Poster's rulings. PR 5's build brief waits for what Design produces.
+The first handoff also has one error: question 16 is not a PR 7 matter. The plan's question 16 asks whether a Poster title may carry a count, and Beni ruled it on Sat 14 Nov as ruling 16, "Fixed".
+
+YOUR DELIVERABLES, IN ORDER, before 4 PM EST.
+1. The Codex build prompt for the leak fix. The facts: tests/vercelIgnore.test.ts builds a throwaway repository and runs git through execFileSync with the parent's environment (git show origin/main:tests/vercelIgnore.test.ts, lines 17 to 19, where git config writes user.name Fixture and user.email fixture@example.invalid). Under GIT_DIR, from a hook or a worktree command, those writes land in the real repository's config; one such leak after #359's tests was repaired on Sat 21 Nov (archive commit ac120be). Read the test and anything else under tests/ that spawns git, and say in the prompt which files share the pattern. The prompt asks Codex, on gpt-6.2-sol at xhigh (an M-or-smaller PR), for a PR on main that runs every spawned git with Git's repository variables removed from its environment, plus a test that sets GIT_DIR to a decoy repository and proves the decoy's config is untouched. It is tier 2 under R1: Codex builds, one Claude cold read follows, and Beni's word merges. It changes no src/, web/, studio/, workflow or src/data file, and it must pass verify on main.
+2. The Claude Design brief for the Poster's rulings, for the same "Fergie Time — second edition" canvas. Its precedent is docs/design-overhaul-rows-design-prompt.md, which deferred these rulings to "a later pass, before PR 5"; follow its shape. The rulings to draw are in docs/design-overhaul-plan-review.md and the gap-18 addendum's list "Also ruled, with boards to follow in a later pass" (docs/design/5-handoff/gap-18-addendum.md, about line 104): ruling 18, "Strict" (a book closes only when every match of its day is FT, AET or PENS); ruling 15, "Drop" (no cycles and no time-of-day rules; a heavy day's "more" opens ordinary rows with both clocks); and ruling 16, "Fixed" (one title per day type, and no title spells a count). Check the plan's string 13 titles against ruling 16: several spell a count. Add today's two: every hidden day keeps its date line, zero and hidden count, and the line may be slimmer, with an all-hidden week no taller than 510.5 px at 360 and 390 px; and #352's carry-over, the Poster's three left rules in a competition's hue. Read the handoff's Poster sections (docs/design/5-handoff/second-edition-handoff.md) and the boards under docs/design/ before you write.
+3. A short note for the Opus seat that takes over after 4 PM, archived as a third section of this file: what you delivered, what Beni answered, what is pending, the live folders, and the next deliverable (PR 5's build brief once Design returns, or whatever Beni names). Write it by about 3:45 PM EST, or sooner if your usage runs low.
+Archive each prompt under docs/ with a row in docs/README.md, on claude/track-a-archive-8 in the worktree /Users/benicheni/code/kickoff/.claude/worktrees/track-a-archive (its .git writes need the sandbox off), and deliver it in chat in one fenced block, one line per paragraph, with its first line pointing at git show of the archived copy. Hand each over and wait.
+
+WHAT DONE LOOKS LIKE.
+- Your first turn: one batched read confirming the integration tip (45b7bc6 at 11:40 AM), main (ffc5cac), the open PRs (#328, #358, #365) and the leak on main, each with its command. Then go straight to deliverable 1; the forks are ruled, so do not ask them again.
+- Every fact in each prompt comes from a read in this session, with the command that shows it. Beni's rulings are named as his, with their dates and sources.
+- No prompt asks a seat to merge, tag, bump, publish or touch production. Neither prompt states a finding about code the PM seat has not read.
+- Nothing pushed, and no docs PR opened, unless Beni says so.
+- The third section is archived before 4 PM.
+
+LIVE FOLDERS. .claude/worktrees/track-a-archive, on claude/track-a-archive-8 (unpushed), until its docs PR merges. .claude/worktrees/sync-test-degraded-standings-88bd26, B5's, until #365 closes; do not touch it. .claude/worktrees/friendly-chaum-0c01ef holds one uncommitted file whose owner is unknown; leave it for Beni.
+
+BUDGET. Beni moved this seat to Fable to use the Fable usage he has left before 4 PM. Batch tool calls, skip re-reads, and stop to write deliverable 3 if your usage warns.
+````
