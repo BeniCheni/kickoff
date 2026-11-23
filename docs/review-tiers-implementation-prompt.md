@@ -53,3 +53,34 @@ DO NOT TOUCH. `.claude/skills/kickoff-pr-review/`: an audit of it is pending, wi
 CHECKS. `npm run typecheck` and `npm test` on the head, with the real counts. The smoke pass `CLAUDE.md` asks of a docs or tooling PR. Every link and anchor your change touches resolves on GitHub. No fenced code block in the README runs wider than 30 columns, because a 390 px GitHub screen shows only 30. Before your final run, fetch `origin/main`. If it has moved, rebase, re-run, and say so.
 LANDING. Open the PR as a draft against `main`, with the repo's PR template filled in and the tier named in the body ("Tier 3: changes CLAUDE.md and AGENTS.md"), then stop. Do not mark it ready and do not merge it. Report the PR number, the head SHA, the real test counts, and anything you could not do.
 ````
+
+## Handed over again (Mon 23 Nov 2026)
+
+The brief above was handed over on Sun 22 Nov and queued behind #352, and Codex never started it:
+`git ls-remote origin 'refs/heads/*tiers*'` printed nothing at 11:38 AM EST today. Two later
+briefs called it "the open `codex/review-tiers` PR" without checking. #364's Pass 2.5 caught that.
+
+#352 merged at 10:07 PM EST on Sun 22 Nov as `45b7bc6`, so the queue is clear. Beni said "Yes,
+hand it over" at about 11:50 AM EST. The PM seat checked the brief against `main` at `ffc5cac`:
+- `git diff --stat 0662e96 origin/main -- README.md CLAUDE.md AGENTS.md .claude/rules` prints
+  nothing, and `CLAUDE.md` is still 99 lines.
+- Only two files the brief reads have moved. `CHANGELOG.md` gained #364's `[Unreleased]` line,
+  and `docs/README.md` gained two rows from #368.
+
+This addendum is a second commit on the archive branch, so the cherry-pick line changes. Delivered
+in chat in a four-backtick fenced block, one line per paragraph. This copy is the archive.
+
+```bash
+codex -m gpt-6.2-sol -c model_reasoning_effort=xhigh -s workspace-write -a on-request -C /Users/benicheni/code/kickoff
+```
+
+````text
+FIRST: read the whole brief and this addendum from the archive with `git -C /Users/benicheni/code/kickoff show claude/review-tiers-archive:docs/review-tiers-implementation-prompt.md`: the brief first, then its last section, "Handed over again (Mon 23 Nov 2026)". A long paste can drop lines without telling you, and the archive copy is the one of record. If what you see here differs from it, follow the archive and say so in your first message.
+Kickoff: the review-tiers build (R1 and R4 into the repo), handed over again on Mon 23 Nov 2026
+WHAT THIS IS. The brief was handed over on Sun 22 Nov and queued behind #352, which merged that night as `45b7bc6`. It was never started, and no `codex/review-tiers` branch exists. Build it now, as the brief says, with the four changes below. The seat is unchanged: Codex on `gpt-6.2-sol` at `xhigh`, committing as `Codex <noreply@openai.com>` with a per-commit `git -c`.
+1. THE CHERRY-PICK. The archive branch now holds two commits: the brief, and this addendum. Make your first commits `git cherry-pick 0662e96..claude/review-tiers-archive`, not the single-commit cherry-pick the brief names. Together they add `docs/review-tiers-implementation-prompt.md`, the spec of record.
+2. WHAT MOVED ON MAIN, now `ffc5cac`. `README.md`, `CLAUDE.md`, `AGENTS.md` and `.claude/rules/` are unchanged since `0662e96`, so the brief's line references still hold; re-read them anyway. #364 added `.claude/hooks/session-start.mjs`, its `.d.mts` file and a `hooks` block in `.claude/settings.json`. All of that falls under `.claude/**`, which is already on the tier 3 list. #364 also added one `### Added` line under `CHANGELOG.md` `[Unreleased]`; leave it, and the rest of `CHANGELOG.md`, alone. #368 added two rows to `docs/README.md`; re-read that file for edit 4.
+3. TIER 2, THE PM SEAT'S RESOLUTION, NOT BENI'S RULING. The brief's tier 2 says the cold reader "merges when the skill's §7 gate passes". But §7 has a reviewer push fixes, and a reviewer that commits and then merges becomes the only cold reader of its own commits. On #365, the first tier 2 PR, the PM seat ran it like this: the cold read is report-only on code; fixes go back to the builder; the reviewer re-reads each fix round and merges only on "Mergeable now". Write tier 2 that way. Name it in the PR body as the PM seat's resolution for Beni to confirm at Pass 3. List the skill's §7 wording under "deliberately not done", because the pending skill audit owns `.claude/skills/`.
+4. CODEX'S QUEUE. #328, at line 271 of `git show origin/docs/review-loop-plan:docs/design-overhaul-plan.md`, says the review-loop track's Codex builds wait while Codex builds an overhaul PR. Today no overhaul PR is building, because the Track A Planner's next step is a Claude Design pass. If Beni routes an overhaul build to you before this PR opens, say so and ask him which comes first.
+Everything else in the brief stands: the worktree, the tiers, the tier 3 paths, the seats, the four edits, DO NOT TOUCH, the checks and the landing. In your first message, name your worktree folder and say when it can be removed: when this PR merges or closes.
+````
