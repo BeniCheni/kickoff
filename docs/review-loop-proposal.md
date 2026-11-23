@@ -802,6 +802,13 @@ Cursor's hands this track seats no Cursor.
 - *Review:* all six passes. It changes the method every later review reads.
 - *Rollback:* revert the merge; seats stop posting the block.
 - *Number:* D8.
+- *Brief, the elenchus half:* [`review-loop-sprint-4-build-prompt.md`](review-loop-sprint-4-build-prompt.md),
+  for Codex on `gpt-6.2-astra` at `xhigh` (Beni, 22 and 23 Nov, under "Rulings received",
+  "Sprint 4's routing"). It carries finding 15, note 21 with the re-read's base and merge commit,
+  25-34 and 3-3, and the model tables of 17 and 18 Nov, which go into elenchus's example of
+  Kickoff's configuration. Eight resolutions in it are the Planner's, each named there. Kickoff's
+  half (the record block, drift items 3 and 4, the appendix's slot, and how Kickoff calls the
+  pinned commit) waits for v0.6.0.
 
 **Sprint 5 — Kickoff phase 2: the gate on `main` (after Sprint 3 passes).**
 - *Scope:* the `kickoff/360` ruleset on `main`, applied by Beni; `loop authorize`; the sync
@@ -1305,7 +1312,8 @@ for Cursor (S7).
       Pass 2.5 becomes Opus 5.5 at `xhigh`. The review paragraph of its build brief is
       superseded on that point, and Sprint 3's Pass 0 brief carries the new seats.
     - **Sprint 4 is Claude's.** It is Kickoff's skill text, in Claude's own skill format, and a
-      Codex review clears flag (a) for it.
+      Codex review clears flag (a) for it. *Stale since 22 Nov:* Codex builds Sprint 4's
+      elenchus half (below, "Sprint 4's routing").
     - **Sprint 5 is Codex's.** It ports Sprint 3's reviewed gate code, so the port stays a copy.
     - **Sprints 6 and 7 cross,** so that no vendor reviews its own launcher: Claude builds the
       Claude runner and Codex reviews it, and the reverse for the Codex runner.
@@ -1815,6 +1823,25 @@ for Cursor (S7).
     T7's command substitution, and every write is on the brief's list), GitHub after each step,
     the posted comment against the draft and its four edits, and the record through
     `75fada0`'s own code, rebuilt from a fresh clone, where `status` names `authorize`.
+- **Sprint 4's routing (Beni, Sun 22 and Mon 23 Nov 2026, in the Planner's chat).** Asked three
+  questions before the brief, Beni answered each as the Planner recommended, and chose the model
+  the next morning.
+  - **Codex builds,** by his rule of the same day that Codex is the default builder, so Pass 1
+    and Pass 2.5 are Claude's (D7). The roster's line "Sprint 4 is Claude's" (17 Nov) is stale:
+    it was written for Kickoff's skill text.
+  - **The elenchus half now.** Kickoff's half follows v0.6.0, in a brief of its own. Its skill
+    text is in Claude's format and would be reviewed by Claude, which brings flag (a) back, so
+    the Planner puts its routing to Beni with that brief.
+  - **The sensitive tier: all six passes,** by his rule that review depth follows four risk
+    tiers (generated, docs, code and sensitive), with the full 360 for sensitive work only. The
+    pull request changes what every adopter installs and what every release block runs.
+  - **The model: `gpt-6.2-astra` at `xhigh`** (Mon 23 Nov, "Update the prompt if no
+    rejection"). The Planner found nothing against it: the roster gives Astra Codex's hardest
+    builds (the gate build, then Sprint 5), Claude still holds Pass 1 and Pass 2.5 on two models,
+    and `xhigh` is the cap. The brief had named `gpt-6.2-sol`; its model lines changed before
+    the build started. Part D's example now lists Astra, which the review needs: it reads the
+    pull request's records against that example, and the builder's Pass 2 and executor records
+    will name Astra.
 
 D8, D10 and D11 are not yet ruled. D4 is withdrawn, and D12 is Pilot (17 Nov).
 
