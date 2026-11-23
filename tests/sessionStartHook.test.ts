@@ -67,19 +67,51 @@ it('distinguishes an empty worktree list, a detached HEAD and unavailable querie
   expect(formatContext({ ...fixtures, pr: timeout }, now).at(-1)).toBe('Branch: topic | PR unknown')
 })
 
-it('includes the current worktree and limits a long list to eight context lines', () => {
+it('hoists the current worktree and caps the newest-first list at eight context lines', () => {
   const others = [
     tree('/example/main', 'branch refs/heads/main'),
-    tree('/example/detached\nfolder', 'detached\0prunable stale gitdir'),
+    tree('/example/detached\nfolder', 'detached'),
+    tree('/example/prunable', 'detached\0prunable stale gitdir'),
     ...Array.from({ length: 6 }, (_, i) => tree(`/example/other-${i}`, `branch refs/heads/other-${i}`)),
   ].join('')
   const worktrees = success(others + fixtures.worktrees.stdout)
-  const lines = formatContext({ ...fixtures, worktrees }, now, '/example')
+  const worktreeMtimes = new Map([
+    ['/example/main', 2],
+    ['/example/detached\nfolder', 4],
+    ['/example/prunable', 5],
+    ['/example/other-3', 1],
+  ])
+  const lines = formatContext({ ...fixtures, worktrees }, now, {
+    home: '/example', cwd: '/example/kickoff tree', worktreeMtimes,
+  })
   expect(lines).toHaveLength(8)
-  expect(lines[1]).toBe('Worktree: ~/kickoff tree (topic)')
-  expect(lines[3]).toBe('Worktree: ~/detached\\u000afolder (detached HEAD, prunable)')
-  expect(lines[6]).toBe('Worktree: ~/other-2 (other-2) +3 more')
+  expect(lines.slice(1, 7)).toEqual([
+    'Worktree: ~/kickoff tree (topic)',
+    'Worktree: ~/detached\\u000afolder (detached HEAD)',
+    'Worktree: ~/main (main)',
+    'Worktree: ~/other-3 (other-3)',
+    'Worktree: ~/other-0 (other-0)',
+    'Worktree: ~/other-1 (other-1) +4 more',
+  ])
   expect(lines[7]).toBe('Branch: topic | No PR')
+})
+
+it('hoists the deepest containing worktree for a detached session in a subdirectory', () => {
+  const worktrees = success([
+    tree('/example/main', 'branch refs/heads/main'),
+    tree('/example/main/.claude/worktrees/review/src-old', 'detached\0prunable stale gitdir'),
+    tree('/example/main/.claude/worktrees/review', 'detached'),
+    tree('/example/main/.claude/worktrees/review/s', 'detached'),
+  ].join(''))
+  expect(formatContext({ ...fixtures, worktrees, branch: success('') }, now, {
+    cwd: '/example/main/.claude/worktrees/review/src',
+  }).slice(1)).toEqual([
+    'Worktree: /example/main/.claude/worktrees/review (detached HEAD)',
+    'Worktree: /example/main (main)',
+    'Worktree: /example/main/.claude/worktrees/review/s (detached HEAD)',
+    'Worktree: /example/main/.claude/worktrees/review/src-old (detached HEAD, prunable)',
+    'Branch: detached HEAD | PR not looked up',
+  ])
 })
 
 it('runs the configured hook with SessionStart stdin and fake gh and git on PATH', () => {

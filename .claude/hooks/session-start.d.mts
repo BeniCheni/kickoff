@@ -7,5 +7,5 @@ export type CommandResult = {
 export function formatContext(
   results: { sync: CommandResult; worktrees: CommandResult; branch: CommandResult; pr?: CommandResult },
   now: number,
-  home?: string,
+  options?: { home?: string; cwd?: string; worktreeMtimes?: ReadonlyMap<string, number> },
 ): string[]

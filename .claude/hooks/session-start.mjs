@@ -3,8 +3,9 @@
 // Step 0 preflight and worktree/PR state with read-only commands. Independent
 // lookups run in parallel, and unavailable results are reported as unknown.
 import { execFile } from 'node:child_process'
+import { realpathSync, statSync } from 'node:fs'
 import { homedir } from 'node:os'
-import { isAbsolute } from 'node:path'
+import { isAbsolute, join, relative, sep } from 'node:path'
 import { pathToFileURL } from 'node:url'
 
 const COMMAND_TIMEOUT_MS = 3_000
@@ -51,26 +52,56 @@ function oneLine(text) {
     `\\u${char.charCodeAt(0).toString(16).padStart(4, '0')}`)
 }
 
-function worktreeLines(result, branchName, home) {
-  if (result.status !== 0) return ['Worktrees: unknown.']
+function parseWorktrees(stdout) {
   const trees = []
-  for (const record of result.stdout.split('\0\0')) {
+  for (const record of stdout.split('\0\0')) {
     const [pathField, ...fields] = record.split('\0')
     if (!pathField.startsWith('worktree ')) continue
     const path = pathField.slice('worktree '.length)
     const branch = fields.find(field => field.startsWith('branch refs/heads/'))?.slice('branch refs/heads/'.length)
     const state = fields.includes('bare') ? 'bare' : 'detached HEAD'
     const prunable = fields.some(field => field === 'prunable' || field.startsWith('prunable '))
-    const label = home && path.startsWith(`${home}/`) ? `~${path.slice(home.length)}` : path
-    const line = `Worktree: ${oneLine(label)} (${oneLine(branch ?? state)}${prunable ? ', prunable' : ''})`
-    trees.push({ branch, line })
+    trees.push({ path, branch, state, prunable })
   }
+  return trees
+}
+
+function readWorktreeMtimes(result) {
+  const mtimes = new Map()
+  if (result.status !== 0) return mtimes
+  for (const { path, state, prunable } of parseWorktrees(result.stdout)) {
+    if (prunable || state === 'bare') continue
+    try {
+      mtimes.set(path, statSync(join(path, '.git')).mtimeMs)
+    } catch {
+      // The worktree may have disappeared or be inaccessible from this session.
+    }
+  }
+  return mtimes
+}
+
+function worktreeLines(result, { cwd, home, worktreeMtimes }) {
+  if (result.status !== 0) return ['Worktrees: unknown.']
+  const trees = parseWorktrees(result.stdout)
   if (trees.length === 0) return ['Worktrees: none.']
 
-  // Git's order can put the session's own worktree beyond the display limit.
-  const current = trees.findIndex(tree => tree.branch === branchName)
+  const mtime = tree => worktreeMtimes?.get(tree.path) ?? Number.MIN_SAFE_INTEGER
+  trees.sort((a, b) => Number(a.prunable) - Number(b.prunable) || mtime(b) - mtime(a))
+
+  // A linked worktree can sit inside another worktree's directory.
+  let current = -1
+  if (cwd) {
+    for (const [index, tree] of trees.entries()) {
+      const fromTree = relative(tree.path, cwd)
+      if (isAbsolute(fromTree) || fromTree === '..' || fromTree.startsWith(`..${sep}`)) continue
+      if (current === -1 || tree.path.length > trees[current].path.length) current = index
+    }
+  }
   if (current > 0) trees.unshift(...trees.splice(current, 1))
-  const lines = trees.slice(0, MAX_WORKTREES).map(tree => tree.line)
+  const lines = trees.slice(0, MAX_WORKTREES).map(({ path, branch, state, prunable }) => {
+    const label = home && path.startsWith(`${home}/`) ? `~${path.slice(home.length)}` : path
+    return `Worktree: ${oneLine(label)} (${oneLine(branch ?? state)}${prunable ? ', prunable' : ''})`
+  })
   if (trees.length > MAX_WORKTREES) {
     lines[MAX_WORKTREES - 1] += ` +${trees.length - MAX_WORKTREES} more`
   }
@@ -85,13 +116,21 @@ function prLabel(result) {
   return `PR #${pr.number} (${pr.state.toLowerCase()}, ${pr.isDraft ? 'draft' : 'non-draft'})`
 }
 
-export function formatContext({ sync, worktrees, branch, pr }, now, home = '') {
+export function formatContext({ sync, worktrees, branch, pr }, now, options = {}) {
   const name = branch.status === 0 ? branch.stdout.trim() : ''
   let session = 'Branch: unknown | PR unknown'
   if (branch.status === 0) {
     session = name ? `Branch: ${oneLine(name)} | ${prLabel(pr)}` : 'Branch: detached HEAD | PR not looked up'
   }
-  return [syncLine(sync, now), ...worktreeLines(worktrees, name, home), session]
+  return [syncLine(sync, now), ...worktreeLines(worktrees, options), session]
+}
+
+function canonicalPath(path) {
+  try {
+    return realpathSync(path)
+  } catch {
+    return path
+  }
 }
 
 async function readSessionCwd() {
@@ -136,7 +175,7 @@ function readCommand(command, args, cwd) {
 }
 
 async function main() {
-  const cwd = await readSessionCwd()
+  const cwd = canonicalPath(await readSessionCwd())
   const syncRequest = readCommand('gh', [
     'run', 'list', '--repo', 'github.com/BeniCheni/kickoff', '--workflow=sync.yml',
     '--branch', 'main', '--limit', '1', '--json', 'conclusion,status,createdAt,url',
@@ -149,7 +188,10 @@ async function main() {
     return { branch, pr }
   })
   const [sync, worktrees, { branch, pr }] = await Promise.all([syncRequest, worktreesRequest, branchRequest])
-  console.log(formatContext({ sync, worktrees, branch, pr }, Date.now(), homedir()).join('\n'))
+  const worktreeMtimes = readWorktreeMtimes(worktrees)
+  console.log(formatContext({ sync, worktrees, branch, pr }, Date.now(), {
+    home: homedir(), cwd, worktreeMtimes,
+  }).join('\n'))
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
