@@ -1,0 +1,209 @@
+import { spawnSync } from 'node:child_process'
+import { mkdtempSync, realpathSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { delimiter, join } from 'node:path'
+import { expect, it } from 'vitest'
+import { formatContext, type CommandResult } from '../.claude/hooks/session-start.mjs'
+import settings from '../.claude/settings.json'
+
+const now = Date.parse('2026-11-22T14:30:00Z')
+const url = 'https://github.com/BeniCheni/kickoff/actions/runs/123'
+const checked = 'checked Nov 22, 2026, 9:30 AM EST'
+const unknownSync = `Sync main: unknown (${checked}). Check before any Step 0.`
+const stepZero = 'Step 0 needs independent primary-source re-verification. See CLAUDE.md, “Scheduled sync”.'
+const success = (stdout: string): CommandResult => ({ status: 0, stdout, stderr: '' })
+const timeout: CommandResult = { status: null, stdout: '', stderr: '' }
+const run = { createdAt: '2026-11-22T12:15:00Z', url, status: 'completed', conclusion: 'success' }
+const draft = success(JSON.stringify({ number: 42, state: 'OPEN', isDraft: true }))
+const noPr = { status: 1, stdout: '', stderr: 'no pull requests found for branch "topic"\n' }
+
+function tree(path: string, head: string) {
+  return `worktree ${path}\0HEAD abc123\0${head}\0\0`
+}
+
+const fixtures = {
+  sync: success(JSON.stringify([run])),
+  worktrees: success(tree('/example/kickoff tree', 'branch refs/heads/topic')),
+  branch: success('topic\n'),
+  pr: noPr,
+}
+
+it('shows the latest successful sync, a worktree with spaces, and no PR', () => {
+  expect(formatContext(fixtures, now)).toEqual([
+    `Sync main: success (2h ago, ${checked}) ${url}`,
+    'Worktree: /example/kickoff tree (topic)',
+    'Branch: topic | No PR',
+  ])
+})
+
+it.each([
+  ['2026-11-22T04:30:00.000Z', '10h', ''],
+  ['2026-11-22T04:29:59.999Z', '10h', ' | Stale success. Check again before any Step 0.'],
+  ['2026-10-13T14:30:00Z', '40d', ' | Stale success. Check again before any Step 0.'],
+])('flags a successful run created at %s only beyond the freshness threshold', (createdAt, age, note) => {
+  const sync = success(JSON.stringify([{ ...run, createdAt }]))
+  expect(formatContext({ ...fixtures, sync }, now)[0]).toBe(`Sync main: success (${age} ago, ${checked}) ${url}${note}`)
+})
+
+it.each(['failure', 'cancelled', 'timed_out'])('requires primary-source re-verification for completed %s', conclusion => {
+  const sync = success(JSON.stringify([{ ...run, conclusion }]))
+  expect(formatContext({ ...fixtures, sync }, now)[0]).toBe(`Sync main: ${conclusion} (2h ago, ${checked}) ${url} | ${stepZero}`)
+})
+
+it.each(['queued', 'in_progress', 'waiting'])('asks for a fresh check while a run is %s', status => {
+  const sync = success(JSON.stringify([{ ...run, status, conclusion: '' }]))
+  expect(formatContext({ ...fixtures, sync }, now)[0])
+    .toBe(`Sync main: ${status} (2h ago, ${checked}) ${url} | Run unfinished. Check again before any Step 0.`)
+})
+
+it.each([
+  ['a timeout with partial stdout', { ...timeout, stdout: fixtures.sync.stdout }],
+  ['a nonzero exit', { status: 1, stdout: '', stderr: 'gh auth login' }],
+  ['an empty run list', success('[]')],
+  ['malformed JSON', success('{"conclusion":')],
+  ['success in the status field alone', success(JSON.stringify([{ ...run, status: 'success', conclusion: '' }]))],
+  ['a success conclusion on an unfinished run', success(JSON.stringify([{ ...run, status: 'in_progress' }]))],
+  ['a successful run from another repository', success(JSON.stringify([{ ...run, url: url.replace('/kickoff/', '/other/') }]))],
+  ['a run created in the future', success(JSON.stringify([{ ...run, createdAt: new Date(now + 1).toISOString() }]))],
+])('keeps sync status unknown for %s', (_case, sync) => {
+  expect(formatContext({ ...fixtures, sync }, now)[0]).toBe(unknownSync)
+})
+
+it('dates an unavailable lookup in Brooklyn time across a UTC day boundary in summer', () => {
+  const summer = Date.parse('2026-07-02T01:15:00Z')
+  expect(formatContext({ ...fixtures, sync: timeout }, summer)[0])
+    .toBe('Sync main: unknown (checked Jul 1, 2026, 9:15 PM EDT). Check before any Step 0.')
+})
+
+it('shows the draft or non-draft status of a PR', () => {
+  expect(formatContext({ ...fixtures, pr: draft }, now).at(-1)).toBe('Branch: topic | PR #42 (open, draft)')
+  const merged = success(JSON.stringify({ number: 43, state: 'MERGED', isDraft: false }))
+  expect(formatContext({ ...fixtures, pr: merged }, now).at(-1)).toBe('Branch: topic | PR #43 (merged, non-draft)')
+})
+
+it('keeps a PR lookup with an unrelated exit-1 error unknown', () => {
+  const pr = { status: 1, stdout: '', stderr: 'HTTP 502' }
+  expect(formatContext({ ...fixtures, pr }, now).at(-1)).toBe('Branch: topic | PR unknown')
+})
+
+it('distinguishes an empty worktree list, a detached HEAD and unavailable queries', () => {
+  expect(formatContext({ ...fixtures, worktrees: success(''), branch: success('') }, now).slice(1))
+    .toEqual(['Worktrees: none.', 'Branch: detached HEAD | PR not looked up'])
+  expect(formatContext({ ...fixtures, worktrees: timeout, branch: timeout }, now).slice(1))
+    .toEqual(['Worktrees: unknown.', 'Branch: unknown | PR unknown'])
+  expect(formatContext({ ...fixtures, pr: timeout }, now).at(-1)).toBe('Branch: topic | PR unknown')
+})
+
+it('hoists the current worktree and caps the newest-first list at eight context lines', () => {
+  const others = [
+    tree('/example/main', 'branch refs/heads/main'),
+    tree('/example/detached\nfolder', 'detached'),
+    tree('/example/prunable', 'detached\0prunable stale gitdir'),
+    ...Array.from({ length: 6 }, (_, i) => tree(`/example/other-${i}`, `branch refs/heads/other-${i}`)),
+  ].join('')
+  const worktrees = success(others + fixtures.worktrees.stdout)
+  const worktreeMtimes = new Map([
+    ['/example/main', 2],
+    ['/example/detached\nfolder', 4],
+    ['/example/prunable', 5],
+    ['/example/other-3', 1],
+  ])
+  const lines = formatContext({ ...fixtures, worktrees }, now, {
+    home: '/example', cwd: '/example/kickoff tree', worktreeMtimes,
+  })
+  expect(lines).toHaveLength(8)
+  expect(lines.slice(1, 7)).toEqual([
+    'Worktree: ~/kickoff tree (topic)',
+    'Worktree: ~/detached\\u000afolder (detached HEAD)',
+    'Worktree: ~/main (main)',
+    'Worktree: ~/other-3 (other-3)',
+    'Worktree: ~/other-0 (other-0)',
+    'Worktree: ~/other-1 (other-1) +4 more',
+  ])
+  expect(lines[7]).toBe('Branch: topic | No PR')
+})
+
+it('hoists the deepest containing worktree for a detached session in a subdirectory', () => {
+  const worktrees = success([
+    tree('/example/main', 'branch refs/heads/main'),
+    tree('/example/main/.claude/worktrees/review/src-old', 'detached\0prunable stale gitdir'),
+    tree('/example/main/.claude/worktrees/review', 'detached'),
+    tree('/example/main/.claude/worktrees/review/s', 'detached'),
+  ].join(''))
+  expect(formatContext({ ...fixtures, worktrees, branch: success('') }, now, {
+    cwd: '/example/main/.claude/worktrees/review/src',
+  }).slice(1)).toEqual([
+    'Worktree: /example/main/.claude/worktrees/review (detached HEAD)',
+    'Worktree: /example/main (main)',
+    'Worktree: /example/main/.claude/worktrees/review/s (detached HEAD)',
+    'Worktree: /example/main/.claude/worktrees/review/src-old (detached HEAD, prunable)',
+    'Branch: detached HEAD | PR not looked up',
+  ])
+})
+
+it.each(['success', 'stalled sync', 'symlinked entry'])('runs the configured hook with fake git and gh (%s)', scenario => {
+  const directory = realpathSync(mkdtempSync(join(tmpdir(), 'kickoff-session-start-')))
+  try {
+    const liveRun = { ...run, createdAt: new Date().toISOString() }
+    const fakeSync = scenario === 'stalled sync' ? 'exec sleep 30' : `printf '%s\\n' '${JSON.stringify([liveRun])}'`
+    writeFileSync(join(directory, 'gh'), `#!/bin/sh
+[ "$PWD" = "$HOOK_TEST_CWD" ] && [ "$GH_PROMPT_DISABLED" = "1" ] && [ "$GH_TELEMETRY" = "0" ] || exit 99
+case "$*" in
+  'run list --repo github.com/BeniCheni/kickoff --workflow=sync.yml --branch main --limit 1 --json conclusion,status,createdAt,url')
+    ${fakeSync} ;;
+  'pr view --json number,state,isDraft') printf '%s\\n' '${draft.stdout}' ;;
+  *) exit 99 ;;
+esac
+`, { mode: 0o755 })
+    writeFileSync(join(directory, 'git'), `#!/bin/sh
+[ "$PWD" = "$HOOK_TEST_CWD" ] && [ "$GIT_OPTIONAL_LOCKS" = "0" ] || exit 99
+case "$*" in
+  'worktree list --porcelain -z') printf 'worktree /example/kickoff tree\\000HEAD abc123\\000branch refs/heads/topic\\000\\000' ;;
+  'branch --show-current') printf 'topic\\n' ;;
+  *) exit 99 ;;
+esac
+`, { mode: 0o755 })
+
+    const hook = settings.hooks.SessionStart[0]!.hooks[0]!
+    const project = join(import.meta.dirname, '..')
+    let hookProject = project
+    if (scenario === 'symlinked entry') {
+      hookProject = join(directory, 'linked-project')
+      symlinkSync(project, hookProject, 'dir')
+    }
+    const started = performance.now()
+    const result = spawnSync(hook.command, hook.args.map(arg => arg.replace('${CLAUDE_PROJECT_DIR}', hookProject)), {
+      cwd: project,
+      env: { ...process.env, PATH: `${directory}${delimiter}${process.env.PATH}`, HOOK_TEST_CWD: directory },
+      input: JSON.stringify({
+        session_id: 'test-session',
+        transcript_path: join(directory, 'transcript.jsonl'),
+        cwd: directory,
+        hook_event_name: 'SessionStart',
+        source: 'startup',
+      }),
+      encoding: 'utf8',
+      timeout: hook.timeout * 1_000,
+      killSignal: 'SIGKILL',
+    })
+    expect(result.error).toBeUndefined()
+    expect(result.status).toBe(0)
+    expect(result.stderr).toBe('')
+    const [sync, ...lines] = result.stdout.trimEnd().split('\n')
+    if (scenario === 'stalled sync') {
+      const elapsed = performance.now() - started
+      expect(elapsed).toBeGreaterThanOrEqual(2_800)
+      expect(elapsed).toBeLessThan(6_000)
+      expect(sync).toMatch(/^Sync main: unknown \(checked .+ (EST|EDT)\)\. Check before any Step 0\.$/)
+    } else {
+      expect(sync).toMatch(/^Sync main: success \(0m ago, checked .+ (EST|EDT)\) /)
+      expect(sync).toContain(url)
+    }
+    expect(lines).toEqual([
+      'Worktree: /example/kickoff tree (topic)',
+      'Branch: topic | PR #42 (open, draft)',
+    ])
+  } finally {
+    rmSync(directory, { recursive: true, force: true })
+  }
+}, 10_000)
