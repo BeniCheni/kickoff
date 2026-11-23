@@ -110,27 +110,41 @@ claims to check, not a verdict.
    **Deliberately not done**, with every line, the lead included, citing its PRs. A line can
    cite only a PR that was sent, and only through its `prs` list. Plain code prints the citation,
    so a line's own text may not point at a PR or an issue at all, since nothing would check that
-   reference. The refused forms are GitHub's own list from
+   reference. Issues count because they share the PRs' number space. The forms come from GitHub's
    [Autolinked references and URLs](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/autolinked-references-and-urls#issues-and-pull-requests)
-   (read 22 Nov 2026), plus the same reference in words:
-   - an issue or pull request URL, bare or as a Markdown link, absolute or relative (`…/pull/327`, `…/issues/361`);
-   - `owner/repo#327` and `#327`;
-   - `GH-327`, in either case;
-   - a PR or issue named by number (`PR 999`, `pull request 999`, `issue 361`).
+   (read 22 Nov 2026), and the check reads a line in two parts:
+   - **Where its links go.** A Markdown link or image destination, a `<…>` autolink or a bare URL
+     is refused only when it's an issue or pull request address: an `/issues/N` or `/pull/N`
+     path, absolute on any host (`redirect.github.com` included) or relative (`../pull/327`).
+     Nothing else in a URL is read, so a link to
+     `https://github.com/golang/go/blob/go1.23.0/test/fixedbugs/issue10047.go` or to
+     `docs/design-overhaul-pr0-implementation-prompt.md` passes, and so does the demo site the way
+     `CHANGELOG.md` names it.
+   - **What a reader sees**, link labels included. GitHub's short forms are refused: `#327`,
+     `owner/repo#327` and `GH-327` (in either case). So is a reference in words, where a keyword
+     and a number are separate tokens: `PR 999`, `PR #999`, `pull request 999`, `issue 361`. A
+     number glued to a word, as in `issue10047`, isn't a reference.
 
-   Issues count because they share the PRs' number space. Links to anything else stay allowed,
-   so a line can still name the demo site the way `CHANGELOG.md` does. Every text also needs
-   words: at least one run of two letters, so `.` alone is not a line. The lead must be exactly
-   one sentence, also checked in plain code (it ends in `.`, `!` or `?`, and no such mark
-   followed by a space comes before the end). A draft that breaks any of these rules is a model
-   failure, not a printed draft. The failure line names the rule and, for a reference, its form.
-   Any PR the draft leaves out is named under it, so a person decides whether it belongs.
+   Every text also needs words: at least one run of two letters, so `.` alone is not a line. The
+   lead must be exactly one sentence, also checked in plain code (it ends in `.`, `!` or `?`, and
+   no such mark followed by a space comes before the end). A draft that breaks any of these rules
+   is a model failure, not a printed draft. The failure line names the rule and, for a reference,
+   its form. Any PR the draft leaves out is named under it, so a person decides whether it belongs.
 
-   **A true line can fail too.** The overhaul's internal names, such as "PR 0" or "PR 7b", are a
-   PR named by number, so a draft that uses one fails. That's on purpose: the change can always be
-   told without the name ("The overhaul pinned the honesty rules", not "Overhaul PR 0 pinned…"),
-   and the citation comes from `prs` either way. If a run fails on "a PR or issue named by number",
-   look for such a name, and run it again or write that line yourself.
+   **A true line can fail too.** The word rule can't tell a reference from prose that happens to
+   put a number after one of its keywords, so these fail on purpose. Each says the same thing
+   reworded:
+
+   | Fails ("a PR or issue named by number") | Passes |
+   | --- | --- |
+   | Overhaul PR 0 pinned the honesty rules. | The overhaul pinned the honesty rules. |
+   | PR 7b trims the fonts. | The overhaul trims the fonts. |
+   | Pass 0 can issue 3 GitHub reads for one small pull request. | Pass 0 can make three GitHub reads for one small pull request. |
+   | Pass 0 reads each pull request 100 commits at a time. | Pass 0 reads commits in pages of 100. |
+
+   The citation comes from `prs` either way. If a run fails on "a PR or issue named by number",
+   look for a number after "PR", "pull request" or "issue", then run it again or write that line
+   yourself.
 
 It prints the draft inside a fence. Wrap it to the file's style when you paste it into
 `CHANGELOG.md`.

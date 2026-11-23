@@ -125,26 +125,70 @@ export function isOneSentence(text: string): boolean {
 }
 
 /**
- * Every way a line's own text can point at a PR or an issue. Citations come only from a line's
- * `prs`, which the enum holds to the PRs sent, so a reference in the text would be a citation that
- * nothing checked, such as a link to #327 printed beside the real "(#502)". The first four forms
- * are GitHub's own, from "Autolinked references and URLs" (docs.github.com, read 22 Nov 2026).
- * Issues count because they share the PRs' number space. The last form is the same reference in
- * words, which also refuses an internal name such as "PR 0" or "PR 7b": the change can always be
- * told without it. A link or URL to anything else, such as the demo site, is not refused.
+ * A line's own text must not point at a PR or an issue. Citations come only from a line's `prs`,
+ * which the enum holds to the PRs sent, so a reference in the text would be a citation that
+ * nothing checked, such as a link to #327 printed beside the real "(#502)". Issues count because
+ * they share the PRs' number space.
+ *
+ * A line has two parts, judged apart. Its link targets (Markdown link and image destinations,
+ * `<…>` autolinks and bare URLs) are refused only when they are an issue or pull request address.
+ * Its visible text (everything else, link labels included) is refused for GitHub's short forms
+ * and for the same reference in words, each matched as whole tokens. So a file named
+ * `issue10047.go` in a link, or `pr0` in a path, is not a reference, while `[#327](…)` and
+ * `[issue 361](…)` are. The forms are GitHub's own, from "Autolinked references and URLs"
+ * (docs.github.com, read 22 Nov 2026).
  */
-export const PROSE_REFERENCES = [
-  // A bare URL or a Markdown link destination, absolute or relative: …/pull/327, …/issues/361.
-  { form: 'an issue or pull request URL', pattern: /\b(?:pull|issues)\/\d/i },
-  { form: 'an owner/repo#N reference', pattern: /[\w.-]+\/[\w.-]+#\d/ },
-  { form: 'a #N reference', pattern: /#\s*\d/ },
-  { form: 'a GH-N reference', pattern: /\bGH-\d/i },
-  { form: 'a PR or issue named by number', pattern: /\b(?:PRs?|pull requests?|issues?)\s*#?\s*\d/i },
+export interface LineParts {
+  visible: string
+  targets: string[]
+}
+
+const MARKDOWN_LINK = /!?\[([^\]]*)\]\(\s*<?([^\s>)]*)>?(?:\s+(?:"[^"]*"|'[^']*'))?\s*\)/g
+const AUTOLINK = /<((?:https?:\/\/|www\.)[^\s>]+)>/gi
+const BARE_URL = /\b(?:https?:\/\/|www\.)[^\s<>()[\]`]+/gi
+
+/** Splits a line into what a reader sees and where its links go. A label stays visible. */
+export function lineParts(text: string): LineParts {
+  const targets: string[] = []
+  const take = (target: string) => {
+    targets.push(target)
+    return ' '
+  }
+  const visible = text
+    .replace(MARKDOWN_LINK, (_, label: string, target: string) => `${label}${take(target)}`)
+    .replace(AUTOLINK, (_, target: string) => take(target))
+    .replace(BARE_URL, (target) => take(target))
+  return { visible, targets }
+}
+
+/**
+ * An issue or pull request address: an `/issues/N` or `/pull/N` path, absolute on any host (so
+ * `redirect.github.com`, which GitHub documents for links without a backlink, too) or relative.
+ */
+export function isReferenceAddress(target: string): boolean {
+  return /(?:^|\/)(?:pull|issues)\/\d+(?![\w-])/i.test(target)
+}
+
+export const ADDRESS_FORM = 'an issue or pull request URL'
+
+/**
+ * The short forms and the words, read in the visible text only. The words take a keyword and a
+ * number as separate tokens ("PR 7b", "issue #361"), never one glued token ("issue10047"). They
+ * also refuse an internal name such as "PR 0" or "PR 7b", and plain prose that puts a number
+ * after "issue" or "pull request": the change can always be told without that, as the README says.
+ */
+export const TEXT_REFERENCES = [
+  { form: 'an owner/repo#N reference', pattern: /(?<![\w./-])[\w.-]+\/[\w.-]+#\d/ },
+  { form: 'a #N reference', pattern: /(?<![\w&#])#\s*\d/ },
+  { form: 'a GH-N reference', pattern: /(?<![\w-])GH-\d/i },
+  { form: 'a PR or issue named by number', pattern: /\b(?:PRs?|pull requests?|issues?)(?:\s+#?|\s*#)\s*\d/i },
 ] as const
 
 /** The first reference form the text uses, or undefined when it cites nothing of its own. */
 export function proseReference(text: string): string | undefined {
-  return PROSE_REFERENCES.find(({ pattern }) => pattern.test(text))?.form
+  const { visible, targets } = lineParts(text)
+  if (targets.some(isReferenceAddress)) return ADDRESS_FORM
+  return TEXT_REFERENCES.find(({ pattern }) => pattern.test(visible))?.form
 }
 
 export function citesInProse(text: string): boolean {

@@ -4,7 +4,7 @@ import { jsonSchemaFor, type ModelRunner } from '../scripts/pm/model'
 import type { CommandRunner, ProcessResult } from '../scripts/pm/process'
 import {
   LIST_FIELDS, LIST_LIMIT, brooklynStamp, citeLine, citesInProse, currentUnreleased, draftBlocks, draftSchema, hasWords, isOneSentence,
-  isSyncPr, mergedPrSchema, renderDraft, runUnreleased, searchSince, splitPrs, uncited, type Draft,
+  isSyncPr, mergedPrSchema, proseReference, renderDraft, runUnreleased, searchSince, splitPrs, uncited, type Draft,
 } from '../scripts/pm/unreleased'
 
 // No test here calls GitHub, git or Claude: every runner is a scripted fake.
@@ -169,6 +169,9 @@ describe('the draft', () => {
     expect(citesInProse('It fits (#999).')).toBe(true)
     expect(citesInProse('It fits (# 999).')).toBe(true)
     expect(citesInProse('Built in PRs 7 and 9.')).toBe(true)
+    // Words inside a URL are not read, and a number glued to a word is not a reference.
+    expect(citesInProse('The notes are at https://example.com/page#123 for now.')).toBe(false)
+    expect(citesInProse('The fix landed in issue10047.go upstream.')).toBe(false)
     expect(hasWords('It fits.')).toBe(true)
     expect(hasWords('Ça marche.')).toBe(true)
     expect(hasWords('A.')).toBe(false)
@@ -314,32 +317,69 @@ describe('runUnreleased', () => {
 
 describe('a draft that cites a PR in its own text', () => {
   // GitHub's reference forms for issues and pull requests, from "Autolinked references and URLs"
-  // on docs.github.com, plus the same reference in words. Only #502 is sent. #327 and #361 are
-  // real numbers that were not, as in Codex's second re-read.
+  // on docs.github.com, plus the same reference in words. Only #502 is sent: the list leaves out
+  // #504, the fixture's other unreleased PR, and each run checks what the model was given. #327,
+  // #361 and golang/go's 10047 are real numbers that were not sent.
+  const only502 = JSON.stringify(JSON.parse(listJson).filter((pr: { number: number }) => pr.number !== 504))
+  const run = async (structured: unknown) => {
+    const h = harness({ model: answer(structured), list: only502 })
+    const code = await runUnreleased([], h.deps)
+    const call = h.modelCalls[0]!
+    const schema = JSON.parse(call.args[call.args.indexOf('--json-schema') + 1]!)
+    // With one PR sent, zod writes the literal as a const rather than a one-value enum.
+    expect(schema.properties.lead.properties.prs.items).toEqual({ type: 'number', const: 502 })
+    expect(call.stdin).toContain('BEGIN PR #502>>>')
+    expect(call.stdin).not.toContain('PR #504')
+    return { h, code }
+  }
+  const changelogLink = 'https://github.com/BeniCheni/kickoff/blob/main/CHANGELOG.md'
   const forms: [string, string][] = [
+    // Link targets: refused only when they are an issue or pull request address.
     ['an issue or pull request URL', 'The table fits, as [the change](https://github.com/BeniCheni/kickoff/pull/327) shows.'],
     ['an issue or pull request URL', 'The table fits, as https://github.com/BeniCheni/kickoff/pull/327 shows.'],
     ['an issue or pull request URL', 'The table fits, as [the issue](https://github.com/BeniCheni/kickoff/issues/361) asked.'],
     ['an issue or pull request URL', 'The table fits, as [the change](../pull/327) shows.'],
+    ['an issue or pull request URL', 'The table fits, as [the change](https://redirect.github.com/BeniCheni/kickoff/pull/327) shows.'],
+    ['an issue or pull request URL', 'The Go [bug](https://github.com/golang/go/issues/10047) is fixed upstream.'],
+    // Visible text, link labels included: GitHub's short forms and the words, as whole tokens.
     ['an owner/repo#N reference', 'The table fits, as BeniCheni/kickoff#327 shows.'],
     ['a #N reference', 'The table fits small screens (#999).'],
+    ['a #N reference', `The table fits, as [#327](${changelogLink}) shows.`],
     ['a GH-N reference', 'The table fits, as GH-327 shows.'],
     ['a GH-N reference', 'The table fits, as gh-327 shows.'],
     ['a PR or issue named by number', 'The table fits, per pull request 999.'],
     ['a PR or issue named by number', 'The table fits, as issue 361 asked.'],
-    // True, but refused on purpose: the overhaul's internal names can always be left out.
+    ['a PR or issue named by number', `The table fits, as [issue 361](${changelogLink}) asked.`],
+    // True, but refused on purpose: each can be told without the number, as the README says.
     ['a PR or issue named by number', 'Overhaul PR 0 pinned the honesty rules.'],
     ['a PR or issue named by number', 'PR 7b trims the fonts.'],
+    ['a PR or issue named by number', 'Pass 0 can issue 3 GitHub reads for one small pull request.'],
+    ['a PR or issue named by number', 'Pass 0 reads each pull request 100 commits at a time.'],
   ]
   const positions = ['lead', 'added', 'changed', 'fixed', 'notDone'] as const
   const placed = (key: (typeof positions)[number], text: string) =>
     key === 'lead' ? { ...draft, lead: { text, prs: [502] } } : { ...draft, [key]: [{ text, prs: [502] }] }
 
+  it('agrees with the README\'s table of true lines that fail, and their rewordings', () => {
+    const readme = readFileSync('scripts/pm/README.md', 'utf8').split('\n')
+    const header = readme.findIndex((line) => line.includes('| Fails ("a PR or issue named by number") | Passes |'))
+    const rows: string[][] = []
+    for (const line of readme.slice(header + 2)) {
+      if (!line.trim().startsWith('|')) break
+      rows.push(line.split('|').slice(1, -1).map((cell) => cell.trim()))
+    }
+    expect(rows).toHaveLength(4)
+    for (const [fails, passes] of rows) {
+      expect(proseReference(fails!)).toBe('a PR or issue named by number')
+      expect(proseReference(passes!)).toBeUndefined()
+    }
+  })
+
   it('refuses each form in the lead and in every section, and says which form it found', async () => {
     for (const [form, text] of forms) {
       for (const key of positions) {
-        const h = harness({ model: answer(placed(key, text)) })
-        expect(await runUnreleased([], h.deps), `${key}: ${text}`).toBe(1)
+        const { h, code } = await run(placed(key, text))
+        expect(code, `${key}: ${text}`).toBe(1)
         expect(h.out).toHaveLength(2)
         expect(h.out[1]).toContain(`cites ${form} in its text, where only prs may cite`)
         expect(h.out.join('\n')).not.toContain('## Draft')
@@ -352,10 +392,18 @@ describe('a draft that cites a PR in its own text', () => {
       'Kickoff v0.5.5 picks up Vitest 4.1.12 and fits a 390 px phone.',
       'The demo at `https://benicheni.github.io/kickoff/` redeploys on every push.',
       'The overhaul pinned the honesty rules.',
+      // Codex's third re-read: a source file named issue10047.go is not issue 10047.
+      'The [regression test](https://github.com/golang/go/blob/go1.23.0/test/fixedbugs/issue10047.go) is a Go source file.',
+      // Its other controls, and the rewordings that keep the facts of the refused prose above.
+      `The [changelog](${changelogLink}) keeps the release notes.`,
+      'The [preview run](https://github.com/BeniCheni/kickoff/actions/runs/45104332843/job/137462044178) passed.',
+      'The [overhaul brief](https://github.com/BeniCheni/kickoff/blob/main/docs/design-overhaul-pr0-implementation-prompt.md) is public.',
+      'Pass 0 can make three GitHub reads for one small pull request.',
+      'Pass 0 reads commits in pages of 100.',
     ]) {
       for (const key of positions) {
-        const h = harness({ model: answer(placed(key, text)) })
-        expect(await runUnreleased([], h.deps), `${key}: ${text}`).toBe(0)
+        const { h, code } = await run(placed(key, text))
+        expect(code, `${key}: ${text}`).toBe(0)
         expect(h.out.join('\n')).toContain(citeLine(text, [502]))
       }
     }
