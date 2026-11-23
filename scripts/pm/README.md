@@ -139,7 +139,12 @@ claims to check, not a verdict.
       where GitHub links nothing, pass. GitHub's short forms are refused: `#327`,
       `owner/repo#327` and `GH-327` (in either case). Each needs a letter-or-digit boundary
       before and after its number. So `#327,`, `(#327)`, `GH-327.` and `` `#327` `` are refused,
-      while `#327b` and `GH-327b`, which GitHub renders as plain text, pass. A reference in words
+      while `#327b` and `GH-327b`, which GitHub renders as plain text, pass. **An issue or pull
+      request address** names one too, link or no link, so a code span doesn't save it:
+      `github.com/<owner>/<repo>/pull/N` or `/issues/N` on any github.com host, `redirect.github.com`
+      included, and the API's `/repos/<owner>/<repo>/pulls/N` or `/issues/N`. Its number is
+      bounded after it as well, so `pull/327/files` and `pull/327.diff` are refused, while
+      `pull/327b` and a `pulls` list with no number pass. A reference in words
       is refused too, where a keyword and a number are separate tokens, reading markers and
       backticks as spaces: `PR 999`, `PR #999`, `pull request 999`, `issue 361`, `issue 361:` and
       `**issue** 361`. A number glued to a word, as in `issue10047`, isn't a reference. The text is

@@ -166,8 +166,18 @@ export const LINK_SYNTAX = [
  * internal name such as "PR 0" and plain prose that puts a number after "issue" or "pull request":
  * the change can always be told without that, as the README says. The text is NFKC-normalized with
  * invisible format characters dropped first, so `#３２７` reads as `#327`.
+ *
+ * An issue or pull request address names one too, link or no link, so the address forms from
+ * GitHub's list are read as text, code spans included: `github.com/<owner>/<repo>/pull/N` or
+ * `/issues/N` on any github.com host (`redirect.github.com` too), and the API's
+ * `/repos/<owner>/<repo>/pulls/N` or `/issues/N`, each with its number bounded after it.
  */
 export const TEXT_REFERENCES = [
+  {
+    form: 'an issue or pull request address',
+    pattern: /(?:github\.com\/[^/\s`]+\/[^/\s`]+\/(?:pull|issues)|\/repos\/[^/\s`]+\/[^/\s`]+\/(?:pulls|issues))\/\d+(?![A-Za-z\d])/i,
+    spaced: false,
+  },
   { form: 'an owner/repo#N reference', pattern: /(?<![\w./-])[\w.-]+\/[\w.-]+#\d+(?![A-Za-z\d])/, spaced: false },
   { form: 'a #N reference', pattern: /(?<![A-Za-z\d])#\s*\d+(?![A-Za-z\d])/, spaced: false },
   { form: 'a GH-N reference', pattern: /(?<![A-Za-z\d-])GH-\d+(?![A-Za-z\d])/i, spaced: false },
@@ -276,7 +286,7 @@ export function uncited(draft: Draft, prNumbers: readonly number[]): number[] {
 export const DRAFT_TASK = `
 You are drafting the [Unreleased] section of CHANGELOG.md for Kickoff, a public app that shows the fixtures and standings of Europe's big five football leagues in Brooklyn time. The data below is each pull request merged into main since the last release tag, labelled with its number, and then the section as it stands now.
 
-The CHANGELOG is a product surface, not a commit log: a reader of the public repo should follow every line without having read the PRs. The shape is a lead of exactly one sentence naming what these changes add up to, with no abbreviations, and with the PRs it sums up in its prs list; then Added, Changed and Fixed; then Deliberately not done. Each line is one or two plain sentences on what changed for a reader. Put every PR number a line or the lead comes from in its prs list, and do not write PR numbers in the text. Group PRs into one line when they are one change.
+The CHANGELOG is a product surface, not a commit log: a reader of the public repo should follow every line without having read the PRs. The shape is a lead of exactly one sentence naming what these changes add up to, with no abbreviations, and with the PRs it sums up in its prs list; then Added, Changed and Fixed; then Deliberately not done. Each line is one or two plain sentences on what changed for a reader. Put every PR number a line or the lead comes from in its prs list, and do not write PR numbers in the text. Write no links or URLs, and put any address that must appear in a code span. Group PRs into one line when they are one change.
 
 Leave out a PR that a CHANGELOG reader would not care about, such as one that only archives review records or build briefs: a person will see which PRs you left out and decide. Deliberately not done holds only what a PR's own description says was left out on purpose, never something you infer. State only what the PR titles and descriptions say. Leave a section empty rather than pad it.
 

@@ -240,6 +240,8 @@ describe('runUnreleased', () => {
     expect(stdin).toContain('The standings table fits a 360 px phone.')
     expect(stdin).toContain('Archives the sync rules.')
     expect(stdin).toContain('- The preview smoke\'s landmark moved.')
+    // Fix round 6, part 2: the task says what the check refuses before the model writes it.
+    expect(stdin).toContain('do not write PR numbers in the text. Write no links or URLs, and put any address that must appear in a code span.')
     for (const kept of ['Its body must never reach the model', 'Time-sensitive fixture lines', 'Nothing changed.', 'Already released.', 'Merged one second after']) {
       expect(stdin).not.toContain(kept)
     }
@@ -545,6 +547,25 @@ describe('a draft that cites a PR in its own text', () => {
         'The table **fits** a *390 px* phone, ~~mostly~~ always.',
         // Round 5 refused this. GitHub renders no link, as for #_327.
         'The table fits, as ~~#~~327 shows.',
+      ],
+    },
+    {
+      // Fix round 6, part 2: an address names a PR or issue, link or no link, so it is read in a
+      // code span too.
+      rule: 'an issue or pull request address, code spans included',
+      refused: [
+        [cites('an issue or pull request address'), 'The fix is at `https://github.com/BeniCheni/kickoff/pull/327` now.'],
+        [cites('an issue or pull request address'), 'The ask is at `https://github.com/BeniCheni/kickoff/issues/361` now.'],
+        [cites('an issue or pull request address'), 'The fix is at `https://redirect.github.com/BeniCheni/kickoff/pull/327` now.'],
+        [cites('an issue or pull request address'), 'The API has it at `https://api.github.com/repos/BeniCheni/kickoff/pulls/327` now.'],
+        [cites('an issue or pull request address'), 'The API has it at `https://api.github.com/repos/BeniCheni/kickoff/issues/361` now.'],
+        [cites('an issue or pull request address'), 'The files are at `https://github.com/BeniCheni/kickoff/pull/327/files` now.'],
+        [cites('an issue or pull request address'), 'The diff is at `https://github.com/BeniCheni/kickoff/pull/327.diff` now.'],
+      ],
+      prints: [
+        'The list is at `https://github.com/BeniCheni/kickoff/pulls` now.',
+        // The number is bounded after it, as the short forms are.
+        'The odd path `https://github.com/BeniCheni/kickoff/pull/327b` is not one.',
       ],
     },
     {
