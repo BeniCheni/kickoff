@@ -77,13 +77,14 @@ STANDING RULES.
 BUDGET. At 9 AM EST Beni had about 10% of his weekly usage left, resetting at 4 PM EST today. Until then, do the read-only orientation and the one-word questions only, and start any brief after the reset unless Beni says otherwise. Batch tool calls and skip re-reads.
 ````
 
-## The second handoff, to Fable 5.2 High (Mon 23 Nov 2026, about 11:50 AM EST)
+## The second handoff, to Fable 5.2 Extra High (Mon 23 Nov 2026, about 11:50 AM EST)
 
 The Opus 5.5 High session started from the block above confirmed every SHA and state in it and
 put the four forks to Beni, who ruled them at about 10:40 AM EST. Its record is the project memory
 note `track-a-pr5-rulings-2026-11-23`. Beni then closed that session and asked for a brief that
-moves the planner seat to Fable 5.2 High until the 4 PM EST budget reset, to use the Fable usage he
-still had. The old Track A session wrote this section from a fresh read at about 11:40 AM EST:
+moves the planner seat to Fable 5.2 until the 4 PM EST budget reset, to use the Fable usage he
+still had. He first asked for High, then raised it to Extra High ("go all-in"), within the effort
+cap he set on Tue 17 Nov. The old Track A session wrote this section from a fresh read at about 11:40 AM EST:
 `origin/overhaul/second-edition` at `45b7bc6`, `origin/main` at `ffc5cac`, open PRs #328, #358
 and #365, and `tests/vercelIgnore.test.ts` on main still leaking (lines 17 and 19).
 
@@ -95,9 +96,9 @@ and PR 5, not PR 7.
 ````text
 Kickoff — the Track A Planner on Fable 5.2 until 4 PM: the second handoff (Mon 23 Nov 2026)
 
-If this paste looks cut short, read the whole brief from its archive before anything else: git -C /Users/benicheni/code/kickoff show claude/track-a-archive-8:docs/design-overhaul-planner-handoff.md, the section "The second handoff, to Fable 5.2 High". The branch is local and not pushed.
+If this paste looks cut short, read the whole brief from its archive before anything else: git -C /Users/benicheni/code/kickoff show claude/track-a-archive-8:docs/design-overhaul-planner-handoff.md, the section "The second handoff, to Fable 5.2 Extra High". The branch is local and not pushed.
 
-You are the Kickoff Planner, Track A's PM seat for Fergie Time's second-edition design overhaul, in a fresh Claude Code session on claude-fable-5-2 at high effort, started by Beni in /Users/benicheni/code/kickoff on Mon 23 Nov 2026. You hold the seat until the 4 PM EST budget reset, when Beni moves it back to Opus 5.5. Name your model and effort in everything you archive. Read CLAUDE.md and every file it points to (.claude/rules/sync.md, design-system.md and releases.md, and docs/roadmap-pointers.md), AGENTS.md and ~/.claude/CLAUDE.md first; they bind you. Then read the first handoff above this section in the same file: its roadmap, what has landed, what is next, the open calls and the standing rules all still hold, except where this section says otherwise. Treat the repository as ground truth and both briefs as maps of it. Run TZ=America/New_York date before writing any date.
+You are the Kickoff Planner, Track A's PM seat for Fergie Time's second-edition design overhaul, in a fresh Claude Code session on claude-fable-5-2 at xhigh effort, started by Beni in /Users/benicheni/code/kickoff on Mon 23 Nov 2026. You hold the seat until the 4 PM EST budget reset, when Beni moves it back to Opus 5.5. Name your model and effort in everything you archive. Read CLAUDE.md and every file it points to (.claude/rules/sync.md, design-system.md and releases.md, and docs/roadmap-pointers.md), AGENTS.md and ~/.claude/CLAUDE.md first; they bind you. Then read the first handoff above this section in the same file: its roadmap, what has landed, what is next, the open calls and the standing rules all still hold, except where this section says otherwise. Treat the repository as ground truth and both briefs as maps of it. Run TZ=America/New_York date before writing any date.
 
 WHAT CHANGED SINCE THE FIRST HANDOFF. An Opus 5.5 session confirmed every SHA and state in it and Beni ruled the four forks at about 10:40 AM EST. The record is the memory note ~/.claude/projects/-Users-benicheni-code-kickoff/memory/track-a-pr5-rulings-2026-11-23.md; read it. In short:
 1. PR 5, Poster's books, still: Codex builds it, at tier 3, the full six-pass 360. Under #328's "When Codex builds" column, the PM seat writes Passes 0 and 1.5, Pass 1 is a fresh Claude Code session on claude-fable-5-2 at xhigh, and Pass 2.5 is a fresh Claude Code session on claude-opus-5-5 at xhigh that writes nothing. Claude also runs the browser verification. Name #328's builders table as stale in PR 5's brief.
@@ -121,5 +122,5 @@ WHAT DONE LOOKS LIKE.
 
 LIVE FOLDERS. .claude/worktrees/track-a-archive, on claude/track-a-archive-8 (unpushed), until its docs PR merges. .claude/worktrees/sync-test-degraded-standings-88bd26, B5's, until #365 closes; do not touch it. .claude/worktrees/friendly-chaum-0c01ef holds one uncommitted file whose owner is unknown; leave it for Beni.
 
-BUDGET. Beni moved this seat to Fable to use the Fable usage he has left before 4 PM. Batch tool calls, skip re-reads, and stop to write deliverable 3 if your usage warns.
+BUDGET. Beni moved this seat to Fable at xhigh to use the Fable usage he has left before 4 PM, so spend it on the two prompts' depth: read every source they cite. Batch tool calls, skip re-reads, and stop to write deliverable 3 if your usage warns.
 ````
