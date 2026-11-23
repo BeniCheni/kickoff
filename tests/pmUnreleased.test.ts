@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { jsonSchemaFor, type ModelRunner } from '../scripts/pm/model'
 import type { CommandRunner, ProcessResult } from '../scripts/pm/process'
 import {
-  LIST_FIELDS, LIST_LIMIT, brooklynStamp, citeLine, citesInProse, currentUnreleased, draftBlocks, draftSchema, hasWords, isOneSentence,
+  LIST_FIELDS, LIST_LIMIT, UNPARSED_FORM, UNREAD, brooklynStamp, citeLine, citesInProse, currentUnreleased, draftBlocks, draftSchema, hasWords, isOneSentence,
   isSyncPr, mergedPrSchema, proseReference, renderDraft, runUnreleased, searchSince, splitPrs, uncited, type Draft,
 } from '../scripts/pm/unreleased'
 
@@ -406,6 +406,155 @@ describe('a draft that cites a PR in its own text', () => {
         expect(code, `${key}: ${text}`).toBe(0)
         expect(h.out.join('\n')).toContain(citeLine(text, [502]))
       }
+    }
+  })
+
+  // Fix round 5: the check reads a closed list of constructs and refuses the rest by name, so each
+  // construct it reads, and each it refuses unread, has a line it refuses and a line it prints.
+  const cites = (form: string) => `cites ${form} in its text, where only prs may cite`
+  const holds = (form: string) => `holds ${form}, which the citation check does not read`
+  const constructs: { construct: string; refused: [message: string, text: string][]; prints: string[] }[] = [
+    {
+      construct: 'code spans, read as plain text without their backticks',
+      refused: [[cites('a #N reference'), 'The table fits, as `#327` says.']],
+      prints: ['The parser leaves `\\`, `&amp;`, `[x]` and `<main>` as they are.', 'The sync PR comes from `github-actions[bot]`.'],
+    },
+    {
+      construct: 'inline links and images, whose labels and titles are visible text',
+      refused: [
+        // In a PR or issue body, a bare 327 resolves to /pull/327 or /issues/327.
+        [cites('an issue or pull request URL'), 'See [the change](327) for details.'],
+        [cites('an issue or pull request URL'), 'See the [change](/BeniCheni/kickoff/pull/327) for details.'],
+        [cites('a #N reference'), 'The badge ![#327](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml/badge.svg) is green.'],
+        [cites('a PR or issue named by number'), `See [the notes](${changelogLink} "issue 361") for details.`],
+      ],
+      prints: [
+        'The badge ![build status](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml/badge.svg) is green.',
+        `See [the notes](${changelogLink} "the release notes") for details.`,
+        `See [the notes](<${changelogLink}>) for details.`,
+      ],
+    },
+    {
+      construct: 'autolinks and bare URLs',
+      refused: [
+        [cites('an issue or pull request URL'), 'See <https://github.com/BeniCheni/kickoff/pull/327> for details.'],
+        [cites('an issue or pull request URL'), 'See www.github.com/BeniCheni/kickoff/issues/361 for details.'],
+      ],
+      prints: ['See <https://benicheni.github.io/kickoff/> for the demo.', 'See www.example.org/docs for details.'],
+    },
+    {
+      construct: 'link destinations, judged by their percent-decoded pathname alone',
+      refused: [
+        // Codex's fifth re-read: the API's address for a PR, and its issue twin.
+        [cites('an issue or pull request URL'), 'See the [API URL for that PR](https://api.github.com/repos/BeniCheni/kickoff/pulls/327) for details.'],
+        [cites('an issue or pull request URL'), 'See the [API URL for that issue](https://api.github.com/repos/BeniCheni/kickoff/issues/361) for details.'],
+        [cites('an issue or pull request URL'), 'See the [change](https://github.com/BeniCheni/kickoff/p%75ll/327) for details.'],
+        [cites('an issue or pull request URL'), 'See the [change](https://github.com/BeniCheni/kickoff/pull/327.diff) for details.'],
+      ],
+      prints: [
+        // Codex's fifth re-read: both pathnames are /docs.
+        'See the [docs](https://example.org/docs?example=/pull/327) for details.',
+        'See the [docs](https://example.org/docs#/issues/361) for details.',
+        'See the [notes](https://github.com/BeniCheni/kickoff/blob/main/docs/release%20notes.md) for details.',
+      ],
+    },
+    {
+      construct: 'emphasis and strikethrough markers, dropped before the text is judged',
+      refused: [
+        // Codex's fifth re-read.
+        [cites('a PR or issue named by number'), `See [the **issue** 361](${changelogLink}) for details.`],
+        [cites('a #N reference'), 'The table fits, as ~~#~~327 shows.'],
+      ],
+      prints: ['The table **fits** a *390 px* phone, ~~mostly~~ always.'],
+    },
+    {
+      construct: 'plain text, normalized, with a token boundary after a short form',
+      refused: [
+        [cites('a #N reference'), 'The table fits, as #​327 shows.'],
+        [cites('a #N reference'), 'The table fits, as #３２７ shows.'],
+        [cites('a #N reference'), 'The table fits, as &#327 shows.'],
+        // Codex's fifth re-read: GitHub links these, so they stay refused.
+        [cites('a #N reference'), 'The table fits, per #327, on a phone.'],
+        [cites('a #N reference'), 'The table fits a phone (#327).'],
+        [cites('a GH-N reference'), 'The table fits, as GH-327.'],
+        [cites('a PR or issue named by number'), 'The table fits, as issue 361: it asked.'],
+      ],
+      // Codex's fifth re-read: GitHub renders the first two as plain text.
+      prints: ['The color is #327b.', 'The part is GH-327b.', 'Fixtures & standings share one clock.'],
+    },
+    {
+      construct: 'unread: a private-use character',
+      refused: [[holds('a private-use character'), 'The table fits a phone.']],
+      prints: ['The table fits ⚽ every phone.'],
+    },
+    {
+      construct: 'unread: a backslash escape',
+      refused: [[holds('a backslash escape'), 'The table fits \\*every\\* phone.']],
+      prints: ['The path separator is `\\` on Windows.'],
+    },
+    {
+      construct: 'unread: a character reference',
+      refused: [
+        // Codex's fifth re-read: GitHub decodes &#47; to a slash and links PR 327.
+        [holds('a character reference'), 'See the [change](https://github.com/BeniCheni/kickoff/pull&#47;327) for details.'],
+        [holds('a character reference'), 'Fixtures &amp; standings share one clock.'],
+      ],
+      prints: ['The entity `&amp;` prints as it is.'],
+    },
+    {
+      construct: 'unread: raw HTML',
+      refused: [
+        [holds('raw HTML'), 'See the <a href="https://github.com/BeniCheni/kickoff/pull/327">change</a> for details.'],
+        [holds('raw HTML'), 'The table fits<!-- issue 361 --> a phone.'],
+      ],
+      prints: ['The table fits every width < 400 px.', 'The page keeps its `<main>` landmark.'],
+    },
+    {
+      construct: 'unread: a bracket outside a plain inline link',
+      refused: [
+        // Codex's fifth re-read: GitHub links a balanced label to /BeniCheni/kickoff/pull/327.
+        [holds('a bracket outside a plain inline link'), 'See the [[Unreleased] changes](/BeniCheni/kickoff/pull/327) for details.'],
+        [holds('a bracket outside a plain inline link'), 'See [the change][327] for details.'],
+        // A true line, refused because a reference definition could make [bot] a link.
+        [holds('a bracket outside a plain inline link'), 'The sync PR comes from github-actions[bot].'],
+      ],
+      prints: [`See the [changelog](${changelogLink}) for details.`],
+    },
+    {
+      construct: 'unread: a link the check cannot parse',
+      refused: [
+        [holds('a link the check cannot parse'), 'See the [change](https://github.com/BeniCheni/kickoff/pull%2/327) for details.'],
+        [holds('a link the check cannot parse'), 'See the [change](https://[327]/) for details.'],
+      ],
+      prints: ['See the [notes](https://github.com/BeniCheni/kickoff/blob/main/docs/release%20notes.md) for details.'],
+    },
+  ]
+
+  it('reads each construct on its closed list, and refuses each it does not read, in every position', async () => {
+    for (const { construct, refused, prints } of constructs) {
+      for (const [message, text] of refused) {
+        for (const key of positions) {
+          const { h, code } = await run(placed(key, text))
+          expect(code, `${construct}, ${key}: ${text}`).toBe(1)
+          expect(h.out).toHaveLength(2)
+          expect(h.out[1], `${construct}, ${key}: ${text}`).toContain(message)
+          expect(h.out.join('\n')).not.toContain('## Draft')
+        }
+      }
+      for (const text of prints) {
+        for (const key of positions) {
+          const { h, code } = await run(placed(key, text))
+          expect(code, `${construct}, ${key}: ${text}`).toBe(0)
+          expect(h.out.join('\n')).toContain(citeLine(text, [502]))
+        }
+      }
+    }
+  })
+
+  it('names in the README every construct it refuses unread', () => {
+    const readme = readFileSync('scripts/pm/README.md', 'utf8')
+    for (const form of [...UNREAD.map(({ form }) => form), UNPARSED_FORM]) {
+      expect(readme).toContain(`**${form}**`)
     }
   })
 })

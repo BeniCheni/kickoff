@@ -130,69 +130,161 @@ export function isOneSentence(text: string): boolean {
  * nothing checked, such as a link to #327 printed beside the real "(#502)". Issues count because
  * they share the PRs' number space.
  *
- * A line has two parts, judged apart. Its link targets (Markdown link and image destinations,
- * `<…>` autolinks and bare URLs) are refused only when they are an issue or pull request address.
- * Its visible text (everything else, link labels included) is refused for GitHub's short forms
- * and for the same reference in words, each matched as whole tokens. So a file named
- * `issue10047.go` in a link, or `pr0` in a path, is not a reference, while `[#327](…)` and
- * `[issue 361](…)` are. The forms are GitHub's own, from "Autolinked references and URLs"
- * (docs.github.com, read 22 Nov 2026).
+ * The check fails closed. It reads a closed list of Markdown constructs, and it refuses a line
+ * holding anything else it cannot judge (UNREAD below), because a false refusal costs one retry
+ * while a construct it misread would let a citation nothing checked into the CHANGELOG. It reads,
+ * in this order:
+ *
+ * 1. Code spans. GitHub reads nothing inside one as Markdown, so its text is set aside before the
+ *    refusals below and put back, without its backticks, as plain text.
+ * 2. Inline links and images, `[label](destination "title")`, with no bracket in the label and no
+ *    space or parenthesis in a bare destination. The label and title are visible text, and the
+ *    destination is an address.
+ * 3. Autolinks, `<https://…>`, and bare URLs from `https://`, `http://` or `www.` up to a space
+ *    or `<`. Each is an address.
+ * 4. Emphasis and strikethrough markers, `*`, `_` and `~`, dropped from the visible text, so
+ *    `**issue** 361` reads as "issue 361".
+ * 5. Plain text: the rest, normalized (NFKC, with invisible format characters dropped) so that a
+ *    fullwidth `#３２７` or a zero-width space inside `#327` reads as `#327`.
+ *
+ * An address is refused when it is an issue or pull request address, and the visible text is
+ * refused for GitHub's short forms and for the same reference in words. The forms are GitHub's
+ * own, from "Autolinked references and URLs" (docs.github.com, read 22 Nov 2026).
  */
 export interface LineParts {
   visible: string
   targets: string[]
 }
 
-const MARKDOWN_LINK = /!?\[([^\]]*)\]\(\s*<?([^\s>)]*)>?(?:\s+(?:"[^"]*"|'[^']*'))?\s*\)/g
-const AUTOLINK = /<((?:https?:\/\/|www\.)[^\s>]+)>/gi
-const BARE_URL = /\b(?:https?:\/\/|www\.)[^\s<>()[\]`]+/gi
+const CODE_SPAN = /(?<!`)(`+)(?!`)(.*?)(?<!`)\1(?!`)/g
+const INLINE_LINK = /!?\[([^[\]]*)\]\(\s*(?:<([^<>]*)>|([^\s<>()]*))(?:\s+(?:"([^"]*)"|'([^']*)'))?\s*\)/g
+const AUTOLINK = /<(https?:\/\/[^\s<>]*)>/gi
+const BARE_URL = /(?:https?:\/\/|www\.)[^\s<]+/gi
+const MARKERS = /[*_~`]/g
+const SLOT = /(\d+)/g
 
-/** Splits a line into what a reader sees and where its links go. A label stays visible. */
-export function lineParts(text: string): LineParts {
+/** What the check does not read. Each is refused by name, outside code spans only. */
+export const UNREAD = [
+  { form: 'a private-use character', pattern: /\p{Co}/u },
+  { form: 'a backslash escape', pattern: /\\/ },
+  { form: 'a character reference', pattern: /&(?:#\d+|#x[\da-f]+|[a-z][a-z\d]*);/i },
+  { form: 'raw HTML', pattern: /<[a-z/!?]/i },
+  { form: 'a bracket outside a plain inline link', pattern: /[[\]]/ },
+] as const
+type Unread = (typeof UNREAD)[number]['form']
+const unreadIn = (text: string, forms: readonly Unread[]) =>
+  UNREAD.find(({ form, pattern }) => forms.includes(form) && pattern.test(text))?.form
+
+/**
+ * Splits a line into what a reader sees and where its links go, or names the first construct it
+ * does not read. The text is flattened first, as `citeLine` prints it.
+ */
+export function lineParts(text: string): LineParts | { unread: string } {
+  const flat = text.replace(/\s+/g, ' ').trim()
+  const privateUse = unreadIn(flat, ['a private-use character'])
+  if (privateUse) return { unread: privateUse }
+  const codes: string[] = []
+  const restore = (part: string) => part.replace(SLOT, (_, i: string) => codes[Number(i)] ?? '')
+  let markup = flat.replace(CODE_SPAN, (_, _fence: string, code: string) => `${codes.push(code) - 1}`)
+  const early = unreadIn(markup, ['a backslash escape', 'a character reference'])
+  if (early) return { unread: early }
   const targets: string[] = []
   const take = (target: string) => {
-    targets.push(target)
+    targets.push(restore(target))
     return ' '
   }
-  const visible = text
-    .replace(MARKDOWN_LINK, (_, label: string, target: string) => `${label}${take(target)}`)
+  markup = markup
+    .replace(INLINE_LINK, (_, label: string, angled?: string, bare?: string, double?: string, single?: string) =>
+      `${label}${take(angled ?? bare ?? '')}${double ?? single ?? ''} `)
     .replace(AUTOLINK, (_, target: string) => take(target))
+  const late = unreadIn(markup, ['raw HTML', 'a bracket outside a plain inline link'])
+  if (late) return { unread: late }
+  const visible = restore(markup)
     .replace(BARE_URL, (target) => take(target))
+    .replace(MARKERS, '')
+    .normalize('NFKC')
+    .replace(/\p{Cf}/gu, '')
   return { visible, targets }
 }
 
 /**
- * An issue or pull request address: an `/issues/N` or `/pull/N` path, absolute on any host (so
- * `redirect.github.com`, which GitHub documents for links without a backlink, too) or relative.
+ * Where a relative destination lands depends on the page: in CHANGELOG.md on GitHub, `327` is a
+ * file beside it, but in a PR or issue body it is `/pull/327`. So each destination is resolved
+ * against both, and refused if either lands on an issue or pull request.
  */
-export function isReferenceAddress(target: string): boolean {
-  return /(?:^|\/)(?:pull|issues)\/\d+(?![\w-])/i.test(target)
-}
-
-export const ADDRESS_FORM = 'an issue or pull request URL'
+export const LINK_BASES = [
+  'https://github.com/BeniCheni/kickoff/blob/main/CHANGELOG.md',
+  'https://github.com/BeniCheni/kickoff/pull/',
+] as const
 
 /**
- * The short forms and the words, read in the visible text only. The words take a keyword and a
- * number as separate tokens ("PR 7b", "issue #361"), never one glued token ("issue10047"). They
+ * An issue or pull request address: a pathname, after percent-decoding, holding `/issues/N`,
+ * `/pull/N` or `/pulls/N` (the API's `/repos/<owner>/<repo>/pulls/N`) on any host, so
+ * `redirect.github.com`, which GitHub documents for links without a backlink, counts too. Only
+ * the pathname is read, by the WHATWG URL parser: a query or a fragment never is.
+ */
+const REFERENCE_PATH = /\/(?:pull|pulls|issues)\/\d+(?![\dA-Za-z])/i
+export const ADDRESS_FORM = 'an issue or pull request URL'
+export const UNPARSED_FORM = 'a link the check cannot parse'
+
+export function addressForm(target: string): string | undefined {
+  const href = /^www\./i.test(target) ? `http://${target}` : target
+  for (const base of LINK_BASES) {
+    let pathname: string
+    try {
+      pathname = decodeURIComponent(new URL(href, base).pathname)
+    } catch {
+      return UNPARSED_FORM
+    }
+    if (REFERENCE_PATH.test(pathname)) return ADDRESS_FORM
+  }
+  return undefined
+}
+
+export function isReferenceAddress(target: string): boolean {
+  return addressForm(target) === ADDRESS_FORM
+}
+
+/**
+ * The short forms and the words, read in the visible text only. A short form needs a token
+ * boundary before and after its number, so `#327,` and `(#327)` count while `#327b`, which GitHub
+ * renders as plain text, does not. The words take a keyword and a number as separate tokens
+ * ("PR 7b", "issue #361"), never one glued token ("issue10047"), with no boundary after: they
  * also refuse an internal name such as "PR 0" or "PR 7b", and plain prose that puts a number
- * after "issue" or "pull request": the change can always be told without that, as the README says.
+ * after "issue" or "pull request". The change can always be told without that, as the README says.
  */
 export const TEXT_REFERENCES = [
-  { form: 'an owner/repo#N reference', pattern: /(?<![\w./-])[\w.-]+\/[\w.-]+#\d/ },
-  { form: 'a #N reference', pattern: /(?<![\w&#])#\s*\d/ },
-  { form: 'a GH-N reference', pattern: /(?<![\w-])GH-\d/i },
+  { form: 'an owner/repo#N reference', pattern: /(?<![\w./-])[\w.-]+\/[\w.-]+#\d+(?!\w)/ },
+  { form: 'a #N reference', pattern: /(?<!\w)#\s*\d+(?!\w)/ },
+  { form: 'a GH-N reference', pattern: /(?<![\w-])GH-\d+(?!\w)/i },
   { form: 'a PR or issue named by number', pattern: /\b(?:PRs?|pull requests?|issues?)(?:\s+#?|\s*#)\s*\d/i },
 ] as const
 
-/** The first reference form the text uses, or undefined when it cites nothing of its own. */
+export interface TextFinding {
+  form: string
+  /** True when the line holds a construct the check does not read, rather than a reference. */
+  unread: boolean
+}
+
+/** Why the check refuses a line's text, or undefined when it cites nothing of its own. */
+export function textFinding(text: string): TextFinding | undefined {
+  const parts = lineParts(text)
+  if ('unread' in parts) return { form: parts.unread, unread: true }
+  for (const target of parts.targets) {
+    const form = addressForm(target)
+    if (form) return { form, unread: form === UNPARSED_FORM }
+  }
+  const form = TEXT_REFERENCES.find(({ pattern }) => pattern.test(parts.visible))?.form
+  return form ? { form, unread: false } : undefined
+}
+
+/** The form the check refused a line's text for, or undefined when it passes. */
 export function proseReference(text: string): string | undefined {
-  const { visible, targets } = lineParts(text)
-  if (targets.some(isReferenceAddress)) return ADDRESS_FORM
-  return TEXT_REFERENCES.find(({ pattern }) => pattern.test(visible))?.form
+  return textFinding(text)?.form
 }
 
 export function citesInProse(text: string): boolean {
-  return proseReference(text) !== undefined
+  return textFinding(text) !== undefined
 }
 
 /** Sentence content: at least one word of two letters, so "." or "…" is not a line. */
@@ -204,8 +296,14 @@ export function hasWords(text: string): boolean {
 const prose = (what: string) => z.string().min(1)
   .refine(hasWords, `${what} has no words`)
   .superRefine((text, ctx) => {
-    const form = proseReference(text)
-    if (form) ctx.addIssue({ code: 'custom', message: `${what} cites ${form} in its text, where only prs may cite` })
+    const finding = textFinding(text)
+    if (!finding) return
+    ctx.addIssue({
+      code: 'custom',
+      message: finding.unread
+        ? `${what} holds ${finding.form}, which the citation check does not read`
+        : `${what} cites ${finding.form} in its text, where only prs may cite`,
+    })
   })
 
 /**
