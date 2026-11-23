@@ -90,10 +90,13 @@ claims to check, not a verdict.
    section, so the draft matches its voice. The draft follows the shape in
    `.claude/rules/releases.md`: one lead sentence, then Added, Changed and Fixed, then
    **Deliberately not done**, with every line, the lead included, citing its PRs. A line can
-   cite only a PR that was sent. The lead must be exactly one sentence, checked in plain code
-   (it ends in `.`, `!` or `?`, and no such mark followed by a space comes before the end). A
-   draft that breaks either rule is a model failure, not a printed draft. Any PR the draft leaves
-   out is named under it, so a person decides whether it belongs.
+   cite only a PR that was sent, and only through its `prs` list. Plain code prints the citation,
+   so a line's own text may not write a PR number (`#999`, `PR 999`, `pull request 999`), which
+   nothing would check. Every text needs words: at least one run of two letters, so `.` alone is
+   not a line. The lead must be exactly one sentence, also checked in plain code (it ends in `.`,
+   `!` or `?`, and no such mark followed by a space comes before the end). A draft that breaks
+   any of these rules is a model failure, not a printed draft. Any PR the draft leaves out is
+   named under it, so a person decides whether it belongs.
 
 It prints the draft inside a fence. Wrap it to the file's style when you paste it into
 `CHANGELOG.md`.

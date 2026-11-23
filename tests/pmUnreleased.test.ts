@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { jsonSchemaFor, type ModelRunner } from '../scripts/pm/model'
 import type { CommandRunner, ProcessResult } from '../scripts/pm/process'
 import {
-  LIST_FIELDS, LIST_LIMIT, brooklynStamp, citeLine, currentUnreleased, draftBlocks, draftSchema, isOneSentence,
+  LIST_FIELDS, LIST_LIMIT, brooklynStamp, citeLine, citesInProse, currentUnreleased, draftBlocks, draftSchema, hasWords, isOneSentence,
   isSyncPr, mergedPrSchema, renderDraft, runUnreleased, searchSince, splitPrs, uncited, type Draft,
 } from '../scripts/pm/unreleased'
 
@@ -123,8 +123,8 @@ describe('the draft', () => {
 
   it('may cite only the PRs that were sent, and every line must cite one', () => {
     expect(schema.safeParse(draft).success).toBe(true)
-    expect(schema.safeParse({ ...draft, fixed: [{ text: 'x', prs: [320] }] }).success).toBe(false)
-    expect(schema.safeParse({ ...draft, fixed: [{ text: 'x', prs: [] }] }).success).toBe(false)
+    expect(schema.safeParse({ ...draft, fixed: [{ text: 'The table fits.', prs: [320] }] }).success).toBe(false)
+    expect(schema.safeParse({ ...draft, fixed: [{ text: 'The table fits.', prs: [] }] }).success).toBe(false)
     expect(schema.safeParse({ ...draft, removed: [] }).success).toBe(false)
     const { notDone: _dropped, ...partial } = draft
     expect(schema.safeParse(partial).success).toBe(false)
@@ -144,6 +144,35 @@ describe('the draft', () => {
     const lead = (jsonSchemaFor(schema).properties as Record<string, { properties: Record<string, object> }>).lead!
     expect(lead.properties.prs).toMatchObject({ minItems: 1, items: { enum: [502, 504] } })
     expect(lead.properties.text).toMatchObject({ description: expect.stringContaining('Exactly one sentence') })
+  })
+
+  it('takes citations only from prs, never from the text, in the lead and in every line', () => {
+    // Codex's re-read: "(#999)" in the text printed beside the real citation, "(#999) (#502)".
+    for (const text of ['The table fits small screens (#999).', 'The table fits, per PR 999.', 'Pull request #504 fits the table.']) {
+      expect(schema.safeParse({ ...draft, lead: { text, prs: [502] } }).success).toBe(false)
+      expect(schema.safeParse({ ...draft, added: [{ text, prs: [502] }] }).success).toBe(false)
+    }
+  })
+
+  it('needs words before the closing mark, in the lead and in every line', () => {
+    // Codex's re-read: a lead of "." printed as "(#502).".
+    for (const text of ['.', '...', '(#502).', ' ? ']) {
+      expect(schema.safeParse({ ...draft, lead: { text, prs: [502] } }).success).toBe(false)
+      expect(schema.safeParse({ ...draft, notDone: [{ text, prs: [502] }] }).success).toBe(false)
+    }
+  })
+
+  it('tells a PR number from the other numbers a line may hold', () => {
+    expect(citesInProse('The public CSS shrinks by 1,583 bytes.')).toBe(false)
+    expect(citesInProse('Kickoff v0.5.5 picks up Next.js 16.4.6 on Node 24.')).toBe(false)
+    expect(citesInProse('The table fits a 360 px phone.')).toBe(false)
+    expect(citesInProse('It fits (#999).')).toBe(true)
+    expect(citesInProse('It fits (# 999).')).toBe(true)
+    expect(citesInProse('Built in PRs 7 and 9.')).toBe(true)
+    expect(hasWords('It fits.')).toBe(true)
+    expect(hasWords('Ça marche.')).toBe(true)
+    expect(hasWords('A.')).toBe(false)
+    expect(hasWords('….')).toBe(false)
   })
 
   it('counts one sentence the strict way', () => {
@@ -240,10 +269,16 @@ describe('runUnreleased', () => {
     for (const model of [
       readFileSync('tests/fixtures/pm/claude-signed-out.json', 'utf8'),
       'not json',
-      answer({ ...draft, fixed: [{ text: 'x', prs: [999] }] }),
+      answer({ ...draft, fixed: [{ text: 'The table fits.', prs: [999] }] }),
       // The live draft Codex saw: a two-sentence lead with no citation.
       answer({ ...draft, lead: 'These changes leave what a reader sees untouched. The groundwork is laid.' }),
       answer({ ...draft, lead: { text: 'One. Two.', prs: [502] } }),
+      // Codex's re-read: both of these exited 0 and printed a draft.
+      answer({ ...draft, lead: { text: 'The table fits small screens (#999).', prs: [502] } }),
+      answer({ ...draft, lead: { text: '.', prs: [502] } }),
+      // The same holes in a section line.
+      answer({ ...draft, changed: [{ text: 'The table fits small screens (#999).', prs: [502] }] }),
+      answer({ ...draft, changed: [{ text: '.', prs: [502] }] }),
     ]) {
       const h = harness({ model, terminal: false })
       expect(await runUnreleased([], h.deps)).toBe(1)

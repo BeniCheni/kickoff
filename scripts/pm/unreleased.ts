@@ -125,18 +125,39 @@ export function isOneSentence(text: string): boolean {
 }
 
 /**
+ * A PR number written into the prose: "#999", "PR 999", "pull request #999". Citations come only
+ * from a line's `prs`, which the enum holds to the PRs sent, so a number in the text would be a
+ * citation that nothing checked: "(#999)" printed beside the real "(#502)".
+ */
+export function citesInProse(text: string): boolean {
+  return /#\s*\d|\b(?:PRs?|pull requests?)\s*#?\s*\d/i.test(text)
+}
+
+/** Sentence content: at least one word of two letters, so "." or "…" is not a line. */
+export function hasWords(text: string): boolean {
+  return /\p{L}{2}/u.test(text)
+}
+
+/** The text of a line or the lead: words, and no PR number of its own. */
+const prose = (what: string) => z.string().min(1)
+  .refine(hasWords, `${what} has no words`)
+  .refine((text) => !citesInProse(text), `${what} writes a PR number into its text, where only prs may cite`)
+
+/**
  * Every line, the lead included, cites at least one PR, and only PRs this code sent, so the
- * model cannot cite one it made up. The lead's one-sentence rule is a check zod runs on the
- * answer; JSON Schema cannot say it, so the schema only describes it to the model.
+ * model cannot cite one it made up, and its text has words and no PR number of its own. The
+ * lead's one-sentence rule is a check zod runs on the answer too. JSON Schema cannot say these
+ * checks, so the schema leaves them out, the task and the lead's description tell the model, and
+ * zod enforces them.
  */
 export function draftSchema(prNumbers: readonly number[]) {
   const [first, ...rest] = prNumbers
   if (first === undefined) throw new Error('draftSchema needs at least one PR number')
   const prs = z.array(z.literal([first, ...rest])).min(1)
-  const line = z.object({ text: z.string().min(1), prs }).strict()
+  const line = z.object({ text: prose('a line'), prs }).strict()
   return z.object({
     lead: z.object({
-      text: z.string().min(1)
+      text: prose('the lead')
         .describe('Exactly one sentence, ending in a full stop, with no abbreviations and no PR numbers.')
         .refine(isOneSentence, 'the lead must be exactly one sentence'),
       prs,
