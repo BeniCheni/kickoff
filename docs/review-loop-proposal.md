@@ -727,6 +727,26 @@ Cursor's hands this track seats no Cursor.
   refusal and seat-token attempt live at `75fada0`, and posts the exec record. T7's forge paths
   that test only the rulesets stand from 17 Nov, since the rulesets and `gate-test` are
   unchanged. Beni merges PR 8 afterwards.
+- *Executed (Sun 22 Nov 2026):* the exec record
+  ([comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-7090032502)), from Codex
+  Desktop `0.171.0-alpha.13` on `gpt-6.2-sol` at `xhigh`: acceptance passed at `75fada0`. On
+  PR 6, the locked gate fixture, the App posted `kickoff/360` success at `21ba7b3`, at `30af773`
+  (a CHANGELOG-only push) and at `8b3a2db` (a source change, after its re-reads). `authorize`
+  refused `8b3a2db` before the re-reads, and the red `771ccd4`, reading no key. The seats'
+  token's one attempt, on `1d0dcb2`, got HTTP 403 and left no status. T1's dry-run push
+  authenticated through the seat helper, and T9's tarball matched the ninth round's, with PR 1's
+  `status` and `check` byte for byte. Each of the five Keychain reads (three of the App's key,
+  two of the seats' token) prompted Beni and was allowed. Under the example configuration,
+  `status` on PR 8 then named `authorize`. `replay/gate` ends at `1d0dcb2`, whose test change
+  needs a 2.5 re-read before the next run's T6. Beni's answers during the run are under
+  "Rulings received" ("Sprint 3's executor").
+- *Merged (Beni, Sun 22 Nov 2026, 21:46 EST):* Beni squash-merged PR 8 at `75fada0` with the
+  Planner's message. `main` is `84b0c20`, one parent `7affd47`, and its tree (`3e02dd9`) is
+  `75fada0`'s exactly. The message carries Codex's Co-authored-by line and no Kickoff link, and
+  no fixture or Kickoff pull request gained a cross-reference. CI's `test` on `main` is green
+  (run `45102112945`). The tag list is empty; `sprint-3`, `replay/main` and `replay/gate` are
+  unmoved; PRs 1, 3 and 6 stay open and locked as fixtures. Sprint 4's brief is next, and it
+  carries 25-34 and 3-3.
 - *Carried from Sprint 1's Pass 1* (Beni, 16 Nov, under "Rulings received"; the numbers are that
   comment's findings): 6, sequence by the order records were posted, not their presence; 7, every
   pass's `input_sha` is the previous recorded pass's `output_sha`, writing or not, and a head
@@ -1774,6 +1794,27 @@ for Cursor (S7).
     [`review-loop-sprint-3-ruling-9-forms.md`](review-loop-sprint-3-ruling-9-forms.md), with a
     one-line test change that catches all five.
   - **After this record**, `status` on PR 8 names `exec`, "no record for pass exec".
+- **Sprint 3's executor (Beni, Sun 22 Nov 2026, in Codex's chat, from the Planner's drafts).**
+  Codex stopped where the brief told it to, and once where the brief contradicted itself.
+  - **gh's own login.** The write list named Beni's gh login, but the Keychain rule said "never
+    read any other Keychain item", and gh keeps its login in the Keychain. Beni let gh use that
+    login internally, for the brief's GETs and writes only. Codex never ran `security` for it,
+    never printed or exported the token, and pushed through `gh auth git-credential` with every
+    inherited helper reset. The gap was the Planner's: what had to hold was that only the three
+    named steps read the two test items, and that no credential value reaches a file, an
+    argument list or a transcript.
+  - **The prompts.** Codex asked after each read, and Beni confirmed each. securityd's log
+    matched them: `elenchus-app-key` at 15:59:06, 21:05:44 and 21:10:51 EST, and
+    `elenchus-seat-token` at 21:16:13 (T7) and 21:17:40 (T1), each approved `allow`, with no
+    Keychain query during the two refusals.
+  - **The record's wording.** Beni had Codex name its runtime as `session_meta` does, Codex
+    Desktop. The Planner's briefs had said "Codex in the ChatGPT desktop app". The record also
+    carries the five log times, and it keeps one nit: the constructed records on PR 6 repeat the
+    17 Nov fixture's requested model, `gpt-6.1-sol`.
+  - **Checked by the Planner:** Codex's session log after each stop (its one `security` call was
+    T7's command substitution, and every write is on the brief's list), GitHub after each step,
+    the posted comment against the draft and its four edits, and the record through
+    `75fada0`'s own code, rebuilt from a fresh clone, where `status` names `authorize`.
 
 D8, D10 and D11 are not yet ruled. D4 is withdrawn, and D12 is Pilot (17 Nov).
 
