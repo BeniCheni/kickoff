@@ -46,11 +46,14 @@ function syncLine(result, now) {
   else if (minutes >= 60) age = `${Math.floor(minutes / 60)}h`
 
   // GitHub leaves conclusion empty while a run is queued or in progress.
-  const outcome = run.conclusion || (run.status !== 'completed' && run.status)
+  const completed = run.status === 'completed'
+  if (!completed && run.conclusion) return unknownSync(checked)
+  const outcome = completed ? run.conclusion : run.status
   if (typeof outcome !== 'string' || !/^[a-z_]+$/.test(outcome)) return unknownSync(checked)
-  if (outcome === 'success' && (run.conclusion !== 'success' || run.status !== 'completed')) return unknownSync(checked)
+  if (outcome === 'success' && !completed) return unknownSync(checked)
 
   const summary = `Sync main: ${outcome} (${age} ago, checked ${checked}) ${run.url}`
+  if (!completed) return `${summary} | Run unfinished. Check again before any Step 0.`
   if (outcome === 'success') return summary
   return `${summary} | Step 0 needs independent primary-source re-verification. See CLAUDE.md, “Scheduled sync”.`
 }

@@ -36,15 +36,15 @@ it('shows the latest successful sync, a worktree with spaces, and no PR', () => 
   ])
 })
 
-it.each([
-  ['completed', 'failure', 'failure'],
-  ['completed', 'cancelled', 'cancelled'],
-  ['completed', 'timed_out', 'timed_out'],
-  ['queued', '', 'queued'],
-  ['in_progress', '', 'in_progress'],
-])('requires primary-source re-verification for %s / %s', (status, conclusion, outcome) => {
-  const sync = success(JSON.stringify([{ ...run, status, conclusion }]))
-  expect(formatContext({ ...fixtures, sync }, now)[0]).toBe(`Sync main: ${outcome} (2h ago, ${checked}) ${url} | ${stepZero}`)
+it.each(['failure', 'cancelled', 'timed_out'])('requires primary-source re-verification for completed %s', conclusion => {
+  const sync = success(JSON.stringify([{ ...run, conclusion }]))
+  expect(formatContext({ ...fixtures, sync }, now)[0]).toBe(`Sync main: ${conclusion} (2h ago, ${checked}) ${url} | ${stepZero}`)
+})
+
+it.each(['queued', 'in_progress', 'waiting'])('asks for a fresh check while a run is %s', status => {
+  const sync = success(JSON.stringify([{ ...run, status, conclusion: '' }]))
+  expect(formatContext({ ...fixtures, sync }, now)[0])
+    .toBe(`Sync main: ${status} (2h ago, ${checked}) ${url} | Run unfinished. Check again before any Step 0.`)
 })
 
 it.each([
@@ -53,6 +53,7 @@ it.each([
   ['an empty run list', success('[]')],
   ['malformed JSON', success('{"conclusion":')],
   ['success in the status field alone', success(JSON.stringify([{ ...run, status: 'success', conclusion: '' }]))],
+  ['a success conclusion on an unfinished run', success(JSON.stringify([{ ...run, status: 'in_progress' }]))],
   ['a successful run from another repository', success(JSON.stringify([{ ...run, url: url.replace('/kickoff/', '/other/') }]))],
   ['a run created in the future', success(JSON.stringify([{ ...run, createdAt: new Date(now + 1).toISOString() }]))],
 ])('keeps sync status unknown for %s', (_case, sync) => {
