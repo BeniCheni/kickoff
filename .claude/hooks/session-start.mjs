@@ -89,7 +89,7 @@ export function formatContext({ sync, worktrees, branch, pr }, now, home = '') {
   const name = branch.status === 0 ? branch.stdout.trim() : ''
   let session = 'Branch: unknown | PR unknown'
   if (branch.status === 0) {
-    session = name ? `Branch: ${oneLine(name)} | ${prLabel(pr)}` : 'Branch: detached HEAD | No PR'
+    session = name ? `Branch: ${oneLine(name)} | ${prLabel(pr)}` : 'Branch: detached HEAD | PR not looked up'
   }
   return [syncLine(sync, now), ...worktreeLines(worktrees, name, home), session]
 }

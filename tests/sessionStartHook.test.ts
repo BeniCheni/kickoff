@@ -61,7 +61,7 @@ it('shows the draft or non-draft status of a PR', () => {
 
 it('distinguishes an empty worktree list, a detached HEAD and unavailable queries', () => {
   expect(formatContext({ ...fixtures, worktrees: success(''), branch: success('') }, now).slice(1))
-    .toEqual(['Worktrees: none.', 'Branch: detached HEAD | No PR'])
+    .toEqual(['Worktrees: none.', 'Branch: detached HEAD | PR not looked up'])
   expect(formatContext({ ...fixtures, worktrees: timeout, branch: timeout }, now).slice(1))
     .toEqual(['Worktrees: unknown.', 'Branch: unknown | PR unknown'])
   expect(formatContext({ ...fixtures, pr: timeout }, now).at(-1)).toBe('Branch: topic | PR unknown')
