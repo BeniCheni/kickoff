@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process'
-import { mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdtempSync, realpathSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { delimiter, join } from 'node:path'
 import { expect, it } from 'vitest'
@@ -132,7 +132,7 @@ it('hoists the deepest containing worktree for a detached session in a subdirect
   ])
 })
 
-it.each(['success', 'stalled sync'])('runs the configured hook with fake git and gh (%s)', scenario => {
+it.each(['success', 'stalled sync', 'symlinked entry'])('runs the configured hook with fake git and gh (%s)', scenario => {
   const directory = realpathSync(mkdtempSync(join(tmpdir(), 'kickoff-session-start-')))
   try {
     const liveRun = { ...run, createdAt: new Date().toISOString() }
@@ -157,8 +157,13 @@ esac
 
     const hook = settings.hooks.SessionStart[0]!.hooks[0]!
     const project = join(import.meta.dirname, '..')
+    let hookProject = project
+    if (scenario === 'symlinked entry') {
+      hookProject = join(directory, 'linked-project')
+      symlinkSync(project, hookProject, 'dir')
+    }
     const started = performance.now()
-    const result = spawnSync(hook.command, hook.args.map(arg => arg.replace('${CLAUDE_PROJECT_DIR}', project)), {
+    const result = spawnSync(hook.command, hook.args.map(arg => arg.replace('${CLAUDE_PROJECT_DIR}', hookProject)), {
       cwd: project,
       env: { ...process.env, PATH: `${directory}${delimiter}${process.env.PATH}`, HOOK_TEST_CWD: directory },
       input: JSON.stringify({

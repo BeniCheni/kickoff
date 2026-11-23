@@ -6,7 +6,7 @@ import { execFile } from 'node:child_process'
 import { realpathSync, statSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { isAbsolute, join, relative, sep } from 'node:path'
-import { pathToFileURL } from 'node:url'
+import { fileURLToPath } from 'node:url'
 
 const COMMAND_TIMEOUT_MS = 3_000
 const INPUT_TIMEOUT_MS = 500
@@ -205,6 +205,6 @@ async function main() {
   }).join('\n'))
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && canonicalPath(fileURLToPath(import.meta.url)) === canonicalPath(process.argv[1])) {
   await main().catch(() => console.log(unknownSync()))
 }
