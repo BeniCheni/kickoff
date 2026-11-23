@@ -42,6 +42,14 @@ describe('claudeArgs', () => {
     expect(JSON.parse(after('--json-schema') ?? '')).toEqual(jsonSchemaFor(okSchema))
   })
 
+  it('documents a sign-in check that loads the settings the call loads', () => {
+    // Plain `claude auth status` loads user settings, which can name other credentials than the
+    // call picks, so the README's check must carry the call's own --setting-sources.
+    const readme = readFileSync('scripts/pm/README.md', 'utf8')
+    expect(readme).toContain(`claude --setting-sources "${after('--setting-sources')}" auth status`)
+    expect(readme).not.toContain("isn't billed per token")
+  })
+
   it('never grants a tool or skips a permission', () => {
     for (const flag of ['--allowedTools', '--allowed-tools', '--dangerously-skip-permissions', '--mcp-config', '--add-dir']) {
       expect(args).not.toContain(flag)

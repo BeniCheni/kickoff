@@ -10,18 +10,36 @@ the repo, posts to GitHub or edits `CHANGELOG.md`.
 | `[Unreleased]` draft | `npx tsx scripts/pm/unreleased.ts` | The PRs merged since the last tag, and a draft `[Unreleased]` section that cites them |
 
 **Each run makes at most one model call, and who pays depends on how `claude` signs in.** The call
-uses `claude-sonnet-5-5` through your `claude` CLI, and the child inherits your environment. The
+uses `claude-sonnet-5-5` through your `claude` CLI. The child inherits your environment, and the
 chore never chooses the credentials. `unreleased.ts` makes no call when nothing but the sync bot
-has merged since the tag. Before a run, check with `claude auth status`, from the same shell:
+has merged since the tag.
 
-- `"authMethod": "claude.ai"` with `"subscriptionType": "max"`: the call counts against your
-  Claude Max usage and isn't billed per token. On 22 Nov 2026 this Mac reported `claude.ai` even
-  with a dummy `ANTHROPIC_API_KEY` in the environment, and a real `claude -p` call from that shell
-  ran on the subscription.
+Check the sign-in the way the chore launches `claude`, with no settings loaded, from the shell and
+environment you will run the chore from:
+
+```bash
+claude --setting-sources "" auth status
+```
+
+The answer depends on that launch context, so a check from anywhere else can mislead. On Claude
+Code 2.1.330 on 22 Nov 2026, this Mac was signed in to Claude Max with a dummy `ANTHROPIC_API_KEY`
+in the environment. The command above reported `"authMethod": "api_key"` with
+`CLAUDE_CODE_ENTRYPOINT` unset or `cli`, as in a plain terminal, and `"claude.ai"` with
+`claude-desktop`, as in a shell inside the Claude desktop app. Without the key, all three reported
+`claude.ai` and `max`. Codex's re-read found that a key in user settings splits the answers too,
+because plain `claude auth status` loads user settings and the chore doesn't.
+
+- `"authMethod": "claude.ai"` with a `"subscriptionType"` such as `"max"`: the call draws on the
+  plan's included usage. Once an included limit is used up, a plan with usage credits turned on
+  goes on at standard API rates, in Claude Code too
+  ([Manage usage credits for paid Claude plans](https://support.claude.com/en/articles/12429409-manage-usage-credits-for-paid-claude-plans)).
 - `"authMethod": "api_key"` (`"apiKeySource": "ANTHROPIC_API_KEY"`, for one): the call is billed
-  per token to that key's API account. That's what a key with no claude.ai login reports. Anthropic
-  explains the variable's effect in
+  per token to that key's API account. Anthropic explains the variable's effect in
   [Manage API key environment variables in Claude Code](https://support.claude.com/en/articles/12304248-manage-api-key-environment-variables-in-claude-code).
+
+`auth status` says which credentials a launch would pick, but it can't show what a run cost. Only
+the plan's usage dashboard, which Anthropic says separates included usage from usage credits, or
+the API account's own usage records can show that.
 
 Neither chore has a `package.json` script, because `package.json` is a release file.
 

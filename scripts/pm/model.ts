@@ -48,9 +48,11 @@ export function claudeArgs(jsonSchema: object): string[] {
 
 /**
  * The real runner. The child runs in the OS temp folder rather than the repo, so it picks up no
- * project files. It inherits the environment, so it signs in however `claude` does from that shell:
- * a claude.ai login counts against the plan, and an API key (ANTHROPIC_API_KEY, say) is billed per
- * token. `claude auth status` says which. This code never picks or changes the credentials.
+ * project files. It inherits the environment, so it signs in however `claude` does from that shell
+ * with no settings loaded: a claude.ai login draws on the plan's included usage (then usage
+ * credits, if they are on), and an API key (ANTHROPIC_API_KEY, say) is billed per token.
+ * `claude --setting-sources "" auth status`, run from the same shell, says which; it cannot say
+ * what a run cost. This code never picks or changes the credentials.
  */
 export const spawnClaude: ModelRunner = (args, stdin) =>
   spawnProcess('claude', args, { stdin, cwd: tmpdir(), timeoutMs: MODEL_TIMEOUT_MS })
