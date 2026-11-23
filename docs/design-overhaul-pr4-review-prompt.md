@@ -1259,3 +1259,133 @@ DELIVERABLE. One PR comment whose first line is "<model> · <effort> · Fix roun
 ```
 
 When fix round 2 posts, the PM seat checks it on GitHub and prepares Pass 2.5's second sitting.
+
+## Fix round 2 posts, Beni's four answers and "Resume", and the note for Pass 2.5's second sitting (Sun 22 Nov 2026, about 8:45 PM EST)
+
+**Fix round 2** pushed `9624016..cdaebf9` at 3:55:58 PM EST and posted `issuecomment-7085704719` at
+3:59:51 PM. Its first line reads "claude-fable-5-2 · xhigh · Fix round 2 — both findings fixed and
+no shipped ring faults; mergeable, with gates and hosted checks green; ready for Pass 2.5's second
+sitting at cdaebf9e4e0d53a85cc739bd77071a77d30e0976". Beni pasted its report into the PM seat's
+session by 8:37 PM EST. Its figures are the builder's, so they are claims here:
+- `74e9f4e` holds each sampled point of a focus ring to its whole depth: 2 capture pixels for the
+  2 px ring at device scale 1. It was red at `9624016` (the new unit case failed 1 of 34, and the
+  stock sweep accepted Pass 2.5's masked rows on both apps) and green at the tip (34 of 34, with
+  36 faults on 36 masked rows and clean rows passing). The mask is now the runner's eighth
+  negative control.
+- `cdaebf9` rewrites the provenance test's comment and rewords one test title. No assertion
+  changes.
+- 11 of 11 gates at `9624016`, `74e9f4e` and `cdaebf9`. Web tests went from 171 to 172, and the
+  offline and single files are byte-identical at all three. 13 of 13 mutations were caught.
+- Four whole runner passes after 3:00 PM EST under the 72-hour alarm (3:00:30 to about 3:54 PM),
+  at the tip and at `9624016`, in report mode and with `--enforce`. All four exited 0, every ring
+  read 2 on every edge, and both commits measured 3,793 rows in 384 cells, identical row for row.
+- The body went from 64,513 to 65,314 characters.
+- Four questions in the comment's section 9, and one item not verified, among others:
+  `node scripts/n6b-proof.mjs` was not run.
+
+**The PM seat's checks,** at 8:37 PM EST:
+- The base and head branch refs read `52fe62b` and `cdaebf9`. The PR record agrees: open, not a
+  draft, MERGEABLE and CLEAN, no review, auto-merge off. #352 is the only open PR into
+  `overhaul/second-edition`.
+- At `cdaebf9`, all four checks succeeded: `verify` (completed 3:58:05 PM EST), Vercel Preview
+  Comments and the Vercel status (3:56:34 PM) and `vercel-smoke` (3:56:48 PM).
+- The two new commits are `74e9f4e` (parent `9624016`) and `cdaebf9`, both authored and committed
+  `Claude <noreply@anthropic.com>`. Together they touch only `web/scripts/evidence.mjs`,
+  `web/test/hit-areas.test.ts` and `tests/tableProvenance.test.ts`. At 3:07 PM EST, before the
+  push, the provenance file's diff outside its comment block was one line: the test title "writes
+  none of the three when the standings fetch fails, so a newer fixtures stamp never sits over an
+  older table" became "…: the run ends before its first write".
+- `git diff 52fe62b cdaebf9 -- src/data` is empty. The root and `web/` lockfile blobs (`264b624`,
+  `8c23805`) are unchanged.
+- The body measures 65,314 characters (`gh pr view 352 --repo BeniCheni/kickoff --json body --jq
+  '.body|length'`), which leaves 222.
+- The shared `.git/config` still reads `core.bare=false` and `Cursor <cursoragent@cursor.com>`.
+  The Mac had 6.8 GiB free.
+
+**A correction.** The comment's section 10 notes that fix round 2's brief calls itself "about 2:20
+PM EST" but was committed at 2:12:36 PM (`30d3b1a`). It was written at about 2:10 PM.
+
+**Beni's answers,** at 8:38:12 PM EST, to fix round 2's four questions, each as done:
+1. **Keep**: the ring reader stops the run at any device scale but 1.
+2. **Keep**: the partial-mask control stops the run if a ring is ever less than 2 px deep, rather
+   than skipping itself.
+3. **Keep**: the body's corrected sentence on what the provenance test holds stays.
+4. **Later**: the sync writer's non-atomic local writes go to a later PR as a carry-over (write
+   beside and rename, or hold the order with a test). No issue is opened.
+
+At 8:39:26 PM EST, asked whether the second sitting resumes the first sitting's Codex session or
+starts a fresh one, Beni answered **"Resume"**.
+
+**The trees,** at 8:39 PM EST. The sitting's session had been idle since its `task_complete` at
+1:27:44 PM. No Codex TUI was running for it, no process had its working directory in its trees,
+and none of its ports was listening. One other Codex session was running, a #365 review in
+`kickoff-pr365-review`.
+- `kickoff-pr352-pass25`: moved in place from `9624016` to `cdaebf9`, tree `f540822`;
+- `kickoff-pr352-pass25-base`: unchanged at `52fe62b`, tree `d23fce0`;
+- `kickoff-pr352-pass25-prev`: unchanged at `f9cc527`, tree `421223a`.
+
+The first sitting had left its build output in all three, and the PM seat removed every ignored
+path except `node_modules` in each. All three are clean, and both installs are present in each.
+
+**The clock.** Fix round 2's runner passes ran under the 72-hour alarm on Sun 22 Nov, between
+3:00:30 and about 3:54 PM EST. At `cdaebf9` the snapshot's next kickoffs are at 2:45 PM (one) and
+3:00 PM EST (two) on Mon 23 Nov. `src/lib/time.ts:118` takes a week as Monday to Sunday, and 22 Nov
+is a Sunday, so any week computed from the Brooklyn date turns over at midnight EST.
+
+**Folders,** at 8:39 PM EST:
+- `kickoff-pr352-pass25`, `-base` and `-prev`, `kickoff-pr352-fix2` and `kickoff-pr352-refresh2`;
+- `kickoff-pr4`, `kickoff-pr4-review` and `kickoff-pr4-review-base`;
+- other sessions' `kickoff-pr364-review`, `kickoff-pr365-review` and
+  `kickoff-session-start-hook`;
+- `kickoff-receipts`.
+
+`kickoff-pr359-review-base` is gone; fix round 2 found it absent at 2:38 PM.
+
+**The note.** It is neutral, like the resume note before it. It was delivered in chat in a fenced
+block, one line per paragraph, with this launch:
+
+```bash
+/Applications/ChatGPT.app/Contents/Resources/codex-cli/bin/codex resume 01a20399-b108-75e1-bd90-4120bd86bba6 -C /Users/benicheni/code/kickoff-pr352-pass25 -m gpt-6.2-sol -c model_reasoning_effort=xhigh -s read-only -a on-request
+```
+
+```text
+PR #352 — Pass 2.5, second sitting: overhaul PR 4, the Table's skin, at cdaebf9 against 52fe62b
+
+FIRST, READ THIS NOTE FROM ITS ARCHIVE. Run git show claude/track-a-archive-7:docs/design-overhaul-pr4-review-prompt.md | sed -n '/^## Fix round 2 posts/,$p' and read it whole. The note is there in full; if this paste and that copy differ, the archived copy is the note. Your opener and the note that resumed you this afternoon are in the same file, in the sections headed "The base refresh posted, Beni's five answers, and the Pass 2.5 opener" and "The second refresh posts". They still bind wherever this note does not replace a fact.
+
+WHY YOU ARE BACK. Your first sitting posted https://github.com/BeniCheni/kickoff/pull/352#issuecomment-7083605139 at 1:26 PM EST on Sun 22 Nov 2026 and handed off: "Beni: Fix or Carry? Recommended answer: Fix. On Fix, Claude checks the painted depth in the focus verifier, adds the one-pixel mask control, and narrows the provenance test comment to the actual publication boundary. Codex reruns the affected checks at the replacement head. Beni decides the squash after that read." Beni ruled "Fix". Fix round 2, Claude Code on claude-fable-5-2 at xhigh in the builder's seat, has posted. Beni then ruled "Resume": this sitting continues in this session. This note is from the PM seat (Claude Code, Opus 5.5, in another session), under the same "Yes, neutral opener" ruling as your opener. It gives you the state, the seats, Beni's rulings, the trees and the limits, and no reading of the fix round or its comment. What you judge, you find. What the affected checks are is yours to judge and to state. Where this note disagrees with the repository or GitHub, they win, and you say so beside your brief.
+
+READ THE BASE AND THE HEAD FIRST, from their branch refs, not from the PR record: gh api repos/BeniCheni/kickoff/branches/overhaul%2Fsecond-edition --jq .commit.sha and gh api repos/BeniCheni/kickoff/branches/claude%2Foverhaul-pr4-table --jq .commit.sha. If the base is not 52fe62b00cdf6716ca2ef6e5eb2610c94bea5158, or the head is not cdaebf9e4e0d53a85cc739bd77071a77d30e0976, say so first in your brief and stop for Beni's word. Read both again before you post. At the PM seat's read, #352 was the only open PR into overhaul/second-edition.
+
+YOUR SEAT is unchanged: the "When Claude builds" column of #328, gpt-6.2-sol at xhigh with --sandbox read-only, writing nothing but your one comment, with the method /kickoff-pr-review --pass 2.5 --no-merge from the skill files in the tip worktree. Name the model, effort and sandbox on your comment's first line from this session file's turn_context lines for the turns this note starts, not from memory. Your opener's paragraphs on the sandbox, Git's environment, what you must not do and the tool message stand as written. Your deliverables are unchanged: the Executive Summary Brief in your reply to Beni, ending with the handoff block, and one PR comment. Push nothing.
+
+WHAT CHANGED SINCE YOUR FIRST SITTING POSTED (re-check all of it).
+- Beni ruled "Fix" at 2:08 PM EST, in the PM seat's session. The PM seat's brief for fix round 2 is in the archive file, in the section headed "Pass 2.5's first sitting posts".
+- Fix round 2: https://github.com/BeniCheni/kickoff/pull/352#issuecomment-7085704719. Two commits were pushed as a fast-forward of 9624016 at 3:55:58 PM EST: 74e9f4e (parent 9624016) and cdaebf9, both authored and committed Claude <noreply@anthropic.com>. Together they change web/scripts/evidence.mjs, web/test/hit-areas.test.ts and tests/tableProvenance.test.ts. The round also edited the PR body. Its comment put four questions to Beni, which he has answered (below).
+- At the PM seat's read (8:37 PM EST), the PR was open, not a draft, MERGEABLE and CLEAN, with base 52fe62b, head cdaebf9, auto-merge off and no review. verify, the Vercel deployment, Vercel Preview Comments and vercel-smoke were green at cdaebf9. git diff 52fe62b cdaebf9 -- src/data was empty, and the root and web/ lockfile blobs are the same at cdaebf9 as at 9624016.
+- The PR body measured 65,314 of GitHub's 65,536 characters: gh pr view 352 --repo BeniCheni/kickoff --json body --jq '.body|length'.
+
+WHERE TO WORK.
+- At 8:39 PM EST the PM seat moved /Users/benicheni/code/kickoff-pr352-pass25 in place to cdaebf9 (tree f540822). /Users/benicheni/code/kickoff-pr352-pass25-base stays at 52fe62b (tree d23fce0) and /Users/benicheni/code/kickoff-pr352-pass25-prev at f9cc527 (tree 421223a). In all three, the PM seat removed every ignored path except node_modules, which included the build output your first sitting left. Each is clean. The installs were not re-run. Confirm each HEAD, a clean status and that the installs match the lockfiles before you build.
+- For per-commit checkouts, use -prev by SHA and return it to f9cc527 when you finish. Your ports, your receipts folder /Users/benicheni/code/kickoff-receipts/pr4/pass25-sitting1/ and your opener's folder rules stand. Another Codex session, a #365 review in /Users/benicheni/code/kickoff-pr365-review, was running at the PM seat's read, so confirm each port is free before you bind it.
+- Disk: 6.8 GiB free at 8:37 PM EST. Fix round 2's comment reports a dip to 3.3 GiB during its runner window as other sessions' folders appeared. The 3 GiB stop stands.
+- Fix round 2's receipts are in /Users/benicheni/code/kickoff-receipts/pr4/fix2/: recipes, not your evidence; change nothing there.
+- Add to the workspaces you must not touch: /Users/benicheni/code/kickoff-pr352-fix2 (fix round 2's tree), and other sessions' kickoff-pr364-review, kickoff-pr365-review and kickoff-session-start-hook. kickoff-pr359-review-base has left the disk. The rest of your list stands.
+
+THE CLOCK. The page has shown the 72-hour state since 2:33:56 PM EST on Sun 22 Nov. Fix round 2's comment reports its four runner passes, at the tip and at 9624016, between 3:00:30 and about 3:54 PM EST under that alarm. At cdaebf9 the snapshot's next kickoffs are at 2:45 PM (one) and 3:00 PM EST (two) on Mon 23 Nov: check with git show cdaebf9:src/data/fixtures.json, filtered on kickoffUtc. src/lib/time.ts line 118 takes a week as Monday to Sunday, and Sun 22 Nov is the last day of its week, so any week computed from the Brooklyn date turns over at midnight EST. Run every runner pass you compare with no kickoff and no midnight between them. Record each run's start and end in Brooklyn time, the Brooklyn date and the banner state, and say for each figure you compare which window it was measured in.
+
+WHAT BENI RULED SINCE YOUR LAST NOTE, named as his.
+- Sun 22 Nov 2026, 2:08 PM EST: "Fix", on your handoff.
+- Sun 22 Nov 2026, 8:38 PM EST, on fix round 2's four questions, each as done: 1 Keep (the ring reader stops the run at any device scale but 1); 2 Keep (the partial-mask control stops the run if a ring is ever less than 2 px deep, rather than skipping itself); 3 Keep (the body's corrected sentence on what the provenance test holds stays); 4 Later (the sync writer's non-atomic local writes go to a later PR; nothing changes in #352).
+- Sun 22 Nov 2026, 8:39 PM EST: "Resume" (this sitting continues in this session).
+Every ruling in your opener and in the note that resumed you stands. At the PM seat's last word from him, he had ruled on nothing else in this PR.
+
+WHAT YOUR SITTING MUST SHOW.
+1. The affected checks at cdaebf9, as your handoff set them: what you re-ran and why each was affected, each figure from a command you ran in this sitting, and anything you could not re-run listed as not verified.
+2. Fix round 2's two commits, each read on its own against your finding it answers: what it changes, whether it does what the finding asked and nothing it was not asked, and every assertion and test title it adds, changes or removes, against its prior rule.
+3. Beni's questions: each question this PR's comments put to him is answered above. Add any of your own, each answerable in one word, with your recommendation and its evidence.
+4. The squash body as it now stands, with the trailers, and your squash subject and body for Beni.
+5. The merge gate, clause by clause, ending in escalation: plan section 3 gives the merge to Beni's word.
+```
+
+When the sitting posts, its Executive Summary Brief goes to Beni for Pass 3.
