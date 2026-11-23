@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-11-22T20:24:58.798Z",
+  "fetchedAt": "2026-11-23T01:01:35.567Z",
   "provider": "espn",
   "season": 2026,
   "leagues": {
@@ -583,13 +583,13 @@
         "abbrev": "ATM",
         "rank": 3,
         "rankChange": 0,
-        "played": 12,
-        "w": 9,
+        "played": 13,
+        "w": 10,
         "d": 1,
         "l": 2,
-        "gf": 23,
+        "gf": 26,
         "ga": 10,
-        "pts": 28
+        "pts": 31
       },
       {
         "teamId": "244",
@@ -772,26 +772,11 @@
         "pts": 12
       },
       {
-        "teamId": "2922",
-        "name": "Getafe",
-        "shortName": "Getafe",
-        "abbrev": "GET",
-        "rank": 16,
-        "rankChange": 0,
-        "played": 12,
-        "w": 3,
-        "d": 3,
-        "l": 6,
-        "gf": 8,
-        "ga": 18,
-        "pts": 12
-      },
-      {
         "teamId": "94",
         "name": "Valencia",
         "shortName": "Valencia",
         "abbrev": "VAL",
-        "rank": 17,
+        "rank": 16,
         "rankChange": 0,
         "played": 13,
         "w": 3,
@@ -799,6 +784,21 @@
         "l": 7,
         "gf": 9,
         "ga": 20,
+        "pts": 12
+      },
+      {
+        "teamId": "2922",
+        "name": "Getafe",
+        "shortName": "Getafe",
+        "abbrev": "GET",
+        "rank": 17,
+        "rankChange": 0,
+        "played": 13,
+        "w": 3,
+        "d": 3,
+        "l": 7,
+        "gf": 8,
+        "ga": 21,
         "pts": 12
       },
       {
@@ -1187,13 +1187,13 @@
         "abbrev": "INT",
         "rank": 3,
         "rankChange": 0,
-        "played": 11,
+        "played": 12,
         "w": 9,
-        "d": 1,
+        "d": 2,
         "l": 1,
-        "gf": 28,
-        "ga": 13,
-        "pts": 28
+        "gf": 32,
+        "ga": 17,
+        "pts": 29
       },
       {
         "teamId": "103",
@@ -1322,13 +1322,13 @@
         "abbrev": "ATA",
         "rank": 12,
         "rankChange": 0,
-        "played": 11,
+        "played": 12,
         "w": 4,
-        "d": 2,
+        "d": 3,
         "l": 5,
-        "gf": 17,
-        "ga": 20,
-        "pts": 14
+        "gf": 21,
+        "ga": 24,
+        "pts": 15
       },
       {
         "teamId": "239",
@@ -1519,12 +1519,12 @@
         "abbrev": "OLM",
         "rank": 5,
         "rankChange": 0,
-        "played": 10,
+        "played": 11,
         "w": 6,
         "d": 0,
-        "l": 4,
-        "gf": 22,
-        "ga": 14,
+        "l": 5,
+        "gf": 24,
+        "ga": 17,
         "pts": 18
       },
       {
@@ -1633,11 +1633,26 @@
         "pts": 14
       },
       {
+        "teamId": "2697",
+        "name": "Le Mans",
+        "shortName": "Le Mans",
+        "abbrev": "MNS",
+        "rank": 13,
+        "rankChange": 0,
+        "played": 11,
+        "w": 2,
+        "d": 5,
+        "l": 4,
+        "gf": 15,
+        "ga": 21,
+        "pts": 11
+      },
+      {
         "teamId": "170",
         "name": "Troyes",
         "shortName": "Troyes",
         "abbrev": "TRY",
-        "rank": 13,
+        "rank": 14,
         "rankChange": 0,
         "played": 11,
         "w": 3,
@@ -1652,7 +1667,7 @@
         "name": "AJ Auxerre",
         "shortName": "Auxerre",
         "abbrev": "AUX",
-        "rank": 14,
+        "rank": 15,
         "rankChange": 0,
         "played": 11,
         "w": 3,
@@ -1667,7 +1682,7 @@
         "name": "Strasbourg",
         "shortName": "Strasbourg",
         "abbrev": "STR",
-        "rank": 15,
+        "rank": 16,
         "rankChange": 0,
         "played": 11,
         "w": 3,
@@ -1676,21 +1691,6 @@
         "gf": 18,
         "ga": 23,
         "pts": 10
-      },
-      {
-        "teamId": "2697",
-        "name": "Le Mans",
-        "shortName": "Le Mans",
-        "abbrev": "MNS",
-        "rank": 16,
-        "rankChange": 0,
-        "played": 10,
-        "w": 1,
-        "d": 5,
-        "l": 4,
-        "gf": 12,
-        "ga": 19,
-        "pts": 8
       },
       {
         "teamId": "7868",
