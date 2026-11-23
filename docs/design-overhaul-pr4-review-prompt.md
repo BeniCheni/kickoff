@@ -1519,3 +1519,23 @@ npm run build
 
 The squash subject and body went to Beni in chat as the second sitting drafted them. When the
 squash lands, the PM seat checks the squash commit on the base and says which folders can go.
+
+## #352 lands (Sun 22 Nov 2026, 10:07 PM EST)
+
+Beni clicked Squash and merge at 10:07:04 PM EST. The PM seat's checks, at 10:09 PM EST:
+- #352 is MERGED, by BeniCheni, as `45b7bc68e5e6fa67f363f936c100378766378d9b`, and the
+  `overhaul/second-edition` branch ref reads that SHA. Its one parent is `52fe62b`.
+- Its tree is `f540822b1a9693876c914cb3a692b0859edb2f35`, the same tree as the reviewed head
+  `cdaebf9` (`git rev-parse cdaebf9^{tree}`), and `git diff cdaebf9 45b7bc6` is empty. So the
+  squash carries exactly what Pass 2.5's second sitting read.
+- Its subject is "Overhaul PR 4: the Table's skin (#352)", and its body is the second sitting's
+  draft word for word, ending in both trailers, `Co-authored-by: Claude <noreply@anthropic.com>`
+  and `Co-authored-by: Codex <noreply@openai.com>`, as Beni ruled.
+- Vercel, Vercel Preview Comments and `vercel-smoke` succeeded on it. `verify` did not run, and
+  is not meant to: `.github/workflows/ci.yml` triggers on `pull_request` and on pushes to `main`
+  only. It passed at `cdaebf9`, whose tree this is.
+
+PR 4 of the overhaul is in the integration branch. What it leaves owed is in the PM seat's
+project memory as #352's carry-overs: the runner's pinned clock and its unexplained
+frame-detachment stops, the Poster's three left rules, PR 3's `syncedAgo` set-aside and the sync
+writer's non-atomic writes. None has an issue.
