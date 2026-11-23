@@ -124,3 +124,128 @@ LIVE FOLDERS. .claude/worktrees/track-a-archive, on claude/track-a-archive-8 (un
 
 BUDGET. Beni moved this seat to Fable at xhigh to use the Fable usage he has left before 4 PM, so spend it on the two prompts' depth: read every source they cite. Batch tool calls, skip re-reads, and stop to write deliverable 3 if your usage warns.
 ````
+
+## The third handoff, back to Opus 5.5 after the 4 PM reset (Mon 23 Nov 2026, about 12:10 PM EST)
+
+Written by the Fable seat (Claude Code, `claude-fable-5-2` at `xhigh`), which took the second
+handoff at 11:46 AM EST. It wrote this note early, at about 12:10 PM EST, so that it is archived
+well before the reset. Anything Beni answers after that time is not in it.
+
+**Delivered, in order.** Both are on `claude/track-a-archive-8`, which is still local and not
+pushed, and both were delivered in chat as one fenced block.
+
+1. The Codex build brief for the leak fix:
+   [`test-git-env-implementation-prompt.md`](test-git-env-implementation-prompt.md), archived at
+   `84b82fe`. Seat: Codex, `gpt-6.2-sol`, `xhigh`. Tier 2.
+2. The Claude Design brief for the Poster:
+   [`design-overhaul-poster-design-prompt.md`](design-overhaul-poster-design-prompt.md),
+   archived at `887348f`.
+
+**What the first turn confirmed**, each with its command:
+- the integration tip is `45b7bc6` and `origin/main` is `ffc5cac`
+  (`git ls-remote origin refs/heads/main refs/heads/overhaul/second-edition`);
+- Beni's checkout is on `main` at `242056c`, one docs commit (#368) behind `origin/main`
+  (`git rev-parse --short HEAD`);
+- the open PRs were #328, #358 and #365, a draft (`gh pr list --state open`). By 12:08 PM EST
+  there was a fourth: #369, Codex's draft for the review tiers, on `codex/review-tiers` at
+  `b5aba31`. It is not this seat's. Until it merges, the repo's tables do not carry R1, R4 and
+  R6, and a brief names them as Beni's rulings of 22 Nov;
+- no `codex/test-git-env` branch was on the remote at 12:08 PM EST
+  (`git ls-remote origin 'refs/heads/codex/*'`);
+- the leak is on `main`: `git show origin/main:tests/vercelIgnore.test.ts`, lines 17 to 19 and 28.
+
+**What Beni answered in this session:** nothing yet. The four rulings of 10:40 AM stand as the
+second handoff records them, and neither brief reopens one.
+
+**What the leak brief's read found.** The table of runs is in the brief's own file.
+- Three test files start real `git` with the inherited environment, not one:
+  `tests/vercelIgnore.test.ts`, `tests/publishGate.test.ts` and `tests/vercelSmoke.test.ts`.
+- Under `GIT_DIR` on a decoy, the decoy takes three config sections, seven commits and 306 loose
+  objects, and the whole suite fails 21 tests in four files. A clean run fails 2, both from this
+  worktree's missing `node_modules`. The 21 Nov record names only the config.
+- Two functions and two scripts read the test process's own environment. They live in `scripts/`
+  and `web/`, which the brief fences off: `scripts/publish-gate.ts` is on the sync rules' path
+  list, and a change there would make the PR tier 3.
+- The brief asks for a decoy test that also checks refs and objects, and for proof that the test
+  fails on today's `main`.
+
+**What the Design brief's read found.** Each is in the brief's own file, with its counts.
+- Seven of the thirteen titles spell a count. Four slots are left without a title, and a
+  domestic midweek never had one.
+- Most of the taglines Beni approved under ruling 17 state a count too. Ruling 16 names titles
+  only. The brief gives this to Beni as a question and does not rule it.
+- Three kinds of day in the snapshot have no slot in the cover library: a supercup alone, a
+  domestic league with the Champions League, and the European cups together. No document states
+  the rule that gives a day its slot.
+- The 510.5 px ceiling is seven daily accounts of about 73 px, so an all-hidden day cannot keep a
+  156 px part opener.
+- "Strict" makes an open book with results in it, which no board draws. The snapshot's first
+  real case is Wed 9 Dec, where the suspended match shares its day with nine others.
+- The canvas's question numbers are not the plan's. Claude Design's new questions start at 30.
+
+**Pending, and whose move each is.**
+1. Codex opens a draft PR on `main` from `codex/test-git-env`. Then the PM seat writes the brief
+   for its one cold read, a fresh Claude Code session. Its model is not ruled:
+   `~/.claude/CLAUDE.md` gives Opus 5.5 High as the default outside the sensitive paths. The read
+   repeats the decoy run by hand and confirms that the new test bites. Beni's word merges. After
+   the merge, later briefs drop the `env -u GIT_DIR …` workaround.
+2. Claude Design replies to the Poster pass. The PM seat then checks the reply against the
+   repository, as it did for the rows pass: any contrast figure against `tests/contrast.ts`'s
+   `ratio()`, every count against the snapshot, and the all-hidden week against 510.5 px. It puts
+   the questions from 30 to Beni one at a time, and archives the reply beside the gap-18 addendum.
+3. PR 5's build brief follows Beni's answers. It is the next deliverable unless he names another.
+4. The docs PR for `claude/track-a-archive-8` is not opened. That is Beni's word.
+
+**What PR 5's build brief must carry**, beside what Claude Design returns:
+- Codex builds it, at tier 3, and #328's builders table is named as stale (ruling 1 of 23 Nov);
+- "Keep", with its ceilings: an all-hidden week no taller than 510.5 px on the Poster at 360 and
+  390, and the Ledger's 450 px not made worse (ruling 2);
+- the Poster's three left rules in a competition's hue, at `src/components/PosterWeek.tsx:44-45`
+  and `src/components/TonightSlate.tsx:56-57` and `:72-73` on `45b7bc6` (#352's carry-over);
+- the runner's pinned clock for its stillness step, if PR 5 touches the runner (#352's
+  carry-over, "probably");
+- #359's low finding: a today whose fixtures are all hidden puts its TODAY pill on a line of its
+  own;
+- the singular "1 MATCH" on a date line (the plan's string 11, and ideas row 129, which ruling 11
+  folded in); 13 match days in the snapshot hold exactly one match;
+- the plan's two honesty rows marked "With PR 5": the cover band's kickoff order, and the book
+  that closes only on stored results, with its source scan;
+- the cover band skips unset and unsettled kickoffs the way `kickoffBounds` does (plan 1.2);
+- the Rack's half of string 33 stays PR 6's.
+
+**Live folders**, from `git worktree list` at 12:07 PM EST. Beni tidies them.
+- `.claude/worktrees/track-a-archive`, on `claude/track-a-archive-8` at `887348f` plus this note:
+  needed until its docs PR merges.
+- `.claude/worktrees/sync-test-degraded-standings-88bd26`, on `claude/pm-chores-9e2627`: B5's,
+  until #365 closes. Not touched.
+- `.claude/worktrees/friendly-chaum-0c01ef`, detached at `e8a0dfa`: owner unknown. Not touched.
+- `~/code/kickoff-pr365-review-5`, detached at `4b9666c`: #365's review. Not this seat's.
+- `~/code/kickoff-review-tiers`, on `codex/review-tiers` at `b5aba31`: Codex's, for #369. Not
+  this seat's.
+- Four folders that Git lists as prunable (`~/code/kickoff-pr364-review`,
+  `~/code/kickoff-pr364-synthesis`, `~/code/kickoff-pr365-review` and
+  `~/code/kickoff-session-start-hook`), and six Codex worktrees under `~/.codex/worktrees/`.
+  None is this seat's.
+- Codex will add one more for `codex/test-git-env` and name it in its first message.
+
+**Receipts.** This seat's decoy runs were under the sandbox's `$TMPDIR`, which does not outlast
+the session. Their commands and results are in the leak brief's file, and each takes under a
+minute to repeat.
+
+**Two traps for a seat that runs tests from this worktree.** It has no `node_modules` of its own,
+so `tests/web-isolation.test.ts` fails here in a clean environment. And a vitest run leaves a
+`node_modules/.vite` folder behind; remove it, so the worktree stays clean.
+
+````text
+Kickoff — the Track A Planner back on Opus 5.5: the third handoff (Mon 23 Nov 2026)
+
+If this paste looks cut short, read the whole note from its archive before anything else: git -C /Users/benicheni/code/kickoff show claude/track-a-archive-8:docs/design-overhaul-planner-handoff.md, the section "The third handoff, back to Opus 5.5 after the 4 PM reset". The branch is local and not pushed.
+
+You are the Kickoff Planner, Track A's PM seat for Fergie Time's second-edition design overhaul, in a fresh Claude Code session on claude-opus-5-5, at the effort Beni names (the first handoff recommended High for this seat), started by Beni in /Users/benicheni/code/kickoff on Mon 23 Nov 2026 after the 4 PM EST reset. Read CLAUDE.md and every file it points to, AGENTS.md and ~/.claude/CLAUDE.md first; they bind you. Then read all three sections of the archived file above: the standing rules of the first, the rulings of the second and the pending list of the third all hold. Treat the repository as ground truth and the three sections as maps of it. Run TZ=America/New_York date before writing any date.
+
+WHERE THINGS STAND. The Fable seat delivered two prompts before noon: the Codex build brief for the leak fix (docs/test-git-env-implementation-prompt.md, 84b82fe) and the Claude Design brief for the Poster (docs/design-overhaul-poster-design-prompt.md, 887348f). Both are archived on claude/track-a-archive-8 and nothing is pushed. Beni had answered nothing new when the note was written at about 12:10 PM EST; ask him what has come back since.
+
+YOUR FIRST TURN. One batched read: the integration tip, origin/main, the open PRs, whether Codex has opened a draft PR from codex/test-git-env, and the live folders with until when each is needed. Then ask Beni which of the two has come back, the leak PR or Claude Design's reply, and take that one. Write nothing else in the first turn.
+
+WHAT COMES NEXT. For the leak PR: write the brief for its one cold read (tier 2, a fresh Claude Code session; ask Beni its model in one word, the default is Opus 5.5 High), and have it repeat the decoy run. For Claude Design's reply: check it against the repository, put its questions from 30 to Beni one at a time, and archive the reply beside the gap-18 addendum. PR 5's build brief follows Beni's answers, and the third section lists what it must carry. Merges, tags, versions and anything public wait for Beni's word.
+````

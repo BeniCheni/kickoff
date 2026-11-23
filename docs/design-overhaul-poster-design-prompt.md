@@ -1,7 +1,7 @@
 # Fergie Time second edition — the Poster before it is built (Claude Design brief, archived Mon 23 Nov 2026, TZ=America/New_York)
 
 Written by the Track A PM seat (Claude Code, `claude-fable-5-2` at `xhigh`) on Mon 23 Nov 2026 at
-about 12:25 PM EST, from a fresh read of the integration branch at `45b7bc6` and `origin/main` at
+about 12:05 PM EST, from a fresh read of the integration branch at `45b7bc6` and `origin/main` at
 `ffc5cac`. To be pasted into the same Claude Design chat as the "Fergie Time — second edition"
 canvas. It is the pass that
 [`design-overhaul-rows-design-prompt.md`](design-overhaul-rows-design-prompt.md) left for "a later
