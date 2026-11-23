@@ -6,25 +6,30 @@ file name the pages already preload. The latin-ext half adds `-ext` before
 `.woff2`. The latin rule comes after the latin-ext rule so the browser tries
 latin first for characters in both ranges. The page heads preload latin files.
 
-Fixtures and Table load six latin halves: Oswald, Inter, Kickoff Mono at 400,
-500 and 600, and Caslon 400 (149,208 bytes). The band's provenance line is
-set in Kickoff Mono Text, and that is what fetches Mono 400. The page foot is
-set in Caslon 400, and so is the staleness banner when it prints. Moments
+Fixtures loads six latin halves: Oswald, Inter, Kickoff Mono at 400, 500 and
+600, and Caslon 400 (149,208 bytes). The band's provenance line is set in
+Kickoff Mono Text, and that is what fetches Mono 400. The page foot is set in
+Caslon 400, and so is the staleness banner when it prints. Table loads those
+six and a seventh, the latin half of Kickoff Display (14,332 bytes, 163,540
+in all). The Table's cover title, "The Register", is set in Kickoff Display,
+in the Vite app and in the Next app, and no other text on any tab is. Moments
 loads five (131,320 bytes): Oswald, Inter and Mono 400, and the latin halves
 of Mono 500 and Caslon 400, which the head preloads and no text on that tab
 selects. The fixture row prints the venue on its meta line. Four fixtures name
 Şükrü Saracoğlu Stadium, and that line is what fetches Inter's latin-ext half:
 Fixtures for the week of Mon 19 Oct 2026 loads seven files (232,876 bytes).
 Nothing else fetches a latin-ext file, and nothing fetches the faces the page
-does not render: Kickoff Display, Chakra Petch and the two italics.
+does not render: Chakra Petch and the two italics.
 
 Those figures are the files' own sizes. On the wire, with each response's
-headers, a cold load in headless Chrome on Thu 19 Nov 2026 read:
+headers, a cold load in headless Chrome on Thu 19 Nov 2026 read as below. The
+Table's row was read on Sat 21 Nov 2026, once its cover had a title, and
+Fixtures and Moments read the same that day as on the 19th.
 
 | Page | Font files | `vite preview` | `next start` |
 | --- | --- | --- | --- |
 | Fixtures | 6 | 151,128 | 150,900 |
-| Table | 6 | 151,128 | 150,900 |
+| Table | 7 | 165,780 | 165,514 |
 | Moments | 5 | 132,920 | 132,730 |
 | Fixtures, week of Mon 19 Oct 2026 | 7 | 235,116 | 234,851 |
 
@@ -33,7 +38,12 @@ Both lenses fetch the same files, at 390 and at 1000.
 The offline and single files inline both halves of the same six faces:
 Oswald, Inter, Kickoff Mono 400, 500 and 600, and Caslon 400. Fixtures and
 Table select all six in either file, and the browser decodes the latin half
-of each. The week of Mon 19 Oct 2026 decodes Inter's latin-ext half as well.
+of each. Neither file carries Kickoff Display. In both, the Table's cover
+title is drawn in Georgia, the fallback its stack names
+(`'Kickoff Display', Georgia, serif`), as measured on macOS, and in the
+system's serif where Georgia is absent. That is a decision and not an
+omission: no face is inlined for the one title (PR #352, question 4, 21 Nov
+2026). The week of Mon 19 Oct 2026 decodes Inter's latin-ext half as well.
 The single file's Moments selects Oswald, Inter and Mono 400. The other five
 latin-ext halves are carried, and no page measured decodes one.
 
@@ -185,6 +195,7 @@ page renders. `Kickoff Mono Text` carries 400 and 400 italic as well. Those
 two faces stay off `Kickoff Mono`: an italic face there would be the one
 today's italic mono matches, and a real 400 would replace the 500 the page
 currently gets as the nearest weight. `Kickoff Display` is the renamed Abril
-Fatface. The Next app copies this directory, both halves included, and
+Fatface, and the Table's cover title is the one text set in it. The Next app
+copies this directory, both halves included, and
 rewrites the stylesheet's `./fonts/` urls to `/fonts/`. The `unicode-range`
 lines are kept.

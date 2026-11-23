@@ -43,10 +43,14 @@ assert.deepEqual(sources, [
   '../../src/components/NextUpStrip.tsx',
   '../../src/components/TonightSlate.tsx',
   '../../src/components/FilterBar.tsx',
-  '../../src/components/CompetitionChip.tsx',
   '../../src/components/StatusPill.tsx',
   '../../src/components/WeekRow.tsx',
   '../../src/components/FilterToggle.tsx',
+  '../../src/components/FormPips.tsx',
+  '../../src/components/NextFixtureCell.tsx',
+  '../../src/components/LeagueTabs.tsx',
+  '../../src/components/ZonesKey.tsx',
+  '../../src/components/RegisterCover.tsx',
 ], 'web Tailwind sources must be web/app plus the named shared files')
 assert.ok(web.includes('bada71'), 'web probe missing: scan check would be vacuous')
 assert.ok(!reader.includes('bada71'), 'web probe reached reader CSS')

@@ -20,8 +20,12 @@
 @source "../../src/components/NextUpStrip.tsx";
 @source "../../src/components/TonightSlate.tsx";
 @source "../../src/components/FilterBar.tsx";
-@source "../../src/components/CompetitionChip.tsx";
 @source "../../src/components/StatusPill.tsx";
 @source "../../src/components/WeekRow.tsx";
 @source "../../src/components/FilterToggle.tsx";
+@source "../../src/components/FormPips.tsx";
+@source "../../src/components/NextFixtureCell.tsx";
+@source "../../src/components/LeagueTabs.tsx";
+@source "../../src/components/ZonesKey.tsx";
+@source "../../src/components/RegisterCover.tsx";
 @import "../../src/shell.css";

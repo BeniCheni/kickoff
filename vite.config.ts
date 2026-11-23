@@ -69,7 +69,7 @@ export default defineConfig(({ mode }) => ({
   // Dev only. The default scan was resolving react-dom/client from a nested checkout
   // inside this repo; these entries are the app and the dev harnesses.
   optimizeDeps: {
-    entries: ['index.html', 'offline.html', 'tests/harness/states.html', 'tests/harness/moments.html'],
+    entries: ['index.html', 'offline.html', 'tests/harness/states.html', 'tests/harness/moments.html', 'tests/harness/table.html'],
   },
   // Two vitest projects under one `npm test` (v0.2.4). `node` is the pure layer — `lib/`,
   // `scripts/`, the diff engine — exactly what ran before. `dom` is the component wiring

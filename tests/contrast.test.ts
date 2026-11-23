@@ -21,7 +21,8 @@ it('keeps every floodlight tint site in the mounted inventory', () => {
       const count = [...readFileSync(new URL(p, root), 'utf8').matchAll(/\bbg-floodlight-bg\b/g)].length
       return count ? [[p, count]] : []
     })
-  expect(sites).toEqual([['components/MomentsEmpty.tsx', 1], ['components/TablePage.tsx', 2]])
+  // The Table's two sites left with the second edition: its notes are flat, in named voices.
+  expect(sites).toEqual([['components/MomentsEmpty.tsx', 1]])
 })
 
 describe('second-edition pairs, read from the tokens', () => {
@@ -87,7 +88,9 @@ describe('second-edition pairs, read from the tokens', () => {
 })
 
 it('fb tokens and stock render only from the named surfaces that own them', () => {
-  const allowed = new Set(['components/ImprintBand.tsx', 'components/PageFoot.tsx', 'index.css', 'components/WeekRow.tsx', 'components/FilterBar.tsx'])
+  // LeagueTabs names black stock on its current tab, a black plate on the pulp page, and
+  // RegisterCover on the Table's cover.
+  const allowed = new Set(['components/ImprintBand.tsx', 'components/PageFoot.tsx', 'components/LeagueTabs.tsx', 'components/RegisterCover.tsx', 'index.css', 'components/WeekRow.tsx', 'components/FilterBar.tsx'])
   const root = new URL('../src/', import.meta.url)
   const hits = globSync('**/*.{css,ts,tsx}', { cwd: root }).filter((file) => {
     if (file === 'shell.css' || allowed.has(file)) return false

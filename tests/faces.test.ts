@@ -10,7 +10,7 @@ const { copyFaces, nextFacesCss } = createRequire(import.meta.url)('../web/scrip
   nextFacesCss: (css: string) => string
 }
 
-const pages = ['index.html', 'offline.html', 'web/app/layout.tsx', 'tests/harness/states.html', 'tests/harness/moments.html']
+const pages = ['index.html', 'offline.html', 'web/app/layout.tsx', 'tests/harness/states.html', 'tests/harness/moments.html', 'tests/harness/table.html']
 
 const FACES: [string, string, string, string][] = [
   ['Oswald', 'normal', '500', 'oswald/Oswald.woff2'],
