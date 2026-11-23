@@ -8,7 +8,8 @@ import settings from '../.claude/settings.json'
 
 const now = Date.parse('2026-11-22T14:30:00Z')
 const url = 'https://github.com/BeniCheni/kickoff/actions/runs/123'
-const unknownSync = 'Sync main: unknown. Check before any Step 0.'
+const checked = 'checked Nov 22, 2026, 9:30 AM EST'
+const unknownSync = `Sync main: unknown (${checked}). Check before any Step 0.`
 const stepZero = 'Step 0 needs independent primary-source re-verification. See CLAUDE.md, “Scheduled sync”.'
 const success = (stdout: string): CommandResult => ({ status: 0, stdout, stderr: '' })
 const timeout: CommandResult = { status: null, stdout: '', stderr: '' }
@@ -29,7 +30,7 @@ const fixtures = {
 
 it('shows the latest successful sync, a worktree with spaces, and no PR', () => {
   expect(formatContext(fixtures, now)).toEqual([
-    `Sync main: success (2h ago) ${url}`,
+    `Sync main: success (2h ago, ${checked}) ${url}`,
     'Worktree: /example/kickoff tree (topic)',
     'Branch: topic | No PR',
   ])
@@ -40,7 +41,7 @@ it.each([
   ['in_progress', '', 'in_progress'],
 ])('requires primary-source re-verification for %s / %s', (status, conclusion, outcome) => {
   const sync = success(JSON.stringify([{ ...run, status, conclusion }]))
-  expect(formatContext({ ...fixtures, sync }, now)[0]).toBe(`Sync main: ${outcome} (2h ago) ${url} | ${stepZero}`)
+  expect(formatContext({ ...fixtures, sync }, now)[0]).toBe(`Sync main: ${outcome} (2h ago, ${checked}) ${url} | ${stepZero}`)
 })
 
 it.each([
@@ -51,6 +52,12 @@ it.each([
   ['success in the status field alone', success(JSON.stringify([{ ...run, status: 'success', conclusion: '' }]))],
 ])('keeps sync status unknown for %s', (_case, sync) => {
   expect(formatContext({ ...fixtures, sync }, now)[0]).toBe(unknownSync)
+})
+
+it('dates an unavailable lookup in Brooklyn time across a UTC day boundary in summer', () => {
+  const summer = Date.parse('2026-07-02T01:15:00Z')
+  expect(formatContext({ ...fixtures, sync: timeout }, summer)[0])
+    .toBe('Sync main: unknown (checked Jul 1, 2026, 9:15 PM EDT). Check before any Step 0.')
 })
 
 it('shows the draft or non-draft status of a PR', () => {
@@ -155,8 +162,10 @@ esac
     expect(result.error).toBeUndefined()
     expect(result.status).toBe(0)
     expect(result.stderr).toBe('')
-    expect(result.stdout.trimEnd().split('\n')).toEqual([
-      `Sync main: success (0m ago) ${url}`,
+    const [sync, ...lines] = result.stdout.trimEnd().split('\n')
+    expect(sync).toMatch(/^Sync main: success \(0m ago, checked .+ (EST|EDT)\) /)
+    expect(sync).toContain(url)
+    expect(lines).toEqual([
       'Worktree: /example/kickoff tree (topic)',
       'Branch: topic | PR #42 (open, draft)',
     ])

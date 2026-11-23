@@ -11,7 +11,14 @@ import { pathToFileURL } from 'node:url'
 const COMMAND_TIMEOUT_MS = 3_000
 const INPUT_TIMEOUT_MS = 500
 const MAX_WORKTREES = 6
-const UNKNOWN_SYNC = 'Sync main: unknown. Check before any Step 0.'
+const CHECK_TIME = new Intl.DateTimeFormat('en-US', {
+  timeZone: 'America/New_York', year: 'numeric', month: 'short', day: 'numeric',
+  hour: 'numeric', minute: '2-digit', timeZoneName: 'short',
+})
+
+function unknownSync(checked = CHECK_TIME.format(Date.now())) {
+  return `Sync main: unknown (checked ${checked}). Check before any Step 0.`
+}
 
 function parseJson(text) {
   try {
@@ -22,15 +29,16 @@ function parseJson(text) {
 }
 
 function syncLine(result, now) {
+  const checked = CHECK_TIME.format(now)
   const runs = result.status === 0 ? parseJson(result.stdout) : undefined
   const run = Array.isArray(runs) ? runs[0] : undefined
   if (!run || typeof run.createdAt !== 'string' || typeof run.url !== 'string'
     || !/^https:\/\/github\.com\/BeniCheni\/kickoff\/actions\/runs\/\d+(?:\/attempts\/\d+)?$/i.test(run.url)) {
-    return UNKNOWN_SYNC
+    return unknownSync(checked)
   }
 
   const elapsed = now - Date.parse(run.createdAt)
-  if (!Number.isFinite(elapsed) || elapsed < 0) return UNKNOWN_SYNC
+  if (!Number.isFinite(elapsed) || elapsed < 0) return unknownSync(checked)
 
   const minutes = Math.floor(elapsed / 60_000)
   let age = `${minutes}m`
@@ -39,10 +47,10 @@ function syncLine(result, now) {
 
   // GitHub leaves conclusion empty while a run is queued or in progress.
   const outcome = run.conclusion || (run.status !== 'completed' && run.status)
-  if (typeof outcome !== 'string' || !/^[a-z_]+$/.test(outcome)) return UNKNOWN_SYNC
-  if (outcome === 'success' && (run.conclusion !== 'success' || run.status !== 'completed')) return UNKNOWN_SYNC
+  if (typeof outcome !== 'string' || !/^[a-z_]+$/.test(outcome)) return unknownSync(checked)
+  if (outcome === 'success' && (run.conclusion !== 'success' || run.status !== 'completed')) return unknownSync(checked)
 
-  const summary = `Sync main: ${outcome} (${age} ago) ${run.url}`
+  const summary = `Sync main: ${outcome} (${age} ago, checked ${checked}) ${run.url}`
   if (outcome === 'success') return summary
   return `${summary} | Step 0 needs independent primary-source re-verification. See CLAUDE.md, “Scheduled sync”.`
 }
@@ -195,5 +203,5 @@ async function main() {
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  await main().catch(() => console.log(UNKNOWN_SYNC))
+  await main().catch(() => console.log(unknownSync()))
 }
