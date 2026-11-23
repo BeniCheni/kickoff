@@ -10,7 +10,7 @@ releases.
 
 ### Added
 
-- Claude Code sessions show the Step 0 sync status, Git worktrees and the current branch's PR.
+- Claude Code's SessionStart hook adds the latest Step 0 sync status, up to six Git worktrees, and the current branch's PR status (when on a branch) to the model's context.
 
 ### Changed
 
