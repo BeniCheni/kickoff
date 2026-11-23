@@ -16,12 +16,10 @@ Moved out of `CLAUDE.md` on 19 Nov 2026 so sessions can load it when they need i
 The prompt ladder in [`CLAUDE.md`](../../CLAUDE.md) says how a version gets *built*. The roles for
 scoping a release are explicit: Beni is CEO, Claude Design is the designer, a Claude Code
 session in this repo is the CTO, and the Cowork session running `/anthropic-skills:football-soccer-deity` is
-Product Manager / TPM. Since PR #24 (5 Sep 2026) implementation is routed per task shape between
-Claude Code, Codex and (since the Moments work) Cursor — the seats table in `README.md`'s "How it
-gets built" section is the owning copy of that routing, and the six-pass 360 in `CLAUDE.md` is how a
-release built by one vendor is reviewed by the other. Beni has said plainly that he has not read
-the generated `docs/` logs in detail and is relying on those roles to have read them — so
-nothing here is answerable from recollection.
+Product Manager / TPM. The [README tiers and seats](../../README.md#-how-it-gets-built)
+own builder and reviewer routing. Releases take the Tier 3 six-pass 360. Beni has said plainly
+that he has not read the generated `docs/` logs in detail and is relying on those roles to have
+read them. Read the records fresh.
 
 **Ground truth for "what has shipped" is four things read together**, never one of them alone:
 `package.json`'s `version`, `git tag` (annotated tags start at v0.2.0 — v0.0.1 through v0.1.1

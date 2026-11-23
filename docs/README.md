@@ -12,10 +12,11 @@ to here, filed by release. Two things a cold reader needs first:
   belongs to.
 - **The rungs.** (1) *proposal* — an audit and the spec of record, written from a fresh read
   of the repo; (2) *design prompt* — the Claude Design brief, on real tokens and data;
-  (3) *implementation prompt* — the Claude Code build spec; (4) *review prompt* — the
+  (3) *implementation prompt* — the build spec; (4) *review prompt* — the
   adversarial review and merge instructions, which since v0.2.1 is the repo command
   `/kickoff-pr-review` (`.claude/skills/kickoff-pr-review/`) plus a per-PR appendix. Precedence
-  when they disagree: design template, then brief, then build spec.
+  when they disagree: design template, then brief, then build spec. The
+  [README tiers and seats](../README.md#-how-it-gets-built) give the current routing.
 
 ## 📖 Reader-facing pages
 
