@@ -38,6 +38,9 @@ it('shows the latest successful sync, a worktree with spaces, and no PR', () => 
 
 it.each([
   ['completed', 'failure', 'failure'],
+  ['completed', 'cancelled', 'cancelled'],
+  ['completed', 'timed_out', 'timed_out'],
+  ['queued', '', 'queued'],
   ['in_progress', '', 'in_progress'],
 ])('requires primary-source re-verification for %s / %s', (status, conclusion, outcome) => {
   const sync = success(JSON.stringify([{ ...run, status, conclusion }]))
@@ -50,6 +53,8 @@ it.each([
   ['an empty run list', success('[]')],
   ['malformed JSON', success('{"conclusion":')],
   ['success in the status field alone', success(JSON.stringify([{ ...run, status: 'success', conclusion: '' }]))],
+  ['a successful run from another repository', success(JSON.stringify([{ ...run, url: url.replace('/kickoff/', '/other/') }]))],
+  ['a run created in the future', success(JSON.stringify([{ ...run, createdAt: new Date(now + 1).toISOString() }]))],
 ])('keeps sync status unknown for %s', (_case, sync) => {
   expect(formatContext({ ...fixtures, sync }, now)[0]).toBe(unknownSync)
 })
@@ -64,6 +69,11 @@ it('shows the draft or non-draft status of a PR', () => {
   expect(formatContext({ ...fixtures, pr: draft }, now).at(-1)).toBe('Branch: topic | PR #42 (open, draft)')
   const merged = success(JSON.stringify({ number: 43, state: 'MERGED', isDraft: false }))
   expect(formatContext({ ...fixtures, pr: merged }, now).at(-1)).toBe('Branch: topic | PR #43 (merged, non-draft)')
+})
+
+it('keeps a PR lookup with an unrelated exit-1 error unknown', () => {
+  const pr = { status: 1, stdout: '', stderr: 'HTTP 502' }
+  expect(formatContext({ ...fixtures, pr }, now).at(-1)).toBe('Branch: topic | PR unknown')
 })
 
 it('distinguishes an empty worktree list, a detached HEAD and unavailable queries', () => {
@@ -121,15 +131,16 @@ it('hoists the deepest containing worktree for a detached session in a subdirect
   ])
 })
 
-it('runs the configured hook with SessionStart stdin and fake gh and git on PATH', () => {
+it.each(['success', 'stalled sync'])('runs the configured hook with fake git and gh (%s)', scenario => {
   const directory = realpathSync(mkdtempSync(join(tmpdir(), 'kickoff-session-start-')))
   try {
     const liveRun = { ...run, createdAt: new Date().toISOString() }
+    const fakeSync = scenario === 'stalled sync' ? 'exec sleep 30' : `printf '%s\\n' '${JSON.stringify([liveRun])}'`
     writeFileSync(join(directory, 'gh'), `#!/bin/sh
 [ "$PWD" = "$HOOK_TEST_CWD" ] && [ "$GH_PROMPT_DISABLED" = "1" ] && [ "$GH_TELEMETRY" = "0" ] || exit 99
 case "$*" in
   'run list --repo github.com/BeniCheni/kickoff --workflow=sync.yml --branch main --limit 1 --json conclusion,status,createdAt,url')
-    printf '%s\\n' '${JSON.stringify([liveRun])}' ;;
+    ${fakeSync} ;;
   'pr view --json number,state,isDraft') printf '%s\\n' '${draft.stdout}' ;;
   *) exit 99 ;;
 esac
@@ -145,6 +156,7 @@ esac
 
     const hook = settings.hooks.SessionStart[0]!.hooks[0]!
     const project = join(import.meta.dirname, '..')
+    const started = performance.now()
     const result = spawnSync(hook.command, hook.args.map(arg => arg.replace('${CLAUDE_PROJECT_DIR}', project)), {
       cwd: project,
       env: { ...process.env, PATH: `${directory}${delimiter}${process.env.PATH}`, HOOK_TEST_CWD: directory },
@@ -163,8 +175,15 @@ esac
     expect(result.status).toBe(0)
     expect(result.stderr).toBe('')
     const [sync, ...lines] = result.stdout.trimEnd().split('\n')
-    expect(sync).toMatch(/^Sync main: success \(0m ago, checked .+ (EST|EDT)\) /)
-    expect(sync).toContain(url)
+    if (scenario === 'stalled sync') {
+      const elapsed = performance.now() - started
+      expect(elapsed).toBeGreaterThanOrEqual(2_800)
+      expect(elapsed).toBeLessThan(6_000)
+      expect(sync).toMatch(/^Sync main: unknown \(checked .+ (EST|EDT)\)\. Check before any Step 0\.$/)
+    } else {
+      expect(sync).toMatch(/^Sync main: success \(0m ago, checked .+ (EST|EDT)\) /)
+      expect(sync).toContain(url)
+    }
     expect(lines).toEqual([
       'Worktree: /example/kickoff tree (topic)',
       'Branch: topic | PR #42 (open, draft)',
@@ -172,4 +191,4 @@ esac
   } finally {
     rmSync(directory, { recursive: true, force: true })
   }
-})
+}, 10_000)
