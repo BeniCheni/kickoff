@@ -125,12 +125,30 @@ export function isOneSentence(text: string): boolean {
 }
 
 /**
- * A PR number written into the prose: "#999", "PR 999", "pull request #999". Citations come only
- * from a line's `prs`, which the enum holds to the PRs sent, so a number in the text would be a
- * citation that nothing checked: "(#999)" printed beside the real "(#502)".
+ * Every way a line's own text can point at a PR or an issue. Citations come only from a line's
+ * `prs`, which the enum holds to the PRs sent, so a reference in the text would be a citation that
+ * nothing checked, such as a link to #327 printed beside the real "(#502)". The first four forms
+ * are GitHub's own, from "Autolinked references and URLs" (docs.github.com, read 22 Nov 2026).
+ * Issues count because they share the PRs' number space. The last form is the same reference in
+ * words, which also refuses an internal name such as "PR 0" or "PR 7b": the change can always be
+ * told without it. A link or URL to anything else, such as the demo site, is not refused.
  */
+export const PROSE_REFERENCES = [
+  // A bare URL or a Markdown link destination, absolute or relative: …/pull/327, …/issues/361.
+  { form: 'an issue or pull request URL', pattern: /\b(?:pull|issues)\/\d/i },
+  { form: 'an owner/repo#N reference', pattern: /[\w.-]+\/[\w.-]+#\d/ },
+  { form: 'a #N reference', pattern: /#\s*\d/ },
+  { form: 'a GH-N reference', pattern: /\bGH-\d/i },
+  { form: 'a PR or issue named by number', pattern: /\b(?:PRs?|pull requests?|issues?)\s*#?\s*\d/i },
+] as const
+
+/** The first reference form the text uses, or undefined when it cites nothing of its own. */
+export function proseReference(text: string): string | undefined {
+  return PROSE_REFERENCES.find(({ pattern }) => pattern.test(text))?.form
+}
+
 export function citesInProse(text: string): boolean {
-  return /#\s*\d|\b(?:PRs?|pull requests?)\s*#?\s*\d/i.test(text)
+  return proseReference(text) !== undefined
 }
 
 /** Sentence content: at least one word of two letters, so "." or "…" is not a line. */
@@ -138,10 +156,13 @@ export function hasWords(text: string): boolean {
   return /\p{L}{2}/u.test(text)
 }
 
-/** The text of a line or the lead: words, and no PR number of its own. */
+/** The text of a line or the lead: words, and no reference of its own to a PR or an issue. */
 const prose = (what: string) => z.string().min(1)
   .refine(hasWords, `${what} has no words`)
-  .refine((text) => !citesInProse(text), `${what} writes a PR number into its text, where only prs may cite`)
+  .superRefine((text, ctx) => {
+    const form = proseReference(text)
+    if (form) ctx.addIssue({ code: 'custom', message: `${what} cites ${form} in its text, where only prs may cite` })
+  })
 
 /**
  * Every line, the lead included, cites at least one PR, and only PRs this code sent, so the

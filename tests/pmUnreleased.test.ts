@@ -311,3 +311,53 @@ describe('runUnreleased', () => {
     expect(h.calls).toEqual([])
   })
 })
+
+describe('a draft that cites a PR in its own text', () => {
+  // GitHub's reference forms for issues and pull requests, from "Autolinked references and URLs"
+  // on docs.github.com, plus the same reference in words. Only #502 is sent. #327 and #361 are
+  // real numbers that were not, as in Codex's second re-read.
+  const forms: [string, string][] = [
+    ['an issue or pull request URL', 'The table fits, as [the change](https://github.com/BeniCheni/kickoff/pull/327) shows.'],
+    ['an issue or pull request URL', 'The table fits, as https://github.com/BeniCheni/kickoff/pull/327 shows.'],
+    ['an issue or pull request URL', 'The table fits, as [the issue](https://github.com/BeniCheni/kickoff/issues/361) asked.'],
+    ['an issue or pull request URL', 'The table fits, as [the change](../pull/327) shows.'],
+    ['an owner/repo#N reference', 'The table fits, as BeniCheni/kickoff#327 shows.'],
+    ['a #N reference', 'The table fits small screens (#999).'],
+    ['a GH-N reference', 'The table fits, as GH-327 shows.'],
+    ['a GH-N reference', 'The table fits, as gh-327 shows.'],
+    ['a PR or issue named by number', 'The table fits, per pull request 999.'],
+    ['a PR or issue named by number', 'The table fits, as issue 361 asked.'],
+    // True, but refused on purpose: the overhaul's internal names can always be left out.
+    ['a PR or issue named by number', 'Overhaul PR 0 pinned the honesty rules.'],
+    ['a PR or issue named by number', 'PR 7b trims the fonts.'],
+  ]
+  const positions = ['lead', 'added', 'changed', 'fixed', 'notDone'] as const
+  const placed = (key: (typeof positions)[number], text: string) =>
+    key === 'lead' ? { ...draft, lead: { text, prs: [502] } } : { ...draft, [key]: [{ text, prs: [502] }] }
+
+  it('refuses each form in the lead and in every section, and says which form it found', async () => {
+    for (const [form, text] of forms) {
+      for (const key of positions) {
+        const h = harness({ model: answer(placed(key, text)) })
+        expect(await runUnreleased([], h.deps), `${key}: ${text}`).toBe(1)
+        expect(h.out).toHaveLength(2)
+        expect(h.out[1]).toContain(`cites ${form} in its text, where only prs may cite`)
+        expect(h.out.join('\n')).not.toContain('## Draft')
+      }
+    }
+  })
+
+  it('still prints true lines that hold other numbers, other links, or the overhaul without its name', async () => {
+    for (const text of [
+      'Kickoff v0.5.5 picks up Vitest 4.1.12 and fits a 390 px phone.',
+      'The demo at `https://benicheni.github.io/kickoff/` redeploys on every push.',
+      'The overhaul pinned the honesty rules.',
+    ]) {
+      for (const key of positions) {
+        const h = harness({ model: answer(placed(key, text)) })
+        expect(await runUnreleased([], h.deps), `${key}: ${text}`).toBe(0)
+        expect(h.out.join('\n')).toContain(citeLine(text, [502]))
+      }
+    }
+  })
+})
