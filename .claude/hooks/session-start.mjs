@@ -11,6 +11,8 @@ import { fileURLToPath } from 'node:url'
 const COMMAND_TIMEOUT_MS = 3_000
 const INPUT_TIMEOUT_MS = 500
 const MAX_WORKTREES = 6
+// The sync rules describe a six-hour maximum scheduled gap and delays of about four hours.
+const STALE_SUCCESS_MS = 10 * 60 * 60 * 1_000
 const CHECK_TIME = new Intl.DateTimeFormat('en-US', {
   timeZone: 'America/New_York', year: 'numeric', month: 'short', day: 'numeric',
   hour: 'numeric', minute: '2-digit', timeZoneName: 'short',
@@ -54,7 +56,10 @@ function syncLine(result, now) {
 
   const summary = `Sync main: ${outcome} (${age} ago, checked ${checked}) ${run.url}`
   if (!completed) return `${summary} | Run unfinished. Check again before any Step 0.`
-  if (outcome === 'success') return summary
+  if (outcome === 'success') {
+    if (elapsed > STALE_SUCCESS_MS) return `${summary} | Stale success. Check again before any Step 0.`
+    return summary
+  }
   return `${summary} | Step 0 needs independent primary-source re-verification. See CLAUDE.md, “Scheduled sync”.`
 }
 

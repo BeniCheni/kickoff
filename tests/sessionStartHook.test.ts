@@ -36,6 +36,15 @@ it('shows the latest successful sync, a worktree with spaces, and no PR', () => 
   ])
 })
 
+it.each([
+  ['2026-11-22T04:30:00.000Z', '10h', ''],
+  ['2026-11-22T04:29:59.999Z', '10h', ' | Stale success. Check again before any Step 0.'],
+  ['2026-10-13T14:30:00Z', '40d', ' | Stale success. Check again before any Step 0.'],
+])('flags a successful run created at %s only beyond the freshness threshold', (createdAt, age, note) => {
+  const sync = success(JSON.stringify([{ ...run, createdAt }]))
+  expect(formatContext({ ...fixtures, sync }, now)[0]).toBe(`Sync main: success (${age} ago, ${checked}) ${url}${note}`)
+})
+
 it.each(['failure', 'cancelled', 'timed_out'])('requires primary-source re-verification for completed %s', conclusion => {
   const sync = success(JSON.stringify([{ ...run, conclusion }]))
   expect(formatContext({ ...fixtures, sync }, now)[0]).toBe(`Sync main: ${conclusion} (2h ago, ${checked}) ${url} | ${stepZero}`)
