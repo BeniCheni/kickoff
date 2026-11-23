@@ -1389,3 +1389,133 @@ WHAT YOUR SITTING MUST SHOW.
 ```
 
 When the sitting posts, its Executive Summary Brief goes to Beni for Pass 3.
+
+## Pass 2.5's second sitting posts, and Beni rules "Squash" with both trailers (Sun 22 Nov 2026, about 10:10 PM EST)
+
+**The sitting** resumed in its Codex session on the note archived at `2676ad8`. The session file's
+`turn_context` lines for its new turns, at 8:58:20 and 9:27:22 PM EST, read `gpt-6.2-sol`,
+`xhigh`, `read-only`, `on-request`, cwd `kickoff-pr352-pass25`, and its last turn ended
+`task_complete` at 9:56:31 PM. It posted `issuecomment-7090320308` at 9:55:28 PM EST, whose first
+line is "gpt-6.2-sol · xhigh · --sandbox read-only". Beni pasted its Executive Summary Brief into
+the PM seat's session by 10:01 PM EST. As before, the paste's links are bare text. Verbatim:
+
+````text
+## Executive Summary Brief — PR #352 · Pass 2.5, second sitting · 22 Nov 2026 EST
+
+Escalated. I recommend Squash at cdaebf9 against 52fe62b. Both findings from the first sitting are closed. The exact tip passed all 11 local gates, hosted verify, and the complete browser report and enforcement runs. I rechecked both live branch refs immediately before posting and verified the posted comment. Second-sitting review comment
+
+### What ships
+
+- The Table gets The Register cover, league tabs with an active competition dot, and a desktop layout with 15 columns. The six sort controls keep their existing behavior. The W, D and L headers stay plain text.
+- Next-fixture cells show Brooklyn and venue clocks from the same kickoff instant when the league has set a time. An unset time gets the full mobile explanation and time TBC on desktop.
+- Form runs oldest to newest. The foot explains that a dot represents a missing finished result for that club in this competition.
+- Keyboard focus is drawn inside rows and sort controls. The verifier now checks the full painted depth at every sampled point.
+
+This lands on overhaul/second-edition at v0.5.5. The plan puts the Poster’s still books, Rack interaction, imagery, offline font trim and decorative motion ahead of the one planned overhaul release, v0.6.0. The betting pipeline’s Step 0 switch to &lens=ledger belongs to that release.
+
+### What the 360 found
+
+The first sitting corroborated the fixes for the provenance stopwatch, absent UCL and full form strips, sort-name swaps, invisible focus, wrong-league captures, false clocks and scores, the unqualified dot sentence, unset-time copy and the missing active dot. It reproduced the inherited Next Back/Forward issue and left that with #360. The historical contrast wording was narrowed. The deleted receipts behind that historical comparison remain unavailable. First-sitting review
+
+| Fix round 2 | Independent result |
+|---|---|
+| Medium · 74e9f4e | I covered the inner top pixel at three of five sample points. The old verifier accepted 36 masked rows in each served app. The tip rejected all 36 in each app with the expected top-edge fault. Restoration gave two painted pixels on every tested edge, including the desktop sorts. Scale 2 stopped at the scale guard. For the one-pixel guard probe, I kept the shipped inset to reach the depth assertion after two preliminary probe shapes hit the row-boundary check first. |
+| Low · cdaebf9 | Mocked failures on the first, second and third writes returned exit 2 after zero, one and two completed writes. The publication workflow stops on exit 2 before committing. The corrected comment describes that boundary, and the renamed test ends its claim at the first write. All 14 assertion sites are preserved. |
+
+74e9f4e retains the opacity, clipping, bare-pixel and 3:1 checks. Its one added test covers width rounding, absent or invalid depth, clean rings, both pixels on all four edges, partial masks, mixed bare and shallow samples, three-pixel rings, diagnostics and propagation to the keyboard sweep. Two independent source mutations made it fail. Restoration passed all 34 tests in the file. cdaebf9 changes one test title to “writes none of the three when the standings fetch fails: the run ends before its first write.” The targeted provenance and publication run passed 36 tests in two files.
+
+### Verification as re-run
+
+I reran both suites because the fixes touch both test trees. I rebuilt the production shells and disk files because the runner drives them, then reran the whole browser suite because the new control can stop it before the matrix.
+
+| SHA | Local gates | Root tests / files | Web tests / files |
+|---|---:|---:|---:|
+| 9624016 | 11/11 | 1,364 / 109 | 171 / 28 |
+| 74e9f4e | 11/11 | 1,364 / 109 | 172 / 28 |
+| cdaebf9 | 11/11 | 1,364 / 109 | 172 / 28 |
+
+Next built on its first attempt at all three SHAs. Offline and single HTML were byte-identical across the three builds at 1,461,899 and 1,512,430 bytes. Local Vercel smoke and standalone N6b passed all four routes, including the deployed SHA and committed snapshot digest. Hosted verify, Vercel deployment, Preview Comments and Vercel smoke were green at the tip. Hosted verify · Hosted smoke
+
+Both reports and the successful tip enforcement measured 3,793 contrast rows in 384 cells, with zero below-floor or unread. The joins found zero row differences and all 144 league records identical. Each completed run also covered 96 lens × theme × tab × width cells across Vite and Next, 72 week cells and 42 Table states. The tip read 1,176 light and 84 dark focus rings. Every sampled edge reached two pixels.
+
+The reports ran from 21:03:03–21:17:28 EST across the two heads. Tip enforcement passed on its isolated retry at 21:35:06–21:48:40 EST. All attempts stayed on Brooklyn’s 22 Nov under the 72-hour alarm, with lastSyncAt=2026-11-19T19:33:56.613Z and no intervening kickoff. Claude reported the same totals in its separate 15:00:31–15:54:42 EST window.
+
+Not verified in this sitting. A complete pre-fix enforcement run and its enforcement joins. Three attempts stopped on Chromium frame detachment. The first tip attempt also stopped on a destroyed execution context before its successful retry. Replaying the runner’s final gate against both complete reports passed, and below-floor and unread controls each triggered failure. The interruption cause remains undetermined. The historical per-commit checks, native base run, full builder mutation set and physical-device testing were outside this rerun. All three tracked worktrees finished clean at their assigned SHAs, the listeners stopped, and shared Git configuration matched its starting values.
+
+### Rulings, squash and merge gate
+
+Beni’s Fix, three Keeps, Later and Resume are reflected in the review. The scale-1 guard, fail-closed mask control and qualified provenance wording stand. Sequential local writes and a pinned runner clock remain deferred. The inherited history and sync work stays with #360, #361 and #358. The only decision I’m putting back to Beni is Squash or Hold.
+
+The live PR body is 65,314 characters. Its historical diff command needs 9624016 in place of HEAD to reproduce +4,449/−493. The final comparison is 42 files, +4,608/−493. Keep the corrected receipts and scope the sampled-row comparison to its clock window. For the fix round’s byte claim, say that the production source and snapshot stayed the same, the disk builds matched by hash, and the production API reports the deployed revision. I’ve used both trailers in the handoff because the committed skill explicitly calls for both on a cross-vendor squash. The body credits Claude for the code and Codex for the review.
+
+| Gate clause | Result |
+|---|---|
+| Mergeable verdict | Met at the rechecked head and base. |
+| Integration only, no numbering fork | Met. Version files and CHANGELOG match the base. This squash carries no tag. |
+| Every High has a fix commit | Met. The first sitting also recorded the two amber assertions red at 0280073 and restored at f5ef791. |
+| Vendor disagreements resolved | Met. Both remaining findings closed on independent evidence. |
+| verify green at the tip | Met at cdaebf9. |
+| Step 0 URL contract, sync gates and generated data preserved | Met against 52fe62b. |
+| Landing authority | Escalated. Plan §3 gives the squash to Beni, and this pass ran with --no-merge. |
+
+### Handoff block
+
+Beni, Squash or Hold? Recommended answer is Squash.
+
+Recheck the live head and base, then click Squash and merge on PR #352.
+Head  cdaebf9e4e0d53a85cc739bd77071a77d30e0976
+Base  52fe62b00cdf6716ca2ef6e5eb2610c94bea5158
+
+Squash subject
+Overhaul PR 4: the Table's skin (#352)
+
+Squash body
+Repaint the Table as The Register. Add the cover, active league dot,
+two-clock next-fixture cells, form pips, games-in-hand note and key.
+Keep the existing sort, zones and generated snapshot. Explain empty
+form slots by competition and show a kickoff time only when set.
+
+Integrate with PR 3 and its follow-up. Verify the full painted depth
+of keyboard focus, including a one-pixel mask control. Document the
+committed snapshot as the publication boundary.
+
+Claude built the change and fixes. Codex ran Pass 1 and Pass 2.5.
+At cdaebf9, all 11 local gates, hosted verify, production smoke and
+N6b passed. The enforced browser run measured 3,793 contrast rows
+in 384 cells, with zero below-floor and zero unread.
+
+Co-authored-by: Claude <noreply@anthropic.com>
+Co-authored-by: Codex <noreply@openai.com>
+
+After the squash, from a checkout of overhaul/second-edition
+git pull --ff-only origin overhaul/second-edition
+npm run typecheck
+env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE -u GIT_COMMON_DIR -u GIT_OBJECT_DIRECTORY npm test
+npm run build
+````
+
+**The PM seat's checks,** at 10:01 PM EST:
+- The base and head branch refs read `52fe62b` and `cdaebf9`, unchanged since fix round 2. The PR
+  is open, not a draft, MERGEABLE and CLEAN, with no review and auto-merge off, and its body still
+  measures 65,314. #352 is the only open PR into `overhaul/second-edition`.
+- The three Pass 2.5 trees are clean at `cdaebf9`, `52fe62b` and `f9cc527`. None of the sitting's
+  ports is listening. The shared `.git/config` still reads `core.bare=false` and
+  `Cursor <cursoragent@cursor.com>`. The Mac had 7.1 GiB free.
+- **The trailers.** The two sittings drafted them differently: the first, Claude's alone, "consistent
+  with the integration squash precedent"; the second, both, "because the committed skill
+  explicitly calls for both". The repo has both. `.claude/skills/kickoff-pr-review/SKILL.md:282-283`
+  at `cdaebf9` reads: "A cross-vendor squash body names who ran which pass and carries both
+  `Co-authored-by:` trailers (`Codex <noreply@openai.com>`, `Claude <noreply@anthropic.com>`), as
+  `8498726` did". `8498726` (v0.2.5, #23) carries both. On this integration branch, `8173066`
+  (#341) carries Cursor and Codex, `d9b97d4` (#342) Cursor and Claude, and `1e09592` (#349) and
+  `52fe62b` (#359) Codex alone.
+
+**Beni's rulings**, at 10:04:25 PM EST, to the PM seat's two questions in its session:
+- **"Squash"**: #352 squashes at `cdaebf9` into `overhaul/second-edition`, by Beni's own click.
+  He was told of the sitting's not-verified pre-fix `--enforce` run and its Chromium
+  frame-detachment stops when he answered.
+- **"Both"**: the squash carries both `Co-authored-by:` trailers, as the skill says and as the
+  second sitting drafted.
+
+The squash subject and body went to Beni in chat as the second sitting drafted them. When the
+squash lands, the PM seat checks the squash commit on the base and says which folders can go.
