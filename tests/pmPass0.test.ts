@@ -266,4 +266,16 @@ describe('runPass0', () => {
     expect(h.out).toEqual(['Could not read PR 4242 completely: GitHub returned 100 of the PR\'s 101 commits, so the skeleton would be incomplete. No skeleton was printed.'])
     expect(h.modelCalls).toEqual([])
   })
+
+  it('prints no skeleton when overlapping pages repeat a commit in place of the last one', async () => {
+    // Codex's re-read: 101 rows, 100 distinct, which printed 100% Claude and left Codex out.
+    const many = withCommits(pr, 101)
+    const h = harness(answer({ claims: [] }), { pr: many, gh: { overlap: { list: 'commits', index: 100, again: 99 } } })
+    expect(await runPass0(['4242'], h.deps)).toBe(2)
+    expect(h.out).toEqual([
+      `Could not read PR 4242 completely: GitHub returned commit ${many.commits[99]!.oid.slice(0, 7)} twice across the pages of commits, so their count cannot be trusted. No skeleton was printed.`,
+    ])
+    expect(h.out.join('\n')).not.toMatch(/Share|%/)
+    expect(h.modelCalls).toEqual([])
+  })
 })

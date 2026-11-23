@@ -12,6 +12,16 @@ export interface FakeGitHubOptions {
   headMovesAtCall?: number
   /** Make `gh pr view` fail with this stderr. */
   viewFails?: string
+  /**
+   * Serve node `again` a second time in place of node `index`, keeping every total right, as
+   * pages that overlap would: Codex's re-read served commit 100 twice and never the 101st.
+   */
+  overlap?: { list: 'commits' | 'files'; index: number; again: number }
+}
+
+const overlapped = (nodes: unknown[], list: 'commits' | 'files', options: FakeGitHubOptions) => {
+  const o = options.overlap
+  return o?.list === list ? nodes.map((node, i) => (i === o.index ? nodes[o.again] : node)) : nodes
 }
 
 const ok = (stdout: string): ProcessResult => ({ status: 0, stdout, stderr: '' })
@@ -37,15 +47,15 @@ export function fakeGitHub(pr: PullRequest, options: FakeGitHubOptions = {}) {
     let served: unknown[]
     if (query === COMMITS_QUERY) {
       total = pr.commits.length
-      served = pr.commits.slice(0, options.commitCap ?? total).map((c) => ({
+      served = overlapped(pr.commits.slice(0, options.commitCap ?? total).map((c) => ({
         commit: {
           oid: c.oid, messageHeadline: c.messageHeadline, messageBody: c.messageBody,
           authors: { totalCount: c.authors.length, nodes: c.authors },
         },
-      }))
+      })), 'commits', options)
     } else if (query === FILES_QUERY) {
       total = pr.files.length
-      served = pr.files.map((f) => ({ ...f, changeType: f.changeType ?? 'MODIFIED' }))
+      served = overlapped(pr.files.map((f) => ({ ...f, changeType: f.changeType ?? 'MODIFIED' })), 'files', options)
     } else {
       throw new Error('unexpected GraphQL query')
     }
@@ -75,5 +85,19 @@ export function withCommits(pr: PullRequest, count: number): PullRequest {
       messageBody: '',
       authors: [i === count - 1 ? codex : claude],
     })),
+  }
+}
+
+/**
+ * A PR of `count` files, each +1 −0, with the PR's own totals to match. Every file has the same
+ * counts, so a repeated file in place of a missing one leaves the totals check satisfied.
+ */
+export function withFiles(pr: PullRequest, count: number): PullRequest {
+  return {
+    ...pr,
+    changedFiles: count,
+    additions: count,
+    deletions: 0,
+    files: Array.from({ length: count }, (_, i) => ({ path: `src/file-${i + 1}.ts`, additions: 1, deletions: 0, changeType: 'ADDED' })),
   }
 }

@@ -93,11 +93,15 @@ export interface Page<N> {
 
 const short = (oid: string) => oid.slice(0, 7)
 
+/** What makes a node itself: a commit's full OID, a file's path. A PR lists each one once. */
+export type NodeKey<N> = (node: N) => string
+
 /**
  * The pages joined into one list, or the reason they cannot be: the head moved between reads,
- * the pages ran out before the total, or GitHub stopped short of its own count.
+ * the pages ran out before the total, a node came back twice, or GitHub stopped short of its own
+ * count. The count is of distinct nodes, so overlapping pages cannot make up a missing one.
  */
-export function assembleList<N>(what: 'commits' | 'files', pages: readonly Page<N>[], headRefOid: string): N[] {
+export function assembleList<N>(what: 'commits' | 'files', pages: readonly Page<N>[], headRefOid: string, key: NodeKey<N>): N[] {
   const first = pages[0]
   if (!first) throw new Error(`GitHub returned no page of ${what}`)
   for (const p of pages) {
@@ -108,6 +112,15 @@ export function assembleList<N>(what: 'commits' | 'files', pages: readonly Page<
   }
   if (pages.at(-1)?.hasNextPage) throw new Error(`the PR has more than ${pages.length * PAGE_SIZE} ${what}, past what this script reads`)
   const nodes = pages.flatMap((p) => p.nodes)
+  const seen = new Set<string>()
+  for (const node of nodes) {
+    const id = key(node)
+    if (seen.has(id)) {
+      const name = what === 'commits' ? `commit ${short(id)}` : `file ${id}`
+      throw new Error(`GitHub returned ${name} twice across the pages of ${what}, so their count cannot be trusted`)
+    }
+    seen.add(id)
+  }
   if (nodes.length !== first.totalCount) {
     throw new Error(`GitHub returned ${nodes.length} of the PR's ${first.totalCount} ${what}, so the skeleton would be incomplete`)
   }
@@ -127,7 +140,7 @@ export function repoOf(url: string, number: number): RepoRef {
 }
 
 async function readList<T extends z.ZodType>(
-  run: CommandRunner, what: 'commits' | 'files', ref: RepoRef, headRefOid: string, node: T,
+  run: CommandRunner, what: 'commits' | 'files', ref: RepoRef, headRefOid: string, node: T, key: NodeKey<z.infer<T>>,
 ): Promise<z.infer<T>[]> {
   const schema = pageSchema(node)
   const pages: Page<z.infer<T>>[] = []
@@ -149,7 +162,7 @@ async function readList<T extends z.ZodType>(
     if (!pr.list.pageInfo.endCursor) throw new Error(`GitHub's page ${index + 1} of ${what} has more but no cursor`)
     after = pr.list.pageInfo.endCursor
   }
-  return assembleList(what, pages, headRefOid)
+  return assembleList(what, pages, headRefOid, key)
 }
 
 /** Every commit with every author GitHub credits, or the reason the list cannot be trusted. */
@@ -172,11 +185,11 @@ export function checkFiles(meta: z.infer<typeof metaSchema>, files: PullRequest[
 }
 
 export async function readCommits(run: CommandRunner, ref: RepoRef, headRefOid: string): Promise<PullRequest['commits']> {
-  return flattenCommits(await readList(run, 'commits', ref, headRefOid, commitNode))
+  return flattenCommits(await readList(run, 'commits', ref, headRefOid, commitNode, (n) => n.commit.oid))
 }
 
 export async function readFiles(run: CommandRunner, ref: RepoRef, headRefOid: string): Promise<PullRequest['files']> {
-  return readList(run, 'files', ref, headRefOid, fileNode)
+  return readList(run, 'files', ref, headRefOid, fileNode, (n) => n.path)
 }
 
 export async function readPullRequest(run: CommandRunner, number: number): Promise<PullRequest> {

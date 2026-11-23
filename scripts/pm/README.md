@@ -37,9 +37,11 @@ nothing. The PR's own fields come from
 Commits and files do not come from `gh pr view`, because gh 2.105.0 asks GitHub for the first 100
 of each and says nothing when there are more. `github.ts` reads them through `gh api graphql`
 instead, 100 at a time, following GitHub's cursor. Each list must reach its connection's
-`totalCount`, the head must not move during the read, and the files must match the PR's
-`changedFiles`, `additions` and `deletions`. If any check fails, the script prints one
-`Could not read PR <N> completely:` line with the reason and exits 2.
+`totalCount` in distinct entries: a commit's full OID or a file's path may come back only once, so
+pages that overlap can't make up for an entry that never came. The head must not move during the
+read, and the files must match the PR's `changedFiles`, `additions` and `deletions`. If any check
+fails, the script prints one `Could not read PR <N> completely:` line with the reason, prints no
+shares, makes no model call and exits 2.
 
 GitHub ends a PR's commit list at 250 even through GraphQL. On 22 Nov 2026, nodejs/node#66667
 reported `totalCount: 340`, and GitHub stopped at 250 with `hasNextPage: false`. So a PR with more

@@ -4,7 +4,7 @@ import {
   COMMITS_QUERY, FILES_QUERY, META_FIELDS, PAGE_SIZE, assembleList, checkFiles, flattenCommits, prSchema,
   readPullRequest, repoOf,
 } from '../scripts/pm/github'
-import { fakeGitHub, withCommits } from './fixtures/pm/fakeGitHub'
+import { fakeGitHub, withCommits, withFiles } from './fixtures/pm/fakeGitHub'
 
 // No test here calls GitHub: `gh` is the scripted fake in tests/fixtures/pm/fakeGitHub.ts.
 const pr = prSchema.parse(JSON.parse(readFileSync('tests/fixtures/pm/pr-view.json', 'utf8')))
@@ -14,25 +14,33 @@ const numbers = (from: number, to: number) => Array.from({ length: to - from }, 
 
 describe('assembleList', () => {
   it('joins pages that reach their total', () => {
-    expect(assembleList('commits', [page(numbers(0, 100), 101, true), page([100], 101)], head)).toEqual(numbers(0, 101))
+    expect(assembleList('commits', [page(numbers(0, 100), 101, true), page([100], 101)], head, String)).toEqual(numbers(0, 101))
   })
 
   it('stops when GitHub ends the list short of its own count', () => {
-    expect(() => assembleList('commits', [page(numbers(0, 100), 101)], head))
+    expect(() => assembleList('commits', [page(numbers(0, 100), 101)], head, String))
       .toThrow('GitHub returned 100 of the PR\'s 101 commits, so the skeleton would be incomplete')
   })
 
+  it('counts distinct nodes, so one served twice cannot stand in for one that is missing', () => {
+    // 101 nodes against a total of 101, but node 99 twice and node 100 never.
+    expect(() => assembleList('commits', [page(numbers(0, 100), 101, true), page([99], 101)], head, String))
+      .toThrow('GitHub returned commit 99 twice across the pages of commits, so their count cannot be trusted')
+    expect(() => assembleList('files', [page(['a.ts', 'b.ts'], 3, true), page(['b.ts'], 3)], head, String))
+      .toThrow('GitHub returned file b.ts twice across the pages of files')
+  })
+
   it('stops when the head or the count moved between pages', () => {
-    expect(() => assembleList('commits', [page([1], 2, true), page([2], 2, false, 'f'.repeat(40))], head)).toThrow(/head moved/)
-    expect(() => assembleList('files', [page([1], 2, true), page([2], 3)], head)).toThrow(/count changed/)
+    expect(() => assembleList('commits', [page([1], 2, true), page([2], 2, false, 'f'.repeat(40))], head, String)).toThrow(/head moved/)
+    expect(() => assembleList('files', [page([1], 2, true), page([2], 3)], head, String)).toThrow(/count changed/)
   })
 
   it('stops when the pages ran out before the list did', () => {
-    expect(() => assembleList('files', [page([1], 2, true)], head)).toThrow(/more than 100 files/)
+    expect(() => assembleList('files', [page([1], 2, true)], head, String)).toThrow(/more than 100 files/)
   })
 
   it('refuses an empty set of pages', () => {
-    expect(() => assembleList('files', [], head)).toThrow(/no page/)
+    expect(() => assembleList('files', [], head, String)).toThrow(/no page/)
   })
 })
 
@@ -69,6 +77,24 @@ describe('readPullRequest', () => {
       .rejects.toThrow('GitHub returned 100 of the PR\'s 101 commits, so the skeleton would be incomplete')
     await expect(readPullRequest(fakeGitHub(withCommits(pr, 340), { commitCap: 250 }).run, 4242))
       .rejects.toThrow('GitHub returned 250 of the PR\'s 340 commits')
+  })
+
+  it('refuses overlapping commit pages that still add up to the total', async () => {
+    // Codex's re-read: page two served commit 100 again in place of the 101st, Codex's own.
+    const many = withCommits(pr, 101)
+    const gh = fakeGitHub(many, { overlap: { list: 'commits', index: 100, again: 99 } })
+    await expect(readPullRequest(gh.run, 4242))
+      .rejects.toThrow(`GitHub returned commit ${many.commits[99]!.oid.slice(0, 7)} twice across the pages of commits`)
+  })
+
+  it('refuses a file served twice, even where the PR\'s totals cannot tell', async () => {
+    const many = withFiles(pr, 101)
+    expect(await readPullRequest(fakeGitHub(many).run, 4242)).toEqual(many)
+    // Every file is +1 −0, so a repeat in place of the last one leaves 101 files, +101 −0.
+    expect(() => checkFiles(many, [...many.files.slice(0, 100), many.files[99]!])).not.toThrow()
+    const gh = fakeGitHub(many, { overlap: { list: 'files', index: 100, again: 99 } })
+    await expect(readPullRequest(gh.run, 4242))
+      .rejects.toThrow('GitHub returned file src/file-100.ts twice across the pages of files, so their count cannot be trusted')
   })
 
   it('refuses a read during which the head moved', async () => {
