@@ -118,7 +118,10 @@ claims to check, not a verdict.
    review round had found a new way for code spans, links and emphasis to hide a citation, so the
    check reads no link syntax at all. An address that must appear goes in a code span, where
    GitHub renders it as code and never as a link, and the person who applies the draft adds any
-   link the CHANGELOG needs. The text is flattened first, as the draft prints it. Then:
+   link the CHANGELOG needs. The text is flattened first, as the draft prints it. A line with
+   **a format character** (Unicode category Cf, such as a zero-width space or a soft hyphen) is
+   refused wherever it stands, code spans included: no draft needs one, and dropping one could
+   join `#327` to the word after it. Retype the line without it. Then:
    1. **Code spans** are single backticks that pair. Inside one, anything may stand:
       `` `https://benicheni.github.io/kickoff/` ``, `` `[Unreleased]` ``, `` `<today>` ``,
       `` `\` `` and `` `github-actions[bot]` `` all pass. A line with **an unpaired backtick** or
@@ -128,28 +131,37 @@ claims to check, not a verdict.
       - **a square bracket**, `[` or `]`, which covers links, images, reference links, footnotes
         and a bare `github-actions[bot]`;
       - **an angle bracket**, `<`, which covers autolinks and raw HTML;
-      - **a URL**, meaning `://` or `www.`;
+      - **a URL**, meaning `://`, `www.` or `github.com/`, because GitHub links a scheme-less
+        `github.com/<owner>/<repo>/discussions/327` to PR 327 itself. Put the address in a code
+        span: `` `github.com/BeniCheni/kickoff/discussions/327` `` passes;
       - **an at sign**, `@`, because GitHub links an email address as `mailto:` and a mention to
         a profile;
       - **a character reference** such as `&amp;` or `&#47;`, and **a backslash**, because either
-        could spell the syntax above without showing it.
+        could spell the syntax above without showing it;
+      - **a commit SHA**, meaning a lowercase hex token of 7 to 40 characters that holds a letter
+        and a digit, because GitHub links a commit's short or full SHA. Put it in a code span:
+        `` `f635fb8` `` passes. Ordinary words pass, since `decade` has no digit and `2026` no
+        letter.
    3. **The text**, code spans included, is then judged for a reference. Emphasis markers (`*`,
       `_`, `~`) and backticks stay where they are, as breaks between words. So `**#327**a` holds
       `#327` and is refused, because GitHub links `#327` there, while `#_327` and `~~#~~327`,
       where GitHub links nothing, pass. GitHub's short forms are refused: `#327`,
-      `owner/repo#327` and `GH-327` (in either case). Each needs a letter-or-digit boundary
-      before and after its number. So `#327,`, `(#327)`, `GH-327.` and `` `#327` `` are refused,
-      while `#327b` and `GH-327b`, which GitHub renders as plain text, pass. **An issue or pull
-      request address** names one too, link or no link, so a code span doesn't save it:
+      `owner/repo#327` and `GH-327` (in either case), wherever they start, since GitHub links
+      `see-GH-327` and `notes/BeniCheni/kickoff#327` too. Each needs a letter-or-digit boundary
+      after its number. So `#327,`, `(#327)`, `GH-327.`, `-GH-327` and `` `#327` `` are refused,
+      while `#327b` and `GH-327b`, which GitHub renders as plain text, pass. Reword `high-5` as
+      `high five`: it is refused for the `gh-5` inside it, though GitHub links nothing there.
+      **An issue or pull request address** names one too, link or no link, so a code span doesn't
+      save it:
       `github.com/<owner>/<repo>/pull/N` or `/issues/N` on any github.com host, `redirect.github.com`
-      included, and the API's `/repos/<owner>/<repo>/pulls/N` or `/issues/N`. Its number is
-      bounded after it as well, so `pull/327/files` and `pull/327.diff` are refused, while
-      `pull/327b` and a `pulls` list with no number pass. A reference in words
+      included, and the API's `api.github.com/repos/<owner>/<repo>/pulls/N` or `/issues/N`. The
+      host starts at a boundary, so `notgithub.com` is not one, nor is a file path that holds
+      `/repos/`. Its number is bounded after it as well, so `pull/327/files` and `pull/327.diff`
+      are refused, while `pull/327b` and a `pulls` list with no number pass. A reference in words
       is refused too, where a keyword and a number are separate tokens, reading markers and
       backticks as spaces: `PR 999`, `PR #999`, `pull request 999`, `issue 361`, `issue 361:` and
       `**issue** 361`. A number glued to a word, as in `issue10047`, isn't a reference. The text is
-      NFKC-normalized with invisible format characters dropped, so a fullwidth `#３２７` or a
-      zero-width space after `#` still reads as `#327`.
+      NFKC-normalized, so a fullwidth `#３２７` still reads as `#327`.
 
    Every text also needs words: at least one run of two letters, so `.` alone is not a line. The
    lead must be exactly one sentence, also checked in plain code (it ends in `.`, `!` or `?`, and
@@ -173,12 +185,16 @@ claims to check, not a verdict.
    | The sync PR comes from github-actions[bot]. | a square bracket | The sync PR comes from `github-actions[bot]`. |
    | Widths < 400 px keep one column. | an angle bracket | Widths under 400 px keep one column. |
    | Mail ops@example.org for access. | an at sign | Mail `ops@example.org` for access. |
+   | The fix landed in f635fb8. | a commit SHA | The fix landed in `f635fb8`. |
+   | The issues live at github.com/BeniCheni/kickoff/issues. | a URL | The issues live at `github.com/BeniCheni/kickoff/issues`. |
+   | The keeper got a high-5 from the bench. | a GH-N reference | The keeper got a high five from the bench. |
 
    The citation comes from `prs` either way. If a run fails, find what the failure line names:
-   a number after "PR", "pull request" or "issue", or an address or name outside a code span.
-   Then run it again, or write that line yourself. One false refusal has no rewording in a code
-   span, because the reference rule reads code spans too: `#327_` is refused, though GitHub
-   renders it as plain text.
+   a number after "PR", "pull request" or "issue", or an address, a name or a SHA outside a code
+   span. Then run it again, or write that line yourself. Two false refusals have no rewording in
+   a code span, because the reference rule reads code spans too: `#327_` is refused, though
+   GitHub renders it as plain text, and so is an address with a numeric fragment, such as
+   `https://example.com/page#123`.
 
 It prints the draft inside a fence. Wrap it to the file's style when you paste it into
 `CHANGELOG.md`.

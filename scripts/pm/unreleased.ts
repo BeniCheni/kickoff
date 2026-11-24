@@ -140,66 +140,82 @@ export function isOneSentence(text: string): boolean {
 export const CODE_SPAN_FORMS = { run: 'a run of backticks', unpaired: 'an unpaired backtick' } as const
 
 /**
+ * An invisible format character (Unicode category Cf, such as a zero-width space or a soft hyphen)
+ * is refused anywhere in a line, code spans included. No draft needs one, and Codex's sixth re-read
+ * found that dropping it hid a reference: `#327` with a zero-width space before "today" read as
+ * `#327today` here, while GitHub linked `#327`.
+ */
+export const FORMAT_CHARACTER = { form: 'a format character', pattern: /\p{Cf}/u } as const
+
+/**
  * What GitHub turns into a link, outside a code span: `[` or `]` (links, images, reference links,
- * footnotes), `<` (autolinks and raw HTML), `://` and `www.` (bare URLs), `@` (an email address,
- * which GitHub links as mailto, or a mention), and a character reference or a backslash, which
- * could spell any of these without showing it.
+ * footnotes), `<` (autolinks and raw HTML), `://`, `www.` and `github.com/` (bare URLs, where
+ * GitHub links a scheme-less `github.com/<owner>/<repo>/discussions/327` to the PR itself), `@`
+ * (an email address, which GitHub links as mailto, or a mention), a character reference or a
+ * backslash, which could spell any of these without showing it, and a commit SHA, meaning a
+ * lowercase hex token of 7 to 40 characters with a letter and a digit, which GitHub links to the
+ * commit (it renders an uppercase one as plain text).
  */
 export const LINK_SYNTAX = [
   { form: 'a square bracket', pattern: /[[\]]/ },
   { form: 'an angle bracket', pattern: /</ },
-  { form: 'a URL', pattern: /:\/\/|www\./i },
+  { form: 'a URL', pattern: /:\/\/|www\.|github\.com\//i },
   { form: 'an at sign', pattern: /@/ },
   { form: 'a character reference', pattern: /&(?:#\d+|#x[\da-f]+|[a-z][a-z\d]*);/i },
   { form: 'a backslash', pattern: /\\/ },
+  { form: 'a commit SHA', pattern: /(?<![A-Za-z\d])(?=[\da-f]*[a-f])(?=[\da-f]*\d)[\da-f]{7,40}(?![A-Za-z\d])/ },
 ] as const
 
 /**
  * The short forms and the words, read in the whole text, code spans included. Emphasis markers
  * and backticks stay where they are, so they break a token without joining or splitting one:
  * `**#327**a` holds `#327` and is refused, as GitHub links it there, while `#_327`, where GitHub
- * links nothing, passes. A short form needs a letter-or-digit boundary on both sides of its
- * number, so `#327,` and `(#327)` count, `#327b` does not, and `#327_` counts (GitHub renders it
- * as plain text, so that is a false refusal taken on purpose). The words take a keyword and a
- * number as separate tokens ("PR 7b", "issue #361"), never one glued token ("issue10047"), and
- * read markers and backticks as spaces, so `**issue** 361` is refused. They also refuse an
+ * links nothing, passes. A short form counts wherever it starts, since GitHub links `see-GH-327`
+ * and `notes/BeniCheni/kickoff#327` too, and needs a letter-or-digit boundary after its number,
+ * so `#327,` and `(#327)` count, `#327b` does not, and `#327_` counts (GitHub renders it as plain
+ * text, so that is a false refusal taken on purpose, as are `high-5` and `a#327`). The words take
+ * a keyword and a number as separate tokens ("PR 7b", "issue #361"), never one glued token
+ * ("issue10047"), and read markers and backticks as spaces, so `**issue** 361` is refused. They also refuse an
  * internal name such as "PR 0" and plain prose that puts a number after "issue" or "pull request":
- * the change can always be told without that, as the README says. The text is NFKC-normalized with
- * invisible format characters dropped first, so `#３２７` reads as `#327`.
+ * the change can always be told without that, as the README says. The text is NFKC-normalized
+ * first, so `#３２７` reads as `#327`. A format character never gets this far (FORMAT_CHARACTER).
  *
  * An issue or pull request address names one too, link or no link, so the address forms from
  * GitHub's list are read as text, code spans included: `github.com/<owner>/<repo>/pull/N` or
  * `/issues/N` on any github.com host (`redirect.github.com` too), and the API's
- * `/repos/<owner>/<repo>/pulls/N` or `/issues/N`, each with its number bounded after it.
+ * `api.github.com/repos/<owner>/<repo>/pulls/N` or `/issues/N`, each with its host starting at a
+ * boundary, so `notgithub.com` or a file path that holds `/repos/` is not one, and its number
+ * bounded after it.
  */
 export const TEXT_REFERENCES = [
   {
     form: 'an issue or pull request address',
-    pattern: /(?:github\.com\/[^/\s`]+\/[^/\s`]+\/(?:pull|issues)|\/repos\/[^/\s`]+\/[^/\s`]+\/(?:pulls|issues))\/\d+(?![A-Za-z\d])/i,
+    pattern: /(?<![\w.-])(?:(?:[\w-]+\.)*github\.com\/[^/\s`]+\/[^/\s`]+\/(?:pull|issues)|api\.github\.com\/repos\/[^/\s`]+\/[^/\s`]+\/(?:pulls|issues))\/\d+(?![A-Za-z\d])/i,
     spaced: false,
   },
-  { form: 'an owner/repo#N reference', pattern: /(?<![\w./-])[\w.-]+\/[\w.-]+#\d+(?![A-Za-z\d])/, spaced: false },
-  { form: 'a #N reference', pattern: /(?<![A-Za-z\d])#\s*\d+(?![A-Za-z\d])/, spaced: false },
-  { form: 'a GH-N reference', pattern: /(?<![A-Za-z\d-])GH-\d+(?![A-Za-z\d])/i, spaced: false },
+  { form: 'an owner/repo#N reference', pattern: /[\w.-]+\/[\w.-]+#\d+(?![A-Za-z\d])/, spaced: false },
+  { form: 'a #N reference', pattern: /#\s*\d+(?![A-Za-z\d])/, spaced: false },
+  { form: 'a GH-N reference', pattern: /GH-\d+(?![A-Za-z\d])/i, spaced: false },
   { form: 'a PR or issue named by number', pattern: /\b(?:PRs?|pull\s+requests?|issues?)(?:\s+#?|\s*#)\s*\d/i, spaced: true },
 ] as const
 
 export interface TextFinding {
   form: string
-  /** `code` for backticks that do not pair, `link` for link syntax, `cites` for a reference. */
-  kind: 'code' | 'link' | 'cites'
+  /** `hidden` for a format character, `code` for backticks that do not pair, `link` for link syntax, `cites` for a reference. */
+  kind: 'hidden' | 'code' | 'link' | 'cites'
 }
 
 /** Why the check refuses a line's text, or undefined when it passes. The text is flattened first, as `citeLine` prints it. */
 export function textFinding(text: string): TextFinding | undefined {
   const flat = text.replace(/\s+/g, ' ').trim()
+  if (FORMAT_CHARACTER.pattern.test(flat)) return { form: FORMAT_CHARACTER.form, kind: 'hidden' }
   if (flat.includes('``')) return { form: CODE_SPAN_FORMS.run, kind: 'code' }
   const pieces = flat.split('`')
   if (pieces.length % 2 === 0) return { form: CODE_SPAN_FORMS.unpaired, kind: 'code' }
   const outside = pieces.filter((_, i) => i % 2 === 0).join(' ')
   const syntax = LINK_SYNTAX.find(({ pattern }) => pattern.test(outside))
   if (syntax) return { form: syntax.form, kind: 'link' }
-  const read = flat.normalize('NFKC').replace(/\p{Cf}/gu, '')
+  const read = flat.normalize('NFKC')
   const spaced = read.replace(/[*_~`]/g, ' ')
   const found = TEXT_REFERENCES.find(({ pattern, spaced: words }) => pattern.test(words ? spaced : read))
   return found ? { form: found.form, kind: 'cites' } : undefined
@@ -231,7 +247,9 @@ const prose = (what: string) => z.string().min(1)
         ? `${what} cites ${finding.form} in its text, where only prs may cite`
         : finding.kind === 'link'
           ? `${what} holds ${finding.form} outside a code span, where a draft may hold no link`
-          : `${what} holds ${finding.form}, so its code spans cannot be read`,
+          : finding.kind === 'hidden'
+            ? `${what} holds ${finding.form}, which no draft needs and which can hide a reference`
+            : `${what} holds ${finding.form}, so its code spans cannot be read`,
     })
   })
 

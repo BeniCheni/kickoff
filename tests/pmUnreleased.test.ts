@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { jsonSchemaFor, type ModelRunner } from '../scripts/pm/model'
 import type { CommandRunner, ProcessResult } from '../scripts/pm/process'
 import {
-  CODE_SPAN_FORMS, LINK_SYNTAX, LIST_FIELDS, LIST_LIMIT, brooklynStamp, citeLine, citesInProse, currentUnreleased, draftBlocks, draftSchema, hasWords, isOneSentence,
+  CODE_SPAN_FORMS, FORMAT_CHARACTER, LINK_SYNTAX, LIST_FIELDS, LIST_LIMIT, brooklynStamp, citeLine, citesInProse, currentUnreleased, draftBlocks, draftSchema, hasWords, isOneSentence,
   isSyncPr, mergedPrSchema, proseReference, renderDraft, runUnreleased, searchSince, splitPrs, uncited, type Draft,
 } from '../scripts/pm/unreleased'
 
@@ -170,9 +170,11 @@ describe('the draft', () => {
     expect(citesInProse('It fits (# 999).')).toBe(true)
     expect(citesInProse('Built in PRs 7 and 9.')).toBe(true)
     // A URL is refused as a link, its address in a code span is not a reference, and a number
-    // glued to a word is not a reference.
+    // glued to a word is not a reference. Since round 7 a short form counts wherever it starts,
+    // so a numeric fragment is refused in a code span too: a false refusal taken on purpose.
     expect(citesInProse('The notes are at https://example.com/page#123 for now.')).toBe(true)
-    expect(citesInProse('The notes are at `https://example.com/page#123` for now.')).toBe(false)
+    expect(citesInProse('The notes are at `https://example.com/page#123` for now.')).toBe(true)
+    expect(citesInProse('The notes are at `https://example.com/page#top` for now.')).toBe(false)
     expect(citesInProse('The fix landed in issue10047.go upstream.')).toBe(false)
     expect(hasWords('It fits.')).toBe(true)
     expect(hasWords('Ça marche.')).toBe(true)
@@ -340,6 +342,7 @@ describe('a draft that cites a PR in its own text', () => {
   const cites = (form: string) => `cites ${form} in its text, where only prs may cite`
   const linked = (form: string) => `holds ${form} outside a code span, where a draft may hold no link`
   const unpaired = (form: string) => `holds ${form}, so its code spans cannot be read`
+  const hidden = (form: string) => `holds ${form}, which no draft needs and which can hide a reference`
   const forms: [message: string, text: string][] = [
     // Link targets. Since fix round 6 ("Drop links from drafts") each is refused as a link.
     [linked('a square bracket'), 'The table fits, as [the change](https://github.com/BeniCheni/kickoff/pull/327) shows.'],
@@ -392,7 +395,7 @@ describe('a draft that cites a PR in its own text', () => {
       if (!line.trim().startsWith('|')) break
       rows.push(line.split('|').slice(1, -1).map((cell) => cell.trim()))
     }
-    expect(rows).toHaveLength(9)
+    expect(rows).toHaveLength(12)
     for (const [fails, refusedFor, passes] of rows) {
       expect(proseReference(fails!), fails).toBe(refusedFor)
       expect(proseReference(passes!), passes).toBeUndefined()
@@ -524,7 +527,8 @@ describe('a draft that cites a PR in its own text', () => {
       rule: 'a character reference or a backslash outside a code span',
       refused: [
         [linked('a character reference'), 'Fixtures &amp; standings share one clock.'],
-        [linked('a character reference'), 'See https&#58;//github.com/BeniCheni/kickoff/pull/327 for details.'],
+        // Round 7 refuses github.com/ by name, which the list reads before a character reference.
+        [linked('a URL'), 'See https&#58;//github.com/BeniCheni/kickoff/pull/327 for details.'],
         [linked('a backslash'), 'The table fits \\*every\\* phone.'],
       ],
       prints: ['Fixtures & standings share one clock.', 'The entity `&amp;` prints as it is.', 'The path separator is `\\` on Windows.'],
@@ -566,12 +570,76 @@ describe('a draft that cites a PR in its own text', () => {
         'The list is at `https://github.com/BeniCheni/kickoff/pulls` now.',
         // The number is bounded after it, as the short forms are.
         'The odd path `https://github.com/BeniCheni/kickoff/pull/327b` is not one.',
+        // Re-read 6: the host starts at a boundary, and the API path at api.github.com.
+        'The mirror is at `https://notgithub.com/BeniCheni/kickoff/pull/327` now.',
+        'The file is `https://github.com/BeniCheni/kickoff/blob/main/docs/repos/example/project/pulls/327.md` now.',
+        'The mirror is at `https://example.org/repos/BeniCheni/kickoff/pulls/327` now.',
       ],
     },
     {
-      rule: 'plain text, normalized, with a short form bounded on both sides of its number',
+      // Fix round 7 (Re-read 6): a short form counts wherever it starts, and its number is still
+      // bounded after it.
+      rule: 'a short form wherever it starts',
       refused: [
-        [cites('a #N reference'), 'The table fits, as #​327 shows.'],
+        [cites('a GH-N reference'), 'Test see-GH-327 for details.'],
+        [cites('a GH-N reference'), 'Test -GH-327 for details.'],
+        [cites('a GH-N reference'), 'Test notes-GH-327 for details.'],
+        [cites('an owner/repo#N reference'), 'Review notes/BeniCheni/kickoff#327 for context.'],
+        [cites('an owner/repo#N reference'), 'Review `github.com/BeniCheni/kickoff#361` for context.'],
+        // A false refusal taken on purpose: GitHub renders high-5 as plain text.
+        [cites('a GH-N reference'), 'The keeper got a high-5 from the bench.'],
+      ],
+      prints: [
+        'Test see-GH-327b for details.',
+        'Review notes/BeniCheni/kickoff#327b for context.',
+        'The keeper got a high five from the bench.',
+      ],
+    },
+    {
+      // Fix round 7 (Re-read 6): GitHub links a scheme-less github.com path, and a discussion's
+      // number to the PR that holds it.
+      rule: 'github.com outside a code span',
+      refused: [
+        [linked('a URL'), 'Review github.com/BeniCheni/kickoff#361 for context.'],
+        [linked('a URL'), 'Review github.com/BeniCheni/kickoff/discussions/327 for context.'],
+      ],
+      prints: ['Review `github.com/BeniCheni/kickoff/discussions/327` for context.'],
+    },
+    {
+      // Fix round 7 (Re-read 6): dropping a format character joined #327 to the word after it.
+      rule: 'a format character anywhere in a line',
+      refused: [
+        [hidden('a format character'), 'Test #327\u200Btoday for details.'],
+        [hidden('a format character'), 'Test a\u200B#327 for details.'],
+        [hidden('a format character'), 'Test GH-327\u200Btoday for details.'],
+        [hidden('a format character'), 'Test #327\u00ADtoday for details.'],
+        [hidden('a format character'), 'Test `#327\u200Btoday` for details.'],
+      ],
+      prints: ['Test #327today for details.', 'Test GH-327today for details.'],
+    },
+    {
+      // Fix round 7 (Re-read 6): GitHub links a commit's short or full SHA.
+      rule: 'a commit SHA outside a code span',
+      refused: [
+        [linked('a commit SHA'), 'The fix landed in f635fb8 today.'],
+        [linked('a commit SHA'), 'The fix landed in f635fb8b8eb6ea1b83d63109026757310fe3e6db today.'],
+      ],
+      prints: [
+        'The fix landed in `f635fb8` today.',
+        'The fix landed in `f635fb8b8eb6ea1b83d63109026757310fe3e6db` today.',
+        // GitHub links only a lowercase SHA.
+        'The fix landed in F635FB8 today.',
+        // Ordinary words and numbers: no letter, no digit, too short, or not hex.
+        'The decade faced 2026 with 1,583 bytes to spare.',
+        'The hash deadbeef has no digit, and the date 20261123 no letter.',
+        'The id f635fb is six characters, and f635fb8g is not hex.',
+      ],
+    },
+    {
+      rule: 'plain text, normalized, with a short form bounded after its number',
+      refused: [
+        // Round 7 refuses the zero-width space itself, wherever it stands.
+        [hidden('a format character'), 'The table fits, as #​327 shows.'],
         [cites('a #N reference'), 'The table fits, as #３２７ shows.'],
         [cites('a #N reference'), 'The table fits, as &#327 shows.'],
         [cites('a #N reference'), 'The table fits, per #327, on a phone.'],
@@ -598,7 +666,7 @@ describe('a draft that cites a PR in its own text', () => {
 
   it('names in the README every form of link syntax and every code-span fault it refuses', () => {
     const readme = readFileSync('scripts/pm/README.md', 'utf8')
-    for (const form of [...LINK_SYNTAX.map(({ form }) => form), ...Object.values(CODE_SPAN_FORMS)]) {
+    for (const form of [...LINK_SYNTAX.map(({ form }) => form), ...Object.values(CODE_SPAN_FORMS), FORMAT_CHARACTER.form]) {
       expect(readme).toContain(`**${form}**`)
     }
   })
