@@ -1670,3 +1670,11 @@ button.register-row {
 @media (max-width: 400px) {
   .book-shelf:has(.book-spine:nth-child(8)) { width: calc(100vw - 8px); margin-inline-start: calc(50% - 50vw + 4px); }
 }
+
+.quiet-week { margin-bottom: 12px; background: var(--fb-cover-black); color: var(--fb-cover-ink); }
+.quiet-art { height: clamp(150px, 32vw, 250px); }
+.quiet-block { background: var(--fb-scrim); padding: 16px; font: 400 14px/1.4 var(--fb-book); }
+.quiet-block > p { margin-block: 6px; }
+.quiet-next { margin-top: 16px; }
+.quiet-next h3, .quiet-next a { font: 600 12px/1.4 var(--fb-label); letter-spacing: .1em; }
+.quiet-next a { min-height: 44px; display: inline-flex; align-items: center; color: var(--fb-pitch); text-decoration: underline; }

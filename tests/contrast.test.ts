@@ -90,7 +90,7 @@ describe('second-edition pairs, read from the tokens', () => {
 it('fb tokens and stock render only from the named surfaces that own them', () => {
   // LeagueTabs names black stock on its current tab, a black plate on the pulp page, and
   // RegisterCover on the Table's cover.
-  const allowed = new Set(['components/ImprintBand.tsx', 'components/PageFoot.tsx', 'components/LeagueTabs.tsx', 'components/RegisterCover.tsx', 'components/BookCover.tsx', 'components/BookShelf.tsx', 'components/PosterPart.tsx', 'index.css', 'components/WeekRow.tsx', 'components/FilterBar.tsx'])
+  const allowed = new Set(['components/ImprintBand.tsx', 'components/PageFoot.tsx', 'components/LeagueTabs.tsx', 'components/RegisterCover.tsx', 'components/BookCover.tsx', 'components/BookShelf.tsx', 'components/QuietWeek.tsx', 'components/PosterPart.tsx', 'index.css', 'components/WeekRow.tsx', 'components/FilterBar.tsx'])
   const root = new URL('../src/', import.meta.url)
   const hits = globSync('**/*.{css,ts,tsx}', { cwd: root }).filter((file) => {
     if (file === 'shell.css' || allowed.has(file)) return false

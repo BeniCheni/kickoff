@@ -146,3 +146,20 @@ it('keeps only visible date spines and labels the next week with its filtered co
   expect(view.container.querySelector('.book-spine')).toBeNull()
   expect(screen.getByText('All matchday books are hidden by filters.')).toBeTruthy()
 })
+
+it('gives a genuinely empty week its quiet edition, a real next-volume link and the illustrative foot', () => {
+  const dates = [...BY_DATE.keys()].sort()
+  const next = dates.find((date, i) => i > 0 && startOfWeek(date) > addDays(startOfWeek(dates[i - 1]!), 7))!
+  const start = addDays(startOfWeek(next), -7)
+  window.history.replaceState(null, '', '?date=' + start + '&league=pl')
+  const view = render(<FixturesPage today={start} lens="poster" />)
+  expect(screen.getByText('A Quiet Week')).toBeTruthy()
+  expect(screen.getByText('Nothing on the rack this week')).toBeTruthy()
+  expect(screen.getByText('A no-bet week is a successful outcome.')).toBeTruthy()
+  const link = screen.getByRole('link', { name: 'NEXT VOLUME ›' }) as HTMLAnchorElement
+  expect(new URL(link.href).searchParams.get('date')).toBe(next)
+  expect(new URL(link.href).searchParams.get('league')).toBe('pl')
+  expect(view.container.querySelector('.poster-rack, .week-gap, .book-shelf')).toBeNull()
+  expect(screen.getByText('Titles and taglines are ILLUSTRATIVE.')).toBeTruthy()
+  window.history.replaceState(null, '', '/')
+})

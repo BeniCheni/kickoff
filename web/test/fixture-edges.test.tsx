@@ -1,8 +1,10 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
+import { BookCover } from '../../src/components/BookCover'
+import { posterBooks } from '../../src/lib/lensSelectors'
 import { FixtureRow } from '../../src/components/FixtureRow'
 import { fixtureTimes } from '../../src/lib/time'
-import { edgeFixture } from '../../tests/fixtures/edgeFixtures'
+import { cannotClose, bookFinals, edgeFixture } from '../../tests/fixtures/edgeFixtures'
 
 /** Server markup only. Hydration stays on the root suite; web/ has no jsdom. */
 function html(row: Parameters<typeof FixtureRow>[0]['fixture']) {
@@ -63,4 +65,15 @@ describe('FixtureRow on Next\'s compiled React', () => {
     expect(text).toContain('3–3 (2–4)')
     expect(text).not.toMatch(/\bFT\b/)
   })
+})
+
+it('renders a closed and a cannot-close cover from the same stored finals in Next', () => {
+  for (const [closed, fixtures] of [[true, bookFinals], [false, cannotClose]] as const) {
+    const book = posterBooks([{ date: '2026-11-22', fixtures }], new Set(['laliga']))[0]!
+    const markup = renderToStaticMarkup(<BookCover book={book} now="2026-11-23T02:00:00Z" league="La Liga" />)
+    expect(markup.includes('FULL TIME')).toBe(closed)
+    expect(markup.includes('The Long Whistle')).toBe(closed)
+    expect(markup).toContain(closed ? '3 MATCHES' : '4 MATCHES')
+    expect(markup).toContain('3–3 (2–4) PENS')
+  }
 })

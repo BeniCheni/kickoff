@@ -60,3 +60,16 @@ export const bookFinals = ['ft', 'aet', 'pens'].map((id, i) => ({
 }))
 
 export const cannotClose = [...bookFinals, edgeFixture({ id: 'abandoned', status: 'abandoned' })]
+
+const unsetBookFixture = edgeFixture({ id: 'unset-book', timeConfidence: 'round_placeholder' })
+const liveBookFixture = edgeFixture({ id: 'live-book', status: 'in_play', result: { home: 1, away: 0 } })
+export const coverSpecimens = [
+  { name: 'singular', fixtures: [edgeFixture()], now: '2026-11-22T12:00:00Z' },
+  { name: 'unset', fixtures: [unsetBookFixture], now: '2026-11-22T12:00:00Z' },
+  { name: 'mixed', fixtures: [unsetBookFixture, edgeFixture()], now: '2026-11-22T12:00:00Z' },
+  { name: 'closed', fixtures: bookFinals, now: '2026-11-22T23:00:00Z' },
+  { name: 'cannot-close', fixtures: cannotClose, now: '2026-11-22T23:00:00Z' },
+  { name: 'live', fixtures: [bookFinals[0]!, liveBookFixture], now: '2026-11-22T21:00:00Z' },
+  { name: 'kicked-off', fixtures: [bookFinals[1]!, bookFinals[2]!, liveBookFixture], now: '2026-11-23T01:00:00Z' },
+]
+export const heavyBookDay = Array.from({ length: 8 }, (_, i) => edgeFixture({ id: 'book-row-' + i }))

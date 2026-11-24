@@ -9,6 +9,10 @@ import { StalenessBanner } from '../../src/components/StalenessBanner'
 // into that copy's tableFor call. TypeScript has no module for the query.
 // @ts-expect-error kickoff-specimen is resolved by Vite, not by the typechecker.
 import { TablePage as SpecimenTable } from '../../src/components/TablePage?kickoff-specimen'
+import { BookCover } from '../../src/components/BookCover'
+import { BookShelf } from '../../src/components/BookShelf'
+import { PosterWeek } from '../../src/components/PosterWeek'
+import { posterBooks } from '../../src/lib/lensSelectors'
 import { PosterRack } from '../../src/components/PosterRack'
 import { clockSnapshotAt, type Clock } from '../../src/lib/clock'
 import { hoursSinceSync, META } from '../../src/lib/fixtures'
@@ -16,7 +20,7 @@ import type { CompetitionKey } from '../../src/lib/competitions'
 import type { Fixture, StandingRow } from '../../src/lib/schema'
 import { addDays, brooklynDate, niceDate } from '../../src/lib/time'
 import { ClockContext } from '../../src/lib/useNow'
-import { edgeFixture, rowStates, specimenRowProps } from '../fixtures/edgeFixtures'
+import { coverSpecimens, heavyBookDay, edgeFixture, rowStates, specimenRowProps } from '../fixtures/edgeFixtures'
 import '../../src/index.css'
 
 // Dev server only. Tailwind scans src/ and not tests/, so the captions and the page
@@ -208,6 +212,19 @@ function Harness() {
         <PosterRack books={[]} resting="register" now={META.lastSyncAt} />
         <LedgerWeek days={[{ date: '2026-11-22', shown: [], total: 1, isToday: false }]} />
       </Section>
+      <div data-specimen="books">
+        {coverSpecimens.map(({ name, fixtures, now }) => {
+          const book = posterBooks([{ date: '2026-11-22', fixtures }], new Set(['laliga']))[0]!
+          return <Section key={name} title={name}><div data-book-case={name}>
+            <BookCover book={book} now={now} league="La Liga" />
+          </div></Section>
+        })}
+        <Section title="Heavy part"><PosterWeek days={[{ date: '2026-11-22', total: heavyBookDay.length,
+          shown: heavyBookDay, isToday: true }]} nowUtcIso="2026-11-22T12:00:00Z" /></Section>
+        <Section title="All-hidden week"><PosterWeek days={Array.from({ length: 7 }, (_, i) => ({
+          date: addDays('2026-11-16', i), total: i + 1, shown: [], isToday: i === 6,
+        }))} /><BookShelf books={[]} resting="register" gaps={[]} /></Section>
+      </div>
       <Section title="Window's end">
         <NextUpStrip today={addDays(META.window.to, 1)} active={none} />
       </Section>

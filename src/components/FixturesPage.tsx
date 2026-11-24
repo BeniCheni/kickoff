@@ -9,6 +9,7 @@ import { useNow } from '../lib/useNow'
 import { BY_DATE, SYNC_STAMP } from '../lib/fixtures'
 import { PageFoot } from './PageFoot'
 import { NextUpStrip } from './NextUpStrip'
+import { QuietWeek } from './QuietWeek'
 import { BookShelf } from './BookShelf'
 import { PosterRack } from './PosterRack'
 import { WeekRow } from './WeekRow'
@@ -74,6 +75,7 @@ export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
   const books = useMemo(() => lens === 'poster' ? posterBooks(week, active) : [], [week, active, lens])
   const nextBook = useMemo(() => lens === 'poster' ? posterBooks(bookWeek(addDays(weekStart, 7), BY_DATE), active)[0]
     : undefined, [weekStart, active, lens])
+  const quiet = lens === 'poster' && week.every(day => day.total === 0)
   const resting = restingBook(books, weekStart, today, nowUtcIso)
   const nav = (dir: number) => setAnchor(addDays(anchor, dir * 7))
   const [filtersOpen, setFiltersOpen] = useState(false)
@@ -82,7 +84,7 @@ export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
     <>
       {/* The hero is the one lens axis that changes the tree: Ledger's Next-up strip,
           and the Poster's anchored week of books. */}
-      {lens === 'poster' ? (
+      {quiet ? <QuietWeek start={weekStart} active={active} now={nowUtcIso} /> : lens === 'poster' ? (
         <PosterRack books={books} resting={resting} now={nowUtcIso} />
       ) : lens === 'ledger' ? (
         <NextUpStrip today={today} active={active} />
@@ -93,12 +95,13 @@ export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
       <FilterBar active={active} lens={lens} open={filtersOpen} onToggle={onToggle}
         onSetGroup={onSetGroup} onShowAll={() => setActive(ALL)} />
 
-      <WeekView weekStart={weekStart} active={active} today={today} lens={lens} />
+      {!quiet && <WeekView weekStart={weekStart} active={active} today={today} lens={lens} />}
 
-      {lens === 'poster' && week.some(day => day.total) &&
+      {lens === 'poster' && !quiet &&
         <BookShelf books={books} resting={resting} next={nextBook} gaps={shelfGaps(week)} />}
 
-      <PageFoot kind={lens === 'ledger' ? 'ledger' : 'poster'}>
+      <PageFoot kind={lens === 'ledger' ? 'ledger' : 'poster'}
+        more={lens === 'poster' ? ['Titles and taglines are ILLUSTRATIVE.'] : []}>
         {lens === 'ledger'
           ? 'Always verify in the book before staking.'
           : `Fixtures from the snapshot synced ${SYNC_STAMP}. Times are Brooklyn unless marked local. Always verify in the book before staking.`}
