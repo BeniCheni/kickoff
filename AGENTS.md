@@ -9,7 +9,23 @@ it first, whatever tool you are. It covers:
 - the verification discipline: `npm run typecheck` and `npm test` green at every commit,
   browser-verification across every lens × theme × tab before declaring done, and
   data-honesty test assertions that are never weakened to make a change pass;
-- commit authorship conventions and the roadmap pointers.
+- commit authorship conventions.
+
+Since 19 Nov 2026 `CLAUDE.md` points to four topic files. Claude Code can load the three
+rules files when a tool reads or edits a matching path. Read the file for your area before
+starting:
+
+- [`.claude/rules/sync.md`](.claude/rules/sync.md) — the scheduled sync, the snapshot
+  boundary, the merge policy and the Step 0 contract with the betting pipeline. The Step 0
+  preflight is in `CLAUDE.md`;
+- [`.claude/rules/design-system.md`](.claude/rules/design-system.md) — Fergie Time and the
+  public design record;
+- [`.claude/rules/releases.md`](.claude/rules/releases.md) — semver, the CHANGELOG, the seven
+  places a version string lives, and who decides what;
+- [`docs/roadmap-pointers.md`](docs/roadmap-pointers.md) — what the next release is, and why.
+
+`CLAUDE.md` keeps each moved section's heading with a pointer, so older citations of
+`CLAUDE.md`, "Scheduled sync" and the like still resolve.
 
 The one rule that outranks everything else: fixture data is **generated and diffed, never
 typed**. `src/data/*.json` is written only by `npm run sync` — do not hand-edit it, and
