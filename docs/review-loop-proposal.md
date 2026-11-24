@@ -818,6 +818,11 @@ Cursor's hands this track seats no Cursor.
   Pass 0's brief for Pass 1 on `claude-fable-5-2` at `xhigh`, in a fresh session in the Claude
   desktop app, with its sealed appendix as a second paste. The Planner posts Pass 0's record
   on #9.
+- *Fix brief:* [`review-loop-sprint-4-fix-prompt.md`](review-loop-sprint-4-fix-prompt.md), Pass 1.5's
+  brief for Pass 2 on `gpt-6.2-astra` at `xhigh`, with Pass 1's correction to finding 4 and its
+  form definitions in [`review-loop-sprint-4-fix-forms.md`](review-loop-sprint-4-fix-forms.md).
+  Pass 1 (`claude-fable-5-2`, `xhigh`) returned merge after a fix round, with ten findings: 0
+  blocking, 4 should-fix and 6 notes.
 
 **Sprint 5 — Kickoff phase 2: the gate on `main` (after Sprint 3 passes).**
 - *Scope:* the `kickoff/360` ruleset on `main`, applied by Beni; `loop authorize`; the sync
@@ -1852,6 +1857,19 @@ for Cursor (S7).
     pull request's records against that example, and the builder's Pass 2 and executor records
     will name Astra.
 
+- **Sprint 4's fix round (Beni, Tue 24 Nov 2026, "Approve as proposed").** The numbers are Pass 1's on
+  elenchus PR 9 (comment 7136930430). Beni approved the Planner's dispositions as proposed:
+  - **Fixed in Pass 2:** 1, the block tags the merge commit and pushes the tag before it switches
+    or fast-forwards the operator's checkout; 2, the split table's world names each pass's seat
+    and role apart from its id, and Pass 1's M1 to M8 then fail; 3, a tag that already exists
+    stops the block before the merge; 4, the printed block carries no control character from any
+    input, the changelog subject included, whatever `gh` does; 5, the Install section; 7, the
+    trailer's fold pinned; 10, wording.
+  - **Finding 4 keeps should-fix,** as Pass 1's correction after posting restates it: the record
+    path is closed only by `gh`'s own rewriting, and the changelog subject is not.
+  - **Deferred to Sprint 5:** 6, with Sprint 3's A7; and 8.
+  - **No change:** 9. `replay/main` cannot change, because its review gate admits a commit only
+    with the App's status.
 D8, D10 and D11 are not yet ruled. D4 is withdrawn, and D12 is Pilot (17 Nov).
 
 ## Found after the spikes (15 Nov 2026, afternoon)
