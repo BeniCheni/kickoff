@@ -101,3 +101,26 @@ Tests, beside the brief's two rows: your reproducer's case, a tag created on ori
 
 Everything else in the brief stands. Carry on from finding 3 in the brief's order, on the same model and effort, in the same folder, and keep your reproducer and its transcript as receipts. In #9's body and in your record's evidence for finding 3, name this as Beni's amendment of 24 Nov, archived in Kickoff's docs/review-loop-sprint-4-fix-prompt.md under "Amendment 1".
 ````
+
+## Amendment 2: finding 3 again (Tue 24 Nov 2026)
+
+Codex stopped at finding 3 a second time, again before any commit. With a separate
+`remote.origin.pushurl`, amendment 1's read of origin answered "no such ref" from the fetch URL
+while the tag existed at the push URL, and the merge ran; the non-forcing push then refused the
+tag, which stayed on its original commit. Amendment 1's wording, "origin, the remote it pushes the
+tag to", was the Planner's, and assumed one URL. Beni ruled the Planner's recommendation
+("Approve and push"). The delivery was this block in chat:
+
+````text
+elenchus PR #9, Pass 2: amendment 2 to the fix brief, finding 3 (Beni's ruling, Tue 24 Nov 2026, from the Planner's recommendation)
+
+You were right to stop again. Amendment 1 called origin "the remote it pushes the tag to", but git lets origin fetch from one URL and push to another, so git ls-remote origin can read a repository the tag push never writes. The rule stands, made exact once more: the read before the merge is made at the one place the block's tag push writes; when git's own configuration for origin does not resolve to exactly one push URL equal to the fetch URL that read uses, the block refuses before the merge.
+
+The mechanism adds one line, immediately before amendment 1's ls-remote line: u=$(git remote get-url origin) && test -n "$u" && test "$(git remote get-url --push --all origin)" = "$u". git remote get-url expands insteadOf and pushInsteadOf, and --push --all prints every push URL, so the test passes only when origin has exactly one push URL and it is the fetch URL. The Planner ran this line in sh, zsh and bash on git 2.54.0: it passes for a plain clone, for a push URL set equal to the fetch URL, and for an insteadOf that rewrites both; it refuses for a push URL to another repository, for two push URLs, for a pushInsteadOf, and for no origin. Supporting separate URLs, by reading every push destination, is not ruled for this round; it goes on Sprint 5's list if an adopter needs it.
+
+One sentence in the README's handoff paragraph says that the block needs origin to fetch from and push to one URL, and refuses otherwise.
+
+Tests, beside amendment 1's rows: your reproducer's case, the tag absent at the fetch URL and present at a separate push URL, stops before the merge stub is called; two push URLs stop before the merge stub; a plain clone with the tag absent reaches the merge. Add the line to the deletion test: deleting it fails your reproducer's row.
+
+Everything else in the brief and in amendment 1 stands. Carry on from finding 3 in the brief's order, on the same model and effort, in the same folder, and keep both reproducers and their transcripts as receipts. If you find another case where this mechanism would hold where the rule does not, stop again. In #9's body and in your record's evidence for finding 3, name both amendments as Beni's of 24 Nov, archived in Kickoff's docs/review-loop-sprint-4-fix-prompt.md under "Amendment 1" and "Amendment 2".
+````

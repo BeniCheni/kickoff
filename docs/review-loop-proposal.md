@@ -1875,6 +1875,10 @@ for Cursor (S7).
     block now reads origin immediately before the merge (`git ls-remote --exit-code`, where only
     "no such ref" passes), and the README names the window left between that read and the merge
     as a limit.
+  - **Amendment 2, finding 3 ("Approve and push").** Codex stopped again: a separate push URL let the read
+    of origin miss a tag at the place the push writes. The block now refuses before the merge
+    unless origin has exactly one push URL and it is the fetch URL. Reading every push
+    destination instead goes on Sprint 5's list if an adopter needs separate URLs.
 D8, D10 and D11 are not yet ruled. D4 is withdrawn, and D12 is Pilot (17 Nov).
 
 ## Found after the spikes (15 Nov 2026, afternoon)
