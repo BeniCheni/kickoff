@@ -50,7 +50,8 @@ Since 22 Nov 2026, Codex builds by default. Beni can route a build to Claude. Se
 
 A PR takes the highest tier any of its changes reaches, with the Tier 0 exception above.
 Anything no tier names is Tier 2.
-Until a labeler exists, the builder names the tier and the file that sets it in the PR body.
+The `tier` workflow labels each same-repo PR using this list from the PR's base commit and
+never lowers a label. The builder still names the tier and the file that sets it in the PR body.
 Any reviewer can raise the tier. Only Beni can lower it.
 
 ### Tier 3 paths
@@ -63,7 +64,7 @@ within one path segment.
   `scripts/ensure-pages.sh`, `scripts/validate.ts`, `scripts/window.ts`, `scripts/providers/**`.
 - **Verification gates:** `vite.config.ts`, `web/vitest.config.ts`,
   `scripts/scan-offline-bundle.ts`, `scripts/vercel-smoke.mjs`, `web/scripts/check-client.mjs`,
-  `web/scripts/check-css.mjs`.
+  `web/scripts/check-css.mjs`, `scripts/tier.ts`, `tests/tier.test.ts`.
 - **Fixture schema, clocks and data rules:** `docs/HONESTY.md`, `src/lib/schema.ts`,
   `src/lib/time.ts`, `src/lib/clock.ts`, `src/lib/useNow.ts`, `src/lib/RequestClock.tsx`,
   `src/lib/competitions.ts`, `src/lib/matchdays.ts`, `src/lib/fixtures.ts`,
