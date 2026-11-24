@@ -1593,3 +1593,15 @@ button.register-row {
 .book-date { font: 400 11px/1.5 var(--fb-mono); }
 .book-date span { white-space: nowrap; }
 .book-date [data-voice='amber'], .band-unset { color: var(--fb-amber); }
+
+.cover-band { border-top: 1px solid var(--fb-rule); font: 400 11px/1.35 var(--fb-mono); }
+.band-entry { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding-block: 4px; }
+.band-names { font: 400 13px/1.25 var(--fb-book); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+.band-clocks, .band-result { flex: none; white-space: nowrap; }
+.band-clocks small { font-size: 10px; }
+.band-clocks[data-day-note] small { display: block; text-align: right; }
+.cover-band [data-voice='pitch'] { color: var(--fb-pitch); }
+.cover-band [data-voice='muted'] { color: var(--fb-cover-muted); }
+.cover-band [data-voice='alarm'] { color: var(--fb-alarm); }
+.cover-band [data-voice='amber'] { color: var(--fb-amber); }
+.band-summary, .band-unset { margin-block-start: 4px; }

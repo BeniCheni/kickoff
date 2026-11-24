@@ -15,6 +15,7 @@
 @source "../../src/components/WeekView.tsx";
 @source "../../src/components/LedgerWeek.tsx";
 @source "../../src/components/PosterWeek.tsx";
+@source "../../src/components/CoverBand.tsx";
 @source "../../src/components/BookDateLine.tsx";
 @source "../../src/components/FixtureRow.tsx";
 @source "../../src/components/MatchdayLines.tsx";

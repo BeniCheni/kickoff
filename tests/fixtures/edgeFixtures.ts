@@ -53,3 +53,10 @@ export const edgeStandingRows: StandingRow[] = [
   { teamId: '1', name: 'Sevilla', shortName: 'Sevilla', abbrev: 'SEV', rank: 1, rankChange: 0, played: 12, w: 8, d: 2, l: 2, gf: 21, ga: 9, pts: 26 },
   { teamId: '2', name: 'Levante', shortName: 'Levante', abbrev: 'LEV', rank: 2, rankChange: 0, played: 11, w: 6, d: 3, l: 2, gf: 15, ga: 10, pts: 21 },
 ]
+
+/** A single Brooklyn matchday with three different stored finals. */
+export const bookFinals = ['ft', 'aet', 'pens'].map((id, i) => ({
+  ...rowStates.find(([, f]) => f.id === id)![1], kickoffUtc: `2026-11-22T${14 + i}:00:00Z`,
+}))
+
+export const cannotClose = [...bookFinals, edgeFixture({ id: 'abandoned', status: 'abandoned' })]

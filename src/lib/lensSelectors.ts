@@ -269,3 +269,25 @@ export function posterBooks(
 export function catalogueNumber(date: string): string {
   return 'FT-' + date.slice(5, 7) + date.slice(8, 10)
 }
+
+/** Stop before the first shared instant, even across competitions. All remaining
+ * credible kickoffs become one count, while placeholders keep their own count. */
+export function coverBand(shown: readonly Fixture[]) {
+  const eligible = shown.filter(f => f.timeConfidence === 'exact' && !unsettledStatus(f.status))
+    .sort((a, b) => Date.parse(a.kickoffUtc) - Date.parse(b.kickoffUtc))
+  let named = 0
+  while (named < 3 && named < eligible.length) {
+    const next = eligible[named + 1]
+    if (next && Date.parse(eligible[named]!.kickoffUtc) === Date.parse(next.kickoffUtc)) break
+    named++
+  }
+  const rest = eligible.slice(named)
+  let summary = ''
+  const from = rest[0]
+  if (from) {
+    summary = '+ ' + rest.length + ' more'
+    if (rest.every(isFinal)) summary += rest.length === 1 ? ' result' : ' results'
+    else summary += ', from ' + fixtureTimes(from.kickoffUtc, from.venueTz).brooklyn.time + ' ET'
+  }
+  return { named: eligible.slice(0, named), summary, unset: unsetKickoffs(shown) }
+}

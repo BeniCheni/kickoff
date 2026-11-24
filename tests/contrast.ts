@@ -96,6 +96,11 @@ export function measureContrast(cssSource = css, componentSource = bannerSource)
       add('Poster focus ring (unchanged)', color('pitch'), value('pitch'), ground, bg, 3)
     }
     const stock = theme === 'light' ? secondEditionTokens(cssSource).paper : secondEditionTokens(cssSource).black
+    const { black } = secondEditionTokens(cssSource)
+    for (const ink of ['fb-cover-ink', 'fb-cover-muted', 'fb-pitch', 'fb-amber', 'fb-alarm']) {
+      add('book ' + ink, opaqueToken(black, ink), black[ink]!, 'flat black stock', opaqueToken(black, 'fb-cover-black'))
+    }
+    add('band LIVE', opaqueToken(black, 'fb-alarm'), black['fb-alarm']!, 'worst scrim', scrimGround(black), 6.20)
     const banner = bannerPaint(cssSource)
     for (const ground of banner.grounds) {
       add('24h banner', opaqueToken(stock, banner.amber), stock[banner.amber]!, ground, opaqueToken(stock, ground))

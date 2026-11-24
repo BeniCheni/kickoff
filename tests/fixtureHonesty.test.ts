@@ -29,6 +29,8 @@ const sites: [string, string, RegExp][] = [
   ['FixtureRow', '2 · unset kickoff', /unset && <div className="fixture-unset" data-voice="amber"/],
   ['NextUpStrip', '2 · unset card', /className="fixture-unset italic" data-voice="amber">TBC/],
   ['BookDateLine', '2 · unset date ending', /line\.ending === 'FIRST KICKOFF NOT SET' \? 'amber'/],
+  ['CoverBand', '3 · kept score and kicked off', /className="band-result" data-voice="amber"/],
+  ['CoverBand', '8 · unknown stadium clock', /<small data-voice=\{local \? 'muted' : 'amber'/],
   ['BookDateLine', '2 · count without a kickoff', /className="band-unset" data-voice="amber"/],
   ['TonightSlate', '2 · unset cover', /text-floodlight-strong italic">TBC/],
   ['FixtureRow', '3 · last live score', /className="fixture-score" data-voice=\{isStale \? 'amber'/],
@@ -70,6 +72,7 @@ it('allows the amber token only on its named grounds and text selectors', () => 
     ".stadium-clock[data-voice='amber'], .fixture-unset",
     ".matchday-line[data-voice='amber']", ".next-card .stadium-clock[data-voice='amber']",
     ".book-date [data-voice='amber'], .band-unset",
+    ".cover-band [data-voice='amber']",
   ]
   const rules = [...read('shell.css').matchAll(/([^{}]+)\{([^{}]*)\}/g)]
   const painted = rules.filter(([, , body]) => /var\(--(?:fb|band)-amber\)/.test(body!))
@@ -77,3 +80,12 @@ it('allows the amber token only on its named grounds and text selectors', () => 
   expect(painted).toEqual(permitted)
 })
 
+
+it('keeps prices, stakes and payouts off the books', () => {
+  for (const file of components) {
+    let source = read(file).replace(/\/\/[^\n]*/g, '')
+    if (file === 'components/FixturesPage.tsx') source = source.replaceAll('Always verify in the book before staking.', '')
+    if (file === 'components/StalenessBanner.tsx') source = source.replace('before staking anything on a kickoff time.', '')
+    expect(source, file).not.toMatch(/\b(?:pric(?:e[sd]?|ing)|stak(?:es?|ed|ing)|pay[- ]?outs?)\b|[£€¥]|\$(?!\{)/i)
+  }
+})
