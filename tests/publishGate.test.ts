@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { execFileSync } from 'node:child_process'
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { resolve } from 'node:path'
+import { repoWithSnapshot as createRepoWithSnapshot } from './helpers/gitFixtures'
 import {
   QUIET_PUBLISH_AFTER_HOURS,
   committedLastSyncAt,
@@ -39,23 +39,8 @@ describe('the age the gate measures comes from the committed snapshot, not the w
   const roots: string[] = []
   afterEach(() => { for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true }) })
 
-  function repoWithSnapshot(committed: string, workingTree: string): string {
-    const root = mkdtempSync(resolve(tmpdir(), 'publish-gate-')); roots.push(root)
-    const git = (...args: string[]) => execFileSync(
-      'git',
-      ['-c', 'user.name=t', '-c', 'user.email=t@example.com', '-c', 'commit.gpgsign=false', ...args],
-      { cwd: root, stdio: 'ignore' },
-    )
-    const write = (stamp: string) =>
-      writeFileSync(resolve(root, 'src/data/meta.json'), JSON.stringify({ lastSyncAt: stamp }) + '\n')
-    git('init', '-q', '-b', 'main')
-    mkdirSync(resolve(root, 'src/data'), { recursive: true })
-    write(committed)
-    git('add', 'src/data/meta.json')
-    git('commit', '-qm', 'snapshot')
-    write(workingTree)  // what scripts/sync.ts leaves behind before the gate step runs
-    return root
-  }
+  const repoWithSnapshot = (committed: string, workingTree: string) =>
+    createRepoWithSnapshot(roots, committed, workingTree)
 
   it('publishes a quiet refresh of a stale snapshot the sync has already overwritten', () => {
     const committed = new Date(Date.now() - 56 * 3_600_000).toISOString()
