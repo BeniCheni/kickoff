@@ -28,9 +28,9 @@ one person ships software with two AI vendors building and reviewing each other'
 You don't need to follow football to read this repo. The football is the excuse. A *fixture* is
 a scheduled match, *kickoff* is when it starts, and a *sportsbook* is a betting site that prices
 those matches; that is all the jargon you need. The interesting part is the workflow: every line
-of the app was written by an AI coding agent. Review depth follows the risk of the change. For
-sensitive changes, a different vendor reviews cold, the builder answers in writing, and Beni
-rules on whatever is still contested.
+of the app was written by an AI coding agent. Review depth follows the risk of the change. Every
+change but the sync bot's gets a cold read from a different vendor. For sensitive changes, the
+builder answers in writing and Beni rules on whatever is still contested.
 
 | If you want | Go here |
 |---|---|
@@ -372,7 +372,7 @@ it. In both columns below, Pass 1 reports findings and the builder commits the f
 |---|---|---|
 | Product manager / scoping / build brief | Claude (Cowork, then Claude Code) | Claude (Cowork, then Claude Code) |
 | Passes 0 and 1.5 | The PM seat | Codex (GPT-6.2 Astra) |
-| Build, Pass 2 and fix rounds | Codex (GPT-6.2 Sol or Astra, as briefed) | Claude Code (Fable 5.2) |
+| Build, Pass 2 and fix rounds | Codex (GPT-6.2 Sol or Astra, as briefed) | Claude Code (Opus 5.5) |
 | Pass 1 · Cold review | Fresh Claude Code session (Fable 5.2), report-only | Fresh Codex session (GPT-6.2 Astra), report-only |
 | Pass 2.5 · Synthesis | Fresh Claude Code session (Opus 5.5), writes nothing | Fresh Codex session (GPT-6.2 Sol), read-only |
 | Designer | Claude Design against *Fergie Time*, using pen.dev | Claude Design against *Fergie Time*, using pen.dev |

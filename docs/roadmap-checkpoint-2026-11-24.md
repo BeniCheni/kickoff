@@ -62,8 +62,11 @@ amendments' home, not the table's.
 Seats are read from the README's table (`README.md:368-378`) as #369 left it: when Codex builds,
 the PM seat holds Passes 0 and 1.5, a fresh Claude Code session on Fable 5.2 holds Pass 1, Codex
 holds Pass 2, and a fresh Claude Code session on Opus 5.5 holds Pass 2.5. When Claude builds,
-Codex holds Passes 0, 1, 1.5 and 2.5, and Claude Code on Fable 5.2 holds Pass 2. Beni holds
-Pass 3 in both.
+Codex holds Passes 0, 1, 1.5 and 2.5, and Claude Code holds Pass 2. Beni holds Pass 3 in both.
+*Amended 24 Nov, about 12:05 PM EST:* #380 (`86155da`, merged 12:01 PM) changed the "When Claude
+builds" column's build and Pass 2 seat from Fable 5.2 to Opus 5.5 (`git diff 605ef5d 86155da --
+README.md`). This file was read before it; where it named Fable 5.2 for that seat, the README now
+says Opus 5.5, and the README wins.
 
 | PR | State | Evidence | Tier | Seats |
 |---|---|---|---|---|
@@ -218,7 +221,7 @@ waits for PR 7; PR 8's seat is Beni's. Nothing in the repo overtakes them.
 |---|---|---|---|---|---|
 | 1 | PR 5's six-pass 360 (#377) | 3 | Codex (built) | P0, P1.5: a PM seat · P1: fresh Fable 5.2 · P2.5: fresh Opus 5.5 · P3: Beni | yes |
 | 2 | The review skill and `CLAUDE.md:33` catch up with #369 | 3 | Codex | P0, P1.5: PM seat · P1: fresh Fable 5.2 · P2.5: fresh Opus 5.5 · P3: Beni | yes, files apart from #377 |
-| 3 | #358's review, before 28 Jan 2027 | 3 | Claude (built) | P0, P1, P1.5, P2.5: Codex · P2: Claude Code Fable 5.2 · P3: Beni | yes, one file on `main` |
+| 3 | #358's review, before 28 Jan 2027 | 3 | Claude (built) | P0, P1, P1.5, P2.5: Codex · P2: Claude Code Opus 5.5 (since #380) · P3: Beni | yes, one file on `main` |
 | 4 | #379's tier 1 read and merge | 1 | Claude (wrote it) | one cold read by Codex · Beni merges | yes; touches `docs/README.md` |
 | 5 | PR 7's pre-brief look (plan review ruling 6) | none | Beni | none | yes, no repo file |
 
@@ -333,5 +336,8 @@ here with its time.
    Code on Fable 5.2 holds Pass 2, and Beni holds Pass 3. Pass 1 checks that the split into two
    cases weakens no assertion, and may recommend a refresh onto `main` (12 behind, merging
    cleanly); the refresh is Beni's word. The deadline is the first sync after Wed 27 Jan 2027.
+   *Amended about 12:05 PM EST:* the question put to Beni named Fable 5.2 for Pass 2. #380,
+   merged at 12:01 PM, moved that seat to Opus 5.5, so Pass 2 is Claude Code on Opus 5.5. The
+   ruling, "Yes, now", is unchanged.
 
 All three forks are ruled. Workstreams 4 and 5 needed no ruling.
