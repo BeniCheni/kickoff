@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import { FixturesPage } from '../../src/components/FixturesPage'
+import { BY_DATE } from '../../src/lib/fixtures'
+import { addDays, startOfWeek } from '../../src/lib/time'
+import { restingBook, type MatchdayBook } from '../../src/lib/lensSelectors'
+import { act } from '@testing-library/react'
 import { CoverBand } from '../../src/components/CoverBand'
 import { edgeFixture, cannotClose } from '../fixtures/edgeFixtures'
 import { PosterWeek } from '../../src/components/PosterWeek'
@@ -57,4 +62,38 @@ describe('the lower band', () => {
     expect(screen.getByText('+ 2 more results')).toBeTruthy()
     expect(view.container.querySelector('[data-band-fixture]')).toBeNull()
   })
+})
+
+it('reads the Rack week, shown counts and Register league from URL state, including popstate', () => {
+  const uclDate = [...BY_DATE].find(([, day]) => day.some(f => f.competition === 'ucl'))![0]
+  const monday = startOfWeek(uclDate)
+  const query = '?date=' + monday + '&only=ucl&league=pl'
+  window.history.replaceState(null, '', query)
+  const view = render(<FixturesPage today={addDays(monday, 14)} lens="poster" />)
+  const expected = Array.from({ length: 7 }, (_, i) => addDays(monday, i)).filter(d => BY_DATE.get(d)?.some(f => f.competition === 'ucl'))
+  const slides = () => [...view.container.querySelectorAll<HTMLElement>('.rack-slide')]
+  expect(slides().map(el => el.dataset.date)).toEqual([...expected, 'register'])
+  for (const el of slides().slice(0, -1)) {
+    const count = BY_DATE.get(el.dataset.date!)!.filter(f => f.competition === 'ucl').length
+    expect(el.querySelector('.book-date')?.textContent).toContain(count + (count === 1 ? ' MATCH ·' : ' MATCHES ·'))
+  }
+  expect(slides().at(-1)?.textContent).toContain('Premier League')
+  act(() => {
+    window.history.replaceState(null, '', query.replace('only=ucl', 'only='))
+    window.dispatchEvent(new PopStateEvent('popstate'))
+  })
+  expect(slides().map(el => el.dataset.date)).toEqual(['register'])
+  expect(view.container.querySelector('.poster-rack button, .poster-rack [tabindex], .poster-rack [role]')).toBeNull()
+  window.history.replaceState(null, '', '/')
+})
+
+it('rests on the next eligible matchday this week, the first open book elsewhere, or the last closed one', () => {
+  const books: MatchdayBook[] = ['2026-11-23', '2026-11-24', '2026-11-25'].map(date => ({
+    date, shown: [edgeFixture({ kickoffUtc: date + 'T20:00:00Z' })], closed: false, slot: 'midweek',
+  }))
+  const now = '2026-11-24T21:00:00Z'
+  expect(restingBook(books, '2026-11-23', '2026-11-24', now)).toBe('2026-11-25')
+  books[0]!.closed = true
+  expect(restingBook(books, '2026-11-23', '2026-11-30', now)).toBe('2026-11-24')
+  expect(restingBook(books.map(b => ({ ...b, closed: true })), '2026-11-23', '2026-11-30', now)).toBe('2026-11-25')
 })

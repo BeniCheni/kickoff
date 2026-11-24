@@ -45,8 +45,6 @@ const hueSites: [string, string, RegExp][] = [
   ['components/LeagueTabs.tsx', 'dot', /<i className="league-tab-dot" aria-hidden="true" style=\{\{ '--comp-hue': COMPETITIONS\[key\]\.color \} as CSSProperties\} \/>/],
   ['components/ZonesKey.tsx', 'zone band', /className=\{`zone-mark zone-mark-\$\{shape\}`\}\s+data-band=\{zone\?\.band\}\s+style=\{zone\?\.color \? \(\{ '--zone-hue': zone\.color \} as CSSProperties\) : undefined\}\s+aria-hidden="true"\s+\/>/],
   // The Poster's first edition, kept as it stands until that surface is repainted: a left rule.
-  ['components/TonightSlate.tsx', 'left rule', /style=\{\{ borderLeftColor: dominant \? COMPETITIONS\[dominant\]\.color : 'var\(--border-strong\)' \}\}/],
-  ['components/TonightSlate.tsx', 'left rule', /style=\{\{ borderLeftColor: COMPETITIONS\[f\.competition\]\.color \}\}/],
   ['components/PosterWeek.tsx', 'left rule', /style=\{\{ borderLeftColor: COMPETITIONS\[block\.dominant\]\.color \}\}/],
 ]
 

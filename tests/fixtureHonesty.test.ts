@@ -32,7 +32,6 @@ const sites: [string, string, RegExp][] = [
   ['CoverBand', '3 · kept score and kicked off', /className="band-result" data-voice="amber"/],
   ['CoverBand', '8 · unknown stadium clock', /<small data-voice=\{local \? 'muted' : 'amber'/],
   ['BookDateLine', '2 · count without a kickoff', /className="band-unset" data-voice="amber"/],
-  ['TonightSlate', '2 · unset cover', /text-floodlight-strong italic">TBC/],
   ['FixtureRow', '3 · last live score', /className="fixture-score" data-voice=\{isStale \? 'amber'/],
   ['StatusPill', '3 · kicked off', /const voice = kickedOff \? 'amber'/],
   ['StalenessBanner', '5 · age banner ground', /className="staleness" data-plane=\{plane\} data-voice=\{plane\}/],

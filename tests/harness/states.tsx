@@ -9,12 +9,12 @@ import { StalenessBanner } from '../../src/components/StalenessBanner'
 // into that copy's tableFor call. TypeScript has no module for the query.
 // @ts-expect-error kickoff-specimen is resolved by Vite, not by the typechecker.
 import { TablePage as SpecimenTable } from '../../src/components/TablePage?kickoff-specimen'
-import { TonightSlate } from '../../src/components/TonightSlate'
+import { PosterRack } from '../../src/components/PosterRack'
 import { clockSnapshotAt, type Clock } from '../../src/lib/clock'
 import { hoursSinceSync, META } from '../../src/lib/fixtures'
 import type { CompetitionKey } from '../../src/lib/competitions'
 import type { Fixture, StandingRow } from '../../src/lib/schema'
-import { addDays, brooklynDate, niceDate, todayIso } from '../../src/lib/time'
+import { addDays, brooklynDate, niceDate } from '../../src/lib/time'
 import { ClockContext } from '../../src/lib/useNow'
 import { edgeFixture, rowStates, specimenRowProps } from '../fixtures/edgeFixtures'
 import '../../src/index.css'
@@ -145,7 +145,6 @@ const NEEDLES = [
 const TABLE_NEEDLES = ['Specimen Unset', 'Specimen Kicked', 'kickoff time not yet set', 'time TBC', 'KICKED OFF']
 
 function Harness() {
-  const today = todayIso()
   const none = new Set<CompetitionKey>()
   useEffect(() => {
     const outer = window.setTimeout(() => {
@@ -206,7 +205,7 @@ function Harness() {
           <NextUpStrip today={brooklynDate(META.lastSyncAt)} active={none} />
         </ClockContext.Provider>
         <div style={{ height: 12 }} />
-        <TonightSlate today={today} active={none} />
+        <PosterRack books={[]} resting="register" now={META.lastSyncAt} />
         <LedgerWeek days={[{ date: '2026-11-22', shown: [], total: 1, isToday: false }]} />
       </Section>
       <Section title="Window's end">

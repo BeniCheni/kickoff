@@ -1,13 +1,15 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { COMPETITION_KEYS, COMPETITIONS, type CompetitionKey } from '../lib/competitions'
 import { addDays, startOfWeek } from '../lib/time'
 import { useUrlState } from '../lib/useUrlState'
 import { encodeDate, encodeOnly, parseDateParam, parseOnlyParam } from '../lib/urlCodecs'
 import type { Lens } from '../lib/lens'
-import { SYNC_STAMP } from '../lib/fixtures'
+import { posterBooks, restingBook } from '../lib/lensSelectors'
+import { useNow } from '../lib/useNow'
+import { BY_DATE, SYNC_STAMP } from '../lib/fixtures'
 import { PageFoot } from './PageFoot'
 import { NextUpStrip } from './NextUpStrip'
-import { TonightSlate } from './TonightSlate'
+import { PosterRack } from './PosterRack'
 import { WeekRow } from './WeekRow'
 import { FilterBar } from './FilterBar'
 import { WeekView } from './WeekView'
@@ -66,15 +68,21 @@ export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
   )
 
   const weekStart = startOfWeek(anchor)
+  const { nowUtcIso } = useNow()
+  const books = useMemo(() => lens === 'poster' ? posterBooks(Array.from({ length: 7 }, (_, i) => {
+    const date = addDays(weekStart, i)
+    return { date, fixtures: BY_DATE.get(date) ?? [] }
+  }), active) : [], [weekStart, active, lens])
+  const resting = restingBook(books, weekStart, today, nowUtcIso)
   const nav = (dir: number) => setAnchor(addDays(anchor, dir * 7))
   const [filtersOpen, setFiltersOpen] = useState(false)
 
   return (
     <>
       {/* The hero is the one lens axis that changes the tree: Ledger's Next-up strip,
-          and Poster's tonight's slate. */}
+          and the Poster's anchored week of books. */}
       {lens === 'poster' ? (
-        <TonightSlate today={today} active={active} />
+        <PosterRack books={books} resting={resting} now={nowUtcIso} />
       ) : lens === 'ledger' ? (
         <NextUpStrip today={today} active={active} />
       ) : null}

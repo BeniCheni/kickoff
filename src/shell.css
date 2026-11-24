@@ -1605,3 +1605,29 @@ button.register-row {
 .cover-band [data-voice='alarm'] { color: var(--fb-alarm); }
 .cover-band [data-voice='amber'] { color: var(--fb-amber); }
 .band-summary, .band-unset { margin-block-start: 4px; }
+
+.poster-rack { width: 100vw; margin-inline-start: calc(50% - 50vw); margin-block-end: 12px; overflow: clip; }
+.rack-faces { --face: min(calc(100vw - 60px), 360px); position: relative; height: 413px; overflow: hidden; }
+.rack-slide { width: var(--face); height: 100%; position: absolute; left: 50%; transform: translateX(-50%); }
+.rack-slide[data-position='left'] { left: calc(50% - var(--face) - 8px); }
+.rack-slide[data-position='right'] { left: calc(50% + var(--face) + 8px); }
+.rack-slide[data-position='outside'] { left: -200%; }
+.book-cover { height: 100%; background: var(--fb-cover-black); color: var(--fb-cover-ink); }
+.book-scrim { height: 100%; display: flex; flex-direction: column; justify-content: flex-end; gap: 12px; padding: 16px; background: var(--fb-scrim); }
+.book-title { font: 400 36px/1.02 var(--fb-display); margin: 0 0 5px; }
+.book-tagline { font: italic 400 13.5px/1.3 var(--fb-book); margin: 7px 0; }
+.book-imprint { display: flex; justify-content: space-between; border-top: 1px solid var(--fb-rule); padding-top: 5px; color: var(--fb-cover-muted); font: 400 10px/1.3 var(--fb-mono); }
+.book-cover .matchday-line[data-voice='ink'] { color: var(--fb-cover-ink); }
+.rack-markers { display: flex; justify-content: center; }
+.rack-marker { flex: 0 0 44px; height: 44px; display: grid; place-items: center; }
+.rack-marker span { display: grid; place-content: center; width: 34px; height: 22px; padding-inline: 1px; background: var(--fb-cover-black); color: var(--fb-cover-ink); font: 400 7px/1 var(--fb-label); text-align: center; }
+.rack-marker[data-resting] span { border-bottom: 3px solid var(--fb-pitch); }
+@media (max-width: 360px) { .book-title { font-size: 33px; } }
+@media (max-width: 899px) {
+  .rack-slide:not([data-position='center']) .book-scrim { clip-path: inset(50%); }
+}
+@media (min-width: 900px) {
+  .rack-faces { height: 450px; }
+  .rack-slide[data-position='left'] { left: calc(50% - 326px); transform: translateX(-50%) scale(.82) rotateY(24deg); }
+  .rack-slide[data-position='right'] { left: calc(50% + 326px); transform: translateX(-50%) scale(.82) rotateY(-24deg); }
+}

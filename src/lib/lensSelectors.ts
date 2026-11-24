@@ -1,6 +1,6 @@
 import { unsettledStatus, type Fixture } from './schema'
 import { COMPETITIONS, competitionRank, type CompetitionKey } from './competitions'
-import { brooklynDate, fixtureTimes, posterDayTitle, weekdayShort } from './time'
+import { brooklynDate, fixtureTimes, posterDayTitle, startOfWeek, weekdayShort } from './time'
 
 /**
  * Pure per-lens data shaping. Everything here takes fixtures as arguments (never importing
@@ -290,4 +290,12 @@ export function coverBand(shown: readonly Fixture[]) {
     else summary += ', from ' + fixtureTimes(from.kickoffUtc, from.venueTz).brooklyn.time + ' ET'
   }
   return { named: eligible.slice(0, named), summary, unset: unsetKickoffs(shown) }
+}
+
+export function restingBook(books: readonly MatchdayBook[], week: string, today: string, now: string) {
+  if (week === startOfWeek(today)) {
+    const { date } = nextMatchdaySelection(books.flatMap(book => book.shown), today, now)
+    if (date) return date
+  }
+  return (books.find(book => !book.closed) ?? books.at(-1))?.date ?? 'register'
 }

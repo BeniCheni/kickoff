@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { FixtureRow } from '../../src/components/FixtureRow'
 import { NextUpStrip } from '../../src/components/NextUpStrip'
-import { TonightSlate } from '../../src/components/TonightSlate'
+import { CoverBand } from '../../src/components/CoverBand'
 import type { Fixture } from '../../src/lib/schema'
 import { primeClock } from './rig'
 
@@ -26,21 +26,19 @@ describe('missing venue UI', () => {
     expect(screen.getByText('12:45 PM')).toBeTruthy()
     expect(screen.queryByText(/next day|prev\./)).toBeNull()
   })
-  it.each([NextUpStrip, TonightSlate])('%s keeps Brooklyn when the venue zone disappears', (Hero) => {
+  it.each(['Ledger', 'Poster'])('%s keeps Brooklyn when the venue zone disappears', lens => {
     release = primeClock(new Date('2026-09-10T12:00:00Z'))
     state.fixtures = [{ ...f, venueTz: 'Europe/London' }]
     const active = new Set(['ucl'] as const)
-    const view = render(<Hero today="2026-09-10" active={active} />)
+    const hero = () => lens === 'Ledger' ? <NextUpStrip today="2026-09-10" active={new Set(active)} />
+      : <CoverBand shown={state.fixtures} now="2026-09-10T12:00:00Z" />
+    const view = render(hero())
     const before = view.container.textContent
     state.fixtures = [f]
-    view.rerender(<Hero today="2026-09-10" active={new Set(active)} />)
-    if (Hero === NextUpStrip) {
-      expect(before).toContain('17:45 local')
+    view.rerender(hero())
+    expect(before).toContain('17:45 local')
       expect(screen.getByText('local time not known').dataset.voice).toBe('amber')
       expect(view.container.textContent).not.toMatch(/17:45|\b(?:EDT|EST|GMT|UTC)\b/)
-    } else {
-      expect(view.container.textContent).toBe(before)
-    }
     expect(view.container.textContent).toContain('12:45')
   })
 })
