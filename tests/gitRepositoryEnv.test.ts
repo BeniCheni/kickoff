@@ -1,7 +1,8 @@
-import { execFileSync } from 'node:child_process'
+import { execFileSync, spawnSync } from 'node:child_process'
 import { mkdtempSync, readFileSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { expect, it, vi } from 'vitest'
 import { committedLastSyncAt } from '../scripts/publish-gate'
 import { history, repoWithSnapshot } from './helpers/gitFixtures'
@@ -55,3 +56,28 @@ it.each([
     for (const root of roots) rmSync(root, { recursive: true, force: true })
   }
 })
+
+it('runs the node project setup before vercelSmoke reads Git HEAD at load', () => {
+  const root = fileURLToPath(new URL('../', import.meta.url))
+  const decoy = mkdtempSync(join(tmpdir(), 'git-setup-decoy-'))
+  try {
+    execFileSync('git', ['init', '-q', decoy])
+    const gitDir = join(decoy, '.git')
+    const config = join(gitDir, 'config')
+    const before = readFileSync(config)
+    const child = spawnSync(process.execPath, [
+      join(root, 'node_modules/vitest/vitest.mjs'), 'run', '--project', 'node', 'tests/vercelSmoke.test.ts',
+    ], { cwd: root, env: { ...process.env, GIT_DIR: gitDir }, encoding: 'utf8', timeout: 30_000 })
+
+    if (child.error) throw child.error
+    expect(child.status, `vercelSmoke failed under the GIT_DIR decoy\n${child.stdout}\n${child.stderr}`).toBe(0)
+    expect(readFileSync(config)).toEqual(before)
+    const git = (...args: string[]) => execFileSync('git', [`--git-dir=${gitDir}`, ...args], { encoding: 'utf8' })
+    expect(git('for-each-ref')).toBe('')
+    const objects = git('count-objects', '-v')
+    expect(objects).toMatch(/^count: 0$/m)
+    expect(objects).toMatch(/^in-pack: 0$/m)
+  } finally {
+    rmSync(decoy, { recursive: true, force: true })
+  }
+}, 30_000)
