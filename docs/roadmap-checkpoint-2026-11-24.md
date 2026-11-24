@@ -24,7 +24,7 @@ file per command group.
 | `package-lock.json` | `0.5.5` at lines 3 and 9 | `grep -n '"version"' package-lock.json \| head -2` |
 | Newest tag | `v0.5.5`, annotated, 14 Nov 2026 5:14 PM EST, on `026f9f9`, an ancestor of `main` | `git tag --sort=-creatordate \| head -5`; `git for-each-ref refs/tags/v0.5.5 --format='%(objecttype) %(taggerdate:iso) %(*objectname:short)'`; `git merge-base --is-ancestor v0.5.5 origin/main` |
 | `CHANGELOG.md` | `[Unreleased]` at line 9, `[0.5.5] — 2026-11-14` at line 24 | `grep -n '^## \[' CHANGELOG.md` |
-| README | badge `0.5.5` (line 4), "What it does today (v0.5.5)" (line 205), Lineage leads with v0.5.5 (line 442) | `grep -n 'badge/version-\|What it does today' README.md`; `grep -n '^- \*\*v0\.5\.5' README.md` |
+| README | badge `0.5.5` (line 4), "What it does today (v0.5.5)" (line 205), Lineage leads with v0.5.5 (line 442) | `grep -n -e 'badge/version-' -e 'What it does today' README.md`; `grep -n '^- \*\*v0\.5\.5' README.md` |
 | `docs/` | the clearing's five prompts, `design-overhaul-clearing-*.md`, for PR #320 | `ls docs \| grep clearing` |
 
 They agree. `[Unreleased]` holds four lines (`sed -n 9,24p CHANGELOG.md`): the SessionStart
@@ -32,7 +32,8 @@ hook's context (#364), the preview smoke's new landmark (PR 0), the stylesheet n
 changing when docs change (#323) and the `GIT_DIR` isolation (#370). They are unreleased. None
 is user-visible, but the release rule allows a patch made of tooling or docs
 (`.claude/rules/releases.md:44-48`), so whether they ship as a patch before v0.6.0 or inside it
-is Beni's call. This seat recommends neither.
+is Beni's call. This seat recommends neither. (*Corrected after #381's cold read:* this
+paragraph first said that none of them is a release on its own.)
 
 ### 1.2 `main` and `overhaul/second-edition`
 
@@ -40,8 +41,8 @@ Commands: `git log -1 --format='%h %ad %s' --date=iso origin/main` (and the same
 branch); `git rev-list --left-right --count origin/main...origin/overhaul/second-edition`;
 `git merge-base origin/main origin/overhaul/second-edition`;
 `git log --merges --first-parent origin/overhaul/second-edition` (the last `main` merge);
-`git log --first-parent --format='%h %s' 2fd2466^..45b7bc6` (the squashes, which `--merges`
-omits).
+`git log --first-parent --format='%h %as %s' 2fd2466^..45b7bc6` (the squashes and their dates,
+which `--merges` omits).
 
 - **`main`** is at `605ef5d` (#369, 24 Nov 11:12 AM EST).
 - **`overhaul/second-edition`** is at `45b7bc6` (#352, PR 4, 22 Nov 10:07 PM EST).
@@ -77,9 +78,11 @@ README.md`). This file was read before it; where it named Fable 5.2 for that sea
 says Opus 5.5, and the README wins.
 
 The tier column classifies each PR by today's Tier 3 paths (`AGENTS.md:56-101`). For a merged PR
-that is a retrospective reading of its diff (`gh pr diff <n> --name-only` against that list);
-every merged one took the six-pass 360 whatever this column says. For an unbuilt PR it is a
-forecast, since its paths are not yet known.
+that is a retrospective reading of its diff (`gh pr diff <n> --name-only` against that list).
+Every numbered PR that has merged took the six-pass 360 whatever this column says; #359, PR 3's
+follow-up, took a single fast-track read (`docs/design-overhaul-pr3-review-prompt.md:932-934`).
+For an unbuilt PR the column is a forecast, since its paths are not yet known. (*Corrected after
+#381's cold read:* the column first gave every merged PR Tier 3, PR 1b included.)
 
 | PR | State | Evidence | Tier (today's paths) | Seats |
 |---|---|---|---|---|
@@ -110,7 +113,7 @@ commands ran outside the sandbox, whose proxy fails `gh`'s certificate check. Ti
 | [#377](https://github.com/BeniCheni/kickoff/pull/377) | PR 5, the Poster's books, into the integration branch. 36 commits (11 Codex, 10 `main` squashes, 15 sync), head `81101fe`. CLEAN; `verify`, `vercel-smoke` and Vercel green; 0 reviews | 3 | opened 23 Nov 11:00 PM, updated 11:26 PM | **Live.** Waits for its Pass 0 brief |
 | [#379](https://github.com/BeniCheni/kickoff/pull/379) | Track A's archive, 14 files, all under `docs/`, none on the Tier 3 list. CLEAN, `verify` green, 0 reviews | 1 | opened 24 Nov 11:00 AM, updated 11:22 AM | **Live.** Waits for its tier 1 read by Codex, then Beni's merge |
 | [#358](https://github.com/BeniCheni/kickoff/pull/358) | `tests/sync.test.ts` states the degraded list instead of inheriting it; closes #361. One file, one commit by Claude (`99757f3`), 12 behind `main`, merges cleanly (`git merge-tree --write-tree origin/main origin/claude/sync-test-degraded-standings-88bd26` exits 0). CLEAN, checks green, 0 reviews | 3 (`tests/sync.test.ts`, `AGENTS.md:76`) | updated 21 Nov 9:37 PM | **Idle, with a deadline** (1.5) |
-| [#328](https://github.com/BeniCheni/kickoff/pull/328) | The review loop's plan of record and the overhaul's routing to 19 Nov, 41 files under `docs/`. DIRTY on `docs/README.md` only (`git merge-tree --write-tree --name-only origin/main origin/docs/review-loop-plan`); only Vercel ran, so no `verify` | 1 | Claude commits at 10:28 and 11:22 AM today (`git log -6 origin/docs/review-loop-plan`) | **Live**, in another session's hands (it is archiving elenchus PR 9's passes). Not this seat's to touch |
+| [#328](https://github.com/BeniCheni/kickoff/pull/328) | The review loop's plan of record and the overhaul's routing to 19 Nov, 41 files under `docs/`. DIRTY on `docs/README.md` only (`git merge-tree --write-tree --name-only origin/main origin/docs/review-loop-plan`); only Vercel ran, so no `verify` | 2: it carries a non-Markdown file under `docs/`, `docs/verification/review-loop/cursor-models-2026-11-15-super.txt`, and Beni's Pass 3 on #369 keeps such files Tier 2 (`git show -s --format=%B 605ef5d`). *Corrected after #381's round-2 read;* first written as 1 | Claude commits at 10:28 and 11:22 AM today (`git log -6 origin/docs/review-loop-plan`) | **Live**, in another session's hands (it is archiving elenchus PR 9's passes). Not this seat's to touch |
 | [#361](https://github.com/BeniCheni/kickoff/issues/361) | `tests/sync.test.ts:84` fails once the snapshot lacks a UCL table | (#358's) | 21 Nov 9:37 PM | open; #358 closes it |
 | [#360](https://github.com/BeniCheni/kickoff/issues/360) | Next reader: Back then Forward to the Table shows La Liga under `league=pl` | 2 (3 if the fix touches `src/lib/useUrlState.ts`) | 21 Nov 9:37 PM | open; the Next reader is not public |
 | [#372](https://github.com/BeniCheni/kickoff/issues/372)–[#375](https://github.com/BeniCheni/kickoff/issues/375) | PM chores F4: four link and SHA edge cases in `scripts/pm/`, labelled `bug` | 2 | 23 Nov 10:05 PM | open; tooling only, no reader sees them |
@@ -137,8 +140,9 @@ commands ran outside the sandbox, whose proxy fails `gh`'s certificate check. Ti
   (`.github/workflows/sync.yml:211-216`, "Verify the written snapshot"). So the first publishing
   sync on or after **Thu 28 Jan 2027** that finds ESPN's league-phase table gone or short writes
   the degraded file, fails its own verify step, and publishes nothing. Each publishing run that
-  still receives the degraded table fails the same way; a run that gets an intact table again,
-  or a dry run or a fetch-only quiet check, both of which skip that step (its `if`, `.github/workflows/sync.yml:212`), does not. Every
+  still receives the degraded table fails the same way. A run that gets an intact table again
+  does not, and nor does a dry run or a fetch-only quiet check, both of which skip that step
+  (its `if`, `.github/workflows/sync.yml:212`). Every
   Step 0 after a failed run must re-verify each open position from primary sources
   (`CLAUDE.md`, "Scheduled sync"). That is **65 days** from today
   (`echo $(( ($(date -j -f %Y-%m-%d 2027-01-28 +%s) - $(date -j -f %Y-%m-%d 2026-11-24 +%s)) / 86400 ))`).
@@ -153,10 +157,17 @@ commands ran outside the sandbox, whose proxy fails `gh`'s certificate check. Ti
   The window is 30 days back to 150 forward (`scripts/sync.ts:110-111`). In the committed data,
   the 555 fixtures from 28 Jan 2027 on include no UCL one
   (`node -e 'const f=require("./src/data/fixtures.json").filter(x=>x.kickoffUtc.slice(0,10)>="2027-01-28");console.log(f.length,f.find(x=>x.id.startsWith("ucl:"))?.id)'`
-  prints `555 undefined`), because ESPN has not yet listed knockout ties. The sync keeps any
-  phase ESPN reports (`src/lib/schema.ts:67-68`), so the risk is real only if ESPN lists no UCL
-  event in a whole window: the earliest is about 26 Feb 2027, when the 30-day look-back passes
-  the last league-phase night. Not verified: when ESPN lists the knockout fixtures.
+  prints `555 undefined`). That proves only what Kickoff has stored, not what ESPN lists. The
+  normaliser keeps eligible UCL events of any phase under a `ucl:` id
+  (`scripts/providers/espn.ts:233`, `:341-345`) and copies the phase slug only for
+  `league-phase` (`:272-276`), so a stored knockout tie satisfies the test by its id even with no
+  phase. The risk is real only if a whole window holds no UCL event. The window is inclusive
+  (`scripts/window.ts:4-9`), so a run on 26 Feb 2027 still reaches back to 27 Jan, and
+  **Sat 27 Feb 2027** is the first run date whose window leaves out the last league-phase night
+  (`TZ=America/New_York date -j -v-30d -f '%Y-%m-%d' 2027-02-27 '+%F'` prints `2027-01-28`).
+  Not verified: whether and when ESPN lists the knockout ties. (*Corrected after #381's round-2
+  read:* this paragraph first gave "about 26 Feb" and leaned on the schema, which describes what
+  a stored fixture may hold, not what the normaliser keeps.)
 - **Nothing else dated** was found. This read's first search, `grep -rln 'src/data/' tests
   web/test` (16 files), finds only literal paths and missed `tests/moments.test.ts`, which reads
   the snapshot through `src/lib/fixtures`. The other consumers of that module were not each
@@ -278,8 +289,8 @@ waits for PR 7; PR 8's seat is Beni's. Nothing in the repo overtakes them.
   then Passes 1 to 3 as the README's Codex column gives them. Done is #377 merged into
   `overhaul/second-edition` on Beni's word, with the cycle archived as
   `docs/design-overhaul-pr5-review-prompt.md` and a row in `docs/README.md`.
-- **Why.** It is the critical path. PRs 6, 7, 7b, 8 and 9 all wait on it, and nothing else in the
-  overhaul can start.
+- **Why.** It is the critical path. PRs 6, 7, 7b, 8 and 9 all wait on it, and no other overhaul
+  build can start. Work that is not a build can go ahead beside it, such as workstream 5's look.
 - **Waits on:** a PM seat. Track A's closed its thread this morning. **Waits on it:** PR 6's
   brief, and everything after.
 - **What the brief must carry** (from this read, not from the build's claims): the `main` merge
@@ -291,7 +302,9 @@ waits for PR 7; PR 8's seat is Beni's. Nothing in the repo overtakes them.
   open, the line that the README's tiers outrank the skill where they differ.
 - **Beside:** yes for the review: it is a branch PR, and items 2 to 5 touch other files. Its
   archive is another matter: it owes a row in `docs/README.md`, which items 2, 3 and 4 may also
-  edit, so whichever lands second resolves a row conflict.
+  edit. Rows added at the same place may conflict, and whichever lands second then resolves it.
+  Today #381 and #379 merge cleanly
+  (`git merge-tree --write-tree --name-only origin/claude/overall-planner-checkpoint 8e198de`).
 - **Decision for Beni:** who opens the PM seat for Pass 0.
 
 ### 2. The review skill catches up with #369
@@ -337,8 +350,9 @@ waits for PR 7; PR 8's seat is Beni's. Nothing in the repo overtakes them.
 - **Why.** It is not on the critical path, but it is the record PR 5's Pass 0 seat reads first,
   and every later brief cites it from the archive branch until it lands.
 - **Waits on:** a Codex read. **Waits on it:** nothing hard.
-- **Beside:** yes, except for `docs/README.md`, which #379, #328 and this checkpoint's branch all
-  add rows to. Whichever merges second resolves a row conflict.
+- **Beside:** yes. #379, #328 and this checkpoint's branch all add rows to `docs/README.md`, so
+  rows may conflict, and whichever merges second then resolves it. At #379's tip it merges with
+  this branch cleanly (the command under workstream 1); #328 conflicts with `main` there.
 - **Decision for Beni:** none until the read reports.
 
 ### 5. PR 7's pre-brief look
@@ -358,9 +372,11 @@ waits for PR 7; PR 8's seat is Beni's. Nothing in the repo overtakes them.
 
 - **PR 6's brief.** The plan's order, and L7: it must be written from a fresh read after PR 5
   merges, or it describes a Poster still under review.
-- **PR 7's brief and build, PR 7b, PR 8, PR 9.** Only one of these is an explicit dependency:
-  PR 7b's brief waits for PR 7 to merge (`docs/design-overhaul-plan.md:399`). The rest is this
-  seat's recommendation to keep the plan's sequence: PR 7 is the still page PR 8 must match with
+- **PR 7's brief and build, PR 7b, PR 8, PR 9.** Three gates are explicit. PR 7's brief waits
+  for Beni's full-size look (plan review ruling 6, `docs/design-overhaul-plan-review.md:52`). PR
+  7b's brief waits for PR 7 to merge (`docs/design-overhaul-plan.md:399`), and the trim must land
+  before v0.6.0 (`:393`), so it also gates PR 9. The rest is this seat's recommendation to keep
+  the plan's sequence: PR 7 is the still page PR 8 must match with
   motion off ("pixel for pixel", section 3's table), and a build before PR 6 would measure a
   layout about to change. PR 8's seat question stays Beni's, read now as Codex by default under
   #369 unless he routes it, with the plan's second opinion on the builder and PR 0's benchmark
@@ -409,10 +425,11 @@ All three forks are ruled. Workstreams 4 and 5 needed no ruling.
 Codex (`gpt-6.2-astra`, high) read #381 cold at `b42e404` and posted "Not yet" on Tue 24 Nov
 2026 at 12:05 PM EST (issue comment 7138659216). It found the Tier 1 tier correct and the
 rulings recorded at the right minutes. This seat re-ran each finding before changing anything,
-and every one reproduced. The fixes are marked in place as corrected or added:
+and every one reproduced. This section is the change record; each fix also carries a
+"corrected" or "added" marker where it falls:
 
-- PR 5's `main` merge reaches #376, not #365, and Pass 1 needs both comparisons (1.2, L1,
-  workstream 1, "Deliberately not started").
+- PR 5's merge of `main` reaches through #376, #365 included, and Pass 1 needs both
+  comparisons (1.2, L1, workstream 1, "Deliberately not started").
 - #328's superseded routing is its per-PR builder table, not its Pass 2.5 seat (1.7 item 5, L3).
 - The tier column is today's paths, retrospective or forecast; PR 1b reads Tier 2 (1.3).
 - Workstream 2's done criterion covers the skill's fix policy and landing steps, both README
@@ -426,3 +443,21 @@ and every one reproduced. The fixes are marked in place as corrected or added:
 - The unreleased lines may ship as a patch; N6a and N6b are already on `main` (1.1, 1.6).
 - The printed commands now produce the figures they stand beside (1.1, 1.2, 1.5).
 - The index conflict #380 caused was resolved by merging `main` at `171daee`.
+
+### Round 2
+
+Codex re-read `bd18228` and posted "Not yet" at 12:21 PM EST (issue comment 7139067907). Of
+round 1's eleven findings it closed eight and found three partly closed. It also corrected its
+own round-1 call: #328 is Tier 2, not Tier 1. This seat re-ran each point, and all reproduced.
+The fixes, each marked in place:
+
+- #328's tier is 2, for its non-Markdown file under `docs/` (1.4).
+- The moments risk's first date is Sat 27 Feb 2027, because the window is inclusive, and its
+  explanation now follows the normaliser rather than the schema (1.5).
+- The plan's explicit gates: Beni's look before PR 7's brief, and PR 7b both after PR 7 and
+  before v0.6.0 ("Deliberately not started").
+- #359's fast-track read set apart from the numbered PRs' 360s (1.3).
+- The `docs/README.md` conflicts described as possible, not certain, and workstream 1's "why"
+  limited to builds (workstreams 1 and 4).
+- The badge grep and the squash log print commands that work; the patch-policy and tier-column
+  passages now carry their correction markers; this record is called the change record.
