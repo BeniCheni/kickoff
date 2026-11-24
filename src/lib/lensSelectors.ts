@@ -1,6 +1,6 @@
 import { unsettledStatus, type Fixture } from './schema'
 import { COMPETITIONS, competitionRank, type CompetitionKey } from './competitions'
-import { brooklynDate, fixtureTimes } from './time'
+import { brooklynDate, fixtureTimes, weekdayShort } from './time'
 
 /**
  * Pure per-lens data shaping. Everything here takes fixtures as arguments (never importing
@@ -230,4 +230,60 @@ export function planPosterWeek(days: readonly DayInfo[]): PosterBlock[] {
     const dominant = dominantCompetition(day.shown)
     return day.shown.length > 2 && dominant !== null ? { kind: 'big', ...fields, dominant } : { kind: 'small', ...fields }
   })
+}
+
+/** Each slot owns its fiction. Counts, dates and match states come from the snapshot. */
+export const COVER_LIBRARY = {
+  fri: ['The Fifth Minute', 'The lights came back on in the ninety-fifth minute. So did something else.'],
+  sat: ['The Valley Doors', 'Every door was left open that Saturday. The whistle did not close them all.'],
+  sun: ['The Tower Counts', 'The tower counts its bells every Sunday. It has never been wrong.'],
+  mon: ['The Empty Hallways', 'It is only Monday. The week has not finished with you.'],
+  midweek: ['The Night Between', 'The weekend is days away. Something could not wait.'],
+  firstNight: ['The First Night', 'Grounds lit at once, a continent apart. Something walks between them.'],
+  secondNight: ['The Second Night', 'It walked between them all night. It is still walking.'],
+  europa: ['The Far Windows', 'Windows lit across the map. Count them again. One is watching back.'],
+  closed: ['The Long Whistle', 'Every whistle blew, and every one was answered. You made it to morning.'],
+  quiet: ['A Quiet Week', 'A no-bet week is a successful outcome.'],
+  register: ['The Register', 'Every name goes in. Some are already falling.'],
+} as const
+
+type DaySlot = Exclude<keyof typeof COVER_LIBRARY, 'closed' | 'quiet' | 'register'>
+export type MatchdayBook = {
+  date: string
+  slot: DaySlot
+  closed: boolean
+  shown: Fixture[]
+}
+
+export function isFinal(fixture: Fixture): boolean {
+  return fixture.status === 'full_time' || fixture.status === 'after_extra_time' || fixture.status === 'after_penalties'
+}
+
+/** The caller supplies one Brooklyn week of unfiltered, display-ordered dates.
+ * Hidden UCL nights still determine which cover a later night takes. */
+export function posterBooks(
+  week: readonly { date: string; fixtures: readonly Fixture[] }[],
+  active: ReadonlySet<CompetitionKey>,
+): MatchdayBook[] {
+  const books: MatchdayBook[] = []
+  let seenChampionsLeague = false
+  for (const { date, fixtures } of [...week].sort((a, b) => a.date.localeCompare(b.date))) {
+    let slot: DaySlot
+    if (fixtures.some(f => f.competition === 'ucl')) {
+      slot = seenChampionsLeague ? 'secondNight' : 'firstNight'
+      seenChampionsLeague = true
+    } else if (fixtures.some(f => f.competition === 'uel' || f.competition === 'uecl')) {
+      slot = 'europa'
+    } else {
+      const weekdays: Record<string, DaySlot> = { Fri: 'fri', Sat: 'sat', Sun: 'sun', Mon: 'mon' }
+      slot = weekdays[weekdayShort(date)] ?? 'midweek'
+    }
+    const shown = fixtures.filter(f => active.has(f.competition))
+    if (shown.length) books.push({ date, slot, shown, closed: fixtures.every(isFinal) })
+  }
+  return books
+}
+
+export function catalogueNumber(date: string): string {
+  return 'FT-' + date.slice(5, 7) + date.slice(8, 10)
 }

@@ -1,8 +1,11 @@
-import { stillToKickOff as snapshotGate } from '../src/lib/fixtures'
+import { BY_DATE, stillToKickOff as snapshotGate } from '../src/lib/fixtures'
 import { describe, expect, it } from 'vitest'
 import type { Fixture } from '../src/lib/schema'
-import type { CompetitionKey } from '../src/lib/competitions'
+import { COMPETITION_KEYS, type CompetitionKey } from '../src/lib/competitions'
 import {
+  COVER_LIBRARY,
+  catalogueNumber,
+  posterBooks,
   LIVE_WINDOW_MS,
   nextMatchdaySelection,
   stillToKickOff,
@@ -18,6 +21,9 @@ import {
   slateSubLine,
   type DayInfo,
 } from '../src/lib/lensSelectors'
+
+import { startOfWeek, weekdayShort } from '../src/lib/time'
+import { edgeFixture } from './fixtures/edgeFixtures'
 
 let seq = 0
 function fx(over: Partial<Fixture> & { competition: CompetitionKey }): Fixture {
@@ -367,5 +373,53 @@ describe('hasKickedOff — the complement of stillToKickOff over scheduled fixtu
     for (const status of ['in_play', 'full_time', 'postponed', 'cancelled', 'suspended', 'abandoned'] as const) {
       expect(hasKickedOff(fx({ competition: 'laliga', kickoffUtc: K, status }), '2026-09-07T17:40:00.000Z')).toBe(false)
     }
+  })
+})
+
+describe('matchday cover slots', () => {
+  const all = new Set(COMPETITION_KEYS)
+  it('places every matchday of each Brooklyn week in exactly one cover slot', () => {
+    const weeks = new Map<string, [string, Fixture[]][]>()
+    for (const entry of BY_DATE) {
+      const monday = startOfWeek(entry[0])
+      const days = weeks.get(monday) ?? []
+      days.push(entry)
+      weeks.set(monday, days)
+    }
+    const dates = new Set<string>()
+    for (const days of weeks.values()) {
+      const week = days.map(([date, fixtures]) => ({ date, fixtures }))
+      const books = posterBooks(week, all)
+      const nights = days.filter(([, fs]) => fs.some(f => f.competition === 'ucl')).map(([d]) => d).sort()
+      for (const book of books) {
+        const comps = book.shown.map(f => f.competition)
+        const day = weekdayShort(book.date).toLowerCase()
+        const domestic = ['mon', 'fri', 'sat', 'sun'].includes(day) ? day : 'midweek'
+        expect(book.slot).toBe(comps.includes('ucl') ? (book.date === nights[0] ? 'firstNight' : 'secondNight')
+          : comps.includes('uel') || comps.includes('uecl') ? 'europa' : domestic)
+        expect(dates.has(book.date)).toBe(false)
+        dates.add(book.date)
+      }
+    }
+    expect([...dates].sort()).toEqual([...BY_DATE.keys()].sort())
+  })
+  it('retains an invisible first night and a hidden unsettled match when assigning covers', () => {
+    const ucl = edgeFixture({ competition: 'ucl', status: 'abandoned' })
+    const pl = edgeFixture({ competition: 'pl', status: 'full_time' })
+    const week = [{ date: '2026-11-25', fixtures: [pl, ucl] }, { date: '2026-11-24', fixtures: [ucl] }]
+    const books = posterBooks(week, new Set(['pl']))
+    expect(books).toEqual([{ date: '2026-11-25', shown: [pl], closed: false, slot: 'secondNight' }])
+    expect(posterBooks(week.slice(0, 1), all)[0]?.slot).toBe('firstNight')
+    expect(posterBooks([{ date: '2026-12-22', fixtures: [edgeFixture({ competition: 'supercoppa' })] }], all)[0]?.slot).toBe('midweek')
+    expect(posterBooks([], all)).toEqual([])
+  })
+  it('uses the date for the catalogue and the approved library for the eleven distinct covers', () => {
+    expect(catalogueNumber('2026-11-20')).toBe('FT-1120')
+    expect(Object.values(COVER_LIBRARY).map(([title]) => title)).toEqual([
+      'The Fifth Minute', 'The Valley Doors', 'The Tower Counts', 'The Empty Hallways',
+      'The Night Between', 'The First Night', 'The Second Night', 'The Far Windows',
+      'The Long Whistle', 'A Quiet Week', 'The Register',
+    ])
+    expect(new Set(Object.values(COVER_LIBRARY).map(([, line]) => line)).size).toBe(11)
   })
 })
