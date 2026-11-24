@@ -22,14 +22,14 @@ GROUND RULES. The repo and GitHub are ground truth. The author's fix-round reply
 
 WHERE. Reuse your detached worktree at /Users/benicheni/code/kickoff-pr381-read: git -C /Users/benicheni/code/kickoff-pr381-read fetch origin, then git -C /Users/benicheni/code/kickoff-pr381-read checkout --detach origin/claude/overall-planner-checkpoint. If that worktree is gone, add it again the same way as round 1. Never Beni's checkout at /Users/benicheni/code/kickoff, never the author's worktree at /Users/benicheni/code/kickoff-overall-planner. Receipts under /Users/benicheni/code/kickoff-receipts/pr381-read/, in a round-2 file.
 
-WHAT MOVED. Round 1 read b42e404. Since then: 171daee merged main at 86155da (#380) into the branch, resolving the docs/README.md row conflict, and 9134831 is the fix round. Read git diff b42e404 9134831, and git show --remerge-diff 171daee for the merge's resolution. Check that the head is still the one you are reading (gh pr view 381 --json headRefOid) and still merges with origin/main.
+WHAT MOVED. Round 1 read b42e404. Since then: 171daee merged main at 86155da (#380) into the branch, resolving the docs/README.md row conflict, 9134831 is the fix round, and the commits after it archive this brief. Read git diff b42e404 9134831, and git show --remerge-diff 171daee for the merge's resolution. Check that the head is still the one you are reading (gh pr view 381 --json headRefOid) and still merges with origin/main.
 
 WHAT THE RE-READ CHECKS.
 - Each round-1 finding: closed, partly closed or open, with the command that shows it. Re-run the commands round 1 gave, at the new head, and re-check each corrected citation against the file it names.
 - Every line the fix round added or changed: its figures, commands and citations hold, and the printed commands produce the figures beside them. Pay most attention to the new conditional risk in section 1.5 (tests/moments.test.ts, the window, the 555 fixtures, the 26 Feb 2027 date) and to workstream 2's widened done criterion.
 - The merge 171daee: both PRs' rows survive in docs/README.md, and the #380 seat change (Pass 2 when Claude builds is now Claude Code on Opus 5.5) is reflected wherever the checkpoint names that seat, without rewriting what Beni was asked or answered.
 - No regression: nothing that held in round 1 is now wrong, and the corrections say so in place rather than erasing the earlier claim.
-- The tier is still Tier 1 by AGENTS.md's paths, now that the PR has three changed files.
+- The tier is still Tier 1 by AGENTS.md's paths, now that the PR has four changed files (git diff --name-only origin/main...HEAD).
 - Public-repo hygiene and the wrapped docs style, on the new lines.
 - Anything new on main or GitHub since round 1 that makes a line false. Keep "moved since" apart from "was wrong when written".
 
