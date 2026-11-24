@@ -21,7 +21,7 @@ export function PosterRack({ books, resting, now }: { books: MatchdayBook[]; res
     </div>
     <div className="rack-markers">{slides.map((book, i) =>
       <div className="rack-marker" data-resting={i === index || undefined} key={book?.date ?? 'register'}>
-        <span>{COVER_LIBRARY[book ? book.closed ? 'closed' : book.slot : 'register'][0]}</span>
+        <span><b>{COVER_LIBRARY[book ? book.closed ? 'closed' : book.slot : 'register'][0]}</b></span>
       </div>)}</div>
   </div>
 }

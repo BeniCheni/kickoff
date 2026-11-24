@@ -15,6 +15,7 @@
 @source "../../src/components/WeekView.tsx";
 @source "../../src/components/LedgerWeek.tsx";
 @source "../../src/components/PosterWeek.tsx";
+@source "../../src/components/BookShelf.tsx";
 @source "../../src/components/PosterPart.tsx";
 @source "../../src/components/BookCover.tsx";
 @source "../../src/components/CoverBand.tsx";

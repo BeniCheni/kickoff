@@ -7,6 +7,7 @@ import { restingBook, type MatchdayBook } from '../../src/lib/lensSelectors'
 import { act, fireEvent } from '@testing-library/react'
 import { CoverBand } from '../../src/components/CoverBand'
 import { edgeFixture, cannotClose } from '../fixtures/edgeFixtures'
+import { BookShelf } from '../../src/components/BookShelf'
 import { PosterPart } from '../../src/components/PosterPart'
 import { PosterWeek } from '../../src/components/PosterWeek'
 import type { Fixture } from '../../src/lib/schema'
@@ -130,4 +131,18 @@ it('keeps an all-hidden today in one dated account and skips it in the part numb
   expect(hidden.querySelector('.week-hidden')?.textContent).toBe('2 hidden by filters')
   expect(hidden.querySelector('.part-plate, [data-fixture-id]')).toBeNull()
   expect(view.container.textContent).not.toMatch(/today/i)
+})
+
+it('keeps only visible date spines and labels the next week with its filtered count', () => {
+  const book: MatchdayBook = { date: '2026-11-20', slot: 'fri', closed: false, shown: [edgeFixture()] }
+  const view = render(<BookShelf books={[book]} resting={book.date} next={{ ...book, date: '2026-11-23' }}
+    gaps={['MON 16 – THU 19 · no books this week']} />)
+  expect(screen.getByText('NOW READING').closest('[data-date]')?.getAttribute('data-date')).toBe(book.date)
+  expect(screen.getByText('1 MATCH')).toBeTruthy()
+  expect(screen.getByText('Next week · Mon 23 Nov · 1 match')).toBeTruthy()
+  expect(screen.getByText('MON 16 – THU 19 · no books this week')).toBeTruthy()
+  expect(view.container.querySelector('button, a, [tabindex], [role]')).toBeNull()
+  view.rerender(<BookShelf books={[]} resting="register" next={book} gaps={[]} />)
+  expect(view.container.querySelector('.book-spine')).toBeNull()
+  expect(screen.getByText('All matchday books are hidden by filters.')).toBeTruthy()
 })

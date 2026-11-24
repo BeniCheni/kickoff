@@ -4,11 +4,12 @@ import { addDays, startOfWeek } from '../lib/time'
 import { useUrlState } from '../lib/useUrlState'
 import { encodeDate, encodeOnly, parseDateParam, parseOnlyParam } from '../lib/urlCodecs'
 import type { Lens } from '../lib/lens'
-import { posterBooks, restingBook } from '../lib/lensSelectors'
+import { bookWeek, posterBooks, restingBook, shelfGaps } from '../lib/lensSelectors'
 import { useNow } from '../lib/useNow'
 import { BY_DATE, SYNC_STAMP } from '../lib/fixtures'
 import { PageFoot } from './PageFoot'
 import { NextUpStrip } from './NextUpStrip'
+import { BookShelf } from './BookShelf'
 import { PosterRack } from './PosterRack'
 import { WeekRow } from './WeekRow'
 import { FilterBar } from './FilterBar'
@@ -69,10 +70,10 @@ export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
 
   const weekStart = startOfWeek(anchor)
   const { nowUtcIso } = useNow()
-  const books = useMemo(() => lens === 'poster' ? posterBooks(Array.from({ length: 7 }, (_, i) => {
-    const date = addDays(weekStart, i)
-    return { date, fixtures: BY_DATE.get(date) ?? [] }
-  }), active) : [], [weekStart, active, lens])
+  const week = useMemo(() => bookWeek(weekStart, BY_DATE), [weekStart])
+  const books = useMemo(() => lens === 'poster' ? posterBooks(week, active) : [], [week, active, lens])
+  const nextBook = useMemo(() => lens === 'poster' ? posterBooks(bookWeek(addDays(weekStart, 7), BY_DATE), active)[0]
+    : undefined, [weekStart, active, lens])
   const resting = restingBook(books, weekStart, today, nowUtcIso)
   const nav = (dir: number) => setAnchor(addDays(anchor, dir * 7))
   const [filtersOpen, setFiltersOpen] = useState(false)
@@ -93,6 +94,9 @@ export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
         onSetGroup={onSetGroup} onShowAll={() => setActive(ALL)} />
 
       <WeekView weekStart={weekStart} active={active} today={today} lens={lens} />
+
+      {lens === 'poster' && week.some(day => day.total) &&
+        <BookShelf books={books} resting={resting} next={nextBook} gaps={shelfGaps(week)} />}
 
       <PageFoot kind={lens === 'ledger' ? 'ledger' : 'poster'}>
         {lens === 'ledger'

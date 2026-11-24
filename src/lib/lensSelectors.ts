@@ -1,6 +1,6 @@
 import { unsettledStatus, type Fixture } from './schema'
 import type { CompetitionKey } from './competitions'
-import { brooklynDate, fixtureTimes, posterDayTitle, startOfWeek, weekdayShort } from './time'
+import { addDays, brooklynDate, fixtureTimes, posterDayTitle, startOfWeek, weekdayShort } from './time'
 
 /**
  * Pure per-lens data shaping. Everything here takes fixtures as arguments (never importing
@@ -151,8 +151,8 @@ export function hotFixtureIds(
 }
 
 /** One group per fixture-bearing day, or per uninterrupted run of empty days. */
-export function groupWeekDays(days: readonly DayInfo[]): DayInfo[][] {
-  const groups: DayInfo[][] = []
+export function groupWeekDays<T extends { total: number }>(days: readonly T[]): T[][] {
+  const groups: T[][] = []
   for (const day of days) {
     const previous = groups.at(-1)
     if (day.total === 0 && previous?.[0]?.total === 0) previous.push(day)
@@ -245,4 +245,20 @@ export function restingBook(books: readonly MatchdayBook[], week: string, today:
     if (date) return date
   }
   return (books.find(book => !book.closed) ?? books.at(-1))?.date ?? 'register'
+}
+
+export function bookWeek(start: string, byDate: ReadonlyMap<string, readonly Fixture[]>) {
+  return Array.from({ length: 7 }, (_, i) => {
+    const date = addDays(start, i)
+    const fixtures = byDate.get(date) ?? []
+    return { date, fixtures, total: fixtures.length }
+  })
+}
+
+export function shelfGaps(week: readonly { date: string; total: number }[]) {
+  const short = (date: string) => weekdayShort(date).toUpperCase() + ' ' + Number(date.slice(8))
+  return groupWeekDays(week).filter(group => group[0]!.total === 0).map(group => {
+    const from = short(group[0]!.date)
+    return (group.length === 1 ? from : from + ' – ' + short(group.at(-1)!.date)) + ' · no books this week'
+  })
 }
