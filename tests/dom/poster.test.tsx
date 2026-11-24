@@ -13,8 +13,9 @@ describe('Poster day-header wiring', () => {
       source: { provider: 'espn', sourceId: `synthetic-${i}`, fetchedAt: '2026-09-05T12:00:00.000Z' },
     }))
     render(<PosterWeek blocks={[{ kind: 'big', date: '2026-09-05', isToday: true, dominant: 'pl', fixtures }]} />)
-    expect(screen.getByText('3 MATCHES · 1 LEAGUE · 3 TBC')).toBeTruthy()
-    expect(screen.queryByText(/FIRST KICKOFF/)).toBeNull()
+    expect(screen.getByText('3 MATCHES')).toBeTruthy()
+    expect(screen.getByText('3 kickoffs, times not yet set by the league').dataset.voice).toBe('amber')
+    expect(screen.getByText('FIRST KICKOFF NOT SET').dataset.voice).toBe('amber')
     expect(screen.queryByText(/3:00 PM/)).toBeNull()
   })
 })

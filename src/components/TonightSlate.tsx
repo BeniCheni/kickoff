@@ -3,7 +3,8 @@ import { COMPETITIONS, type CompetitionKey } from '../lib/competitions'
 import { fixtureTimes, posterDayTitle } from '../lib/time'
 import { planSlate } from '../lib/fixtures'
 import { useNow } from '../lib/useNow'
-import { dominantCompetition, slateSubLine } from '../lib/lensSelectors'
+import { BookDateLine, UnsetCount } from './BookDateLine'
+import { dominantCompetition, unsetKickoffs } from '../lib/lensSelectors'
 import type { Fixture } from '../lib/schema'
 
 /** "1:30 PM" → big clock, small meridiem — the Poster template's own split. */
@@ -49,7 +50,6 @@ export function TonightSlate({
   }
 
   const dominant = dominantCompetition(slate)
-  const sub = slateSubLine(slate, isTonight)
 
   return (
     <div
@@ -63,7 +63,8 @@ export function TonightSlate({
         {posterDayTitle(date)}
       </div>
       <div className="font-mono mt-1.5 text-[11px] font-medium tracking-[0.06em] text-ink-secondary">
-        {sub}
+        <BookDateLine date={date} shown={slate} closed={false} />
+        <UnsetCount count={unsetKickoffs(slate)} />
       </div>
       <div className="mt-2.5">
         {slate.map((f) => (

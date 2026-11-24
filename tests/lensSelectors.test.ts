@@ -17,8 +17,7 @@ import {
   kickoffBounds,
   nextKickoffId,
   planPosterWeek,
-  posterSubLine,
-  slateSubLine,
+  bookDateLine,
   type DayInfo,
 } from '../src/lib/lensSelectors'
 
@@ -45,27 +44,31 @@ function day(shown: Fixture[], over: Partial<DayInfo> = {}): DayInfo {
   return { date: '2026-08-30', shown, total: shown.length, isToday: false, ...over }
 }
 
+function dateLine(shown: Fixture[], closed = false) {
+  return bookDateLine('2026-08-30', shown, closed)
+}
+
 describe('Poster day-header count versus league-set times', () => {
   it('names mixed exact/TBC counts and ignores the placeholder instant for FIRST', () => {
     const exact = fx({ competition: 'pl', kickoffUtc: '2026-09-05T19:30:00.000Z' })
     const tbc = fx({ competition: 'laliga', kickoffUtc: '2026-09-05T12:00:00.000Z', timeConfidence: 'round_placeholder' })
-    expect(posterSubLine([tbc, exact])).toBe('2 MATCHES · 2 LEAGUES · 1 TBC · FIRST KICKOFF 3:30 PM')
+    expect(dateLine([tbc, exact])).toMatchObject({ count: '2 MATCHES', unset: 1, ending: 'FIRST 3:30 PM ET' })
   })
   it('an all-TBC day has counts but no invented FIRST time', () => {
     const tbc = fx({ competition: 'pl', timeConfidence: 'round_placeholder' })
     const tbd = fx({ competition: 'pl', timeConfidence: 'tbd' })
-    expect(posterSubLine([tbc, tbd])).toBe('2 MATCHES · 1 LEAGUE · 2 TBC')
+    expect(dateLine([tbc, tbd])).toMatchObject({ count: '2 MATCHES', unset: 2, ending: 'FIRST KICKOFF NOT SET' })
   })
   it('postponed, cancelled, suspended and abandoned exact times do not become FIRST or get counted as TBC', () => {
-    expect(posterSubLine([
+    expect(dateLine([
       fx({ competition: 'pl', status: 'postponed' }),
       fx({ competition: 'pl', status: 'cancelled' }),
       fx({ competition: 'pl', status: 'suspended' }),
       fx({ competition: 'pl', status: 'abandoned' }),
-    ])).toBe('4 MATCHES · 1 LEAGUE')
+    ])).toMatchObject({ count: '4 MATCHES', unset: 0, ending: '' })
   })
   it('retains singular labels for a one-fixture input', () => {
-    expect(posterSubLine([fx({ competition: 'pl' })])).toBe('1 MATCH · 1 LEAGUE · FIRST KICKOFF 1:00 PM')
+    expect(dateLine([fx({ competition: 'pl' })])).toMatchObject({ count: '1 MATCH', ending: 'FIRST 1:00 PM ET' })
   })
 })
 
@@ -151,29 +154,29 @@ describe('kickoffBounds', () => {
   })
 })
 
-describe('slateSubLine', () => {
-  it('renders the FIRST/LAST range for a multi-kickoff slate', () => {
+describe('cover date lines', () => {
+  it('names only the first kickoff on a multi-kickoff day', () => {
     const early = fx({ competition: 'pl', kickoffUtc: '2026-08-30T17:00:00.000Z' })
     const late = fx({ competition: 'laliga', kickoffUtc: '2026-08-30T19:30:00.000Z' })
-    expect(slateSubLine([early, late], true)).toBe('2 REMAINING · FIRST 1:00 PM · LAST 3:30 PM')
+    expect(dateLine([early, late])).toMatchObject({ count: '2 MATCHES', unset: 0, ending: 'FIRST 1:00 PM ET' })
   })
 
-  it('collapses a one-kickoff slate to a single time — never FIRST and LAST of the same match', () => {
+  it('names the single kickoff in Brooklyn time', () => {
     const only = fx({ competition: 'pl', kickoffUtc: '2026-08-31T00:00:00.000Z' })
-    expect(slateSubLine([only], true)).toBe('1 REMAINING · KICKOFF 8:00 PM')
+    expect(dateLine([only])).toMatchObject({ count: '1 MATCH', unset: 0, ending: 'FIRST 8:00 PM ET' })
   })
 
   it('says MATCHES, not REMAINING, about a future matchday', () => {
     const a = fx({ competition: 'pl', kickoffUtc: '2026-09-01T17:00:00.000Z' })
     const b = fx({ competition: 'pl', kickoffUtc: '2026-09-01T19:00:00.000Z' })
-    expect(slateSubLine([a, b], false)).toBe('2 MATCHES · FIRST 1:00 PM · LAST 3:00 PM')
+    expect(dateLine([a, b])).toMatchObject({ count: '2 MATCHES', unset: 0, ending: 'FIRST 1:00 PM ET' })
   })
 
   it('gives an all-TBC slate its count, its TBC count and no invented times', () => {
     const tbc = fx({ competition: 'ligue1', timeConfidence: 'round_placeholder' })
-    expect(slateSubLine([tbc], true)).toBe('1 REMAINING · 1 TBC')
+    expect(dateLine([tbc])).toMatchObject({ count: '1 MATCH', unset: 1, ending: 'FIRST KICKOFF NOT SET' })
     const tbd = fx({ competition: 'ligue1', timeConfidence: 'tbd', kickoffUtc: '2026-09-01T12:00:00.000Z' })
-    expect(slateSubLine([tbc, tbd], false)).toBe('2 MATCHES · 2 TBC')
+    expect(dateLine([tbc, tbd])).toMatchObject({ count: '2 MATCHES', unset: 2, ending: 'FIRST KICKOFF NOT SET' })
   })
 
   // v0.2.2 review: the count includes every fixture, the range only the league-set ones, so a
@@ -183,10 +186,10 @@ describe('slateSubLine', () => {
     const early = fx({ competition: 'pl', kickoffUtc: '2026-08-30T17:00:00.000Z' })
     const late = fx({ competition: 'laliga', kickoffUtc: '2026-08-30T19:30:00.000Z' })
     const tbc = fx({ competition: 'ligue1', timeConfidence: 'round_placeholder', kickoffUtc: '2026-08-30T12:00:00.000Z' })
-    expect(slateSubLine([early, tbc, late], true)).toBe('3 REMAINING · 1 TBC · FIRST 1:00 PM · LAST 3:30 PM')
-    expect(slateSubLine([early, tbc, late], false)).toBe('3 MATCHES · 1 TBC · FIRST 1:00 PM · LAST 3:30 PM')
+    expect(dateLine([early, tbc, late])).toMatchObject({ count: '3 MATCHES', unset: 1, ending: 'FIRST 1:00 PM ET' })
+    expect(bookDateLine('2026-09-01', [tbc, early, late], false)).toMatchObject({ date: 'TUE 1 SEP', count: '3 MATCHES', unset: 1, ending: 'FIRST 1:00 PM ET' })
     // …and the placeholder's filler instant never becomes FIRST or LAST, whichever side it sits on.
-    expect(slateSubLine([tbc, late], true)).toBe('2 REMAINING · 1 TBC · KICKOFF 3:30 PM')
+    expect(dateLine([tbc, late])).toMatchObject({ count: '2 MATCHES', unset: 1, ending: 'FIRST 3:30 PM ET' })
   })
 })
 

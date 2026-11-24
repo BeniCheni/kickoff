@@ -1589,3 +1589,7 @@ button.register-row {
 }
 .week-prev .glyph, .week-next .glyph { width: 16px; height: 16px; }
 .week-filters { gap: 3px; }
+
+.book-date { font: 400 11px/1.5 var(--fb-mono); }
+.book-date span { white-space: nowrap; }
+.book-date [data-voice='amber'], .band-unset { color: var(--fb-amber); }

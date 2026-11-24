@@ -28,6 +28,8 @@ const sites: [string, string, RegExp][] = [
   ['ProvenanceLine', '1 · sync line', /className="provenance" data-provenance="" data-voice="amber"/],
   ['FixtureRow', '2 · unset kickoff', /unset && <div className="fixture-unset" data-voice="amber"/],
   ['NextUpStrip', '2 · unset card', /className="fixture-unset italic" data-voice="amber">TBC/],
+  ['BookDateLine', '2 · unset date ending', /line\.ending === 'FIRST KICKOFF NOT SET' \? 'amber'/],
+  ['BookDateLine', '2 · count without a kickoff', /className="band-unset" data-voice="amber"/],
   ['TonightSlate', '2 · unset cover', /text-floodlight-strong italic">TBC/],
   ['FixtureRow', '3 · last live score', /className="fixture-score" data-voice=\{isStale \? 'amber'/],
   ['StatusPill', '3 · kicked off', /const voice = kickedOff \? 'amber'/],
@@ -67,6 +69,7 @@ it('allows the amber token only on its named grounds and text selectors', () => 
     ".fixture-status[data-voice='amber'], .fixture-score[data-voice='amber']",
     ".stadium-clock[data-voice='amber'], .fixture-unset",
     ".matchday-line[data-voice='amber']", ".next-card .stadium-clock[data-voice='amber']",
+    ".book-date [data-voice='amber'], .band-unset",
   ]
   const rules = [...read('shell.css').matchAll(/([^{}]+)\{([^{}]*)\}/g)]
   const painted = rules.filter(([, , body]) => /var\(--(?:fb|band)-amber\)/.test(body!))

@@ -6,7 +6,7 @@ import { PosterWeek } from '../../src/components/PosterWeek'
 import { FixtureRow } from '../../src/components/FixtureRow'
 import { normalizeEvent } from '../../scripts/providers/espn'
 import { fixtureSchema } from '../../src/lib/schema'
-import { posterSubLine } from '../../src/lib/lensSelectors'
+import { bookDateLine } from '../../src/lib/lensSelectors'
 import payload from '../fixtures/espn/ucl-md1.json'
 const f = fixtureSchema.parse(normalizeEvent(payload.events[0], 'ucl', '2026-09-10T12:00:00Z'))
 
@@ -41,9 +41,9 @@ describe('day-level matchday provenance', () => {
     expect(container.querySelectorAll('[data-matchday-state]')).toHaveLength(3)
     expect(container.querySelector('.ledger-week [data-matchday-state]')?.parentElement?.nextElementSibling?.getAttribute('data-fixture-id')).toBe(f.id)
   })
-  it('says competition for an entirely European day while preserving mixed/domestic wording', () => {
-    expect(posterSubLine([f])).toContain('1 COMPETITION')
-    expect(posterSubLine([f, { ...f, competition: 'pl' }])).toContain('2 LEAGUES')
+  it('counts European and mixed days without calling a cup a league', () => {
+    expect(bookDateLine('2026-09-08', [f], false).count).toBe('1 MATCH')
+    expect(bookDateLine('2026-09-08', [f, { ...f, competition: 'pl' }], false).count).toBe('2 MATCHES')
   })
   it('keeps the competition name in readable muted ink while the glyph retains its hue', () => {
     render(<FixtureRow fixture={f} />)

@@ -1,6 +1,7 @@
 import { COMPETITIONS } from '../lib/competitions'
 import { posterDayTitle, weekdayShort } from '../lib/time'
-import { posterSubLine, type PosterBlock } from '../lib/lensSelectors'
+import { isFinal, unsetKickoffs, type PosterBlock } from '../lib/lensSelectors'
+import { BookDateLine, UnsetCount } from './BookDateLine'
 import { FixtureRows } from './FixtureRow'
 import { MatchdayLines } from './MatchdayLines'
 
@@ -56,7 +57,8 @@ export function PosterWeek({ blocks, stale = EMPTY, next, nowUtcIso }: { blocks:
                   {block.isToday && <TodayPill />}
                 </div>
                 <div className="font-mono mt-1.5 text-[11px] font-medium tracking-[0.06em] text-ink-secondary">
-                  {posterSubLine(block.fixtures)}
+                  <BookDateLine date={block.date} shown={block.fixtures} closed={!block.hidden && block.fixtures.every(isFinal)} />
+                  <UnsetCount count={unsetKickoffs(block.fixtures)} />
                 </div>
                 {!!block.hidden && <p className="week-hidden">{block.hidden} hidden by filters</p>}
                 <MatchdayLines fixtures={block.fixtures.slice(0, 1)} className="mt-[3px]" />

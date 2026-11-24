@@ -1,6 +1,6 @@
 import { unsettledStatus, type Fixture } from './schema'
 import { COMPETITIONS, competitionRank, type CompetitionKey } from './competitions'
-import { brooklynDate, fixtureTimes, weekdayShort } from './time'
+import { brooklynDate, fixtureTimes, posterDayTitle, weekdayShort } from './time'
 
 /**
  * Pure per-lens data shaping. Everything here takes fixtures as arguments (never importing
@@ -69,43 +69,25 @@ export function kickoffBounds(
   return first && last ? { first, last } : null
 }
 
-/**
- * The Poster hero's mono sub-line. A one-kickoff slate collapses the range to a single
- * `KICKOFF h:mm` — FIRST and LAST wearing the same time is a range that isn't one. A
- * future matchday's slate counts `MATCHES`, not `REMAINING`: nothing about a day that
- * hasn't started is remaining. The count is every fixture on the slate; the FIRST/LAST
- * range can only be drawn from league-set times, so when the two disagree the gap is named
- * — `N TBC` — rather than left for the reader to notice that the count outruns the range
- * (docs/v0.3.0-ideas.md row 13, on the front door since v0.2.2). A slate of only TBC times
- * gets the count, the TBC count and no times.
- */
-export function slateSubLine(slate: readonly Fixture[], isTonight: boolean): string {
-  const parts = [`${slate.length} ${isTonight ? 'REMAINING' : 'MATCHES'}`]
-  const tbc = slate.filter((f) => f.timeConfidence !== 'exact').length
-  if (tbc > 0) parts.push(`${tbc} TBC`)
-  const bounds = kickoffBounds(slate)
-  if (bounds) {
-    const time = (f: Fixture) => fixtureTimes(f.kickoffUtc, f.venueTz).brooklyn.time
-    if (bounds.first.id === bounds.last.id) parts.push(`KICKOFF ${time(bounds.first)}`)
-    else parts.push(`FIRST ${time(bounds.first)}`, `LAST ${time(bounds.last)}`)
-  }
-  return parts.join(' · ')
+/** The edition date is a Brooklyn calendar day. Only the shown, credible kickoffs
+ * contribute a clock, while closure describes the entire unfiltered matchday. */
+export function bookDateLine(date: string, shown: readonly Fixture[], closed: boolean) {
+  const count = matchCount(shown.length)
+  const unset = unsetKickoffs(shown)
+  const first = kickoffBounds(shown)?.first
+  let ending = ''
+  if (closed && shown.length) ending = 'FULL TIME'
+  else if (first) ending = 'FIRST ' + fixtureTimes(first.kickoffUtc, first.venueTz).brooklyn.time + ' ET'
+  else if (unset) ending = 'FIRST KICKOFF NOT SET'
+  return { date: posterDayTitle(date).toUpperCase(), count, ending, unset }
 }
 
-/** Poster day headers count all shown fixtures, while FIRST can only name a league-set
- * time. State the TBC count explicitly, using the same confidence rule as the hero. */
-export function posterSubLine(fixtures: readonly Fixture[]): string {
-  const leagues = new Set(fixtures.map((f) => f.competition)).size
-  const noun = fixtures.every(f => COMPETITIONS[f.competition].group !== 'domestic') ? 'COMPETITION' : 'LEAGUE'
-  const parts = [
-    `${fixtures.length} ${fixtures.length === 1 ? 'MATCH' : 'MATCHES'}`,
-    `${leagues} ${noun}${leagues === 1 ? '' : 'S'}`,
-  ]
-  const tbc = fixtures.filter((f) => f.timeConfidence !== 'exact').length
-  if (tbc > 0) parts.push(`${tbc} TBC`)
-  const bounds = kickoffBounds(fixtures)
-  if (bounds) parts.push(`FIRST KICKOFF ${fixtureTimes(bounds.first.kickoffUtc, bounds.first.venueTz).brooklyn.time}`)
-  return parts.join(' · ')
+export function matchCount(count: number): string {
+  return count + (count === 1 ? ' MATCH' : ' MATCHES')
+}
+
+export function unsetKickoffs(fixtures: readonly Fixture[]): number {
+  return fixtures.filter(f => !unsettledStatus(f.status) && f.timeConfidence !== 'exact').length
 }
 
 /**

@@ -38,6 +38,7 @@ assert.deepEqual(sources, [
   '../../src/components/WeekView.tsx',
   '../../src/components/LedgerWeek.tsx',
   '../../src/components/PosterWeek.tsx',
+  '../../src/components/BookDateLine.tsx',
   '../../src/components/FixtureRow.tsx',
   '../../src/components/MatchdayLines.tsx',
   '../../src/components/NextUpStrip.tsx',
