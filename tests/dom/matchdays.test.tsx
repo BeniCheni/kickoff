@@ -36,7 +36,7 @@ describe('day-level matchday provenance', () => {
   it('keeps the provenance above Ledger rows and on both Poster headers', () => {
     const { container } = render(<>
       <LedgerWeek days={[{ date: '2026-09-08', shown: [f], total: 1, isToday: false }]} />
-      <PosterWeek blocks={[{ kind: 'big', date: '2026-09-08', fixtures: [f], isToday: false, dominant: 'ucl' }, { kind: 'small', date: '2026-09-09', fixtures: [f], isToday: false }]} />
+      <PosterWeek days={[{ date: '2026-09-08', shown: [f], total: 1, isToday: false }, { date: '2026-09-09', shown: [f], total: 1, isToday: false }]} />
     </>)
     expect(container.querySelectorAll('[data-matchday-state]')).toHaveLength(3)
     expect(container.querySelector('.ledger-week [data-matchday-state]')?.parentElement?.nextElementSibling?.getAttribute('data-fixture-id')).toBe(f.id)
@@ -60,7 +60,7 @@ it('starts each distinct UEFA line at its first governed row in a mixed day', ()
   const fixtures = [other, f, { ...f, id: 'same' }, moved]
   const { container } = render(<>
     <LedgerWeek days={[{ date: '2026-10-13', shown: fixtures, total: 4, isToday: false }]} />
-    <PosterWeek blocks={[{ kind: 'big', date: '2026-10-13', fixtures, isToday: false, dominant: 'ucl' }]} />
+    <PosterWeek days={[{ date: '2026-10-13', shown: fixtures, total: fixtures.length, isToday: false }]} />
   </>)
   for (const section of container.querySelectorAll('section')) {
     const lines = [...section.querySelectorAll('[data-matchday-state]')]

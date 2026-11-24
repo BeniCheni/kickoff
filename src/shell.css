@@ -1648,3 +1648,7 @@ button.register-row {
 @media (prefers-reduced-motion: no-preference) {
   :root:not([data-motion='off']) .more-rows { transition: grid-template-rows 180ms ease; }
 }
+
+.poster-hidden { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; }
+.poster-hidden > p { white-space: nowrap; }
+.poster-hidden .book-date { color: var(--fb-pulp-ink); }

@@ -12,11 +12,10 @@ import {
   hasKickedOff,
   believablyLive,
   staleLiveIds,
-  dominantCompetition,
   hotFixtureIds,
   kickoffBounds,
   nextKickoffId,
-  planPosterWeek,
+  groupWeekDays,
   bookDateLine,
   type DayInfo,
 } from '../src/lib/lensSelectors'
@@ -72,31 +71,20 @@ describe('Poster day-header count versus league-set times', () => {
   })
 })
 
-describe('dominantCompetition', () => {
-  it('picks the competition with the most fixtures that day', () => {
-    const list = [fx({ competition: 'pl' }), fx({ competition: 'pl' }), fx({ competition: 'laliga' })]
-    expect(dominantCompetition(list)).toBe('pl')
-  })
-
-  it('breaks a tie toward the marquee (non-domestic) competition', () => {
-    const list = [
-      fx({ competition: 'pl' }),
-      fx({ competition: 'pl' }),
-      fx({ competition: 'ucl' }),
-      fx({ competition: 'ucl' }),
-    ]
-    expect(dominantCompetition(list)).toBe('ucl')
-    // ...regardless of which side of the list the marquee sits on.
-    expect(dominantCompetition([...list].reverse())).toBe('ucl')
-  })
-
-  it('is deterministic on an all-domestic tie (display rank, then key)', () => {
-    const list = [fx({ competition: 'pl' }), fx({ competition: 'laliga' })]
-    expect(dominantCompetition(list)).toBe(dominantCompetition([...list].reverse()))
-  })
-
-  it('returns null for an empty day', () => {
-    expect(dominantCompetition([])).toBeNull()
+describe('a matchday owns one slot whatever the competition counts', () => {
+  const all = new Set(COMPETITION_KEYS)
+  function slot(fixtures: Fixture[]) {
+    return posterBooks([{ date: '2026-08-30', fixtures }], all)[0]?.slot
+  }
+  it('lets one European fixture determine the slot even on a mainly domestic day', () => {
+    const leagues = [fx({ competition: 'pl' }), fx({ competition: 'pl' })]
+    expect(slot(leagues)).toBe('sun')
+    expect(slot([...leagues, fx({ competition: 'uecl' })])).toBe('europa')
+    const mixed = [...leagues, fx({ competition: 'ucl' }), fx({ competition: 'uel' })]
+    expect(slot(mixed)).toBe('firstNight')
+    expect(slot(mixed.reverse())).toBe('firstNight')
+    expect(slot(leagues.reverse())).toBe('sun')
+    expect(slot([])).toBeUndefined()
   })
 })
 
@@ -241,40 +229,22 @@ describe('hot rows (LIVE + next kickoff)', () => {
   })
 })
 
-describe('planPosterWeek', () => {
-  const big = [
-    fx({ competition: 'pl' }),
-    fx({ competition: 'pl' }),
-    fx({ competition: 'laliga' }),
-  ]
-
-  it('classifies by slate size: >2 big, 1–2 small, empty snapshot day a gap', () => {
-    const blocks = planPosterWeek([
-      day(big, { date: '2026-08-30' }),
-      day([fx({ competition: 'pl' }), fx({ competition: 'pl' })], { date: '2026-08-31' }),
-      day([], { date: '2026-09-01' }),
-    ])
-    expect(blocks.map((b) => b.kind)).toEqual(['big', 'small', 'gap'])
+describe('the Poster week groups only genuinely empty dates', () => {
+  const matches = [fx({ competition: 'pl' }), fx({ competition: 'pl' }), fx({ competition: 'laliga' })]
+  it('keeps both heavy and light matchdays intact', () => {
+    const days = [day(matches), day(matches.slice(0, 2)), day([])]
+    const groups = groupWeekDays(days)
+    expect(groups).toEqual(days.map(d => [d]))
+    expect(groups[0]?.[0]?.shown).toEqual(matches)
   })
-
-  it('carries the dominant competition on big days', () => {
-    const blocks = planPosterWeek([day(big)])
-    expect(blocks[0]).toMatchObject({ kind: 'big', dominant: 'pl' })
-  })
-
-  it('keeps a filtered day between two snapshot gaps', () => {
-    const blocks = planPosterWeek([
-      day(big, { date: '2026-08-30' }),
-      day([], { date: '2026-08-31', total: 0 }),
-      day([], { date: '2026-09-01', total: 0 }),
-      day([], { date: '2026-09-02', total: 3 }),
-      day([], { date: '2026-09-03', total: 0 }),
+  it('keeps a hidden date between the two runs of genuinely empty dates', () => {
+    const days = [day(matches), day([], { date: '2026-08-31' }), day([], { date: '2026-09-01' }),
+      day([], { date: '2026-09-02', total: 3 }), day([], { date: '2026-09-03' })]
+    const groups = groupWeekDays(days)
+    expect(groups.map(g => g.map(d => d.date))).toEqual([
+      ['2026-08-30'], ['2026-08-31', '2026-09-01'], ['2026-09-02'], ['2026-09-03'],
     ])
-    expect(blocks.map((b) => b.kind)).toEqual(['big', 'gap', 'small', 'gap'])
-    expect(blocks[1]).toMatchObject({
-      kind: 'gap',
-      dates: ['2026-08-31', '2026-09-01'],
-    })
+    expect(groups[2]?.[0]).toMatchObject({ total: 3, shown: [] })
   })
 })
 

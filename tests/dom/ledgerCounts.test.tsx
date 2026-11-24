@@ -5,7 +5,6 @@ import { FIXTURES } from '../../src/lib/fixtures'
 import { addDays, brooklynDate, startOfWeek, weekdayShort } from '../../src/lib/time'
 import { LedgerWeek } from '../../src/components/LedgerWeek'
 import { PosterWeek } from '../../src/components/PosterWeek'
-import { planPosterWeek } from '../../src/lib/lensSelectors'
 import { WeekView } from '../../src/components/WeekView'
 
 const byWeek = new Map<string, number>()
@@ -24,7 +23,7 @@ describe.each(['poster', 'ledger'] as const)('%s snapshot accounts', lens => {
   ] as [string, CompetitionKey[]][])('accounts for every fixture with %s shown', (_name, keys) => {
     const active = new Set(keys)
     const { container } = render(<WeekView weekStart={week} today={week} lens={lens} active={active} />)
-    for (const line of container.querySelectorAll('.ledger-date, .matchday-line, .week-hidden, .week-count, .week-gap')) {
+    for (const line of container.querySelectorAll('.book-date, .ledger-date, .matchday-line, .week-hidden, .week-count, .week-gap')) {
       expect(line.textContent).not.toMatch(/\b(?:EDT|EST|CET|CEST|GMT|UTC|BST|EET|EEST)\b|[+-]\d\d:\d\d/)
     }
     const breakdown = []
@@ -63,11 +62,11 @@ describe.each(['poster', 'ledger'] as const)('%s snapshot accounts', lens => {
 
 it('shows the hidden count below both sizes of Poster date line', () => {
   const fixtures = FIXTURES.slice(0, 3)
-  const blocks = planPosterWeek([
+  const days = [
     { date: week, shown: fixtures, total: 5, isToday: false },
     { date: addDays(week, 1), shown: fixtures.slice(0, 1), total: 4, isToday: false },
-  ])
-  const { container } = render(<PosterWeek blocks={blocks} />)
+  ]
+  const { container } = render(<PosterWeek days={days} />)
   expect([...container.querySelectorAll('.week-hidden')].map(el => el.textContent)).toEqual(['2 hidden by filters', '3 hidden by filters'])
 })
 
@@ -80,7 +79,7 @@ for (const lens of ['ledger', 'poster'] as const) {
       shown: selection === 'mixed' && i !== 3 ? FIXTURES.slice(0, total) : [],
     }))
     const { container } = render(lens === 'ledger'
-      ? <LedgerWeek days={days} /> : <PosterWeek blocks={planPosterWeek(days)} />)
+      ? <LedgerWeek days={days} /> : <PosterWeek days={days} />)
     const wrapper = container.firstElementChild!
     const lines = [...wrapper.children].filter(el => !el.matches('.week-count'))
     const short = (date: string) => `${weekdayShort(date)} ${Number(date.slice(8))}`

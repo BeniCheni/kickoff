@@ -1,5 +1,5 @@
 import { unsettledStatus, type Fixture } from './schema'
-import { COMPETITIONS, competitionRank, type CompetitionKey } from './competitions'
+import type { CompetitionKey } from './competitions'
 import { brooklynDate, fixtureTimes, posterDayTitle, startOfWeek, weekdayShort } from './time'
 
 /**
@@ -16,38 +16,6 @@ export type DayInfo = {
   total: number
   isToday: boolean
   closed?: boolean
-}
-
-/** Marquee = any non-domestic competition; there is no per-fixture importance signal. */
-export function isMarquee(key: CompetitionKey): boolean {
-  return COMPETITIONS[key].group !== 'domestic'
-}
-
-/** Tie-break order: marquee beats domestic, then display rank, then key — deterministic. */
-function beats(a: CompetitionKey, b: CompetitionKey): boolean {
-  if (isMarquee(a) !== isMarquee(b)) return isMarquee(a)
-  const ra = competitionRank(a)
-  const rb = competitionRank(b)
-  if (ra !== rb) return ra < rb
-  return a < b
-}
-
-/**
- * The day's dominant competition — the one with the most fixtures, ties breaking toward
- * the marquee (non-domestic) one. Drives Poster's duotone header and hero rails.
- */
-export function dominantCompetition(list: readonly Fixture[]): CompetitionKey | null {
-  const counts = new Map<CompetitionKey, number>()
-  for (const f of list) counts.set(f.competition, (counts.get(f.competition) ?? 0) + 1)
-  let best: CompetitionKey | null = null
-  let bestCount = 0
-  for (const [key, count] of counts) {
-    if (best === null || count > bestCount || (count === bestCount && beats(key, best))) {
-      best = key
-      bestCount = count
-    }
-  }
-  return best
 }
 
 /**
@@ -182,16 +150,6 @@ export function hotFixtureIds(
   return hot
 }
 
-/**
- * Poster's proportional-loudness fold: days with more than two shown matches get the
- * full-bleed duotone header, lighter and fully filtered days keep an inline header.
- * Only consecutive days without fixtures in the snapshot share a hairline line.
- */
-export type PosterBlock =
-  | { kind: 'big'; date: string; isToday: boolean; closed?: boolean; hidden?: number; fixtures: Fixture[]; dominant: CompetitionKey }
-  | { kind: 'small'; date: string; isToday: boolean; closed?: boolean; hidden?: number; fixtures: Fixture[] }
-  | { kind: 'gap'; dates: string[] }
-
 /** One group per fixture-bearing day, or per uninterrupted run of empty days. */
 export function groupWeekDays(days: readonly DayInfo[]): DayInfo[][] {
   const groups: DayInfo[][] = []
@@ -201,18 +159,6 @@ export function groupWeekDays(days: readonly DayInfo[]): DayInfo[][] {
     else groups.push([day])
   }
   return groups
-}
-
-export function planPosterWeek(days: readonly DayInfo[]): PosterBlock[] {
-  return groupWeekDays(days).map(group => {
-    const day = group[0]!
-    if (day.total === 0) {
-      return { kind: 'gap', dates: group.map(d => d.date) }
-    }
-    const fields = { closed: day.closed, date: day.date, isToday: day.isToday, fixtures: day.shown, hidden: day.total - day.shown.length }
-    const dominant = dominantCompetition(day.shown)
-    return day.shown.length > 2 && dominant !== null ? { kind: 'big', ...fields, dominant } : { kind: 'small', ...fields }
-  })
 }
 
 /** Each slot owns its fiction. Counts, dates and match states come from the snapshot. */

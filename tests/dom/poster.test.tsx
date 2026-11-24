@@ -20,7 +20,7 @@ describe('Poster day-header wiring', () => {
       status: 'scheduled', timeConfidence: 'round_placeholder',
       source: { provider: 'espn', sourceId: `synthetic-${i}`, fetchedAt: '2026-09-05T12:00:00.000Z' },
     }))
-    render(<PosterWeek blocks={[{ kind: 'big', date: '2026-09-05', isToday: true, dominant: 'pl', fixtures }]} />)
+    render(<PosterWeek days={[{ date: '2026-09-05', isToday: true, shown: fixtures, total: fixtures.length }]} />)
     expect(screen.getByText('3 MATCHES')).toBeTruthy()
     expect(screen.getByText('SAT 5 SEP')).toBeTruthy()
     expect(screen.getByText('FIRST KICKOFF NOT SET').dataset.voice).toBe('amber')
@@ -115,4 +115,19 @@ it.each([4, 5, 6, 26])('opens every shown row in place when a part contains %i m
   expect(view.container.querySelectorAll('.stadium-clock')).toHaveLength(count)
   fireEvent.click(button)
   expect(ids()).toHaveLength(4)
+})
+
+it('keeps an all-hidden today in one dated account and skips it in the part numbers', () => {
+  const fixture = edgeFixture()
+  const view = render(<PosterWeek days={[
+    { date: '2026-11-21', total: 1, shown: [fixture], isToday: false },
+    { date: '2026-11-22', total: 2, shown: [], isToday: true },
+    { date: '2026-11-23', total: 1, shown: [fixture], isToday: false },
+  ]} />)
+  expect([...view.container.querySelectorAll('.part-plate span')].map(el => el.textContent)).toEqual(['PART ONE', 'PART TWO'])
+  const hidden = view.container.querySelector('.poster-hidden')!
+  expect(hidden.querySelector('.book-date')?.textContent).toBe('SUN 22 NOV · 0 MATCHES')
+  expect(hidden.querySelector('.week-hidden')?.textContent).toBe('2 hidden by filters')
+  expect(hidden.querySelector('.part-plate, [data-fixture-id]')).toBeNull()
+  expect(view.container.textContent).not.toMatch(/today/i)
 })
