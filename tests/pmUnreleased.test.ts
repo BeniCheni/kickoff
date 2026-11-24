@@ -395,7 +395,7 @@ describe('a draft that cites a PR in its own text', () => {
       if (!line.trim().startsWith('|')) break
       rows.push(line.split('|').slice(1, -1).map((cell) => cell.trim()))
     }
-    expect(rows).toHaveLength(12)
+    expect(rows).toHaveLength(13)
     for (const [fails, refusedFor, passes] of rows) {
       expect(proseReference(fails!), fails).toBe(refusedFor)
       expect(proseReference(passes!), passes).toBeUndefined()
@@ -633,6 +633,30 @@ describe('a draft that cites a PR in its own text', () => {
         'The decade faced 2026 with 1,583 bytes to spare.',
         'The hash deadbeef has no digit, and the date 20261123 no letter.',
         'The id f635fb is six characters, and f635fb8g is not hex.',
+      ],
+    },
+    {
+      // Fix round 7, beyond the note: GitHub links a PR or issue path with no host to this repo's
+      // own PR or issue, discussions included, outside a code span.
+      rule: 'a PR or issue path outside a code span',
+      refused: [
+        [linked('a PR or issue path'), 'Review BeniCheni/kickoff/pull/327 for context.'],
+        [linked('a PR or issue path'), 'Review example.org/BeniCheni/kickoff/pull/327 for context.'],
+        [linked('a PR or issue path'), 'Review /issues/361 for context.'],
+        [linked('a PR or issue path'), 'Review ../pull/327 for context.'],
+        [linked('a PR or issue path'), 'Review (/discussions/327) for context.'],
+        [linked('a PR or issue path'), 'Review /PULL/327 for context.'],
+        [linked('a PR or issue path'), 'Review BeniCheni/kickoff/pull/327-notes.md for context.'],
+        // A false refusal taken on purpose: GitHub renders docs/pull/327 as plain text.
+        [linked('a PR or issue path'), 'The notes sit in docs/pull/327 for now.'],
+      ],
+      prints: [
+        'Review `BeniCheni/kickoff/pull/327` for context.',
+        'Review `/pull/327` for context.',
+        'Review pull/327 for context.',
+        'Review /pull/327b for context.',
+        'Review BeniCheni/kickoff/pulls/327 for context.',
+        'The notes sit in `docs/pull/327` for now.',
       ],
     },
     {

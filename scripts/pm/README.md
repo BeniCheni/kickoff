@@ -141,7 +141,10 @@ claims to check, not a verdict.
       - **a commit SHA**, meaning a lowercase hex token of 7 to 40 characters that holds a letter
         and a digit, because GitHub links a commit's short or full SHA. Put it in a code span:
         `` `f635fb8` `` passes. Ordinary words pass, since `decade` has no digit and `2026` no
-        letter.
+        letter;
+      - **a PR or issue path**, meaning `/pull/N`, `/issues/N` or `/discussions/N` with no host,
+        because GitHub links `BeniCheni/kickoff/pull/327`, `../pull/327` and `/issues/361` to this
+        repo's own PR or issue. In a code span it renders as code: `` `../pull/327` `` passes.
    3. **The text**, code spans included, is then judged for a reference. Emphasis markers (`*`,
       `_`, `~`) and backticks stay where they are, as breaks between words. So `**#327**a` holds
       `#327` and is refused, because GitHub links `#327` there, while `#_327` and `~~#~~327`,
@@ -188,6 +191,7 @@ claims to check, not a verdict.
    | The fix landed in f635fb8. | a commit SHA | The fix landed in `f635fb8`. |
    | The issues live at github.com/BeniCheni/kickoff/issues. | a URL | The issues live at `github.com/BeniCheni/kickoff/issues`. |
    | The keeper got a high-5 from the bench. | a GH-N reference | The keeper got a high five from the bench. |
+   | The notes sit in docs/pull/327 for now. | a PR or issue path | The notes sit in `docs/pull/327` for now. |
 
    The citation comes from `prs` either way. If a run fails, find what the failure line names:
    a number after "PR", "pull request" or "issue", or an address, a name or a SHA outside a code

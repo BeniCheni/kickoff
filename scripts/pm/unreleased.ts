@@ -154,7 +154,10 @@ export const FORMAT_CHARACTER = { form: 'a format character', pattern: /\p{Cf}/u
  * (an email address, which GitHub links as mailto, or a mention), a character reference or a
  * backslash, which could spell any of these without showing it, and a commit SHA, meaning a
  * lowercase hex token of 7 to 40 characters with a letter and a digit, which GitHub links to the
- * commit (it renders an uppercase one as plain text).
+ * commit (it renders an uppercase one as plain text). Last, a PR or issue path with no host:
+ * GitHub links `BeniCheni/kickoff/pull/327`, `../pull/327`, `/issues/361` and `/discussions/327`
+ * to this repo's PR or issue, so `/pull/N`, `/issues/N` and `/discussions/N` are refused, with
+ * the number bounded after it.
  */
 export const LINK_SYNTAX = [
   { form: 'a square bracket', pattern: /[[\]]/ },
@@ -164,6 +167,7 @@ export const LINK_SYNTAX = [
   { form: 'a character reference', pattern: /&(?:#\d+|#x[\da-f]+|[a-z][a-z\d]*);/i },
   { form: 'a backslash', pattern: /\\/ },
   { form: 'a commit SHA', pattern: /(?<![A-Za-z\d])(?=[\da-f]*[a-f])(?=[\da-f]*\d)[\da-f]{7,40}(?![A-Za-z\d])/ },
+  { form: 'a PR or issue path', pattern: /\/(?:pull|issues|discussions)\/\d+(?![A-Za-z\d])/i },
 ] as const
 
 /**
