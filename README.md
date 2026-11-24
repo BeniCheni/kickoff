@@ -332,16 +332,20 @@ passing tests.
 a *build spec* and a *review prompt*, each generated from a fresh read of the repo, never from
 anyone's memory of it.
 
-Since 22 November 2026, a pull request takes the highest tier its changes reach. The sync
-bot's generated-only PRs take Tier 0. The builder names the tier and the file that sets it in
-the PR body until a labeler exists. Any reviewer can raise the tier. Only Beni can lower it.
+Since 22 November 2026, a pull request takes the highest tier its changes reach. A PR the
+scheduled sync workflow opens from `sync/scheduled`, containing only `src/data/**` and
+`docs/sync-digest.md`, takes Tier 0. The builder names the tier and the file that sets it in the
+PR body until a labeler exists. Any reviewer can raise the tier. Only Beni can lower it.
 
 | Tier | Changes | Review and merge |
 |---|---|---|
-| 0 · Generated | The sync bot's snapshot PRs | After `verify` passes, the workflow merges. |
+| 0 · Generated | Scheduled sync PRs as described above | The workflow merges after `verify` passes. |
 | 1 · Docs | Prose in `docs/` or this README, outside Tier 3 | One cold read by the other vendor, then Beni merges. A planned automated read will run only on branches in this repo. |
-| 2 · Code | App or tooling code outside Tier 3 | The builder hands off to one cold reader from the other vendor for a report-only `/kickoff-pr-review`. The builder fixes findings. The reviewer re-reads each round and merges only on “Mergeable now” with `verify` green at the tip. |
+| 2 · Code | App or tooling code, and anything no other tier covers | One report-only cold read by the other vendor. The builder fixes findings. |
 | 3 · Sensitive | Data honesty, sync, workflows, schema, clocks, standing agent instructions, releases and numbering | The six-pass 360, with the merge on Beni's word. |
+
+The Tier 2 reviewer runs `/kickoff-pr-review`, re-reads each round, and merges only on
+“Mergeable now” with `verify` green at the tip.
 
 [AGENTS.md](AGENTS.md#review-tiers) lists the Tier 3 paths. Beni merges and tags every release.
 
@@ -349,9 +353,9 @@ the PR body until a labeler exists. Any reviewer can raise the tier. Only Beni c
 
 | Pass | Who | What they leave behind |
 |---|---|---|
-| 0 · Brief | The product-manager seat | The review prompt, with the builder's claims sealed in an appendix marked "verify independently" |
-| 1 · Cold review | The vendor that did **not** build it | Findings it reproduced, fix commits, one PR comment |
-| 1.5 · Rebuttal brief | The PM seat | Each finding packaged for the builder to accept, contest, or accept-but-contest-the-characterisation |
+| 0 · Brief | The seat that briefs the review | The review prompt, with the builder's claims sealed in an appendix marked "verify independently" |
+| 1 · Cold review | The vendor that did **not** build it | Findings it reproduced, one PR comment |
+| 1.5 · Rebuttal brief | The seat that briefs the review | Each finding packaged for the builder to accept, contest, or accept-but-contest-the-characterisation |
 | 2 · Rebuttal | The builder | Its answers, in code |
 | 2.5 · Synthesis | A seat that wrote neither the build nor the fixes | Every number re-run at the tip, and a merge gate |
 | 3 · Adjudication | A human | Rules on whatever is still contested, and clicks merge |
