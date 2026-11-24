@@ -86,6 +86,6 @@ it('keeps prices, stakes and payouts off the books', () => {
     if (file === 'components/FixturesPage.tsx') source = source.replaceAll('Always verify in the book before staking.', '')
     if (file === 'components/QuietWeek.tsx') source = source.replace('Nothing to stake until {bookCalendar(next).longDate}.', '')
     if (file === 'components/StalenessBanner.tsx') source = source.replace('before staking anything on a kickoff time.', '')
-    expect(source, file).not.toMatch(/\b(?:pric(?:e[sd]?|ing)|stak(?:es?|ed|ing)|pay[- ]?outs?)\b|[£€¥]|\$(?!\{)/i)
+    expect(source.replaceAll('${', '{'), file).not.toMatch(/\b(?:pric(?:e[sd]?|ing)|stak(?:es?|ed|ing)|pay[- ]?outs?)\b|\p{Sc}/iu)
   }
 })

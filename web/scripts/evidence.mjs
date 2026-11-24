@@ -48,7 +48,7 @@ export function launchBrowser() {
 // puppeteer names console.warn 'warn'; 'warning' is the protocol's word for the same level.
 const CONSOLE_FAILS = new Set(['error', 'warn', 'warning', 'assert'])
 
-export async function openPage(browser, url, theme, width, { waitUntil = 'networkidle0', offline = false } = {}) {
+export async function openPage(browser, url, theme, width, { waitUntil = 'networkidle0', offline = false, clock = null, reduced = false } = {}) {
   const context = await browser.createBrowserContext()
   const page = await context.newPage()
   const errors = []
@@ -72,6 +72,8 @@ export async function openPage(browser, url, theme, width, { waitUntil = 'networ
     // A contrary retired preference must neither affect first paint nor be deleted.
     localStorage.setItem('kickoff-theme-broadcast', chosen === 'light' ? 'dark' : 'light')
   }, theme)
+  if (clock !== null) await page.evaluateOnNewDocument(at => { Date.now = () => at }, clock)
+  if (reduced) await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }])
   if (offline) await page.setOfflineMode(true)
   const response = await page.goto(url, { waitUntil, timeout: 30_000 })
   // The offline file carries its faces. The bound stays so a face that never
@@ -1193,6 +1195,31 @@ export async function proveFocus(browser, origins, out) {
       assert.equal(await page.evaluate(() => document.documentElement.scrollWidth === innerWidth), true, id)
       assert.deepEqual(errors, [], id)
       rows.push(row)
+    } finally { await context.close() }
+  }
+  rows.push(...await provePosterFocus(browser, origins))
+  return rows
+}
+
+export async function provePosterFocus(browser, origins) {
+  const places = [{ underFoot: 1.06 }, { y: 20 }]
+  const rows = []
+  const { fixtures, window } = readSnapshot(root)
+  const heavy = chooseWeeks(fixtures, window).heavy.monday
+  for (const [app, origin] of Object.entries(origins)) for (const width of [360, 390, 1000]) {
+    const id = 'focus-' + app + '-poster-' + width
+    const { page, context, errors } = await openPage(browser, origin + '/?date=' + heavy, 'light', width)
+    try {
+      const owed = await page.$$eval('.more-stories', buttons => buttons.length)
+      assert.ok(owed > 0, id)
+      for (const place of places) {
+        const { seen } = await sweepFocus(page, place, { within: '.poster-part', layout: 'poster' })
+        assert.equal(seen.length, owed, id)
+        assert.ok(seen.every(control => control.text.startsWith('More stories')), id)
+        assert.deepEqual(seen.flatMap(focusFaults), [], id)
+      }
+      assert.deepEqual(errors, [], id)
+      rows.push({ id, controls: owed, pressed: places.length * owed })
     } finally { await context.close() }
   }
   return rows
@@ -2904,6 +2931,13 @@ async function heldLoad(page, scripts, app, navigate, label, expect) {
 
 export async function proveMotion(browser, origins, out) {
   const cases = []
+  const { fixtures } = readSnapshot(root)
+  // A named, scheduled band entry lets the control prove that advancing the clock
+  // across the same boundary really does repaint KICKED OFF.
+  const liveDay = [...Map.groupBy(fixtures, f => brooklynDate(f.kickoffUtc)).values()].find(day =>
+    day.length === 1 && day[0].status === 'scheduled' && day[0].timeConfidence === 'exact')
+  assert.ok(liveDay, 'No scheduled single-match day for the stillness control')
+  const kickoff = Date.parse(liveDay[0].kickoffUtc)
   for (const [app, origin] of Object.entries(origins)) {
     let server = null
     if (app === 'next') {
@@ -2959,14 +2993,35 @@ export async function proveMotion(browser, origins, out) {
         }, `${label} reload`, afterReload)
 
         let still = null
+        let clockProof = null
         if (afterReload === 'off') {
+          await page.evaluate((at, date) => {
+            Date.now = () => at
+            const url = new URL(location.href)
+            url.searchParams.set('date', date)
+            history.replaceState(null, '', url)
+            window.dispatchEvent(new PopStateEvent('popstate'))
+            window.dispatchEvent(new Event('focus'))
+          }, kickoff - 1000, brooklynDate(liveDay[0].kickoffUtc))
+          const entry = '.rack-slide[data-position="center"] [data-band-fixture="' + liveDay[0].id + '"]'
+          await page.waitForSelector(entry + ' .band-clocks')
+          await page.evaluate(() => document.fonts.ready)
           await page.mouse.move(4, 600)
           await new Promise((resolve) => setTimeout(resolve, 400))
+          const start = performance.now()
           const first = await page.screenshot()
           await new Promise((resolve) => setTimeout(resolve, 2000))
           const second = await page.screenshot()
           still = Buffer.from(first).equals(Buffer.from(second))
           assert.equal(still, true, `${label} still`)
+          const elapsed = performance.now() - start
+          assert.ok(elapsed > 1000)
+          assert.equal(await page.evaluate(() => Date.now()), kickoff - 1000)
+          await page.evaluate(at => { Date.now = () => at; window.dispatchEvent(new Event('focus')) }, kickoff + 1000)
+          // The Rack may now rest on tomorrow. Read the very same fixture on its own slide.
+          const state = '[data-band-fixture="' + liveDay[0].id + '"] .band-result'
+          await page.waitForFunction(sel => document.querySelector(sel)?.textContent === 'KICKED OFF', {}, state)
+          clockProof = { kickoff: liveDay[0].kickoffUtc, pinned: new Date(kickoff - 1000).toISOString(), elapsedMs: Math.round(elapsed), advanced: 'KICKED OFF' }
           if (spec.id === 'stored-on') {
             writeFileSync(path.join(out, `motion-stopped-${app}-a.png`), first)
             writeFileSync(path.join(out, `motion-stopped-${app}-b.png`), second)
@@ -2981,7 +3036,7 @@ export async function proveMotion(browser, origins, out) {
           settled: { motion: load.settled.attribute, glyph: load.settled.glyph, name: load.settled.name },
           pressed: { motion: pressed.attribute, name: pressed.name, stored },
           reloaded: { motion: reload.settled.attribute, name: reload.settled.name },
-          still,
+          still, clockProof,
         })
       } finally { await context.close() }
     }
@@ -3077,6 +3132,217 @@ export async function proveLedgerCounts(browser, origins, heavy, fixtures) {
 }
 
 
+// Independently group stored instants for the cover oracle. The app's selectors are
+// deliberately absent here so a change to a tie, status or clock can fail this proof.
+const finalLabels = { full_time: 'FT', after_extra_time: 'AET', after_penalties: 'PENS' }
+const unsettled = new Set(['abandoned', 'suspended', 'postponed', 'cancelled'])
+function bandOracle(day, at) {
+  const timed = day.filter(f => !unsettled.has(f.status) && f.timeConfidence === 'exact')
+  const groups = [...Map.groupBy(timed, f => Date.parse(f.kickoffUtc))].sort(([a], [b]) => a - b)
+  const named = []
+  for (const [, group] of groups) {
+    if (group.length !== 1 || named.length === 3) break
+    named.push(group[0])
+  }
+  const clock = (f, local = false) => new Intl.DateTimeFormat('en-US', {
+    timeZone: local ? f.venueTz : 'America/New_York', hour: local ? '2-digit' : 'numeric', minute: '2-digit',
+    ...(local ? { hourCycle: 'h23' } : { hour12: true }),
+  }).format(new Date(f.kickoffUtc)).replace(/\s/g, ' ')
+  const other = groups.flatMap(([, list]) => list).slice(named.length)
+  const count = other.length
+  const summary = count === 0 ? '' : '+ ' + count + ' more' + (other.every(f => f.status in finalLabels)
+    ? (count === 1 ? ' result' : ' results') : ', from ' + clock(other[0]) + ' ET')
+  const unseen = day.filter(f => !unsettled.has(f.status) && f.timeConfidence !== 'exact').length
+  const unsetText = unseen ? unseen + (unseen === 1 ? ' kickoff, time' : ' kickoffs, times') + ' not yet set by the league' : ''
+  const entries = named.map(f => {
+    const row = { id: f.id, name: f.home.name + ' v ' + f.away.name }
+    const score = f.result ? f.result.home + '–' + f.result.away + (f.shootout ? ' (' + f.shootout.home + '–' + f.shootout.away + ')' : '') + ' ' : ''
+    if (finalLabels[f.status]) return { ...row, outcome: score + finalLabels[f.status] }
+    if (f.status === 'in_play') return { ...row, outcome: score + (at - Date.parse(f.kickoffUtc) > 4 * 3600_000 ? 'KICKED OFF' : 'LIVE') }
+    if (Date.parse(f.kickoffUtc) <= at) return { ...row, outcome: 'KICKED OFF' }
+    const localDay = f.venueTz && new Intl.DateTimeFormat('en-CA', { timeZone: f.venueTz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(f.kickoffUtc))
+    const nyDay = brooklynDate(f.kickoffUtc)
+    const note = localDay && localDay !== nyDay ? ' (' + new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', weekday: 'short' }).format(new Date(f.kickoffUtc)) + ', ' + (nyDay < localDay ? 'prev.' : 'next') + ' day)' : ''
+    return { ...row, outcome: clock(f) + ' ET' + note + ' ' + (f.venueTz ? clock(f, true) + ' local' : 'local time not known') }
+  })
+  const ending = day.every(f => f.status in finalLabels) ? 'FULL TIME'
+    : groups.length ? 'FIRST ' + clock(groups[0][1][0]) + ' ET' : unseen ? 'FIRST KICKOFF NOT SET' : ''
+  return { entries, summary, unsetText, ending }
+}
+
+function selectBandDays(days) {
+  const rules = {
+    single: day => day.length === 1 && day[0].timeConfidence === 'exact',
+    shared: day => bandOracle(day, 0).entries.length === 0 && bandOracle(day, 0).summary.includes('from'),
+    unset: day => day.every(f => !unsettled.has(f.status) && f.timeConfidence !== 'exact'),
+    closed: day => day.every(f => f.status in finalLabels),
+    mixedGroup: day => new Set(day.map(f => COMPETITIONS[f.competition].group)).size > 1,
+    mixedTime: day => day.some(f => f.timeConfidence === 'exact') && day.some(f => f.timeConfidence !== 'exact'),
+  }
+  const weeks = new Set()
+  return Object.entries(rules).map(([kind, rule]) => {
+    const choices = [...days].filter(([, day]) => rule(day))
+    const selected = choices.find(([date]) => !weeks.has(startOfWeek(date))) ?? choices[0]
+    assert.ok(selected, 'Snapshot has no band case for ' + kind)
+    weeks.add(startOfWeek(selected[0]))
+    return { kind, date: selected[0], fixtures: selected[1] }
+  })
+}
+
+function readBand(slide) {
+  return {
+    entries: [...slide.querySelectorAll('.band-entry')].map(el => ({
+      id: el.dataset.bandFixture, name: el.querySelector('.band-names').textContent,
+      outcome: el.querySelector('.band-result, .band-clocks').textContent.trim(),
+    })),
+    summary: slide.querySelector('.band-summary')?.textContent ?? '',
+    unsetText: slide.querySelector('.band-unset')?.textContent ?? '',
+    ending: slide.querySelector('.book-date span:nth-child(3)')?.textContent.trim() ?? '',
+  }
+}
+
+export async function provePoster(browser, origins, fixtures, out, results, contrasts) {
+  const days = Map.groupBy(fixtures, f => brooklynDate(f.kickoffUtc))
+  const weeks = Map.groupBy(fixtures, f => startOfWeek(brooklynDate(f.kickoffUtc)))
+  const heaviest = [...weeks].sort(([, a], [, b]) => b.length - a.length)[0][0]
+  const fullUefa = [...weeks].find(([monday, fs]) => fs.some(f => f.competition === 'ucl') &&
+    Array.from({ length: 7 }, (_, i) => days.has(addDays(monday, i))).every(Boolean))
+  assert.ok(fullUefa, 'No UEFA week with seven books')
+  const heavy = fullUefa[0]
+  for (const [app, origin] of Object.entries(origins)) {
+    for (const { kind, date, fixtures: day } of selectBandDays(days)) {
+      const id = app + '-band-' + kind
+      const at = Date.parse(date + 'T05:01:00Z')
+      const { page, context, errors } = await openPage(browser, origin + '/?date=' + date, 'light', 390, { clock: at })
+      try {
+        const selector = '.rack-slide[data-date="' + date + '"]'
+        const band = await page.$eval(selector, readBand)
+        assert.deepEqual(band, bandOracle(day, at), id)
+        if (kind === 'mixedTime') {
+          assert.equal(await page.$eval(selector, el => el.dataset.position), 'center', id)
+          await shoot(page, path.join(out, id + '.png'), 390)
+        }
+        assert.deepEqual(errors, [], id)
+        results.push({ id, date, matches: day.length, ...band })
+      } finally { await context.close() }
+    }
+    for (const width of [360, 390, 1000]) {
+      const id = app + '-rack-' + width
+      const { page, context, errors } = await openPage(browser, origin + '/?date=' + heavy, 'light', width, { reduced: true })
+      try {
+        const metrics = await page.evaluate(() => {
+          const rect = selector => document.querySelector(selector).getBoundingClientRect().toJSON()
+          const all = sel => [...document.querySelectorAll(sel)].map(el => el.getBoundingClientRect().toJSON())
+          return { center: rect('.rack-slide[data-position="center"]'), left: rect('.rack-slide[data-position="left"]'), right: rect('.rack-slide[data-position="right"]'),
+            markers: all('.rack-marker'), markerArt: rect('.rack-marker span'), opener: rect('.part-plate'), weekRow: rect('.week-row'),
+            spines: all('.book-spine'), reading: rect('.book-spine[data-reading]'), shelf: rect('.book-shelf'), rows: all('.poster-part .fixture-row').map(box => box.height),
+            cover: document.querySelector('.rack-slide[data-position="center"]').dataset.date,
+            focusable: [...document.querySelectorAll('.rack-slide, .rack-marker, .book-spine')].some(el => el.tabIndex >= 0 || el.querySelector('button,a[href],[tabindex],input,[role]')),
+          }
+        })
+        assert.deepEqual([metrics.center.width, metrics.center.height], width === 1000 ? [360, 450] : [width - 60, 413], id)
+        if (width < 1000) assert.deepEqual([metrics.left.right, width - metrics.right.left, metrics.center.left - metrics.left.right], [22, 22, 8], id)
+        else assert.ok(metrics.left.left >= 0 && metrics.right.right <= width && metrics.shelf.width === 640, id)
+        assert.equal(metrics.markers.length, 8, id)
+        assert.ok(metrics.markers.every((m, i) => m.width === 44 && m.height === 44 && m.y === metrics.markers[0].y && m.x === metrics.markers[0].x + 44 * i), id)
+        assert.equal(metrics.markers[7].right - metrics.markers[0].left, 352, id)
+        if (width === 360) assert.equal(metrics.markers[0].left, 4, id)
+        assert.deepEqual([metrics.markerArt.width, metrics.markerArt.height, metrics.opener.height, metrics.weekRow.height, metrics.reading.height], [34, 22, 156, 44, 190], id)
+        assert.ok(metrics.spines.every(s => s.width >= 44 && [176, 190].includes(s.height)), id)
+        assert.equal(metrics.focusable, false, id)
+        const button = await page.$('.more-stories')
+        const bar = await button.evaluate(el => ({ width: el.offsetWidth, full: el.parentElement.offsetWidth, h: el.offsetHeight,
+          before: el.parentElement.querySelectorAll('.fixture-row').length, label: el.textContent }))
+        assert.ok(bar.h >= 44 && bar.width === bar.full && bar.before === 4, id)
+        await button.click()
+        const after = await button.evaluate(el => ({ expanded: el.getAttribute('aria-expanded'), rows: el.parentElement.querySelectorAll('.fixture-row').length,
+          duration: getComputedStyle(el.nextElementSibling).transitionDuration, label: el.textContent }))
+        assert.equal(after.expanded, 'true', id)
+        assert.equal(after.rows, 4 + Number(bar.label.match(/(\d+) MATCHES/)[1]), id)
+        assert.equal(after.duration, '0s', id)
+        if (width === 360) {
+          await new Promise(r => setTimeout(r, 10000))
+          assert.equal(await page.$eval('.rack-slide[data-position="center"]', el => el.dataset.date), metrics.cover, id)
+        }
+        assert.deepEqual(errors, [], id)
+        results.push({ id, week: heavy, ...metrics, bar, after })
+      } finally { await context.close() }
+    }
+    const hiddenWeeks = new Set([heaviest])
+    if (days.has('2026-10-26')) hiddenWeeks.add('2026-10-26')
+    for (const date of hiddenWeeks) for (const lens of ['poster', 'ledger']) for (const width of [360, 390]) {
+      const id = [app, 'hidden', date, lens, width].join('-')
+      const { page, context, errors } = await openPage(browser, origin + '/?date=' + date + '&only=&lens=' + lens, 'light', width)
+      try {
+        const week = await page.$eval('.' + lens + '-week', el => ({ h: el.getBoundingClientRect().height,
+          days: [...el.querySelectorAll('section')].map(d => ({ line: d.textContent, h: d.getBoundingClientRect().height })) }))
+        assert.ok(week.h <= (lens === 'poster' ? 510.5 : 450), id)
+        if (lens === 'poster') {
+          assert.ok(week.days.length && week.days.every(d => /0 MATCHES.*hidden by filters/.test(d.line) && [35.5, 52].includes(d.h)), id)
+          assert.equal(await page.$$eval('.rack-slide', els => els.map(el => el.dataset.date).join()), 'register', id)
+          assert.equal(await page.$('.book-spine'), null, id)
+        }
+        assert.deepEqual(errors, [], id)
+        results.push({ id, ...week })
+      } finally { await context.close() }
+    }
+  }
+  for (const file of ['single', 'offline']) for (const theme of ['light', 'dark']) for (const width of [360, 375, 390, 1000]) {
+    const id = [file, 'poster', theme, width].join('-')
+    const url = pathToFileURL(path.join(root, 'dist-' + file, 'index.html')).href
+    const { page, context, escaped, errors } = await openPage(browser, url + '?date=' + heavy + '&lens=poster', theme, width, { offline: true, waitUntil: 'domcontentloaded' })
+    try {
+      assert.equal(await page.$$eval('.rack-slide', els => els.length), 8, id)
+      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth === innerWidth), true, id)
+      assert.deepEqual(escaped, [], id)
+      assert.deepEqual(errors, [], id)
+      await shoot(page, path.join(out, id + '.png'), width)
+      results.push({ id, requests: escaped.length })
+    } finally { await context.close() }
+  }
+  await proveBookStates(browser, out, results, contrasts)
+}
+
+export async function proveBookStates(browser, out, results, contrasts) {
+  const harness = process.env.KICKOFF_HARNESS_ORIGIN ?? 'http://127.0.0.1:5175'
+  for (const theme of ['light', 'dark']) for (const width of [360, 390]) {
+    const id = 'poster-states-' + theme + '-' + width
+    const { page, context, errors } = await openPage(browser, harness + '/tests/harness/states.html?lens=poster&theme=' + theme, theme, width, { waitUntil: 'load' })
+    try {
+      await page.waitForSelector('[data-states-ready="true"]')
+      const specimen = '[data-specimen="books"]'
+      const all = await page.$$eval(specimen + ' [data-book-case]', els => Object.fromEntries(els.map(el => [el.dataset.bookCase, el.textContent])))
+      assert.match(all.singular, /1 MATCH · FIRST 3:00 PM ET/)
+      assert.match(all.unset, /FIRST KICKOFF NOT SET/)
+      assert.doesNotMatch(all.unset, /\d:\d\d/)
+      assert.match(all.mixed, /1 kickoff, time not yet set by the league/)
+      assert.match(all.closed, /The Long Whistle.*FULL TIME.*2–1 FT.*2–1 AET.*3–3 \(2–4\) PENS/)
+      assert.doesNotMatch(all['cannot-close'], /The Long Whistle|FULL TIME/)
+      assert.match(all.live, /2–1 FT.*1–0 LIVE/)
+      assert.match(all['kicked-off'], /2–1 AET.*3–3 \(2–4\) PENS.*1–0 KICKED OFF/)
+      assert.equal(await page.$$eval(specimen + ' .poster-hidden', els => els.length), 7)
+      assert.equal(await page.$eval(specimen + ' .more-stories', el => el.getAttribute('aria-expanded')), 'false')
+      await page.setViewport({ width, height: 844, deviceScaleFactor: 1 })
+      await (await page.$(specimen)).screenshot({ path: path.join(out, id + '-closed.png') })
+      await page.click(specimen + ' .more-stories')
+      await page.waitForSelector(specimen + ' .more-stories[aria-expanded="true"]')
+      assert.equal(await page.$$eval(specimen + ' .poster-part .fixture-row', els => els.length), 8)
+      await page.$eval(specimen + ' .more-rows', async panel => {
+        // Opening the fold changes the document height. Sample only after the reader's
+        // 180 ms expansion has finished, so both captures use the same coordinates.
+        await new Promise(requestAnimationFrame)
+        await Promise.all(panel.getAnimations().map(animation => animation.finished))
+        await document.fonts.ready
+        window.scrollTo(0, 0)
+      })
+      const shown = await shoot(page, path.join(out, id + '-open.png'), width)
+      contrasts.push(await measureContrast(page, id, width, shown, specimen))
+      assert.deepEqual(errors, [], id)
+      results.push({ id, cases: Object.keys(all), closedRows: 4, openRows: 8 })
+    } finally { await context.close() }
+  }
+}
+
 async function main() {
   const args = process.argv.slice(2)
   const enforce = args.includes('--enforce')
@@ -3107,6 +3373,8 @@ async function main() {
   }
   try {
     steps.motion = await proveMotion(browser, origins, out)
+    steps.poster = []
+    await provePoster(browser, origins, fixtures, out, steps.poster, weekRun.contrast)
     steps.chrome = await proveChrome(browser, origins)
     steps.feedback = await proveFeedback(browser, origins)
     steps.banner = await proveBanner(browser, origins, out)

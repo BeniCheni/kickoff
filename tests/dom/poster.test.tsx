@@ -35,8 +35,18 @@ describe('the lower band', () => {
     const view = render(<CoverBand shown={cannotClose} now={now} />)
     expect([...view.container.querySelectorAll('.band-result')].map(el => el.textContent)).toEqual(['2–1 FT', '2–1 AET', '3–3 (2–4) PENS'])
     expect(view.container.querySelector('[data-band-fixture="abandoned"]')).toBeNull()
+    expect(view.container.querySelector('.band-summary')).toBeNull()
     view.rerender(<CoverBand shown={[edgeFixture({ status: 'full_time' })]} now={now} />)
     expect(screen.getByText('FT').textContent).toBe('FT')
+  })
+  it('caps unique kickoffs at three and keeps the count open when a remaining match is scheduled', () => {
+    const day = Array.from({ length: 5 }, (_, i) => edgeFixture({
+      id: 'held-' + i, kickoffUtc: '2026-11-22T' + (14 + i) + ':00:00Z',
+      status: i === 4 ? 'scheduled' : 'full_time',
+    }))
+    const view = render(<CoverBand shown={day} now={now} />)
+    expect(view.container.querySelectorAll('[data-band-fixture]')).toHaveLength(3)
+    expect(screen.getByText('+ 2 more, from 12:00 PM ET')).toBeTruthy()
   })
   it('keeps a live score in ink and the last seen score with KICKED OFF', () => {
     const f = edgeFixture({ status: 'in_play', result: { home: 1, away: 0 } })
