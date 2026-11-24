@@ -328,3 +328,10 @@ here with its time.
    with #369, keeps Tier 3 and takes the six-pass 360 in the README's Codex column, with the
    merge on Beni's word. Its brief stays out of `docs/design-overhaul-plan.md`, which #328
    rewrites.
+3. **Fork 3, #358: "Yes, now"** (Tue 24 Nov 2026, 11:49 AM EST). #358's six-pass 360 starts now
+   under the README's "When Claude builds" column: Codex holds Passes 0, 1, 1.5 and 2.5, Claude
+   Code on Fable 5.2 holds Pass 2, and Beni holds Pass 3. Pass 1 checks that the split into two
+   cases weakens no assertion, and may recommend a refresh onto `main` (12 behind, merging
+   cleanly); the refresh is Beni's word. The deadline is the first sync after Wed 27 Jan 2027.
+
+All three forks are ruled. Workstreams 4 and 5 needed no ruling.
