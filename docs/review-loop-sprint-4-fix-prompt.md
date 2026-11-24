@@ -124,3 +124,26 @@ Tests, beside amendment 1's rows: your reproducer's case, the tag absent at the 
 
 Everything else in the brief and in amendment 1 stands. Carry on from finding 3 in the brief's order, on the same model and effort, in the same folder, and keep both reproducers and their transcripts as receipts. If you find another case where this mechanism would hold where the rule does not, stop again. In #9's body and in your record's evidence for finding 3, name both amendments as Beni's of 24 Nov, archived in Kickoff's docs/review-loop-sprint-4-fix-prompt.md under "Amendment 1" and "Amendment 2".
 ````
+
+## Amendment 3: finding 3, and a closing rule for it (Tue 24 Nov 2026)
+
+Codex stopped at finding 3 a third time, again before any commit. Amendment 2's test compared the
+outputs of command substitutions, which strip trailing line feeds, so two repositories whose
+paths differ by a trailing line feed compared equal. The Planner reproduced it in sh, zsh and
+bash. Beni ruled Codex's recommendation, a byte-for-byte comparison of single-line outputs,
+together with a closing rule that lets Codex close further cases of the same kind itself
+("Approve and push"). The delivery was this block in chat:
+
+````text
+elenchus PR #9, Pass 2: amendment 3 to the fix brief, finding 3 (Beni's ruling, Tue 24 Nov 2026, from your recommendation and the Planner's)
+
+You were right to stop a third time. Shell command substitution strips trailing line feeds, so amendment 2's test compared two different URLs as equal. The Planner reproduced your case in sh, zsh and bash on git 2.54.0. Your recommendation is ruled: each lookup of origin's URLs must return exactly one nonempty line ending in one line feed, and the fetch and push outputs are compared byte for byte. A URL that holds any control character, a line feed inside it included, refuses, as finding 4's rule already asks of everything the block prints.
+
+The mechanism is yours to write. One form the Planner ran, exactly as written here, in the three shells: f=$(git remote get-url origin && echo .) && p=$(git remote get-url --push --all origin && echo .) && test "$f" = "$p" && test "$f" != "$(printf '\n.')" && test "$(printf %s "$f" | wc -l | tr -d " ")" = 1. The trailing dot keeps the line feeds that command substitution would strip. It passes a plain clone and refuses a push URL that differs by a trailing line feed, a fetch and push URL that both end in one, a push URL to another repository, two push URLs, and no origin. An empty remote.origin.url passes, correctly: git then reports the remote's name, origin, as its URL, so the read and the push still go to the same place. Use it, or a form of your own that meets the rule, and say which.
+
+The closing rule for finding 3, so that this round does not stop once per case. The rule is fixed: the block never runs the merge while the tag exists at the one place its tag push writes, as far as a read made immediately before the merge can tell, and anything it cannot establish refuses before the merge. If you find another case of the same kind (how git reports origin's URLs, or how the shell carries that report to the comparison), close it yourself within that rule: add a test row that fails without your change, name the case in #9's body and in your record's evidence for finding 3, and carry on. Stop only if meeting the rule would need a write outside the brief's limits, a change to what the block may assume of the operator beyond what the README states, or a case of a different kind.
+
+Tests, beside amendments 1 and 2's rows: your reproducer's case, a push URL that differs by a trailing line feed, stops before the merge stub is called; a URL holding a line feed inside it stops before the merge stub; a plain clone reaches the merge. Add the guard to the deletion test.
+
+Everything else in the brief and in amendments 1 and 2 stands. Carry on from finding 3 in the brief's order, on the same model and effort, in the same folder, and keep all three reproducers and their transcripts as receipts. In #9's body and your record's evidence for finding 3, name the three amendments as Beni's of 24 Nov, archived in Kickoff's docs/review-loop-sprint-4-fix-prompt.md under "Amendment 1", "Amendment 2" and "Amendment 3".
+````

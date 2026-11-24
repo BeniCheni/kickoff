@@ -1879,6 +1879,12 @@ for Cursor (S7).
     of origin miss a tag at the place the push writes. The block now refuses before the merge
     unless origin has exactly one push URL and it is the fetch URL. Reading every push
     destination instead goes on Sprint 5's list if an adopter needs separate URLs.
+  - **Amendment 3, finding 3 ("Approve and push").** Codex stopped a third time: command substitution
+    strips trailing line feeds, so two URLs that differ by one compared equal. Origin's URLs are
+    now compared byte for byte as single nonempty lines, and a URL holding a control character
+    refuses. A closing rule lets Codex close further cases of the same kind within the rule,
+    naming each, and stop only for a write outside the limits, a new assumption about the
+    operator, or a case of a different kind.
 D8, D10 and D11 are not yet ruled. D4 is withdrawn, and D12 is Pilot (17 Nov).
 
 ## Found after the spikes (15 Nov 2026, afternoon)
