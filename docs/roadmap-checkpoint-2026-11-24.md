@@ -318,4 +318,8 @@ waits for PR 7; PR 8's seat is Beni's. Nothing in the repo overtakes them.
 Put one at a time in chat, each with this seat's recommendation first. Each ruling is recorded
 here with its time.
 
-_(Pending.)_
+1. **Fork 1, PR 5's Pass 0: "Yes"** (Tue 24 Nov 2026, 11:46 AM EST). A fresh PM seat on Opus 5.5
+   at High writes PR 5's Pass 0 brief now, for #377 at its head. The brief carries the points
+   under workstream 1: the `main` merge at `9720754`, the Tier 3 tests, the full matrix, and the
+   README's tiers outranking the skill's table while workstream 2 is open. This seat writes no
+   brief; it only records the ruling.
