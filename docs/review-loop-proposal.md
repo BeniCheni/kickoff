@@ -823,6 +823,17 @@ Cursor's hands this track seats no Cursor.
   form definitions in [`review-loop-sprint-4-fix-forms.md`](review-loop-sprint-4-fix-forms.md).
   Pass 1 (`claude-fable-5-2`, `xhigh`) returned merge after a fix round, with ten findings: 0
   blocking, 4 should-fix and 6 notes.
+- *Fixed (Tue 24 Nov 2026):* Pass 2's
+  [record](https://github.com/BeniCheni/elenchus/pull/9#issuecomment-7139978285), from Codex
+  Desktop `0.171.0-alpha.13.2` on `gpt-6.2-astra` at `xhigh`: three commits to `51a076e`,
+  after the three stops on finding 3 that Beni's amendments answered. As the round reports it,
+  findings 1 to 5, 7 and 10 are fixed, 6 and 8 are left open as deferred, and 9 is unchanged as
+  ruled. 447 tests pass; every one of its 61 changed status forms and 32 deletions fails at least
+  one, and the control none. Under Amendment 3's closing rule it closed three further cases, a
+  shared URL holding a tab, a C1 control or a Unicode line separator, each with its own test.
+- *Synthesis brief:* [`review-loop-sprint-4-synthesis-prompt.md`](review-loop-sprint-4-synthesis-prompt.md),
+  for Pass 2.5 (Claude Code, `claude-opus-5-5`, `xhigh`), in
+  `~/code/review-seats/elenchus-pr9-pass25`, with its sealed appendix as a second paste.
 
 **Sprint 5 — Kickoff phase 2: the gate on `main` (after Sprint 3 passes).**
 - *Scope:* the `kickoff/360` ruleset on `main`, applied by Beni; `loop authorize`; the sync
