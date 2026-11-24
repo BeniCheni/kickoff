@@ -323,3 +323,8 @@ here with its time.
    under workstream 1: the `main` merge at `9720754`, the Tier 3 tests, the full matrix, and the
    README's tiers outranking the skill's table while workstream 2 is open. This seat writes no
    brief; it only records the ruling.
+2. **Fork 2, the review skill's tier: "Yes, Tier 3"** (Tue 24 Nov 2026, 11:48 AM EST). Workstream
+   2, which brings `.claude/skills/kickoff-pr-review/SKILL.md` and `CLAUDE.md:32-33` into line
+   with #369, keeps Tier 3 and takes the six-pass 360 in the README's Codex column, with the
+   merge on Beni's word. Its brief stays out of `docs/design-overhaul-plan.md`, which #328
+   rewrites.
