@@ -809,6 +809,15 @@ Cursor's hands this track seats no Cursor.
   Kickoff's configuration. Eight resolutions in it are the Planner's, each named there. Kickoff's
   half (the record block, drift items 3 and 4, the appendix's slot, and how Kickoff calls the
   pinned commit) waits for v0.6.0.
+- *Built:* elenchus PR 9, `sprint-4` → `main`, opened Mon 23 Nov 2026 at 10:00 EST by Codex
+  (`gpt-6.2-astra`, `xhigh`, Codex Desktop), head `bd84690`: seven commits on `84b0c20`, all
+  authored as Codex, nine paths (one added, eight modified), green `test` check. Its body
+  reports each part with its commits, the forms and deletions, T1, T3, T8, T13 and T9, and a
+  "Not verified" list.
+- *Review brief:* [`review-loop-sprint-4-review-prompt.md`](review-loop-sprint-4-review-prompt.md),
+  Pass 0's brief for Pass 1 on `claude-fable-5-2` at `xhigh`, in a fresh session in the Claude
+  desktop app, with its sealed appendix as a second paste. The Planner posts Pass 0's record
+  on #9.
 
 **Sprint 5 — Kickoff phase 2: the gate on `main` (after Sprint 3 passes).**
 - *Scope:* the `kickoff/360` ruleset on `main`, applied by Beni; `loop authorize`; the sync
