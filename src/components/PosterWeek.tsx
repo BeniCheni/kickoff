@@ -1,7 +1,6 @@
-import { COMPETITIONS } from '../lib/competitions'
+import { PosterPart } from './PosterPart'
 import { posterDayTitle, weekdayShort } from '../lib/time'
-import { isFinal, unsetKickoffs, type PosterBlock } from '../lib/lensSelectors'
-import { BookDateLine, UnsetCount } from './BookDateLine'
+import { isFinal, type PosterBlock } from '../lib/lensSelectors'
 import { FixtureRows } from './FixtureRow'
 import { MatchdayLines } from './MatchdayLines'
 
@@ -21,8 +20,9 @@ function TodayPill() {
  * an inline header; consecutive empty days merge into one hairline line. Its fixture list uses the contents layout.
  */
 export function PosterWeek({ blocks, stale = EMPTY, next, nowUtcIso }: { blocks: PosterBlock[]; next?: string | null; nowUtcIso?: string; stale?: ReadonlySet<string> }) {
+  let part = 0
   return (
-    <div>
+    <div className="poster-week">
       {blocks.map((block) => {
         if (block.kind === 'gap') {
           const label = block.dates
@@ -38,40 +38,14 @@ export function PosterWeek({ blocks, stale = EMPTY, next, nowUtcIso }: { blocks:
           )
         }
 
-        if (block.kind === 'big') {
-          return (
-            <section key={block.date}>
-              <div
-                className="-mx-5 mt-[22px] border-l-[12px] bg-surface-alt py-3 pr-5 pl-4"
-                style={{ borderLeftColor: COMPETITIONS[block.dominant].color }}
-              >
-                <div className="flex flex-wrap items-baseline gap-2.5">
-                  <span
-                    className={[
-                      'font-display leading-none font-bold uppercase',
-                      block.isToday ? 'text-[44px]' : 'text-[28px]',
-                    ].join(' ')}
-                  >
-                    {posterDayTitle(block.date)}
-                  </span>
-                  {block.isToday && <TodayPill />}
-                </div>
-                <div className="font-mono mt-1.5 text-[11px] font-medium tracking-[0.06em] text-ink-secondary">
-                  <BookDateLine date={block.date} shown={block.fixtures} closed={!block.hidden && block.fixtures.every(isFinal)} />
-                  <UnsetCount count={unsetKickoffs(block.fixtures)} />
-                </div>
-                {!!block.hidden && <p className="week-hidden">{block.hidden} hidden by filters</p>}
-                <MatchdayLines fixtures={block.fixtures.slice(0, 1)} className="mt-[3px]" />
-              </div>
-              <div className="mt-2.5 border-t border-line">
-                <FixtureRows fixtures={block.fixtures} lens="poster" next={next} nowUtcIso={nowUtcIso} stale={stale} />
-              </div>
-            </section>
-          )
+        if (block.fixtures.length) {
+          return <PosterPart key={block.date} date={block.date} shown={block.fixtures} hidden={block.hidden ?? 0}
+            part={++part} closed={block.closed ?? (!block.hidden && block.fixtures.every(isFinal))}
+            next={next} stale={stale} nowUtcIso={nowUtcIso} />
         }
 
         return (
-          <section key={block.date}>
+          <section key={block.date} data-week-date={block.date}>
             <div className="mt-[18px] flex flex-wrap items-baseline gap-2.5">
               <span className="font-display text-[16px] font-semibold tracking-[0.06em] uppercase">
                 {posterDayTitle(block.date)}

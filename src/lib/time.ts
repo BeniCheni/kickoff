@@ -145,6 +145,13 @@ export function weekRange(start: string, today: string): string {
   return `${left}–${right}${year}`
 }
 
+export function bookCalendar(iso: string) {
+  const date = new Date(iso + 'T12:00:00Z')
+  const weekday = formatter('UTC', { weekday: 'long' }).format(date)
+  const month = formatter('UTC', { month: 'long' }).format(date)
+  return { weekday, longDate: `${weekday} ${date.getUTCDate()} ${month}` }
+}
+
 export function weekdayShort(iso: string): string {
   return formatter('UTC', { weekday: 'short' }).format(new Date(`${iso}T12:00:00Z`))
 }

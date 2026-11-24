@@ -15,6 +15,7 @@ export type DayInfo = {
   /** Total on the date regardless of filters — distinguishes "hidden" from "nothing on". */
   total: number
   isToday: boolean
+  closed?: boolean
 }
 
 /** Marquee = any non-domestic competition; there is no per-fixture importance signal. */
@@ -187,8 +188,8 @@ export function hotFixtureIds(
  * Only consecutive days without fixtures in the snapshot share a hairline line.
  */
 export type PosterBlock =
-  | { kind: 'big'; date: string; isToday: boolean; hidden?: number; fixtures: Fixture[]; dominant: CompetitionKey }
-  | { kind: 'small'; date: string; isToday: boolean; hidden?: number; fixtures: Fixture[] }
+  | { kind: 'big'; date: string; isToday: boolean; closed?: boolean; hidden?: number; fixtures: Fixture[]; dominant: CompetitionKey }
+  | { kind: 'small'; date: string; isToday: boolean; closed?: boolean; hidden?: number; fixtures: Fixture[] }
   | { kind: 'gap'; dates: string[] }
 
 /** One group per fixture-bearing day, or per uninterrupted run of empty days. */
@@ -208,7 +209,7 @@ export function planPosterWeek(days: readonly DayInfo[]): PosterBlock[] {
     if (day.total === 0) {
       return { kind: 'gap', dates: group.map(d => d.date) }
     }
-    const fields = { date: day.date, isToday: day.isToday, fixtures: day.shown, hidden: day.total - day.shown.length }
+    const fields = { closed: day.closed, date: day.date, isToday: day.isToday, fixtures: day.shown, hidden: day.total - day.shown.length }
     const dominant = dominantCompetition(day.shown)
     return day.shown.length > 2 && dominant !== null ? { kind: 'big', ...fields, dominant } : { kind: 'small', ...fields }
   })

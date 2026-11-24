@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 import { addDays } from '../lib/time'
 import { useNow } from '../lib/useNow'
-import { FIXTURES, fixturesOn, totalOn } from '../lib/fixtures'
-import { hotFixtureIds, nextKickoffId, staleLiveIds, planPosterWeek, type DayInfo } from '../lib/lensSelectors'
+import { BY_DATE, FIXTURES, fixturesOn, totalOn } from '../lib/fixtures'
+import { isFinal, hotFixtureIds, nextKickoffId, staleLiveIds, planPosterWeek, type DayInfo } from '../lib/lensSelectors'
 import { LedgerWeek } from './LedgerWeek'
 import { PosterWeek } from './PosterWeek'
 import type { CompetitionKey } from '../lib/competitions'
@@ -25,7 +25,7 @@ export function WeekView({
 }) {
   const days: DayInfo[] = Array.from({ length: 7 }, (_, i) => {
     const date = addDays(weekStart, i)
-    return { date, shown: fixturesOn(date, active), total: totalOn(date), isToday: date === today }
+    return { date, shown: fixturesOn(date, active), total: totalOn(date), isToday: date === today, closed: lens === 'poster' && BY_DATE.get(date)?.every(isFinal) }
   })
 
   // Retain LIVE + next-kickoff data-hot markers for the next design iteration.

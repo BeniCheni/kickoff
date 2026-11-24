@@ -44,11 +44,9 @@ const hueSites: [string, string, RegExp][] = [
   ['components/FilterToggle.tsx', 'dot', /<i aria-hidden="true" className="competition-dot" style=\{shown \? \{ backgroundColor: color \} : undefined\} \/>/],
   ['components/LeagueTabs.tsx', 'dot', /<i className="league-tab-dot" aria-hidden="true" style=\{\{ '--comp-hue': COMPETITIONS\[key\]\.color \} as CSSProperties\} \/>/],
   ['components/ZonesKey.tsx', 'zone band', /className=\{`zone-mark zone-mark-\$\{shape\}`\}\s+data-band=\{zone\?\.band\}\s+style=\{zone\?\.color \? \(\{ '--zone-hue': zone\.color \} as CSSProperties\) : undefined\}\s+aria-hidden="true"\s+\/>/],
-  // The Poster's first edition, kept as it stands until that surface is repainted: a left rule.
-  ['components/PosterWeek.tsx', 'left rule', /style=\{\{ borderLeftColor: COMPETITIONS\[block\.dominant\]\.color \}\}/],
 ]
 
-it('reads a competition’s colour only to draw a mark that carries no text: a dot, a zone band, or the first-edition Poster’s left rule', () => {
+it('reads a competition’s colour only to draw a mark that carries no text: a dot or a zone band', () => {
   const files = globSync('**/*.{ts,tsx}', { cwd: src }).filter(file => file !== 'lib/competitions.ts')
   const remaining = new Map(files.map(file => [file, readFileSync(new URL(file, src), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '')]))
   for (const [file, shape, pattern] of hueSites) {

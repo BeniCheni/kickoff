@@ -1,3 +1,4 @@
+import { bookCalendar } from '../src/lib/time'
 import { describe, it, expect } from 'vitest'
 import { fixtureTimes, brooklynAbbrev, brooklynDate, startOfWeek, addDays, syncStamp, posterDayTitle, weekRange, zonedParts } from '../src/lib/time'
 
@@ -112,4 +113,8 @@ describe('Brooklyn week range', () => {
   ])('labels %s relative to %s', (start, today, expected) => {
     expect(weekRange(start, today)).toBe(expected)
   })
+})
+
+it('names the calendar day on a part and the next volume', () => {
+  expect(bookCalendar('2026-11-20')).toEqual({ weekday: 'Friday', longDate: 'Friday 20 November' })
 })

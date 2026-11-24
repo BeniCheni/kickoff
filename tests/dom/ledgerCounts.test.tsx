@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { render, within } from '@testing-library/react'
+import { fireEvent, render, within } from '@testing-library/react'
 import { COMPETITIONS, COMPETITION_KEYS, type CompetitionKey } from '../../src/lib/competitions'
 import { FIXTURES } from '../../src/lib/fixtures'
-import { addDays, brooklynDate, posterDayTitle, startOfWeek, weekdayShort } from '../../src/lib/time'
+import { addDays, brooklynDate, startOfWeek, weekdayShort } from '../../src/lib/time'
 import { LedgerWeek } from '../../src/components/LedgerWeek'
 import { PosterWeek } from '../../src/components/PosterWeek'
 import { planPosterWeek } from '../../src/lib/lensSelectors'
@@ -23,7 +23,7 @@ describe.each(['poster', 'ledger'] as const)('%s snapshot accounts', lens => {
     ['none', []],
   ] as [string, CompetitionKey[]][])('accounts for every fixture with %s shown', (_name, keys) => {
     const active = new Set(keys)
-    const { container, getByText } = render(<WeekView weekStart={week} today={week} lens={lens} active={active} />)
+    const { container } = render(<WeekView weekStart={week} today={week} lens={lens} active={active} />)
     for (const line of container.querySelectorAll('.ledger-date, .matchday-line, .week-hidden, .week-count, .week-gap')) {
       expect(line.textContent).not.toMatch(/\b(?:EDT|EST|CET|CEST|GMT|UTC|BST|EET|EEST)\b|[+-]\d\d:\d\d/)
     }
@@ -43,9 +43,9 @@ describe.each(['poster', 'ledger'] as const)('%s snapshot accounts', lens => {
         expect(gap!.querySelectorAll('[data-fixture-id]')).toHaveLength(0)
         continue
       }
-      const section = lens === 'poster'
-        ? getByText(posterDayTitle(date)).closest<HTMLElement>('section')!
-        : container.querySelector<HTMLElement>(`section[data-week-date="${date}"]`)!
+      const section = container.querySelector<HTMLElement>(`section[data-week-date="${date}"]`)!
+      const more = within(section).queryByRole('button', { name: /More stories/ })
+      if (more) fireEvent.click(more)
       const ids = [...section.querySelectorAll<HTMLElement>('[data-fixture-id]')].map(row => row.dataset.fixtureId)
       expect(ids.sort()).toEqual(expected.sort())
       expect(within(section).getByText(new RegExp(`\\b${expected.length} match(?:es)?\\b`, 'i'))).toBeTruthy()

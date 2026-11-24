@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from 'vitest'
-import { render } from '@testing-library/react'
+import { fireEvent, render } from '@testing-library/react'
 import { WeekView } from '../../src/components/WeekView'
 import { COMPETITION_KEYS, competitionRank } from '../../src/lib/competitions'
 import { FIXTURES } from '../../src/lib/fixtures'
 import type { Fixture } from '../../src/lib/schema'
-import { brooklynDate, posterDayTitle, startOfWeek } from '../../src/lib/time'
+import { brooklynDate, startOfWeek } from '../../src/lib/time'
 
 /**
  * One synthetic Saturday, in a file order that is not the display order. The committed
@@ -55,23 +55,6 @@ function pairing(fixture: Fixture): string {
   return `${fixture.home.name} v ${fixture.away.name}`
 }
 
-/** An element's own text, ignoring descendants. Ledger's weekday and numeral are divs. */
-function ownText(element: Element): string | null {
-  if (element.childNodes.length !== 1 || element.childNodes[0]?.nodeType !== Node.TEXT_NODE) return null
-  return element.textContent
-}
-
-function sectionFor(container: HTMLElement, date: string, lens: 'poster' | 'ledger'): HTMLElement | null {
-  const sections = [...container.querySelectorAll('section')]
-  if (lens === 'poster') {
-    const title = posterDayTitle(date)
-    return sections.find((section) =>
-      [...section.querySelectorAll('span')].some((span) => ownText(span) === title),
-    ) ?? null
-  }
-  return sections.find(section => section.dataset.weekDate === date) ?? null
-}
-
 /** Longest contained pairing wins, so "Arsenal vs Chelsea" does not claim "Arsenal vs Chelsea B". */
 function renderedIds(section: HTMLElement, expected: Fixture[]): string[] {
   const remaining = [...expected]
@@ -104,8 +87,9 @@ describe('a day renders in display order in both lenses', () => {
       const view = render(
         <WeekView weekStart={startOfWeek(DATE)} active={active} today="2026-01-01" lens={lens} />,
       )
-      const section = sectionFor(view.container, DATE, lens)
+      const section = view.container.querySelector<HTMLElement>(`section[data-week-date="${DATE}"]`)
       expect(section, `${lens} section for ${DATE}`).toBeTruthy()
+      if (lens === 'poster') fireEvent.click(view.getByRole('button', { name: /More stories/ }))
       expect(renderedIds(section!, expected)).toEqual(expected.map((fixture) => fixture.id))
       expect(section!.querySelector('[data-fixture-id="synthetic:c-tie-second"]')!.textContent).not.toMatch(/\d:\d\d|local/)
       view.unmount()

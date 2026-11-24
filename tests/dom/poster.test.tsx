@@ -4,9 +4,10 @@ import { FixturesPage } from '../../src/components/FixturesPage'
 import { BY_DATE } from '../../src/lib/fixtures'
 import { addDays, startOfWeek } from '../../src/lib/time'
 import { restingBook, type MatchdayBook } from '../../src/lib/lensSelectors'
-import { act } from '@testing-library/react'
+import { act, fireEvent } from '@testing-library/react'
 import { CoverBand } from '../../src/components/CoverBand'
 import { edgeFixture, cannotClose } from '../fixtures/edgeFixtures'
+import { PosterPart } from '../../src/components/PosterPart'
 import { PosterWeek } from '../../src/components/PosterWeek'
 import type { Fixture } from '../../src/lib/schema'
 
@@ -21,7 +22,7 @@ describe('Poster day-header wiring', () => {
     }))
     render(<PosterWeek blocks={[{ kind: 'big', date: '2026-09-05', isToday: true, dominant: 'pl', fixtures }]} />)
     expect(screen.getByText('3 MATCHES')).toBeTruthy()
-    expect(screen.getByText('3 kickoffs, times not yet set by the league').dataset.voice).toBe('amber')
+    expect(screen.getByText('SAT 5 SEP')).toBeTruthy()
     expect(screen.getByText('FIRST KICKOFF NOT SET').dataset.voice).toBe('amber')
     expect(screen.queryByText(/3:00 PM/)).toBeNull()
   })
@@ -96,4 +97,22 @@ it('rests on the next eligible matchday this week, the first open book elsewhere
   books[0]!.closed = true
   expect(restingBook(books, '2026-11-23', '2026-11-30', now)).toBe('2026-11-24')
   expect(restingBook(books.map(b => ({ ...b, closed: true })), '2026-11-23', '2026-11-30', now)).toBe('2026-11-25')
+})
+
+it.each([4, 5, 6, 26])('opens every shown row in place when a part contains %i matches', count => {
+  const fixtures = Array.from({ length: count }, (_, i) => edgeFixture({ id: 'row-' + i }))
+  const view = render(<PosterPart date="2026-11-21" shown={fixtures} hidden={3} closed={false} part={2} />)
+  expect(screen.getByText('PART TWO')).toBeTruthy()
+  const ids = () => [...view.container.querySelectorAll<HTMLElement>('[data-fixture-id]')].map(el => el.dataset.fixtureId)
+  expect(ids()).toEqual(fixtures.slice(0, count >= 6 ? 4 : count).map(f => f.id))
+  if (count <= 5) return expect(screen.queryByRole('button')).toBeNull()
+  const button = screen.getByRole('button', { name: 'More stories · ' + (count - 4) + ' MATCHES · SAT · SHOW' })
+  expect(button.getAttribute('aria-expanded')).toBe('false')
+  fireEvent.click(button)
+  expect(button.getAttribute('aria-expanded')).toBe('true')
+  expect(button.textContent).toContain('HIDE')
+  expect(ids()).toEqual(fixtures.map(f => f.id))
+  expect(view.container.querySelectorAll('.stadium-clock')).toHaveLength(count)
+  fireEvent.click(button)
+  expect(ids()).toHaveLength(4)
 })
