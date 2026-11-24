@@ -13,8 +13,9 @@ unchanged text cut to "…".
 The five ruled matters it redrew (the closing book, no cycles, fixed titles, the all-hidden day and
 no rule in a competition's hue) are the later word on the sections it names.
 [`second-edition-handoff.md`](second-edition-handoff.md) and
-[`gap-18-addendum.md`](gap-18-addendum.md) are not edited here. Questions 30 to 39 bind nothing
-until Beni rules them, and his rulings are added below as he gives them.
+[`gap-18-addendum.md`](gap-18-addendum.md) are not edited here. Beni ruled questions 30 to 39 the
+same evening, all ten Yes, between about 7:40 and 9:56 PM EST. His rulings are below, and they are
+the later word on the reply's proposals.
 
 ## The PM seat's check, Mon 23 Nov 2026, about 7:20 PM EST
 
@@ -60,7 +61,68 @@ Read against the integration branch at `45b7bc6`, whose snapshot was synced on 1
 
 ## Beni's rulings on questions 30 to 39
 
-None yet.
+Each was put to him one at a time, with the PM seat's recommendation first.
+
+- **30, Yes** (Mon 23 Nov 2026, about 7:40 PM EST). The open book's band keeps kickoff order, so
+  results lead. Each entry prints what the snapshot stores, an unsettled match is passed over,
+  and the count line keeps its open form until every match it counts is final. LIVE on a band uses
+  the new 6.20:1 pair. The plan's rule that the band skips a kickoff the league has not set binds
+  beside it (`docs/design-overhaul-plan.md`, lines 54 and 487).
+- **31, Yes** (about 7:43 PM EST). A day shows its first four rows. The "more" control appears only
+  when it would hide two or more, so a day of five shows all five, and under filters it counts the
+  rows the filters leave beyond the fourth. In the snapshot, 32 days hold one to four matches, 6 hold
+  five and 71 hold six or more. Today's Poster has no "more" control, so the rule is new in PR 5.
+- **32, Yes** (about 7:46 PM EST). The label spells no number: "More stories · 22 MATCHES · SAT ·
+  SHOW". This amends string 18 of the plan's section 10.4 (`docs/design-overhaul-plan.md:737`),
+  approved under ruling 17 as "Twenty-two more stories · 22 MATCHES · SAT · SHOW". The count stays
+  in Plex Mono, and no number-to-words code is needed.
+- **33, Yes** (about 7:49 PM EST). A part carries at most one aside, at its foot, belonging to the
+  day's slot and never to its fixtures. The Poster's two asides of string 20
+  (`docs/design-overhaul-plan.md:739`), "Fifteen minutes between doors…" and "Five doors at once…",
+  fall, and the Poster carries none until one is written for a slot. String 20's other two asides,
+  the Register's and the Ledger's, are not touched. Neither Poster aside is in `src/` at `45b7bc6`.
+- **34, Yes** (about 8:09 PM EST). The five new titles are approved as copy: The Valley Doors
+  (domestic Saturday), The Empty Hallways (domestic Monday), The First Night (the first Champions
+  League night), The Far Windows (Europa and Conference night) and The Night Between (domestic
+  midweek). None appears elsewhere in the repository at `45b7bc6`. The Rack's spoken names (string
+  32) take the slot's title.
+- **35, Yes** (about 8:15 PM EST). Each slot takes one fixed tagline, as in the table above, stating
+  no count, no league size and no weekday but its own. This replaces string 14
+  (`docs/design-overhaul-plan.md:718-730`). Ten of its eleven listed taglines state a count, which
+  a cover reused week to week would print falsely on most days. One example is the Register's
+  "Twenty names go in. Three are already falling.", where `src/data/standings.json` at `45b7bc6`
+  holds 18 clubs for the Bundesliga and Ligue 1 and 36 for the Champions League. The quiet week's
+  line stays as approved.
+- **36, Yes** (about 8:22 PM EST). The slot rule decides each day's cover, as the diff's line 397
+  states it, with weeks running Monday to Sunday in Brooklyn, as `startOfWeek` does
+  (`src/lib/time.ts:118-119`). Over the snapshot it places all 109 days, as the check above counts
+  them. Because a day's night depends on the other days of its week, PR 5 computes slots a week
+  at a time.
+- **37, Yes** (about 8:26 PM EST). On the Poster, an all-hidden day's date line and hidden count
+  share one line, each an unbroken unit, and the count wraps only where the pair cannot fit. The
+  day is 35.5 px (the existing `.week-gap` and `.week-hidden`, `src/shell.css:1567-1568`), the week
+  of 26 Oct is 248.5 px, and the week is 364 px if every count wraps. All three are under the
+  510.5 px ceiling. By the PM seat's arithmetic, the longest pair in the snapshot is about 45
+  characters, roughly 300 to 315 px of a 320 px measure at 360. PR 5's browser pass measures it.
+  The Ledger's 450 px is not touched.
+- **38, Yes** (about 9:52 PM EST). On the Poster, neither a part nor an all-hidden day marks today,
+  and the TODAY pill stays on the Ledger. This removes a cue that is live: on `origin/main` and at
+  `45b7bc6`, `src/components/PosterWeek.tsx` gives today's block a 44 px title against 28 px and a
+  `TodayPill` (lines 9, 58, 63 and 89 on `main`), so v0.6.0's notes list it under "Changed". Today
+  stays findable by the cover, which is tonight's remaining slate or the next matchday and says
+  so (`TonightSlate`'s docstring), by the week row's Today control (handoff line 234) and by the
+  Ledger's pill. #359's low finding, a TODAY pill on a line of its own under an all-hidden today,
+  falls with it.
+- **39, Yes** (about 9:56 PM EST). On the Rack and the shelf, counts follow the filters, and an
+  all-hidden day's book leaves the Rack and its spine leaves the shelf until one of its
+  competitions is shown again. This is the plan's recommendation for its row 139 and its rule
+  that "a cover's count is the count shown" (`docs/design-overhaul-plan.md:139`, `:499`). The day
+  itself stays in the contents as ruling 37's line. In the week of 23 Nov, `?only=ucl` leaves two
+  books, Tue 24 and Wed 25, and `?only=pl` leaves four, Mon 23, Fri 27, Sat 28 and Sun 29. An
+  empty `?only=` is a cleared selection, not junk (`src/lib/urlCodecs.ts`, `parseOnlyParam`), and
+  with it, or with a filter that hides the whole week, the Rack holds The Register alone and the
+  shelf holds no spine. No approved string covers that shelf: string 19's "no books this week"
+  would be false, because the books exist. PR 5's brief asks for the line.
 
 ## The reply, as relayed
 
