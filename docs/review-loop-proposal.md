@@ -1870,6 +1870,11 @@ for Cursor (S7).
   - **Deferred to Sprint 5:** 6, with Sprint 3's A7; and 8.
   - **No change:** 9. `replay/main` cannot change, because its review gate admits a commit only
     with the App's status.
+  - **Amendment 1, finding 3 ("Approve and push").** Codex stopped before any commit: a tag created on
+    origin between the block's print and its paste passed both checks, and the merge ran. The
+    block now reads origin immediately before the merge (`git ls-remote --exit-code`, where only
+    "no such ref" passes), and the README names the window left between that read and the merge
+    as a limit.
 D8, D10 and D11 are not yet ruled. D4 is withdrawn, and D12 is Pilot (17 Nov).
 
 ## Found after the spikes (15 Nov 2026, afternoon)

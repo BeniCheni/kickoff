@@ -79,3 +79,25 @@ YOUR RECORD, as the last fenced json block of one new comment on #9 (not a reply
 
 STOP AND REPORT if: the model or effort is not gpt-6.2-astra at xhigh; anything in the start check differs; a write would land outside the list above; a dependency, package-lock.json, the record schema, anything under .github/ or a captured fixture would change; a Keychain prompt appears; a rule's mechanism would hold where the rule does not; or a usage limit stops you. Your last message, in chat: sprint-4's new head, each finding with its commit or its ruling, the forms table, the deletion table, the receipts, your comment's URL, and what you did not do. Then stop. Pass 2.5, a fresh Claude Code session on claude-opus-5-5 at xhigh that writes nothing, reads the round next, and Beni rules at Pass 3.
 ````
+
+## Amendment 1: finding 3 (Tue 24 Nov 2026)
+
+Codex stopped at finding 3 before any commit, as the brief told it to when a mechanism would hold
+where the rule does not. In a local bare repository, handoff's GET answered 404 when the block was
+printed; a second operator then created the tag on origin; the block's local check passed, the
+merge ran, and `git tag` stopped with exit 128 after the merge. Beni ruled the Planner's
+recommendation ("Approve and push"). The delivery was this block in chat:
+
+````text
+elenchus PR #9, Pass 2: amendment 1 to the fix brief, finding 3 (Beni's ruling, Tue 24 Nov 2026, from the Planner's recommendation)
+
+You were right to stop. The brief's mechanism for finding 3 held only when handoff printed the block: a tag created on origin between the print and the paste passes the GET, which ran too early, and the local check, which never sees origin, and the merge then runs. The rule stands, made exact: the block never runs the merge while the tag exists on origin, the remote it pushes the tag to, as far as a read made immediately before the merge can tell; and a read that cannot tell refuses.
+
+The mechanism, replacing the brief's for finding 3. (1) Keep handoff's GET of /repos/{repo}/git/ref/tags/{tag} when it prints: 200 refuses naming the tag, and anything but a clean 404 refuses too. (2) Keep the block's local check, ! git rev-parse -q --verify 'refs/tags/<tag>'. (3) Add, as the block's line immediately before the merge, a read of origin whose only passing answer is "no such ref": { git ls-remote --exit-code origin 'refs/tags/<tag>' >/dev/null; test $? -eq 2; }. git ls-remote --exit-code exits 2 when nothing matches, so a tag found (exit 0) and every failure to read (no network, no access, any other exit) stop the chain. Check that the line behaves so in the shells the README names for pasting the block, since the block does not assume set -e.
+
+The window between that read and the merge is a limit, not a finding. Name it in one sentence in the README's handoff paragraph, with what happens if a tag lands in it: the merge has run, git tag stops because the fetch brought the existing tag down, the block's push never forces so the remote tag is not overwritten, and the operator tags by hand.
+
+Tests, beside the brief's two rows: your reproducer's case, a tag created on origin after handoff printed and before the block runs, stops before the merge stub is called; and an origin that cannot be read (a path that does not exist) stops before the merge stub is called. Add the ls-remote line to the deletion test: deleting it fails your reproducer's row.
+
+Everything else in the brief stands. Carry on from finding 3 in the brief's order, on the same model and effort, in the same folder, and keep your reproducer and its transcript as receipts. In #9's body and in your record's evidence for finding 3, name this as Beni's amendment of 24 Nov, archived in Kickoff's docs/review-loop-sprint-4-fix-prompt.md under "Amendment 1".
+````
