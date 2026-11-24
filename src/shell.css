@@ -1656,8 +1656,8 @@ button.register-row {
 
 .book-shelf { margin-block: 20px; background: var(--fb-cover-black); color: var(--fb-cover-ink); padding-block: 12px; }
 .book-shelf h2 { padding: 0 9px 12px; font: 600 11px/1.4 var(--fb-label); letter-spacing: .1em; }
-.shelf-spines { display: flex; align-items: flex-end; gap: 0; }
-.book-spine { flex: 1 1 0; min-width: 44px; height: 176px; display: flex; flex-direction: column; align-items: stretch; text-align: center; border: 1px solid var(--fb-cover-muted); }
+.shelf-spines { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(44px, 1fr); align-items: end; }
+.book-spine { min-width: 44px; height: 176px; display: flex; flex-direction: column; align-items: stretch; text-align: center; border: 1px solid var(--fb-cover-muted); }
 .book-spine[data-reading] { height: 190px; border: 2px solid var(--fb-cover-ink); box-shadow: inset 0 -3px var(--fb-pitch); }
 .spine-head { background: var(--fb-blood); color: var(--fb-cover-ink); font: 600 12px/1.1 var(--fb-neon); padding: 4px 1px; }
 .spine-head small { display: block; font: 600 10px/1.1 var(--fb-label); }

@@ -3249,6 +3249,9 @@ export async function provePoster(browser, origins, fixtures, out, results, cont
         if (width === 360) assert.equal(metrics.markers[0].left, 4, id)
         assert.deepEqual([metrics.markerArt.width, metrics.markerArt.height, metrics.opener.height, metrics.weekRow.height, metrics.reading.height], [34, 22, 156, 44, 190], id)
         assert.ok(metrics.spines.every(s => s.width >= 44 && [176, 190].includes(s.height)), id)
+        const widths = metrics.spines.map(spine => spine.width)
+        assert.ok(Math.max(...widths) - Math.min(...widths) <= 1 / 64, id + ' equal-width spines')
+        assert.ok(metrics.rows.length && metrics.rows.every(height => height >= 44), id + ' contents rows')
         assert.equal(metrics.focusable, false, id)
         const button = await page.$('.more-stories')
         const bar = await button.evaluate(el => ({ width: el.offsetWidth, full: el.parentElement.offsetWidth, h: el.offsetHeight,
