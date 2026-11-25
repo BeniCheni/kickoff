@@ -84,7 +84,7 @@ export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
     <>
       {/* The hero is the one lens axis that changes the tree: Ledger's Next-up strip,
           and the Poster's anchored week of books. */}
-      {quiet ? <QuietWeek start={weekStart} active={active} now={nowUtcIso} /> : lens === 'poster' ? (
+      {quiet ? <QuietWeek start={weekStart} today={today} active={active} now={nowUtcIso} /> : lens === 'poster' ? (
         <PosterRack books={books} resting={resting} now={nowUtcIso} />
       ) : lens === 'ledger' ? (
         <NextUpStrip today={today} active={active} />
