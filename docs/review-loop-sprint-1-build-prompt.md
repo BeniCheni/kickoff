@@ -9,6 +9,11 @@ commit authors were checked against Kickoff before this was written. Beni starts
 Cursor seat of the design overhaul is waiting. Archive copy; the delivery was the fenced block
 in chat.
 
+*Noted 25 Nov 2026:* the block below asks the seat to write a Kickoff pull request as
+owner/repo#number in elenchus's README and in a fixture's title, and those references appear on
+Kickoff PR 320's timeline. Text published since names a pull request in plain text ("Kickoff PR
+320"). The block is kept as delivered.
+
 ---
 
 ````text

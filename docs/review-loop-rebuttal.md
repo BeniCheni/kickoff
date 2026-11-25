@@ -1,9 +1,11 @@
 *Archived Sun 15 Nov 2026 (TZ=America/New_York) by the Planner seat for the review-loop track,
-as Attachment B of `review-loop-planner-brief.md`. Written by the Claude Code Planner in Cowork on
-15 Nov 2026 and returned to ChatGPT for its second assessment (`review-loop-consensus-codex.md`).
-Verbatim below the rule, byte for byte from the exported Markdown, including the export's
-placeholder for the embedded diagram. Its claims were re-checked in this repository on 15 Nov
-2026; where they disagree, `review-loop-proposal.md` says so, and the proposal wins.*
+as Attachment B of `review-loop-planner-brief.md`. Written by the Claude Code Planner in Cowork
+on 15 Nov 2026 and returned to ChatGPT for its second assessment
+(`review-loop-consensus-codex.md`). Verbatim below the rule, byte for byte from the exported
+Markdown, including the export's placeholder for the embedded diagram, except that this public
+copy removes the amounts in the options table's "Added cost" column, with a note under the table
+(25 Nov 2026). Its claims were re-checked in this repository on 15 Nov 2026; where they
+disagree, `review-loop-proposal.md` says so, and the proposal wins.*
 
 ---
 

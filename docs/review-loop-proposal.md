@@ -4,6 +4,9 @@ The six-pass 360 keeps every seat, prompt and ruling it has, and gains a statele
 reads one machine-readable seat record per pass from the PR, then a GitHub-enforced gate once the
 spikes below say who may open it.
 
+*Public copy (25 Nov 2026):* every cost, price and subscription amount is removed from this file.
+Some passages also say so where they fall; the rest were reworded without one.
+
 Proposal and spike record, Sun 15 Nov 2026 (Brooklyn). Sprint 0 of the review-loop tooling track:
 spikes, the plan and the decisions. Nothing here is built; no version moves; no number is chosen.
 Written by the Planner seat (Claude Code, Opus 5.5) from a fresh read of `origin/main` at
@@ -108,7 +111,7 @@ Sprint 6 gates `loop run` like a human typing the command.
 $ claude -p "reply ok" --model haiku --effort low --output-format json
 modelUsage: { "claude-haiku-5-5": { … "canonicalModel": "claude-haiku-5-5" } }   (no effort key in the result)
 $ claude -p "reply ok" --model fable --effort xhigh --permission-mode plan --output-format json
-modelUsage: { "claude-fable-5-2": { "outputTokens": 146, "costUSD": 0.807712 } }
+modelUsage: { "claude-fable-5-2": { "outputTokens": 146, "costUSD": [removed] } }
 transcript ~/.claude/projects/<cwd-slug>/<session_id>.jsonl: "model":"claude-fable-5-2" ×4, "effort":"xhigh" ×4, "perTurnEffort":"xhigh" ×2, "permissionMode":"plan"
 $ claude -p "reply ok" --model haiku --permission-mode plan --output-format json
 modelUsage: { "claude-sonnet-5-5": … }      ← Haiku requested, Sonnet ran, exit 0
@@ -443,10 +446,11 @@ overhaul's builder is Cursor (`design-overhaul-plan.md:217`), so while an overha
 Cursor's hands this track seats no Cursor.
 
 *Since Mon 16 Nov 2026* (D5, D6 and "One repository, `BeniCheni/elenchus`", under "Rulings
-received"): the tool lives in one lasting repository, elenchus, and Kickoff runs a pinned commit
-of it. Rollback for Sprints 1 to 3 is reverting on elenchus's `main` and deleting the replay
-branches, not archiving a scratch repository, and Sprint 4 ports nothing. The sprints' first
-*Where*, *Scope* and *Rollback* lines below are kept as planned and marked where they changed.
+received"): the tool lives in one lasting repository, elenchus, and Kickoff is to run a pinned
+commit of it; that call site is part of Kickoff's Sprint 4 half, still to come. Rollback for
+Sprints 1 to 3 is reverting on elenchus's `main` and deleting the replay branches, not archiving a
+scratch repository, and Sprint 4 ports nothing. The sprints' first *Where*, *Scope* and *Rollback*
+lines below are kept as planned and marked where they changed.
 
 **Sprint 0 — this session.** Spikes, this proposal, the archives, the decision packet. No code.
 
@@ -458,7 +462,9 @@ branches, not archiving a scratch repository, and Sprint 4 ports nothing. The sp
   `ddd9a37`, **with `sync.yml` and `pages.yml` deleted in the seed commit**, or the scratch repo
   runs Kickoff's cron sync against ESPN and deploys Pages. The replay branch is then pushed
   commit by commit: `0faf606` (build), `89b8067` (Pass 1), `09324fb` (Pass 2), then `main`
-  advanced to `34d078b` and `dcb914e` (the release step). The records are transcribed by hand
+  advanced to `34d078b` and `dcb914e` (the release step). *As planned; since 16 Nov,* the tool
+  and its replay share elenchus, with code under `src/`, tests under `test/` and the replay on
+  its `replay/*` branches. The records are transcribed by hand
   from #320's comments `6880031532`, `6882281451`, `6882900669`, `6884589607` and `6884640961`.
 - *Acceptance:* T1 (status and check), T3, T9, T12, T13.
 - *Review:* fast-track, Pass 1 then Beni. Nothing here can merge anything that matters; a miss
@@ -789,8 +795,8 @@ branches, not archiving a scratch repository, and Sprint 4 ports nothing. The sp
   fixed in the same PR); `loop status` and `loop check` ported to their home (D5);
   `tests/loop/` joins the root `node` project. *As planned; since D5 (16 Nov),* nothing is
   ported. elenchus's half shipped as elenchus PR 9, and Kickoff's half is what remains: the
-  seat-record block in `pr-comment.md` and `SKILL.md`, drift items 3 and 4, and how Kickoff
-  calls the pinned tool.
+  seat-record block in `pr-comment.md` and `SKILL.md`, the sealed appendix's slot in
+  `pr-comment.md`, drift items 3 and 4, and how Kickoff calls the pinned tool.
 - *Acceptance:* T1, T3, T9 and T13 against a real Kickoff PR's records, read-only.
 - *Carried from Sprint 1:* a release artefact Kickoff can pin (finding 15: no `dist/`, no
   `prepare`, `private: true`), and a slot in `pr-comment.md` for the sealed appendix, delivered as
@@ -901,9 +907,16 @@ branches, not archiving a scratch repository, and Sprint 4 ports nothing. The sp
   a seat besides the Keychain prompt; and A7, `prep` for an adopter with no seat token, with the
   Keychain service names as configuration.
 - *Carried from Sprint 3's later rulings* (under "Rulings received"; the numbers are PR 8's):
-  25-15, deferred to Sprint 5 before the port by the third Pass 3; 25-31, the carry's tests for
-  what the standing synthesis's and the standing ruling's chains of replacements replaced, by
-  the eighth Pass 3; and 25-32's second half, by the ninth Pass 3.
+  - 25-15 (third Pass 3, deferred before the port): `status` makes no head compare, so the
+    head re-read that `check` asks for comes before the pass `status` names. Sprint 5 makes
+    `status` say so, or compare the head itself.
+  - 25-31 (eighth Pass 3): tests that the carry survives for what the standing synthesis's and
+    the standing ruling's chains of replacements replaced. Sprint 3 tested every posting outside
+    those chains.
+  - 25-32's second half (eighth Pass 3, confirmed by the ninth): tests for a carry lost only
+    where a source differs from the default in two or more distinctions at once. The default is
+    an on-time v1.2 posting that no correction replaced, at a range the chain does not return
+    to, naming the id blocking and open.
 - *Carried from Sprint 4's review* (Beni, 24 Nov, under "Rulings received"; the numbers are
   elenchus PR 9's): 6, `prep` for a Grok seat and what `read_only_seat` means for xai, with A7;
   8, trailer order for integer-like vendor names; separate push URLs (Amendment 2); and 25-1 to
@@ -1104,8 +1117,8 @@ for Cursor (S7).
   `~/.cursor/chats/` and `~/.cursor/projects/private-tmp-claude-501-rlp-spike-*`),
   `~/.opencodereview/last-update-check`, and `pull/320`, `pull/316` and `pull/247` fetched into
   the main checkout's object store with no ref written. Claude spend at list prices was
-  small, most of it the one Fable 5.2 run (amounts removed from the public copy, 25 Nov 2026). Codex
-  and Cursor drew on plan quota.
+  small, and the one Fable 5.2 run was part of it (amounts removed from the public copy, 25 Nov
+  2026). Codex and Cursor drew on plan quota.
 
 ## Rulings received
 
@@ -1987,6 +2000,13 @@ for Cursor (S7).
     `git diff --name-status`. Open Code Review comes back with O2 if path-scoped rules are wanted.
   - **D11: No.** This file stays the plan of record, with no sprint issues. Revisit if the track
     grows past one open sprint.
+- **Vendor commit identities in the public archive (Beni, Wed 25 Nov 2026, "Exception").** PR
+  328's cold read and re-read flagged the email addresses in its archives, under a brief that
+  said "no email address". The Planner asked whether to keep or redact them. Every one is a
+  vendor's public commit identity (Codex's, Claude's and Cursor's noreply addresses, one in a
+  fixture) or `git@github.com`. They stay, byte for byte, because the studio's commit rule uses
+  them and several archived forms publish their hashes. The rule against publishing email
+  addresses still holds for everyone's personal addresses.
 D4 is withdrawn, and D12 is Pilot (17 Nov).
 
 ## Found after the spikes (15 Nov 2026, afternoon)

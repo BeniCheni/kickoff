@@ -1,7 +1,8 @@
 *Archived Sun 15 Nov 2026 (TZ=America/New_York) by the Planner seat (Claude Code, Opus 5.5) that
 ran it. The brief was written by the Cowork Planner and delivered in chat on 15 Nov 2026, with two
 addenda the same day (four references reviewed; TypeSafe Jev). All three are verbatim below the
-rule, in the order they arrived. Attachment A sits inside the brief as delivered and is also
+rule, in the order they arrived, except that this public copy removes one price, marked where it
+was (25 Nov 2026). Attachment A sits inside the brief as delivered and is also
 archived as `review-loop-consensus-codex.md`; Attachment B, the exported Markdown file, is archived
 as `review-loop-rebuttal.md`. The plan of record this brief asks for is `review-loop-proposal.md`.*
 
