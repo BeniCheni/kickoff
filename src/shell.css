@@ -1606,8 +1606,10 @@ button.register-row {
 .cover-band [data-voice='amber'] { color: var(--fb-amber); }
 .band-summary, .band-unset { margin-block-start: 4px; }
 
-.poster-rack { width: 100vw; margin-inline-start: calc(50% - 50vw); margin-block-end: 12px; overflow: clip; }
-.rack-faces { --face: min(calc(100vw - 60px), 360px); position: relative; height: 413px; overflow: hidden; }
+/* The body’s content width excludes a space-taking browser scrollbar. */
+body:has(.poster-rack) { container-type: inline-size; }
+.poster-rack { width: 100cqw; margin-inline-start: calc(50% - 50cqw); margin-block-end: 12px; overflow: clip; }
+.rack-faces { --face: min(calc(100cqw - 60px), 360px); position: relative; height: 413px; overflow: hidden; }
 .rack-slide { width: var(--face); height: 100%; position: absolute; left: 50%; transform: translateX(-50%); }
 .rack-slide[data-position='left'] { left: calc(50% - var(--face) - 8px); }
 .rack-slide[data-position='right'] { left: calc(50% + var(--face) + 8px); }
@@ -1657,7 +1659,7 @@ button.register-row {
 
 .book-shelf { margin-block: 20px; background: var(--fb-cover-black); color: var(--fb-cover-ink); padding-block: 12px; }
 .book-shelf h2 { padding: 0 9px 12px; font: 600 11px/1.4 var(--fb-label); letter-spacing: .1em; }
-.shelf-spines { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(44px, 1fr); align-items: end; }
+.shelf-spines { overflow-x: auto; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(44px, 1fr); align-items: end; }
 .book-spine { min-width: 44px; height: 176px; display: flex; flex-direction: column; align-items: stretch; text-align: center; border: 1px solid var(--fb-cover-muted); }
 .book-spine[data-reading] { height: 190px; border: 2px solid var(--fb-cover-ink); box-shadow: inset 0 -3px var(--fb-pitch); }
 .spine-head { background: var(--fb-blood); color: var(--fb-cover-ink); font: 600 12px/1.1 var(--fb-neon); padding: 4px 1px; }
@@ -1669,7 +1671,7 @@ button.register-row {
 .spine-next { margin: auto 2px; font: 400 10px/1.35 var(--fb-book); }
 .shelf-note { padding: 9px; font: 400 11px/1.5 var(--fb-mono); color: var(--fb-cover-muted); }
 @media (max-width: 400px) {
-  .book-shelf:has(.book-spine:nth-child(8)) { width: calc(100vw - 8px); margin-inline-start: calc(50% - 50vw + 4px); }
+  .book-shelf:has(.book-spine:nth-child(8)) { width: calc(100cqw - 8px); margin-inline-start: calc(50% - 50cqw + 4px); }
 }
 
 .quiet-week { margin-bottom: 12px; background: var(--fb-cover-black); color: var(--fb-cover-ink); }

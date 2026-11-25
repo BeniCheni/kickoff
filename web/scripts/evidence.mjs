@@ -3201,6 +3201,36 @@ function readBand(slide) {
   }
 }
 
+/** The ordinary matrix uses overlay scrollbars. Reserve a real gutter here so
+ * a viewport-width bleed or a wide shelf cannot silently enlarge the document. */
+export async function provePosterScrollbar(origins, week, results) {
+  const browser = await puppeteer.launch({
+    executablePath: chrome, headless: true, ignoreDefaultArgs: ['--hide-scrollbars'],
+  })
+  try {
+    for (const [app, origin] of Object.entries(origins)) {
+      const id = app + '-poster-classic-scrollbar'
+      const { page, context, errors } = await openPage(browser, origin + '/?date=' + week, 'light', 360)
+      try {
+        await page.addStyleTag({ content: 'html::-webkit-scrollbar { width: 15px; height: 15px } html::-webkit-scrollbar-thumb { background: gray }' })
+        const metrics = await page.evaluate(() => {
+          const root = document.documentElement
+          const rack = document.querySelector('.poster-rack').getBoundingClientRect()
+          window.scrollTo(9999, 0)
+          return { gutter: innerWidth - root.clientWidth, client: root.clientWidth, width: root.scrollWidth,
+            travel: scrollX, rackLeft: rack.left, rackRight: rack.right, spines: document.querySelectorAll('.book-spine').length }
+        })
+        assert.equal(metrics.gutter, 15, id + ' must reserve the scrollbar')
+        assert.equal(metrics.spines, 8, id + ' must include the full shelf')
+        assert.deepEqual([metrics.width, metrics.travel, metrics.rackLeft, metrics.rackRight],
+          [metrics.client, 0, 0, metrics.client], id)
+        assert.deepEqual(errors, [], id)
+        results.push({ id, ...metrics })
+      } finally { await context.close() }
+    }
+  } finally { await browser.close() }
+}
+
 export async function provePoster(browser, origins, fixtures, out, results, contrasts) {
   const days = Map.groupBy(fixtures, f => brooklynDate(f.kickoffUtc))
   const weeks = Map.groupBy(fixtures, f => startOfWeek(brooklynDate(f.kickoffUtc)))
@@ -3209,6 +3239,9 @@ export async function provePoster(browser, origins, fixtures, out, results, cont
     Array.from({ length: 7 }, (_, i) => days.has(addDays(monday, i))).every(Boolean))
   assert.ok(fullUefa, 'No UEFA week with seven books')
   const heavy = fullUefa[0]
+  const fullShelf = [...weeks.keys()].find(monday => Array.from({ length: 7 }, (_, i) => days.has(addDays(monday, i))).every(Boolean) && weeks.has(addDays(monday, 7)))
+  assert.ok(fullShelf, 'No week with seven spines and a next volume')
+  await provePosterScrollbar(origins, fullShelf, results)
   for (const [app, origin] of Object.entries(origins)) {
     for (const { kind, date, fixtures: day } of selectBandDays(days)) {
       const id = app + '-band-' + kind
