@@ -1,6 +1,6 @@
 import { unsettledStatus, type Fixture } from './schema'
-import { COMPETITIONS, competitionRank, type CompetitionKey } from './competitions'
-import { brooklynDate, fixtureTimes } from './time'
+import type { CompetitionKey } from './competitions'
+import { addDays, brooklynDate, fixtureTimes, posterDayTitle, startOfWeek, weekdayShort } from './time'
 
 /**
  * Pure per-lens data shaping. Everything here takes fixtures as arguments (never importing
@@ -15,38 +15,7 @@ export type DayInfo = {
   /** Total on the date regardless of filters — distinguishes "hidden" from "nothing on". */
   total: number
   isToday: boolean
-}
-
-/** Marquee = any non-domestic competition; there is no per-fixture importance signal. */
-export function isMarquee(key: CompetitionKey): boolean {
-  return COMPETITIONS[key].group !== 'domestic'
-}
-
-/** Tie-break order: marquee beats domestic, then display rank, then key — deterministic. */
-function beats(a: CompetitionKey, b: CompetitionKey): boolean {
-  if (isMarquee(a) !== isMarquee(b)) return isMarquee(a)
-  const ra = competitionRank(a)
-  const rb = competitionRank(b)
-  if (ra !== rb) return ra < rb
-  return a < b
-}
-
-/**
- * The day's dominant competition — the one with the most fixtures, ties breaking toward
- * the marquee (non-domestic) one. Drives Poster's duotone header and hero rails.
- */
-export function dominantCompetition(list: readonly Fixture[]): CompetitionKey | null {
-  const counts = new Map<CompetitionKey, number>()
-  for (const f of list) counts.set(f.competition, (counts.get(f.competition) ?? 0) + 1)
-  let best: CompetitionKey | null = null
-  let bestCount = 0
-  for (const [key, count] of counts) {
-    if (best === null || count > bestCount || (count === bestCount && beats(key, best))) {
-      best = key
-      bestCount = count
-    }
-  }
-  return best
+  closed?: boolean
 }
 
 /**
@@ -69,43 +38,25 @@ export function kickoffBounds(
   return first && last ? { first, last } : null
 }
 
-/**
- * The Poster hero's mono sub-line. A one-kickoff slate collapses the range to a single
- * `KICKOFF h:mm` — FIRST and LAST wearing the same time is a range that isn't one. A
- * future matchday's slate counts `MATCHES`, not `REMAINING`: nothing about a day that
- * hasn't started is remaining. The count is every fixture on the slate; the FIRST/LAST
- * range can only be drawn from league-set times, so when the two disagree the gap is named
- * — `N TBC` — rather than left for the reader to notice that the count outruns the range
- * (docs/v0.3.0-ideas.md row 13, on the front door since v0.2.2). A slate of only TBC times
- * gets the count, the TBC count and no times.
- */
-export function slateSubLine(slate: readonly Fixture[], isTonight: boolean): string {
-  const parts = [`${slate.length} ${isTonight ? 'REMAINING' : 'MATCHES'}`]
-  const tbc = slate.filter((f) => f.timeConfidence !== 'exact').length
-  if (tbc > 0) parts.push(`${tbc} TBC`)
-  const bounds = kickoffBounds(slate)
-  if (bounds) {
-    const time = (f: Fixture) => fixtureTimes(f.kickoffUtc, f.venueTz).brooklyn.time
-    if (bounds.first.id === bounds.last.id) parts.push(`KICKOFF ${time(bounds.first)}`)
-    else parts.push(`FIRST ${time(bounds.first)}`, `LAST ${time(bounds.last)}`)
-  }
-  return parts.join(' · ')
+/** The edition date is a Brooklyn calendar day. Only the shown, credible kickoffs
+ * contribute a clock, while closure describes the entire unfiltered matchday. */
+export function bookDateLine(date: string, shown: readonly Fixture[], closed: boolean) {
+  const count = matchCount(shown.length)
+  const unset = unsetKickoffs(shown)
+  const first = kickoffBounds(shown)?.first
+  let ending = ''
+  if (closed && shown.length) ending = 'FULL TIME'
+  else if (first) ending = 'FIRST ' + fixtureTimes(first.kickoffUtc, first.venueTz).brooklyn.time + ' ET'
+  else if (unset) ending = 'FIRST KICKOFF NOT SET'
+  return { date: posterDayTitle(date).toUpperCase(), count, ending, unset }
 }
 
-/** Poster day headers count all shown fixtures, while FIRST can only name a league-set
- * time. State the TBC count explicitly, using the same confidence rule as the hero. */
-export function posterSubLine(fixtures: readonly Fixture[]): string {
-  const leagues = new Set(fixtures.map((f) => f.competition)).size
-  const noun = fixtures.every(f => COMPETITIONS[f.competition].group !== 'domestic') ? 'COMPETITION' : 'LEAGUE'
-  const parts = [
-    `${fixtures.length} ${fixtures.length === 1 ? 'MATCH' : 'MATCHES'}`,
-    `${leagues} ${noun}${leagues === 1 ? '' : 'S'}`,
-  ]
-  const tbc = fixtures.filter((f) => f.timeConfidence !== 'exact').length
-  if (tbc > 0) parts.push(`${tbc} TBC`)
-  const bounds = kickoffBounds(fixtures)
-  if (bounds) parts.push(`FIRST KICKOFF ${fixtureTimes(bounds.first.kickoffUtc, bounds.first.venueTz).brooklyn.time}`)
-  return parts.join(' · ')
+export function matchCount(count: number): string {
+  return count + (count === 1 ? ' MATCH' : ' MATCHES')
+}
+
+export function unsetKickoffs(fixtures: readonly Fixture[]): number {
+  return fixtures.filter(f => !unsettledStatus(f.status) && f.timeConfidence !== 'exact').length
 }
 
 /**
@@ -199,19 +150,9 @@ export function hotFixtureIds(
   return hot
 }
 
-/**
- * Poster's proportional-loudness fold: days with more than two shown matches get the
- * full-bleed duotone header, lighter and fully filtered days keep an inline header.
- * Only consecutive days without fixtures in the snapshot share a hairline line.
- */
-export type PosterBlock =
-  | { kind: 'big'; date: string; isToday: boolean; hidden?: number; fixtures: Fixture[]; dominant: CompetitionKey }
-  | { kind: 'small'; date: string; isToday: boolean; hidden?: number; fixtures: Fixture[] }
-  | { kind: 'gap'; dates: string[] }
-
 /** One group per fixture-bearing day, or per uninterrupted run of empty days. */
-export function groupWeekDays(days: readonly DayInfo[]): DayInfo[][] {
-  const groups: DayInfo[][] = []
+export function groupWeekDays<T extends { total: number }>(days: readonly T[]): T[][] {
+  const groups: T[][] = []
   for (const day of days) {
     const previous = groups.at(-1)
     if (day.total === 0 && previous?.[0]?.total === 0) previous.push(day)
@@ -220,14 +161,104 @@ export function groupWeekDays(days: readonly DayInfo[]): DayInfo[][] {
   return groups
 }
 
-export function planPosterWeek(days: readonly DayInfo[]): PosterBlock[] {
-  return groupWeekDays(days).map(group => {
-    const day = group[0]!
-    if (day.total === 0) {
-      return { kind: 'gap', dates: group.map(d => d.date) }
+/** Each slot owns its fiction. Counts, dates and match states come from the snapshot. */
+export const COVER_LIBRARY = {
+  fri: ['The Fifth Minute', 'The lights came back on in the ninety-fifth minute. So did something else.'],
+  sat: ['The Valley Doors', 'Every door was left open that Saturday. The whistle did not close them all.'],
+  sun: ['The Tower Counts', 'The tower counts its bells every Sunday. It has never been wrong.'],
+  mon: ['The Empty Hallways', 'It is only Monday. The week has not finished with you.'],
+  midweek: ['The Night Between', 'The weekend is days away. Something could not wait.'],
+  firstNight: ['The First Night', 'Grounds lit at once, a continent apart. Something walks between them.'],
+  secondNight: ['The Second Night', 'It walked between them all night. It is still walking.'],
+  europa: ['The Far Windows', 'Windows lit across the map. Count them again. One is watching back.'],
+  closed: ['The Long Whistle', 'Every whistle blew, and every one was answered. You made it to morning.'],
+  quiet: ['A Quiet Week', 'A no-bet week is a successful outcome.'],
+  register: ['The Register', 'Every name goes in. Some are already falling.'],
+} as const
+
+type DaySlot = Exclude<keyof typeof COVER_LIBRARY, 'closed' | 'quiet' | 'register'>
+export type MatchdayBook = {
+  date: string
+  slot: DaySlot
+  closed: boolean
+  shown: Fixture[]
+}
+
+export function isFinal(fixture: Fixture): boolean {
+  return fixture.status === 'full_time' || fixture.status === 'after_extra_time' || fixture.status === 'after_penalties'
+}
+
+/** The caller supplies one Brooklyn week of unfiltered, display-ordered dates.
+ * Hidden UCL nights still determine which cover a later night takes. */
+export function posterBooks(
+  week: readonly { date: string; fixtures: readonly Fixture[] }[],
+  active: ReadonlySet<CompetitionKey>,
+): MatchdayBook[] {
+  const books: MatchdayBook[] = []
+  let seenChampionsLeague = false
+  for (const { date, fixtures } of [...week].sort((a, b) => a.date.localeCompare(b.date))) {
+    let slot: DaySlot
+    if (fixtures.some(f => f.competition === 'ucl')) {
+      slot = seenChampionsLeague ? 'secondNight' : 'firstNight'
+      seenChampionsLeague = true
+    } else if (fixtures.some(f => f.competition === 'uel' || f.competition === 'uecl')) {
+      slot = 'europa'
+    } else {
+      const weekdays: Record<string, DaySlot> = { Fri: 'fri', Sat: 'sat', Sun: 'sun', Mon: 'mon' }
+      slot = weekdays[weekdayShort(date)] ?? 'midweek'
     }
-    const fields = { date: day.date, isToday: day.isToday, fixtures: day.shown, hidden: day.total - day.shown.length }
-    const dominant = dominantCompetition(day.shown)
-    return day.shown.length > 2 && dominant !== null ? { kind: 'big', ...fields, dominant } : { kind: 'small', ...fields }
+    const shown = fixtures.filter(f => active.has(f.competition))
+    if (shown.length) books.push({ date, slot, shown, closed: fixtures.every(isFinal) })
+  }
+  return books
+}
+
+export function catalogueNumber(date: string): string {
+  return 'FT-' + date.slice(5, 7) + date.slice(8, 10)
+}
+
+/** Stop before the first shared instant, even across competitions. All remaining
+ * credible kickoffs become one count, while placeholders keep their own count. */
+export function coverBand(shown: readonly Fixture[]) {
+  const eligible = shown.filter(f => f.timeConfidence === 'exact' && !unsettledStatus(f.status))
+    .sort((a, b) => Date.parse(a.kickoffUtc) - Date.parse(b.kickoffUtc))
+  let named = 0
+  while (named < 3 && named < eligible.length) {
+    const next = eligible[named + 1]
+    if (next && Date.parse(eligible[named]!.kickoffUtc) === Date.parse(next.kickoffUtc)) break
+    named++
+  }
+  const rest = eligible.slice(named)
+  let summary = ''
+  const from = rest[0]
+  if (from) {
+    summary = '+ ' + rest.length + ' more'
+    if (rest.every(isFinal)) summary += rest.length === 1 ? ' result' : ' results'
+    else summary += ', from ' + fixtureTimes(from.kickoffUtc, from.venueTz).brooklyn.time + ' ET'
+  }
+  return { named: eligible.slice(0, named), summary, unset: unsetKickoffs(shown) }
+}
+
+export function restingBook(books: readonly MatchdayBook[], week: string, today: string, now: string) {
+  if (week === startOfWeek(today)) {
+    const { date } = nextMatchdaySelection(books.flatMap(book => book.shown), today, now)
+    if (date) return date
+  }
+  return (books.find(book => !book.closed) ?? books.at(-1))?.date ?? 'register'
+}
+
+export function bookWeek(start: string, byDate: ReadonlyMap<string, readonly Fixture[]>) {
+  return Array.from({ length: 7 }, (_, i) => {
+    const date = addDays(start, i)
+    const fixtures = byDate.get(date) ?? []
+    return { date, fixtures, total: fixtures.length }
+  })
+}
+
+export function shelfGaps(week: readonly { date: string; total: number }[]) {
+  const short = (date: string) => weekdayShort(date).toUpperCase() + ' ' + Number(date.slice(8))
+  return groupWeekDays(week).filter(group => group[0]!.total === 0).map(group => {
+    const from = short(group[0]!.date)
+    return (group.length === 1 ? from : from + ' – ' + short(group.at(-1)!.date)) + ' · no books this week'
   })
 }

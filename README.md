@@ -23,22 +23,21 @@
 **A football fixtures tracker that would rather admit what it doesn't know than tell you a
 confident lie. It grew a video studio that publishes AI-generated cat footballers under the same
 rule, and it is about to put on a horror paperback's clothes. It's also an open notebook on how
-one person ships software with three AI vendors building, reviewing and arguing with each other's
-work.**
+one person ships software with two AI vendors building and reviewing each other's work.**
 
 You don't need to follow football to read this repo. The football is the excuse. A *fixture* is
 a scheduled match, *kickoff* is when it starts, and a *sportsbook* is a betting site that prices
 those matches; that is all the jargon you need. The interesting part is the workflow: every line
-of the app was written by an AI coding agent, every feature goes through a pull request that a
-*different* vendor's agent reviews cold, the builder gets to argue back in writing, and a human
-rules on whatever is still contested.
+of the app was written by an AI coding agent. Review depth follows the risk of the change. Every
+change but the sync bot's gets a cold read from a different vendor. For sensitive changes, the
+builder answers in writing and Beni rules on whatever is still contested.
 
 | If you want | Go here |
 |---|---|
 | The live demo | **[benicheni.github.io/kickoff](https://benicheni.github.io/kickoff/)** |
 | The full-stack app on Vercel *(sign-in required for now)* | **[kickoff-git-main-beni-von-chenis-projects.vercel.app](https://kickoff-git-main-beni-von-chenis-projects.vercel.app/?tab=moments)** |
 | The new look *(work in progress)*, and how it was designed | [The look](#%EF%B8%8F-the-look-a-horror-paperback-that-never-existed) and the [design record](docs/design/README.md) |
-| How three AI vendors build one repo | [How it gets built](#-how-it-gets-built) |
+| How two AI vendors build one repo | [How it gets built](#-how-it-gets-built) |
 | Why a fixtures app has a motto | [Why this exists](#-why-this-exists) |
 | The map and the data flow | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) |
 
@@ -333,13 +332,30 @@ passing tests.
 a *build spec* and a *review prompt*, each generated from a fresh read of the repo, never from
 anyone's memory of it.
 
-**Every feature and fix gets a cross-vendor review**, in six passes:
+Since 22 November 2026, a pull request takes the highest tier its changes reach. A PR the
+scheduled sync workflow opens from `sync/scheduled`, containing only `src/data/**` and
+`docs/sync-digest.md`, takes Tier 0. The builder names the tier and the file that sets it in the
+PR body until a labeler exists. Any reviewer can raise the tier. Only Beni can lower it.
+
+| Tier | Changes | Review and merge |
+|---|---|---|
+| 0 · Generated | Scheduled sync PRs as described above | The workflow merges after `verify` passes. |
+| 1 · Docs | Prose in `docs/` or this README, outside Tier 3 | One cold read by the other vendor, then Beni merges. A planned automated read will run only on branches in this repo. |
+| 2 · Code | App or tooling code, and anything no other tier covers | One report-only cold read by the other vendor. The builder fixes findings. |
+| 3 · Sensitive | Data honesty, sync, workflows, schema, clocks, standing agent instructions, releases and numbering | The six-pass 360, with the merge on Beni's word. |
+
+The Tier 2 reviewer runs `/kickoff-pr-review`, re-reads each round, and merges only on
+“Mergeable now” with `verify` green at the tip.
+
+[AGENTS.md](AGENTS.md#review-tiers) lists the Tier 3 paths. Beni merges and tags every release.
+
+**Tier 3 gets the six-pass 360.**
 
 | Pass | Who | What they leave behind |
 |---|---|---|
-| 0 · Brief | The product-manager seat | The review prompt, with the builder's claims sealed in an appendix marked "verify independently" |
-| 1 · Cold review | The vendor that did **not** build it | Findings it reproduced, fix commits, one PR comment |
-| 1.5 · Rebuttal brief | The PM seat | Each finding packaged for the builder to accept, contest, or accept-but-contest-the-characterisation |
+| 0 · Brief | The seat that briefs the review | The review prompt, with the builder's claims sealed in an appendix marked "verify independently" |
+| 1 · Cold review | The vendor that did **not** build it | Findings it reproduced, one PR comment |
+| 1.5 · Rebuttal brief | The seat that briefs the review | Each finding packaged for the builder to accept, contest, or accept-but-contest-the-characterisation |
 | 2 · Rebuttal | The builder | Its answers, in code |
 | 2.5 · Synthesis | A seat that wrote neither the build nor the fixes | Every number re-run at the tip, and a merge gate |
 | 3 · Adjudication | A human | Rules on whatever is still contested, and clicks merge |
@@ -349,23 +365,25 @@ a live technical claim: the reviewer said a malformed team id "can only miss the
 builder reproduced the opposite, one team borrowing another's league position, and fixed it. One
 reviewer would have merged that.
 
-**The seats are routed by what a mistake would cost, not by brand:**
+**Codex is the default builder as of 22 November 2026.** Claude builds when Beni routes a PR to
+it. In both columns below, Pass 1 reports findings and the builder commits the fixes.
 
-| Seat | Who sits in it |
-|---|---|
-| Product manager / scoping / the prompts | Claude (Cowork, then Claude Code) |
-| Builder | Cursor (Grok 4.7) and Codex (GPT-6 and 6.1), by task shape and by quota |
-| Cold reviewer, Pass 1 | Claude Code (Fable 5.2, extra effort) |
-| Synthesis and merge, Passes 2.5 to 3 | Codex (GPT-6.1 Sol), on a human's word |
-| Designer | Claude Design, against the *Fergie Time* design system, with pen.dev as the sketchpad |
-| CEO | A human, who rules on every contested point and every release |
+| Seat | When Codex builds (default) | When Claude builds |
+|---|---|---|
+| Product manager / scoping / build brief | Claude (Cowork, then Claude Code) | Claude (Cowork, then Claude Code) |
+| Passes 0 and 1.5 | The PM seat | Codex (GPT-6.2 Astra) |
+| Build, Pass 2 and fix rounds | Codex (GPT-6.2 Sol or Astra, as briefed) | Claude Code (Opus 5.5) |
+| Pass 1 · Cold review | Fresh Claude Code session (Fable 5.2), report-only | Fresh Codex session (GPT-6.2 Astra), report-only |
+| Pass 2.5 · Synthesis | Fresh Claude Code session (Opus 5.5), writes nothing | Fresh Codex session (GPT-6.2 Sol), read-only |
+| Designer | Claude Design against *Fergie Time*, using pen.dev | Claude Design against *Fergie Time*, using pen.dev |
+| CEO / Pass 3 | Beni adjudicates and gives the word to merge | Beni adjudicates and gives the word to merge |
 
 **Verification is measured, never admired.** A review is not "it looks fine". It's 96 browser
 cells across two apps, three tabs, two lenses, two themes and four widths, each checked for
 sideways overflow; a fix reproduced red against the commit before it and green after. Screenshots are set
 to a viewport before capture, because one clipped screenshot once cost a whole review pass
 proving a bug that didn't exist. The repo skills that encode all this:
-[`/kickoff-pr-review`](.claude/skills/kickoff-pr-review/) for the six passes, and
+[`/kickoff-pr-review`](.claude/skills/kickoff-pr-review/) for cold review and the Tier 3 cycle, and
 [`kickoff-design-studio`](.agents/skills/kickoff-design-studio/) and
 [`kickoff-design-review`](.agents/skills/kickoff-design-review/) for design.
 
@@ -395,12 +413,16 @@ The [demo](https://benicheni.github.io/kickoff/) needs nothing. To run it yourse
 
 ```bash
 npm install
-npm run dev              # localhost:5173, hot reload
-npm test                 # vitest, two projects: pure layer under node, component wiring under jsdom
+npm run dev
+npm test
 npm run typecheck
-npm run build            # static bundle in dist/
-npm run sync -- --check  # fetch ESPN, diff against the snapshot, write nothing
+npm run build
+npm run sync -- --check
 ```
+
+The dev server hot-reloads at `localhost:5173`. Vitest checks the pure layer under Node and
+component wiring under jsdom. The build writes to `dist/`. The sync check fetches ESPN and diffs
+against the snapshot without writing it.
 
 The fixture snapshot is committed, so the app works offline from a clone. `npm run sync`
 refreshes it from ESPN's public scoreboard (no key, no account) and writes to the repo, so read

@@ -1,23 +1,27 @@
-import { stillToKickOff as snapshotGate } from '../src/lib/fixtures'
+import { BY_DATE, stillToKickOff as snapshotGate } from '../src/lib/fixtures'
 import { describe, expect, it } from 'vitest'
 import type { Fixture } from '../src/lib/schema'
-import type { CompetitionKey } from '../src/lib/competitions'
+import { COMPETITION_KEYS, type CompetitionKey } from '../src/lib/competitions'
 import {
+  COVER_LIBRARY,
+  catalogueNumber,
+  posterBooks,
   LIVE_WINDOW_MS,
   nextMatchdaySelection,
   stillToKickOff,
   hasKickedOff,
   believablyLive,
   staleLiveIds,
-  dominantCompetition,
   hotFixtureIds,
   kickoffBounds,
   nextKickoffId,
-  planPosterWeek,
-  posterSubLine,
-  slateSubLine,
+  groupWeekDays,
+  bookDateLine,
   type DayInfo,
 } from '../src/lib/lensSelectors'
+
+import { startOfWeek, weekdayShort } from '../src/lib/time'
+import { edgeFixture } from './fixtures/edgeFixtures'
 
 let seq = 0
 function fx(over: Partial<Fixture> & { competition: CompetitionKey }): Fixture {
@@ -39,55 +43,48 @@ function day(shown: Fixture[], over: Partial<DayInfo> = {}): DayInfo {
   return { date: '2026-08-30', shown, total: shown.length, isToday: false, ...over }
 }
 
+function dateLine(shown: Fixture[], closed = false) {
+  return bookDateLine('2026-08-30', shown, closed)
+}
+
 describe('Poster day-header count versus league-set times', () => {
   it('names mixed exact/TBC counts and ignores the placeholder instant for FIRST', () => {
     const exact = fx({ competition: 'pl', kickoffUtc: '2026-09-05T19:30:00.000Z' })
     const tbc = fx({ competition: 'laliga', kickoffUtc: '2026-09-05T12:00:00.000Z', timeConfidence: 'round_placeholder' })
-    expect(posterSubLine([tbc, exact])).toBe('2 MATCHES · 2 LEAGUES · 1 TBC · FIRST KICKOFF 3:30 PM')
+    expect(dateLine([tbc, exact])).toMatchObject({ count: '2 MATCHES', unset: 1, ending: 'FIRST 3:30 PM ET' })
   })
   it('an all-TBC day has counts but no invented FIRST time', () => {
     const tbc = fx({ competition: 'pl', timeConfidence: 'round_placeholder' })
     const tbd = fx({ competition: 'pl', timeConfidence: 'tbd' })
-    expect(posterSubLine([tbc, tbd])).toBe('2 MATCHES · 1 LEAGUE · 2 TBC')
+    expect(dateLine([tbc, tbd])).toMatchObject({ count: '2 MATCHES', unset: 2, ending: 'FIRST KICKOFF NOT SET' })
   })
   it('postponed, cancelled, suspended and abandoned exact times do not become FIRST or get counted as TBC', () => {
-    expect(posterSubLine([
+    expect(dateLine([
       fx({ competition: 'pl', status: 'postponed' }),
       fx({ competition: 'pl', status: 'cancelled' }),
       fx({ competition: 'pl', status: 'suspended' }),
       fx({ competition: 'pl', status: 'abandoned' }),
-    ])).toBe('4 MATCHES · 1 LEAGUE')
+    ])).toMatchObject({ count: '4 MATCHES', unset: 0, ending: '' })
   })
   it('retains singular labels for a one-fixture input', () => {
-    expect(posterSubLine([fx({ competition: 'pl' })])).toBe('1 MATCH · 1 LEAGUE · FIRST KICKOFF 1:00 PM')
+    expect(dateLine([fx({ competition: 'pl' })])).toMatchObject({ count: '1 MATCH', ending: 'FIRST 1:00 PM ET' })
   })
 })
 
-describe('dominantCompetition', () => {
-  it('picks the competition with the most fixtures that day', () => {
-    const list = [fx({ competition: 'pl' }), fx({ competition: 'pl' }), fx({ competition: 'laliga' })]
-    expect(dominantCompetition(list)).toBe('pl')
-  })
-
-  it('breaks a tie toward the marquee (non-domestic) competition', () => {
-    const list = [
-      fx({ competition: 'pl' }),
-      fx({ competition: 'pl' }),
-      fx({ competition: 'ucl' }),
-      fx({ competition: 'ucl' }),
-    ]
-    expect(dominantCompetition(list)).toBe('ucl')
-    // ...regardless of which side of the list the marquee sits on.
-    expect(dominantCompetition([...list].reverse())).toBe('ucl')
-  })
-
-  it('is deterministic on an all-domestic tie (display rank, then key)', () => {
-    const list = [fx({ competition: 'pl' }), fx({ competition: 'laliga' })]
-    expect(dominantCompetition(list)).toBe(dominantCompetition([...list].reverse()))
-  })
-
-  it('returns null for an empty day', () => {
-    expect(dominantCompetition([])).toBeNull()
+describe('a matchday owns one slot whatever the competition counts', () => {
+  const all = new Set(COMPETITION_KEYS)
+  function slot(fixtures: Fixture[]) {
+    return posterBooks([{ date: '2026-08-30', fixtures }], all)[0]?.slot
+  }
+  it('lets one European fixture determine the slot even on a mainly domestic day', () => {
+    const leagues = [fx({ competition: 'pl' }), fx({ competition: 'pl' })]
+    expect(slot(leagues)).toBe('sun')
+    expect(slot([...leagues, fx({ competition: 'uecl' })])).toBe('europa')
+    const mixed = [...leagues, fx({ competition: 'ucl' }), fx({ competition: 'uel' })]
+    expect(slot(mixed)).toBe('firstNight')
+    expect(slot(mixed.reverse())).toBe('firstNight')
+    expect(slot(leagues.reverse())).toBe('sun')
+    expect(slot([])).toBeUndefined()
   })
 })
 
@@ -145,29 +142,29 @@ describe('kickoffBounds', () => {
   })
 })
 
-describe('slateSubLine', () => {
-  it('renders the FIRST/LAST range for a multi-kickoff slate', () => {
+describe('cover date lines', () => {
+  it('names only the first kickoff on a multi-kickoff day', () => {
     const early = fx({ competition: 'pl', kickoffUtc: '2026-08-30T17:00:00.000Z' })
     const late = fx({ competition: 'laliga', kickoffUtc: '2026-08-30T19:30:00.000Z' })
-    expect(slateSubLine([early, late], true)).toBe('2 REMAINING · FIRST 1:00 PM · LAST 3:30 PM')
+    expect(dateLine([early, late])).toMatchObject({ count: '2 MATCHES', unset: 0, ending: 'FIRST 1:00 PM ET' })
   })
 
-  it('collapses a one-kickoff slate to a single time — never FIRST and LAST of the same match', () => {
+  it('names the single kickoff in Brooklyn time', () => {
     const only = fx({ competition: 'pl', kickoffUtc: '2026-08-31T00:00:00.000Z' })
-    expect(slateSubLine([only], true)).toBe('1 REMAINING · KICKOFF 8:00 PM')
+    expect(dateLine([only])).toMatchObject({ count: '1 MATCH', unset: 0, ending: 'FIRST 8:00 PM ET' })
   })
 
   it('says MATCHES, not REMAINING, about a future matchday', () => {
     const a = fx({ competition: 'pl', kickoffUtc: '2026-09-01T17:00:00.000Z' })
     const b = fx({ competition: 'pl', kickoffUtc: '2026-09-01T19:00:00.000Z' })
-    expect(slateSubLine([a, b], false)).toBe('2 MATCHES · FIRST 1:00 PM · LAST 3:00 PM')
+    expect(dateLine([a, b])).toMatchObject({ count: '2 MATCHES', unset: 0, ending: 'FIRST 1:00 PM ET' })
   })
 
   it('gives an all-TBC slate its count, its TBC count and no invented times', () => {
     const tbc = fx({ competition: 'ligue1', timeConfidence: 'round_placeholder' })
-    expect(slateSubLine([tbc], true)).toBe('1 REMAINING · 1 TBC')
+    expect(dateLine([tbc])).toMatchObject({ count: '1 MATCH', unset: 1, ending: 'FIRST KICKOFF NOT SET' })
     const tbd = fx({ competition: 'ligue1', timeConfidence: 'tbd', kickoffUtc: '2026-09-01T12:00:00.000Z' })
-    expect(slateSubLine([tbc, tbd], false)).toBe('2 MATCHES · 2 TBC')
+    expect(dateLine([tbc, tbd])).toMatchObject({ count: '2 MATCHES', unset: 2, ending: 'FIRST KICKOFF NOT SET' })
   })
 
   // v0.2.2 review: the count includes every fixture, the range only the league-set ones, so a
@@ -177,10 +174,10 @@ describe('slateSubLine', () => {
     const early = fx({ competition: 'pl', kickoffUtc: '2026-08-30T17:00:00.000Z' })
     const late = fx({ competition: 'laliga', kickoffUtc: '2026-08-30T19:30:00.000Z' })
     const tbc = fx({ competition: 'ligue1', timeConfidence: 'round_placeholder', kickoffUtc: '2026-08-30T12:00:00.000Z' })
-    expect(slateSubLine([early, tbc, late], true)).toBe('3 REMAINING · 1 TBC · FIRST 1:00 PM · LAST 3:30 PM')
-    expect(slateSubLine([early, tbc, late], false)).toBe('3 MATCHES · 1 TBC · FIRST 1:00 PM · LAST 3:30 PM')
+    expect(dateLine([early, tbc, late])).toMatchObject({ count: '3 MATCHES', unset: 1, ending: 'FIRST 1:00 PM ET' })
+    expect(bookDateLine('2026-09-01', [tbc, early, late], false)).toMatchObject({ date: 'TUE 1 SEP', count: '3 MATCHES', unset: 1, ending: 'FIRST 1:00 PM ET' })
     // …and the placeholder's filler instant never becomes FIRST or LAST, whichever side it sits on.
-    expect(slateSubLine([tbc, late], true)).toBe('2 REMAINING · 1 TBC · KICKOFF 3:30 PM')
+    expect(dateLine([tbc, late])).toMatchObject({ count: '2 MATCHES', unset: 1, ending: 'FIRST 3:30 PM ET' })
   })
 })
 
@@ -232,40 +229,22 @@ describe('hot rows (LIVE + next kickoff)', () => {
   })
 })
 
-describe('planPosterWeek', () => {
-  const big = [
-    fx({ competition: 'pl' }),
-    fx({ competition: 'pl' }),
-    fx({ competition: 'laliga' }),
-  ]
-
-  it('classifies by slate size: >2 big, 1–2 small, empty snapshot day a gap', () => {
-    const blocks = planPosterWeek([
-      day(big, { date: '2026-08-30' }),
-      day([fx({ competition: 'pl' }), fx({ competition: 'pl' })], { date: '2026-08-31' }),
-      day([], { date: '2026-09-01' }),
-    ])
-    expect(blocks.map((b) => b.kind)).toEqual(['big', 'small', 'gap'])
+describe('the Poster week groups only genuinely empty dates', () => {
+  const matches = [fx({ competition: 'pl' }), fx({ competition: 'pl' }), fx({ competition: 'laliga' })]
+  it('keeps both heavy and light matchdays intact', () => {
+    const days = [day(matches), day(matches.slice(0, 2)), day([])]
+    const groups = groupWeekDays(days)
+    expect(groups).toEqual(days.map(d => [d]))
+    expect(groups[0]?.[0]?.shown).toEqual(matches)
   })
-
-  it('carries the dominant competition on big days', () => {
-    const blocks = planPosterWeek([day(big)])
-    expect(blocks[0]).toMatchObject({ kind: 'big', dominant: 'pl' })
-  })
-
-  it('keeps a filtered day between two snapshot gaps', () => {
-    const blocks = planPosterWeek([
-      day(big, { date: '2026-08-30' }),
-      day([], { date: '2026-08-31', total: 0 }),
-      day([], { date: '2026-09-01', total: 0 }),
-      day([], { date: '2026-09-02', total: 3 }),
-      day([], { date: '2026-09-03', total: 0 }),
+  it('keeps a hidden date between the two runs of genuinely empty dates', () => {
+    const days = [day(matches), day([], { date: '2026-08-31' }), day([], { date: '2026-09-01' }),
+      day([], { date: '2026-09-02', total: 3 }), day([], { date: '2026-09-03' })]
+    const groups = groupWeekDays(days)
+    expect(groups.map(g => g.map(d => d.date))).toEqual([
+      ['2026-08-30'], ['2026-08-31', '2026-09-01'], ['2026-09-02'], ['2026-09-03'],
     ])
-    expect(blocks.map((b) => b.kind)).toEqual(['big', 'gap', 'small', 'gap'])
-    expect(blocks[1]).toMatchObject({
-      kind: 'gap',
-      dates: ['2026-08-31', '2026-09-01'],
-    })
+    expect(groups[2]?.[0]).toMatchObject({ total: 3, shown: [] })
   })
 })
 
@@ -367,5 +346,66 @@ describe('hasKickedOff — the complement of stillToKickOff over scheduled fixtu
     for (const status of ['in_play', 'full_time', 'postponed', 'cancelled', 'suspended', 'abandoned'] as const) {
       expect(hasKickedOff(fx({ competition: 'laliga', kickoffUtc: K, status }), '2026-09-07T17:40:00.000Z')).toBe(false)
     }
+  })
+})
+
+describe('matchday cover slots', () => {
+  const all = new Set(COMPETITION_KEYS)
+  it('places every matchday of each Brooklyn week in exactly one cover slot', () => {
+    const weeks = new Map<string, [string, Fixture[]][]>()
+    for (const entry of BY_DATE) {
+      const monday = startOfWeek(entry[0])
+      const days = weeks.get(monday) ?? []
+      days.push(entry)
+      weeks.set(monday, days)
+    }
+    const dates = new Set<string>()
+    for (const days of weeks.values()) {
+      const week = days.map(([date, fixtures]) => ({ date, fixtures }))
+      const books = posterBooks(week, all)
+      const nights = days.filter(([, fs]) => fs.some(f => f.competition === 'ucl')).map(([d]) => d).sort()
+      for (const book of books) {
+        const comps = book.shown.map(f => f.competition)
+        const day = weekdayShort(book.date).toLowerCase()
+        const domestic = ['mon', 'fri', 'sat', 'sun'].includes(day) ? day : 'midweek'
+        expect(book.slot).toBe(comps.includes('ucl') ? (book.date === nights[0] ? 'firstNight' : 'secondNight')
+          : comps.includes('uel') || comps.includes('uecl') ? 'europa' : domestic)
+        expect(dates.has(book.date)).toBe(false)
+        dates.add(book.date)
+      }
+    }
+    expect([...dates].sort()).toEqual([...BY_DATE.keys()].sort())
+  })
+  it('retains an invisible first night and a hidden unsettled match when assigning covers', () => {
+    const ucl = edgeFixture({ competition: 'ucl', status: 'abandoned' })
+    const pl = edgeFixture({ competition: 'pl', status: 'full_time' })
+    const week = [{ date: '2026-11-25', fixtures: [pl, ucl] }, { date: '2026-11-24', fixtures: [ucl] }]
+    const books = posterBooks(week, new Set(['pl']))
+    expect(books).toEqual([{ date: '2026-11-25', shown: [pl], closed: false, slot: 'secondNight' }])
+    expect(posterBooks(week.slice(0, 1), all)[0]?.slot).toBe('firstNight')
+    expect(posterBooks([{ date: '2026-12-22', fixtures: [edgeFixture({ competition: 'supercoppa' })] }], all)[0]?.slot).toBe('midweek')
+    expect(posterBooks([], all)).toEqual([])
+  })
+  it('uses the date for the catalogue and the approved library for the eleven distinct covers', () => {
+    expect(catalogueNumber('2026-11-20')).toBe('FT-1120')
+    expect(Object.values(COVER_LIBRARY).map(([title]) => title)).toEqual([
+      'The Fifth Minute', 'The Valley Doors', 'The Tower Counts', 'The Empty Hallways',
+      'The Night Between', 'The First Night', 'The Second Night', 'The Far Windows',
+      'The Long Whistle', 'A Quiet Week', 'The Register',
+    ])
+    expect(new Set(Object.values(COVER_LIBRARY).map(([, line]) => line)).size).toBe(11)
+    expect(Object.values(COVER_LIBRARY).map(([, line]) => line)).toEqual([
+      'The lights came back on in the ninety-fifth minute. So did something else.',
+      'Every door was left open that Saturday. The whistle did not close them all.',
+      'The tower counts its bells every Sunday. It has never been wrong.',
+      'It is only Monday. The week has not finished with you.',
+      'The weekend is days away. Something could not wait.',
+      'Grounds lit at once, a continent apart. Something walks between them.',
+      'It walked between them all night. It is still walking.',
+      'Windows lit across the map. Count them again. One is watching back.',
+      'Every whistle blew, and every one was answered. You made it to morning.',
+      'A no-bet week is a successful outcome.',
+      'Every name goes in. Some are already falling.',
+    ])
   })
 })

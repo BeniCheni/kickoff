@@ -1,13 +1,17 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { COMPETITION_KEYS, COMPETITIONS, type CompetitionKey } from '../lib/competitions'
 import { addDays, startOfWeek } from '../lib/time'
 import { useUrlState } from '../lib/useUrlState'
 import { encodeDate, encodeOnly, parseDateParam, parseOnlyParam } from '../lib/urlCodecs'
 import type { Lens } from '../lib/lens'
-import { SYNC_STAMP } from '../lib/fixtures'
+import { bookWeek, posterBooks, restingBook, shelfGaps } from '../lib/lensSelectors'
+import { useNow } from '../lib/useNow'
+import { BY_DATE, SYNC_STAMP } from '../lib/fixtures'
 import { PageFoot } from './PageFoot'
 import { NextUpStrip } from './NextUpStrip'
-import { TonightSlate } from './TonightSlate'
+import { QuietWeek } from './QuietWeek'
+import { BookShelf } from './BookShelf'
+import { PosterRack } from './PosterRack'
 import { WeekRow } from './WeekRow'
 import { FilterBar } from './FilterBar'
 import { WeekView } from './WeekView'
@@ -66,15 +70,22 @@ export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
   )
 
   const weekStart = startOfWeek(anchor)
+  const { nowUtcIso } = useNow()
+  const week = useMemo(() => bookWeek(weekStart, BY_DATE), [weekStart])
+  const books = useMemo(() => lens === 'poster' ? posterBooks(week, active) : [], [week, active, lens])
+  const nextBook = useMemo(() => lens === 'poster' ? posterBooks(bookWeek(addDays(weekStart, 7), BY_DATE), active)[0]
+    : undefined, [weekStart, active, lens])
+  const quiet = lens === 'poster' && week.every(day => day.total === 0)
+  const resting = restingBook(books, weekStart, today, nowUtcIso)
   const nav = (dir: number) => setAnchor(addDays(anchor, dir * 7))
   const [filtersOpen, setFiltersOpen] = useState(false)
 
   return (
     <>
       {/* The hero is the one lens axis that changes the tree: Ledger's Next-up strip,
-          and Poster's tonight's slate. */}
-      {lens === 'poster' ? (
-        <TonightSlate today={today} active={active} />
+          and the Poster's anchored week of books. */}
+      {quiet ? <QuietWeek start={weekStart} today={today} active={active} now={nowUtcIso} /> : lens === 'poster' ? (
+        <PosterRack books={books} resting={resting} now={nowUtcIso} />
       ) : lens === 'ledger' ? (
         <NextUpStrip today={today} active={active} />
       ) : null}
@@ -84,9 +95,13 @@ export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
       <FilterBar active={active} lens={lens} open={filtersOpen} onToggle={onToggle}
         onSetGroup={onSetGroup} onShowAll={() => setActive(ALL)} />
 
-      <WeekView weekStart={weekStart} active={active} today={today} lens={lens} />
+      {!quiet && <WeekView weekStart={weekStart} active={active} today={today} lens={lens} />}
 
-      <PageFoot kind={lens === 'ledger' ? 'ledger' : 'poster'}>
+      {lens === 'poster' && !quiet &&
+        <BookShelf books={books} resting={resting} next={nextBook} gaps={shelfGaps(week)} />}
+
+      <PageFoot kind={lens === 'ledger' ? 'ledger' : 'poster'}
+        more={lens === 'poster' ? ['Titles and taglines are ILLUSTRATIVE.'] : []}>
         {lens === 'ledger'
           ? 'Always verify in the book before staking.'
           : `Fixtures from the snapshot synced ${SYNC_STAMP}. Times are Brooklyn unless marked local. Always verify in the book before staking.`}

@@ -53,3 +53,24 @@ export const edgeStandingRows: StandingRow[] = [
   { teamId: '1', name: 'Sevilla', shortName: 'Sevilla', abbrev: 'SEV', rank: 1, rankChange: 0, played: 12, w: 8, d: 2, l: 2, gf: 21, ga: 9, pts: 26 },
   { teamId: '2', name: 'Levante', shortName: 'Levante', abbrev: 'LEV', rank: 2, rankChange: 0, played: 11, w: 6, d: 3, l: 2, gf: 15, ga: 10, pts: 21 },
 ]
+
+/** A single Brooklyn matchday with three different stored finals. */
+export const bookFinals = ['ft', 'aet', 'pens'].map((id, i) => ({
+  ...rowStates.find(([, f]) => f.id === id)![1], kickoffUtc: `2026-11-22T${14 + i}:00:00Z`,
+}))
+
+export const cannotClose = [...bookFinals, edgeFixture({ id: 'abandoned', status: 'abandoned' })]
+
+const unsetBookFixture = edgeFixture({ id: 'unset-book', timeConfidence: 'round_placeholder' })
+const liveBookFixture = edgeFixture({ id: 'live-book', status: 'in_play', result: { home: 1, away: 0 } })
+export const coverSpecimens = [
+  { name: 'day-note', fixtures: [rowStates.find(([, fixture]) => fixture.id === 'next-day')![1]], now: '2026-11-21T12:00:00Z' },
+  { name: 'singular', fixtures: [edgeFixture()], now: '2026-11-22T12:00:00Z' },
+  { name: 'unset', fixtures: [unsetBookFixture], now: '2026-11-22T12:00:00Z' },
+  { name: 'mixed', fixtures: [unsetBookFixture, edgeFixture()], now: '2026-11-22T12:00:00Z' },
+  { name: 'closed', fixtures: bookFinals, now: '2026-11-22T23:00:00Z' },
+  { name: 'cannot-close', fixtures: cannotClose, now: '2026-11-22T23:00:00Z' },
+  { name: 'live', fixtures: [bookFinals[0]!, liveBookFixture], now: '2026-11-22T21:00:00Z' },
+  { name: 'kicked-off', fixtures: [bookFinals[1]!, bookFinals[2]!, liveBookFixture], now: '2026-11-23T01:00:00Z' },
+]
+export const heavyBookDay = Array.from({ length: 8 }, (_, i) => edgeFixture({ id: 'book-row-' + i }))

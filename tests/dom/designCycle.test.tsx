@@ -4,10 +4,10 @@ import { BY_DATE, FIXTURES } from '../../src/lib/fixtures'
 import type { Fixture } from '../../src/lib/schema'
 import { COMPETITION_KEYS } from '../../src/lib/competitions'
 import { brooklynDate, startOfWeek } from '../../src/lib/time'
-import { LIVE_WINDOW_MS } from '../../src/lib/lensSelectors'
+import { LIVE_WINDOW_MS, posterBooks, restingBook } from '../../src/lib/lensSelectors'
 import { WeekView } from '../../src/components/WeekView'
 import { NextUpStrip } from '../../src/components/NextUpStrip'
-import { TonightSlate } from '../../src/components/TonightSlate'
+import { PosterRack } from '../../src/components/PosterRack'
 import { primeClock, wake } from './rig'
 
 let release: (() => void) | undefined
@@ -137,12 +137,13 @@ describe('an unset kickoff is never a clock on a hero', () => {
   it('Poster: the slate row reads TBC, and the sub-line counts it without a FIRST or KICKOFF time', () => {
     const [only] = placeholderDay(1)
     release = primeClock(new Date(only!.kickoffUtc))
-    const { container } = render(<TonightSlate today={brooklynDate(only!.kickoffUtc)} active={active} />)
-    const slot = screen.getByText('TBC')
-    expect(slot.className).toContain('italic')
-    expect(slot.className).toContain('text-floodlight-strong')
-    expect(screen.getByText('1 REMAINING · 1 TBC')).toBeTruthy()
-    expect(container.textContent).toContain(`${only!.home.name} v ${only!.away.name}`)
+    const date = brooklynDate(only!.kickoffUtc)
+    const books = posterBooks([{ date, fixtures: [only!] }], active)
+    const { container } = render(<PosterRack books={books} resting={date} now={only!.kickoffUtc} />)
+    expect(screen.getByText('FIRST KICKOFF NOT SET').dataset.voice).toBe('amber')
+    expect(screen.getByText('1 kickoff, time not yet set by the league').dataset.voice).toBe('amber')
+    expect(screen.getByText('1 MATCH')).toBeTruthy()
+    expect(container.querySelector('[data-band-fixture]')).toBeNull()
     expect(container.textContent).not.toMatch(CLOCK)
   })
 })
@@ -162,8 +163,12 @@ it('a later-day NEXT carries its Brooklyn day on both heroes, not the UTC or sta
   expect(ledger.container.textContent).toContain('8:30')
   expect(ledger.container.textContent).not.toMatch(/2 days|Today/)
   ledger.unmount()
-  const poster = render(<TonightSlate today="2026-09-05" active={active} />)
-  expect(screen.getByText('Next matchday — nothing left today')).toBeTruthy()
-  expect(screen.getByText('Sun 6 Sep')).toBeTruthy()
-  expect(poster.container.textContent).toContain('KICKOFF 8:30 PM')
+  const date = brooklynDate(next.kickoffUtc)
+  const books = posterBooks([{ date, fixtures: [next] }], active)
+  const now = '2026-09-05T23:00:00.000Z'
+  const resting = restingBook(books, startOfWeek(date), '2026-09-05', now)
+  const poster = render(<PosterRack books={books} resting={resting} now={now} />)
+  expect(poster.container.querySelector('[data-position="center"]')?.getAttribute('data-date')).toBe('2026-09-06')
+  expect(screen.getByText('SUN 6 SEP')).toBeTruthy()
+  expect(poster.container.textContent).toContain('FIRST 8:30 PM ET')
 })

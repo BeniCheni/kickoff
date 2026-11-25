@@ -68,16 +68,16 @@ export function FixtureRow({ fixture, lens = 'ledger', hot, stale, next, nowUtcI
 
 /** Keep snapshot order. A distinct UEFA provenance line belongs to the first row it describes.
  * Poster already prints the first fixture's line at the foot of its day header. */
-export function FixtureRows({ fixtures, lens, next, nowUtcIso, hot, stale }: {
-  fixtures: readonly Fixture[]; lens: Lens; next?: string | null; nowUtcIso?: string
+export function FixtureRows({ fixtures, lens, next, nowUtcIso, hot, stale, preceding = [] }: {
+  preceding?: readonly Fixture[]; fixtures: readonly Fixture[]; lens: Lens; next?: string | null; nowUtcIso?: string
   hot?: ReadonlySet<string>; stale?: ReadonlySet<string>
 }) {
-  const printed = new Set<string>()
+  const printed = new Set(matchdayLines(preceding).map(line => line.key))
   return fixtures.map((fixture, index) => {
     const lines = matchdayLines([fixture]).filter(line => !printed.has(line.key))
     for (const line of lines) printed.add(line.key)
     return <Fragment key={fixture.id}>
-      {(lens !== 'poster' || index > 0) && <MatchdayText lines={lines} />}
+      {(lens !== 'poster' || preceding.length > 0 || index > 0) && <MatchdayText lines={lines} />}
       <FixtureRow fixture={fixture} lens={lens} next={fixture.id === next} nowUtcIso={nowUtcIso}
         hot={hot?.has(fixture.id)} stale={stale?.has(fixture.id)} />
     </Fragment>
