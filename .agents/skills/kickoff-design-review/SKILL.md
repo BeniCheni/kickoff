@@ -82,8 +82,9 @@ re-run disputed/fixed claims against the named new revision, preserve IDs and hi
 and surface unresolved choices to Beni. A counterexample to an absolute claim need not disprove
 the scoped user problem. Prior conclusions remain unproven until checked in that pass.
 
-Do not invent pass flags or copy the PR skill's fix/land authority. Design approval, implementation
-verification and live release verification remain distinct; no final decision is made for Beni.
+Do not invent pass flags or fix, land or merge a PR under a design review. Design approval,
+implementation verification and live release verification remain distinct. Leave final decisions
+to Beni.
 `src/data/*.json` remains generated and diffed, never hand-edited for a review or test. Use isolated
 fixtures only. No artifact, curated-data, workflow or release changes belong to this review;
 CLAUDE.md's release gates still apply, with no merge, tag or publication authority here.
