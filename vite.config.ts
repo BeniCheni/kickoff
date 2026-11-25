@@ -86,6 +86,7 @@ export default defineConfig(({ mode }) => ({
         test: {
           name: 'node',
           environment: 'node',
+          setupFiles: ['tests/setupGitEnv.ts'],
           include: ['tests/**/*.test.ts'],
           // The directory is the dom project's whatever the extension — the same line
           // tsconfig.node.json draws. Without it a `.test.ts` under tests/dom matched the

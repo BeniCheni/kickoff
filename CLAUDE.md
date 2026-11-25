@@ -12,13 +12,17 @@ invent matchday numbers, both clocks derive from one UTC instant.
 ## How this repo gets built (the prompt ladder, proven on the v0.0.3 doc cycle — shipped as
 release v0.1.0; doc-ladder naming and release semver diverge, don't assume they match)
 
+Since 22 Nov 2026, review depth follows four risk tiers. Tier 3 gets the six-pass 360.
+The [README](README.md#-how-it-gets-built) owns the tiers and seats.
+[AGENTS.md](AGENTS.md#review-tiers) lists the Tier 3 paths.
+
 Versions move through four documents, all archived in `docs/` and all **generated from a fresh
 read of the repo, never from recollection** — treat the repo as ground truth and my description
 of it as unreliable:
 
 1. `docs/vX.Y.Z-proposal.md` — audit + directions (written by a Claude Code session in-repo).
 2. `docs/vX.Y.Z-design-prompt.md` — the Claude Design brief, built on real tokens/data.
-3. `docs/vX.Y.Z-implementation-prompt.md` — the Claude Code build spec.
+3. `docs/vX.Y.Z-implementation-prompt.md` — the build spec.
 4. `docs/vX.Y.Z-review-prompt.md` — the adversarial review + merge instructions. Since v0.2.1
    the method lives in the repo skill `/kickoff-pr-review` (`.claude/skills/kickoff-pr-review/`;
    `/beni-pr-review` until v0.2.4); the archived prompt for a release is the per-PR part —
@@ -33,8 +37,7 @@ Rules that earned their place: **spec precedence is template > design brief > im
 prompt** (note every resolution in the PR); every prompt is delivered in the chat message in a
 fenced block, ready to paste — the `docs/` copy is the archive, never the delivery; review
 sessions get prior findings only as a sealed "verify independently" appendix, never as
-conclusions; model routing that worked — Fable 5 **High** for design/build, **Extra** for the
-review pass.
+conclusions. See the [README seats table](README.md#-how-it-gets-built) for model routing.
 
 **Generated prompts are never hand-wrapped — see `../Sportsbooks/CLAUDE.md`, "Generated copy-paste
 content is NEVER hand-wrapped" (5 Sep 2026), which is the owning copy.** In short: one line per
