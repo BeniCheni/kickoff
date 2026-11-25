@@ -44,12 +44,15 @@ export function QuietWeek({ start, today, active, now, coverage = 'full' }: {
   if (only === null) params.delete('only')
   else params.set('only', only)
   const { title, tagline, suffix, body } = quietCopy(coverage, META.window)
+  // "Nothing to stake until" rules out every day before the next known fixture. Only a fully
+  // fetched week can say that: an unfetched day may have held matches (PR #387, Pass 2.5).
+  const stakeCaption = upcoming && coverage === 'full'
   return <section className="quiet-week" data-stock="black">
     <div className="quiet-art" aria-hidden="true" />
     <div className="quiet-block">
       <h2 className="book-title">{title}</h2>
       <p className="book-date">{range.toUpperCase().replace('–', ' – ')}{year} · {suffix}</p>
-      {upcoming && <p>Nothing to stake until {bookCalendar(next).longDate}.</p>}
+      {stakeCaption && <p>Nothing to stake until {bookCalendar(next).longDate}.</p>}
       {tagline && <p className="book-tagline">{tagline}</p>}
       <p>{body}</p>
       {next && <div className="quiet-next">
