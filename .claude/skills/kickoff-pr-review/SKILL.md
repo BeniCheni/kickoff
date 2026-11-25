@@ -73,7 +73,7 @@ Rules the cycle runs on:
   before the merge that makes it public. Numbering forks are his (`CLAUDE.md`, "Release
   management").
 - **Brief the receiving seat.** Open every prompt or note handed to another seat with
-  “You are <seat> … If you are not, stop and say so” (#380). The next line of any long opener
+  `You are <seat> … If you are not, stop and say so` (#380). The next line of any long opener
   points to the archived copy with `git show <branch>:<file>` (#359). Passes 0 and 1.5 deliver
   their prompts in chat in a fenced block and archive them under `docs/`.
 - **Keep Learning output style out of deliverables.** Omit Learn-by-Doing requests,
