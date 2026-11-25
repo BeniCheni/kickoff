@@ -4,9 +4,9 @@ import { addDays, startOfWeek } from '../lib/time'
 import { useUrlState } from '../lib/useUrlState'
 import { encodeDate, encodeOnly, parseDateParam, parseOnlyParam } from '../lib/urlCodecs'
 import type { Lens } from '../lib/lens'
-import { bookWeek, posterBooks, restingBook, shelfGaps } from '../lib/lensSelectors'
+import { bookWeek, posterBooks, restingBook, shelfGaps, weekCoverage } from '../lib/lensSelectors'
 import { useNow } from '../lib/useNow'
-import { BY_DATE, SYNC_STAMP } from '../lib/fixtures'
+import { BY_DATE, META, SYNC_STAMP } from '../lib/fixtures'
 import { PageFoot } from './PageFoot'
 import { NextUpStrip } from './NextUpStrip'
 import { QuietWeek } from './QuietWeek'
@@ -71,9 +71,9 @@ export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
 
   const weekStart = startOfWeek(anchor)
   const { nowUtcIso } = useNow()
-  const week = useMemo(() => bookWeek(weekStart, BY_DATE), [weekStart])
+  const week = useMemo(() => bookWeek(weekStart, BY_DATE, META.window), [weekStart])
   const books = useMemo(() => lens === 'poster' ? posterBooks(week, active) : [], [week, active, lens])
-  const nextBook = useMemo(() => lens === 'poster' ? posterBooks(bookWeek(addDays(weekStart, 7), BY_DATE), active)[0]
+  const nextBook = useMemo(() => lens === 'poster' ? posterBooks(bookWeek(addDays(weekStart, 7), BY_DATE, META.window), active)[0]
     : undefined, [weekStart, active, lens])
   const quiet = lens === 'poster' && week.every(day => day.total === 0)
   const resting = restingBook(books, weekStart, today, nowUtcIso)
@@ -84,7 +84,8 @@ export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
     <>
       {/* The hero is the one lens axis that changes the tree: Ledger's Next-up strip,
           and the Poster's anchored week of books. */}
-      {quiet ? <QuietWeek start={weekStart} today={today} active={active} now={nowUtcIso} /> : lens === 'poster' ? (
+      {quiet ? <QuietWeek start={weekStart} today={today} active={active} now={nowUtcIso}
+        coverage={weekCoverage(week)} /> : lens === 'poster' ? (
         <PosterRack books={books} resting={resting} now={nowUtcIso} />
       ) : lens === 'ledger' ? (
         <NextUpStrip today={today} active={active} />

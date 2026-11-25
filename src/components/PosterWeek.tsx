@@ -10,7 +10,8 @@ export function PosterWeek({ days, stale, next, nowUtcIso }: {
   return <div className="poster-week">{groupWeekDays(days).map(group => {
     const { date, total, shown, closed } = group[0]!
     if (!total) return <p className="week-gap" key={date}>
-      {group.map(day => weekdayShort(day.date).toUpperCase() + ' ' + Number(day.date.slice(8))).join(' · ')} — NO FIXTURES
+      {group.map(day => weekdayShort(day.date).toUpperCase() + ' ' + Number(day.date.slice(8))).join(' · ')}
+      {group[0]!.covered === false ? ' — OUTSIDE THE SNAPSHOT' : ' — NO FIXTURES'}
     </p>
     if (!shown.length) return <section key={date} data-week-date={date} className="poster-hidden week-gap">
       <BookDateLine date={date} shown={shown} closed={false} />
