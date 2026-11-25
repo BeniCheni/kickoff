@@ -1660,13 +1660,20 @@ body:has(.poster-rack) { container-type: inline-size; }
 .book-shelf { margin-block: 20px; background: var(--fb-cover-black); color: var(--fb-cover-ink); padding-block: 12px; }
 .book-shelf h2 { padding: 0 9px 12px; font: 600 11px/1.4 var(--fb-label); letter-spacing: .1em; }
 .shelf-spines { overflow-x: auto; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(44px, 1fr); align-items: end; }
-.book-spine { min-width: 44px; height: 176px; display: flex; flex-direction: column; align-items: stretch; text-align: center; border: 1px solid var(--fb-cover-muted); }
+.book-spine { container-type: inline-size; min-width: 44px; height: 176px; display: flex; flex-direction: column; align-items: stretch; text-align: center; border: 1px solid var(--fb-cover-muted); }
 .book-spine[data-reading] { height: 190px; border: 2px solid var(--fb-cover-ink); box-shadow: inset 0 -3px var(--fb-pitch); }
 .spine-head { background: var(--fb-blood); color: var(--fb-cover-ink); font: 600 12px/1.1 var(--fb-neon); padding: 4px 1px; }
 .spine-head small { display: block; font: 600 10px/1.1 var(--fb-label); }
 .spine-title { align-self: center; flex: 1; padding: 5px 0; writing-mode: vertical-rl; transform: rotate(180deg); font: 700 12px/1.15 var(--fb-neon); color: var(--fb-cover-ink); text-shadow: 0 0 2px var(--fb-rift); }
-.spine-foot { padding: 3px 0 6px; border-top: 1px solid var(--fb-rule); font: 400 10px/1.2 var(--fb-mono); }
-.spine-foot span { display: block; }
+.spine-foot { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; white-space: nowrap; padding: 3px 0 6px; border-top: 1px solid var(--fb-rule); font: 400 10px/1.2 var(--fb-mono); }
+/* Keep the catalogue and count on their own lines inside the 44px phone spine. */
+@container (width < 60px) {
+  .spine-foot { letter-spacing: -.06em; }
+  .spine-foot span { transform: scaleX(.85); }
+}
+@container (width < 48px) {
+  .spine-foot span { transform: scaleX(.7); }
+}
 .book-spine[data-upcoming] { border-style: dashed; color: var(--fb-cover-muted); }
 .spine-next { margin: auto 2px; font: 400 10px/1.35 var(--fb-book); }
 .shelf-note { padding: 9px; font: 400 11px/1.5 var(--fb-mono); color: var(--fb-cover-muted); }

@@ -8,7 +8,7 @@ function Spine({ book, reading, upcoming = false }: { book: MatchdayBook; readin
     <p className="spine-head">FT{reading && <small>NOW READING</small>}</p>
     {upcoming ? <p className="spine-next">Next week · {posterDayTitle(book.date)} · {count.toLowerCase()}</p>
       : <p className="spine-title">{title}</p>}
-    <p className="spine-foot">{catalogueNumber(book.date)}{!upcoming && <>{' · '}<span>{count}</span></>}</p>
+    <p className="spine-foot">{catalogueNumber(book.date)}{!upcoming && <>{' '}<span>{count}</span></>}</p>
   </div>
 }
 
