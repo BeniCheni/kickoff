@@ -834,6 +834,17 @@ Cursor's hands this track seats no Cursor.
 - *Synthesis brief:* [`review-loop-sprint-4-synthesis-prompt.md`](review-loop-sprint-4-synthesis-prompt.md),
   for Pass 2.5 (Claude Code, `claude-opus-5-5`, `xhigh`), in
   `~/code/review-seats/elenchus-pr9-pass25`, with its sealed appendix as a second paste.
+- *Synthesized (Tue 24 Nov 2026):* Pass 2.5's
+  [comment](https://github.com/BeniCheni/elenchus/pull/9#issuecomment-7150581217): *ready for
+  Pass 3*. Findings 2, 4, 5, 7 and 10 fixed, 1 and 3 fixed in part, 6 and 8 deferred and 9
+  unchanged as ruled, and seven new notes, 25-1 to 25-7. The appendix was first pasted by mistake
+  into an empty session in the same folder, which stopped without reading or writing anything;
+  the seat started afresh and read nothing under `~/.claude`, so the seal held. Its draft's hash
+  was printed before the paste, and the posted comment differs from it only in the appendix
+  section. The Planner reproduced 25-3 with the head's guard in three shells.
+- *Ruled (Tue 24 Nov 2026):* Pass 3's [comment](https://github.com/BeniCheni/elenchus/pull/9#issuecomment-7151372275), by the Planner for Beni: no further
+  fix round, and 25-1 to 25-7 go to Sprint 5. The rulings are under "Rulings received"
+  ("Sprint 4's Pass 3"). The executor, pass `exec`, is next.
 
 **Sprint 5 — Kickoff phase 2: the gate on `main` (after Sprint 3 passes).**
 - *Scope:* the `kickoff/360` ruleset on `main`, applied by Beni; `loop authorize`; the sync
@@ -855,6 +866,15 @@ Cursor's hands this track seats no Cursor.
   15, blocking on an unreported model without blocking on an unreported effort; A6, what binds
   a seat besides the Keychain prompt; and A7, `prep` for an adopter with no seat token, with the
   Keychain service names as configuration.
+- *Carried from Sprint 4's review* (Beni, 24 Nov, under "Rulings received"; the numbers are
+  elenchus PR 9's): 6, `prep` for a Grok seat and what `read_only_seat` means for xai, with A7;
+  8, trailer order for integer-like vendor names; separate push URLs (Amendment 2); and 25-1 to
+  25-7. 25-1 to 25-4 share one rule: anything the block can know before the merge that would
+  keep the merge commit's tag from reaching the pull request's repository is refused before the
+  merge, and the read before the merge reaches the place the push writes. Sprint 5 settles that
+  as a design question (one channel for the read and the push), not another refusal list. 25-5:
+  the README names a UTF-8 locale for pasting into bash, and `node` on `PATH` in the pasting
+  shell. 25-6 and 25-7: the count rule's pin and the seven unpinned parts of the fix round.
 - *Review:* all six passes.
 - *Rollback:* disable the ruleset (a settings act, Beni's).
 
@@ -1896,6 +1916,19 @@ for Cursor (S7).
     refuses. A closing rule lets Codex close further cases of the same kind within the rule,
     naming each, and stop only for a write outside the limits, a new assumption about the
     operator, or a case of a different kind.
+- **Sprint 4's Pass 3 (Beni, Tue 24 Nov 2026, "Yes, no round").** The Planner asked "Rule Pass 3 with no
+  further round, carrying 25-1 to 25-7 to Sprint 5?", beside one closed round for 25-3's refusal
+  and two README sentences. The record is elenchus PR 9's [Pass 3](https://github.com/BeniCheni/elenchus/pull/9#issuecomment-7151372275).
+  - **No further fix round.** No blocking or should-fix finding is open, and 447 of 447 tests
+    pass at `51a076e`. Every new note but 25-5 stops the block or leaves origin's tags
+    untouched, and 25-5 needs bash 3.2 under a non-UTF-8 locale.
+  - **Findings 1 and 3 are fixed for the cases ruled.** The cases their rules still miss are
+    25-2 (checkout states) and 25-3 (`uploadpack` and `receivepack`, a different kind of case
+    under the closing rule).
+  - **25-1 to 25-7: notes, deferred to Sprint 5** (Sprint 5's "Carried from Sprint 4's review").
+  - **Next: the executor,** Codex on `gpt-6.2-astra` at `xhigh`, with nothing to apply. The merge
+    waits for Beni's word; the Planner plans a squash with its own message, as for PR 8, and no
+    tag (D8).
 D8, D10 and D11 are not yet ruled. D4 is withdrawn, and D12 is Pilot (17 Nov).
 
 ## Found after the spikes (15 Nov 2026, afternoon)
