@@ -29,8 +29,8 @@ of it as unreliable:
    number, spec files, human-review items, the sealed appendix — not the method. Since v0.3.0
    the skill also carries the **six-pass 360 cycle** for a release built by one vendor and
    reviewed by another — Pass 0 brief → 1 cold review → 1.5 rebuttal brief → 2 rebuttal →
-   2.5 synthesis and Executive Summary Brief → 3 Beni's adjudication — with the Pass 2.5
-   merge gate that decides auto-merge versus escalation; the pipeline skill's B1.6 is the
+   2.5 synthesis and Executive Summary Brief → 3 Beni's adjudication. Pass 2.5 scores the gate
+   and escalates. The merge takes Beni's word. The pipeline skill's B1.6 remains the
    PM-side copy of the same cycle.
 
 Rules that earned their place: **spec precedence is template > design brief > implementation

@@ -11,7 +11,11 @@ Everything below was learned the expensive way in the v0.1.0 and v0.2.0 reviews.
 theme is the toggle (or storage: `kickoff-theme`).
 
 Four 390 px captures (lens × theme, Fixtures tab) go in the PR when anything visual changed.
-Nothing is committed under `docs/screenshots/` unless the originals were wrong.
+The reviewer links them in the review comment. The builder commits replacements under
+`docs/screenshots/` only when the originals were wrong.
+
+For docs or tooling, run the two-width smoke pass in `SKILL.md` §4. If the sandbox refuses
+`listen`, compare base and head `npm run build` output and record that substitute (#382).
 
 ## One tab, your own
 
@@ -114,8 +118,8 @@ would not.
 
 The snapshot usually has zero postponed, cancelled or in-play fixtures, but weekend windows can
 still carry a live row. Tests reading the committed snapshot must scope their queries to the
-target fixture row. To see those branches in a browser you stub a row in a local, uncommitted
-copy of `src/data/fixtures.json` and revert — never commit hand-edited data.
+target fixture row. Use the serve-only `tests/harness/states.html` for browser specimens of
+those branches. Leave the generated snapshot alone.
 
 ## Zero-slack points
 

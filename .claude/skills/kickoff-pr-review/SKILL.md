@@ -1,16 +1,16 @@
 ---
 name: kickoff-pr-review
-description: Adversarial review → fix → land pass for one Kickoff pull request (prompt-ladder step 4), and the Pass 2.5 synthesis of the six-pass 360 cycle. Use when asked to review, verify, synthesise or land a Kickoff PR by number — "/kickoff-pr-review 12", "review PR 12", "/kickoff-pr-review 12 --pass 2.5". Not for reviewing plans, drafts or proposals.
-argument-hint: <PR# or branch> [--no-merge] [--pass 1|2.5]
+description: Cold review of one Kickoff pull request by tier, and Pass 2.5 synthesis for the Tier 3 six-pass 360. Use the PR number, for example "/kickoff-pr-review 12" or "/kickoff-pr-review 12 --pass 2.5". The builder owns fixes. Plans, design artifacts and proposals use their own review methods.
+argument-hint: <PR#> [--pass 1|2.5] [--no-merge]
 disable-model-invocation: true
 ---
 
 # Kickoff PR review — verify, don't vibe
 
-`$ARGUMENTS` — the first token is a PR number or, before a PR exists, a branch name (the base
-is then `origin/main`, and §7 step 0 turns the branch into a PR before anything lands);
-`--no-merge` anywhere means stop at the PR comment and leave the merge to a human. Invoked by
-hand only — it pushes commits. Beni clicks every release merge; a tag is a release act.
+`$ARGUMENTS` starts with the PR number. `--pass 1` is the default cold read. `--pass 2.5`
+selects Tier 3 synthesis. The reviewer reports and the builder commits fixes. Only Tier 2
+allows a reviewer to merge (§7). `--no-merge` leaves the merge to Beni and preserves the pass's
+reporting deliverables.
 
 **Who can invoke it, and when.** `disable-model-invocation: true` means a human types
 `/kickoff-pr-review <N>` as the message. A prompt that says "invoke the skill" cannot make the
@@ -23,71 +23,99 @@ were both "Unknown skill" in a session started before the checkout.
 
 This skill encodes the *method*. The adversarial reading is still your work in the session; a
 skill that pre-listed findings would be the sealed-appendix anti-pattern in a new costume.
-Model routing: `CLAUDE.md`'s routing line (the Extra reasoning tier for this pass).
+Use the [README seats table](../../../README.md#-how-it-gets-built) for models, effort where
+specified, and routing in both build columns.
+
+## Choose the tier
+
+Use the highest of the PR body's declared tier, the `tier` job's computed tier for the current
+tip, and any tier a reviewer raises. Read the job summary for the files, rules and commit the
+tier list came from. A `tier-N` label is a hint because a manual change can freeze it. Only
+Beni can lower a tier. Cite his ruling if he has lowered it.
+
+- **Tier 0:** The sync workflow handles its own PR (§0).
+- **Tier 1:** One report-only cold read by the other vendor, then Beni merges. There is no
+  re-read round.
+- **Tier 2:** One report-only cold review by the other vendor. The builder fixes findings and
+  the reviewer re-reads each round. The reviewer may squash a non-release on **Mergeable now**
+  with `verify` green at the tip and the landing checks in §7 satisfied.
+- **Tier 3:** Run the six-pass 360 below. Pass 2.5 scores the gate and escalates. Beni gives
+  the word to merge every Tier 3 PR, including every release.
 
 ## The 360 cycle — six passes, two vendors, one adjudicator (Beni's design, 6 Sep 2026)
 
-A release built by one vendor and reviewed by another moves through six passes. PR #23
-(v0.2.5) ran three of them and proved the third was worth having — Pass 2 overturned a Pass 1
-claim in code; PR #26 (v0.3.0) ran all six and added the synthesis pass, because two vendors'
-comments are evidence for a decision, not the decision. `--pass` selects which one this
-session is running; the default is Pass 1.
+A Tier 3 PR moves through six passes. PR #23 (v0.2.5) ran three of them. Pass 2 overturned a
+Pass 1 claim in code. PR #26 (v0.3.0) ran all six and added the synthesis pass so Beni could
+adjudicate on evidence re-run at the tip.
 
-| Pass | Seat | Reads | Leaves behind |
+| Pass | When Codex builds | When Claude builds | Leaves behind |
 |---|---|---|---|
-| **0 — brief the cold review** | PM: a Claude Code session, Fable 5.1 High, with the pipeline skill (`/anthropic-skills:football-soccer-deity`) loaded | the PR and the repo, read fresh; the executives' goals for the release | the Pass 1 prompt — `/kickoff-pr-review <N> --no-merge` plus tailored context and the sealed appendix — delivered in chat and archived as `docs/<version>-review-prompt.md` |
-| **1 — cold review** | the vendor that did not build it: Claude Code, Fable 5.1 Extra, a fresh session | Pass 0's prompt, then the repo (§1–§4) | fix commits for what it reproduced, one PR comment (`pr-comment.md`); stops at the comment |
-| **1.5 — rebuttal brief** | the PM seat again | Pass 1's comment | the Pass 2 prompt: every finding for the builder to accept / contest / accept-but-contest-the-characterisation, with the evidence needed to reproduce each; Beni's rulings so far travel in it, named as his |
-| **2 — rebuttal** | the builder: Codex, GPT-6 Astra Extra High | Pass 1.5's prompt, then the head | fix commits, one PR comment in the same table shape; may prepare the release only when a ruling on the number travelled in the prompt |
-| **2.5 — synthesis** | the PM seat, `--pass 2.5` | Pass 2's comment and commits, re-run against the head | corroboration, the Executive Summary Brief (`executive-brief.md`), one short PR comment, and either the merge or the escalation |
-| **3 — adjudication** | Beni | the brief | rules on anything the vendors still contest; clicks every release merge and tags it |
+| **0 — brief the cold review** | PM seat | Codex | Pass 1 prompt from a fresh read of the PR and repo, with tailored context, `/kickoff-pr-review <N> --pass 1` and the sealed appendix (§8) |
+| **1 — cold review** | Fresh Claude Code session | Fresh Codex session | One report-only PR comment with reproduced findings and the smallest change for each (§5) |
+| **1.5 — rebuttal brief** | PM seat | Codex | Pass 2 prompt with each finding and its reproduction for the builder to accept, contest, or accept but contest the characterisation. Attribute Beni's rulings to him |
+| **2 — rebuttal** | Codex builder | Claude Code builder | A disposition for each finding in one PR comment with any fix SHA. This seat owns every fix round and prepares a release only with Beni's ruling on the number |
+| **2.5 — synthesis** | Fresh Claude Code seat | Fresh Codex seat | One PR comment and the Executive Summary Brief in chat. The seat independently re-runs the tip, scores every clause of the gate and escalates with the handoff block (§7 step 8) |
+| **3 — adjudication** | Beni | Beni | Rules on remaining disputes and gives the word to merge. Beni merges and tags every release |
 
 Rules the cycle runs on:
 
-- **The builder reviews nothing it built and the reviewer builds nothing it will review.** A
-  vendor that writes to the PR branch during its pass says so in its comment — the branch has
-  moved under the next seat.
-- **Pass 2.5 is a re-run, not a read.** Every number in the brief comes from a command run in
-  that session: typecheck, the suite and both builds at the head; `verify` at the tip; the
-  browser matrix on every surface the rebuttal touched, cell for cell; each "fixed" finding
-  reproduced red-then-green or re-measured; the seven version places on a release; the squash
-  body's two trailers ready to paste. A claim the pass could not re-run is listed as not
-  verified, never as verified.
-- **The Pass 2.5 merge gate.** Auto-merge (squash, `--auto` is fine when `verify` is
-  green) only when *all* of these hold: not a release (no version bump, no new `CHANGELOG.md`
-  section, no tag to follow); no numbering fork; every high finding has a fix commit; nothing
-  is still contested between the two vendors; `verify` green at the tip; no change to the
-  `?only=` / `&date=` contract, to `sync.yml`'s gates, or to `src/data/*.json`. Any one
-  failing means **escalate**: the brief carries the handoff block (§7 step 8) and the questions,
-  each answerable in one word. Beni merges and tags every release, this cycle included.
+- **Keep the seats independent.** The builder stops at Pass 2 and its fix rounds. The fresh
+  Pass 2.5 seat wrote neither the build nor any fix. Its only written deliverables are one
+  PR comment and the Executive Summary Brief.
+- **Pass 2.5 re-runs the evidence.** Every number in the brief comes from a command run in
+  that session. Run typecheck, the suite and both builds at the head. Read `verify` and `tier`
+  for the tip (§7 step 1). Run the browser matrix cell for cell on every surface the rebuttal
+  touched, reproduce each fix red-then-green or re-measure it, check the seven version places
+  on a release, and prepare both squash trailers. List any claim you could not re-run as
+  **Not verified**.
 - **A ruling recorded second-hand is confirmed, never assumed.** A PR body that says "Beni
   approved v0.3.0" is a claim by the builder; the brief asks him to confirm it in one word
   before the merge that makes it public. Numbering forks are his (`CLAUDE.md`, "Release
   management").
-- **Passes 0, 1.5 and 2.5 are prompt-and-brief work, not code work.** They read the repo fresh
-  (`CLAUDE.md`, B0), deliver prompts in chat in a fenced block, and archive them under
-  `docs/`. The PM seat may run in Claude Code or Cowork; the skill it loads is the pipeline's.
-- **Each pass writes its retro where the method lives**: Pass 1 and 2.5 into this file when
-  the PR is tooling, else into the current ideas file's process notes; the cycle's own shape
-  into `CLAUDE.md` and the pipeline skill's B1.6.
+- **Brief the receiving seat.** Open every prompt or note handed to another seat with
+  “You are <seat> … If you are not, stop and say so” (#380). The next line of any long opener
+  points to the archived copy with `git show <branch>:<file>` (#359). Passes 0 and 1.5 deliver
+  their prompts in chat in a fenced block and archive them under `docs/`.
+- **Keep Learning output style out of deliverables.** Omit Learn-by-Doing requests,
+  `TODO(human)` and insight boxes from PR comments and briefs. Reviewers put their retro
+  in their comment (§9).
+
+### Score the merge gate
+
+Pass 2.5 scores each clause as met, unmet or not verified, with evidence for Beni. The Tier 2
+reviewer uses the same checklist before merging (§7 step 4).
+
+1. The PR is a non-release. There is no version bump, new release section in `CHANGELOG.md`,
+   or tag to follow.
+2. There is no numbering fork.
+3. Every high finding still standing has a verified fix commit.
+4. The two vendors have no unresolved dispute.
+5. `verify` is green at the tip.
+6. The `?only=` / `&date=` contract is unchanged.
+7. The `sync.yml` gates are unchanged.
+8. `src/data/*.json` is unchanged.
+
+Tier 2 requires every clause to be met. Tier 3 Pass 2.5 always escalates with the scored gate,
+the handoff block (§7 step 8) and any remaining questions answerable in one word.
 
 ## 0. Before anything
 
-- `CLAUDE.md` and `AGENTS.md` outrank this skill on process. Read them first.
+- Read `CLAUDE.md`, `AGENTS.md` and the README's tier and seat rules first. They outrank this
+  skill. If a PR changes this method, its review briefs name the governing sources and say
+  whether the skill itself applies.
 - **Detect a release before you start.** A version bump in `package.json`, a new `CHANGELOG.md`
   section, or a tag to follow makes this a release PR — §7 step 4 will stop you short of the
   merge. Say so in your first message and plan the handoff (§7 step 8) from the beginning; do
   not discover the gate at the end of a long pass.
 - `TZ=America/New_York date` before you write any date anywhere.
-- Work in a worktree for the PR branch (`git fetch origin` first). Beni's main checkout may hold
-  the branch, so use a different local branch name and push with `HEAD:<remote-branch>`.
-  Worktrees share the main checkout's `node_modules` and port 5173 — confirm which checkout
-  the dev server serves (`lsof -iTCP:5173 -sTCP:LISTEN`, then that process's cwd) before any
-  browser claim, and use one browser tab of your own. In this harness (the Claude Code desktop
-  app with its Bash sandbox on), `tsx`, `gh` and `git fetch/push` need the sandbox off, and so
-  does any write under `.claude/skills/` or under the main checkout's `node_modules` —
-  `vitest` writes `node_modules/.vite-temp/` there, so whether `npm test` runs sandboxed
-  depends on that day's write allowlist. Try sandboxed first; bypass on an `EPERM`, and say so.
+- Fetch the PR base and tip. Use your own detached worktree at the exact tip SHA. Reviewers push
+  nothing. Install the pinned dependencies in your worktree. Confirm which checkout the dev
+  server serves (`lsof -iTCP:5173 -sTCP:LISTEN`, then that process's cwd) before any browser
+  claim, and use one browser tab of your own.
+- In the Claude Code desktop harness, `gh` and `tsx` need the Bash sandbox off. Request that
+  access through the harness and say what required it. Use absolute paths for scratch probes,
+  since `$TMPDIR` can change outside the sandbox. In zsh use a loop variable such as
+  `probe_file`, since assigning `path` rewrites `PATH` (#382).
 - **Never run `npm run sync` during a review.** It writes `src/data/*.json`, and a data refresh
   is not a release. `npm run sync -- --check` is the only form allowed.
 - Leave the bot's open `sync/scheduled` PR alone — and know what it is. It is the rolling data
@@ -101,18 +129,16 @@ Rules the cycle runs on:
   merged or not. This skill neither reviews nor merges it. Current standings failures abort
   with exit 2 before any report or PR update; `standings=failed` is only a legacy value.
 - Repo ground truth beats any description of it, including the PR body and this skill.
-- **`--pass 2.5` changes the starting point, not the standard.** Read Pass 1's and Pass 2's
-  comments first, then the head's full diff against `origin/main` and each rebuttal commit on
-  its own; re-run §2 and every §4 cell class the rebuttal touched; check every "fixed" row
-  against the code, not the table. The deliverable is the Executive Summary Brief
-  (`executive-brief.md`) in chat, one short PR comment recording the corroboration and the
-  merge or escalation, and — when the gate allows — the merge itself.
+- **`--pass 2.5` starts from the rebuttal.** Read Pass 1's and Pass 2's comments first, then
+  the full diff against the remote PR base and each rebuttal commit on its own. Re-run §2
+  and every §4 cell class the rebuttal touched. Verify every "fixed" row against the code.
+  Deliver the Executive Summary Brief (`executive-brief.md`) in chat and one short PR comment
+  recording the corroboration and escalation.
 
 ## 1. Read, in this order
 
-1. The PR: `gh pr view <N> --json title,body,headRefName,baseRefName,headRefOid,files,commits`
-   — or, given a branch, `git rev-parse origin/<branch>`. Note the tip SHA; everything you
-   verify is against it.
+1. The PR (`gh pr view <N> --json title,body,headRefName,baseRefName,headRefOid,files,commits`).
+   Record the full tip SHA and tier before verifying anything at that tip.
 2. The spec lineage, tolerating missing rungs (no shipped cycle has archived all four):
    `docs/<version>-proposal.md` → `docs/<version>-design-prompt.md` →
    `docs/<version>-implementation-prompt.md`. **Precedence: template > design brief >
@@ -124,10 +150,9 @@ Rules the cycle runs on:
    every precedence resolution you make in the PR conversation.
 3. The process notes: the `## Process notes` tails of the current and previous
    `docs/vX.Y.Z-ideas.md`. They bind you.
-4. The diff: `git diff origin/main...<branch>` — `origin/main`, because a worktree's local
-   `main` is whatever the main checkout last pulled and `git fetch` never moves it (a stale
-   `main` once doubled the count by dragging in a sync squash). **Every hunk, not a skim.**
-   Record the file count and insertions; you will cite them.
+4. The diff (`git diff origin/<base-ref>...<tip-sha>`). Use the fetched remote base, since a
+   stale local `main` once doubled the count by dragging in a sync squash. Read every hunk and
+   record the file count, insertions and deletions.
 
 ## 2. Baseline
 
@@ -210,24 +235,29 @@ then Added / Changed / Fixed, then **Deliberately not done**.
   in this repo's browser pane — settling React, driving the clock, URL state without navigating,
   the hidden-pane gotchas — are in `${CLAUDE_SKILL_DIR}/browser-matrix.md`.
 - **Smoke pass** if the diff is docs or tooling: build, load at 390 and ~1000, confirm the
-  header's version string and `scrollWidth`. Don't spend 48 captures proving a CHANGELOG edit
-  didn't break the renderer.
+  header's version string and `scrollWidth`. If the sandbox refuses `listen`, compare
+  `npm run build` output at base and head and report it as the smoke substitute (#382).
 - **Re-run whatever the PR's own verification matrix promised.** Read it out of the proposal;
-  do not trust the PR body's account of it. With no proposal (§1.2 tolerates that), the PR
-  body's promise is all there is — run it, and say in the comment that no spec backed it.
+  do not trust the PR body's account of it. With no proposal (§1 step 2), run the PR body's
+  promised checks and say in the comment that no spec backed them.
 - **Latent paths need synthetic data.** The snapshot usually holds zero postponed, cancelled or
   in-play fixtures, but a weekend sync writes live rows. A test that mutates a real-snapshot row
   must scope every query to that row (`within`), and must not pick its rows by `status` or
   `result` — those move with every sync, and a pick that lands in another week finds no row at
-  all. Fabricated-fixture unit tests are the durable coverage; to see a branch in the browser,
-  stub a row in a local, uncommitted copy of `src/data/fixtures.json` and revert.
-- **A workflow changed:** `gh workflow run sync.yml --ref <branch> -f dry_run=true` is its
-  unit test — but `workflow_dispatch` resolves the workflow *path* on `main`, so a brand-new
-  workflow file cannot be dispatched until something with that name lands there. Since
+  all. Use fabricated-fixture unit tests for durable coverage and the serve-only
+  `tests/harness/states.html` for browser specimens. Leave the generated snapshot alone.
+- **A workflow changed:** the reviewer reads the run and its log. The builder can dispatch
+  `gh workflow run sync.yml --ref <branch> -f dry_run=true` to test sync. `workflow_dispatch`
+  resolves the workflow path on `main`, so a new workflow file must land there first. Since
   v0.4.0 a real (non-dry) dispatch on any ref but `main` fails at "Publish only from main"
-  before the fetch, so it opens no PR; `dry_run=true` is the only feature-branch form.
+  before the fetch and opens no PR. Use `dry_run=true` on a feature branch.
 
 ## 5. Fix policy
+
+Reviewers put each fix in a finding (§7 step 2). Give the file and line, the command or probe
+that reproduced it, expected and observed behaviour, and the smallest change that addresses it.
+
+The builder applies the following policy in Pass 2 and each fix round.
 
 - Fix what you can **reproduce or demonstrate**, in scope: correctness, honesty, a11y/AA on new
   surfaces, layout defects, workflow failure paths, small structural cleanups the fix naturally
@@ -237,79 +267,92 @@ then Added / Changed / Fixed, then **Deliberately not done**.
   record. No silent token repaints — a token that fails AA is flagged to the design system, not
   repainted here. If a real fix needs an out-of-scope file, stop and say so.
 - **Never weaken a data-honesty assertion to make anything pass.**
-- Commits: small, reviewable units; each message says what broke, how you proved it, how the
-  fix was verified. Author them as `Claude <noreply@anthropic.com>` via per-commit
-  `git -c user.name=Claude -c user.email=noreply@anthropic.com commit` — never `git config`,
-  the repo config is shared across worktrees. End each message with the `Co-Authored-By`
-  trailer the harness gives you for the model in the session; do not hard-code one.
+- Keep commits small and reviewable. Say what broke, how you proved it and how you verified
+  the fix. Use your own agent identity (`CLAUDE.md`) via per-commit
+  `git -c user.name=<name> -c user.email=<email> commit`. The repo config is shared across
+  worktrees. Use the `Co-Authored-By` trailer the harness gives you, when supplied.
 - A behavioural fix in a non-release PR goes under `[Unreleased]` in `CHANGELOG.md` in the
   same commit — the heading accumulates between releases (`CLAUDE.md`, "Release management");
   a release PR folds it into the new section instead.
-- Re-run typecheck, the full suite and the matrix after fixes.
+- Re-run typecheck, the full suite and the matrix after fixes. Push the fix rounds and put
+  the fix SHA and verification in the rebuttal comment (`pr-comment.md`).
 
 ## 6. The next ideas note
 
-Everything you judged real and out of scope goes into the current ranked list — the
-`docs/vX.Y.Z-ideas.md` that `CLAUDE.md`'s "Roadmap pointers" names — ranked by research value ×
-feasibility, one-line rationale, rough size. Append rows there when the PR is a patch; start the
-next file when the PR is the minor that consumes the list, carrying open rows forward with the
-previous number in parentheses (rows are renumbered; always name the file when you cite one).
-Add to its `## Process notes` tail anything this review taught about verifying a PR. Write it
-to be read cold.
+The reviewer lists real out-of-scope candidates in the PR comment with a one-line rationale,
+rough size and rank by research value × feasibility. The PM seat files them in the ranked list
+named by `CLAUDE.md`'s "Roadmap pointers". It appends rows for a patch and starts the next file
+for a minor that consumes the list, carrying open rows forward with the previous number in
+parentheses. Rows are renumbered, so cite the file with the row. See §9 for process notes.
 
-## 7. Land it
+## 7. Report and land by tier
 
-0. **Branch mode only:** open the PR first — `gh pr create --base main --head <branch>` with
-   the review comment (step 2's shape) as the body — and continue from step 1 with its number.
-   Nothing below runs against a bare branch: there is no check to watch, nothing to comment
-   on, nothing to merge.
-1. Push your commits to the PR branch; wait for `verify` (`gh pr checks <N> --watch`). A red
-   `verify` is a high finding: fix it, or the verdict is "not mergeable — `verify` red".
-2. **One PR comment**, shape in `${CLAUDE_SKILL_DIR}/pr-comment.md`: verdict · findings table
-   (severity · finding · how verified · fix commit) · findings killed as unreproducible · what was
-   deliberately not done · the matrix as actually run · precedence resolutions · human-review
-   resolutions.
-3. If the invoking prompt carries **human-review items** (Beni routes his review through the
-   prompt, not PR comments), resolve each on the branch, record the resolution in the spec of
-   record, and answer any "correct me if I'm wrong" in one line in the comment.
-4. **The gate.** A merge needs all three: the verdict is "mergeable" or "mergeable after
-   fixes", every high finding has a fix commit, and `verify` is green at the tip. Then **stop
-   here** if `--no-merge` was given, if the PR is a release (a version bump, a new
-   `CHANGELOG.md` section, a tag to follow) — Beni clicks every release merge, this skill's own
-   releases included, and a tag is a release act — or, on `--pass 2.5`, if any clause of the
-   Pass 2.5 merge gate above fails. Otherwise squash-merge (the practice since PR #4) with a
-   message written as a release note in the repo's voice: terse, factual, one wink maximum. A
-   cross-vendor squash body names who ran which pass and carries both `Co-authored-by:`
-   trailers (`Codex <noreply@openai.com>`, `Claude <noreply@anthropic.com>`), as `8498726` did.
-5. A release's version moves *inside the PR* — this repo has bumped in the PR on every
+0. **Builder opens the PR.** Name the tier and the file that sets it in the PR body. The
+   reviewer starts with the PR number and a detached worktree at the tip (§0).
+1. **Read checks for the reviewed tip.** Wait for `verify` (`gh pr checks <N> --watch`) and
+   record a red result as a high finding. Also read the `tier` job summary for the current PR
+   event. Its `pull_request_target` run can be listed against the base, so match the run to
+   the PR and tip event rather than treating its policy commit as the reviewed SHA. If the
+   summary is unavailable, record that and classify the diff against `AGENTS.md`. If
+   `vercel-smoke` is absent, check the Vercel result and the Ignored Build Step
+   ([`web/README.md`](../../../web/README.md), [`web/vercel.json`](../../../web/vercel.json))
+   before calling it a gap (#370, #382).
+2. **Post one PR comment per pass**, using [pr-comment.md](pr-comment.md). Give the verdict,
+   findings and smallest changes, unreproducible leads, the checks and matrix as run,
+   precedence and human-review resolutions, out-of-scope candidates and the retro. Name the
+   reviewed SHA and any checks you could not run. The verdict is **Mergeable now**,
+   **Mergeable after fixes** with the required fixes identified, or **Not mergeable** with
+   the blocker. Pass 2.5 also delivers the Executive Summary Brief and its scored gate.
+3. **Answer Beni's human-review items** from the invoking prompt in the review comment. Give a
+   one-line answer to each "correct me if I'm wrong". The builder applies accepted changes
+   and records the resolutions and accepted costs in the spec of record. Refer owner decisions
+   to Beni.
+4. **Apply the tier's merge authority.**
+   - **Tier 0:** Leave the merge to the sync workflow.
+   - **Tier 1:** The cold reviewer stops at the report. Beni merges.
+   - **Tier 2:** The reviewer re-reads each builder fix round. Merge only on **Mergeable now**,
+     every gate clause met, `verify` green at the reviewed tip, and no `--no-merge` flag. Re-read
+     if the tip moved. Every release goes to Tier 3.
+   - **Tier 3:** Pass 2.5 always hands off the scored gate and block in step 8. Beni adjudicates
+     and gives the word to merge. Beni merges and tags releases.
+
+   For every squash, record the base SHA, compute the expected tree with
+   `git merge-tree --write-tree <base> <head>`, and pin the reviewed full head SHA with
+   `gh pr merge <N> --squash --match-head-commit <full sha>` (#369, #382). After merging, fetch
+   the squash and compare its tree to the expected tree. If the base moved, record the squash's
+   first parent and also compare using that parent as `<base>`. Report any mismatch to Beni.
+   Write the squash as a terse, factual release note. A cross-vendor squash names who ran which
+   pass and includes both `Co-authored-by:` trailers (`Codex <noreply@openai.com>` and
+   `Claude <noreply@anthropic.com>`), as `8498726` did.
+5. The builder moves a release's version *inside the PR*. This repo has bumped in the PR on every
    release; only the tag is post-merge: `package.json` and `package-lock.json`, `CHANGELOG.md`,
    the README's badge, heading and Lineage. The release *date* is written in the PR too, with
    the intended merge day (`TZ=America/New_York date`), and it lives in more than one file —
    the `CHANGELOG.md` heading, the README Lineage entry, and any `docs/` table that dates
-   releases (`docs/v0.2.1-pr-review-skill-plan.md` has one); `grep -rn '<day> Sep 2026'` finds
-   them all. If the merge slips past Brooklyn midnight, move every one before tagging.
+   releases (`docs/v0.2.1-pr-review-skill-plan.md` has one). Search for the old release day in
+   each format. If the merge slips past Brooklyn midnight, move every date before tagging.
    **Beni merges and tags every release.** The tag record says so — `v0.2.2` and `v0.2.3` are
    his; `v0.2.0` and `v0.2.1`, before this skill existed, were Claude's — and this line makes it
    the rule rather than a habit: `git tag -a vX.Y.Z -m "vX.Y.Z — <subject>"` on the squash
-   commit, push the tag, pull `main`; typecheck, test and build must be green there. The
-   session's last act on a release is the handoff block (step 8), never the tag.
-6. If `sync.yml` changed: watch the first scheduled run and report what the merge box does.
+   commit, push the tag, pull `main`; typecheck, test and build must be green there.
+6. If `sync.yml` changed, the builder and Beni watch the first scheduled run after landing and
+   report what the merge box does.
    Since v0.4.0 every successful run opens a snapshot PR — `npm run sync <stamp>` when the
    report changed (with a `docs/sync-digest.md` entry), `sync: verified unchanged — <stamp>`
    when it did not — which merges once `verify` is green, after which the run requests a
    Pages deploy. Observe one of each, and keep "merged", "deployment requested" and "deployed"
    apart. Count runs with `gh run list --workflow=sync.yml` when you write this up, never carry
    a number from a document. Test the merge box itself; the first theory shipped was wrong.
-7. Say where everything landed.
-8. **The handoff block.** On a release, end with one fenced, paste-ready block — Beni should
-   paste, not compose (he tagged v0.2.3 fifty-eight seconds after merging it, which means he
-   was typing it himself): the merge to click and its squash message; `git tag -a vX.Y.Z -m
-   "vX.Y.Z — <subject>"` with the subject already written; `git push origin vX.Y.Z`;
-   `git pull`; and the three commands that must come back green (`npm run typecheck`,
-   `npm test`, `npm run build`). If the release added or renamed a skill, the block also
-   carries the one step only a human can run: a worktree on the branch, a fresh session, the
-   command typed and seen in the `/` menu. On `--pass 2.5` the same block is the last
-   section of the Executive Summary Brief whenever the pass escalates instead of merging.
+7. **Record the landing.** The person who merges reports the squash SHA, tree check and any
+   release tag. A Tier 2 reviewer can add the receipt to the existing PR comment.
+8. **The handoff block.** End every Tier 3 Pass 2.5 brief with one fenced, paste-ready block.
+   Give Beni the head-pinned squash command, its message with both trailers, and the tree
+   check from step 4. Include `git pull` and the commands that must come back green
+   (`npm run typecheck`, `npm test`, `npm run build`). For a release, include
+   `git tag -a vX.Y.Z -m "vX.Y.Z — <subject>"` with the subject filled in and
+   `git push origin vX.Y.Z`. If the PR added or renamed a skill, include the human check
+   after the merge in a fresh session and worktree of `main`. Type the command and confirm
+   it appears in the `/` menu.
 
 ## 8. Sealed appendix
 
@@ -319,9 +362,8 @@ ghosts. **A no-finding review of a real diff is a finding about the review.**
 
 ## 9. Retro, when this skill was the method
 
-What the skill got right and what it got wrong, counted honestly — not a quota of three and
-three, and "nothing to fix" needs the same evidence as any other finding. Fold the fixes into
-this file in the same PR when the PR is tooling, and list that edit in the findings table like
-any other diff, so the next reviewer reads it cold instead of inheriting it; otherwise note
-them in the ideas file for the next patch. If the *method* changed, fold it into `CLAUDE.md`
-too.
+In their PR comment, reviewers say what the procedure got right and what it got wrong.
+"Nothing to fix" needs the same evidence as any other finding. The PM seat files the lessons
+in the ideas file's `## Process notes`. For tooling, the builder can fold a lesson into the
+skill in the PR's own fix round and list the change in the rebuttal for the next reviewer.
+The PM seat carries changes to the cycle into the owning instructions.
