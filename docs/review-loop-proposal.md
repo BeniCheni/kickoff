@@ -845,6 +845,10 @@ Cursor's hands this track seats no Cursor.
 - *Ruled (Tue 24 Nov 2026):* Pass 3's [comment](https://github.com/BeniCheni/elenchus/pull/9#issuecomment-7151372275), by the Planner for Beni: no further
   fix round, and 25-1 to 25-7 go to Sprint 5. The rulings are under "Rulings received"
   ("Sprint 4's Pass 3"). The executor, pass `exec`, is next.
+- *Executor brief:* [`review-loop-sprint-4-exec-prompt.md`](review-loop-sprint-4-exec-prompt.md),
+  for the executor, pass `exec` (Codex in the Codex desktop app, `gpt-6.2-astra`, `xhigh`), in
+  `~/code/review-seats/elenchus-pr9-exec`. Nothing to apply: it re-checks GitHub's state at
+  `51a076e`, runs the suite and T9 again, and posts the exec record. The merge is Beni's.
 
 **Sprint 5 — Kickoff phase 2: the gate on `main` (after Sprint 3 passes).**
 - *Scope:* the `kickoff/360` ruleset on `main`, applied by Beni; `loop authorize`; the sync
