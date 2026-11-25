@@ -2932,12 +2932,19 @@ async function heldLoad(page, scripts, app, navigate, label, expect) {
 export async function proveMotion(browser, origins, out) {
   const cases = []
   const { fixtures } = readSnapshot(root)
-  // A named, scheduled band entry lets the control prove that advancing the clock
-  // across the same boundary really does repaint KICKED OFF.
-  const liveDay = [...Map.groupBy(fixtures, f => brooklynDate(f.kickoffUtc)).values()].find(day =>
-    day.length === 1 && day[0].status === 'scheduled' && day[0].timeConfidence === 'exact')
-  assert.ok(liveDay, 'No scheduled single-match day for the stillness control')
-  const kickoff = Date.parse(liveDay[0].kickoffUtc)
+  // A single kickoff makes the clock edge visible on its original slide. A later
+  // eligible date in the same week gives the Rack an independently known destination.
+  const days = Map.groupBy(fixtures, f => brooklynDate(f.kickoffUtc))
+  const dates = [...days.keys()].filter(date => days.get(date).some(f => f.status === 'scheduled')).sort()
+  const index = dates.findIndex((date, i) => {
+    const day = days.get(date)
+    return day.length === 1 && day[0].timeConfidence === 'exact' && dates[i + 1] &&
+      startOfWeek(dates[i + 1]) === startOfWeek(date)
+  })
+  assert.ok(index >= 0, 'No scheduled single-match day followed by another book this week')
+  const fixture = days.get(dates[index])[0]
+  const nextBook = dates[index + 1]
+  const kickoff = Date.parse(fixture.kickoffUtc)
   for (const [app, origin] of Object.entries(origins)) {
     let server = null
     if (app === 'next') {
@@ -3002,8 +3009,8 @@ export async function proveMotion(browser, origins, out) {
             history.replaceState(null, '', url)
             window.dispatchEvent(new PopStateEvent('popstate'))
             window.dispatchEvent(new Event('focus'))
-          }, kickoff - 1000, brooklynDate(liveDay[0].kickoffUtc))
-          const entry = '.rack-slide[data-position="center"] [data-band-fixture="' + liveDay[0].id + '"]'
+          }, kickoff - 1000, dates[index])
+          const entry = '.rack-slide[data-position="center"] [data-band-fixture="' + fixture.id + '"]'
           await page.waitForSelector(entry + ' .band-clocks')
           await page.evaluate(() => document.fonts.ready)
           await page.mouse.move(4, 600)
@@ -3018,10 +3025,17 @@ export async function proveMotion(browser, origins, out) {
           assert.ok(elapsed > 1000)
           assert.equal(await page.evaluate(() => Date.now()), kickoff - 1000)
           await page.evaluate(at => { Date.now = () => at; window.dispatchEvent(new Event('focus')) }, kickoff + 1000)
-          // The Rack may now rest on tomorrow. Read the very same fixture on its own slide.
-          const state = '[data-band-fixture="' + liveDay[0].id + '"] .band-result'
+          // The original slide keeps the result and the resting cover follows the clock.
+          const state = '[data-band-fixture="' + fixture.id + '"] .band-result'
           await page.waitForFunction(sel => document.querySelector(sel)?.textContent === 'KICKED OFF', {}, state)
-          clockProof = { kickoff: liveDay[0].kickoffUtc, pinned: new Date(kickoff - 1000).toISOString(), elapsedMs: Math.round(elapsed), advanced: 'KICKED OFF' }
+          const resting = await page.evaluate(() => {
+            const cover = document.querySelector('.rack-slide[data-position="center"]')
+            return { date: cover.dataset.date, title: cover.querySelector('.book-title').textContent,
+              marker: document.querySelector('.rack-marker[data-resting] b').textContent,
+              reading: document.querySelector('.book-spine[data-reading]').dataset.date }
+          })
+          assert.deepEqual([resting.date, resting.reading, resting.marker], [nextBook, nextBook, resting.title], label)
+          clockProof = { from: dates[index], resting, kickoff: fixture.kickoffUtc, pinned: new Date(kickoff - 1000).toISOString(), elapsedMs: Math.round(elapsed), advanced: 'KICKED OFF' }
           if (spec.id === 'stored-on') {
             writeFileSync(path.join(out, `motion-stopped-${app}-a.png`), first)
             writeFileSync(path.join(out, `motion-stopped-${app}-b.png`), second)

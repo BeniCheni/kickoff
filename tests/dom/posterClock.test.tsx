@@ -10,6 +10,9 @@ vi.mock('../../src/data/fixtures.json', async () => {
     edgeFixture({ id: 'fri', competition: 'pl', kickoffUtc: '2026-11-20T19:00:00.000Z' }),
     edgeFixture({ id: 'mon-pl', competition: 'pl', kickoffUtc: '2026-11-23T17:00:00.000Z' }),
     edgeFixture({ id: 'mon-es', kickoffUtc: '2026-11-23T19:00:00.000Z' }),
+    edgeFixture({ id: 'tue-early', competition: 'ucl', kickoffUtc: '2026-11-24T18:00:00.000Z' }),
+    edgeFixture({ id: 'tue-last', competition: 'ucl', kickoffUtc: '2026-11-24T20:00:00.000Z' }),
+    edgeFixture({ id: 'wed', competition: 'ucl', kickoffUtc: '2026-11-25T20:00:00.000Z' }),
   ] }
 })
 
@@ -44,4 +47,25 @@ it('counts only visible fixtures on the next-week spine', () => {
   window.history.replaceState(null, '', '?date=2026-11-16&only=pl')
   const { container } = render(<FixturesPage today="2026-11-16" lens="poster" />)
   expect(container.querySelector('[data-upcoming] .spine-next')?.textContent).toBe('Next week · Mon 23 Nov · 1 match')
+})
+
+it('moves the resting cover, marker and reading spine together at the last kickoff with motion off', () => {
+  const release = primeClock(new Date('2026-11-24T17:59:59Z'))
+  try {
+    document.documentElement.dataset.motion = 'off'
+    const { container } = render(<ClockedPoster />)
+    const resting = () => [
+      container.querySelector<HTMLElement>('.rack-slide[data-position="center"]')?.dataset.date,
+      container.querySelector('.rack-marker[data-resting] b')?.textContent,
+      container.querySelector<HTMLElement>('.book-spine[data-reading]')?.dataset.date,
+    ]
+    const tuesday = ['2026-11-24', 'The First Night', '2026-11-24']
+    expect(resting()).toEqual(tuesday)
+    tick(1050)
+    expect(resting()).toEqual(tuesday)
+    tick(2 * 60 * 60 * 1000)
+    expect(resting()).toEqual(['2026-11-25', 'The Second Night', '2026-11-25'])
+  } finally {
+    release()
+  }
 })
