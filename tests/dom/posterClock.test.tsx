@@ -8,6 +8,8 @@ vi.mock('../../src/data/fixtures.json', async () => {
   const { edgeFixture } = await import('../fixtures/edgeFixtures')
   return { default: [
     edgeFixture({ id: 'fri', competition: 'pl', kickoffUtc: '2026-11-20T19:00:00.000Z' }),
+    edgeFixture({ id: 'mon-pl', competition: 'pl', kickoffUtc: '2026-11-23T17:00:00.000Z' }),
+    edgeFixture({ id: 'mon-es', kickoffUtc: '2026-11-23T19:00:00.000Z' }),
   ] }
 })
 
@@ -36,4 +38,10 @@ it('keeps the next volume link when its matchday becomes yesterday in Brooklyn',
   } finally {
     release()
   }
+})
+
+it('counts only visible fixtures on the next-week spine', () => {
+  window.history.replaceState(null, '', '?date=2026-11-16&only=pl')
+  const { container } = render(<FixturesPage today="2026-11-16" lens="poster" />)
+  expect(container.querySelector('[data-upcoming] .spine-next')?.textContent).toBe('Next week · Mon 23 Nov · 1 match')
 })

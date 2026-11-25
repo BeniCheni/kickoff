@@ -394,5 +394,18 @@ describe('matchday cover slots', () => {
       'The Long Whistle', 'A Quiet Week', 'The Register',
     ])
     expect(new Set(Object.values(COVER_LIBRARY).map(([, line]) => line)).size).toBe(11)
+    expect(Object.values(COVER_LIBRARY).map(([, line]) => line)).toEqual([
+      'The lights came back on in the ninety-fifth minute. So did something else.',
+      'Every door was left open that Saturday. The whistle did not close them all.',
+      'The tower counts its bells every Sunday. It has never been wrong.',
+      'It is only Monday. The week has not finished with you.',
+      'The weekend is days away. Something could not wait.',
+      'Grounds lit at once, a continent apart. Something walks between them.',
+      'It walked between them all night. It is still walking.',
+      'Windows lit across the map. Count them again. One is watching back.',
+      'Every whistle blew, and every one was answered. You made it to morning.',
+      'A no-bet week is a successful outcome.',
+      'Every name goes in. Some are already falling.',
+    ])
   })
 })

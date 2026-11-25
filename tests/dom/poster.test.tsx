@@ -182,3 +182,23 @@ it('prints the mixed-day unset count under the FIRST date line in the part', () 
   expect(date.nextElementSibling?.textContent).toBe('1 kickoff, time not yet set by the league')
   expect(date.nextElementSibling?.getAttribute('data-voice')).toBe('amber')
 })
+
+it('prints the exact plural unset total on the cover band', () => {
+  const shown = ['one', 'two'].map(id => edgeFixture({ id, timeConfidence: 'tbd' }))
+  render(<CoverBand shown={shown} now="2026-11-21T00:00:00Z" />)
+  expect(screen.getByText('2 kickoffs, times not yet set by the league').dataset.voice).toBe('amber')
+})
+
+it('keeps a placeholder clock off the spine', () => {
+  const book: MatchdayBook = { date: '2026-11-22', slot: 'sun', closed: false,
+    shown: [edgeFixture({ timeConfidence: 'round_placeholder' })] }
+  const { container } = render(<BookShelf books={[book]} resting={book.date} gaps={[]} />)
+  expect(container.querySelector('.book-spine')?.textContent).not.toMatch(/\d{1,2}:\d{2}/)
+})
+
+it('keeps both fixtures anonymous in an alphabetical tie at the first kickoff', () => {
+  const shown = ['Alpha', 'Zulu'].map(name => edgeFixture({ id: name, home: { name } }))
+  const { container } = render(<CoverBand shown={shown} now="2026-11-21T00:00:00Z" />)
+  expect(container.querySelector('[data-band-fixture]')).toBeNull()
+  expect(screen.getByText('+ 2 more, from 3:00 PM ET')).toBeTruthy()
+})
