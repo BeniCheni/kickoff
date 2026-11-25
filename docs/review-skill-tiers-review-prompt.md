@@ -222,9 +222,12 @@ The PM seat re-checked at 4:35 PM EST. The head was still `298790b`, CLEAN, `tie
 only `src/data/` and `docs/sync-digest.md`, none of #388's nine files. `git merge-tree
 --write-tree origin/main 298790b` gave `3c200c8`, and `git diff 9512537 3c200c8` was byte for
 byte `git diff bafb1f1 298790b`. Pass 2.5's handoff block, written an hour after its read,
-still pinned `bafb1f1` and tree `958a9cd`, so the PM seat gave Beni the corrected values.
+still pinned `bafb1f1` and tree `958a9cd`, so the PM seat gave Beni the corrected values. The
+brief and the block are archived as delivered, pre-sync pins and all, in the last section of
+this file.
 
-Beni answered "Yes to all five" at about 4:44 PM EST:
+Beni answered "Yes to all five" at about 4:44 PM EST. The questions are quoted in full under
+"Questions for the CEO" in the archived brief below; in short:
 1. His four Pass 1.5 rulings (Q1 to Q4), as the PR body records them: **Yes**.
 2. The builder's four judgments (the pointer's wording; clauses 1, 2, 6, 7 and 8 raising a PR
    to Tier 3; the moves into §0; the two-step `/` menu check): **Yes**.
@@ -236,8 +239,9 @@ Then, in order:
 - Beni ran the branch-side `/` menu check in a fresh session at the PR tip and said "Yes, it
   passed".
 - 4:46 PM EST: the PM seat re-read `main` (`9512537`) and the merge tree (`3c200c8`), then
-  `gh pr merge 388 --squash --match-head-commit 298790b…` merged as `282b1a3`, with Pass 2.5's
-  subject and body and `Co-Authored-By:` trailers for Codex and Claude. The PR had already been
+  `gh pr merge 388 --squash --match-head-commit 298790b…` merged as `282b1a3`, with the subject
+  and body from Pass 2.5's handoff block below, unchanged, including its `Co-Authored-By:`
+  trailers for Codex and Claude. The PR had already been
   marked ready. `282b1a3`'s parent is `9512537` and its tree is `3c200c8`. On `main` after the
   fast-forward, `npm run typecheck` was clean, `npm test` passed 1,244 tests in 89 files, and
   `npm run build` was green. No tag, because this is not a release.
@@ -248,15 +252,171 @@ Handed on, none of them blocking:
   run makes no repository or PR changes. The dispatch runs the branch's copy, so first check in
   the diff that every write step still requires `dry_run == 'false'`."), and `CLAUDE.md:33-34`,
   which says the pipeline plugin's B1.6 "remains the PM-side copy of the same cycle". In both
-  local synced copies of the plugin (27 Oct and 20 Nov), B1.6 predates #369's tiers. The fix is
-  the plugin's (Beni's) or a one-line trim.
-- Pass 2.5's candidates for the PM seat: a "(§0)" pointer in the "Archive the cycle" bullet; the
-  PR template's tier line (Pass 1's); a Codex-side discovery check beside the `/` menu check;
-  and "a vendor other than the builder's" in the pointer if Cursor builds become routine.
+  local synced copies of the plugin (27 Oct and 20 Nov), B1.6 predates #369's tiers. Whether the
+  live plugin is newer is for Beni to confirm. The fix is the plugin's (Beni's) or a one-line
+  trim.
+- Pass 2.5's candidates for the PM seat, in its order and each sized small
+  (`https://github.com/BeniCheni/kickoff/pull/388#issuecomment-7175235767`, "Candidates for the
+  PM seat"):
+  1. a "(§0)" pointer in the "Archive the cycle" bullet, so the briefing seats meet the seat
+     line there (rank 1);
+  2. the PR template's tier line: Pass 1 found that `.github/PULL_REQUEST_TEMPLATE.md` has no
+     line for the tier and the file that sets it, which `AGENTS.md:55-56` asks of every builder;
+  3. a Codex-side discovery check beside the `/` menu check, since the pointer's description
+     changed and `kickoff-design-review/SKILL.md:96` says never to claim a command works
+     without checking the Codex surface;
+  4. "a vendor other than the builder's" in the pointer if Cursor builds become routine, of low
+     value today. Behind it sits a gap in the sources, not in #388: the seats table has no
+     column that names who cold-reads a Cursor build.
 - Pass 1's other out-of-scope item: `README.md:364` ("clicks merge") against `:382` ("gives the
   word to merge"), a Tier 1 wording fix.
 - Pass 2.5's retro: delete each scratch build export once its hashes are recorded (the two
   exports filled the disk); a `git archive` export can build but cannot run the suite, because
-  three test files need `.git`; and a rebuttal row that describes added text should quote it.
+  three test files need `.git`, so for a test count at another commit use a worktree or a
+  scratch `git init` of the export; and a rebuttal row that describes added text should quote
+  it.
 - The PM seat's retro: a synthesis seat re-reads `main` just before it writes the handoff block,
   not only at the start of its run.
+
+# Pass 2.5's Executive Summary Brief and handoff block (delivered in chat at 4:33 PM EST, archived here)
+
+Pass 2.5 delivered these in its own chat, and Beni pasted them into the PM seat's. They are kept
+as delivered, so a reader can compare the five questions and the proposed squash message with
+what landed. They are historical: step 1's pins (`main` at `bafb1f1`, tree `958a9cd`) predate
+sync PR #390, and the PM seat ran the steps against `9512537` and `3c200c8` instead, as the
+record above says. The terminal that carried the paste drew the merge-gate table with box
+characters and dropped a few words where lines wrapped. The table is redrawn in Markdown, and
+the words and the one semicolon restored there are in [square brackets]. Nothing else is
+changed.
+
+````text
+Executive Summary Brief — PR #388 · Pass 2.5 · Wed 25 Nov 2026, 4:33 PM EST
+
+Decision: escalated. At 298790b7d7c1a02aad8120fba36f4e421364aa83 all eight gate clauses are met. Every one of Pass 1's eleven findings is fixed, and so are your four rulings. The fix round lost no line. I found one new low finding (A, below) that does not block. This is Tier 3, so the merge waits for your word. Before you give it, run the / menu check on the branch (step 0 of the handoff block).
+
+Merge gate
+
+| # | Clause | Score | Evidence at the tip |
+|---|---|---|---|
+| 1 | Non-release | met | No change to package.json, the lockfile, CHANGELOG.md or the roadmap pointers; no tag |
+| 2 | No numbering fork | met | No version file moves |
+| 3 | Every high finding fixed | met | There never was a high finding |
+| 4 | No dispute between vendors | met | Codex accepted or fixed all 11 and contested none |
+| 5 | verify green | met | Run 45694198281 on 298790b |
+| 6 | ?only= / &date= contract unchanged | met | src/ unchanged |
+| 7 | sync.yml gates unchanged | met | .github/ unchanged |
+| 8 | src/data/*.json unchanged | met | Unchanged |
+
+Every remaining question is yours.
+
+What ships
+
+- Reviewers stop pushing, fixing or merging. Cold reads only report. The builder commits every fix. Pass 2.5 writes only its comment and this brief.
+- Merge authority follows the tiers. Only a Tier 2 reviewer merges, and only on "Mergeable now" with verify green and all eight clauses met. If clause 1, 2, 6, 7 or 8 fails, the reviewer raises the PR to Tier 3. Tier 1 and Tier 3 merges are yours.
+- The Codex and Cursor pointer has the vendor rule back. "The other vendor does the cold read. In Tier 3, if your vendor built the pull request, you hold Pass 2 at most."
+- Lessons from #359, #369, #370, #380 and #382 now sit where seats will meet them:
+  - the seat line and the pointer to the archived copy;
+  - keeping the Learning style out of deliverables;
+  - the build comparison when the sandbox blocks the dev server;
+  - sandbox hygiene;
+  - finding the tier run;
+  - the squash pinned to the head, with a tree check.
+- Three files stop describing the old cycle: CLAUDE.md, .claude/rules/releases.md and the design-review skill.
+
+Where it sits
+
+This is workstream 2 of the 24 Nov checkpoint, as the build brief describes it. It is not a release: no version, no CHANGELOG entry, no tag, and the public roadmap doesn't move.
+
+What the 360 found
+
+- Pass 1 (Fable 5.2, report-only): "Mergeable after fixes", with 2 medium and 9 low. The two mediums: the pointer had dropped the vendor rule, and the reviewer's own sync dry run [had] been handed to the builder.
+- Your rulings: Q1 to Q4, each a Yes, at about 2:53 PM.
+- Pass 2 (Codex, gpt-6.2-sol) fixed all 11 and Q4's three lines in 298790b, and contested nothing.
+- Pass 2.5:
+  - Every row holds at the head.
+  - Codex's comment says the skill now has the reviewer raise a numbering fork "on discovery". That wording is not at the head, but the general "The reviewer raises it" covers it[;] nothing needs to change.
+  - New finding A (low): SKILL.md:256 says "A dry run makes no repository or PR changes." That holds for main's sync.yml. But a dry-run dispatch on a branch runs the branch's own [copy] of the workflow, with write permissions. If that copy drops a dry-run check, the run can still write.
+- Nothing is contested between the vendors.
+
+Verification as re-run
+
+- Typecheck and tests: typecheck clean, 1,244 tests in 89 files at the head. 26da6db also gives 1,244 in 89 when run in a scratch git repo; a bare export fails 3 files that need [.git].
+- Hosted checks: verify and tier are green at the head. tier computed Tier 3 from bafb1f1 and listed all 8 sensitive files, including the two that Q4 added.
+- Smoke substitute: the sandbox blocked the dev server (listen EPERM). Builds at bafb1f1, 26da6db and 298790b each wrote 7 files with identical SHA-256 hashes.
+- There is no vercel-smoke run, as expected. Vercel skipped the deploy because no build input changed, so nothing triggered the smoke.
+- Docs checks:
+  - All 24 section citations resolve.
+  - GitHub renders all nine files.
+  - All three frontmatter blocks parse as YAML.
+  - git merge-tree gives tree 958a9cd.
+- Not re-run: the live browser smoke, the / menu, how Codex or Cursor loads the pointer, a live dry run, the earlier commits 4f5339c and 1aed6fc, and the live plugin's B1.6.
+
+Risks and accepted costs
+
+- No guard test. That was the builder's call, and Pass 1 agreed. A later rewording could bring the old shape back, and only review would catch it.
+- "The other vendor" assumes two vendors. The seats table has no column for a Cursor build.
+- Finding A: the dry-run sentence is true only while the branch keeps sync.yml's dry-run checks.
+- CLAUDE.md:33-34 may be false. It says the plugin's B1.6 "remains the PM-side copy of the same cycle". In both local synced copies (27 Oct and 20 Nov), B1.6 still describes [three] passes and older model names. The base already made this claim, and this PR keeps it.
+- No new exposure for Step 0: the app, the data and the workflows are unchanged, and the build is byte-identical.
+
+Handed to the next patch (PM seat)
+
+- One Tier 3 instruction PR after you update the plugin: finding A, plus a fix or trim of CLAUDE.md:33-34.
+- Candidates from the comment:
+  - a "(§0)" pointer in the "Archive the cycle" bullet;
+  - a Codex-side check that the pointer still loads;
+  - the PR template's tier line;
+  - the wording at README.md:364, a Tier 1 fix.
+- Retro notes:
+  - delete scratch build copies once their hashes are recorded;
+  - a bare export can build but cannot run the suite.
+
+Questions for the CEO
+
+1. Do you confirm your four Pass 1.5 rulings (Q1 to Q4, each a Yes, about 2:53 PM) as the PR body records them? Yes / No
+2. Do you accept the builder's four judgments: the pointer's wording, clauses 1, 2, 6, 7 and 8 raising a PR to Tier 3, the moves to §0, and the two-step / check? Yes / No. I'd say Yes.
+3. Should finding A wait for the next instruction PR instead of going into #388 now? Yes / No. I'd say Yes: it is low, and folding it in now costs another fix round and another re-check.
+4. Should the PM seat's three open items (the template's tier line, README.md:364, B1.6) stay out of #388? Yes / No. I'd say Yes; none of them blocks.
+5. Once the branch-side / check passes, should #388 merge at 298790b? Yes / No
+
+Handoff block
+
+# 0 · Before the word (human): the branch-side / menu check, in a fresh session at the PR tip
+cd /Users/benicheni/code/kickoff-pr388-synthesis && claude
+#   Type /kickoff-pr-review. Confirm the entry and the hint "<PR#> [--pass 1|2.5] [--no-merge]" appear in the / menu. Press Esc without running it, then /exit.
+
+# 1 · The squash, pinned to the reviewed head
+cd /Users/benicheni/code/kickoff
+git fetch origin
+git rev-parse origin/main   # expect bafb1f1fa53c30f9b0009abd76d793b43686ae1f; if it moved, stop
+git merge-tree --write-tree origin/main 298790b7d7c1a02aad8120fba36f4e421364aa83   # expect 958a9cd581c8c5d9602b0d7be1ab2a2244ef7daa
+gh pr ready 388
+gh pr merge 388 --squash --match-head-commit 298790b7d7c1a02aad8120fba36f4e421364aa83 \
+  --subject "Align the Kickoff review skill with review tiers (#388)" \
+  --body "$(cat <<'EOF'
+The review skill, its three templates and the Codex/Cursor pointer now say what the README and AGENTS.md have said since #369: cold reads are report-only, the builder commits every fix, Pass 2.5 writes only its comment and the Executive Summary Brief and always escalates, only a Tier 2 reviewer merges, and every Tier 3 merge takes Beni's word. The pointer restores the vendor rule, a report-only reviewer may dispatch its own sync dry run, and the eight-clause gate stays the skill's Tier 2 discipline above AGENTS.md's floor, raising a PR to Tier 3 on clause 1, 2, 6, 7 or 8.
+
+CLAUDE.md now gives the six-pass 360 to a Tier 3 PR and calls the review prompt a brief; .claude/rules/releases.md and the kickoff-design-review skill follow, per Beni's rulings Q1-Q4 of 25 Nov 2026. No app code changed; the build is byte-identical to main's.
+
+Built by Codex (gpt-6.2-sol). Build brief and Passes 0 and 1.5 by the PM seat, Claude Code (Opus 5.5). Pass 1 cold review by Claude Code (Fable 5.2), report-only. Pass 2 by Codex. Pass 2.5 by Claude Code (Opus 5.5), writing nothing. Pass 3 by Beni.
+
+Co-Authored-By: Codex <noreply@openai.com>
+Co-Authored-By: Claude <noreply@anthropic.com>
+EOF
+)"
+
+# 2 · Tree check, then main green
+git fetch origin
+git log -1 --format='%H %P' origin/main   # the parent should be bafb1f1…; if not, rerun merge-tree with that parent
+git rev-parse 'origin/main^{tree}'        # expect 958a9cd581c8c5d9602b0d7be1ab2a2244ef7daa
+git pull
+npm run typecheck && npm test && npm run build
+
+# 3 · After the merge (human): the main-side / menu check, in a fresh session on main
+claude
+#   Type /kickoff-pr-review, confirm it appears in the / menu with the same hint, press Esc, then /exit.
+
+Live folder: ~/code/kickoff-pr388-synthesis (detached at 298790b, now holding node_modules and dist). It is needed until you've done step 0's check; after that the PM seat can remove it.
+
+This pass stops here. #388 stays a draft.
+````
