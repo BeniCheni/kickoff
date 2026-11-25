@@ -2,9 +2,23 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import App from '../../src/App'
 import { AppHeader } from '../../src/components/AppHeader'
+import { META, SYNC_STAMP } from '../../src/lib/fixtures'
 import { edt, installMatchMedia, primeClock } from './rig'
 
 describe('the header is one module', () => {
+  it('prints the fixture count and the sync stamp', () => {
+    installMatchMedia({ dark: false })
+    const release = primeClock(edt('2026-09-05T12:00:00'))
+    try {
+      render(<App />)
+      const text = (document.querySelector('header')!.textContent ?? '').toLowerCase()
+      expect(text).toContain(`${META.total} fixtures`)
+      expect(text).toContain(SYNC_STAMP.toLowerCase())
+    } finally {
+      release()
+    }
+  })
+
   it('Vite’s header outerHTML is the shared header in both themes', () => {
     installMatchMedia({ dark: false })
     const release = primeClock(edt('2026-09-05T12:00:00'))

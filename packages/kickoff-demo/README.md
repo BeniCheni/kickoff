@@ -34,7 +34,7 @@ a nullable `parent_id`.
 ## What it must never import
 
 `studio/`, `src/`, `web/`, Drizzle, `postgres`, the filesystem, the environment,
-fal, or `server-only`. Its only dependency is zod `4.4.3`.
+fal, or `server-only`. Its only dependency is zod `4.6.7`.
 
 ## Who depends on it
 

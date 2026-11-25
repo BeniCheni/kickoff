@@ -1,0 +1,26 @@
+{
+  "number": 378,
+  "facts": {
+    "headRef": "sync/scheduled",
+    "authorLogin": "github-actions[bot]",
+    "sameRepo": true
+  },
+  "files": [
+    {
+      "filename": "docs/sync-digest.md",
+      "status": "modified"
+    },
+    {
+      "filename": "src/data/fixtures.json",
+      "status": "modified"
+    },
+    {
+      "filename": "src/data/meta.json",
+      "status": "modified"
+    },
+    {
+      "filename": "src/data/standings.json",
+      "status": "modified"
+    }
+  ]
+}

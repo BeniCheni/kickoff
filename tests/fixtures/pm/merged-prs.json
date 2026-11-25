@@ -1,0 +1,65 @@
+[
+  {
+    "number": 505,
+    "title": "npm run sync 11/18/2026 by hand",
+    "url": "https://github.com/example/kickoff/pull/505",
+    "headRefName": "someone/manual-sync",
+    "body": "A sync run by hand. Its body must never reach the model.",
+    "mergedAt": "2026-11-18T12:00:00Z",
+    "mergeCommit": { "oid": "ffffffffffffffffffffffffffffffffffffffff" }
+  },
+  {
+    "number": 504,
+    "title": "docs: the sync rules, archived",
+    "url": "https://github.com/example/kickoff/pull/504",
+    "headRefName": "claude/sync-rules-docs",
+    "body": "Archives the sync rules. A docs PR whose title mentions sync, not a sync PR.",
+    "mergedAt": "2026-11-17T15:00:00Z",
+    "mergeCommit": { "oid": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" }
+  },
+  {
+    "number": 503,
+    "title": "⚠ npm run sync 11/16/2026 4:11 PM ET — time-sensitive change reported",
+    "url": "https://github.com/example/kickoff/pull/503",
+    "headRefName": "sync/scheduled",
+    "body": "Time-sensitive fixture lines. Never a model's input.",
+    "mergedAt": "2026-11-16T21:17:43Z",
+    "mergeCommit": { "oid": "dddddddddddddddddddddddddddddddddddddddd" }
+  },
+  {
+    "number": 502,
+    "title": "Show the whole table at 360 px",
+    "url": "https://github.com/example/kickoff/pull/502",
+    "headRefName": "claude/table-360",
+    "body": "## What this changes\n\nThe standings table fits a 360 px phone.\n\n## What was deliberately not done\n\nThe Ledger lens keeps its old widths.",
+    "mergedAt": "2026-11-16T17:00:00Z",
+    "mergeCommit": { "oid": "cccccccccccccccccccccccccccccccccccccccc" }
+  },
+  {
+    "number": 501,
+    "title": "sync: verified unchanged — 11/15/2026 2:54 AM ET",
+    "url": "https://github.com/example/kickoff/pull/501",
+    "headRefName": "sync/scheduled",
+    "body": "Nothing changed.",
+    "mergedAt": "2026-11-15T08:01:24Z",
+    "mergeCommit": { "oid": "9999999999999999999999999999999999999999" }
+  },
+  {
+    "number": 500,
+    "title": "The release itself",
+    "url": "https://github.com/example/kickoff/pull/500",
+    "headRefName": "codex/release",
+    "body": "Merged one second after the commit it became, which the tag points at.",
+    "mergedAt": "2026-11-14T22:14:03Z",
+    "mergeCommit": { "oid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" }
+  },
+  {
+    "number": 499,
+    "title": "An earlier PR in the release",
+    "url": "https://github.com/example/kickoff/pull/499",
+    "headRefName": "claude/earlier",
+    "body": "Already released.",
+    "mergedAt": "2026-11-14T08:00:00Z",
+    "mergeCommit": { "oid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" }
+  }
+]

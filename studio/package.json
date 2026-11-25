@@ -24,7 +24,7 @@
     "postgres": "3.4.9",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "zod": "4.4.3"
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.5.9",
@@ -38,7 +38,7 @@
     "tailwindcss": "4.3.3",
     "tsx": "4.23.12",
     "typescript": "7.0.2",
-    "vite": "8.2.2",
-    "vitest": "4.1.11"
+    "vite": "8.3.8",
+    "vitest": "4.1.12"
   }
 }

@@ -1,0 +1,78 @@
+{
+  "number": 365,
+  "facts": {
+    "headRef": "claude/pm-chores",
+    "authorLogin": "BeniCheni",
+    "sameRepo": true
+  },
+  "files": [
+    {
+      "filename": "docs/pm-chores-implementation-prompt.md",
+      "status": "added"
+    },
+    {
+      "filename": "scripts/pm/README.md",
+      "status": "added"
+    },
+    {
+      "filename": "scripts/pm/github.ts",
+      "status": "added"
+    },
+    {
+      "filename": "scripts/pm/model.ts",
+      "status": "added"
+    },
+    {
+      "filename": "scripts/pm/pass0.ts",
+      "status": "added"
+    },
+    {
+      "filename": "scripts/pm/process.ts",
+      "status": "added"
+    },
+    {
+      "filename": "scripts/pm/unreleased.ts",
+      "status": "added"
+    },
+    {
+      "filename": "tests/fixtures/pm/claude-signed-out.json",
+      "status": "added"
+    },
+    {
+      "filename": "tests/fixtures/pm/claude-success.json",
+      "status": "added"
+    },
+    {
+      "filename": "tests/fixtures/pm/fakeGitHub.ts",
+      "status": "added"
+    },
+    {
+      "filename": "tests/fixtures/pm/merged-prs.json",
+      "status": "added"
+    },
+    {
+      "filename": "tests/fixtures/pm/pr-view.json",
+      "status": "added"
+    },
+    {
+      "filename": "tests/pmGithub.test.ts",
+      "status": "added"
+    },
+    {
+      "filename": "tests/pmModel.test.ts",
+      "status": "added"
+    },
+    {
+      "filename": "tests/pmPass0.test.ts",
+      "status": "added"
+    },
+    {
+      "filename": "tests/pmProcess.test.ts",
+      "status": "added"
+    },
+    {
+      "filename": "tests/pmUnreleased.test.ts",
+      "status": "added"
+    }
+  ]
+}

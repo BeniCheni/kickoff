@@ -192,7 +192,7 @@ describe('migration 0002 and the studio column lists', () => {
 })
 
 describe('package boundary', () => {
-  it('depends on zod 4.4.3 and nothing else', () => {
+  it('depends on zod 4.6.7 and nothing else', () => {
     const pkg = JSON.parse(readFileSync(path.join(packageRoot, 'package.json'), 'utf8')) as {
       name: string
       private: boolean
@@ -203,7 +203,7 @@ describe('package boundary', () => {
     expect(pkg.name).toBe('@kickoff/catalog')
     expect(pkg.private).toBe(true)
     expect(pkg.version).toBe('0.0.0')
-    expect(pkg.dependencies).toEqual({ zod: '4.4.3' })
+    expect(pkg.dependencies).toEqual({ zod: '4.6.7' })
     expect(pkg.devDependencies).toBeUndefined()
     const installedEntry = createRequire(import.meta.url).resolve('@kickoff/catalog')
     const resolved = realpathSync(createRequire(installedEntry).resolve('zod'))

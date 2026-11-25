@@ -50,12 +50,143 @@ function hasLeak(text, bypass) {
     Boolean(bypass && plain.includes(bypass))
 }
 
-// The landmarks are the shell-matrix / n3-next-vite / n4b-regressions selectors, except on
-// Fixtures: those receipts looked for the Weekly button, which the app no longer renders.
+// Contract every later brief carries. A route fails without these, in the server HTML.
+// Each name is a real attribute of its element: whitespace inside the tag precedes it,
+// so a prefixed stand-in (data-aria-label, x-data-moments-background, x-data-table-picker) does not count.
+// The tag name is the whole name, so button-probe is not a button. Attribute names are
+// read case-insensitively, and a quoted > stays inside its value.
+//   nav aria-label="Primary"         — every tab (checked below, not in ROUTES)
+//   data-moments-background="route"  — Fixtures and Table
+//   button aria-label="Previous"     — Fixtures only: the week stepper's previous chevron.
+//                                      A button, and that exact name: "Previous week" fails.
+//                                      aria-labelledby on that button fails too, in any letter case:
+//                                      it overrides the name.
+//   data-table-picker                — Table
+//   main aria-label="Moments"        — Moments
+// Two more readings are of Moments' words, and they go quiet, not red, if the words change:
+//   id="moments-unavailable-heading" or "The gallery is unavailable."  — the latest-main gallery gate
+//   "Stub catalog · synthetic records"                                 — the stub-catalog leak check
+// "Jump to today" is not in the contract. The second edition renames that button "Today"
+// (PR 3) and keeps the stepper through that week-row rebuild and the Poster books (PR 5).
+
+function isHtmlSpace(char) {
+  return char === ' ' || char === '\n' || char === '\r' || char === '\t' || char === '\f'
+}
+
+function isAsciiLetter(code) {
+  return (code >= 65 && code <= 90) || (code >= 97 && code <= 122)
+}
+
+const RAW_TEXT = new Set(['script', 'style', 'textarea', 'title'])
+
+// One pass over start tags. The tag name and attribute names are lowercased.
+// Quoted values are taken whole, so a > inside quotes cannot end the tag.
+function startTags(html) {
+  const tags = []
+  let i = 0
+  while (i < html.length) {
+    const open = html.indexOf('<', i)
+    if (open === -1) break
+    i = open + 1
+    if (html.startsWith('!--', i)) {
+      const end = html.indexOf('-->', i + 3)
+      i = end === -1 ? html.length : end + 3
+      continue
+    }
+    if (!isAsciiLetter(html.charCodeAt(i))) continue
+    const nameStart = i
+    i += 1
+    while (i < html.length) {
+      const code = html.charCodeAt(i)
+      const nameChar = isAsciiLetter(code) || (code >= 48 && code <= 57) || code === 45 || code === 58 || code === 95
+      if (!nameChar) break
+      i += 1
+    }
+    const name = html.slice(nameStart, i).toLowerCase()
+    const attrs = new Map()
+    let closed = false
+    while (i < html.length) {
+      while (isHtmlSpace(html[i])) i += 1
+      if (i >= html.length) break
+      if (html[i] === '>') {
+        i += 1
+        closed = true
+        break
+      }
+      if (html[i] === '/' && html[i + 1] === '>') {
+        i += 2
+        closed = true
+        break
+      }
+      const attrStart = i
+      while (i < html.length) {
+        const char = html[i]
+        if (char === '=' || char === '>' || char === '/' || char === '"' || char === "'" || isHtmlSpace(char)) break
+        i += 1
+      }
+      if (i === attrStart) {
+        i += 1
+        continue
+      }
+      const attr = html.slice(attrStart, i).toLowerCase()
+      while (isHtmlSpace(html[i])) i += 1
+      let value = ''
+      if (html[i] === '=') {
+        i += 1
+        while (isHtmlSpace(html[i])) i += 1
+        const quote = html[i]
+        if (quote === '"' || quote === "'") {
+          const valueStart = i + 1
+          const valueEnd = html.indexOf(quote, valueStart)
+          if (valueEnd === -1) {
+            value = html.slice(valueStart)
+            i = html.length
+          } else {
+            value = html.slice(valueStart, valueEnd)
+            i = valueEnd + 1
+          }
+        } else {
+          const valueStart = i
+          while (i < html.length && !isHtmlSpace(html[i]) && html[i] !== '>') i += 1
+          value = html.slice(valueStart, i)
+        }
+      }
+      if (!attrs.has(attr)) attrs.set(attr, value)
+    }
+    if (closed) tags.push({ name, attrs })
+    if (closed && RAW_TEXT.has(name)) {
+      const closer = new RegExp(`</${name}\\s*>`, 'ig')
+      closer.lastIndex = i
+      const match = closer.exec(html)
+      i = match ? match.index + match[0].length : html.length
+    }
+  }
+  return tags
+}
+
+function pageLandmarks(html) {
+  const found = {
+    primaryNav: false,
+    momentsBackground: false,
+    previousButton: false,
+    tablePicker: false,
+    momentsMain: false,
+  }
+  for (const tag of startTags(html)) {
+    const label = tag.attrs.get('aria-label')
+    if (tag.name === 'nav' && label === 'Primary') found.primaryNav = true
+    if (tag.attrs.get('data-moments-background') === 'route') found.momentsBackground = true
+    if (tag.name === 'button' && label === 'Previous' && !tag.attrs.has('aria-labelledby')) found.previousButton = true
+    if (tag.attrs.has('data-table-picker')) found.tablePicker = true
+    if (tag.name === 'main' && label === 'Moments') found.momentsMain = true
+  }
+  return found
+}
+
 const ROUTES = [
-  ['/', /data-moments-background="route"/, /<button\b[^>]*>\s*Jump to today\s*<\/button>/],
-  ['/?tab=table', /data-moments-background="route"/, /\bdata-table-picker(?:=|[ >])/],
-  ['/?tab=moments', /<main\b[^>]*aria-label="Moments"/],
+  ['/', 'momentsBackground', 'previousButton'],
+  ['/?tab=table', 'momentsBackground', 'tablePicker'],
+  ['/?tab=moments', 'momentsMain'],
 ]
 
 export async function smoke({ url, sha, project, mainSha, ref = null, bypass }, { fetchImpl = fetch, cwd = root } = {}) {
@@ -85,7 +216,8 @@ export async function smoke({ url, sha, project, mainSha, ref = null, bypass }, 
       if (snapshot?.sourceSha !== sha) throw new Error('Snapshot source SHA does not match deployment')
       if (snapshot?.snapshotDigest !== expectedDigest) throw new Error('Snapshot digest does not match committed data')
     } else {
-      if (!/<nav\b[^>]*aria-label="Primary"/.test(body) || !landmarks.every(marker => marker.test(body))) throw new Error(`Missing page landmark: ${route}`)
+      const found = pageLandmarks(body)
+      if (!found.primaryNav || !landmarks.every(key => found[key])) throw new Error(`Missing page landmark: ${route}`)
       if (route === '/?tab=moments') galleryUnavailable = /id="moments-unavailable-heading"|The gallery is unavailable\./.test(body)
     }
     checks.push(route)

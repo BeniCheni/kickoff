@@ -1,0 +1,308 @@
+{
+  "number": 320,
+  "facts": {
+    "headRef": "codex/clearing",
+    "authorLogin": "BeniCheni",
+    "sameRepo": true
+  },
+  "files": [
+    {
+      "filename": ".agents/skills/kickoff-design-review/SKILL.md",
+      "status": "modified"
+    },
+    {
+      "filename": ".agents/skills/kickoff-design-studio/SKILL.md",
+      "status": "modified"
+    },
+    {
+      "filename": ".claude/skills/kickoff-pr-review/SKILL.md",
+      "status": "modified"
+    },
+    {
+      "filename": ".claude/skills/kickoff-pr-review/browser-matrix.md",
+      "status": "modified"
+    },
+    {
+      "filename": ".claude/skills/kickoff-pr-review/pr-comment.md",
+      "status": "modified"
+    },
+    {
+      "filename": "CHANGELOG.md",
+      "status": "modified",
+      "patch": "@@ -8,6 +8,32 @@ releases.\n \n ## [Unreleased]\n \n+## [0.5.5] — 2026-11-14\n+\n+The clearing: the Broadcast lens, Where to Watch and the Monthly view are retired, and the fixtures start higher on the page.\n+\n+### Changed\n+\n+- The preview smoke's Fixtures landmark is now \"Jump to today\".\n+- The README's football pictures are from the v0.5.5 build.\n+\n+### Removed\n+\n+- The Broadcast lens and ticker. The lens switch now reads Poster, then Ledger, with one\n+  shared theme preference. Old Broadcast links open Poster and lose the retired parameter.\n+- Where to Watch, the expanded-row TV pill, and hand-maintained competition TV data.\n+- The Monthly calendar and Weekly / Monthly control. Fixtures use the weekly view;\n+  old `view` parameters are removed while competition filters and date pins keep working.\n+\n+### Deliberately not done\n+\n+- The Next.js cutover and the design overhaul. The clearing ships on its own, before both.\n+- Where the lens switch sits at 360 and 375 waits for the overhaul (ideas row 125).\n+- The second edition's look, tokens, type, photographs, motion, Rack, covers and NEXT pill.\n+  The next-fixture selection and row data markers remain for that later work.\n+- Step 0's move to Ledger, the Next.js cutover, and changes to Moments beyond retired lens\n+  references. Generated snapshots, sync scripts and historical design/proof records stay as-is.\n+\n ## [0.5.4] — 2026-11-14\n \n A match decided in extra time or on penalties is stored as its own final, so one such"
+    },
+    {
+      "filename": "CLAUDE.md",
+      "status": "modified"
+    },
+    {
+      "filename": "README.md",
+      "status": "modified",
+      "patch": "@@ -1,7 +1,7 @@\n # ⚽ Kickoff\n \n [![CI](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml/badge.svg)](https://github.com/BeniCheni/kickoff/actions/workflows/ci.yml)\n-[![version](https://img.shields.io/badge/version-0.5.4-1d4ed8)](CHANGELOG.md)\n+[![version](https://img.shields.io/badge/version-0.5.5-1d4ed8)](CHANGELOG.md)\n [![license](https://img.shields.io/badge/license-MIT-16a34a)](LICENSE)\n [![stack](https://img.shields.io/badge/stack-Next.js%20%C2%B7%20Supabase%20%C2%B7%20pgvector%20%C2%B7%20R2-0f172a)](#-how-it-is-wired)\n [![built with](https://img.shields.io/badge/built%20with-Claude%20Code-D97757)](CLAUDE.md)\n@@ -43,12 +43,12 @@ once CI is green.) The paper trail for all of that is in this repo, PR by PR.\n | The announcement | [The LinkedIn post about the full-stack milestone](https://www.linkedin.com/posts/benicheni_buildinpublic-fullstack-supabase-ugcPost-7518805278302232576-IAIO/) |\n \n > **The straight answer on what's live.** The GitHub demo is the Vite app on GitHub Pages:\n-> fixtures, standings and three lenses, redeployed on every merge. If the amber banner is up\n+> fixtures, standings and two lenses, redeployed on every merge. If the amber banner is up\n > when you get there, that's not a bug; that's the whole pitch. The full-stack version is the\n > Next.js app on Vercel, and today it sits behind Vercel's own sign-in, which is why that link\n > asks you to log in first. The Moments pictures below were captured from it, the clip was made\n > from the file it plays, and the three Studio pictures come from the Studio's own stub-mode\n-> proof run. Its public cutover is a numbered plan, not a promise with a date, and `v0.5.4` is\n+> proof run. Its public cutover is a numbered plan, not a promise with a date, and `v0.5.5` is\n > the latest release.\n \n https://github.com/user-attachments/assets/20449d7e-d1e4-451c-be29-e6a2b15baf38\n@@ -133,23 +133,21 @@ EU AI Act Article 50 answer before it can be published, a `Generated` label that\n filtered away, and made-up viewers that say they are made up. Both halves are built to hold\n their rule, and both are covered below.\n \n-## ⏱️ What it does today (v0.5.4)\n+## ⏱️ What it does today (v0.5.5)\n \n-### ⚽ The football app (public, v0.5.4)\n+### ⚽ The football app (public, v0.5.5)\n \n Fourteen competitions: the five big domestic leagues (La Liga, the Premier League, Serie A,\n Ligue 1, the Bundesliga), the three UEFA club competitions (Champions League, Europa League,\n-Conference League) and the six super cups. 1,461 fixtures and six league tables as of 27\n-October 2026, synced from ESPN's public scoreboard and read through three visual \"lenses\"\n-over one fixture skeleton. The pictures below are the v0.5.3 build of the GitHub demo,\n-captured that day at a 390 px phone width.\n+Conference League) and the six super cups. 1,482 fixtures and six league tables as of 14\n+November 2026, synced from ESPN's public scoreboard and read through two visual \"lenses\"\n+over one fixture skeleton. The pictures below are the v0.5.5 build, captured that day:\n+the two phone pictures at a 390 px width, and La Liga's table at desktop width.\n \n <p align=\"center\">\n-  <img src=\"docs/screenshots/2026-10-27/football-poster-light.jpg\" width=\"230\" alt=\"The Poster lens on a phone, light theme: tonight's slate, Tuesday 27 October, with three Serie A kickoffs as a full-bleed hero above the week's fixtures\">\n+  <img src=\"docs/screenshots/2026-11-14/football-poster-light.jpg\" width=\"230\" alt=\"The Poster lens on a phone, light theme: next matchday Friday 20 November, Bayern Munich, Troyes and Athletic Club, above the empty week of 9–15 November. The switch reads Poster, then Ledger.\">\n   &nbsp;\n-  <img src=\"docs/screenshots/2026-10-27/football-ledger-light.jpg\" width=\"230\" alt=\"The Ledger lens: a date-spine calendar with a Next up strip\">\n-  &nbsp;\n-  <img src=\"docs/screenshots/2026-10-27/football-broadcast-dark.jpg\" width=\"230\" alt=\"The Broadcast lens, dark: a marquee ticker above Monday's completed results and Tuesday's kickoffs\">\n+  <img src=\"docs/screenshots/2026-11-14/football-ledger-light.jpg\" width=\"230\" alt=\"The Ledger lens on a phone, light theme: a Next up strip for 20 and 21 November above the empty week of 9–15 November. The switch reads Poster, then Ledger.\">\n </p>\n \n What the app refuses to do is the feature:\n@@ -166,7 +164,7 @@ What the app refuses to do is the feature:\n - **The table tells you what it can't compare.** \"2 clubs have a game in hand — sort by PPG.\"\n \n <p align=\"center\">\n-  <img src=\"docs/screenshots/2026-10-27/football-table-1000.jpg\" width=\"720\" alt=\"La Liga's table at desktop width in the Ledger lens: matchday banner, European qualification bands, points per game, form and next fixture\">\n+  <img src=\"docs/screenshots/2026-11-14/football-table-1000.jpg\" width=\"720\" alt=\"La Liga's table at desktop width in the Ledger lens: matchday 12 of 38, European qualification bands, points per game, form and next fixture. The switch reads Poster, then Ledger.\">\n </p>\n \n The full argument — the UTC instant, the diff engine, the fail-loud guards, staleness as a\n@@ -415,7 +413,7 @@ runs the six-pass cycle; [`kickoff-design-studio`](.agents/skills/kickoff-design\n \n ## 📍 Where we are\n \n-**Shipped, and public** (`v0.5.4`): fixtures, standings, the three lenses, the scheduled sync\n+**Shipped, and public** (`v0.5.5`): fixtures, standings, the two lenses, the scheduled sync\n with its self-merging PRs and change digest, and the Champions League with computed matchday\n provenance and venue clocks (v0.5.0).\n \n@@ -470,7 +468,7 @@ database `DATABASE_URL` names, and `fetch-model` downloads the CLIP model files\n Face. The reader has no `--live` switch: it reads the database in its environment, and a\n separate stub-catalog flag gives it synthetic data for local runs.\n \n-Lens, tab, week and filters all live in the URL — `?lens=broadcast&tab=table` means what it\n+Lens, tab, week and filters all live in the URL — `?lens=ledger&tab=table` means what it\n says — so any view survives a reload and can be sent to someone. Found a fixture the app gets\n wrong? That's this repo's signature issue; there's a\n [template](.github/ISSUE_TEMPLATE/wrong-fixture-data.md).\n@@ -479,6 +477,7 @@ wrong? That's this repo's signature issue; there's a\n \n One subject line per release. The honours board:\n \n+- **v0.5.5** *(Sat 14 Nov 2026)* — the clearing: the Broadcast lens, Where to Watch and the Monthly view are retired, and the fixtures start higher on the page.\n - **v0.5.4** *(Sat 14 Nov 2026)* — a match decided in extra time or on penalties is stored as its own final, so one such result can no longer refuse the snapshot for every league.\n - **v0.5.3** *(27 Oct 2026)* — one suspended or abandoned match can no longer freeze every league's table.\n - **v0.5.2** *(17 Sep 2026)* — hotfix to the hotfix: the 30-day lookback restored so the app keeps its recent results."
+    },
+    {
+      "filename": "docs/ARCHITECTURE.md",
+      "status": "modified"
+    },
+    {
+      "filename": "docs/HONESTY.md",
+      "status": "modified"
+    },
+    {
+      "filename": "docs/README.md",
+      "status": "modified"
+    },
+    {
+      "filename": "docs/screenshots/2026-11-14/football-ledger-light.jpg",
+      "status": "added"
+    },
+    {
+      "filename": "docs/screenshots/2026-11-14/football-poster-light.jpg",
+      "status": "added"
+    },
+    {
+      "filename": "docs/screenshots/2026-11-14/football-table-1000.jpg",
+      "status": "added"
+    },
+    {
+      "filename": "docs/v0.2.6-ideas.md",
+      "status": "modified"
+    },
+    {
+      "filename": "package-lock.json",
+      "status": "modified"
+    },
+    {
+      "filename": "package.json",
+      "status": "modified"
+    },
+    {
+      "filename": "scripts/vercel-smoke.mjs",
+      "status": "modified"
+    },
+    {
+      "filename": "src/App.tsx",
+      "status": "modified"
+    },
+    {
+      "filename": "src/components/FixtureRow.tsx",
+      "status": "modified"
+    },
+    {
+      "filename": "src/components/FixturesPage.tsx",
+      "status": "modified"
+    },
+    {
+      "filename": "src/components/LedgerWeek.tsx",
+      "status": "modified"
+    },
+    {
+      "filename": "src/components/LensSwitcher.tsx",
+      "status": "modified"
+    },
+    {
+      "filename": "src/components/MonthView.tsx",
+      "status": "removed"
+    },
+    {
+      "filename": "src/components/NextUpStrip.tsx",
+      "status": "modified"
+    },
+    {
+      "filename": "src/components/TabNav.tsx",
+      "status": "modified"
+    },
+    {
+      "filename": "src/components/TickerStrip.tsx",
+      "status": "removed"
+    },
+    {
+      "filename": "src/components/WatchPanel.tsx",
+      "status": "removed"
+    },
+    {
+      "filename": "src/components/WeekView.tsx",
+      "status": "modified"
+    },
+    {
+      "filename": "src/index.css",
+      "status": "modified"
+    },
+    {
+      "filename": "src/lib/competitions.ts",
+      "status": "modified"
+    },
+    {
+      "filename": "src/lib/lens.ts",
+      "status": "modified"
+    },
+    {
+      "filename": "src/lib/lensSelectors.ts",
+      "status": "modified"
+    },
+    {
+      "filename": "src/lib/theme.ts",
+      "status": "modified"
+    },
+    {
+      "filename": "src/lib/time.ts",
+      "status": "modified"
+    },
+    {
+      "filename": "src/lib/urlCodecs.ts",
+      "status": "modified"
+    },
+    {
+      "filename": "src/lib/useThemeController.ts",
+      "status": "modified"
+    },
+    {
+      "filename": "src/offline.tsx",
+      "status": "modified"
+    },
+    {
+      "filename": "src/shell.css",
+      "status": "modified"
+    },
+    {
+      "filename": "studio/README.md",
+      "status": "modified"
+    },
+    {
+      "filename": "tests/contrast.ts",
+      "status": "modified"
+    },
+    {
+      "filename": "tests/dom/app.test.tsx",
+      "status": "modified"
+    },
+    {
+      "filename": "tests/dom/appBoundary.test.tsx",
+      "status": "modified"
+    },
+    {
+      "filename": "tests/dom/appHeader.test.tsx",
+      "status": "modified"
+    },
+    {
+      "filename": "tests/dom/clearing.test.tsx",
+      "status": "added"
+    },
+    {
+      "filename": "tests/dom/designCycle.test.tsx",
+      "status": "modified"
+    },
+    {
+      "filename": "tests/dom/matchdays.test.tsx",
+      "status": "modified"
+    },
+    {
+      "filename": "tests/dom/momentsGallery.test.tsx",
+      "status": "modified"
+    },
+    {
+      "filename": "tests/dom/momentsPlayerHost.test.tsx",
+      "status": "modified"
+    },
+    {
+      "filename": "tests/dom/theme.test.tsx",
+      "status": "modified"
+    },
+    {
+      "filename": "tests/dom/urlState.test.tsx",
+      "status": "modified"
+    },
+    {
+      "filename": "tests/europeanContrast.test.ts",
+      "status": "modified"
+    },
+    {
+      "filename": "tests/harness/moments.tsx",
+      "status": "modified"
+    },
+    {
+      "filename": "tests/lens.test.ts",
+      "status": "modified"
+    },
+    {
+      "filename": "tests/lensSelectors.test.ts",
+      "status": "modified"
+    },
+    {
+      "filename": "tests/removalAudit.test.ts",
+      "status": "added"
+    },
+    {
+      "filename": "tests/theme.test.ts",
+      "status": "modified"
+    },
+    {
+      "filename": "tests/themeBootstrap.test.ts",
+      "status": "modified"
+    },
+    {
+      "filename": "tests/urlCodecs.test.ts",
+      "status": "modified"
+    },
+    {
+      "filename": "tests/vercelIgnore.test.ts",
+      "status": "modified"
+    },
+    {
+      "filename": "tests/vercelSmoke.test.ts",
+      "status": "modified"
+    },
+    {
+      "filename": "vite.config.ts",
+      "status": "modified"
+    },
+    {
+      "filename": "web/README.md",
+      "status": "modified"
+    },
+    {
+      "filename": "web/app/globals.css",
+      "status": "modified"
+    },
+    {
+      "filename": "web/app/moments/gallery.css",
+      "status": "modified"
+    },
+    {
+      "filename": "web/app/shell.tsx",
+      "status": "modified"
+    },
+    {
+      "filename": "web/scripts/check-css.mjs",
+      "status": "modified"
+    },
+    {
+      "filename": "web/scripts/clearing.mjs",
+      "status": "added"
+    },
+    {
+      "filename": "web/src-allowlist.mjs",
+      "status": "modified"
+    },
+    {
+      "filename": "web/test/fixtures-table.test.tsx",
+      "status": "modified"
+    },
+    {
+      "filename": "web/test/header-shared.test.tsx",
+      "status": "modified"
+    },
+    {
+      "filename": "web/test/moments-watch.test.tsx",
+      "status": "modified"
+    },
+    {
+      "filename": "web/test/scaffold.test.tsx",
+      "status": "modified"
+    },
+    {
+      "filename": "web/test/snapshot.test.ts",
+      "status": "modified"
+    }
+  ]
+}
