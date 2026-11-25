@@ -16,6 +16,23 @@ export type DayInfo = {
   total: number
   isToday: boolean
   closed?: boolean
+  /** False when the date falls outside the snapshot's window, so `total: 0` there means
+   * "not fetched", never "no matches". Absent means covered. */
+  covered?: boolean
+}
+
+/** The snapshot's inclusive Brooklyn date range (`meta.json`'s `window`). */
+export type Coverage = { readonly from: string; readonly to: string }
+
+/** Whether the snapshot fetched this Brooklyn date at all. */
+export function inCoverage(date: string, coverage: Coverage): boolean {
+  return date >= coverage.from && date <= coverage.to
+}
+
+/** How much of a week the snapshot fetched: every day, some days, or none. */
+export function weekCoverage(days: readonly { covered?: boolean }[]): 'full' | 'partial' | 'none' {
+  const covered = days.filter(day => day.covered !== false).length
+  return covered === days.length ? 'full' : covered === 0 ? 'none' : 'partial'
 }
 
 /**
@@ -151,11 +168,13 @@ export function hotFixtureIds(
 }
 
 /** One group per fixture-bearing day, or per uninterrupted run of empty days. */
-export function groupWeekDays<T extends { total: number }>(days: readonly T[]): T[][] {
+export function groupWeekDays<T extends { total: number; covered?: boolean }>(days: readonly T[]): T[][] {
   const groups: T[][] = []
   for (const day of days) {
     const previous = groups.at(-1)
-    if (day.total === 0 && previous?.[0]?.total === 0) previous.push(day)
+    const lead = previous?.[0]
+    // An uncovered date never shares a gap with a covered empty one: they say different things.
+    if (day.total === 0 && lead?.total === 0 && (lead.covered !== false) === (day.covered !== false)) previous!.push(day)
     else groups.push([day])
   }
   return groups
@@ -247,18 +266,19 @@ export function restingBook(books: readonly MatchdayBook[], week: string, today:
   return (books.find(book => !book.closed) ?? books.at(-1))?.date ?? 'register'
 }
 
-export function bookWeek(start: string, byDate: ReadonlyMap<string, readonly Fixture[]>) {
+export function bookWeek(start: string, byDate: ReadonlyMap<string, readonly Fixture[]>, coverage: Coverage) {
   return Array.from({ length: 7 }, (_, i) => {
     const date = addDays(start, i)
     const fixtures = byDate.get(date) ?? []
-    return { date, fixtures, total: fixtures.length }
+    return { date, fixtures, total: fixtures.length, covered: inCoverage(date, coverage) }
   })
 }
 
-export function shelfGaps(week: readonly { date: string; total: number }[]) {
+export function shelfGaps(week: readonly { date: string; total: number; covered?: boolean }[]) {
   const short = (date: string) => weekdayShort(date).toUpperCase() + ' ' + Number(date.slice(8))
   return groupWeekDays(week).filter(group => group[0]!.total === 0).map(group => {
     const from = short(group[0]!.date)
-    return (group.length === 1 ? from : from + ' – ' + short(group.at(-1)!.date)) + ' · no books this week'
+    return (group.length === 1 ? from : from + ' – ' + short(group.at(-1)!.date))
+      + (group[0]!.covered === false ? ' · outside the snapshot' : ' · no books this week')
   })
 }

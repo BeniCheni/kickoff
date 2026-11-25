@@ -18,6 +18,7 @@ releases.
 
 ### Fixed
 
+- A saved Fixtures link to a week the data no longer covers says "outside the snapshot" in both lenses, instead of "no fixtures" for matches that were played, and its quiet cover no longer says "nothing to stake" before the next known fixture.
 - Writing about the app outside its source no longer changes its stylesheet.
 - Root tests clear Git's inherited repository variables (such as `GIT_DIR`), so fixture writes stay in their temporary repositories.
 
