@@ -100,7 +100,7 @@ C+ (Proposal C with a GitHub-enforced gate) is the only option that rates High o
 | **C+ (recommended):** repo-native controller, GitHub gate | High: seats unchanged, order enforced by records | High: GitHub blocks merge on the head SHA | One script, one ruleset | None | Low: lives in the repo, reviewed by the same 360 | High: no new process holds credentials | Medium: `loop status` and the PR page |
 | **C as written:** scripts and JSON files | High | Medium: a script gate can be skipped | Scripts, state files | None | Low | High | Low to medium |
 | **D:** Orchestrator.inc alone + controller | Medium: auto-feedback to the builder must be off | Medium: AO approval and seat records can disagree | Desktop app, daemon, controller | No licence fee | Medium: an upstream release train | Medium: telemetry; reviewer sandboxing varies by agent | High |
-| **B:** Paradev + MCO + controller | Medium | Medium | Desktop app, MCO, controller | None; automations need a paid plan | Medium to high | Medium: worktrees do not sandbox; MCO paths are not an OS sandbox | High |
+| **B:** Paradev + MCO + controller | Medium | Medium | Desktop app, MCO, controller | None; automations need Pro | Medium to high | Medium: worktrees do not sandbox; MCO paths are not an OS sandbox | High |
 | **A:** Orchestrator.inc + MCO + controller | Medium | Low: three state stores to reconcile | Desktop app, daemon, MCO, controller | No licence fee | High: two upstream release trains | Medium | High |
 
 *Amounts removed from the public copy on 25 Nov 2026; each "Added cost" cell said the same in words.*

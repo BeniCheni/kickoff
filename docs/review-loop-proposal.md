@@ -2002,11 +2002,18 @@ for Cursor (S7).
     grows past one open sprint.
 - **Vendor commit identities in the public archive (Beni, Wed 25 Nov 2026, "Exception").** PR
   328's cold read and re-read flagged the email addresses in its archives, under a brief that
-  said "no email address". The Planner asked whether to keep or redact them. Every one is a
-  vendor's public commit identity (Codex's, Claude's and Cursor's noreply addresses, one in a
-  fixture) or `git@github.com`. They stay, byte for byte, because the studio's commit rule uses
-  them and several archived forms publish their hashes. The rule against publishing email
-  addresses still holds for everyone's personal addresses.
+  said "no email address". The Planner asked whether to keep or redact them. Each is one of
+  three kinds: a vendor's public commit identity (Codex's and Claude's noreply addresses and
+  Cursor's agent mailbox), the synthetic Grok author that one Sprint 4 fix form injects into a
+  test fixture, or the SSH user and host `git@github.com`. They stay, byte for byte, because the
+  studio's commit rule uses the first kind and several archived forms publish their hashes. The
+  rule against publishing email addresses still holds for everyone's personal addresses.
+- **A personal address in one commit's metadata (Beni, Wed 25 Nov 2026, "Accept").** The second
+  re-read found that the changed files hold no personal address, but one of the PR's commits,
+  `6a0afc9`, names Beni as its committer with his own address. Kickoff's `main` already shows
+  the same address in 130 commits. The Planner asked whether to accept it or rewrite the
+  branch's history. Beni accepted it: the commit stays as it is, and no history is rewritten.
+
 D4 is withdrawn, and D12 is Pilot (17 Nov).
 
 ## Found after the spikes (15 Nov 2026, afternoon)
