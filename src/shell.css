@@ -1608,7 +1608,7 @@ button.register-row {
 
 /* The body’s content width excludes a space-taking browser scrollbar. */
 body:has(.poster-rack) { container-type: inline-size; }
-.poster-rack { width: 100cqw; margin-inline-start: calc(50% - 50cqw); margin-block-end: 12px; overflow: clip; }
+.poster-rack { container: poster-rack / inline-size; width: 100cqw; margin-inline-start: calc(50% - 50cqw); margin-block-end: 12px; overflow: clip; }
 .rack-faces { --face: min(calc(100cqw - 60px), 360px); position: relative; height: 413px; overflow: hidden; }
 .rack-slide { width: var(--face); height: 100%; position: absolute; left: 50%; transform: translateX(-50%); }
 .rack-slide[data-position='left'] { left: calc(50% - var(--face) - 8px); }
@@ -1626,13 +1626,14 @@ body:has(.poster-rack) { container-type: inline-size; }
 .rack-marker b { width: 54px; font-weight: inherit; transform: scaleX(.6); }
 .rack-marker[data-resting] span { box-shadow: 0 2px var(--fb-pitch); }
 @media (max-width: 360px) { .book-title { font-size: 33px; } }
-@media (max-width: 899px) {
+@container poster-rack (width < 900px) {
   .rack-slide:not([data-position='center']) .book-scrim { clip-path: inset(50%); }
 }
-@media (min-width: 900px) {
-  .rack-faces { height: 450px; }
-  .rack-slide[data-position='left'] { left: calc(50% - 326px); transform: translateX(-50%) scale(.82) rotateY(24deg); }
-  .rack-slide[data-position='right'] { left: calc(50% + 326px); transform: translateX(-50%) scale(.82) rotateY(-24deg); }
+@container poster-rack (min-width: 900px) {
+  /* Leave room for half of the projected 270px neighbour at the desktop threshold. */
+  .rack-faces { height: 450px; --neighbour-offset: min(326px, calc(50cqw - 135px)); }
+  .rack-slide[data-position='left'] { left: calc(50% - var(--neighbour-offset)); transform: translateX(-50%) scale(.82) rotateY(24deg); }
+  .rack-slide[data-position='right'] { left: calc(50% + var(--neighbour-offset)); transform: translateX(-50%) scale(.82) rotateY(-24deg); }
 }
 
 .poster-part { margin-block: 16px; }
