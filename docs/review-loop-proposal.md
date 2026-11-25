@@ -801,7 +801,7 @@ Cursor's hands this track seats no Cursor.
     re-read's Q1 and Q2 against the ported tests, and each must fail at least one test.
 - *Review:* all six passes. It changes the method every later review reads.
 - *Rollback:* revert the merge; seats stop posting the block.
-- *Number:* D8.
+- *Number:* D8, ruled Patch (Beni, 25 Nov, under "Rulings received").
 - *Brief, the elenchus half:* [`review-loop-sprint-4-build-prompt.md`](review-loop-sprint-4-build-prompt.md),
   for Codex on `gpt-6.2-astra` at `xhigh` (Beni, 22 and 23 Nov, under "Rulings received",
   "Sprint 4's routing"). It carries finding 15, note 21 with the re-read's base and merge commit,
@@ -1950,7 +1950,18 @@ for Cursor (S7).
   - **Next: the executor,** Codex on `gpt-6.2-astra` at `xhigh`, with nothing to apply. The merge
     waits for Beni's word; the Planner plans a squash with its own message, as for PR 8, and no
     tag (D8).
-D8, D10 and D11 are not yet ruled. D4 is withdrawn, and D12 is Pilot (17 Nov).
+- **D8, D10 and D11 (Beni, Wed 25 Nov 2026, in the Planner's chat).** The Planner put each
+  question as the decision packet words it, with the packet's recommendations for D10 and D11
+  and none for D8, since the number is Beni's.
+  - **D8: Patch.** Kickoff's Sprint 4 and 5 PRs ship as patch releases after v0.6.0, as
+    `CLAUDE.md` numbers a skill, workflow or doc change. Which patch each takes is still Beni's,
+    when its PR is ready. elenchus's own version numbers stay a separate question, put to Beni
+    before its first tag.
+  - **D10: Later.** The coverage floor stays the one Sprint 2 shipped, built from
+    `git diff --name-status`. Open Code Review comes back with O2 if path-scoped rules are wanted.
+  - **D11: No.** This file stays the plan of record, with no sprint issues. Revisit if the track
+    grows past one open sprint.
+D4 is withdrawn, and D12 is Pilot (17 Nov).
 
 ## Found after the spikes (15 Nov 2026, afternoon)
 
