@@ -7,20 +7,26 @@ import { addDays, bookCalendar, niceDate, weekRange } from '../lib/time'
 import { COVER_LIBRARY, type Coverage } from '../lib/lensSelectors'
 import { CoverBand } from './CoverBand'
 
+type QuietCopy = { title: string; tagline: string | null; suffix: string; body: string }
+
 /**
- * The quiet cover's two claims about the week: the date line's suffix and the body line.
- * `coverage` says how much of the week the snapshot fetched (`weekCoverage`); `snapshot` is
- * the snapshot's inclusive Brooklyn range. A covered empty week really had no fixtures; an
- * uncovered day was never fetched, so it must not be called empty.
+ * The quiet cover's claims about the week: its title and tagline, the date line's suffix and
+ * the body line. `coverage` says how much of the week the snapshot fetched (`weekCoverage`);
+ * `snapshot` is the snapshot's inclusive Brooklyn range. A covered empty week really had no
+ * fixtures, so it keeps the library's quiet cover. An uncovered day was never fetched: the
+ * cover must not call it empty, quiet or a no-bet week.
  */
-export function quietCopy(coverage: 'full' | 'partial' | 'none', snapshot: Coverage): { suffix: string; body: string } {
+export function quietCopy(coverage: 'full' | 'partial' | 'none', snapshot: Coverage): QuietCopy {
   const span = `${niceDate(snapshot.from)} to ${niceDate(snapshot.to)}`
-  if (coverage === 'none') return { suffix: 'OUTSIDE THE SNAPSHOT', body: `The snapshot covers ${span}` }
+  if (coverage === 'none') return {
+    title: 'Beyond the Snapshot', tagline: null, suffix: 'OUTSIDE THE SNAPSHOT', body: `The snapshot covers ${span}`,
+  }
   if (coverage === 'partial') return {
-    suffix: 'PARTLY OUTSIDE THE SNAPSHOT',
+    title: 'Beyond the Snapshot', tagline: null, suffix: 'PARTLY OUTSIDE THE SNAPSHOT',
     body: `Nothing on the rack on the days the snapshot covers, ${span}`,
   }
-  return { suffix: 'NO FIXTURES', body: 'Nothing on the rack this week' }
+  const [title, tagline] = COVER_LIBRARY.quiet
+  return { title, tagline, suffix: 'NO FIXTURES', body: 'Nothing on the rack this week' }
 }
 
 export function QuietWeek({ start, today, active, now, coverage = 'full' }: {
@@ -37,15 +43,14 @@ export function QuietWeek({ start, today, active, now, coverage = 'full' }: {
   const only = encodeOnly(active)
   if (only === null) params.delete('only')
   else params.set('only', only)
-  const [title, tagline] = COVER_LIBRARY.quiet
-  const { suffix, body } = quietCopy(coverage, META.window)
+  const { title, tagline, suffix, body } = quietCopy(coverage, META.window)
   return <section className="quiet-week" data-stock="black">
     <div className="quiet-art" aria-hidden="true" />
     <div className="quiet-block">
       <h2 className="book-title">{title}</h2>
       <p className="book-date">{range.toUpperCase().replace('–', ' – ')}{year} · {suffix}</p>
       {upcoming && <p>Nothing to stake until {bookCalendar(next).longDate}.</p>}
-      <p className="book-tagline">{tagline}</p>
+      {tagline && <p className="book-tagline">{tagline}</p>}
       <p>{body}</p>
       {next && <div className="quiet-next">
         {upcoming && <>

@@ -53,12 +53,16 @@ describe('the Poster week and quiet cover say the same', () => {
   })
 
   it('words the quiet cover by how much of the week was fetched', () => {
-    expect(quietCopy('full', SNAPSHOT)).toEqual({ suffix: 'NO FIXTURES', body: 'Nothing on the rack this week' })
+    expect(quietCopy('full', SNAPSHOT)).toEqual({
+      title: 'A Quiet Week', tagline: 'A no-bet week is a successful outcome.',
+      suffix: 'NO FIXTURES', body: 'Nothing on the rack this week',
+    })
     expect(quietCopy('none', SNAPSHOT)).toEqual({
+      title: 'Beyond the Snapshot', tagline: null,
       suffix: 'OUTSIDE THE SNAPSHOT', body: 'The snapshot covers June 1, 2029 to January 10, 2030',
     })
     expect(quietCopy('partial', SNAPSHOT)).toEqual({
-      suffix: 'PARTLY OUTSIDE THE SNAPSHOT',
+      title: 'Beyond the Snapshot', tagline: null, suffix: 'PARTLY OUTSIDE THE SNAPSHOT',
       body: 'Nothing on the rack on the days the snapshot covers, June 1, 2029 to January 10, 2030',
     })
   })
