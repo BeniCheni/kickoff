@@ -849,6 +849,23 @@ Cursor's hands this track seats no Cursor.
   for the executor, pass `exec` (Codex in the Codex desktop app, `gpt-6.2-astra`, `xhigh`), in
   `~/code/review-seats/elenchus-pr9-exec`. Nothing to apply: it re-checks GitHub's state at
   `51a076e`, runs the suite and T9 again, and posts the exec record. The merge is Beni's.
+- *Executed (Tue 24 Nov 2026):* the exec record
+  ([comment](https://github.com/BeniCheni/elenchus/pull/9#issuecomment-7152270768)), from Codex
+  Desktop `0.171.0-alpha.13.2` on `gpt-6.2-astra` at `xhigh`: 447 of 447 tests at `51a076e`,
+  and T9's tarball matched Pass 2's (`3a1996ae…`). The tarball, the commit pin and a cold
+  `npm ci` each gave a working CLI and reproduced PR 1's `status` and `check` byte for byte.
+  Under the example configuration, `status` on PR 9 then named `authorize`, and `check`
+  printed `ok`. The record's 17 findings carry Pass 3's ids, severities and statuses. The
+  executor's ten escalations, its one post included, were allowed by Codex Desktop's automatic
+  approval reviewer (`codex-auto-review`, `low`, read-only), and none reached Beni. Its own
+  log has no approval event. The run stayed inside its write list.
+- *Merged (Beni, Wed 25 Nov 2026, 13:35 EST):* Beni squash-merged PR 9 at `51a076e` with the
+  Planner's message, byte for byte. `main` is `fbe4e38`, one parent `84b0c20`, and its tree
+  (`ca38bc0`) is `51a076e`'s exactly. The message carries Codex's Co-authored-by line and no
+  Kickoff link, and no fixture or Kickoff pull request gained a cross-reference. CI's `test` on
+  `main` is green (run `45676793642`). The tag list is empty (D8); `sprint-4`, `replay/main`
+  and `replay/gate` are unmoved; PRs 1, 3 and 6 stay open and locked as fixtures. Kickoff's
+  half of Sprint 4 is next.
 
 **Sprint 5 — Kickoff phase 2: the gate on `main` (after Sprint 3 passes).**
 - *Scope:* the `kickoff/360` ruleset on `main`, applied by Beni; `loop authorize`; the sync
