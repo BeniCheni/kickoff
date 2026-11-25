@@ -227,7 +227,7 @@ Beni asked for TypeSafe's Jev to be evaluated as an addition to the review loop.
 
 ## Spike S12 — calibrate on our own record (only if D12 is Pilot)
 
-From the PR comments of the last ten 360 cycles, extract each finding's id, severity and evidence text into a JSONL file. Run the two Nouls with the JavaScript SDK (`@typesafe-ai/sdk`, Node 20 or later). Report the confusion tables at 0.3, 0.5 and 0.7, and list every disagreement with its text. The Planner does not create, read or print an API key; Beni sets `TYPESAFE_API_KEY` in the shell himself. Cost is negligible: Jev bills input tokens only, at $0.042 per million.
+From the PR comments of the last ten 360 cycles, extract each finding's id, severity and evidence text into a JSONL file. Run the two Nouls with the JavaScript SDK (`@typesafe-ai/sdk`, Node 20 or later). Report the confusion tables at 0.3, 0.5 and 0.7, and list every disagreement with its text. The Planner does not create, read or print an API key; Beni sets `TYPESAFE_API_KEY` in the shell himself. Cost is negligible: Jev bills input tokens only. (Price removed from the public copy, 25 Nov 2026.)
 
 ## Risks to record
 

@@ -124,8 +124,9 @@ modelUsage: { "claude-sonnet-5-5": … }      ← Haiku requested, Sonnet ran, e
   ok"); without plan mode, Haiku ran. Fable 5.2 under plan mode stayed Fable. The cause was not
   established. Only `modelUsage` showed it.
 - Fable 5.2 and Opus 5.5 are selectable today (S2's run; this session runs on Opus 5.5).
-- A trivial "reply ok" on Fable 5.2 at `xhigh` cost $0.81 at list prices, almost all of it
-  caching the system prompt. Haiku cost $0.004 and Sonnet about $0.09.
+- A trivial "reply ok" on Fable 5.2 at `xhigh` cost far more than on Haiku or Sonnet at list
+  prices, almost all of it caching the system prompt. (Amounts removed from the public copy,
+  25 Nov 2026.)
 
 **Changes:** `observed.model` comes from `modelUsage`, `observed.effort` from the transcript, and
 `loop check` fails a record where either differs from the request (test T13 uses this run as
@@ -441,6 +442,12 @@ overhaul PR's review reads and whose release PR must pass. They land **after v0.
 overhaul's builder is Cursor (`design-overhaul-plan.md:217`), so while an overhaul PR is in
 Cursor's hands this track seats no Cursor.
 
+*Since Mon 16 Nov 2026* (D5, D6 and "One repository, `BeniCheni/elenchus`", under "Rulings
+received"): the tool lives in one lasting repository, elenchus, and Kickoff runs a pinned commit
+of it. Rollback for Sprints 1 to 3 is reverting on elenchus's `main` and deleting the replay
+branches, not archiving a scratch repository, and Sprint 4 ports nothing. The sprints' first
+*Where*, *Scope* and *Rollback* lines below are kept as planned and marked where they changed.
+
 **Sprint 0 — this session.** Spikes, this proposal, the archives, the decision packet. No code.
 
 **Sprint 1 — records and the read-only controller (non-production, approved).**
@@ -456,7 +463,8 @@ Cursor's hands this track seats no Cursor.
 - *Acceptance:* T1 (status and check), T3, T9, T12, T13.
 - *Review:* fast-track, Pass 1 then Beni. Nothing here can merge anything that matters; a miss
   costs a sprint, and Sprints 3 and 4 review the same code at full depth before production.
-- *Rollback:* archive the scratch repository. Kickoff is untouched.
+- *Rollback:* archive the scratch repository. Kickoff is untouched. *As planned; since 16 Nov,*
+  revert on elenchus's `main` and delete the replay branches.
 - *Done (Mon 16 Nov 2026):* merged by Beni as elenchus `84764ff`, a squash of #2; see "Sprint 1's
   build". The rulings since then changed its home (D5, D6, one repository) and its rollback.
 
@@ -468,7 +476,8 @@ Cursor's hands this track seats no Cursor.
 - *Acceptance:* T1 (`prep`), T4 for all three vendors (Cursor's ask mode is expected to fail,
   per S7), T8, T11.
 - *Review:* fast-track, for the same reason as Sprint 1.
-- *Rollback:* archive.
+- *Rollback:* archive. *As planned; since 16 Nov,* revert on elenchus's `main` and delete the
+  replay branches.
 - *Built (Mon 16 Nov 2026):* by Cursor as elenchus #4 (`sprint-2`, head `c4497cb`), with the
   fixture #3 for `prep`. Pass 1 asked for a fix round, which Beni ordered the same night; its
   first amendment makes each seat a clone of its own rather than a worktree of a shared clone.
@@ -500,7 +509,7 @@ Cursor's hands this track seats no Cursor.
 - *Review brief:* [`review-loop-sprint-3-review-prompt.md`](review-loop-sprint-3-review-prompt.md),
   Pass 0's brief for Pass 1 (Claude Code, `claude-fable-5-2`, `xhigh`), with its sealed appendix as
   a second paste, and the brief that resumed Pass 1 after a restart emptied `/tmp`.
-- *Reviewed (Wed 18 Nov 2026):* Pass 1's
+- *Reviewed (Tue 17 Nov 2026, 11:29 PM EST):* Pass 1's
   [comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-6969080448): *merge after
   a fix round*, 23 findings (4 blocking, 6 should-fix, 13 notes). Beni's rulings on them are
   under "Rulings received" ("Sprint 3's fix round").
@@ -515,8 +524,8 @@ Cursor's hands this track seats no Cursor.
   paste.
 - *Synthesized (Wed 18 Nov 2026):* Pass 2.5's
   [comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-6989421952): *another fix
-  round first*. 17 of Pass 1's findings fixed, 9 in part, five deferrals as ruled, and findings
-  25-1 to 25-7 (2 blocking, 2 should-fix, 3 notes).
+  round first*. 17 of Pass 1's findings fixed, finding 9 fixed in part, five deferrals as ruled, and
+  findings 25-1 to 25-7 (2 blocking, 2 should-fix, 3 notes).
 - *Ruled (Wed 18 Nov 2026):* Pass 3's [comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-6990209294), by the Planner for Beni. The
   rulings and finding 3-1 are under "Rulings received" ("Sprint 3's Pass 3").
 - *Second fix brief:* [`review-loop-sprint-3-fix-2-prompt.md`](review-loop-sprint-3-fix-2-prompt.md),
@@ -772,12 +781,16 @@ Cursor's hands this track seats no Cursor.
   fetches the pull request twice.
 - *Review:* **all six passes.** This is the gate code Sprint 5 ports. Reviewing it at full depth
   where it is written means the port is a copy of reviewed code.
-- *Rollback:* archive.
+- *Rollback:* archive. *As planned; since 16 Nov,* revert on elenchus's `main` and delete the
+  replay branches, and there is no port: Kickoff pins the reviewed commit.
 
 **Sprint 4 — Kickoff phase 1: records (after v0.6.0).**
 - *Scope:* the seat-record block in `pr-comment.md` and `SKILL.md` (with drift items 3 and 4
   fixed in the same PR); `loop status` and `loop check` ported to their home (D5);
-  `tests/loop/` joins the root `node` project.
+  `tests/loop/` joins the root `node` project. *As planned; since D5 (16 Nov),* nothing is
+  ported. elenchus's half shipped as elenchus PR 9, and Kickoff's half is what remains: the
+  seat-record block in `pr-comment.md` and `SKILL.md`, drift items 3 and 4, and how Kickoff
+  calls the pinned tool.
 - *Acceptance:* T1, T3, T9 and T13 against a real Kickoff PR's records, read-only.
 - *Carried from Sprint 1:* a release artefact Kickoff can pin (finding 15: no `dist/`, no
   `prepare`, `private: true`), and a slot in `pr-comment.md` for the sealed appendix, delivered as
@@ -863,9 +876,9 @@ Cursor's hands this track seats no Cursor.
   Planner's message, byte for byte. `main` is `fbe4e38`, one parent `84b0c20`, and its tree
   (`ca38bc0`) is `51a076e`'s exactly. The message carries Codex's Co-authored-by line and no
   Kickoff link, and no fixture or Kickoff pull request gained a cross-reference. CI's `test` on
-  `main` is green (run `45676793642`). The tag list is empty (D8); `sprint-4`, `replay/main`
-  and `replay/gate` are unmoved; PRs 1, 3 and 6 stay open and locked as fixtures. Kickoff's
-  half of Sprint 4 is next.
+  `main` is green (run `45676793642`). The tag list is empty: elenchus's numbering is Beni's, before
+  its first tag; `sprint-4`, `replay/main` and `replay/gate` are unmoved; PRs 1, 3 and 6 stay open
+  and locked as fixtures. Kickoff's half of Sprint 4 is next.
 
 **Sprint 5 — Kickoff phase 2: the gate on `main` (after Sprint 3 passes).**
 - *Scope:* the `kickoff/360` ruleset on `main`, applied by Beni; `loop authorize`; the sync
@@ -887,6 +900,10 @@ Cursor's hands this track seats no Cursor.
   15, blocking on an unreported model without blocking on an unreported effort; A6, what binds
   a seat besides the Keychain prompt; and A7, `prep` for an adopter with no seat token, with the
   Keychain service names as configuration.
+- *Carried from Sprint 3's later rulings* (under "Rulings received"; the numbers are PR 8's):
+  25-15, deferred to Sprint 5 before the port by the third Pass 3; 25-31, the carry's tests for
+  what the standing synthesis's and the standing ruling's chains of replacements replaced, by
+  the eighth Pass 3; and 25-32's second half, by the ninth Pass 3.
 - *Carried from Sprint 4's review* (Beni, 24 Nov, under "Rulings received"; the numbers are
   elenchus PR 9's): 6, `prep` for a Grok seat and what `read_only_seat` means for xai, with A7;
   8, trailer order for integer-like vendor names; separate push URLs (Amendment 2); and 25-1 to
@@ -1086,8 +1103,9 @@ for Cursor (S7).
   (`~/.claude/projects/-private-tmp-claude-501-rlp-spike-*`, `~/.codex/sessions/2026/11/15/`,
   `~/.cursor/chats/` and `~/.cursor/projects/private-tmp-claude-501-rlp-spike-*`),
   `~/.opencodereview/last-update-check`, and `pull/320`, `pull/316` and `pull/247` fetched into
-  the main checkout's object store with no ref written. Claude spend was under $2 at list
-  prices, $0.81 of it the one Fable 5.2 run. Codex and Cursor drew on plan quota.
+  the main checkout's object store with no ref written. Claude spend at list prices was
+  small, most of it the one Fable 5.2 run (amounts removed from the public copy, 25 Nov 2026). Codex
+  and Cursor drew on plan quota.
 
 ## Rulings received
 
@@ -1353,7 +1371,7 @@ for Cursor (S7).
 
 - **Two vendors, each at its deepest (Beni, Tue 17 Nov 2026).** Beni moved to Claude Max and
   ChatGPT Pro, and is ending the xAI and Cursor paid tiers. *Corrected Wed 18 Nov:* xAI was kept,
-  downgraded to $8 a month, for light work only ("A light seat on Grok 4.7", below). He asked for
+  on a cheaper tier, for light work only ("A light seat on Grok 4.7", below). He asked for
   the review cycle to be fitted to the two vendors at the deepest each subscription allows. He
   approved four proposals as written, after confirming that GPT-6.2 Sol is available and having
   it folded in.
@@ -1418,7 +1436,8 @@ for Cursor (S7).
       - **Optionally Gemini,** through fal's OpenRouter route.
     - **The answer key** is Beni's rulings on about 70 findings: Kickoff PR 320's Pass 1, and
       elenchus Sprints 1 and 2's Pass 1 with Sprint 2's appendix.
-    - **The cost** is about $3–6 in all.
+    - **The cost** is small: list-price API calls only (amount removed from the public copy,
+      25 Nov 2026).
     - **The keys.** Beni sets `TYPESAFE_API_KEY` and `ANTHROPIC_API_KEY` in his own shell and
       runs the script, which a seat writes. The Planner never sees a key.
     - **What a calibrated judge becomes:** an advisory signal in `check` under O3's rules,
@@ -1426,7 +1445,7 @@ for Cursor (S7).
     - **One caveat.** Claude and GPT state a confidence, while Jev reports a calibrated
       probability. S12 scores all of them the same way.
   - **The App's avatar and the repository's social preview** were generated on fal: Nano Banana
-    Pro, four images, about $0.60. Beni chooses which to use and uploads them himself.
+    Pro, four images. Beni chooses which to use and uploads them himself.
 
 - **The effort cap is Extra High (Beni, Tue 17 Nov 2026).** No model runs deeper than `xhigh`,
   the level both CLIs call Extra High. That applies to every seat on both vendors, and to S12's
@@ -1445,7 +1464,12 @@ for Cursor (S7).
   to 9: Codex builds 3, 6 and 8, and Claude builds 4, 5, 7 and 9. *Corrected Wed 18 Nov:* PRs 1b
   and 2 were already building in Cursor when Beni approved it, and he kept both ("Keep both
   builds"), so #341 and #342 are reviewed under the Sun 15 routing (Pass 1 Claude, Pass 2 Cursor
-  before Thu 19 Nov, Pass 2.5 Codex). What it changes for this track:
+  before Thu 19 Nov, Pass 2.5 Codex). *Superseded Wed 18 Nov, recorded 25 Nov:* "Keep both
+  builds" was not Beni's last word. The same morning, in a forked PM session, he answered
+  "Re-route per #328", which is the ruling of record (`design-overhaul-plan.md`, section 3,
+  "Corrected Thu 19 Nov 2026"). Both PRs kept Cursor's code and took this amendment's review
+  seats from Pass 1 on: on #341 Codex fixed and Claude synthesized, and on #342 Claude fixed and
+  Codex synthesized. What it changes for this track:
   - **The wait rule is lifted.** It came with the overhaul's Sun 15 Nov amendment (under D7,
     above): while Codex built an overhaul PR, this track's Codex builds waited.
   - **In its place, on either vendor,** both tracks may run at once, and an overhaul seat
@@ -1456,17 +1480,19 @@ for Cursor (S7).
     this track's Claude seats, so a Pass 1, a Pass 1.5 or a Pass 2.5 here can be the seat that
     yields. *Corrected Wed 18 Nov:* this week both vendors carry overhaul seats, since #341 and
     #342 each take a Claude Pass 1 and a Codex Pass 2.5, so Sprint 3's Codex fix round can be the
-    seat that yields too.
+    seat that yields too. *Superseded, recorded 25 Nov:* under "Re-route per #328", #341's Pass 1
+    and Pass 2.5 were Claude's and its fix round Codex's, and #342's Pass 1 and Pass 2.5 were
+    Codex's and its fix rounds Claude's, so both vendors still carried overhaul seats.
   - **A seat that yields resumes on the same model.** A sprint still never switches seat or
     model mid-build.
 
 - **Sprint 3's fix round (Beni, Wed 18 Nov 2026, "Approve and post").** Pass 1
   ([comment](https://github.com/BeniCheni/elenchus/pull/8#issuecomment-6969080448),
-  `claude-fable-5-2` at `xhigh`) returned *merge after a fix round*: 23 findings (4 blocking, 6
-  should-fix, 13 notes), and verdicts on all ten appendix items, none of which changed a finding
-  or joined one. Beni approved the Planner's dispositions as proposed. The brief is
-  [`review-loop-sprint-3-fix-prompt.md`](review-loop-sprint-3-fix-prompt.md), for Codex, the
-  sprint's builder; the model it runs on is the next item.
+  `claude-fable-5-2`, `xhigh` requested, its observed effort null) returned *merge after a fix
+  round*: 23 findings (4 blocking, 6 should-fix, 13 notes), and verdicts on all ten appendix items,
+  none of which changed a finding or joined one. Beni approved the Planner's dispositions as
+  proposed. The brief is [`review-loop-sprint-3-fix-prompt.md`](review-loop-sprint-3-fix-prompt.md),
+  for Codex, the sprint's builder; the model it runs on is the next item.
   - **The fix round's model (Beni, Wed 18 Nov 2026, "we can use gpt-6.2-sol and Extra high").**
     Pass 2 runs on `gpt-6.2-sol` at `xhigh`, in Codex in the ChatGPT desktop app, because the
     restart closed the terminal that built the sprint. It is a ruled exception to the rule that a
@@ -1508,8 +1534,8 @@ for Cursor (S7).
     transcript carries: an auto-update put 2.1.326 on PATH in the minute the session started,
     and its `claude --version` ran that.
 
-- **A light seat on Grok 4.7 (Beni, Wed 18 Nov 2026, "Yes, record it").** xAI was downgraded
-  that day to $8 a month, not ended. The tier offers one model, Grok 4.7, at medium effort only,
+- **A light seat on Grok 4.7 (Beni, Wed 18 Nov 2026, "Yes, record it").** xAI was moved
+  that day to a cheaper tier, not ended. The tier offers one model, Grok 4.7, at medium effort only,
   with a 256K context window. Beni is keeping it for now and may still drop it. He offered it
   "for anything simple docs update, straightforward hotfixes or Pass 3 to logistically approve,
   merging PRs and tagging and/or releasing new version", and said to record it with the
@@ -1949,7 +1975,7 @@ for Cursor (S7).
   - **25-1 to 25-7: notes, deferred to Sprint 5** (Sprint 5's "Carried from Sprint 4's review").
   - **Next: the executor,** Codex on `gpt-6.2-astra` at `xhigh`, with nothing to apply. The merge
     waits for Beni's word; the Planner plans a squash with its own message, as for PR 8, and no
-    tag (D8).
+    tag, since elenchus's numbering is Beni's.
 - **D8, D10 and D11 (Beni, Wed 25 Nov 2026, in the Planner's chat).** The Planner put each
   question as the decision packet words it, with the packet's recommendations for D10 and D11
   and none for D8, since the number is Beni's.
@@ -2210,7 +2236,8 @@ appendix carries the four items below to the reviewer.
   guarded by `--match-head-commit fd4c88a`. `main` is `71c8d1c`, one parent `84764ff`, and its
   tree is `fd4c88a`'s exactly. The message carries the correction to the T4 receipt and Cursor's
   Co-authored-by line, and no Kickoff link. CI's `test` on `main` is green (run
-  `134125548701`). The tag list is empty; `sprint-2`, `replay/main` and `replay/pr320-p1` are
+  `44108000461`; `134125548701`, first cited here, is that run's `test` check run, corrected
+  25 Nov). The tag list is empty; `sprint-2`, `replay/main` and `replay/pr320-p1` are
   unmoved; #1 and #3 stay open and locked as fixtures. The README PR, elenchus #5, was then
   retargeted from `sprint-2` to `main` with `main` merged in. It changes `README.md` and
   `package.json` only. Beni merged it the same day as `7affd47`.
