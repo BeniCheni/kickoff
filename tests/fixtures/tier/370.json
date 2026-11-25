@@ -1,0 +1,39 @@
+{
+  "number": 370,
+  "facts": {
+    "headRef": "codex/test-git-env",
+    "authorLogin": "BeniCheni",
+    "sameRepo": true
+  },
+  "files": [
+    {
+      "filename": "CHANGELOG.md",
+      "status": "modified",
+      "patch": "@@ -19,6 +19,7 @@ releases.\n ### Fixed\n \n - Writing about the app outside its source no longer changes its stylesheet.\n+- Root tests clear Git's inherited repository variables (such as `GIT_DIR`), so fixture writes stay in their temporary repositories.\n \n ## [0.5.5] — 2026-11-14\n "
+    },
+    {
+      "filename": "tests/gitRepositoryEnv.test.ts",
+      "status": "added"
+    },
+    {
+      "filename": "tests/helpers/gitFixtures.ts",
+      "status": "added"
+    },
+    {
+      "filename": "tests/publishGate.test.ts",
+      "status": "modified"
+    },
+    {
+      "filename": "tests/setupGitEnv.ts",
+      "status": "added"
+    },
+    {
+      "filename": "tests/vercelIgnore.test.ts",
+      "status": "modified"
+    },
+    {
+      "filename": "vite.config.ts",
+      "status": "modified"
+    }
+  ]
+}

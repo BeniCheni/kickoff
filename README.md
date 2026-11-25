@@ -334,8 +334,11 @@ anyone's memory of it.
 
 Since 22 November 2026, a pull request takes the highest tier its changes reach. A PR the
 scheduled sync workflow opens from `sync/scheduled`, containing only `src/data/**` and
-`docs/sync-digest.md`, takes Tier 0. The builder names the tier and the file that sets it in the
-PR body until a labeler exists. Any reviewer can raise the tier. Only Beni can lower it.
+`docs/sync-digest.md`, takes Tier 0. On eligible PR events, the `tier` workflow computes the
+tier from the default branch's [Tier 3 list](AGENTS.md#tier-3-paths). Forks get a summary only.
+The workflow applies existing repository labels to same-repo PRs, never lowers the tier, and
+preserves manual tier-label changes. The builder still names the tier and the file that sets it
+in the PR body. Any reviewer can raise the tier. Only Beni can lower it.
 
 | Tier | Changes | Review and merge |
 |---|---|---|

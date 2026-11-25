@@ -1,0 +1,14 @@
+{
+  "number": 314,
+  "facts": {
+    "headRef": "claude/mwg-theme-ideas",
+    "authorLogin": "BeniCheni",
+    "sameRepo": true
+  },
+  "files": [
+    {
+      "filename": "docs/v0.2.6-ideas.md",
+      "status": "modified"
+    }
+  ]
+}
