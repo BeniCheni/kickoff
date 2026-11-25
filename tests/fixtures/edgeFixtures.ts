@@ -64,6 +64,7 @@ export const cannotClose = [...bookFinals, edgeFixture({ id: 'abandoned', status
 const unsetBookFixture = edgeFixture({ id: 'unset-book', timeConfidence: 'round_placeholder' })
 const liveBookFixture = edgeFixture({ id: 'live-book', status: 'in_play', result: { home: 1, away: 0 } })
 export const coverSpecimens = [
+  { name: 'day-note', fixtures: [rowStates.find(([, fixture]) => fixture.id === 'next-day')![1]], now: '2026-11-21T12:00:00Z' },
   { name: 'singular', fixtures: [edgeFixture()], now: '2026-11-22T12:00:00Z' },
   { name: 'unset', fixtures: [unsetBookFixture], now: '2026-11-22T12:00:00Z' },
   { name: 'mixed', fixtures: [unsetBookFixture, edgeFixture()], now: '2026-11-22T12:00:00Z' },

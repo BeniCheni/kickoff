@@ -3362,6 +3362,10 @@ export async function proveBookStates(browser, out, results, contrasts) {
       await page.waitForSelector('[data-states-ready="true"]')
       const specimen = '[data-specimen="books"]'
       const all = await page.$$eval(specimen + ' [data-book-case]', els => Object.fromEntries(els.map(el => [el.dataset.bookCase, el.textContent])))
+      const note = await page.$eval('[data-book-case="day-note"] .band-clocks small', el =>
+        [el.textContent, el.dataset.voice, getComputedStyle(el).fontSize, getComputedStyle(el).fontFamily])
+      assert.deepEqual(note.slice(0, 3), ['(Sun, next day)', 'muted', '10px'], id)
+      assert.match(note[3], /Mono/i, id)
       assert.match(all.singular, /1 MATCH · FIRST 3:00 PM ET/)
       assert.match(all.unset, /FIRST KICKOFF NOT SET/)
       assert.doesNotMatch(all.unset, /\d:\d\d/)

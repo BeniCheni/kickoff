@@ -1599,7 +1599,7 @@ button.register-row {
 .band-names { font: 400 13px/1.25 var(--fb-book); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
 .band-clocks, .band-result { flex: none; white-space: nowrap; }
 .band-clocks small { font-size: 10px; }
-.band-clocks[data-day-note] small { display: block; text-align: right; }
+.band-clocks[data-day-note] small:last-child { display: block; text-align: right; }
 .cover-band [data-voice='pitch'] { color: var(--fb-pitch); }
 .cover-band [data-voice='muted'] { color: var(--fb-cover-muted); }
 .cover-band [data-voice='alarm'] { color: var(--fb-alarm); }

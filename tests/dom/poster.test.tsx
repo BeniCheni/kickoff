@@ -202,3 +202,10 @@ it('keeps both fixtures anonymous in an alphabetical tie at the first kickoff', 
   expect(container.querySelector('[data-band-fixture]')).toBeNull()
   expect(screen.getByText('+ 2 more, from 3:00 PM ET')).toBeTruthy()
 })
+
+it('prints the Brooklyn day note separately in the muted voice', () => {
+  const shown = [edgeFixture({ venueTz: 'America/Los_Angeles', kickoffUtc: '2026-11-22T05:30:00.000Z' })]
+  const { container } = render(<CoverBand shown={shown} now="2026-11-21T00:00:00Z" />)
+  expect(container.querySelector('.band-clocks [data-voice="pitch"]')?.textContent).toBe('12:30 AM ET')
+  expect(container.querySelector('.band-clocks small[data-voice="muted"]')?.textContent).toBe('(Sun, next day)')
+})

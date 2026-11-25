@@ -18,7 +18,8 @@ function BandOutcome({ fixture, now }: { fixture: Fixture; now: string }) {
   }
   const { brooklyn, local, dayDelta } = fixtureTimes(fixture.kickoffUtc, fixture.venueTz)
   return <span className="band-clocks" data-day-note={dayDelta || undefined}>
-    <span data-voice="pitch">{brooklyn.time} ET{dayDelta ? ` (${brooklyn.weekday}, ${dayDelta < 0 ? 'prev.' : 'next'} day)` : ''}</span>
+    <span data-voice="pitch">{brooklyn.time} ET</span>
+    {dayDelta ? <> <small data-voice="muted">({brooklyn.weekday}, {dayDelta < 0 ? 'prev.' : 'next'} day)</small></> : null}
     {' '}<small data-voice={local ? 'muted' : 'amber'}>{local ? local.clock24 + ' local' : 'local time not known'}</small>
   </span>
 }
