@@ -173,3 +173,12 @@ it('gives a genuinely empty week its quiet edition, a real next-volume link and 
   expect(screen.getByText('Titles and taglines are ILLUSTRATIVE.')).toBeTruthy()
   window.history.replaceState(null, '', '/')
 })
+
+it('prints the mixed-day unset count under the FIRST date line in the part', () => {
+  const shown = [edgeFixture(), edgeFixture({ id: 'unset', timeConfidence: 'round_placeholder' })]
+  const { container } = render(<PosterWeek days={[{ date: '2026-11-22', total: 2, shown, isToday: false }]} />)
+  const date = container.querySelector('.part-date .book-date')!
+  expect(date.textContent).toContain('FIRST 3:00 PM ET')
+  expect(date.nextElementSibling?.textContent).toBe('1 kickoff, time not yet set by the league')
+  expect(date.nextElementSibling?.getAttribute('data-voice')).toBe('amber')
+})

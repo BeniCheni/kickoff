@@ -24,7 +24,7 @@ export function PosterPart({ date, shown, hidden, closed, part, next, nowUtcIso,
         <h2>{bookCalendar(date).weekday}</h2>
       </div>
       <div className="part-date">
-        <BookDateLine date={date} shown={shown} closed={closed} />
+        <BookDateLine date={date} shown={shown} closed={closed} showMixedUnset />
         {!!hidden && <p className="week-hidden">{hidden} hidden by filters</p>}
       </div>
       <MatchdayLines fixtures={first.slice(0, 1)} />
