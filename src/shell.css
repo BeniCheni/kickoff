@@ -1651,7 +1651,7 @@ body:has(.poster-rack) { container-type: inline-size; }
 .more-rows > div { min-height: 0; overflow: clip; }
 @media (max-width: 360px) { .more-stories span { display: block; } }
 @media (prefers-reduced-motion: no-preference) {
-  :root:not([data-motion='off']) .more-rows { transition: grid-template-rows 180ms ease; }
+  :root:not([data-motion='off']) .more-rows { transition: grid-template-rows 180ms cubic-bezier(.2,.7,.2,1); }
 }
 
 .poster-hidden { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 8px; }
@@ -1676,7 +1676,7 @@ body:has(.poster-rack) { container-type: inline-size; }
   .spine-foot span { transform: scaleX(.7); }
 }
 .book-spine[data-upcoming] { border-style: dashed; color: var(--fb-cover-muted); }
-.spine-next { margin: auto 2px; font: 400 10px/1.35 var(--fb-book); }
+.spine-next { margin: auto 0; font: 400 10px/1.35 var(--fb-mono); letter-spacing: -.02em; }
 .shelf-note { padding: 9px; font: 400 11px/1.5 var(--fb-mono); color: var(--fb-cover-muted); }
 @media (max-width: 400px) {
   .book-shelf:has(.book-spine:nth-child(8)) { width: calc(100cqw - 8px); margin-inline-start: calc(50% - 50cqw + 4px); }

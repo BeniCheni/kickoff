@@ -21,7 +21,6 @@ export const SRC_ALLOWLIST = [
   'src/components/TabNav.tsx',
   'src/components/TablePage.tsx', // the Table tab
   'src/components/BookCover.tsx', // Next's closed and cannot-close server specimens
-  'src/components/PosterRack.tsx', // Poster Rack on the Fixtures tab
   'src/components/ViewBoundary.tsx',
   'src/components/WeekView.tsx', // week dispatch into Ledger or Poster
   'src/lib/RequestClock.tsx',
