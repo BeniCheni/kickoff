@@ -209,11 +209,11 @@ Pass 2.5 (Claude Code, `claude-opus-5-5` at `xhigh`, a fresh session in
 `~/code/kickoff-pr382-synthesis`) posted at 5:22 PM EST as
 `https://github.com/BeniCheni/kickoff/pull/382#issuecomment-7146149046`. It found every fixed
 finding holding at `eeaf014` and Beni's five rulings landed as ruled. Its own mutation pass
-caught 27 of 35 mutants, and Pass 1's five classifier survivors were now caught. It raised five
-new low items, none blocking, and escalated: every clause of the skill's merge gate held, but a
-Tier 3 merge takes Beni's word. It also confirmed, from GitHub's docs, that GitHub's default
-Actions policy blocks `pull_request_target` in public repositories without an event policy
-from 2 December 2026, and that Kickoff had none.
+caught 27 of 35 mutants, and Pass 1's five classifier survivors were now caught. It raised four
+new low items, none blocking, and a skill-audit note already reported on #380, and escalated:
+every clause of the skill's merge gate held, but a Tier 3 merge takes Beni's word. It also
+confirmed, from GitHub's docs, that GitHub's default Actions policy blocks `pull_request_target`
+in public repositories without an event policy from 2 December 2026, and that Kickoff had none.
 
 The PM seat re-checked at 9:02 PM EST. The head was still `eeaf014`, a draft, CLEAN, with no
 labels. `main` was `2e46532`, two bot syncs past `ae983ad`, and `git merge-tree` was clean. A
@@ -250,15 +250,21 @@ The PM seat ran Pass 2.5's handoff block, in order:
   #377 has no auto-merge armed.
 
 Handed on, none of them blocking:
-- Pass 2.5's five low items. (1) The workflow test misses four import forms (double-quoted,
-  side-effect, multi-line and dynamic) and does not pin `permissions:` or a job-level `env:`.
-  (2) Seven defensive checks have no test that can fail them, though each works today. (3)
-  Finding 6's pattern leaves `## [v0.6.0]` and `## [0.6]` at Tier 2. (4) `AGENTS.md` and the
-  README say the list comes from `main` but not that the script does, and do not describe the
-  freeze from ruling 3. (5) For the skill audit: `SKILL.md`'s seat table still names Fable 5.1.
+- Pass 2.5's four new low items. (1) The workflow test misses four import forms
+  (double-quoted, side-effect, multi-line and dynamic) and does not pin `permissions:` or a
+  job-level `env:`. (2) Seven defensive checks have no test that can fail them, though each
+  works today. (3) Finding 6's pattern leaves `## [v0.6.0]`, `## [0.6]` and `## 0.6.0` at Tier
+  2. (4) `AGENTS.md` and the README say the list comes from `main` but not that the script
+  does, and do not describe the freeze that Pass 1.5's Q2 set up and Pass 3's answer 3 relies
+  on.
+- Pass 2.5's retro for the skill audit, already reported on #380: `SKILL.md`'s seat table
+  still names Fable 5.1.
 - Pass 1's question for Beni: Tier 0 trusts a PR's author and branch, not its commits, so a
   person's commit pushed onto `sync/scheduled` that touches only `src/data/**` still reads Tier
   0 (`AGENTS.md:39-41` has the same gap).
 - Pass 1's notes for the skill audit: its smoke pass cannot run where the sandbox refuses
   `listen`, and the build-comparison fallback this cycle used could move into the skill.
+- Two probe notes for the skill audit. Pass 1: `gh` and `tsx` need the sandbox off, where
+  `$TMPDIR` is a different folder, so probe paths must be absolute. Pass 2.5: in zsh, a probe
+  loop variable named `path` rewrites `PATH`, so name it something else.
 - B4 builds on the labeler and reads the computed tier from the job summary.
