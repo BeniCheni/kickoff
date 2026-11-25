@@ -59,9 +59,9 @@ adjudicate on evidence re-run at the tip.
 
 Rules the cycle runs on:
 
-- **Keep the seats independent.** The builder stops at Pass 2 and its fix rounds. The fresh
-  Pass 2.5 seat wrote neither the build nor any fix. Its only written deliverables are one
-  PR comment and the Executive Summary Brief.
+- **Keep the seats independent.** The other vendor runs Pass 1 and Pass 2.5. The builder's
+  vendor holds Pass 2 and its fix rounds. The fresh Pass 2.5 seat wrote neither the build nor
+  any fix. Its only written deliverables are one PR comment and the Executive Summary Brief.
 - **Pass 2.5 re-runs the evidence.** Every number in the brief comes from a command run in
   that session. Run typecheck, the suite and both builds at the head. Read `verify` and `tier`
   for the tip (§7 step 1). Run the browser matrix cell for cell on every surface the rebuttal
@@ -72,18 +72,15 @@ Rules the cycle runs on:
   approved v0.3.0" is a claim by the builder; the brief asks him to confirm it in one word
   before the merge that makes it public. Numbering forks are his (`CLAUDE.md`, "Release
   management").
-- **Brief the receiving seat.** Open every prompt or note handed to another seat with
-  `You are <seat> … If you are not, stop and say so` (#380). The next line of any long opener
-  points to the archived copy with `git show <branch>:<file>` (#359). Passes 0 and 1.5 deliver
-  their prompts in chat in a fenced block and archive them under `docs/`.
-- **Keep Learning output style out of deliverables.** Omit Learn-by-Doing requests,
-  `TODO(human)` and insight boxes from PR comments and briefs. Reviewers put their retro
-  in their comment (§9).
+- **Archive the cycle.** Passes 0 and 1.5 deliver their prompts in chat in a fenced block
+  and archive them under `docs/`. The PM seat archives the Executive Summary Brief with
+  the cycle's record.
 
 ### Score the merge gate
 
-Pass 2.5 scores each clause as met, unmet or not verified, with evidence for Beni. The Tier 2
-reviewer uses the same checklist before merging (§7 step 4).
+Pass 2.5 scores each clause as met, unmet or not verified, with evidence for Beni. For Tier 2,
+this checklist is the skill's own merge discipline. `AGENTS.md` sets the floor of
+**Mergeable now** and `verify` green at the tip (§7 step 4).
 
 1. The PR is a non-release. There is no version bump, new release section in `CHANGELOG.md`,
    or tag to follow.
@@ -95,14 +92,21 @@ reviewer uses the same checklist before merging (§7 step 4).
 7. The `sync.yml` gates are unchanged.
 8. `src/data/*.json` is unchanged.
 
-Tier 2 requires every clause to be met. Tier 3 Pass 2.5 always escalates with the scored gate,
-the handoff block (§7 step 8) and any remaining questions answerable in one word.
+Tier 2 requires every clause to be met. An unmet clause 1, 2, 6, 7 or 8 makes the PR Tier 3.
+The reviewer raises it. Tier 3 Pass 2.5 always escalates with the scored gate, the handoff block
+(§7 step 8) and any remaining questions answerable in one word.
 
 ## 0. Before anything
 
 - Read `CLAUDE.md`, `AGENTS.md` and the README's tier and seat rules first. They outrank this
   skill. If a PR changes this method, its review briefs name the governing sources and say
   whether the skill itself applies.
+- **Brief the receiving seat.** Open every prompt or note handed to another seat with
+  `You are <seat> … If you are not, stop and say so` (#380). The next line of any long opener
+  points to the archived copy with `git show <branch>:<file>` (#359).
+- **Keep Learning output style out of deliverables.** Omit Learn-by-Doing requests,
+  `TODO(human)` and insight boxes from PR comments and briefs. Reviewers put their retro
+  in their comment (§9).
 - **Detect a release before you start.** A version bump in `package.json`, a new `CHANGELOG.md`
   section, or a tag to follow makes this a release PR — §7 step 4 will stop you short of the
   merge. Say so in your first message and plan the handoff (§7 step 8) from the beginning; do
@@ -245,12 +249,14 @@ then Added / Changed / Fixed, then **Deliberately not done**.
   must scope every query to that row (`within`), and must not pick its rows by `status` or
   `result` — those move with every sync, and a pick that lands in another week finds no row at
   all. Use fabricated-fixture unit tests for durable coverage and the serve-only
-  `tests/harness/states.html` for browser specimens. Leave the generated snapshot alone.
-- **A workflow changed:** the reviewer reads the run and its log. The builder can dispatch
-  `gh workflow run sync.yml --ref <branch> -f dry_run=true` to test sync. `workflow_dispatch`
-  resolves the workflow path on `main`, so a new workflow file must land there first. Since
-  v0.4.0 a real (non-dry) dispatch on any ref but `main` fails at "Publish only from main"
-  before the fetch and opens no PR. Use `dry_run=true` on a feature branch.
+  `tests/harness/states.html` for browser specimens. If the harness lacks a needed specimen,
+  report the gap as a finding for the builder to fill. Leave the generated snapshot alone.
+- **A workflow changed:** the reviewer reads the builder's run and its log. The builder can
+  dispatch `gh workflow run sync.yml --ref <branch> -f dry_run=true` to test sync. The reviewer
+  can dispatch its own dry run on the PR branch. A dry run makes no repository or PR changes.
+  `workflow_dispatch` resolves the workflow path on `main`, so a new workflow file must land
+  there first. Since v0.4.0 a real dispatch on any ref but `main` fails at "Publish only
+  from main" before the fetch and opens no PR. Use `dry_run=true` on a feature branch.
 
 ## 5. Fix policy
 
@@ -269,8 +275,9 @@ The builder applies the following policy in Pass 2 and each fix round.
 - **Never weaken a data-honesty assertion to make anything pass.**
 - Keep commits small and reviewable. Say what broke, how you proved it and how you verified
   the fix. Use your own agent identity (`CLAUDE.md`) via per-commit
-  `git -c user.name=<name> -c user.email=<email> commit`. The repo config is shared across
-  worktrees. Use the `Co-Authored-By` trailer the harness gives you, when supplied.
+  `git -c user.name=<name> -c user.email=<email> commit`. Never set it with `git config`.
+  The repo config is shared across worktrees. Use the `Co-Authored-By` trailer the harness
+  gives you, when supplied.
 - A behavioural fix in a non-release PR goes under `[Unreleased]` in `CHANGELOG.md` in the
   same commit — the heading accumulates between releases (`CLAUDE.md`, "Release management");
   a release PR folds it into the new section instead.
@@ -291,9 +298,9 @@ parentheses. Rows are renumbered, so cite the file with the row. See §9 for pro
    reviewer starts with the PR number and a detached worktree at the tip (§0).
 1. **Read checks for the reviewed tip.** Wait for `verify` (`gh pr checks <N> --watch`) and
    record a red result as a high finding. Also read the `tier` job summary for the current PR
-   event. Its `pull_request_target` run can be listed against the base, so match the run to
-   the PR and tip event rather than treating its policy commit as the reviewed SHA. If the
-   summary is unavailable, record that and classify the diff against `AGENTS.md`. If
+   event. Find the run under the PR's branch and tip (`gh run list --workflow tier.yml
+   --commit <tip>`). The summary names the default-branch commit that supplied the tier list.
+   If the summary is unavailable, record that and classify the diff against `AGENTS.md`. If
    `vercel-smoke` is absent, check the Vercel result and the Ignored Build Step
    ([`web/README.md`](../../../web/README.md), [`web/vercel.json`](../../../web/vercel.json))
    before calling it a gap (#370, #382).
@@ -306,7 +313,10 @@ parentheses. Rows are renumbered, so cite the file with the row. See §9 for pro
 3. **Answer Beni's human-review items** from the invoking prompt in the review comment. Give a
    one-line answer to each "correct me if I'm wrong". The builder applies accepted changes
    and records the resolutions and accepted costs in the spec of record. Refer owner decisions
-   to Beni.
+   to Beni. If the PR added or renamed a skill or changed its frontmatter, include a human
+   check in a fresh session in a worktree of the PR branch before the merge. Repeat it in a
+   fresh session in a worktree of `main` after the merge. Type the command and confirm it
+   appears in the `/` menu.
 4. **Apply the tier's merge authority.**
    - **Tier 0:** Leave the merge to the sync workflow.
    - **Tier 1:** The cold reviewer stops at the report. Beni merges.
@@ -350,9 +360,7 @@ parentheses. Rows are renumbered, so cite the file with the row. See §9 for pro
    check from step 4. Include `git pull` and the commands that must come back green
    (`npm run typecheck`, `npm test`, `npm run build`). For a release, include
    `git tag -a vX.Y.Z -m "vX.Y.Z — <subject>"` with the subject filled in and
-   `git push origin vX.Y.Z`. If the PR added or renamed a skill, include the human check
-   after the merge in a fresh session and worktree of `main`. Type the command and confirm
-   it appears in the `/` menu.
+   `git push origin vX.Y.Z`. Include the human `/` menu checks from step 3 when they apply.
 
 ## 8. Sealed appendix
 
@@ -365,5 +373,6 @@ ghosts. **A no-finding review of a real diff is a finding about the review.**
 In their PR comment, reviewers say what the procedure got right and what it got wrong.
 "Nothing to fix" needs the same evidence as any other finding. The PM seat files the lessons
 in the ideas file's `## Process notes`. For tooling, the builder can fold a lesson into the
-skill in the PR's own fix round and list the change in the rebuttal for the next reviewer.
+skill in the PR's own fix round. That edit makes the PR Tier 3. List the change in the
+rebuttal for the next reviewer.
 The PM seat carries changes to the cycle into the owning instructions.

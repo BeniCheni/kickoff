@@ -4,6 +4,7 @@ One brief per Tier 3 cycle, delivered in chat, written for the CEO — who has s
 the generated `docs/` in detail and relies on the seats to have read them. Decision first;
 everything else is what the decision rests on. Every number comes from a command run in the
 same session; a number lifted from a PR body or a comment is labelled as that vendor's claim.
+The PM seat archives the brief with the cycle's record.
 
 ```markdown
 ## Executive Summary Brief — PR #<N> · Pass 2.5 · <date, TZ=America/New_York>
@@ -45,5 +46,6 @@ Each answerable in one word. A ruling the vendors recorded second-hand is confir
 ### Handoff block
 Always include the fenced, paste-ready block from `SKILL.md` §7 step 8. Give the head-pinned
 squash command, message with both trailers, tree check and post-merge checks. Include the tag
-commands for a release and the human `/` menu check if a skill was added or renamed.
+commands for a release and the human `/` menu checks for a skill addition, rename or
+frontmatter change.
 ```

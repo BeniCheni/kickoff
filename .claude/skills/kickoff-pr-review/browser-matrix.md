@@ -119,7 +119,8 @@ would not.
 The snapshot usually has zero postponed, cancelled or in-play fixtures, but weekend windows can
 still carry a live row. Tests reading the committed snapshot must scope their queries to the
 target fixture row. Use the serve-only `tests/harness/states.html` for browser specimens of
-those branches. Leave the generated snapshot alone.
+those branches. If the harness lacks a needed specimen, report the gap for the builder to
+fill. Leave the generated snapshot alone.
 
 ## Zero-slack points
 

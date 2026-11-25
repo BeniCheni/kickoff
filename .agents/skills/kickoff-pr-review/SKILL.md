@@ -11,5 +11,5 @@ Use `.claude/skills/kickoff-pr-review/SKILL.md` and the templates in the same fo
 seat rules, and `CLAUDE.md` outrank the procedure. Use the README's seats table for routing.
 
 Use the equivalent tools for your runtime. Builders use their own commit identity
-(`Codex <noreply@openai.com>`, or Cursor's agent address) for fixes. An independent seat does the
-cold read. If you built the pull request, you hold Pass 2 at most.
+(`Codex <noreply@openai.com>`, or Cursor's agent address) for fixes. The other vendor does the
+cold read. In Tier 3, if your vendor built the pull request, you hold Pass 2 at most.

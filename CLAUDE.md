@@ -23,12 +23,12 @@ of it as unreliable:
 1. `docs/vX.Y.Z-proposal.md` — audit + directions (written by a Claude Code session in-repo).
 2. `docs/vX.Y.Z-design-prompt.md` — the Claude Design brief, built on real tokens/data.
 3. `docs/vX.Y.Z-implementation-prompt.md` — the build spec.
-4. `docs/vX.Y.Z-review-prompt.md` — the adversarial review + merge instructions. Since v0.2.1
+4. `docs/vX.Y.Z-review-prompt.md` — the adversarial review brief. Since v0.2.1
    the method lives in the repo skill `/kickoff-pr-review` (`.claude/skills/kickoff-pr-review/`;
    `/beni-pr-review` until v0.2.4); the archived prompt for a release is the per-PR part —
    number, spec files, human-review items, the sealed appendix — not the method. Since v0.3.0
-   the skill also carries the **six-pass 360 cycle** for a release built by one vendor and
-   reviewed by another — Pass 0 brief → 1 cold review → 1.5 rebuttal brief → 2 rebuttal →
+   the skill also carries the **six-pass 360 cycle** for a Tier 3 PR — Pass 0 brief →
+   1 cold review → 1.5 rebuttal brief → 2 rebuttal →
    2.5 synthesis and Executive Summary Brief → 3 Beni's adjudication. Pass 2.5 scores the gate
    and escalates. The merge takes Beni's word. The pipeline skill's B1.6 remains the
    PM-side copy of the same cycle.
