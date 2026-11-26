@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { FixturesPage } from '../../src/components/FixturesPage'
 import { useMotionController } from '../../src/lib/useMotionController'
@@ -263,10 +263,22 @@ function Watch() {
 
 function WatchFrame() {
   const { motion, toggle } = useMotionController()
-  const ms = Number(new URLSearchParams(location.search).get('ms'))
-  return <div data-watch-frame="" data-measure="poster" data-ground="pulp">
-    <FixturesPage today={META.window.from} lens="poster" motion={motion} toggleMotion={toggle}
-      openingMs={[220, 320, 450, 600].includes(ms) ? ms : 220} />
+  const frame = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const ms = Number(new URLSearchParams(location.search).get('ms'))
+    if (![320, 450, 600].includes(ms)) return
+    // Retiming these two real animations keeps the production component and its finish event intact.
+    const observer = new MutationObserver(() => {
+      const growth = frame.current?.querySelector('.book-growth')
+      for (const animation of growth?.getAnimations({ subtree: true }) ?? []) {
+        animation.effect?.updateTiming({ duration: ms })
+      }
+    })
+    observer.observe(frame.current!, { subtree: true, childList: true })
+    return () => observer.disconnect()
+  }, [])
+  return <div ref={frame} data-watch-frame="" data-measure="poster" data-ground="pulp">
+    <FixturesPage today={META.window.from} lens="poster" motion={motion} toggleMotion={toggle} />
   </div>
 }
 

@@ -6,8 +6,8 @@ import { BookCover } from './BookCover'
 import { PosterPart } from './PosterPart'
 
 /** Scale only the empty stock. The separate live cover translates without scaling its type. */
-export function OpeningShell({ book, now, bounds, target, duration, finish }: {
-  book: MatchdayBook; now: string; bounds: DOMRect; target: RefObject<HTMLDivElement | null>; duration: number; finish: () => void
+export function OpeningShell({ book, now, bounds, target, finish }: {
+  book: MatchdayBook; now: string; bounds: DOMRect; target: RefObject<HTMLDivElement | null>; finish: () => void
 }) {
   const stock = useRef<HTMLDivElement>(null)
   const ink = useRef<HTMLDivElement>(null)
@@ -16,6 +16,7 @@ export function OpeningShell({ book, now, bounds, target, duration, finish }: {
     const dest = target.current!.getBoundingClientRect()
     const dx = dest.left - bounds.left
     const dy = dest.top - bounds.top
+    const duration = 220
     const timing = { duration, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'forwards' as const }
     const shell = stock.current?.animate?.([
       { transform: 'none' },
@@ -27,7 +28,7 @@ export function OpeningShell({ book, now, bounds, target, duration, finish }: {
     if (shell) shell.onfinish = () => complete()
     const timer = shell ? undefined : window.setTimeout(() => complete(), duration)
     return () => { window.clearTimeout(timer); shell?.cancel(); glyphs?.cancel() }
-  }, [bounds, duration, target])
+  }, [bounds, target])
   const box = { left: bounds.left, top: bounds.top, width: bounds.width, height: bounds.height }
   return <div aria-hidden="true" className="book-growth">
     <div ref={stock} className="opening-stock" style={box} />

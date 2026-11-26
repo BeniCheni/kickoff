@@ -25,8 +25,8 @@ const ALL = new Set(COMPETITION_KEYS)
  * tab is active. Its navigation state (`date`, `only`) stays in the URL, so it survives
  * a hop to the Table tab and back.
  */
-export function FixturesPage({ today, lens, motion, toggleMotion, onRegister, openingMs = 220 }: {
-  today: string; lens: Lens; motion?: Motion; toggleMotion?: () => void; onRegister?: () => void; openingMs?: number
+export function FixturesPage({ today, lens, motion, toggleMotion, onRegister }: {
+  today: string; lens: Lens; motion?: Motion; toggleMotion?: () => void; onRegister?: () => void
 }) {
   const encodeAnchor = useCallback((v: string) => encodeDate(v, today), [today])
   const decodeAnchor = useCallback((s: string) => parseDateParam(s, today), [today])
@@ -42,13 +42,13 @@ export function FixturesPage({ today, lens, motion, toggleMotion, onRegister, op
   // ?date=2026-09-12 lost its param at the 12th→13th rollover), and the next Sunday→Monday
   // would then have dragged the reader into a week they never asked for.
   const [reading, setReading] = useState<{ date: string; source: HTMLButtonElement; bounds: DOMRect; opening: boolean } | null>(null)
-  const returnFocus = useRef<HTMLButtonElement | null>(null)
+  const returnFocus = useRef<{ source: HTMLButtonElement; date: string } | null>(null)
   const contents = useRef<HTMLDivElement>(null)
   const prevToday = useRef(today)
   useEffect(() => {
-    if (prevToday.current === today) return
+    if (prevToday.current === today || reading) return
     prevToday.current = today
-    if (!reading && !new URLSearchParams(window.location.search).has('date')) setAnchor(today)
+    if (!new URLSearchParams(window.location.search).has('date')) setAnchor(today)
   }, [today, setAnchor, reading])
   const [active, setActive] = useUrlState<ReadonlySet<CompetitionKey>>(
     'only', ALL,
@@ -95,18 +95,27 @@ export function FixturesPage({ today, lens, motion, toggleMotion, onRegister, op
     else if (reading?.opening && motion !== 'on') setReading({ ...reading, opening: false })
   }, [book, reading, motion])
   useLayoutEffect(() => {
-    if (!reading && returnFocus.current) {
-      returnFocus.current.focus()
-      returnFocus.current = null
+    const opener = returnFocus.current
+    if (reading || !opener) return
+    // Follow an unpinned rollover before restoring focus: the old shelf will unmount.
+    if (prevToday.current !== today && !new URLSearchParams(location.search).has('date')) return
+    const slide = opener.source.closest('.rack-slide')
+    if (opener.source.isConnected && (!slide || slide.getAttribute('data-position') === 'center')) opener.source.focus()
+    if (document.activeElement !== opener.source) {
+      const fallback = document.querySelector<HTMLButtonElement>(`.book-spine[data-date="${opener.date}"]`)
+        ?? document.querySelector<HTMLButtonElement>('.rack-slide[data-position="center"] .rack-face-hit, .week-row button')
+      fallback?.focus()
     }
-  }, [reading])
+    returnFocus.current = null
+  }, [reading, today, anchor])
   function open(book: { date: string }, source: HTMLButtonElement) {
     const face = source.closest('.rack-slide') ?? contents.current?.parentElement?.querySelector('.rack-slide[data-position="center"]')
-    setReading({ date: book.date, source, bounds: (face ?? source).getBoundingClientRect(), opening: motion === 'on' })
+    const bounds = (face ?? source).getBoundingClientRect()
+    const visible = bounds.bottom > 0 && bounds.top < window.innerHeight && bounds.right > 0 && bounds.left < window.innerWidth
+    setReading({ date: book.date, source, bounds, opening: motion === 'on' && !reading && visible })
   }
   function close() {
-    if (reading) returnFocus.current = reading.source.isConnected ? reading.source :
-      document.querySelector<HTMLButtonElement>(`.book-spine[data-date="${reading.date}"]`)
+    returnFocus.current = reading
     setReading(null)
   }
   function navigate(date: string) { setReading(null); setAnchor(date) }
@@ -134,7 +143,7 @@ export function FixturesPage({ today, lens, motion, toggleMotion, onRegister, op
 
       {!quiet && (lens === 'poster' ? <div ref={contents}>
         {reading?.opening && book && <OpeningShell key={book.date} book={book} now={nowUtcIso} bounds={reading.bounds}
-          target={contents} duration={openingMs} finish={() => setReading({ ...reading, opening: false })} />}
+          target={contents} finish={() => setReading({ ...reading, opening: false })} />}
         {opened ? <OpenedBook book={opened} back={books.find(item => item.date !== opened.date && item.date === resting)
           ?? books.find(item => item.date !== opened.date)} now={nowUtcIso} close={close} />
           : <WeekView weekStart={weekStart} active={active} today={today} lens={lens} />}

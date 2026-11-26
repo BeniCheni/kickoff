@@ -143,7 +143,12 @@ export function PosterRack({
               rotation.select(i)
               if (position !== 'center') return
               if (book) onOpen?.(book, event.currentTarget)
-              else onRegister?.()
+              else if (onRegister) {
+                // The primary band persists across navigation in all three shells.
+                const tabs = document.querySelectorAll<HTMLButtonElement>('.imprint-tabs button')
+                Array.from(tabs).find(tab => tab.textContent === 'Table')?.focus()
+                onRegister()
+              }
             }} />
           <BookCover book={book} now={now} league={COMPETITIONS[league].name} />
         </div>

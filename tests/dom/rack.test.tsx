@@ -1,5 +1,6 @@
 import { act, fireEvent, render } from '@testing-library/react'
 import { afterEach, expect, it, vi } from 'vitest'
+import App from '../../src/App'
 import { FixturesPage } from '../../src/components/FixturesPage'
 import { PosterRack } from '../../src/components/PosterRack'
 import { useMotionController } from '../../src/lib/useMotionController'
@@ -183,7 +184,9 @@ it('holds the opened week across an unpinned Sunday rollover, and gives focus ba
   expect(v.container.querySelector('.opened-book [data-week-date]')?.getAttribute('data-week-date')).toBe(sunday)
   expect(location.search).toBe('')
   fireEvent.click(v.container.querySelector('.book-back')!)
-  expect(document.activeElement).toBe(spine)
+  expect(v.container.querySelector(`.book-spine[data-date="${sunday}"]`)).toBeNull()
+  expect(document.activeElement).toBe(v.container.querySelector('.rack-slide[data-position="center"] .rack-face-hit, .week-row button'))
+  expect(location.search).toBe('')
 })
 
 it('takes the muted spine to its real date with the current filters and league', () => {
@@ -234,4 +237,41 @@ it('waits for growth, keeps a surviving filtered volume and closes on removal, n
   v.rerender(<FixturesPage lens="ledger" today={date} motion="on" />)
   v.rerender(<FixturesPage lens="poster" today={date} motion="on" />)
   expect(opened()).toBeNull()
+})
+
+it('opens an offscreen shelf at once, and switches volumes without remounting the week', () => {
+  const v = render(<FixturesPage lens="poster" today={date} motion="on" />)
+  const face = v.container.querySelector('.rack-slide[data-position="center"]')!
+  const bounds = vi.spyOn(face, 'getBoundingClientRect').mockReturnValue(new DOMRect(30, -500, 330, 413))
+  const spines = v.container.querySelectorAll<HTMLButtonElement>('.book-spine:not([data-upcoming])')
+  fireEvent.click(spines[0]!)
+  expect(v.container.querySelector('.book-growth')).toBeNull()
+  expect(v.container.querySelector('.opened-book [data-week-date]')?.getAttribute('data-week-date')).toBe(spines[0]!.dataset.date)
+  bounds.mockReturnValue(new DOMRect(30, 80, 330, 413))
+  fireEvent.click(spines[1]!)
+  expect(v.container.querySelector('.book-growth,.poster-week')).toBeNull()
+  expect(v.container.querySelector('.opened-book [data-week-date]')?.getAttribute('data-week-date')).toBe(spines[1]!.dataset.date)
+  expect(document.activeElement).toBe(v.container.querySelector('.opened-book h2'))
+})
+
+it('restores focus to the dated spine when a motion change hides the opening face', () => {
+  const v = render(<FixturesPage lens="poster" today={date} motion="off" />)
+  const marker = v.container.querySelector<HTMLButtonElement>('.rack-marker:not([aria-current])')!
+  fireEvent.click(marker)
+  const opener = v.container.querySelector<HTMLButtonElement>('.rack-slide[data-position="center"] .rack-face-hit')!
+  const opened = opener.parentElement!.dataset.date
+  fireEvent.click(opener)
+  v.rerender(<FixturesPage lens="poster" today={date} motion="on" />)
+  fireEvent.click(v.container.querySelector('.book-back')!)
+  expect(document.activeElement).toBe(v.container.querySelector(`.book-spine[data-date="${opened}"]`))
+})
+
+it('takes Register focus to the current Table tab and preserves the selected league', () => {
+  window.history.replaceState(null, '', '?date=' + date + '&league=pl')
+  const v = render(<App />)
+  fireEvent.click(v.container.querySelector('.rack-marker:last-child')!)
+  fireEvent.click(v.container.querySelector('.rack-slide[data-position="center"] .rack-face-hit')!)
+  expect(document.activeElement).toBe(v.container.querySelector('.imprint-tabs [aria-current="page"]'))
+  expect(document.activeElement?.textContent).toBe('Table')
+  expect(new URLSearchParams(location.search).get('league')).toBe('pl')
 })
