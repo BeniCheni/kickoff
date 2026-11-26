@@ -34,7 +34,7 @@ export function passFrame(ms: number, count: number, start: number, rest: number
   if (count === 1 || step >= count || (step === count - 1 && within >= CROSS)) {
     return { index: rest, done: true, wait: 0 }
   }
-  if (ms < FIRST_HOLD) return { index: start, done: false, wait: FIRST_HOLD - ms }
+  if (ms < FIRST_HOLD) return { index: start, initial: true, done: false, wait: FIRST_HOLD - ms }
   const from = (start + step) % count
   const to = step === count - 1 ? rest : (from + 1) % count
   if (within >= CROSS) return { index: to, done: false, wait: CROSS + HOLD - within }

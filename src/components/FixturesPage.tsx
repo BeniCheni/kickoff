@@ -46,9 +46,9 @@ export function FixturesPage({ today, lens, motion, toggleMotion, onRegister, op
   const contents = useRef<HTMLDivElement>(null)
   const prevToday = useRef(today)
   useEffect(() => {
-    if (prevToday.current === today || reading) return
+    if (prevToday.current === today) return
     prevToday.current = today
-    if (!new URLSearchParams(window.location.search).has('date')) setAnchor(today)
+    if (!reading && !new URLSearchParams(window.location.search).has('date')) setAnchor(today)
   }, [today, setAnchor, reading])
   const [active, setActive] = useUrlState<ReadonlySet<CompetitionKey>>(
     'only', ALL,
@@ -118,7 +118,9 @@ export function FixturesPage({ today, lens, motion, toggleMotion, onRegister, op
           and the Poster's anchored week of books. */}
       {quiet ? <QuietWeek start={weekStart} today={today} active={active} now={nowUtcIso}
         coverage={weekCoverage(week)} /> : lens === 'poster' ? (
-        <PosterRack key={weekStart + ':' + books.map(book => book.date).join(',')} motion={motion} toggleMotion={toggleMotion} opening={reading?.opening} locked={!!opened} onOpen={open} onRegister={onRegister} books={books} resting={resting} now={nowUtcIso} />
+        <PosterRack key={weekStart + ':' + books.map(book => book.date).join(',')}
+          books={books} resting={resting} now={nowUtcIso} motion={motion} toggleMotion={toggleMotion}
+          opening={reading?.opening} locked={!!opened} onOpen={open} onRegister={onRegister} />
       ) : lens === 'ledger' ? (
         <NextUpStrip today={today} active={active} />
       ) : null}

@@ -14,8 +14,22 @@ function lane(slide: number, center: number, count: number) {
   return offset === count - 1 ? -1 : 2
 }
 const positions = ['left', 'center', 'right', 'outside'] as const
-export function PosterRack({ books, resting, now, motion = 'off', toggleMotion, locked = false, opening = false, onOpen, onRegister }: { books: MatchdayBook[]; resting: string; now: string; motion?: Motion; toggleMotion?: () => void; locked?: boolean; opening?: boolean
-  onOpen?: (book: MatchdayBook, source: HTMLButtonElement) => void; onRegister?: () => void }) {
+
+type RackProps = {
+  books: MatchdayBook[]
+  resting: string
+  now: string
+  motion?: Motion
+  toggleMotion?: () => void
+  locked?: boolean
+  opening?: boolean
+  onOpen?: (book: MatchdayBook, source: HTMLButtonElement) => void
+  onRegister?: () => void
+}
+
+export function PosterRack({
+  books, resting, now, motion = 'off', toggleMotion, locked = false, opening = false, onOpen, onRegister,
+}: RackProps) {
   const [league] = useUrlState<CompetitionKey>('league', 'laliga', encodeLeague, parseLeague)
   const slides = [...books, null]
   const rest = slides.findIndex(book => (book?.date ?? 'register') === resting)
@@ -32,7 +46,7 @@ export function PosterRack({ books, resting, now, motion = 'off', toggleMotion, 
   const suppressTap = useRef(false)
   const [travel, setTravel] = useState(0)
   function down(event: PointerEvent<HTMLDivElement>) {
-    if (!event.isPrimary || event.button !== 0) return
+    if (locked || opening || !event.isPrimary || event.button !== 0) return
     rotation.pause()
     suppressTap.current = false
     drag.current = { id: event.pointerId, x: event.clientX, y: event.clientY, start: event.timeStamp, horizontal: false }
@@ -71,12 +85,14 @@ export function PosterRack({ books, resting, now, motion = 'off', toggleMotion, 
     className="poster-rack" role="region" aria-roledescription="carousel" aria-label="The Rack">
     <div className="rack-controls" data-many={slides.length > 4 || undefined}>
       <button type="button" className="rack-stop" onClick={toggle}>
-        {paused ? <span>Start rotation</span> : <>
+        <span className="rack-stop-label">{paused ? 'Start rotation' : <>
           <span className="motion-when-on">Stop rotation</span><span className="motion-when-off">Start rotation</span>
-        </>}
+        </>}</span>
       </button>
       <div className="rack-markers">{slides.map((book, i) =>
-        <button type="button" aria-label={names[i]} disabled={locked && i !== rest} onClick={() => rotation.select(i)} aria-current={i === index || undefined} className="rack-marker" data-resting={i === index || undefined} key={book?.date ?? 'register'}>
+        <button type="button" className="rack-marker" aria-label={names[i]} disabled={locked && i !== rest}
+          onClick={() => rotation.select(i)} aria-current={i === index || undefined}
+          data-resting={i === index || undefined} key={book?.date ?? 'register'}>
           <span><b>{COVER_LIBRARY[book ? book.closed ? 'closed' : book.slot : 'register'][0]}</b></span>
         </button>)}</div>
       {!locked && !paused && slides.length > 1 && <em className="rack-hint motion-when-on">Tap to open · swipe</em>}
@@ -85,13 +101,14 @@ export function PosterRack({ books, resting, now, motion = 'off', toggleMotion, 
       onClickCapture={event => { if (suppressTap.current && event.detail) { event.stopPropagation(); suppressTap.current = false } }}
       style={{ '--drag': travel + 'px' } as CSSProperties} data-reader={rotation.held !== null || undefined} data-dragging={travel !== 0 || undefined}
       aria-live={rotation.held !== null ? 'polite' : 'off'} data-crossing={crossing ? 'auto' : undefined}>
+      <span className="sr-only">{rotation.held !== null ? names[index] : ''}</span>
       {crossing && slides.map((book, i) => {
         const from = lane(i, crossing.from, slides.length)
         const to = lane(i, crossing.to, slides.length)
         // The old left edge leaves to the left, the new right edge enters from the right.
-        const a = from === 2 && to === -1 ? -2 : from
-        const b = to === 2 && from === -1 ? -2 : to
-        const x = a + (b - a) * crossing.progress
+        const startLane = from === 2 && to === -1 ? -2 : from
+        const endLane = to === 2 && from === -1 ? -2 : to
+        const x = startLane + (endLane - startLane) * crossing.progress
         return <div aria-hidden="true" className="rack-moving-stock" key={book?.date ?? 'register'}
           style={{ '--lane': x, '--depth': Math.min(1, Math.abs(x)) } as CSSProperties} />
       })}

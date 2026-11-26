@@ -3246,6 +3246,7 @@ export async function provePosterScrollbar(origins, week, results) {
 }
 
 export async function provePoster(browser, origins, fixtures, out, results, contrasts) {
+  const { proveRackCrossing, captureRackAccessibility } = await import('./rack-crossing.mjs')
   const days = Map.groupBy(fixtures, f => brooklynDate(f.kickoffUtc))
   const weeks = Map.groupBy(fixtures, f => startOfWeek(brooklynDate(f.kickoffUtc)))
   const heaviest = [...weeks].sort(([, a], [, b]) => b.length - a.length)[0][0]
@@ -3257,6 +3258,9 @@ export async function provePoster(browser, origins, fixtures, out, results, cont
   assert.ok(fullShelf, 'No week with seven spines and a next volume')
   await provePosterScrollbar(origins, fullShelf, results)
   for (const [app, origin] of Object.entries(origins)) {
+    results.push({ id: app + '-accessibility-tree', ...await captureRackAccessibility(browser, origin, heavy, app, out) })
+    for (const width of [390, 1000]) results.push({ id: app + '-title-swap-' + width,
+      ...await proveRackCrossing(browser, origin, heavy, width) })
     for (const { kind, date, fixtures: day } of selectBandDays(days)) {
       const id = app + '-band-' + kind
       const at = Date.parse(date + 'T05:01:00Z')
@@ -3284,7 +3288,12 @@ export async function provePoster(browser, origins, fixtures, out, results, cont
             markers: all('.rack-marker'), markerArt: rect('.rack-marker span'), opener: rect('.part-plate'), weekRow: rect('.week-row'),
             spines: all('.book-spine'), reading: rect('.book-spine[data-reading]'), shelf: rect('.book-shelf'), rows: all('.poster-part .fixture-row').map(box => box.height),
             cover: document.querySelector('.rack-slide[data-position="center"]').dataset.date,
-            focusable: [...document.querySelectorAll('.rack-slide, .rack-marker, .book-spine')].some(el => el.tabIndex >= 0 || el.querySelector('button,a[href],[tabindex],input,[role]')),
+            rackOrder: [...document.querySelectorAll('.poster-rack button')].filter(el => el.tabIndex >= 0 && !el.disabled).map(el => el.className),
+            readingFooter: [...document.querySelector('.book-spine[data-reading] .spine-foot').childNodes].map(node => {
+              const range = document.createRange()
+              range.selectNodeContents(node)
+              return range.getBoundingClientRect().toJSON()
+            }),
           }
         })
         assert.deepEqual([metrics.center.width, metrics.center.height], width === 1000 ? [360, 450] : [width - 60, 413], id)
@@ -3299,7 +3308,10 @@ export async function provePoster(browser, origins, fixtures, out, results, cont
         const widths = metrics.spines.map(spine => spine.width)
         assert.ok(Math.max(...widths) - Math.min(...widths) <= 1 / 64, id + ' equal-width spines')
         assert.ok(metrics.rows.length && metrics.rows.every(height => height >= 44), id + ' contents rows')
-        assert.equal(metrics.focusable, false, id)
+        assert.deepEqual(metrics.rackOrder, ['rack-stop', ...Array(8).fill('rack-marker'), 'rack-face-hit'], id)
+        if (width === 360) for (const box of metrics.readingFooter.filter(box => box.width)) {
+          assert.ok(box.left >= metrics.reading.left && box.right <= metrics.reading.right, id + ' reading footer')
+        }
         const button = await page.$('.more-stories')
         const bar = await button.evaluate(el => ({ width: el.offsetWidth, full: el.parentElement.offsetWidth, h: el.offsetHeight,
           before: el.parentElement.querySelectorAll('.fixture-row').length, label: el.textContent }))
@@ -3316,6 +3328,30 @@ export async function provePoster(browser, origins, fixtures, out, results, cont
         }
         assert.deepEqual(errors, [], id)
         results.push({ id, week: heavy, ...metrics, bar, after })
+      } finally { await context.close() }
+    }
+    for (const width of [360, 900, 921]) {
+      const { context, page } = await openPage(browser, origin + '/?date=' + fullShelf, 'light', width)
+      try {
+        const details = await page.evaluate(() => ({
+          left: document.querySelector('.rack-slide[data-position="left"]').getBoundingClientRect().left,
+          right: document.querySelector('.rack-slide[data-position="right"]').getBoundingClientRect().right,
+          spineFont: getComputedStyle(document.querySelector('.spine-next')).fontFamily,
+          reading: document.querySelector('.book-spine[data-reading]').getBoundingClientRect().toJSON(),
+          footer: [...document.querySelector('.book-spine[data-reading] .spine-foot').childNodes].map(node => {
+            const range = document.createRange()
+            range.selectNodeContents(node)
+            return range.getBoundingClientRect().toJSON()
+          }),
+          fold: getComputedStyle(document.querySelector('.more-rows')).transition,
+        }))
+        assert.match(details.spineFont, /Mono/i)
+        if (width === 360) for (const box of details.footer.filter(box => box.width)) {
+          assert.ok(box.left >= details.reading.left && box.right <= details.reading.right, app + ' full shelf reading footer')
+        }
+        if (width >= 900) assert.ok(details.left >= 0 && details.right <= width, app + ' neighbours at ' + width)
+        assert.match(details.fold, /grid-template-rows 0.18s cubic-bezier\(0.2, 0.7, 0.2, 1\)/)
+        results.push({ id: app + '-neighbours-' + width, ...details })
       } finally { await context.close() }
     }
     const hiddenWeeks = new Set([heaviest])
@@ -3347,7 +3383,13 @@ export async function provePoster(browser, origins, fixtures, out, results, cont
       assert.deepEqual(escaped, [], id)
       assert.deepEqual(errors, [], id)
       await shoot(page, path.join(out, id + '.png'), width)
-      results.push({ id, requests: escaped.length })
+      await page.$eval('.rack-stop', el => el.click())
+      assert.equal(await page.evaluate(() => document.documentElement.dataset.motion), 'off', id)
+      await page.$eval('.rack-marker', el => el.click())
+      await page.click('.rack-slide[data-position="center"] .rack-face-hit')
+      await page.waitForSelector('.opened-book h2')
+      assert.deepEqual(escaped, [], id)
+      results.push({ id, requests: escaped.length, opened: true })
     } finally { await context.close() }
   }
   await proveBookStates(browser, out, results, contrasts)
