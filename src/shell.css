@@ -1660,6 +1660,7 @@ body:has(.poster-rack) { container-type: inline-size; }
 .opening-stock, .opening-ink { position: fixed; z-index: 8; pointer-events: none; overflow: clip; transform-origin: top left; }
 .opening-stock { background: var(--fb-cover-black); }
 .opening-ink .book-cover { background: transparent; }
+.rack-note { margin-block: 8px; color: var(--fb-pulp-ink); font: italic 14px/1.4 var(--fb-book); }
 .book-back { min-height: 44px; text-align: left; font: italic 14px/1.3 var(--fb-book); color: var(--fb-pulp-ink); }
 .opened-book .part-plate h2:focus-visible { outline-offset: -2px; }
 .poster-part { margin-block: 16px; }

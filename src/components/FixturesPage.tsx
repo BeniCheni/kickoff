@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { COMPETITION_KEYS, COMPETITIONS, type CompetitionKey } from '../lib/competitions'
-import { addDays, startOfWeek } from '../lib/time'
+import { addDays, niceDate, startOfWeek } from '../lib/time'
 import { useUrlState } from '../lib/useUrlState'
 import { encodeDate, encodeOnly, parseDateParam, parseOnlyParam } from '../lib/urlCodecs'
 import type { Motion } from '../lib/motion'
 import type { Lens } from '../lib/lens'
-import { bookWeek, posterBooks, restingBook, shelfGaps, weekCoverage } from '../lib/lensSelectors'
+import { bookWeek, nextMatchdaySelection, posterBooks, restingBook, shelfGaps, weekCoverage } from '../lib/lensSelectors'
 import { useNow } from '../lib/useNow'
-import { BY_DATE, META, SYNC_STAMP } from '../lib/fixtures'
+import { BY_DATE, FIXTURES, META, SYNC_STAMP } from '../lib/fixtures'
 import { PageFoot } from './PageFoot'
 import { NextUpStrip } from './NextUpStrip'
 import { QuietWeek } from './QuietWeek'
@@ -83,6 +83,10 @@ export function FixturesPage({ today, lens, motion, toggleMotion, onRegister, op
   const nextBook = useMemo(() => lens === 'poster' ? posterBooks(bookWeek(addDays(weekStart, 7), BY_DATE, META.window), active)[0]
     : undefined, [weekStart, active, lens])
   const quiet = lens === 'poster' && week.every(day => day.total === 0)
+  const nothingAhead = useMemo(() => lens === 'poster' && !nextMatchdaySelection(FIXTURES, today, nowUtcIso).date,
+    [lens, today, nowUtcIso])
+  const rackNote = !quiet && !books.length ? 'Filters hide every matchday book this week.'
+    : nothingAhead ? `No further kickoffs in the snapshot through ${niceDate(META.window.to)}.` : null
   const resting = restingBook(books, weekStart, today, nowUtcIso)
   const book = books.find(item => item.date === reading?.date)
   const opened = book && !reading?.opening ? book : undefined
@@ -119,6 +123,7 @@ export function FixturesPage({ today, lens, motion, toggleMotion, onRegister, op
         <NextUpStrip today={today} active={active} />
       ) : null}
 
+      {lens === 'poster' && rackNote && <p className="rack-note">{rackNote}</p>}
       <WeekRow start={weekStart} today={today} lens={lens} count={active.size} expanded={filtersOpen}
         onNavigate={nav} onToday={() => navigate(today)} onFilters={() => setFiltersOpen(!filtersOpen)} />
       <FilterBar active={active} lens={lens} open={filtersOpen} onToggle={onToggle}
