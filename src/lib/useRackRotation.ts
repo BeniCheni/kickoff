@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState, type RefObject } from 'react'
-import { FIRST_HOLD, passFrame, rackClock } from './rackRotation'
+import { FIRST_HOLD, HOLD, passFrame, rackClock } from './rackRotation'
 import type { Motion } from './motion'
 
 /** One finite pass per start. A visibility change freezes both the hold and the crossing. */
 export function useRackRotation(root: RefObject<HTMLDivElement | null>, count: number, rest: number, motion: Motion, locked: boolean) {
   const [held, setHeld] = useState<number | null>(null)
   const [generation, setGeneration] = useState(0)
+  const [running, setRunning] = useState(false)
   const [frame, setFrame] = useState<ReturnType<typeof passFrame> | null>(null)
   const latestRest = useRef(rest)
   useEffect(() => {
@@ -44,7 +45,9 @@ export function useRackRotation(root: RefObject<HTMLDivElement | null>, count: n
     }
     function sync() {
       stop()
-      if (!done && visible && !document.hidden) { clock.start(); sample() }
+      const active = !done && visible && !document.hidden
+      setRunning(active)
+      if (active) { clock.start(); sample() }
     }
     const observer = typeof IntersectionObserver === 'undefined' ? null : new IntersectionObserver(entries => {
       visible = entries[entries.length - 1]!.isIntersecting
@@ -59,6 +62,9 @@ export function useRackRotation(root: RefObject<HTMLDivElement | null>, count: n
   const auto = motion === 'on' && held === null && !frame?.done && count > 1
   const index = held ?? (auto && !frame?.initial ? frame?.index : null) ?? rest
   function restart() { setFrame(null); setHeld(null); setGeneration(n => n + 1) }
-  return { auto, index, crossing: auto ? frame?.crossing : undefined, held,
+  const duration = frame?.initial ? FIRST_HOLD : HOLD
+  const hold = auto && !locked && frame && frame.wait > 0
+    ? { duration, elapsed: duration - frame.wait, running } : null
+  return { auto, index, hold, crossing: auto ? frame?.crossing : undefined, held,
     pause: () => { if (auto) setHeld(index) }, select: setHeld, restart }
 }

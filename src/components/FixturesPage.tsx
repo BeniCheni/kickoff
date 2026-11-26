@@ -101,7 +101,8 @@ export function FixturesPage({ today, lens, motion, toggleMotion, onRegister, op
     }
   }, [reading])
   function open(book: { date: string }, source: HTMLButtonElement) {
-    setReading({ date: book.date, source, bounds: source.getBoundingClientRect(), opening: motion === 'on' })
+    const face = source.closest('.rack-slide') ?? contents.current?.parentElement?.querySelector('.rack-slide[data-position="center"]')
+    setReading({ date: book.date, source, bounds: (face ?? source).getBoundingClientRect(), opening: motion === 'on' })
   }
   function close() {
     if (reading) returnFocus.current = reading.source.isConnected ? reading.source :

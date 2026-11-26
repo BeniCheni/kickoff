@@ -93,7 +93,11 @@ export function PosterRack({
         <button type="button" className="rack-marker" aria-label={names[i]} disabled={locked && i !== rest}
           onClick={() => rotation.select(i)} aria-current={i === index || undefined}
           data-resting={i === index || undefined} key={book?.date ?? 'register'}>
-          <span><b>{COVER_LIBRARY[book ? book.closed ? 'closed' : book.slot : 'register'][0]}</b></span>
+          <span><b>{COVER_LIBRARY[book ? book.closed ? 'closed' : book.slot : 'register'][0]}</b>
+            {i === index && rotation.hold && <i aria-hidden="true" className="rack-hold" key={rotation.hold.elapsed}
+              style={{ animationDuration: rotation.hold.duration + 'ms', animationDelay: -rotation.hold.elapsed + 'ms',
+                animationPlayState: rotation.hold.running ? 'running' : 'paused' }} />}
+          </span>
         </button>)}</div>
       {!locked && !paused && slides.length > 1 && <em className="rack-hint motion-when-on">Tap to open · swipe</em>}
     </div>
