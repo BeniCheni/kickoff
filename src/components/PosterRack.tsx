@@ -21,7 +21,7 @@ type RackProps = {
   resting: string
   now: string
   motion?: Motion
-  toggleMotion?: () => void
+  toggleMotion?: (() => void) | null
   locked?: boolean
   opening?: boolean
   onOpen?: (book: MatchdayBook, source: HTMLButtonElement) => void
@@ -102,7 +102,7 @@ export function PosterRack({
     onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false) }}
     className="poster-rack" role="region" aria-roledescription="carousel" aria-label="The Rack">
     <div className="rack-controls" data-many={slides.length > 4 || undefined}>
-      <button type="button" className="rack-stop" onClick={toggleMotion}>
+      <button type="button" className="rack-stop" disabled={toggleMotion === null} onClick={toggleMotion ?? undefined}>
         <span className="rack-stop-label">
           <span className="motion-when-on">Stop rotation</span><span className="motion-when-off">Start rotation</span>
         </span>

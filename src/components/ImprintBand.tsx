@@ -37,7 +37,7 @@ export function ImprintBand({
   themeLabel: ReactNode
   onToggleTheme: () => void
   motionLabel: ReactNode
-  onToggleMotion: () => void
+  onToggleMotion: (() => void) | null
 }) {
   const stock = bandStock(tab, lens)
   // The band is pinned. What pins below it reads the height measured here.
@@ -57,7 +57,8 @@ export function ImprintBand({
           <span className="wordmark-strap" data-voice="pitch">Brooklyn · ET</span>
         </div>
         <div className="imprint-tools">
-          <MotionControl label={motionLabel} onToggle={onToggleMotion} />
+          {onToggleMotion ? <MotionControl label={motionLabel} onToggle={onToggleMotion} />
+            : <fieldset disabled className="contents"><MotionControl label={motionLabel} onToggle={() => {}} /></fieldset>}
           <button type="button" className="imprint-hit theme-toggle" onClick={onToggleTheme}>
             <span className="theme-disc" aria-hidden="true"><Glyph name="moon" /></span>
             <span className="imprint-name">{themeLabel}</span>
@@ -77,4 +78,9 @@ export function ImprintBand({
  *  themselves, measure it before their first paint, and need none. */
 export function BandHeightBoot() {
   return <script data-kickoff-band="" dangerouslySetInnerHTML={{ __html: BAND_HEIGHT_BOOT }} />
+}
+
+/** Disk editions have no motion controller, storage listener or preference writer. */
+export function useStillMotion() {
+  return { motion: 'off' as const, toggle: null }
 }

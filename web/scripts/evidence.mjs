@@ -48,7 +48,7 @@ export function launchBrowser() {
 // puppeteer names console.warn 'warn'; 'warning' is the protocol's word for the same level.
 const CONSOLE_FAILS = new Set(['error', 'warn', 'warning', 'assert'])
 
-export async function openPage(browser, url, theme, width, { waitUntil = 'networkidle0', offline = false, clock = null, reduced = false, touch = false } = {}) {
+export async function openPage(browser, url, theme, width, { waitUntil = 'networkidle0', offline = false, clock = null, reduced = false, touch = false, beforeLoad = null } = {}) {
   const context = await browser.createBrowserContext()
   const page = await context.newPage()
   const errors = []
@@ -72,6 +72,7 @@ export async function openPage(browser, url, theme, width, { waitUntil = 'networ
     // A contrary retired preference must neither affect first paint nor be deleted.
     localStorage.setItem('kickoff-theme-broadcast', chosen === 'light' ? 'dark' : 'light')
   }, theme)
+  if (beforeLoad) await page.evaluateOnNewDocument(beforeLoad)
   if (clock !== null) await page.evaluateOnNewDocument(at => { Date.now = () => at }, clock)
   if (reduced) await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }])
   if (offline) await page.setOfflineMode(true)
@@ -3266,15 +3267,43 @@ async function pressRackControl(page, control, method) {
 
 async function proveRackInput(browser, url, disk = false) {
   const records = []
+  function seedDisk() {
+    if (!sessionStorage.getItem('rack-test-seeded')) {
+      localStorage.setItem('kickoff-motion', 'on')
+      sessionStorage.setItem('rack-test-seeded', '1')
+    }
+    const set = Storage.prototype.setItem
+    window.diskMotionWrites = []
+    Storage.prototype.setItem = function(key, value) {
+      if (key === 'kickoff-motion') window.diskMotionWrites.push(value)
+      return set.call(this, key, value)
+    }
+  }
   for (const method of ['touch', 'mouse', 'keyboard']) {
-    const { context, page, errors, escaped } = await openPage(browser, url, 'light', 390, { touch: method === 'touch', offline: disk })
+    const { context, page, errors, escaped } = await openPage(browser, url, 'light', 390, { touch: method === 'touch', offline: disk, beforeLoad: disk ? seedDisk : null })
     try {
       const stop = await page.$('.rack-stop')
       const motion = () => page.evaluate(() => document.documentElement.dataset.motion)
       assert.equal(await motion(), disk ? 'off' : 'on')
       const box = await pressRackControl(page, stop, method)
       assert.equal(await motion(), 'off')
-      if (!disk) {
+      if (disk) {
+        assert.ok(await stop.evaluate(el => el.matches(':disabled')))
+        const band = await page.$('.motion-control')
+        assert.ok(await band.evaluate(el => el.matches(':disabled')))
+        await pressRackControl(page, band, method)
+        for (const [control, name] of [[stop, 'START ROTATION'], [band, 'Start motion']]) {
+          const ax = await page.accessibility.snapshot({ root: control, interestingOnly: false })
+          assert.deepEqual([ax.role, ax.name, ax.disabled], ['button', name, true])
+        }
+        assert.equal(await page.evaluate(() => localStorage.getItem('kickoff-motion')), 'on')
+        assert.deepEqual(await page.evaluate(() => window.diskMotionWrites), [])
+        await page.reload({ waitUntil: 'load' })
+        await page.waitForSelector('.rack-marker')
+        assert.equal(await motion(), 'off')
+        assert.equal(await page.evaluate(() => localStorage.getItem('kickoff-motion')), 'on')
+        assert.deepEqual(await page.evaluate(() => window.diskMotionWrites), [])
+      } else {
         assert.equal(await page.evaluate(() => localStorage.getItem('kickoff-motion')), 'off')
         assert.match(await page.$eval('.motion-control', el => el.innerText), /Start motion/i)
       }
@@ -3436,6 +3465,10 @@ export async function provePoster(browser, origins, fixtures, out, results, cont
       } finally { await context.close() }
     }
   }
+  for (const file of ['single', 'offline']) {
+    const url = pathToFileURL(path.join(root, 'dist-' + file, 'index.html')).href + '?date=' + heavy
+    results.push({ id: file + '-locked-motion', presses: await proveRackInput(browser, url, true) })
+  }
   for (const file of ['single', 'offline']) for (const theme of ['light', 'dark']) for (const width of [360, 375, 390, 1000]) {
     const id = [file, 'poster', theme, width].join('-')
     const url = pathToFileURL(path.join(root, 'dist-' + file, 'index.html')).href
@@ -3446,9 +3479,8 @@ export async function provePoster(browser, origins, fixtures, out, results, cont
       assert.deepEqual(escaped, [], id)
       assert.deepEqual(errors, [], id)
       await shoot(page, path.join(out, id + '.png'), width)
-      await page.$eval('.rack-stop', el => el.click())
       assert.equal(await page.evaluate(() => document.documentElement.dataset.motion), 'off', id)
-      await page.$eval('.rack-marker', el => el.click())
+      await page.click('.rack-marker')
       await page.click('.rack-slide[data-position="center"] .rack-face-hit')
       await page.waitForSelector('.opened-book h2')
       assert.deepEqual(escaped, [], id)

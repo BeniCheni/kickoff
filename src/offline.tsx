@@ -6,12 +6,14 @@ import { encodeTab, parseTab, type Tab } from './lib/urlCodecs'
 import { DEFAULT_LENS, encodeLens, parseLens } from './lib/lens'
 import { useMotionController } from './lib/useMotionController'
 import { useThemeController } from './lib/useThemeController'
-import { ImprintBand } from './components/ImprintBand'
+import { ImprintBand, useStillMotion } from './components/ImprintBand'
 import { FixturesPage } from './components/FixturesPage'
 import { TablePage } from './components/TablePage'
 import { StalenessBanner } from './components/StalenessBanner'
 import { ViewBoundary } from './components/ViewBoundary'
 import './index.css'
+
+const useEditionMotion = import.meta.env.MODE === 'offline' ? useStillMotion : useMotionController
 
 const OFFLINE_TABS: ReadonlyArray<{ key: Tab; label: string }> = [
   { key: 'fixtures', label: 'Fixtures' },
@@ -29,7 +31,7 @@ export function OfflineApp() {
   const [lens, setLens] = useUrlState('lens', DEFAULT_LENS, encodeLens, parseLens, 'replace')
   useCanonicalSearch(today)
   const { theme, toggle } = useThemeController(lens)
-  const { motion, toggle: toggleMotion } = useMotionController()
+  const { motion, toggle: toggleMotion } = useEditionMotion()
   const shown = tab === 'table' ? 'table' : 'fixtures'
 
   return (

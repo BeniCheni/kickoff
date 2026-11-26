@@ -6,4 +6,6 @@ import { readBootTheme } from './lib/theme'
 const decision = readBootTheme(window.location.search)
 document.documentElement.dataset.lens = decision.lens
 document.documentElement.dataset.theme = decision.theme
-document.documentElement.dataset.motion = readBootMotion()
+// The bootstrap is compiled separately and then inlined. Vite substitutes its HTML
+// mode here in the outer build. Next embeds the unexpanded string and uses its usual preference.
+document.documentElement.dataset.motion = ['single', 'offline'].includes('%MODE%') ? 'off' : readBootMotion()

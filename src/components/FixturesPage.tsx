@@ -26,7 +26,7 @@ const ALL = new Set(COMPETITION_KEYS)
  * a hop to the Table tab and back.
  */
 export function FixturesPage({ today, lens, motion, toggleMotion, onRegister }: {
-  today: string; lens: Lens; motion?: Motion; toggleMotion?: () => void; onRegister?: () => void
+  today: string; lens: Lens; motion?: Motion; toggleMotion?: (() => void) | null; onRegister?: () => void
 }) {
   const encodeAnchor = useCallback((v: string) => encodeDate(v, today), [today])
   const decodeAnchor = useCallback((s: string) => parseDateParam(s, today), [today])
