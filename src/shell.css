@@ -1647,7 +1647,8 @@ body:has(.poster-rack) { container-type: inline-size; }
 .rack-markers { display: flex; justify-content: center; }
 .rack-marker { flex: 0 0 44px; height: 44px; display: grid; place-items: center; }
 .rack-marker span { position: relative; display: grid; place-content: center; width: 34px; height: 22px; padding-inline: 1px; background: var(--fb-cover-black); color: var(--fb-cover-ink); font: 500 10px/1 var(--fb-label); text-align: center; }
-.rack-hold { position: absolute; inset: auto 0 0; height: 1px; background: var(--fb-cover-ink); transform-origin: left;
+/* Give the hold its own row below the pitch underline, clear of two-line marker titles. */
+.rack-hold { position: absolute; inset: calc(100% + 4px) 0 auto; height: 1px; background: var(--fb-cover-ink); transform-origin: left;
   animation: rack-hold-progress linear both; }
 @keyframes rack-hold-progress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 .rack-marker b { width: 54px; font-weight: inherit; transform: scaleX(.6); }
