@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { FixturesPage } from '../../src/components/FixturesPage'
 import { BY_DATE } from '../../src/lib/fixtures'
-import { addDays, startOfWeek } from '../../src/lib/time'
+import { addDays, bookCalendar, startOfWeek } from '../../src/lib/time'
 import { restingBook, type MatchdayBook } from '../../src/lib/lensSelectors'
 import { act, fireEvent } from '@testing-library/react'
 import { CoverBand } from '../../src/components/CoverBand'
@@ -90,12 +90,25 @@ it('reads the Rack week, shown counts and Register league from URL state, includ
     expect(el.querySelector('.book-date')?.textContent).toContain(count + (count === 1 ? ' MATCH ·' : ' MATCHES ·'))
   }
   expect(slides().at(-1)?.textContent).toContain('Premier League')
+  const rack = screen.getByRole('region', { name: 'The Rack' })
+  expect(rack.getAttribute('aria-roledescription')).toBe('carousel')
+  for (const [i, slide] of slides().entries()) {
+    const name = slide.getAttribute('aria-label')!
+    expect(slide.getAttribute('role')).toBe('group')
+    expect(slide.getAttribute('aria-roledescription')).toBe('slide')
+    if (i < expected.length) {
+      const title = slide.querySelector('.book-title')!.textContent
+      expect(name).toBe(`${title}, ${bookCalendar(expected[i]!).longDate}, ${i + 1} of ${expected.length + 1}`)
+    } else expect(name).toBe('The Register, Premier League table')
+    expect(screen.getByRole('button', { name }).getAttribute('aria-current')).toBe(
+      slide.dataset.position === 'center' ? 'true' : null)
+  }
   act(() => {
     window.history.replaceState(null, '', query.replace('only=ucl', 'only='))
     window.dispatchEvent(new PopStateEvent('popstate'))
   })
   expect(slides().map(el => el.dataset.date)).toEqual(['register'])
-  expect(view.container.querySelector('.poster-rack button, .poster-rack [tabindex], .poster-rack [role]')).toBeNull()
+  expect(screen.getByRole('button', { name: 'The Register, Premier League table' }).getAttribute('aria-current')).toBe('true')
   window.history.replaceState(null, '', '/')
 })
 
