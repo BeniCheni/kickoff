@@ -1614,6 +1614,13 @@ body:has(.poster-rack) { container-type: inline-size; }
 .rack-slide[data-position='left'] { left: calc(50% - var(--face) - 8px); }
 .rack-slide[data-position='right'] { left: calc(50% + var(--face) + 8px); }
 .rack-slide[data-position='outside'] { left: -200%; }
+.rack-moving-stock { position: absolute; left: 50%; width: var(--face); height: 100%; background: var(--fb-cover-black);
+  transform: translateX(calc(-50% + var(--lane) * (var(--face) + 8px))); }
+@container poster-rack (min-width: 900px) {
+  .rack-moving-stock { transform: translateX(calc(-50% + var(--lane) * var(--neighbour-offset)))
+    scale(calc(1 - .18 * var(--depth))) rotateY(calc(-24deg * var(--lane))); }
+}
+.rack-faces[data-crossing='auto'] .book-cover { background: transparent; }
 .book-cover { height: 100%; background: var(--fb-cover-black); color: var(--fb-cover-ink); }
 .book-scrim { height: 100%; display: flex; flex-direction: column; justify-content: flex-end; gap: 12px; padding: 16px; background: var(--fb-scrim); }
 .book-title { font: 400 36px/1.02 var(--fb-display); margin: 0 0 5px; }

@@ -87,7 +87,7 @@ export function FixturesPage({ today, lens, motion, toggleMotion }: { today: str
           and the Poster's anchored week of books. */}
       {quiet ? <QuietWeek start={weekStart} today={today} active={active} now={nowUtcIso}
         coverage={weekCoverage(week)} /> : lens === 'poster' ? (
-        <PosterRack motion={motion} toggleMotion={toggleMotion} books={books} resting={resting} now={nowUtcIso} />
+        <PosterRack key={weekStart + ':' + books.map(book => book.date).join(',')} motion={motion} toggleMotion={toggleMotion} books={books} resting={resting} now={nowUtcIso} />
       ) : lens === 'ledger' ? (
         <NextUpStrip today={today} active={active} />
       ) : null}
