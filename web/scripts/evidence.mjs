@@ -48,7 +48,7 @@ export function launchBrowser() {
 // puppeteer names console.warn 'warn'; 'warning' is the protocol's word for the same level.
 const CONSOLE_FAILS = new Set(['error', 'warn', 'warning', 'assert'])
 
-export async function openPage(browser, url, theme, width, { waitUntil = 'networkidle0', offline = false, clock = null, reduced = false } = {}) {
+export async function openPage(browser, url, theme, width, { waitUntil = 'networkidle0', offline = false, clock = null, reduced = false, touch = false } = {}) {
   const context = await browser.createBrowserContext()
   const page = await context.newPage()
   const errors = []
@@ -66,7 +66,7 @@ export async function openPage(browser, url, theme, width, { waitUntil = 'networ
     const target = unexpectedHost(request.url(), url, { offline })
     if (target) escaped.push(`${request.method()} ${target}`)
   })
-  await page.setViewport({ width, height: 844, deviceScaleFactor: 1 })
+  await page.setViewport({ width, height: 844, deviceScaleFactor: 1, hasTouch: touch })
   await page.evaluateOnNewDocument((chosen) => {
     localStorage.setItem('kickoff-theme', chosen)
     // A contrary retired preference must neither affect first paint nor be deleted.
@@ -3232,8 +3232,12 @@ export async function provePosterScrollbar(origins, week, results) {
           const rack = document.querySelector('.poster-rack').getBoundingClientRect()
           window.scrollTo(9999, 0)
           return { gutter: innerWidth - root.clientWidth, client: root.clientWidth, width: root.scrollWidth,
+            markerBoxes: [...document.querySelectorAll('.rack-marker')].map(el => el.getBoundingClientRect().toJSON()),
             travel: scrollX, rackLeft: rack.left, rackRight: rack.right, spines: document.querySelectorAll('.book-spine').length }
         })
+        assert.equal(metrics.markerBoxes.length, 8, id)
+        assert.ok(metrics.markerBoxes.every(b => b.left >= 0 && b.right <= metrics.client && b.height === 44 &&
+          Math.abs(b.width - metrics.client / 8) < .02), id + ' complete marker targets')
         assert.equal(metrics.gutter, 15, id + ' must reserve the scrollbar')
         assert.equal(metrics.spines, 8, id + ' must include the full shelf')
         assert.deepEqual([metrics.width, metrics.travel, metrics.rackLeft, metrics.rackRight],
@@ -3243,6 +3247,60 @@ export async function provePosterScrollbar(origins, week, results) {
       } finally { await context.close() }
     }
   } finally { await browser.close() }
+}
+
+/** A press starts at the painted position, before the browser sends hover, touch or focus. */
+async function pressRackControl(page, control, method) {
+  await control.scrollIntoView()
+  const before = await control.boundingBox()
+  assert.ok(before)
+  const x = before.x + before.width / 2
+  const y = before.y + before.height / 2
+  if (method === 'touch') await page.touchscreen.tap(x, y)
+  else if (method === 'mouse') await page.mouse.click(x, y)
+  else { await control.focus(); await page.keyboard.press('Enter') }
+  const after = await control.boundingBox()
+  assert.deepEqual(after, before, method + ' press moved the control')
+  return before
+}
+
+async function proveRackInput(browser, url, disk = false) {
+  const records = []
+  for (const method of ['touch', 'mouse', 'keyboard']) {
+    const { context, page, errors, escaped } = await openPage(browser, url, 'light', 390, { touch: method === 'touch', offline: disk })
+    try {
+      const stop = await page.$('.rack-stop')
+      const motion = () => page.evaluate(() => document.documentElement.dataset.motion)
+      assert.equal(await motion(), disk ? 'off' : 'on')
+      const box = await pressRackControl(page, stop, method)
+      assert.equal(await motion(), 'off')
+      if (!disk) {
+        assert.equal(await page.evaluate(() => localStorage.getItem('kickoff-motion')), 'off')
+        assert.match(await page.$eval('.motion-control', el => el.innerText), /Start motion/i)
+      }
+      assert.deepEqual(errors, [])
+      assert.deepEqual(escaped, [])
+      records.push({ method, box })
+    } finally { await context.close() }
+  }
+  return records
+}
+
+async function proveFirstMarker(browser, url) {
+  const { context, page } = await openPage(browser, url, 'light', 360, { touch: true })
+  try {
+    const markers = await page.$$('.rack-marker')
+    assert.equal(markers.length, 4)
+    const box = await pressRackControl(page, markers[3], 'touch')
+    assert.equal(await markers[3].evaluate(el => el.getAttribute('aria-current')), 'true')
+    // Enter keyboard modality, then measure the actual ring ink on every edge.
+    await page.keyboard.press('Tab')
+    for (const selector of ['.rack-stop', '.rack-marker']) {
+      await page.focus(selector)
+      assert.deepEqual(ringPaintFaults(selector, await ringPaint(page)), [])
+    }
+    return box
+  } finally { await context.close() }
 }
 
 export async function provePoster(browser, origins, fixtures, out, results, contrasts) {
@@ -3258,6 +3316,11 @@ export async function provePoster(browser, origins, fixtures, out, results, cont
   assert.ok(fullShelf, 'No week with seven spines and a next volume')
   await provePosterScrollbar(origins, fullShelf, results)
   for (const [app, origin] of Object.entries(origins)) {
+    const fourSlides = [...weeks].find(([, fs]) => new Set(fs.map(f => brooklynDate(f.kickoffUtc))).size === 3)
+    assert.ok(fourSlides, 'No four-slide Rack in the snapshot')
+    const inputUrl = origin + '/?date=' + fourSlides[0]
+    results.push({ id: app + '-first-marker', box: await proveFirstMarker(browser, inputUrl) })
+    results.push({ id: app + '-rotation-switch', presses: await proveRackInput(browser, inputUrl) })
     results.push({ id: app + '-accessibility-tree', ...await captureRackAccessibility(browser, origin, heavy, app, out) })
     for (const width of [390, 1000]) results.push({ id: app + '-title-swap-' + width,
       ...await proveRackCrossing(browser, origin, heavy, width) })

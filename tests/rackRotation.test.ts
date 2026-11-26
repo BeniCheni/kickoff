@@ -1,5 +1,5 @@
 import { expect, it } from 'vitest'
-import { CROSS, FIRST_HOLD, HOLD, crossingFrame, passFrame, rackClock } from '../src/lib/rackRotation'
+import { CROSS, FIRST_HOLD, HOLD, crossingFrame, passFrame, rackClock, rackPass, stockLane } from '../src/lib/rackRotation'
 
 it('visits each neighbour once, including the Register, then follows the current resting book', () => {
   expect(passFrame(8999, 4, 2, 2).wait).toBe(1)
@@ -27,4 +27,25 @@ it('resumes at the same active millisecond after a suspension', () => {
   clock.start()
   now += 15
   expect(clock.read()).toBe(9515)
+})
+
+it('retains the selected slide and remaining hold when a suspended pass resumes', () => {
+  let now = 0
+  const pass = rackPass(4, () => now)
+  pass.start()
+  now = FIRST_HOLD + CROSS + 4000
+  pass.suspend()
+  expect(pass.frame(0)).toMatchObject({ index: 1, wait: 3000 })
+  now += 12000
+  expect(pass.select(2, 0)).toMatchObject({ index: 2, wait: 3000 })
+  pass.start()
+  now += 3000
+  expect(pass.frame(0).crossing).toMatchObject({ from: 2, to: 3, progress: 0 })
+})
+
+it('moves two stocks in the same direction and hides the three-card wrap across the centre', () => {
+  expect(stockLane(0, 1, .5, 2)).toBe(-.5)
+  expect(stockLane(1, 0, .5, 2)).toBe(.5)
+  expect(stockLane(-1, 1, .5, 3)).toBeNull()
+  expect(stockLane(-1, 2, .5, 4)).toBe(-1.5)
 })

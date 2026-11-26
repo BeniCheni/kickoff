@@ -20,22 +20,39 @@ function Rack() {
 const advance = (ms: number) => act(() => vi.advanceTimersByTime(ms))
 afterEach(() => { vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals() })
 
-it.each(['hover', 'focus', 'touch'])('only an explicit Start releases a %s pause', method => {
+it.each(['hover', 'focus', 'touch'])('suspends the remaining hold while the reader uses %s', method => {
   vi.useFakeTimers()
   const v = render(<Rack />)
   const rack = v.getByRole('region')
   const marker = rack.querySelector<HTMLElement>('.rack-marker')!
-  if (method === 'hover') { fireEvent.pointerOver(rack); fireEvent.pointerOut(rack) }
-  if (method === 'focus') { fireEvent.focus(marker); fireEvent.blur(marker) }
+  advance(4000)
+  if (method === 'hover') fireEvent.pointerOver(rack)
+  if (method === 'focus') fireEvent.focus(marker)
   if (method === 'touch') fireEvent.touchStart(rack)
-  expect(rack.querySelector('.rack-hint')).toBeNull()
+  expect(rack.querySelector('.rack-hint')?.hasAttribute('data-hidden')).toBe(true)
   expect(rack.querySelector('.rack-faces')?.getAttribute('aria-live')).toBe('polite')
   advance(20000)
   expect(marker.getAttribute('aria-current')).toBe('true')
   expect(document.documentElement.dataset.motion).toBe('on')
-  fireEvent.click(v.getByRole('button', { name: 'Start rotation' }))
-  advance(10600)
-  expect(marker.hasAttribute('aria-current')).toBe(false)
+  if (method === 'hover') fireEvent.pointerOut(rack)
+  if (method === 'focus') fireEvent.blur(marker)
+  if (method === 'touch') { fireEvent.touchEnd(rack, { touches: [] }); advance(7000) }
+  advance(4999)
+  expect(rack.querySelector('[data-crossing]')).toBeNull()
+  advance(2)
+  expect(rack.querySelector('[data-crossing]')).toBeTruthy()
+})
+
+it.each(['pointer', 'touch', 'focus'])('a single Stop turns motion off after %s arrives first', method => {
+  const v = render(<Rack />)
+  const stop = v.container.querySelector('.rack-stop')!
+  if (method === 'pointer') fireEvent.pointerOver(stop)
+  if (method === 'touch') fireEvent.touchStart(stop)
+  if (method === 'focus') fireEvent.focus(stop)
+  fireEvent.click(stop)
+  expect(v.getByText('Band off')).toBeTruthy()
+  expect(document.documentElement.dataset.motion).toBe('off')
+  expect(localStorage.getItem('kickoff-motion')).toBe('off')
 })
 
 it('suspends mid-crossing while hidden or outside the viewport, resuming without catch-up', () => {

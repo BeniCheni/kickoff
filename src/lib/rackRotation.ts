@@ -11,6 +11,7 @@ export function rackClock(now: () => number) {
   const read = () => accumulated + (since === null ? 0 : now() - since)
   return {
     read,
+    seek(elapsed: number) { accumulated = elapsed; if (since !== null) since = now() },
     start() { since ??= now() },
     suspend() { accumulated = read(); since = null },
   }
@@ -40,4 +41,39 @@ export function passFrame(ms: number, count: number, start: number, rest: number
   if (within >= CROSS) return { index: to, done: false, wait: CROSS + HOLD - within }
   const crossing = crossingFrame(from, to, within)
   return { index: crossing.marker, done: false, wait: 0, crossing }
+}
+
+/** Keep the same hold deadline when a marker changes the displayed book. A selection
+ * during a crossing settles the new book immediately and gives it the following hold. */
+export function rackPass(count: number, now: () => number) {
+  const clock = rackClock(now)
+  let origin: number | null = null
+  function frame(rest: number) {
+    const elapsed = clock.read()
+    if (elapsed >= FIRST_HOLD) origin ??= rest
+    return passFrame(elapsed, count, origin ?? rest, rest)
+  }
+  return {
+    start: clock.start, suspend: clock.suspend, frame,
+    select(index: number, rest: number) {
+      let current = frame(rest)
+      if (current.done || current.index === index && !current.crossing) return current
+      if (current.crossing) {
+        clock.seek(clock.read() + CROSS * (1 - current.crossing.progress))
+        current = frame(rest)
+      }
+      origin = ((origin ?? rest) + index - current.index + count) % count
+      return frame(rest)
+    },
+  }
+}
+
+/** A wrapping stock leaves at the edge. It must never pass through the incoming stock. */
+export function stockLane(from: number, to: number, progress: number, count: number) {
+  if (count === 3 && from === -1 && to === 1) return null
+  const start = from === 2 && to === -1 ? -2 : from
+  let end = to
+  if (from === -1 && to === 2) end = -2
+  if (count === 2 && from === 0 && to === 1) end = -1
+  return start + (end - start) * progress
 }

@@ -1,53 +1,38 @@
-import { useEffect, useRef, useState, type RefObject } from 'react'
-import { FIRST_HOLD, HOLD, passFrame, rackClock } from './rackRotation'
+import { useEffect, useMemo, useRef, useState, type RefObject } from 'react'
+import { FIRST_HOLD, HOLD, passFrame, rackPass } from './rackRotation'
 import type { Motion } from './motion'
 
-/** One finite pass per start. A visibility change freezes both the hold and the crossing. */
-export function useRackRotation(root: RefObject<HTMLDivElement | null>, count: number, rest: number, motion: Motion, locked: boolean) {
-  const [held, setHeld] = useState<number | null>(null)
-  const [generation, setGeneration] = useState(0)
+/** Global motion starts a new pass. Reader and visibility pauses suspend the same clock. */
+export function useRackRotation(root: RefObject<HTMLDivElement | null>, count: number, rest: number, motion: Motion, paused: boolean) {
+  const pass = useMemo(() => rackPass(count, () => performance.now()), [count, motion])
+  const [sample, setSample] = useState<{ pass: typeof pass; frame: ReturnType<typeof passFrame> } | null>(null)
+  const [chosen, setChosen] = useState<{ pass: typeof pass; rest: number; index: number; settled: boolean } | null>(null)
   const [running, setRunning] = useState(false)
-  const [frame, setFrame] = useState<ReturnType<typeof passFrame> | null>(null)
   const latestRest = useRef(rest)
+  useEffect(() => { latestRest.current = rest }, [rest])
+
   useEffect(() => {
-    if (latestRest.current !== rest && motion === 'off' && !locked) setHeld(null)
-    latestRest.current = rest
-  }, [rest, motion, locked])
-  useEffect(() => {
-    setHeld(null)
-    setFrame(null)
-  }, [motion])
-  useEffect(() => {
-    if (locked) { setHeld(current => current ?? latestRest.current); return }
-    if (held !== null || motion === 'off' || count < 2) return
-    let start: number | null = null
-    const clock = rackClock(() => performance.now())
+    if (motion === 'off' || count < 2 || paused) return
     let timer = 0
     let raf = 0
     let visible = typeof IntersectionObserver === 'undefined'
-    let done = false
     function stop() {
       window.clearTimeout(timer)
       window.cancelAnimationFrame(raf)
-      clock.suspend()
+      pass.suspend()
     }
-    function sample() {
-      const elapsed = clock.read()
-      // Next's request clock catches up after hydration. Let the still follow the
-      // live resting date until the first crossing actually leaves that book.
-      if (elapsed >= FIRST_HOLD) start ??= latestRest.current
-      const next = passFrame(elapsed, count, start ?? latestRest.current, latestRest.current)
-      setFrame(next)
-      done = next.done
-      if (done) return
-      if (next.wait > 0) timer = window.setTimeout(sample, next.wait)
-      else raf = window.requestAnimationFrame(sample)
+    function tick() {
+      const frame = pass.frame(latestRest.current)
+      setSample({ pass, frame })
+      if (frame.done) { pass.suspend(); return }
+      if (frame.wait > 0) timer = window.setTimeout(tick, frame.wait)
+      else raf = window.requestAnimationFrame(tick)
     }
     function sync() {
       stop()
-      const active = !done && visible && !document.hidden
+      const active = visible && !document.hidden
       setRunning(active)
-      if (active) { clock.start(); sample() }
+      if (active) { pass.start(); tick() }
     }
     const observer = typeof IntersectionObserver === 'undefined' ? null : new IntersectionObserver(entries => {
       visible = entries[entries.length - 1]!.isIntersecting
@@ -57,14 +42,19 @@ export function useRackRotation(root: RefObject<HTMLDivElement | null>, count: n
     document.addEventListener('visibilitychange', sync)
     sync()
     return () => { stop(); observer?.disconnect(); document.removeEventListener('visibilitychange', sync) }
-  }, [root, count, motion, held, generation, locked])
+  }, [root, pass, count, motion, paused])
 
-  const auto = motion === 'on' && held === null && !frame?.done && count > 1
-  const index = held ?? (auto && !frame?.initial ? frame?.index : null) ?? rest
-  function restart() { setFrame(null); setHeld(null); setGeneration(n => n + 1) }
+  const frame = sample?.pass === pass ? sample.frame : null
+  const manual = chosen?.pass === pass && (motion === 'on' || chosen.rest === rest) ? chosen.index : null
+  const auto = motion === 'on' && !paused && !frame?.done && count > 1
+  const index = manual !== null && (chosen?.settled || frame?.initial) ? manual
+    : frame && !frame.initial && !frame.done ? frame.index : rest
   const duration = frame?.initial ? FIRST_HOLD : HOLD
-  const hold = auto && !locked && frame && frame.wait > 0
+  const hold = auto && frame && frame.wait > 0
     ? { duration, elapsed: duration - frame.wait, running } : null
-  return { auto, index, hold, crossing: auto ? frame?.crossing : undefined, held,
-    pause: () => { if (auto) setHeld(index) }, select: setHeld, restart }
+  function select(index: number) {
+    if (motion === 'on') setSample({ pass, frame: pass.select(index, rest) })
+    setChosen({ pass, rest, index, settled: motion === 'off' || !!frame?.done })
+  }
+  return { index, auto, hold, reader: paused || (manual !== null && !auto), crossing: auto ? frame?.crossing : undefined, select }
 }

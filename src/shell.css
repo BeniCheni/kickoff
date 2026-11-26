@@ -1626,9 +1626,9 @@ body:has(.poster-rack) { container-type: inline-size; }
   .rack-moving-stock { transform: translateX(calc(-50% + var(--lane) * var(--neighbour-offset)))
     scale(calc(1 - .18 * var(--depth))) rotateY(calc(-24deg * var(--lane))); }
 }
-/* Restore PR 5's exact raster position at rest. Use transform offsets only while dragging or crossing. */
-.rack-faces:not([data-reader]) .rack-slide[data-position='left'],
-.rack-faces:not([data-reader]) .rack-slide[data-position='right'] { left: calc(50% + var(--offset)); transform: translateX(-50%) scale(var(--scale)) rotateY(var(--turn)); }
+/* Preserve PR 5's still raster. While motion is on, hovering never changes placement models. */
+[data-motion='off'] .rack-faces:not([data-reader]) .rack-slide[data-position='left'],
+[data-motion='off'] .rack-faces:not([data-reader]) .rack-slide[data-position='right'] { left: calc(50% + var(--offset)); transform: translateX(-50%) scale(var(--scale)) rotateY(var(--turn)); }
 .rack-faces[data-crossing='auto'] .book-cover { background: transparent; }
 .book-cover { height: 100%; background: var(--fb-cover-black); color: var(--fb-cover-ink); }
 .book-scrim { height: 100%; display: flex; flex-direction: column; justify-content: flex-end; gap: 12px; padding: 16px; background: var(--fb-scrim); }
@@ -1641,11 +1641,15 @@ body:has(.poster-rack) { container-type: inline-size; }
 .rack-controls { display: flex; justify-content: center; align-items: center; padding-inline: 4px; background: var(--fb-cover-black); color: var(--fb-cover-ink); }
 .rack-controls[data-many] { flex-wrap: wrap; }
 .rack-controls[data-many] .rack-markers { order: 1; width: 100%; }
+.rack-stop:focus-visible, .rack-marker:focus-visible { outline-offset: -2px; }
 .rack-stop { flex: none; min-height: 44px; padding-inline: 4px; }
-.rack-stop-label { display: inline-flex; align-items: center; height: 24px; white-space: nowrap; padding-inline: 4px; border: 1px solid currentColor; font: 600 11px/12px var(--fb-label); text-transform: uppercase; }
+.rack-stop-label { display: inline-flex; justify-content: center; min-width: 7.6em; align-items: center; height: 24px; white-space: nowrap; padding-inline: 4px; border: 1px solid currentColor; font: 600 11px/12px var(--fb-label); text-transform: uppercase; }
 .rack-hint { min-width: 0; max-width: 13ch; font: italic 13.5px/1.15 var(--fb-book); }
+.rack-hint[data-hidden], [data-motion='off'] .rack-hint { visibility: hidden; }
 .rack-markers { display: flex; justify-content: center; }
 .rack-marker { flex: 0 0 44px; height: 44px; display: grid; place-items: center; }
+.rack-controls[data-many] { padding-inline: 0; }
+.rack-controls[data-many] .rack-marker { flex: 1 1 0; min-width: 0; max-width: 44px; }
 .rack-marker span { position: relative; display: grid; place-content: center; width: 34px; height: 22px; padding-inline: 1px; background: var(--fb-cover-black); color: var(--fb-cover-ink); font: 500 10px/1 var(--fb-label); text-align: center; }
 /* Give the hold its own row below the pitch underline, clear of two-line marker titles. */
 .rack-hold { position: absolute; inset: calc(100% + 4px) 0 auto; height: 1px; background: var(--fb-cover-ink); transform-origin: left;

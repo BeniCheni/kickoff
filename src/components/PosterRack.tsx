@@ -1,4 +1,5 @@
-import { useRef, useState, type PointerEvent, type CSSProperties } from 'react'
+import { useEffect, useRef, useState, type PointerEvent, type CSSProperties } from 'react'
+import { HOLD, stockLane } from '../lib/rackRotation'
 import { useRackRotation } from '../lib/useRackRotation'
 import { useUrlState } from '../lib/useUrlState'
 import { COMPETITIONS, type CompetitionKey } from '../lib/competitions'
@@ -34,20 +35,30 @@ export function PosterRack({
   const slides = [...books, null]
   const rest = slides.findIndex(book => (book?.date ?? 'register') === resting)
   const root = useRef<HTMLDivElement>(null)
-  const rotation = useRackRotation(root, slides.length, rest, motion, locked || opening)
-  const index = locked ? rest : rotation.index
-  const crossing = locked ? undefined : rotation.crossing
-  const paused = !locked && motion === 'on' && (rotation.held !== null || (slides.length > 1 && !rotation.auto))
-  function toggle() {
-    if (locked || motion === 'off' || !paused) toggleMotion?.()
-    rotation.restart()
+  const [hovered, setHovered] = useState(false)
+  const [focused, setFocused] = useState(false)
+  const [touchHeld, setTouchHeld] = useState(false)
+  const touchInput = useRef(false)
+  const releaseTimer = useRef<number>(undefined)
+  useEffect(() => () => window.clearTimeout(releaseTimer.current), [])
+  function touchStart() {
+    touchInput.current = true
+    window.clearTimeout(releaseTimer.current)
+    setTouchHeld(true)
   }
+  function touchEnd() {
+    window.clearTimeout(releaseTimer.current)
+    releaseTimer.current = window.setTimeout(() => setTouchHeld(false), HOLD)
+  }
+  const paused = hovered || focused || touchHeld
+  const rotation = useRackRotation(root, slides.length, rest, motion, paused || locked || opening)
+  const index = locked ? rest : rotation.index
+  const crossing = rotation.crossing
   const drag = useRef<{ id: number; x: number; y: number; start: number; horizontal: boolean } | null>(null)
   const suppressTap = useRef(false)
   const [travel, setTravel] = useState(0)
   function down(event: PointerEvent<HTMLDivElement>) {
     if (locked || opening || !event.isPrimary || event.button !== 0) return
-    rotation.pause()
     suppressTap.current = false
     drag.current = { id: event.pointerId, x: event.clientX, y: event.clientY, start: event.timeStamp, horizontal: false }
   }
@@ -81,13 +92,20 @@ export function PosterRack({
   const names = slides.map((book, i) => book
     ? `${COVER_LIBRARY[book.closed ? 'closed' : book.slot][0]}, ${bookCalendar(book.date).longDate}, ${i + 1} of ${slides.length}`
     : `The Register, ${COMPETITIONS[league].name} table`)
-  return <div ref={root} onFocusCapture={rotation.pause} onPointerEnter={rotation.pause} onTouchStart={rotation.pause}
+  return <div ref={root} onPointerEnter={event => {
+    if (event.pointerType !== 'touch') { touchInput.current = false; setHovered(true) }
+  }} onPointerLeave={() => setHovered(false)}
+    onPointerDownCapture={event => { touchInput.current = event.pointerType === 'touch' }}
+    onTouchStart={touchStart} onTouchEnd={event => { if (!event.touches.length) touchEnd() }} onTouchCancel={touchEnd}
+    onFocusCapture={event => setFocused(!touchInput.current || event.target.matches(':focus-visible'))}
+    onKeyDownCapture={() => { touchInput.current = false; setFocused(true) }}
+    onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false) }}
     className="poster-rack" role="region" aria-roledescription="carousel" aria-label="The Rack">
     <div className="rack-controls" data-many={slides.length > 4 || undefined}>
-      <button type="button" className="rack-stop" onClick={toggle}>
-        <span className="rack-stop-label">{paused ? 'Start rotation' : <>
+      <button type="button" className="rack-stop" onClick={toggleMotion}>
+        <span className="rack-stop-label">
           <span className="motion-when-on">Stop rotation</span><span className="motion-when-off">Start rotation</span>
-        </>}</span>
+        </span>
       </button>
       <div className="rack-markers">{slides.map((book, i) =>
         <button type="button" className="rack-marker" aria-label={names[i]} disabled={locked && i !== rest}
@@ -99,20 +117,18 @@ export function PosterRack({
                 animationPlayState: rotation.hold.running ? 'running' : 'paused' }} />}
           </span>
         </button>)}</div>
-      {!locked && !paused && slides.length > 1 && <em className="rack-hint motion-when-on">Tap to open · swipe</em>}
+      {slides.length > 1 && <em className="rack-hint" data-hidden={!rotation.auto || undefined}>Tap to open · swipe</em>}
     </div>
     <div className="rack-faces" onPointerDown={down} onPointerMove={move} onPointerUp={release} onPointerCancel={release}
       onClickCapture={event => { if (suppressTap.current && event.detail) { event.stopPropagation(); suppressTap.current = false } }}
-      style={{ '--drag': travel + 'px' } as CSSProperties} data-reader={rotation.held !== null || undefined} data-dragging={travel !== 0 || undefined}
-      aria-live={rotation.held !== null ? 'polite' : 'off'} data-crossing={crossing ? 'auto' : undefined}>
-      <span className="sr-only">{rotation.held !== null ? names[index] : ''}</span>
+      style={{ '--drag': travel + 'px' } as CSSProperties} data-reader={rotation.reader || undefined} data-dragging={travel !== 0 || undefined}
+      aria-live={rotation.reader ? 'polite' : 'off'} data-crossing={crossing ? 'auto' : undefined}>
+      <span className="sr-only">{rotation.reader ? names[index] : ''}</span>
       {crossing && slides.map((book, i) => {
         const from = lane(i, crossing.from, slides.length)
         const to = lane(i, crossing.to, slides.length)
-        // The old left edge leaves to the left, the new right edge enters from the right.
-        const startLane = from === 2 && to === -1 ? -2 : from
-        const endLane = to === 2 && from === -1 ? -2 : to
-        const x = startLane + (endLane - startLane) * crossing.progress
+        const x = stockLane(from, to, crossing.progress, slides.length)
+        if (x === null) return null
         return <div aria-hidden="true" className="rack-moving-stock" key={book?.date ?? 'register'}
           style={{ '--lane': x, '--depth': Math.min(1, Math.abs(x)) } as CSSProperties} />
       })}
