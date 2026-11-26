@@ -2,11 +2,12 @@ import { useUrlState } from '../lib/useUrlState'
 import { COMPETITIONS, type CompetitionKey } from '../lib/competitions'
 import { encodeLeague, parseLeague } from '../lib/urlCodecs'
 import { COVER_LIBRARY, type MatchdayBook } from '../lib/lensSelectors'
+import type { Motion } from '../lib/motion'
 import { bookCalendar } from '../lib/time'
 import { BookCover } from './BookCover'
 
 /** Flat stock in reading order. Only the resting cover and its neighbours are in view. */
-export function PosterRack({ books, resting, now }: { books: MatchdayBook[]; resting: string; now: string }) {
+export function PosterRack({ books, resting, now, toggleMotion }: { books: MatchdayBook[]; resting: string; now: string; motion?: Motion; toggleMotion?: () => void }) {
   const [league] = useUrlState<CompetitionKey>('league', 'laliga', encodeLeague, parseLeague)
   const slides = [...books, null]
   const index = slides.findIndex(book => (book?.date ?? 'register') === resting)
@@ -14,6 +15,16 @@ export function PosterRack({ books, resting, now }: { books: MatchdayBook[]; res
     ? `${COVER_LIBRARY[book.closed ? 'closed' : book.slot][0]}, ${bookCalendar(book.date).longDate}, ${i + 1} of ${slides.length}`
     : `The Register, ${COMPETITIONS[league].name} table`)
   return <div className="poster-rack" role="region" aria-roledescription="carousel" aria-label="The Rack">
+    <div className="rack-controls" data-many={slides.length > 4 || undefined}>
+      <button type="button" className="rack-stop" onClick={toggleMotion}>
+        <span className="motion-when-on">Stop rotation</span><span className="motion-when-off">Start rotation</span>
+      </button>
+      <div className="rack-markers">{slides.map((book, i) =>
+        <button type="button" aria-label={names[i]} aria-current={i === index || undefined} className="rack-marker" data-resting={i === index || undefined} key={book?.date ?? 'register'}>
+          <span><b>{COVER_LIBRARY[book ? book.closed ? 'closed' : book.slot : 'register'][0]}</b></span>
+        </button>)}</div>
+      <em className="rack-hint motion-when-on">Tap to open · swipe</em>
+    </div>
     <div className="rack-faces" aria-live="off">
       {slides.map((book, i) => {
         const offset = (i - index + slides.length) % slides.length
@@ -23,9 +34,5 @@ export function PosterRack({ books, resting, now }: { books: MatchdayBook[]; res
         </div>
       })}
     </div>
-    <div className="rack-markers">{slides.map((book, i) =>
-      <button type="button" aria-label={names[i]} aria-current={i === index || undefined} className="rack-marker" data-resting={i === index || undefined} key={book?.date ?? 'register'}>
-        <span><b>{COVER_LIBRARY[book ? book.closed ? 'closed' : book.slot : 'register'][0]}</b></span>
-      </button>)}</div>
   </div>
 }

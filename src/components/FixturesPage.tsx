@@ -3,6 +3,7 @@ import { COMPETITION_KEYS, COMPETITIONS, type CompetitionKey } from '../lib/comp
 import { addDays, startOfWeek } from '../lib/time'
 import { useUrlState } from '../lib/useUrlState'
 import { encodeDate, encodeOnly, parseDateParam, parseOnlyParam } from '../lib/urlCodecs'
+import type { Motion } from '../lib/motion'
 import type { Lens } from '../lib/lens'
 import { bookWeek, posterBooks, restingBook, shelfGaps, weekCoverage } from '../lib/lensSelectors'
 import { useNow } from '../lib/useNow'
@@ -23,7 +24,7 @@ const ALL = new Set(COMPETITION_KEYS)
  * tab is active. Its navigation state (`date`, `only`) stays in the URL, so it survives
  * a hop to the Table tab and back.
  */
-export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
+export function FixturesPage({ today, lens, motion, toggleMotion }: { today: string; lens: Lens; motion?: Motion; toggleMotion?: () => void }) {
   const encodeAnchor = useCallback((v: string) => encodeDate(v, today), [today])
   const decodeAnchor = useCallback((s: string) => parseDateParam(s, today), [today])
   const [anchor, setAnchor] = useUrlState<string>(
@@ -86,7 +87,7 @@ export function FixturesPage({ today, lens }: { today: string; lens: Lens }) {
           and the Poster's anchored week of books. */}
       {quiet ? <QuietWeek start={weekStart} today={today} active={active} now={nowUtcIso}
         coverage={weekCoverage(week)} /> : lens === 'poster' ? (
-        <PosterRack books={books} resting={resting} now={nowUtcIso} />
+        <PosterRack motion={motion} toggleMotion={toggleMotion} books={books} resting={resting} now={nowUtcIso} />
       ) : lens === 'ledger' ? (
         <NextUpStrip today={today} active={active} />
       ) : null}

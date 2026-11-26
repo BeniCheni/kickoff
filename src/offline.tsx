@@ -51,7 +51,7 @@ export function OfflineApp() {
       <div data-moments-background="route">
         <ViewBoundary key={`${shown}:${lens}`}>
           <StalenessBanner />
-          {shown === 'table' ? <TablePage /> : <FixturesPage today={today} lens={lens} />}
+          {shown === 'table' ? <TablePage /> : <FixturesPage today={today} lens={lens} motion={motion} toggleMotion={toggleMotion} />}
         </ViewBoundary>
       </div>
     </div>
