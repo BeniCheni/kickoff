@@ -2010,9 +2010,10 @@ for Cursor (S7).
   rule against publishing email addresses still holds for everyone's personal addresses.
 - **A personal address in one commit's metadata (Beni, Wed 25 Nov 2026, "Accept").** The second
   re-read found that the changed files hold no personal address, but one of the PR's commits,
-  `6a0afc9`, names Beni as its committer with his own address. Kickoff's `main` already shows
-  the same address in 130 commits. The Planner asked whether to accept it or rewrite the
-  branch's history. Beni accepted it: the commit stays as it is, and no history is rewritten.
+  `6a0afc9`, names Beni as its committer with his own address. At Kickoff's `main` commit
+  `bafb1f1`, 130 commits already carried the same address, all of them as author and 16 also
+  as committer. The Planner asked whether to accept it or rewrite the branch's history. Beni
+  accepted it: the commit stays as it is, and no history is rewritten.
 
 D4 is withdrawn, and D12 is Pilot (17 Nov).
 
