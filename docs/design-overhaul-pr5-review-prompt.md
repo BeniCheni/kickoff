@@ -626,6 +626,13 @@ The same recount confirms the body's **20 fully closed days and 18 mixed-time da
 `posterBooks` reports closure across the whole day. `kickoffBounds` and `unsetKickoffs` identify
 days with both a league-set kickoff and an unset kickoff eligible to appear in the Poster.
 
+The PM seat owns the carry for Beni's Tier 3 “Yes”. Under the 26 Nov “Release” ruling, the first
+PR to bring `tests/dom/posterClock.test.tsx` to `main`, expected to be the v0.6.0 release from
+`overhaul/second-edition`, adds that path to `AGENTS.md` under “Dates, status, fixture order and
+standings”, immediately after `tests/dom/poster.test.tsx`, and changes the pin in
+`tests/tier.test.ts` from 94 to 95. The test requires each entry to match a tracked file. The
+`tier` workflow reads the default branch's list, so the entry takes effect when the file lands.
+
 Reproduce the counts from a checkout with the referenced commits and `npm ci` already run. This
 uses `b166339`'s product selectors for all three snapshots and all competition filters enabled.
 
