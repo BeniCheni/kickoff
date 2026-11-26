@@ -85,7 +85,7 @@ export default function App({ momentsEdition = MOMENTS, momentsStorage, momentsR
 
         <StalenessBanner />
 
-        {tab === 'table' ? <TablePage /> : <FixturesPage today={today} lens={lens} motion={motion} toggleMotion={toggleMotion} />}
+        {tab === 'table' ? <TablePage /> : <FixturesPage today={today} lens={lens} motion={motion} toggleMotion={toggleMotion} onRegister={() => setTab('table')} />}
       </ViewBoundary></div>}
     </div>
     </>

@@ -18,6 +18,7 @@
 @source "../../src/components/QuietWeek.tsx";
 @source "../../src/components/BookShelf.tsx";
 @source "../../src/components/PosterPart.tsx";
+@source "../../src/components/OpenedBook.tsx";
 @source "../../src/components/BookCover.tsx";
 @source "../../src/components/CoverBand.tsx";
 @source "../../src/components/BookDateLine.tsx";

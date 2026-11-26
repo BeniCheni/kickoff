@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { COMPETITION_KEYS, COMPETITIONS, type CompetitionKey } from '../lib/competitions'
 import { addDays, startOfWeek } from '../lib/time'
 import { useUrlState } from '../lib/useUrlState'
@@ -11,6 +11,7 @@ import { BY_DATE, META, SYNC_STAMP } from '../lib/fixtures'
 import { PageFoot } from './PageFoot'
 import { NextUpStrip } from './NextUpStrip'
 import { QuietWeek } from './QuietWeek'
+import { OpenedBook, OpeningShell } from './OpenedBook'
 import { BookShelf } from './BookShelf'
 import { PosterRack } from './PosterRack'
 import { WeekRow } from './WeekRow'
@@ -24,7 +25,9 @@ const ALL = new Set(COMPETITION_KEYS)
  * tab is active. Its navigation state (`date`, `only`) stays in the URL, so it survives
  * a hop to the Table tab and back.
  */
-export function FixturesPage({ today, lens, motion, toggleMotion }: { today: string; lens: Lens; motion?: Motion; toggleMotion?: () => void }) {
+export function FixturesPage({ today, lens, motion, toggleMotion, onRegister, openingMs = 220 }: {
+  today: string; lens: Lens; motion?: Motion; toggleMotion?: () => void; onRegister?: () => void; openingMs?: number
+}) {
   const encodeAnchor = useCallback((v: string) => encodeDate(v, today), [today])
   const decodeAnchor = useCallback((s: string) => parseDateParam(s, today), [today])
   const [anchor, setAnchor] = useUrlState<string>(
@@ -38,12 +41,15 @@ export function FixturesPage({ today, lens, motion, toggleMotion }: { today: str
   // that version dropped a pin on yesterday's date at the second midnight (browser-proven:
   // ?date=2026-09-12 lost its param at the 12th→13th rollover), and the next Sunday→Monday
   // would then have dragged the reader into a week they never asked for.
+  const [reading, setReading] = useState<{ date: string; source: HTMLButtonElement; bounds: DOMRect; opening: boolean } | null>(null)
+  const returnFocus = useRef<HTMLButtonElement | null>(null)
+  const contents = useRef<HTMLDivElement>(null)
   const prevToday = useRef(today)
   useEffect(() => {
-    if (prevToday.current === today) return
+    if (prevToday.current === today || reading) return
     prevToday.current = today
     if (!new URLSearchParams(window.location.search).has('date')) setAnchor(today)
-  }, [today, setAnchor])
+  }, [today, setAnchor, reading])
   const [active, setActive] = useUrlState<ReadonlySet<CompetitionKey>>(
     'only', ALL,
     encodeOnly,
@@ -78,7 +84,28 @@ export function FixturesPage({ today, lens, motion, toggleMotion }: { today: str
     : undefined, [weekStart, active, lens])
   const quiet = lens === 'poster' && week.every(day => day.total === 0)
   const resting = restingBook(books, weekStart, today, nowUtcIso)
-  const nav = (dir: number) => setAnchor(addDays(anchor, dir * 7))
+  const book = books.find(item => item.date === reading?.date)
+  const opened = book && !reading?.opening ? book : undefined
+  useEffect(() => {
+    if (reading && !book) setReading(null)
+    else if (reading?.opening && motion !== 'on') setReading({ ...reading, opening: false })
+  }, [book, reading, motion])
+  useLayoutEffect(() => {
+    if (!reading && returnFocus.current) {
+      returnFocus.current.focus()
+      returnFocus.current = null
+    }
+  }, [reading])
+  function open(book: { date: string }, source: HTMLButtonElement) {
+    setReading({ date: book.date, source, bounds: source.getBoundingClientRect(), opening: motion === 'on' })
+  }
+  function close() {
+    if (reading) returnFocus.current = reading.source.isConnected ? reading.source :
+      document.querySelector<HTMLButtonElement>(`.book-spine[data-date="${reading.date}"]`)
+    setReading(null)
+  }
+  function navigate(date: string) { setReading(null); setAnchor(date) }
+  const nav = (dir: number) => navigate(addDays(anchor, dir * 7))
   const [filtersOpen, setFiltersOpen] = useState(false)
 
   return (
@@ -87,20 +114,26 @@ export function FixturesPage({ today, lens, motion, toggleMotion }: { today: str
           and the Poster's anchored week of books. */}
       {quiet ? <QuietWeek start={weekStart} today={today} active={active} now={nowUtcIso}
         coverage={weekCoverage(week)} /> : lens === 'poster' ? (
-        <PosterRack key={weekStart + ':' + books.map(book => book.date).join(',')} motion={motion} toggleMotion={toggleMotion} books={books} resting={resting} now={nowUtcIso} />
+        <PosterRack key={weekStart + ':' + books.map(book => book.date).join(',')} motion={motion} toggleMotion={toggleMotion} opening={reading?.opening} locked={!!opened} onOpen={open} onRegister={onRegister} books={books} resting={resting} now={nowUtcIso} />
       ) : lens === 'ledger' ? (
         <NextUpStrip today={today} active={active} />
       ) : null}
 
       <WeekRow start={weekStart} today={today} lens={lens} count={active.size} expanded={filtersOpen}
-        onNavigate={nav} onToday={() => setAnchor(today)} onFilters={() => setFiltersOpen(!filtersOpen)} />
+        onNavigate={nav} onToday={() => navigate(today)} onFilters={() => setFiltersOpen(!filtersOpen)} />
       <FilterBar active={active} lens={lens} open={filtersOpen} onToggle={onToggle}
         onSetGroup={onSetGroup} onShowAll={() => setActive(ALL)} />
 
-      {!quiet && <WeekView weekStart={weekStart} active={active} today={today} lens={lens} />}
+      {!quiet && (lens === 'poster' ? <div ref={contents}>
+        {reading?.opening && book && <OpeningShell key={book.date} book={book} now={nowUtcIso} bounds={reading.bounds}
+          target={contents} duration={openingMs} finish={() => setReading({ ...reading, opening: false })} />}
+        {opened ? <OpenedBook book={opened} back={books.find(item => item.date !== opened.date && item.date === resting)
+          ?? books.find(item => item.date !== opened.date)} now={nowUtcIso} close={close} />
+          : <WeekView weekStart={weekStart} active={active} today={today} lens={lens} />}
+      </div> : <WeekView weekStart={weekStart} active={active} today={today} lens={lens} />)}
 
       {lens === 'poster' && !quiet &&
-        <BookShelf books={books} resting={resting} next={nextBook} gaps={shelfGaps(week)} />}
+        <BookShelf books={books} resting={opened?.date ?? resting} next={nextBook} gaps={opened ? [] : shelfGaps(week)} onOpen={open} onNext={navigate} />}
 
       <PageFoot kind={lens === 'ledger' ? 'ledger' : 'poster'}
         more={lens === 'poster' ? ['Titles and taglines are ILLUSTRATIVE.'] : []}>

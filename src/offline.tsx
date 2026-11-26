@@ -51,7 +51,7 @@ export function OfflineApp() {
       <div data-moments-background="route">
         <ViewBoundary key={`${shown}:${lens}`}>
           <StalenessBanner />
-          {shown === 'table' ? <TablePage /> : <FixturesPage today={today} lens={lens} motion={motion} toggleMotion={toggleMotion} />}
+          {shown === 'table' ? <TablePage /> : <FixturesPage today={today} lens={lens} motion={motion} toggleMotion={toggleMotion} onRegister={() => setTab('table')} />}
         </ViewBoundary>
       </div>
     </div>

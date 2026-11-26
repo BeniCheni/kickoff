@@ -41,6 +41,7 @@ assert.deepEqual(sources, [
   '../../src/components/QuietWeek.tsx',
   '../../src/components/BookShelf.tsx',
   '../../src/components/PosterPart.tsx',
+  '../../src/components/OpenedBook.tsx',
   '../../src/components/BookCover.tsx',
   '../../src/components/CoverBand.tsx',
   '../../src/components/BookDateLine.tsx',

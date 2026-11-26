@@ -14,16 +14,18 @@ function lane(slide: number, center: number, count: number) {
   return offset === count - 1 ? -1 : 2
 }
 const positions = ['left', 'center', 'right', 'outside'] as const
-export function PosterRack({ books, resting, now, motion = 'off', toggleMotion }: { books: MatchdayBook[]; resting: string; now: string; motion?: Motion; toggleMotion?: () => void }) {
+export function PosterRack({ books, resting, now, motion = 'off', toggleMotion, locked = false, opening = false, onOpen, onRegister }: { books: MatchdayBook[]; resting: string; now: string; motion?: Motion; toggleMotion?: () => void; locked?: boolean; opening?: boolean
+  onOpen?: (book: MatchdayBook, source: HTMLButtonElement) => void; onRegister?: () => void }) {
   const [league] = useUrlState<CompetitionKey>('league', 'laliga', encodeLeague, parseLeague)
   const slides = [...books, null]
   const rest = slides.findIndex(book => (book?.date ?? 'register') === resting)
   const root = useRef<HTMLDivElement>(null)
-  const rotation = useRackRotation(root, slides.length, rest, motion)
-  const { index, crossing } = rotation
-  const paused = rotation.held !== null || (slides.length > 1 && !rotation.auto && motion === 'on')
+  const rotation = useRackRotation(root, slides.length, rest, motion, locked || opening)
+  const index = locked ? rest : rotation.index
+  const crossing = locked ? undefined : rotation.crossing
+  const paused = !locked && motion === 'on' && (rotation.held !== null || (slides.length > 1 && !rotation.auto))
   function toggle() {
-    if (motion === 'off' || !paused) toggleMotion?.()
+    if (locked || motion === 'off' || !paused) toggleMotion?.()
     rotation.restart()
   }
   const drag = useRef<{ id: number; x: number; y: number; start: number; horizontal: boolean } | null>(null)
@@ -74,10 +76,10 @@ export function PosterRack({ books, resting, now, motion = 'off', toggleMotion }
         </>}
       </button>
       <div className="rack-markers">{slides.map((book, i) =>
-        <button type="button" aria-label={names[i]} onClick={() => rotation.select(i)} aria-current={i === index || undefined} className="rack-marker" data-resting={i === index || undefined} key={book?.date ?? 'register'}>
+        <button type="button" aria-label={names[i]} disabled={locked && i !== rest} onClick={() => rotation.select(i)} aria-current={i === index || undefined} className="rack-marker" data-resting={i === index || undefined} key={book?.date ?? 'register'}>
           <span><b>{COVER_LIBRARY[book ? book.closed ? 'closed' : book.slot : 'register'][0]}</b></span>
         </button>)}</div>
-      {!paused && slides.length > 1 && <em className="rack-hint motion-when-on">Tap to open · swipe</em>}
+      {!locked && !paused && slides.length > 1 && <em className="rack-hint motion-when-on">Tap to open · swipe</em>}
     </div>
     <div className="rack-faces" onPointerDown={down} onPointerMove={move} onPointerUp={release} onPointerCancel={release}
       onClickCapture={event => { if (suppressTap.current && event.detail) { event.stopPropagation(); suppressTap.current = false } }}
@@ -97,8 +99,15 @@ export function PosterRack({ books, resting, now, motion = 'off', toggleMotion }
         const position = positions[lane(i, crossing?.text ?? index, slides.length) + 1]
         return <div className="rack-slide" role="group" aria-roledescription="slide" aria-label={names[i]} style={crossing ? { opacity: position === 'center' ? crossing.opacity : 0 } : undefined}
           data-position={position} data-date={book?.date ?? 'register'} key={book?.date ?? 'register'}>
-          {(position === 'left' || position === 'right') && <button type="button" className="rack-face-hit"
-            tabIndex={-1} aria-label={'Show ' + names[i]} onClick={() => rotation.select(i)} />}
+          <button type="button" className="rack-face-hit" tabIndex={position === 'center' ? 0 : -1}
+            aria-label={(position === 'center' ? 'Open ' : 'Show ') + names[i]}
+            disabled={locked && position !== 'center'}
+            onClick={event => {
+              rotation.select(i)
+              if (position !== 'center') return
+              if (book) onOpen?.(book, event.currentTarget)
+              else onRegister?.()
+            }} />
           <BookCover book={book} now={now} league={COMPETITIONS[league].name} />
         </div>
       })}

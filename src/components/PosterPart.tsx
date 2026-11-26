@@ -1,4 +1,4 @@
-import { useId, useState } from 'react'
+import { useId, useState, type Ref } from 'react'
 import { bookCalendar, weekdayShort } from '../lib/time'
 import { matchCount } from '../lib/lensSelectors'
 import type { Fixture } from '../lib/schema'
@@ -8,20 +8,20 @@ import { MatchdayLines } from './MatchdayLines'
 
 const parts = ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN']
 
-export function PosterPart({ date, shown, hidden, closed, part, next, nowUtcIso, stale }: {
-  date: string; shown: Fixture[]; hidden: number; closed: boolean; part: number
+export function PosterPart({ date, shown, hidden, closed, part, next, nowUtcIso, stale, volumeHeading }: {
+  date: string; shown: Fixture[]; hidden: number; closed: boolean; part?: number; volumeHeading?: Ref<HTMLHeadingElement>
   next?: string | null; nowUtcIso?: string; stale?: ReadonlySet<string>
 }) {
   const [open, setOpen] = useState(false)
   const panel = useId()
-  const extra = shown.length >= 6 ? shown.length - 4 : 0
+  const extra = !volumeHeading && shown.length >= 6 ? shown.length - 4 : 0
   const first = extra ? shown.slice(0, 4) : shown
   const rowProps = { lens: 'poster' as const, next, nowUtcIso, stale }
   return <section className="poster-part" data-week-date={date}>
     <header>
       <div className="part-plate" data-stock="black">
-        <span>PART {parts[part - 1]}</span>
-        <h2>{bookCalendar(date).weekday}</h2>
+        <span>{volumeHeading ? '— THIS VOLUME' : 'PART ' + parts[part! - 1]}</span>
+        <h2 ref={volumeHeading} tabIndex={volumeHeading ? -1 : undefined}>{bookCalendar(date).weekday}</h2>
       </div>
       <div className="part-date">
         <BookDateLine date={date} shown={shown} closed={closed} showMixedUnset />

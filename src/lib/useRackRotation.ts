@@ -3,7 +3,7 @@ import { passFrame, rackClock } from './rackRotation'
 import type { Motion } from './motion'
 
 /** One finite pass per start. A visibility change freezes both the hold and the crossing. */
-export function useRackRotation(root: RefObject<HTMLDivElement | null>, count: number, rest: number, motion: Motion) {
+export function useRackRotation(root: RefObject<HTMLDivElement | null>, count: number, rest: number, motion: Motion, locked: boolean) {
   const [held, setHeld] = useState<number | null>(null)
   const [generation, setGeneration] = useState(0)
   const [frame, setFrame] = useState<ReturnType<typeof passFrame> | null>(null)
@@ -14,6 +14,7 @@ export function useRackRotation(root: RefObject<HTMLDivElement | null>, count: n
     setFrame(null)
   }, [motion])
   useEffect(() => {
+    if (locked) { setHeld(current => current ?? latestRest.current); return }
     if (held !== null || motion === 'off' || count < 2) return
     const start = latestRest.current
     const clock = rackClock(() => performance.now())
@@ -46,7 +47,7 @@ export function useRackRotation(root: RefObject<HTMLDivElement | null>, count: n
     document.addEventListener('visibilitychange', sync)
     sync()
     return () => { stop(); observer?.disconnect(); document.removeEventListener('visibilitychange', sync) }
-  }, [root, count, motion, held, generation])
+  }, [root, count, motion, held, generation, locked])
 
   const auto = motion === 'on' && held === null && !frame?.done && count > 1
   const index = held ?? (auto ? frame?.index : null) ?? rest
