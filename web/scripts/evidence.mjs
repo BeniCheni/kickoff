@@ -3332,6 +3332,21 @@ async function proveFirstMarker(browser, url) {
   } finally { await context.close() }
 }
 
+async function proveFirstCover(browser, url) {
+  const { context, page } = await openPage(browser, url, 'light', 390, { touch: true })
+  try {
+    const face = await page.$('.rack-slide[data-position="center"] .rack-face-hit')
+    const expected = await face.evaluate(el => el.parentElement.dataset.date)
+    const before = await face.boundingBox()
+    await page.touchscreen.tap(before.x + before.width * .8, before.y + before.height / 2)
+    await page.waitForSelector('.opened-book h2')
+    const after = await face.boundingBox()
+    assert.equal(await page.$eval('.opened-book [data-week-date]', el => el.dataset.weekDate), expected)
+    assert.deepEqual([after.x, after.width, after.height], [before.x, before.width, before.height])
+    return { expected, before, after }
+  } finally { await context.close() }
+}
+
 export async function provePoster(browser, origins, fixtures, out, results, contrasts) {
   const { proveRackCrossing, captureRackAccessibility } = await import('./rack-crossing.mjs')
   const days = Map.groupBy(fixtures, f => brooklynDate(f.kickoffUtc))
@@ -3348,6 +3363,7 @@ export async function provePoster(browser, origins, fixtures, out, results, cont
     const fourSlides = [...weeks].find(([, fs]) => new Set(fs.map(f => brooklynDate(f.kickoffUtc))).size === 3)
     assert.ok(fourSlides, 'No four-slide Rack in the snapshot')
     const inputUrl = origin + '/?date=' + fourSlides[0]
+    results.push({ id: app + '-first-cover', ...await proveFirstCover(browser, inputUrl) })
     results.push({ id: app + '-first-marker', box: await proveFirstMarker(browser, inputUrl) })
     results.push({ id: app + '-rotation-switch', presses: await proveRackInput(browser, inputUrl) })
     results.push({ id: app + '-accessibility-tree', ...await captureRackAccessibility(browser, origin, heavy, app, out) })

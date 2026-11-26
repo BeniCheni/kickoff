@@ -3,6 +3,7 @@ import { afterEach, expect, it, vi } from 'vitest'
 import App from '../../src/App'
 import { FixturesPage } from '../../src/components/FixturesPage'
 import { PosterRack } from '../../src/components/PosterRack'
+import { FIRST_HOLD, CROSS, HOLD } from '../../src/lib/rackRotation'
 import { useMotionController } from '../../src/lib/useMotionController'
 import { bookWeek, posterBooks } from '../../src/lib/lensSelectors'
 import { BY_DATE, META } from '../../src/lib/fixtures'
@@ -274,4 +275,18 @@ it('takes Register focus to the current Table tab and preserves the selected lea
   expect(document.activeElement).toBe(v.container.querySelector('.imprint-tabs [aria-current="page"]'))
   expect(document.activeElement?.textContent).toBe('Table')
   expect(new URLSearchParams(location.search).get('league')).toBe('pl')
+})
+
+it('honours a marker chosen during the final crossing, after the pass settles', () => {
+  vi.useFakeTimers()
+  const v = render(<Rack />)
+  const markers = v.container.querySelectorAll<HTMLButtonElement>('.rack-marker')
+  advance(FIRST_HOLD + (markers.length - 1) * (CROSS + HOLD) + 500)
+  const target = markers[1]!
+  fireEvent.focus(target)
+  fireEvent.click(target)
+  expect(target.getAttribute('aria-current')).toBe('true')
+  fireEvent.blur(target)
+  advance(30000)
+  expect(target.getAttribute('aria-current')).toBe('true')
 })

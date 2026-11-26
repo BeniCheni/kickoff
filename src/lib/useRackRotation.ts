@@ -53,8 +53,9 @@ export function useRackRotation(root: RefObject<HTMLDivElement | null>, count: n
   const hold = auto && frame && frame.wait > 0
     ? { duration, elapsed: duration - frame.wait, running } : null
   function select(index: number) {
-    if (motion === 'on') setSample({ pass, frame: pass.select(index, rest) })
-    setChosen({ pass, rest, index, settled: motion === 'off' || !!frame?.done })
+    const selected = motion === 'on' ? pass.select(index, rest) : null
+    if (selected) setSample({ pass, frame: selected })
+    setChosen({ pass, rest, index, settled: selected === null || selected.done })
   }
   return { index, auto, hold, reader: paused || (manual !== null && !auto), crossing: auto ? frame?.crossing : undefined, select }
 }
