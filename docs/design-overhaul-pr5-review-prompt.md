@@ -622,7 +622,8 @@ head, `b166339`. [Pass 2.5 raised N3](https://github.com/BeniCheni/kickoff/pull/
   `2e46532`'s snapshot, whose window starts 2026-10-25, one day later than `81101fe`'s 2026-10-24
   start, so Sat 24 Oct left the window. The head and `2e46532` share the `08252ff` data tree.
 
-The same recount confirms the body's **20 fully closed days and 18 mixed-time days** at `b166339`.
+The recount gives **20 fully closed days and 18 mixed-time days** at `b166339`. Of the 20 closed
+days, 19 are shared with `81101fe`. Sat 24 Oct left the window and Tue 24 Nov closed.
 `posterBooks` reports closure across the whole day. `kickoffBounds` and `unsetKickoffs` identify
 days with both a league-set kickoff and an unset kickoff eligible to appear in the Poster.
 
