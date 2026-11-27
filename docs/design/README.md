@@ -101,7 +101,11 @@ On Tue 17 Nov Claude Design drew gap 18 (the filter panel, and Zones & key, open
 its questions 22 to 26, and the folded addendum is in [`gap-18-addendum.md`](5-handoff/gap-18-addendum.md).
 It is the later word on every section it names. Later that day a rows pass redrew KICKED OFF and the
 unsettled row, Beni ruled 27 to 29, and the same file closes with the handoff's changed lines and its
-final section 11.
+final section 11. On Mon 23 Nov a Poster pass redrew five ruled matters (the closing book, no cycles,
+fixed titles, the all-hidden day and no rule in a competition's hue) and put questions 30 to 39,
+which Beni ruled Yes that evening. Its reply, with the PM seat's check against the snapshot and
+the rulings, is in
+[`poster-pass-addendum.md`](5-handoff/poster-pass-addendum.md).
 
 ## 6 · The plan, Sat 14 Nov
 
