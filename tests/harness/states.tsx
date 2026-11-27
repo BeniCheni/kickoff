@@ -1,5 +1,7 @@
-import { useEffect, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { FixturesPage } from '../../src/components/FixturesPage'
+import { useMotionController } from '../../src/lib/useMotionController'
 import { FixtureRow } from '../../src/components/FixtureRow'
 import { LedgerWeek } from '../../src/components/LedgerWeek'
 import { MatchdayLines } from '../../src/components/MatchdayLines'
@@ -15,7 +17,7 @@ import { PosterWeek } from '../../src/components/PosterWeek'
 import { posterBooks } from '../../src/lib/lensSelectors'
 import { PosterRack } from '../../src/components/PosterRack'
 import { clockSnapshotAt, type Clock } from '../../src/lib/clock'
-import { hoursSinceSync, META } from '../../src/lib/fixtures'
+import { BY_DATE, hoursSinceSync, META } from '../../src/lib/fixtures'
 import type { CompetitionKey } from '../../src/lib/competitions'
 import type { Fixture, StandingRow } from '../../src/lib/schema'
 import { addDays, brooklynDate, niceDate } from '../../src/lib/time'
@@ -242,4 +244,43 @@ function Harness() {
   )
 }
 
-createRoot(document.getElementById('root')!).render(<Harness />)
+function Watch() {
+  const [duration, setDuration] = useState(220)
+  const [width, setWidth] = useState(390)
+  const [run, setRun] = useState(0)
+  const day = [...BY_DATE].find(([, rows]) => rows.length >= 26)?.[0] ?? META.window.from
+  const address = `?watch=frame&lens=poster&date=${day}&ms=${duration}`
+  return <>
+    <label>Width <select value={width} onChange={e => setWidth(Number(e.target.value))}>
+      {[390, 1000].map(w => <option key={w}>{w}</option>)}</select> px</label>{' '}
+    <label>Growth <select value={duration} onChange={e => setDuration(Number(e.target.value))}>
+      {[220, 320, 450, 600].map(ms => <option key={ms}>{ms}</option>)}</select> ms</label>{' '}
+    <button type="button" onClick={() => setRun(n => n + 1)}>Replay</button>
+    <p>Leave the Rack untouched for a crossing. Tap its centre to watch the book open.</p>
+    <iframe key={run} title="Rack watch" src={address} style={{ width, height: '80vh', border: 0 }} />
+  </>
+}
+
+function WatchFrame() {
+  const { motion, toggle } = useMotionController()
+  const frame = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const ms = Number(new URLSearchParams(location.search).get('ms'))
+    if (![320, 450, 600].includes(ms)) return
+    // Retiming these two real animations keeps the production component and its finish event intact.
+    const observer = new MutationObserver(() => {
+      const growth = frame.current?.querySelector('.book-growth')
+      for (const animation of growth?.getAnimations({ subtree: true }) ?? []) {
+        animation.effect?.updateTiming({ duration: ms })
+      }
+    })
+    observer.observe(frame.current!, { subtree: true, childList: true })
+    return () => observer.disconnect()
+  }, [])
+  return <div ref={frame} data-watch-frame="" data-measure="poster" data-ground="pulp">
+    <FixturesPage today={META.window.from} lens="poster" motion={motion} toggleMotion={toggle} />
+  </div>
+}
+
+const watch = new URLSearchParams(location.search).get('watch')
+createRoot(document.getElementById('root')!).render(watch === 'frame' ? <WatchFrame /> : watch === '1' ? <Watch /> : <Harness />)

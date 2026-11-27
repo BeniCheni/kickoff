@@ -138,6 +138,35 @@ export function tick(ms: number): void {
   })
 }
 
+/** Exercise visibilitychange with the same document state the Rack observes. */
+export function hiddenTabRig() {
+  const hidden = vi.spyOn(document, 'hidden', 'get').mockReturnValue(false)
+  return {
+    set(value: boolean) {
+      act(() => { hidden.mockReturnValue(value); document.dispatchEvent(new Event('visibilitychange')) })
+    },
+    restore: () => hidden.mockRestore(),
+  }
+}
+
+export function intersectionRig() {
+  const targets = new Map<Element, IntersectionObserver>()
+  const callbacks = new Map<IntersectionObserver, IntersectionObserverCallback>()
+  class Observer {
+    constructor(fn: IntersectionObserverCallback) { callbacks.set(this as unknown as IntersectionObserver, fn) }
+    observe(target: Element) { targets.set(target, this as unknown as IntersectionObserver) }
+    disconnect() { for (const [el, owner] of targets) if (owner === this as unknown as IntersectionObserver) targets.delete(el) }
+  }
+  vi.stubGlobal('IntersectionObserver', Observer)
+  return {
+    set(target: Element, visible: boolean) {
+      const observer = targets.get(target)!
+      act(() => callbacks.get(observer)!([{ target, isIntersecting: visible } as IntersectionObserverEntry], observer))
+    },
+    restore: () => vi.unstubAllGlobals(),
+  }
+}
+
 /** A tab waking after a sleep: time has moved with no timer having fired, and the
  *  environment signals `focus` — the catch-up path in clock.ts's `listen`. */
 export function wake(at: Date): void {

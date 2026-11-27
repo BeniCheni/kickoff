@@ -5,7 +5,7 @@ import { encodeTab, parseTab } from './lib/urlCodecs'
 import { DEFAULT_LENS, encodeLens, parseLens, type Lens } from './lib/lens'
 import { useMotionController } from './lib/useMotionController'
 import { useThemeController } from './lib/useThemeController'
-import { ImprintBand } from './components/ImprintBand'
+import { ImprintBand, useStillMotion } from './components/ImprintBand'
 import type { Tab } from './components/TabNav'
 import { FixturesPage } from './components/FixturesPage'
 import { MomentsPage } from './components/MomentsPage'
@@ -19,6 +19,8 @@ import { MomentsSessionBoundary, MomentsSessionProvider, useMomentsSession } fro
 import { ViewBoundary } from './components/ViewBoundary'
 import type { MomentsPlayability } from './lib/momentsPlayability'
 import type { MomentsPlayerFactory } from './lib/momentsPlayer'
+
+const useEditionMotion = import.meta.env.MODE === 'single' ? useStillMotion : useMotionController
 
 // A route-level seam allows the isolated harness to exercise the real shell and boundary.
 function MomentsRouteBoundary({ boundaryKey, children }: { boundaryKey: string; children: ReactNode }) {
@@ -51,7 +53,7 @@ export default function App({ momentsEdition = MOMENTS, momentsStorage, momentsR
 
   useCanonicalSearch(today)
   const { theme, toggle } = useThemeController(lens)
-  const { motion, toggle: toggleMotion } = useMotionController()
+  const { motion, toggle: toggleMotion } = useEditionMotion()
 
   return (
     <>
@@ -85,7 +87,7 @@ export default function App({ momentsEdition = MOMENTS, momentsStorage, momentsR
 
         <StalenessBanner />
 
-        {tab === 'table' ? <TablePage /> : <FixturesPage today={today} lens={lens} />}
+        {tab === 'table' ? <TablePage /> : <FixturesPage today={today} lens={lens} motion={motion} toggleMotion={toggleMotion} onRegister={() => setTab('table')} />}
       </ViewBoundary></div>}
     </div>
     </>

@@ -30,11 +30,11 @@ renumbers a public roadmap.
 **Doc-ladder names and release numbers diverge on purpose** (v0.1.0 shipped from the v0.0.3 doc
 cycle) and always have. Do not infer one from the other.
 
-**`docs/vX.Y.Z-ideas.md` is a ranked candidate list, not a release scope.** It is written cold by
-the session that reviewed the *previous* release, ranked by research value × feasibility, and it
-carries rows forward across releases — renumbered, with the previous file's row number kept in
-parentheses (`docs/v0.3.0-ideas.md` row 6 is `docs/v0.2.0-ideas.md` row 2), so always name the
-file when you cite a row. Turning one into a release
+**`docs/vX.Y.Z-ideas.md` is a ranked candidate list, not a release scope.** Reviewers list
+candidates in their PR comments. The PM seat files them, ranked by research value × feasibility.
+The list carries rows forward across releases — renumbered, with the previous file's row number
+kept in parentheses (`docs/v0.3.0-ideas.md` row 6 is `docs/v0.2.0-ideas.md` row 2), so always
+name the file when you cite a row. Turning one into a release
 means: group rows by what they touch, decide patch vs minor per row under semver, sequence them
 so prerequisites land first, and name what is deferred *and why* — the deferral reasons are the
 part a cold reader six months out actually needs.

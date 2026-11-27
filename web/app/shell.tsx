@@ -45,7 +45,7 @@ function ShellInner({ moments, catalogMode }: { moments: MomentsPayload; catalog
   useCanonicalSearch(today)
   useIgnoredWatchScrub()
   const { toggle } = useThemeController(lens)
-  const { toggle: toggleMotion } = useMotionController()
+  const { motion, toggle: toggleMotion } = useMotionController()
   function onSelect(next: Tab) {
     const currentWatch = new URLSearchParams(window.location.search).get('watch')
     const enteringMoments = next === 'moments' && tab !== 'moments'
@@ -86,7 +86,7 @@ function ShellInner({ moments, catalogMode }: { moments: MomentsPayload; catalog
       {tab === 'moments' ? <ViewBoundary key={tab}><MomentsRegion moments={moments} catalogMode={catalogMode} search={liveSearch} /></ViewBoundary> : (
         <div data-moments-background="route"><ViewBoundary key={`${tab}:${lens}`}>
           <StalenessBanner />
-          {tab === 'table' ? <TablePage /> : <FixturesPage today={today} lens={lens} />}
+          {tab === 'table' ? <TablePage /> : <FixturesPage today={today} lens={lens} motion={motion} toggleMotion={toggleMotion} onRegister={() => onSelect('table')} />}
         </ViewBoundary></div>
       )}
       <PrivacyFoot />

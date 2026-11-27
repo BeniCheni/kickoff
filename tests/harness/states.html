@@ -16,5 +16,7 @@
   #root { box-sizing: border-box; width: 100%; max-width: 780px; margin: 0 auto; padding: 28px 20px 64px; }
   [data-book-case] { width: min(calc(100vw - 60px), 360px); height: 413px; margin-inline: auto; }
   [data-specimen-lens] { width: min(100%, 640px); margin: 0 auto 5px; }
+  html:has(iframe) #root { max-width: none; padding: 4px; }
+  #root:has(> [data-watch-frame]) { --page-gutter: 20px; max-width: calc(var(--fb-measure) + 2 * var(--page-gutter)); }
 </style>
 </head><body><div id="root"></div><script type="module" src="./states.tsx"></script></body></html>

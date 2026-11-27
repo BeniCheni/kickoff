@@ -1,5 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { expect, test } from 'vitest'
+import { BY_DATE } from '../../src/lib/fixtures'
 import { clockSnapshotAt } from '../../src/lib/clock'
 import { TABLE_LEAGUES } from '../../src/lib/competitions'
 import { RequestClock } from '../../src/lib/RequestClock'
@@ -15,6 +16,15 @@ function html(search: string) {
     </RequestClock>,
   )
 }
+
+test('the server renders the carousel and both first-paint motion actions from a dated request', () => {
+  const markup = html('?date=' + [...BY_DATE.keys()][0] + '&league=pl')
+  expect(markup).toContain('aria-roledescription="carousel"')
+  expect(markup).toContain('aria-label="The Register, Premier League table"')
+  expect(markup).toContain('class="motion-when-on">Stop rotation')
+  expect(markup).toContain('class="motion-when-off">Start rotation')
+  expect(markup).not.toContain('class="opened-book"')
+})
 
 function checkedLens(markup: string): string {
   const match = markup.match(/aria-checked="true"[\s\S]*?>(Poster|Ledger)</)
