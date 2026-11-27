@@ -31,7 +31,7 @@ of it as unreliable:
    1 cold review → 1.5 rebuttal brief → 2 rebuttal →
    2.5 synthesis and Executive Summary Brief → 3 Beni's adjudication. Pass 2.5 scores the gate
    and escalates. The merge takes Beni's word. `/kickoff-pr-review` owns this cycle.
-   The pipeline skill's B1.6 is an older PM-side copy that predates the tiers.
+   Where the pipeline skill's B1.6 differs, `/kickoff-pr-review` wins.
 
 Rules that earned their place: **spec precedence is template > design brief > implementation
 prompt** (note every resolution in the PR); every prompt is delivered in the chat message in a
