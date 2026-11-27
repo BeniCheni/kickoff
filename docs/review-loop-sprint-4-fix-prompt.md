@@ -1,0 +1,149 @@
+# The review loop, Sprint 4 — the fix round for elenchus #9 (Codex brief, archived Tue 24 Nov 2026, TZ=America/New_York)
+
+Written by the Planner seat (Claude Code 2.1.330, Opus 5.5, at `high` as the Claude desktop app
+reports it) as Pass 1.5, after Pass 1
+([comment](https://github.com/BeniCheni/elenchus/pull/9#issuecomment-7136930430),
+`claude-fable-5-2` at `xhigh`) returned *merge after a fix round* with ten findings (0 blocking,
+4 should-fix, 6 notes) and its verdicts on the eight items of its sealed appendix.
+
+The Planner checked the comment before writing:
+- GitHub stores it as the seat's draft: 51,361 characters from an anonymous GET, the figure the
+  seat reported.
+- Its record passes the head's own validator, with coverage 9 of 9 and nothing skipped.
+- `check` on #9 under `examples/kickoff.elenchus.json` prints `ok`, and `status` names pass 1.5.
+- The seal held. The seat's sealed files match the hashes it gave before the paste, and were
+  written at 23:56 EST on 23 Nov, before the archive went public. Its transcript names the
+  archive only in a branch listing that lacked it. Between the sealed findings and the posted
+  ones, one line changed: the repair the seat disclosed.
+
+After posting, the seat corrected finding 4 in chat; the correction is not on GitHub.
+- `gh` 2.105.0 rewrites C0 and C1 control characters in a JSON response before elenchus parses
+  it, so finding 4's scenario cannot arrive through a record. The Planner saw the same rewriting
+  in its own read: `\u0000` came back as `\^@`, and `gh` gave 51,340 characters against
+  GitHub's 51,361.
+- The same rule has a live path finding 4 does not name: the changelog subject. It arrives
+  base64-encoded, where `gh` does not rewrite.
+
+The correction and the seat's form definitions are archived beside this brief, in
+[`review-loop-sprint-4-fix-forms.md`](review-loop-sprint-4-fix-forms.md), so the round relies on
+no seat folder. Beni's dispositions are under "Rulings received" ("Sprint 4's fix round") in
+[review-loop-proposal.md](review-loop-proposal.md). Archive copy; the delivery was the fenced
+block in chat.
+
+---
+
+````text
+elenchus, Sprint 4 fix round (Pass 2): Pass 1's findings on the release block, the status pins and the block's inputs (Codex Desktop, gpt-6.2-astra at xhigh)
+
+You are the builder seat of Sprint 4 of elenchus. You built pull request #9 (sprint-4 → main, head bd84690f302fb31d841d89e7752953da22ebeb62) on gpt-6.2-astra at xhigh. Pass 1, a fresh Claude Code session on claude-fable-5-2 at xhigh, reviewed it and posted one comment, https://github.com/BeniCheni/elenchus/pull/9#issuecomment-7136930430: merge after a fix round, ten findings (0 blocking, 4 should-fix, 6 notes), and its verdicts on a sealed appendix of eight items, A1 to A8. The Planner seat (Claude Code, Opus 5.5) wrote this brief as Pass 1.5 and posted its record on #9 just before this round; Beni approved its dispositions before the brief reached you. This is Pass 2: you answer every finding, fix what is ruled fixed now, add a "Fix round" section to #9's body, and post your record. Nothing else. You are a new session; read #9's body and the Pass 1 comment in full before anything else.
+
+WHERE TO WORK. Create a new folder, ~/code/review-seats/elenchus-pr9-pass2, beside the others; delete nothing in ~/code/review-seats. Clone BeniCheni/elenchus into it, check out sprint-4 at bd84690, and keep every receipt in that folder and in #9, never only under /tmp. Seat folders have been lost before, so put every receipt a later pass needs in your comment or #9's body as well. If your session started in another folder, its AGENTS.md, CLAUDE.md and skills are not this task's: ignore them, and touch nothing in /Users/benicheni/code/elenchus, any ~/code/kickoff* checkout, ~/code/keel* or any other folder under ~/code/review-seats. You may read Pass 1's folder, ~/code/review-seats/elenchus-pr9-pass1, as a convenience only, and write nothing there; everything this round needs from it is archived in Kickoff (READ FIRST).
+
+CONFIRM YOUR MODEL FIRST. Beni starts you in Codex Desktop on gpt-6.2-astra at xhigh, the build's model and effort. Before anything else, state the model and the reasoning effort you are running on and where you read each (your own session file's turn_context under ~/.codex/sessions, or /status), your Codex version, and the app that runs you as your session log names it. If the model is not gpt-6.2-astra or the effort is not xhigh, stop. If a usage limit stops you partway, push only what is green, say exactly where you stopped, and do not finish on another model or effort.
+
+READ FIRST. The Pass 1 comment is the source of every finding number, scenario, form name and smallest fix: read it in full, its sections on the resolutions, the disagreements and the sealed appendix included. In BeniCheni/kickoff, on the branch docs/review-loop-plan (Kickoff PR 328 is not merged), read docs/review-loop-sprint-4-fix-forms.md: it holds the seat's correction to finding 4, made after it posted and not on GitHub, and all-forms.json, the seat's 36 form definitions (find and replace edits); check each file's bytes and sha256 against the line above it. Read docs/review-loop-proposal.md there under "Rulings received": "Sprint 4's routing" and "Sprint 4's fix round", which holds Beni's dispositions. Read Kickoff only with gh api GET calls. Where this brief and a finding's smallest fix differ, this brief governs; where this brief is silent, the smallest fix is the target. Each rule below is stated as what must hold, then its mechanism: if the mechanism would hold where the rule does not, stop and say so. Do not reply to or edit the review comment.
+
+THE LIMITS ARE THE BUILD BRIEF'S. BeniCheni/kickoff and BeniCheni/keel stay read-only in every way, and you name no pull request of theirs as owner/repo#number or as a link; write "Kickoff PR 320". This round's writes in elenchus are, and are only: new commits on sprint-4, fast-forward only; edits of #9's body; and one new comment on #9 carrying your Pass 2 record. No change to replay/main or any other replay/* branch, to #1, #3, #6 or #7, or to rulesets, environments, secrets, labels or settings; no merge, tag, release, force-push, review request or approval. Your gh login is Beni's admin account, and an approval prompt in your app may be answered by a model rather than by Beni, so this list is the only gate: check the target of every write before you run it. Push only through gh's own login, with every inherited credential helper cleared: git -c credential.helper= -c 'credential.helper=!gh auth git-credential' push origin sprint-4. Commit as Codex <noreply@openai.com>, set on every commit (git -c user.name=Codex -c user.email=noreply@openai.com commit …), and check git log --format='%an <%ae>' before every push. Never run /usr/bin/security; run neither prep nor authorize against GitHub (authorize --dry-run and their offline tests are fine). Never run a line of a printed release block against GitHub or a clone whose origin is GitHub; test it only against stub gh and git commands and a local bare repository, as the suite does. If macOS shows a Keychain prompt, stop and tell Beni. The dependencies, package-lock.json, the record schema, anything under .github/ and every captured fixture under test/fixtures/ stay as they are; if one must change, stop and ask first.
+
+BEFORE ANY WRITE, confirm with GET calls: main is 84b0c20e8e62fd66c2b60b4aeff24f5748f6b240; sprint-4 is bd84690f302fb31d841d89e7752953da22ebeb62; replay/main is 610f74bcd331b229e93f127e256230bb5406d136, replay/gate 1d0dcb25b7bac31802e5a0f7b690eab6251ed8bd, replay/pr320 dcb914e3724e0e6ed0462f52f248185f9e138d6a and replay/pr320-p1 0faf606a131133e050b2b599b5d0cdf75e545c6e; /tags and /releases are empty; #1, #3 and #6 are open, draft and locked, and #7 is closed and locked; the three rulesets on replay/main are active; and #9 carries three comments, Pass 0's, Pass 1's and the Planner's Pass 1.5. If anything differs, stop and report. Run the same checks after your last push, and report that nothing but sprint-4 and #9 moved.
+
+ORDER. Code and tests first, as new commits on bd84690, each passing npm run typecheck (both tsc runs) and npm test on its own. Then the forms and the deletion test. Then T9 at the new head, after the push. Then #9's body. Your record comment goes last.
+
+FINDING 1 — THE TAG BEFORE THE CHECKOUT. Rule: once the merge has happened, nothing about the operator's checkout can stop the tag. Mechanism: the block runs merge, read the merge commit, test -n, fetch the base, tag the merge commit, push the tag, and only then switch to the base, fast-forward it and run the green commands, which is also the order of section 7 of Kickoff's skill. Keep the switch (your choice, which fixes main's fast-forward of the wrong branch), after the tag. Tests in the block test: the base checked out in another worktree, and an uncommitted edit to a file the merge changes; in each, origin has the tag on the merge commit after the block runs, whatever the later lines do. The README's handoff paragraph says the order and why.
+
+FINDING 2 — PINS THAT TELL SEAT, ROLE AND ID APART. Rule: each arm of nextStep has a test whose expected seat and role differ from the pass id and from each other, so a next that names one where another belongs fails. Mechanism: in the split table's world (test/authorize.test.ts:48-50), name each pass's role and seat apart from its id (for example role `role ${id}` and seat `seat ${id}`); compare the 3-3 line and the G table with those names; write the in-progress arm's blocked text out with the previous pass's id; and add role to T1's rows in test/replay-records.test.ts. src/report.ts does not change. Then run, each alone, serially, in a copy of a fresh export of your head, with both typechecks and the full suite (npx vitest run --maxWorkers=1 --testTimeout=120000 --hookTimeout=180000) in an environment whose gh refuses every call: Control, the nine R- forms, Q1, Q2, M1 to M8, K1 and K2 from all-forms.json, and your own 40 forms from the build. Control fails nothing; every other form fails at least one test. A form whose find text no longer occurs exactly once is rewritten to make the same change, and named. Report a table: each form, how many tests it fails, and their names.
+
+FINDING 3 — A TAG THAT EXISTS STOPS THE BLOCK BEFORE THE MERGE. Rule: whatever can be known to stop the tag is checked before the merge line runs. Mechanism: handoff refuses, naming the tag, when the repository already has it (a GET of /repos/{repo}/git/ref/tags/{tag} that answers 200), and a read that cannot tell whether the tag exists also refuses; and the block's first line refuses a local tag of that name (! git rev-parse -q --verify 'refs/tags/<tag>'). Tests: the tag on the repository, refused by handoff; the tag only in the local checkout, where the stubbed block stops before the merge stub is called.
+
+FINDING 4 — NO CONTROL CHARACTER IN THE BLOCK, as the seat's correction restates it. The severity stays should-fix: the record path is closed today only by gh's own rewriting, which no test or README line states, and the changelog subject reaches the block's --subject and the tag's -m unfolded. Rule: the printed block contains no control character (U+0000 to U+001F, U+007F to U+009F, U+2028, U+2029) other than the line feeds that end its lines and separate the body's lines, whatever gh does and wherever the text came from: a record, the configuration or the changelog. Mechanism: one fold, in elenchus, applied to every value substituted into the block (each pass line, each trailer, the subject, the merge message, the tag message, the tag), turning each run into one space; and a configuration error naming the field for a handoff template that holds one. Tests through the in-memory client, so that gh's rewriting does not hide them: ESC and NUL in a record's source; ESC [1A ESC [2K BEL in the changelog subject; and a scan of the whole printed block for the rule. One README sentence says the block's inputs are folded and by whom.
+
+FINDING 5 — THE INSTALL SECTION. Fix now, in README.md's Install, three things: the first commit that can be pinned is 30c352a (the one that adds prepare), and an earlier one installs with no CLI and exit 0; an install with lifecycle scripts off also exits 0 with no CLI, and the first sign is "command not found" from npx --no-install; and the lockfile's git+ssh URL is fetched over HTTPS from codeload, and npm checks neither it nor its integrity, so the commit SHA is the only thing verified. No change to package.json.
+
+FINDING 7 — THE TRAILER'S FOLD. Fix now, by finding 4's single fold. Test: a configured author with a line break in the block test's configuration, so that writing the trailer without the fold fails a test (the seat's X04-trailer-fold).
+
+FINDING 10 — WORDING. Fix now: README.md:357 ("vendors beyond these three"); :351 ("After v0.6.0", which is Kickoff's version, so name it as Kickoff's); :19 ("already", a stage word by Beni's rule, though it predates this sprint); :200-201, which says that handoff refuses a merge_command without {merge_body}; src/types.ts:86's comment on merge_command; and test/package.test.ts's test name, which says only what it checks (the packed file list).
+
+NO CHANGE, as ruled:
+- 6 (prep's refusal of the Grok route, and what read_only_seat means for xai) is deferred to Sprint 5 with Sprint 3's A7, prep for an adopter with no seat token, since src/prep.ts is outside this diff.
+- 8 (configuration order as JavaScript's key order) is deferred to Sprint 5: no configuration in use is affected.
+- 9 (handoff stops at replay/main's configuration) stays as it is: replay/main cannot change, because its review gate admits a commit only with the App's status. #9's body says so under the fix round.
+- Pass 1's disagreements 1 and 2 (Pass 0's record and the archive were late) were the Planner's, and need nothing from you.
+
+THE DELETION TEST. Every rule this round adds (findings 1, 3, 4 and 7), deleted alone in a copy, fails a test. Run the seat's X01 to X14 too, rewritten where this round moved their find text, each doing what its name says. Name any deletion that fails nothing, and why.
+
+THE RECEIPTS: each new commit alone through both typechecks and the suite; the forms table; the deletion table; and T9 at the new head after the push: npm run build and npm pack, the tarball installed alone in an empty directory; the pinned install from the new head and npm ci from its lockfile in a second directory with GIT_CONFIG_GLOBAL=/dev/null, GIT_CONFIG_NOSYSTEM=1, SSH_AUTH_SOCK unset and GIT_SSH_COMMAND=false, each with an empty npm cache; from each, status and check live on #1 compared byte for byte with test/fixtures/replay-p9/status.txt and check.txt, and on #3 reported; handoff live on #1, which must still refuse at the configuration (finding 9); and status and check on #9 with --config examples/kickoff.elenchus.json, reported. Every figure carries the command that reproduces it, and dates are Brooklyn time.
+
+THE PULL REQUEST BODY. Keep what it says. Add a section "Fix round": your model check; each of Pass 1's findings 1 to 10 with its commits and tests, or its deferral or no-change as ruled; the forms table; the deletion table; the receipts; and anything this brief left open that you resolved, each named. The body is 50,599 bytes and GitHub's limit is 65,536: keep the section under 12,000 bytes, and put what does not fit in your record comment. Add no Kickoff link.
+
+YOUR RECORD, as the last fenced json block of one new comment on #9 (not a reply), built from schema/seat-record-1.2.json at your head: seat_record 1, schema_version "1.2", pr 9, pass "2", runtime "Codex" (your comment's first line names Codex Desktop and its version) and runtime_version, the session's own Codex version; model requested gpt-6.2-astra and effort requested xhigh, each with its observed value and the source you named at the start; route recommended_by "Beni", confirmed_by "Beni", by_hand true; next_route for Pass 2.5: Claude Code, claude-opus-5-5, xhigh, recommended_by "roster (D7)", confirmed_by "Beni"; posted_by "BeniCheni"; input_sha bd84690f302fb31d841d89e7752953da22ebeb62; output_sha your new head; commits, every commit of the round in full; and findings answering each of Pass 1's ids, 1 to 10, with Pass 1's severity, a disposition (accept, contest, or accept-observation-contest-severity), a status (fixed for what this round fixes; open for a deferral or a no-change, with the ruling named in its evidence; contested only with your own evidence), and evidence naming the commit and test. A contested finding is not fixed in this round; Pass 2.5 and Beni decide it. Validate the record with your head's own validator, check offline with your head's loadReview and buildCheck under examples/kickoff.elenchus.json that it reads as a valid pass 2 after the three comments on #9, then re-check the head and the comment count (three) and post in one command, so nothing can land between.
+
+STOP AND REPORT if: the model or effort is not gpt-6.2-astra at xhigh; anything in the start check differs; a write would land outside the list above; a dependency, package-lock.json, the record schema, anything under .github/ or a captured fixture would change; a Keychain prompt appears; a rule's mechanism would hold where the rule does not; or a usage limit stops you. Your last message, in chat: sprint-4's new head, each finding with its commit or its ruling, the forms table, the deletion table, the receipts, your comment's URL, and what you did not do. Then stop. Pass 2.5, a fresh Claude Code session on claude-opus-5-5 at xhigh that writes nothing, reads the round next, and Beni rules at Pass 3.
+````
+
+## Amendment 1: finding 3 (Tue 24 Nov 2026)
+
+Codex stopped at finding 3 before any commit, as the brief told it to when a mechanism would hold
+where the rule does not. In a local bare repository, handoff's GET answered 404 when the block was
+printed; a second operator then created the tag on origin; the block's local check passed, the
+merge ran, and `git tag` stopped with exit 128 after the merge. Beni ruled the Planner's
+recommendation ("Approve and push"). The delivery was this block in chat:
+
+````text
+elenchus PR #9, Pass 2: amendment 1 to the fix brief, finding 3 (Beni's ruling, Tue 24 Nov 2026, from the Planner's recommendation)
+
+You were right to stop. The brief's mechanism for finding 3 held only when handoff printed the block: a tag created on origin between the print and the paste passes the GET, which ran too early, and the local check, which never sees origin, and the merge then runs. The rule stands, made exact: the block never runs the merge while the tag exists on origin, the remote it pushes the tag to, as far as a read made immediately before the merge can tell; and a read that cannot tell refuses.
+
+The mechanism, replacing the brief's for finding 3. (1) Keep handoff's GET of /repos/{repo}/git/ref/tags/{tag} when it prints: 200 refuses naming the tag, and anything but a clean 404 refuses too. (2) Keep the block's local check, ! git rev-parse -q --verify 'refs/tags/<tag>'. (3) Add, as the block's line immediately before the merge, a read of origin whose only passing answer is "no such ref": { git ls-remote --exit-code origin 'refs/tags/<tag>' >/dev/null; test $? -eq 2; }. git ls-remote --exit-code exits 2 when nothing matches, so a tag found (exit 0) and every failure to read (no network, no access, any other exit) stop the chain. Check that the line behaves so in the shells the README names for pasting the block, since the block does not assume set -e.
+
+The window between that read and the merge is a limit, not a finding. Name it in one sentence in the README's handoff paragraph, with what happens if a tag lands in it: the merge has run, git tag stops because the fetch brought the existing tag down, the block's push never forces so the remote tag is not overwritten, and the operator tags by hand.
+
+Tests, beside the brief's two rows: your reproducer's case, a tag created on origin after handoff printed and before the block runs, stops before the merge stub is called; and an origin that cannot be read (a path that does not exist) stops before the merge stub is called. Add the ls-remote line to the deletion test: deleting it fails your reproducer's row.
+
+Everything else in the brief stands. Carry on from finding 3 in the brief's order, on the same model and effort, in the same folder, and keep your reproducer and its transcript as receipts. In #9's body and in your record's evidence for finding 3, name this as Beni's amendment of 24 Nov, archived in Kickoff's docs/review-loop-sprint-4-fix-prompt.md under "Amendment 1".
+````
+
+## Amendment 2: finding 3 again (Tue 24 Nov 2026)
+
+Codex stopped at finding 3 a second time, again before any commit. With a separate
+`remote.origin.pushurl`, amendment 1's read of origin answered "no such ref" from the fetch URL
+while the tag existed at the push URL, and the merge ran; the non-forcing push then refused the
+tag, which stayed on its original commit. Amendment 1's wording, "origin, the remote it pushes the
+tag to", was the Planner's, and assumed one URL. Beni ruled the Planner's recommendation
+("Approve and push"). The delivery was this block in chat:
+
+````text
+elenchus PR #9, Pass 2: amendment 2 to the fix brief, finding 3 (Beni's ruling, Tue 24 Nov 2026, from the Planner's recommendation)
+
+You were right to stop again. Amendment 1 called origin "the remote it pushes the tag to", but git lets origin fetch from one URL and push to another, so git ls-remote origin can read a repository the tag push never writes. The rule stands, made exact once more: the read before the merge is made at the one place the block's tag push writes; when git's own configuration for origin does not resolve to exactly one push URL equal to the fetch URL that read uses, the block refuses before the merge.
+
+The mechanism adds one line, immediately before amendment 1's ls-remote line: u=$(git remote get-url origin) && test -n "$u" && test "$(git remote get-url --push --all origin)" = "$u". git remote get-url expands insteadOf and pushInsteadOf, and --push --all prints every push URL, so the test passes only when origin has exactly one push URL and it is the fetch URL. The Planner ran this line in sh, zsh and bash on git 2.54.0: it passes for a plain clone, for a push URL set equal to the fetch URL, and for an insteadOf that rewrites both; it refuses for a push URL to another repository, for two push URLs, for a pushInsteadOf, and for no origin. Supporting separate URLs, by reading every push destination, is not ruled for this round; it goes on Sprint 5's list if an adopter needs it.
+
+One sentence in the README's handoff paragraph says that the block needs origin to fetch from and push to one URL, and refuses otherwise.
+
+Tests, beside amendment 1's rows: your reproducer's case, the tag absent at the fetch URL and present at a separate push URL, stops before the merge stub is called; two push URLs stop before the merge stub; a plain clone with the tag absent reaches the merge. Add the line to the deletion test: deleting it fails your reproducer's row.
+
+Everything else in the brief and in amendment 1 stands. Carry on from finding 3 in the brief's order, on the same model and effort, in the same folder, and keep both reproducers and their transcripts as receipts. If you find another case where this mechanism would hold where the rule does not, stop again. In #9's body and in your record's evidence for finding 3, name both amendments as Beni's of 24 Nov, archived in Kickoff's docs/review-loop-sprint-4-fix-prompt.md under "Amendment 1" and "Amendment 2".
+````
+
+## Amendment 3: finding 3, and a closing rule for it (Tue 24 Nov 2026)
+
+Codex stopped at finding 3 a third time, again before any commit. Amendment 2's test compared the
+outputs of command substitutions, which strip trailing line feeds, so two repositories whose
+paths differ by a trailing line feed compared equal. The Planner reproduced it in sh, zsh and
+bash. Beni ruled Codex's recommendation, a byte-for-byte comparison of single-line outputs,
+together with a closing rule that lets Codex close further cases of the same kind itself
+("Approve and push"). The delivery was this block in chat:
+
+````text
+elenchus PR #9, Pass 2: amendment 3 to the fix brief, finding 3 (Beni's ruling, Tue 24 Nov 2026, from your recommendation and the Planner's)
+
+You were right to stop a third time. Shell command substitution strips trailing line feeds, so amendment 2's test compared two different URLs as equal. The Planner reproduced your case in sh, zsh and bash on git 2.54.0. Your recommendation is ruled: each lookup of origin's URLs must return exactly one nonempty line ending in one line feed, and the fetch and push outputs are compared byte for byte. A URL that holds any control character, a line feed inside it included, refuses, as finding 4's rule already asks of everything the block prints.
+
+The mechanism is yours to write. One form the Planner ran, exactly as written here, in the three shells: f=$(git remote get-url origin && echo .) && p=$(git remote get-url --push --all origin && echo .) && test "$f" = "$p" && test "$f" != "$(printf '\n.')" && test "$(printf %s "$f" | wc -l | tr -d " ")" = 1. The trailing dot keeps the line feeds that command substitution would strip. It passes a plain clone and refuses a push URL that differs by a trailing line feed, a fetch and push URL that both end in one, a push URL to another repository, two push URLs, and no origin. An empty remote.origin.url passes, correctly: git then reports the remote's name, origin, as its URL, so the read and the push still go to the same place. Use it, or a form of your own that meets the rule, and say which.
+
+The closing rule for finding 3, so that this round does not stop once per case. The rule is fixed: the block never runs the merge while the tag exists at the one place its tag push writes, as far as a read made immediately before the merge can tell, and anything it cannot establish refuses before the merge. If you find another case of the same kind (how git reports origin's URLs, or how the shell carries that report to the comparison), close it yourself within that rule: add a test row that fails without your change, name the case in #9's body and in your record's evidence for finding 3, and carry on. Stop only if meeting the rule would need a write outside the brief's limits, a change to what the block may assume of the operator beyond what the README states, or a case of a different kind.
+
+Tests, beside amendments 1 and 2's rows: your reproducer's case, a push URL that differs by a trailing line feed, stops before the merge stub is called; a URL holding a line feed inside it stops before the merge stub; a plain clone reaches the merge. Add the guard to the deletion test.
+
+Everything else in the brief and in amendments 1 and 2 stands. Carry on from finding 3 in the brief's order, on the same model and effort, in the same folder, and keep all three reproducers and their transcripts as receipts. In #9's body and your record's evidence for finding 3, name the three amendments as Beni's of 24 Nov, archived in Kickoff's docs/review-loop-sprint-4-fix-prompt.md under "Amendment 1", "Amendment 2" and "Amendment 3".
+````
