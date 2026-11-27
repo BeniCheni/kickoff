@@ -627,10 +627,12 @@ days, 19 are shared with `81101fe`. Sat 24 Oct left the window and Tue 24 Nov cl
 `posterBooks` reports closure across the whole day. `kickoffBounds` and `unsetKickoffs` identify
 days with both a league-set kickoff and an unset kickoff eligible to appear in the Poster.
 
-Reproduce the counts from a checkout with the referenced commits and `npm ci` already run. This
-uses `b166339`'s product selectors for all three snapshots and all competition filters enabled.
+Reproduce the counts after `npm ci`. Fetch PR #377's head ref to make the pre-squash commits
+available. This uses `b166339`'s product selectors for all three snapshots and all competition
+filters enabled.
 
 ```bash
+git fetch origin refs/pull/377/head
 scratch=$(mktemp -d)
 git archive b166339 src/lib src/data | tar -x -C "$scratch"
 ln -s "$PWD/node_modules" "$scratch/node_modules"
@@ -677,6 +679,7 @@ TS
 ./node_modules/.bin/tsx "$scratch/count.ts"
 git show --no-patch --format='%h %P' ab93663
 git rev-parse b166339:src/data 2e46532:src/data
+rm -rf "$scratch"
 ```
 
 ## Poster clock Tier 3 carry for the release
