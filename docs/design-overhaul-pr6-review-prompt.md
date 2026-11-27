@@ -1,4 +1,4 @@
-# Kickoff design overhaul, PR 6 (#393) — review prompts (Pass 0, written Wed 25 Nov 2026, TZ=America/New_York)
+# Kickoff design overhaul, PR 6 (#393) — the review cycle, Pass 0 to the merge (25–27 Nov 2026, TZ=America/New_York)
 
 ## Pass 0: the cold-review opener for Pass 1
 
@@ -177,3 +177,263 @@ THE LANDING. This is not a release: no version bump, CHANGELOG section or tag, a
 DELIVERABLES. Two only. One short PR comment on #393 per pr-comment.md, recording the corroboration and the escalation, first line your model and effort. Then the Executive Summary Brief in chat per executive-brief.md, with the scored gate, what you could not verify (VoiceOver on macOS and iOS, a real phone, Safari, WebKit and Firefox, at least), the one-word questions for Beni, and the handoff block last as one fenced, paste-ready block. Push nothing and edit nothing in the PR or its body. Keep local paths and private material out of the public comment. End with the folders and ports you leave running and until when.
 SEALED APPENDIX. These are the PM seat's observations from reading the fix range at 12:00 to 12:03 PM EST, not conclusions. Verify each independently, and say so where one does not hold. (1) git log 1cc5b90..75ee995 shows four commits, all authored Codex <noreply@openai.com>: e8fcc26, 0e590be, fcb729d, 75ee995. git diff --stat over the same range gives 14 files, +399/−109, including src/App.tsx, src/offline.tsx, src/themeBoot.ts and src/components/ImprintBand.tsx. git diff --stat over the fenced files, src/data and docs/sync-digest.md prints nothing. (2) Three expect lines are removed in tests/ over the range: the rack-hint toBeNull, a marker's aria-current toBe(false), and activeElement toBe(spine). Check each is replaced by an equal or stronger assertion and none touches data honesty. (3) src/themeBoot.ts now picks the disk lock by ['single', 'offline'].includes('%MODE%'), relying on Vite's HTML %MODE% substitution after the bootstrap is inlined, and on Next embedding the unexpanded string. Confirm what each of the four outputs (dist, the single file, the offline file, the Next build) actually carries in that position, and that the Vite dev server and Next keep the stored preference. (4) App.tsx and offline.tsx choose useStillMotion by import.meta.env.MODE; useStillMotion lives in ImprintBand.tsx. Confirm the Vite app is not locked and that Moments in the single file still works under a constant motion-off. (5) The disabled band control is wrapped in <fieldset disabled className="contents">. Confirm the built disk CSS gives .contents display: contents, so the band's layout matches 1cc5b90's motion-off band, and record what Chromium's tree names the disabled controls. (6) Pass 2's figures to re-derive: first marker taps 0/16 to 16/16; centre-cover presses 18/26 to 26/26 per app at 390 and 90/90 across variants; the 4,729 px flash for 237 ms (Vite) and 251 ms (Next) gone; eight markers at 43.125 × 44 px under a 15 px gutter; the four-edge focus ring 100 % on 96 controls; motion-off face strips matching the base pixel for pixel in 20 of 24 pairs, with the other four put down to the newer snapshot.
 ````
+
+## Between the passes: the builder's seat check and the restart (Thu 26 and Fri 27 Nov 2026)
+
+At about 10:55 AM EST on 26 Nov, the fresh Codex session that Beni opened for Pass 2 stopped
+before any edit. Its session record confirmed `gpt-6.2-astra` at `xhigh`, but the session had
+started in `/Users/benicheni/code` rather than in the builder's checkout. The PM seat checked the
+checkout at 10:56 AM: clean, on `codex/overhaul-pr6-rack` at `1cc5b90`, with no listener on
+7576–7578 or 7676–7678. It told Codex to proceed: a session's start folder does not change the
+seat. The same note corrected one line of the Pass 1.5 brief, which had said the head servers
+"run" on those ports when Codex had to start them. The Pass 2.5 section above records Codex's
+scope question and Beni's ruling on it.
+
+On the morning of 27 Nov, every review server was down. At the PM seat's request, Codex
+restarted the tip's three production servers from `kickoff-pr6-recovery` on 7576–7578 for
+Beni's sitting. It first confirmed the checkout was clean at `75ee995`. The PM seat fetched each
+of the three links at 10:35 AM EST and got 200.
+
+## Pass 2.5's Executive Summary Brief, as delivered (Thu 26 Nov 2026, 12:49 PM EST)
+
+A fresh Claude Code session on `claude-opus-5-5` sat Pass 2.5 from its own clone. It posted the
+[Pass 2.5 comment](https://github.com/BeniCheni/kickoff/pull/393#issuecomment-7199726061) at
+12:49 PM EST and delivered the brief below in its chat. The model is confirmed by the session
+file's assistant records. The effort, `high`, is as briefed; the seat said it could not read its
+own effort setting.
+
+The PM seat extracted the brief word for word from that session file on Fri 27 Nov 2026. The
+brief is the last assistant text block, which starts at its heading. Its handoff block `cd`s
+into the seat's clone. The PM seat ran the same steps from its own clone (Pass 3 below).
+
+`````markdown
+## Executive Summary Brief: PR #393 · Pass 2.5 · Thu 26 Nov 2026, 12:49 PM EST
+
+**Decision: escalated.** The merge is yours to give. At `75ee995c0f489c40be67a5a0a238321b839f1e2e` all eleven gates pass, on the tip and on each fix commit. Every high and medium fix fails at 1cc5b90 and passes at the tip with real touch, mouse and key presses. All four conditions on your scope extension are met. Two behaviours are still provisional, and your VoiceOver and phone questions are still open.
+
+I'm a fresh Claude Code session on `claude-opus-5-5`. I wrote neither the build nor any fix. My effort setting is `high` as briefed; I can't read it from inside the session. The archived brief and your paste match.
+
+### Merge gate
+| # | Clause | Score | Evidence at the tip |
+|---|---|---|---|
+| 1 | Not a release | **Met** | No change to `package.json`, the lockfile or `CHANGELOG.md` against the base; no tag. |
+| 2 | No numbering fork | **Met** | No version moves. |
+| 3 | Every standing high has a verified fix | **Met** | Finding 2 fixed in `e8fcc26` (and `fcb729d` for the disk files); finding 1 fixed in `e8fcc26`. Both fail at 1cc5b90 and pass at the tip. |
+| 4 | No unresolved dispute between vendors | **Met** | Finding 1's severity: Pass 1 said high, Pass 2 says medium. I read medium (reason below), so nothing is left open. |
+| 5 | `verify` green at the tip | **Met** | Run 45858866524 succeeded; `tier` computed Tier 3 from main `2931dde`. |
+| 6 | `?only=` / `&date=` contract unchanged | **Met** | The codec and selector files are untouched across the whole PR. Opening and closing a book leaves `location.search` and `history.length` unchanged (8 of 8 cells). |
+| 7 | `sync.yml` gates unchanged | **Met** | Nothing under `.github/` or `scripts/` changed. |
+| 8 | `src/data/*.json` unchanged | **Unmet as written, by design** | Merge `f74c4ec` brings in main's snapshot. It is byte-identical to main at `2bdf996`, and no authored commit touches it. You own this call; it is already disclosed in the PR body. |
+
+### Your rulings at the tip
+- **O1–O5:** O2, O4 and O5 re-checked by touch and mouse at 390 and 1000 in both apps, 8 of 8. O1 and O3 weren't re-run; the rebuttal only removed the opening duration from that code.
+- **"APG": met.** The button reads STOP ROTATION through hover, focus and touch pauses, and one press stops the page in 6 of 6 cells.
+- **"Resume": met.** A pause 4.6 s into the first hold carried on 4.47 s after release (hover and focus, both apps). After a touch it carried on 11.47 s after the touch ended (7 s plus the unspent hold).
+- **"Still, both": met.** Both disk files were opened from disk with the network off, once with no stored choice and once with `kickoff-motion=on` set before load. Each stayed `off` from its first paint through hydration, band and Rack presses, an 11 s hold and a reload. There were zero crossings, storage writes, requests and console errors.
+- **Scope conditions:**
+  - (1) Met. Boot, band press, reload and the stored value match 1cc5b90 in all four stored and reduced-motion states, on Vite preview, Next and the Vite dev server. The only difference is the stored-off row's first Rack press, which now stops, as you ruled.
+  - (2) Met.
+  - (3) Met: no new words.
+  - (4) Met: the fenced files are untouched.
+  - Appendix (3) holds: the boot string reads `production` in `dist`, `single` and `offline` in the two disk files, `development` on the dev server, and the unexpanded `%MODE%` in Next's served HTML.
+
+### What ships
+- The Rack makes one pass through the week's books and The Register: a 9 s first hold, 7 s holds, 1.8 s crossings, then it rests on the resting book.
+- Hover, touch and focus pause it in place, and it carries on with the hold it had left. "Stop rotation" turns motion off for the whole page in one press.
+- Markers, a swipe and the faces move it. A centre tap opens the day's volume with every filtered fixture and both clocks, and the line back closes it.
+- The shelf's spines open volumes and switch between them; The Register opens the Table.
+- Both disk files ship still and can't start motion.
+
+### Where it sits
+This is overhaul PR 6 into `overhaul/second-edition`, not `main`, and it isn't a release. Main has moved on since the merge (a newer snapshot, `6862ee7`, and `2931dde`), so the integration branch carries the `2bdf996` data until its next merge from main.
+
+### What the 360 found
+- **1** (high → accept, contest severity): first marker press by touch 0/16 → 16/16 and by mouse 0/16 → 16/16. The shift was up to 56.98 px at 1cc5b90 and is 0 px at the tip.
+  - **Severity: medium.** The rubric's high line is a confident lie, a data write, a red build, a crash, an AA failure or the Step 0 contract. A tap that lands one marker over shows a correctly named book that the reader can see is wrong, and the rubric calls a layout defect medium. Pass 2 and I agree, so I haven't put it to you.
+- **2** (high → accept): at 1cc5b90 Stop left motion on and nothing stored, 6 of 6 presses. At the tip it turns motion off and stores it, 6 of 6. No crossing followed in 10.8 s.
+  - My run at 1cc5b90 left the Rack paused under "Start rotation". Pass 1 saw "Stop rotation" return and a crossing. Either way motion was never turned off.
+- **3** (medium → accept): neighbours displaced 10 of 37 frames, by up to 338 px, at 1cc5b90; 0 frames at the tip. Centre-cover first touch went 18/24 → 24/24 per app.
+- **4** (medium → accept): focus ring painted on all four edges for 0/60 controls at 1cc5b90 and 60/60 at the tip.
+- **5** (medium → accept): the shelf switch flashed to 4,729 px for 227 ms (Vite) and 233 ms (Next); 0 frames at the tip.
+- **10** (low → accept): eight markers at 43.125 × 44 px cover 0…345 under a real 15 px gutter, both ends hittable.
+- **6–9 and 11** (low → accept): checked against the code and the new tests. None of the four outputs contains `openingMs` or the watch-harness labels.
+- **Sealed appendix:**
+  - (1) and (2) hold. Each removed `expect` is replaced by an equal or stronger assertion, and none touches data honesty.
+  - (3), (4) and (5) hold. Moments in the single file shows its empty local gallery, the same as at 1cc5b90. The disk fieldset computes to `display: contents`, and the band matches pixel for pixel.
+  - (6) holds in kind, on my own matrices: 18/24 → 24/24 cover presses and 227/233 ms flashes rather than Pass 2's 18/26 and 237/251 ms.
+
+### Verification as re-run
+- **Tip gates:** typecheck clean; 1,648 tests in 123 files; three Vite builds; offline scan with 22 markers. In `web/`: typecheck, 174 tests in 28 files, Next build, `check:client` and `check:css`. All exit 0.
+- **Per fix SHA:** `e8fcc26` 1,644, `0e590be` 1,647, `fcb729d` 1,647, with web at 174 throughout.
+- **Runner:** report and `--enforce` both exit 0. Each measured 3,387 contrast samples, none below the floor or unread, lowest 5.73:1 for POSTPONED in `harness-light-360`.
+- **Browser matrix:** 96 of 96 cells pass with `scrollWidth === innerWidth`. Poster states 80 of 80 are overflow-free. Motion-off face strips are identical to 1cc5b90 in 12 of 12 pairs.
+- **Not verified:**
+  - VoiceOver on macOS and iOS
+  - a real phone
+  - Safari, WebKit and Firefox
+  - the Vercel preview itself and the local production smoke proof
+  - Pass 2's 90/90 cover-press variants and 42 Table-state cells as separate figures
+  - findings 6–9 in a browser
+  - face strips against the base
+
+### Risks and accepted costs
+- **Leave, in Chromium:** a mouse click on a marker focuses it, so the Rack stays paused until the reader clicks elsewhere (12 s held, then it resumed). Safari doesn't focus buttons on click, so check this in the sitting.
+- **Motion-off control row:** with motion off, the hidden hint keeps its box. Stop and the markers sit about 56 px left of where 1cc5b90 centred them, with 111 px of empty row on the right. That keeps Stop under the finger across Stop and Start. In the disk files, where nothing can toggle, the row is always drawn this way.
+- **Disk files:** a reader can't start motion in them.
+- **No new exposure for the betting track's Step 0.**
+
+### For the PM seat
+- Skill note: an `evaluateOnNewDocument` recorder must observe `document`, because `documentElement` is null when the document is created. Mine failed this way on its first run, and the empty log looked like a pass.
+- Pair every motion-off face strip with a strip of the control row.
+
+### Questions for you
+1. **Leave / Hold / Never?** How does a soft pause end? Leave is built as described and reversible.
+2. **Fresh / Resume?** What happens after Stop then Start? Fresh is built: Start shows the resting book and gives a full 9 s hold.
+3. **Keep / Centre?** Should the motion-off control row stay where it is, or centre?
+4. **Yes / No?** Do you confirm APG, Resume, Still-both and the two-file scope extension as yours? They reached me through the PM seat.
+5. **Markers / Buttons?**
+6. **220 / 320 / 450 / 600?**
+7. **Yes / No?** Does the crossing read as one event?
+8. **Wrap / Edit?**
+9. **Keep / Trim?**
+10. **Approve / Edit?** One answer for each of the six copy items:
+    - "The Rack"
+    - "Open {slide name}"
+    - "Show {slide name}"
+    - "‹ Back to the week"
+    - "Filters hide every matchday book this week."
+    - "No further kickoffs in the snapshot through {window end}."
+11. **Merge / Hold?** After the sitting.
+
+### Handoff block
+This runs from my clone. Both co-author trailers are included as the skill asks. bf7b82b, PR 5's squash, carried only Codex's.
+````bash
+cd /Users/benicheni/code/kickoff-pr393-pass25
+gh pr ready 393
+gh pr merge 393 --squash --match-head-commit 75ee995c0f489c40be67a5a0a238321b839f1e2e --subject "Overhaul PR 6: the Rack turns (#393)" --body "$(cat <<'EOF'
+On Poster Fixtures the Rack makes one pass through the week's dated
+books and The Register: a 9 s first hold, 7 s holds and 1.8 s
+crossings in transform and opacity, ending on the resting book.
+Hover, touch and focus pause it in place and it resumes with the hold
+it had left; "Stop rotation" stays on the button, and one press turns
+motion off for the page. Markers, a swipe and the faces move it; a
+centre tap opens the day's volume with every filtered fixture and both
+clocks, and the line back closes it. The shelf's spines open and
+switch volumes, and The Register opens the Table. Both disk files ship
+still and cannot start motion.
+
+Take main through 2bdf996, its review records and snapshot.
+
+Codex built the change and its fixes and ran Pass 2. Claude Code ran
+Pass 1 on Fable 5.2 and Pass 2.5 on Opus 5.5. At 75ee995 every root
+and web gate passed, 1,648 tests in 123 files and 174 in 28, with
+hosted verify green. The enforced browser run measured 3,387 contrast
+samples in 388 cells, none below the floor or unread.
+
+Co-authored-by: Codex <noreply@openai.com>
+Co-authored-by: Claude <noreply@anthropic.com>
+EOF
+)"
+git fetch origin overhaul/second-edition
+SQUASH=$(git rev-parse origin/overhaul/second-edition)
+git rev-parse "$SQUASH^1"        # expect 1f947af5728fdaaad619322c9d6f6e8e32b63549
+git rev-parse "$SQUASH^{tree}"   # expect 4b09558fd46ab79ed9f96040f1fcc5d8961dd289
+git merge-tree --write-tree "$SQUASH^1" 75ee995c0f489c40be67a5a0a238321b839f1e2e   # must equal the line above if the base moved
+git checkout overhaul/second-edition && git pull --ff-only
+npm ci && npm run typecheck && npm test && npm run build && npm run build:single && npm run build:offline && node node_modules/tsx/dist/cli.mjs scripts/scan-offline-bundle.ts
+cd web && npm ci && npm run typecheck && npm test && npm run build && npm run check:client && npm run check:css
+````
+
+### Left running
+- **Folders:**
+  - `kickoff-pr393-pass25`: the tip
+  - `kickoff-pr393-pass25-h1`: 1cc5b90
+  - `kickoff-pr393-pass25-mid`: a fourth worktree I added for the per-commit gates, now back at the tip
+  - `kickoff-pr393-pass25-base`: 1f947af, never installed or used
+  - Receipts in `kickoff-receipts/pr393/pass25/`
+- **Servers:** the tip on 7594 (Vite preview), 7595 (Next) and 7596 (dev harness), and 1cc5b90 on 7694–7696.
+- **Until when:** your phone and VoiceOver sitting, or 9:00 PM EST tonight, whichever comes first.
+- Codex's folders and its servers on 7576–7578 and 7676–7678 are untouched.
+- To stop mine:
+```bash
+for p in 7594 7595 7596 7694 7695 7696; do lsof -tiTCP:$p -sTCP:LISTEN | xargs kill; done
+```
+`````
+
+## Pass 3: Beni's rulings and the merge (Fri 27 Nov 2026, 9:57 to 10:39 AM EST)
+
+**The desk questions.** At 9:57 AM EST, Beni answered the four questions from the brief that need
+no device, all as the PM seat recommended:
+
+| # | Question | Beni |
+|---|---|---|
+| 1 | Leave / Hold / Never | **Leave** |
+| 2 | Fresh / Resume | **Fresh** |
+| 3 | Keep / Centre | **Keep** |
+| 4 | Confirm APG, Resume, "Still, both" and the two-file scope extension as his own | **Yes** |
+
+Each matches the build, so Leave and Fresh stop being provisional. The PM seat posted these as
+[Pass 3, part 1](https://github.com/BeniCheni/kickoff/pull/393#issuecomment-7221455119), on
+Beni's "Yes, post".
+
+**The sitting.** Beni sat on the phone and with VoiceOver against the restarted servers and both
+disk files. At about 10:36 AM EST he answered "220, Yes, Wrap, Markers, Keep, all Approve,
+Merge":
+
+| Question | Beni |
+|---|---|
+| 220 / 320 / 450 / 600 | **220** |
+| Yes / No (one event) | **Yes** |
+| Wrap / Edit | **Wrap** |
+| Markers / Buttons | **Markers** |
+| Keep / Trim | **Keep** |
+| Approve / Edit for each of the six copy items | **Approve**, all six |
+| Merge / Hold | **Merge** |
+
+He reported no concern with how the disabled band and Rack controls announce in the disk files.
+Every answer matches the build at `75ee995`, so no code change followed. The PM seat posted these
+as [Pass 3, part 2](https://github.com/BeniCheni/kickoff/pull/393#issuecomment-7222272353).
+
+**The merge.** On Beni's "Yes, merge it", the PM seat ran the handoff block's steps from its own
+clone, `kickoff-pr393-pm`. It did not use the Pass 2.5 seat's clone, which belongs to another
+session. At 10:38 AM EST, with the head still `75ee995` and CLEAN and all five hosted checks
+green:
+- `gh pr ready 393`;
+- `gh pr merge 393 --squash --match-head-commit 75ee995c0f489c40be67a5a0a238321b839f1e2e`, with
+  the brief's subject and body and both co-author trailers.
+
+#393 squash-merged into `overhaul/second-edition` as `0b924ff`:
+- `git rev-parse 0b924ff^1` prints `1f947af`;
+- `git rev-parse 0b924ff^{tree}` and `git rev-parse 75ee995^{tree}` both print `4b09558f`, the
+  tree the brief expected, so the integration branch holds the reviewed bytes;
+- no tag, version or CHANGELOG entry was made;
+- `main` and Pages are unchanged.
+
+In a clean worktree at `0b924ff` (`~/code/kickoff-pr393-landing`), after `npm ci`, every gate
+exited 0:
+- at the root: typecheck; `npm test`, 1,648 tests in 123 files; `build`, `build:single` and
+  `build:offline`; the offline scan, 22 markers;
+- in `web/`: typecheck; `npm test`, 174 tests in 28 files; `build`, `check:client` and
+  `check:css`.
+
+The logs are in `kickoff-receipts/overall-planner/pr393-pass3/landing/`. The PM seat recorded
+the landing on the PR at 10:39 AM EST:
+https://github.com/BeniCheni/kickoff/pull/393#issuecomment-7222328634.
+
+**Lessons for the skill**, from the three retros. These are to be filed in the ideas file's
+`## Process notes` once #396, which edits that file, has landed:
+- **Real input for a new control's first press.** Make it the matrix's own cell, with the
+  control's box read before and after. Scripted `el.click()` and `fireEvent.click` skip the
+  hover, touch and focus that ran first, and findings 1 to 3 lived in that gap (Pass 1, Pass 2
+  and Pass 2.5).
+- **Compare pixels against the merge commit when the branch merged a newer snapshot.** Pass 1
+  lost a cell to Wednesday's cover changing words.
+- **The classic-scrollbar cell needs `--hide-scrollbars` removed.** The runner does this; the
+  skill's matrix note does not say so.
+- **The severity scale has no line for a control that does something other than its name.**
+  Pass 1 rated finding 1 high on that ground. Pass 2 and Pass 2.5 read medium, as a layout
+  defect.
+- **Observe `document`, not `document.documentElement`, from `evaluateOnNewDocument`.** The
+  element is null when the document is created, and an empty log looks like a pass. Fail a probe
+  on its own console error (Pass 2.5).
+- **Pair every motion-off face strip with a strip of the control row** (Pass 2.5).
