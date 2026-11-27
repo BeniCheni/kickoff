@@ -190,9 +190,10 @@ seat. The same note corrected one line of the Pass 1.5 brief, which had said the
 scope question and Beni's ruling on it.
 
 On the morning of 27 Nov, every review server was down. At the PM seat's request, Codex
-restarted the tip's three production servers from `kickoff-pr6-recovery` on 7576–7578 for
-Beni's sitting. It first confirmed the checkout was clean at `75ee995`. The PM seat fetched each
-of the three links at 10:35 AM EST and got 200.
+restarted the tip's three servers from `kickoff-pr6-recovery` on 7576–7578 for Beni's
+sitting: the Vite preview, the Next production server and the Vite development harness. It
+first confirmed the checkout was clean at `75ee995`. The PM seat fetched each of the three links
+at 10:35 AM EST and got 200.
 
 ## Pass 2.5's Executive Summary Brief, as delivered (Thu 26 Nov 2026, 12:49 PM EST)
 
@@ -376,9 +377,8 @@ Each matches the build, so Leave and Fresh stop being provisional. The PM seat p
 [Pass 3, part 1](https://github.com/BeniCheni/kickoff/pull/393#issuecomment-7221455119), on
 Beni's "Yes, post".
 
-**The sitting.** Beni sat on the phone and with VoiceOver against the restarted servers and both
-disk files. At about 10:36 AM EST he answered "220, Yes, Wrap, Markers, Keep, all Approve,
-Merge":
+**The sitting.** Beni sat on the phone and with VoiceOver against the restarted servers. At
+about 10:36 AM EST he answered "220, Yes, Wrap, Markers, Keep, all Approve, Merge":
 
 | Question | Beni |
 |---|---|
@@ -427,7 +427,7 @@ https://github.com/BeniCheni/kickoff/pull/393#issuecomment-7222328634.
   hover, touch and focus that ran first, and findings 1 to 3 lived in that gap (Pass 1, Pass 2
   and Pass 2.5).
 - **Compare pixels against the merge commit when the branch merged a newer snapshot.** Pass 1
-  lost a cell to Wednesday's cover changing words.
+  traced four differing face-strip pairs to Wednesday's changed cover.
 - **The classic-scrollbar cell needs `--hide-scrollbars` removed.** The runner does this; the
   skill's matrix note does not say so.
 - **The severity scale has no line for a control that does something other than its name.**
