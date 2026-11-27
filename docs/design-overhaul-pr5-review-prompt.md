@@ -682,13 +682,27 @@ git rev-parse b166339:src/data 2e46532:src/data
 rm -rf "$scratch"
 ```
 
+## Beni's rulings on the record PR (#396) — Fri 27 Nov 2026
+
+After [#396's Pass 2.5](https://github.com/BeniCheni/kickoff/pull/396#issuecomment-7222544043),
+Beni gave four answers in the PM seat's chat:
+
+1. **Yes.** His 26 Nov answers stand: Q1 “Yes, fold them” for the review skill, `CLAUDE.md`
+   and `README.md`, and Q2 “Release” for the Poster clock Tier 3 entry.
+2. **Release.** On Pass 1's Release-or-Glob question, Beni kept the Poster clock entry with
+   the release carry below.
+3. **Fold.** This supersedes the earlier “Later” for `.claude/rules/sync.md`. The record PR
+   qualifies the dry-run guarantee and links dispatchers to the review skill's write-gate
+   check. Ideas row 141 keeps its existing publication-versus-delivery wording.
+4. **Yes.** `web/src-allowlist.mjs` joins the Tier 3 list in the record PR.
+
 ## Poster clock Tier 3 carry for the release
 
-Beni's 26 Nov “Release” ruling supersedes Pass 3's ruling 4 gloss (“The record PR adds…”) and
-the Tier 3 line under “The record PR owes” above. The PM seat owns the carry. The first PR to
-bring `tests/dom/posterClock.test.tsx` to `main`, expected to be the v0.6.0 release from
-`overhaul/second-edition`, adds the path to `AGENTS.md` under “Dates, status, fixture order and
-standings”, immediately after `tests/dom/poster.test.tsx`, and raises the pin in
+Beni's 26 Nov Q2 “Release” ruling, confirmed on 27 Nov, supersedes Pass 3's ruling 4 gloss
+(“The record PR adds…”) and the Tier 3 line under “The record PR owes” above. The PM seat owns
+the carry. The first PR to bring `tests/dom/posterClock.test.tsx` to `main`, expected to be the
+v0.6.0 release from `overhaul/second-edition`, adds the path to `AGENTS.md` under “Dates, status,
+fixture order and standings”, immediately after `tests/dom/poster.test.tsx`, and raises the pin in
 `tests/tier.test.ts` by one. The test requires each entry to match a tracked file.
 Until the entry lands on `main`, a PR into any branch that changes only
 `tests/dom/posterClock.test.tsx` computes Tier 2 because `tier.yml` reads `main`'s list for every PR.
