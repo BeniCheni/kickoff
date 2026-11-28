@@ -45,7 +45,7 @@ describe('Tier 3 list', () => {
     const introduction = section.split(/^-/m)[0]!
     expect([...introduction.matchAll(/`([^`\r\n]+)`/g)].map((match) => match[1])).toEqual(['**', '*'])
     const entries = parseTier3Rules(agents).filter(({ marker }) => !marker).map(({ path }) => path)
-    expect(entries).toHaveLength(94)
+    expect(entries).toHaveLength(95)
     expect(new Set(entries).size).toBe(entries.length)
     const tracked = execFileSync('git', ['ls-files', '-z'], { cwd: new URL('..', import.meta.url), encoding: 'utf8' }).split('\0')
     for (const entry of entries) {

@@ -253,7 +253,10 @@ then Added / Changed / Fixed, then **Deliberately not done**.
   report the gap as a finding for the builder to fill. Leave the generated snapshot alone.
 - **A workflow changed:** the reviewer reads the builder's run and its log. The builder can
   dispatch `gh workflow run sync.yml --ref <branch> -f dry_run=true` to test sync. The reviewer
-  can dispatch its own dry run on the PR branch. A dry run makes no repository or PR changes.
+  can dispatch its own dry run on the PR branch. On `main`'s workflow a dry run makes no
+  repository, PR or Actions API writes. A dispatch runs the branch's copy. Before dispatching,
+  check in the diff that every write step (repository, PR or Actions API) still requires
+  `dry_run == 'false'`.
   `workflow_dispatch` resolves the workflow path on `main`, so a new workflow file must land
   there first. Since v0.4.0 a real dispatch on any ref but `main` fails at "Publish only
   from main" before the fetch and opens no PR. Use `dry_run=true` on a feature branch.

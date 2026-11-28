@@ -30,8 +30,8 @@ of it as unreliable:
    the skill also carries the **six-pass 360 cycle** for a Tier 3 PR — Pass 0 brief →
    1 cold review → 1.5 rebuttal brief → 2 rebuttal →
    2.5 synthesis and Executive Summary Brief → 3 Beni's adjudication. Pass 2.5 scores the gate
-   and escalates. The merge takes Beni's word. The pipeline skill's B1.6 remains the
-   PM-side copy of the same cycle.
+   and escalates. The merge takes Beni's word. `/kickoff-pr-review` owns this cycle.
+   Where the pipeline skill's B1.6 differs, `/kickoff-pr-review` wins.
 
 Rules that earned their place: **spec precedence is template > design brief > implementation
 prompt** (note every resolution in the PR); every prompt is delivered in the chat message in a

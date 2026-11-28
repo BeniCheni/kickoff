@@ -361,7 +361,7 @@ The Tier 2 reviewer runs `/kickoff-pr-review`, re-reads each round, and merges o
 | 1.5 · Rebuttal brief | The seat that briefs the review | Each finding packaged for the builder to accept, contest, or accept-but-contest-the-characterisation |
 | 2 · Rebuttal | The builder | Its answers, in code |
 | 2.5 · Synthesis | A seat that wrote neither the build nor the fixes | Every number re-run at the tip, and a merge gate |
-| 3 · Adjudication | A human | Rules on whatever is still contested, and clicks merge |
+| 3 · Adjudication | A human | Rules on whatever is still contested, and gives the word to merge |
 
 Why bother with a rebuttal? Because on the first full run the builder overturned the reviewer on
 a live technical claim: the reviewer said a malformed team id "can only miss the join"; the

@@ -64,7 +64,7 @@ Each entry is anchored at the repository root, so a bare name names only the roo
 - **Snapshot and workflows:** `src/data/**`, `docs/sync-digest.md`, `.github/workflows/**`.
 - **Sync scripts:** `scripts/*sync*`, `scripts/diff.ts`, `scripts/publish-gate.ts`,
   `scripts/ensure-pages.sh`, `scripts/validate.ts`, `scripts/window.ts`, `scripts/providers/**`.
-- **Verification gates:** `vite.config.ts`, `web/vitest.config.ts`,
+- **Verification gates:** `vite.config.ts`, `web/vitest.config.ts`, `web/src-allowlist.mjs`,
   `scripts/scan-offline-bundle.ts`, `scripts/vercel-smoke.mjs`, `web/scripts/check-client.mjs`,
   `web/scripts/check-css.mjs`, `scripts/tier.ts`, `tests/tier.test.ts`, `tests/fixtures/tier/**`.
 - **Fixture schema, clocks and data rules:** `docs/HONESTY.md`, `src/lib/schema.ts`,

@@ -605,3 +605,104 @@ Still open:
   - the Tier 3 line;
   - the Git fixture tests' time budgets and `fixtureHonesty`'s scan of `lensSelectors.ts`, both
     as ideas.
+
+## Correction to #377's PR body (N3) — Thu 26 Nov 2026
+
+Beni ruled “Record” on 24 Nov. This corrects the figures in the merged PR body for the reviewed
+head, `b166339`. [Pass 2.5 raised N3](https://github.com/BeniCheni/kickoff/pull/377#issuecomment-7152237436).
+
+- The merged snapshot has **1,377 fixtures** in both `meta.json`'s `total` and the fixture array,
+  down from 1,396 at `81101fe`.
+- In “Snapshot and design record”, Saturday's Merged count is **23** and its Change is **−1**.
+  The Matchdays row is **105** and **−4**. The other slots are Sunday 24, domestic midweek 20,
+  Friday 12, Monday 11, Europa / Conference 6, first Champions League night 5 and second
+  Champions League night 4. The deltas compare with the body's integration base, `45b7bc6`.
+- Decision 4's “All 106 dates” is **105 dates** at the reviewed head.
+- “Inputs” also includes the second merge, `ab93663` (parents `81101fe` and `2e46532`). It took
+  `2e46532`'s snapshot, whose window starts 2026-10-25, one day later than `81101fe`'s 2026-10-24
+  start, so Sat 24 Oct left the window. The head and `2e46532` share the `08252ff` data tree.
+
+The recount gives **20 fully closed days and 18 mixed-time days** at `b166339`. Of the 20 closed
+days, 19 are shared with `81101fe`. Sat 24 Oct left the window and Tue 24 Nov closed.
+`posterBooks` reports closure across the whole day. `kickoffBounds` and `unsetKickoffs` identify
+days with both a league-set kickoff and an unset kickoff eligible to appear in the Poster.
+
+Reproduce the counts after `npm ci`. Fetch PR #377's head ref to make the pre-squash commits
+available. This uses `b166339`'s product selectors for all three snapshots and all competition
+filters enabled.
+
+```bash
+git fetch origin refs/pull/377/head
+scratch=$(mktemp -d)
+git archive b166339 src/lib src/data | tar -x -C "$scratch"
+ln -s "$PWD/node_modules" "$scratch/node_modules"
+for ref in 45b7bc6 81101fe; do
+  mkdir "$scratch/${ref}"
+  git archive "$ref" src/data | tar -x -C "$scratch/${ref}"
+done
+cat > "$scratch/count.ts" <<'TS'
+import { readFileSync } from 'node:fs'
+import { COMPETITION_KEYS } from './src/lib/competitions'
+import { sortForDisplay } from './src/lib/fixtures'
+import { bookWeek, kickoffBounds, posterBooks, unsetKickoffs } from './src/lib/lensSelectors'
+import { fixturesFileSchema, metaSchema, type Fixture } from './src/lib/schema'
+import { brooklynDate, startOfWeek } from './src/lib/time'
+
+const all = new Set(COMPETITION_KEYS)
+for (const [ref, dir] of [
+  ['45b7bc6', './45b7bc6/src/data/'],
+  ['81101fe', './81101fe/src/data/'],
+  ['b166339', './src/data/'],
+]) {
+  const read = (file: string) => JSON.parse(readFileSync(new URL(dir + file, import.meta.url), 'utf8'))
+  const fixtures = fixturesFileSchema.parse(read('fixtures.json'))
+  const meta = metaSchema.parse(read('meta.json'))
+  const byDate = new Map<string, Fixture[]>()
+  for (const fixture of fixtures) {
+    const date = brooklynDate(fixture.kickoffUtc)
+    if (!byDate.has(date)) byDate.set(date, [])
+    byDate.get(date)!.push(fixture)
+  }
+  for (const day of byDate.values()) sortForDisplay(day)
+  const weeks = new Set([...byDate.keys()].map(startOfWeek))
+  const books = [...weeks].flatMap(week => posterBooks(bookWeek(week, byDate), all))
+  const slots = Object.fromEntries(['sun', 'sat', 'midweek', 'fri', 'mon', 'europa',
+    'firstNight', 'secondNight'].map(slot => [slot, books.filter(book => book.slot === slot).length]))
+  const mixed = books.filter(({ shown }) => kickoffBounds(shown) && unsetKickoffs(shown) > 0)
+  console.log(ref, JSON.stringify({
+    metaTotal: meta.total, fixtures: fixtures.length, dates: byDate.size, matchdays: books.length,
+    windowFrom: meta.window.from, hasOct24: byDate.has('2026-10-24'), slots,
+    closed: books.filter(book => book.closed).length, mixed: mixed.length,
+  }))
+}
+TS
+./node_modules/.bin/tsx "$scratch/count.ts"
+git show --no-patch --format='%h %P' ab93663
+git rev-parse b166339:src/data 2e46532:src/data
+rm -rf "$scratch"
+```
+
+## Beni's rulings on the record PR (#396) — Fri 27 Nov 2026
+
+After [#396's Pass 2.5](https://github.com/BeniCheni/kickoff/pull/396#issuecomment-7222544043),
+Beni gave four answers in the PM seat's chat:
+
+1. **Yes.** His 26 Nov answers stand: Q1 “Yes, fold them” for the review skill, `CLAUDE.md`
+   and `README.md`, and Q2 “Release” for the Poster clock Tier 3 entry.
+2. **Release.** On Pass 1's Release-or-Glob question, Beni kept the Poster clock entry with
+   the release carry below.
+3. **Fold.** This supersedes the earlier “Later” for `.claude/rules/sync.md`. The record PR
+   qualifies the dry-run guarantee and links dispatchers to the review skill's write-gate
+   check. Ideas row 141 keeps its existing publication-versus-delivery wording.
+4. **Yes.** `web/src-allowlist.mjs` joins the Tier 3 list in the record PR.
+
+## Poster clock Tier 3 carry for the release
+
+Beni's 26 Nov Q2 “Release” ruling, confirmed on 27 Nov, supersedes Pass 3's ruling 4 gloss
+(“The record PR adds…”) and the Tier 3 line under “The record PR owes” above. The PM seat owns
+the carry. The first PR to bring `tests/dom/posterClock.test.tsx` to `main`, expected to be the
+v0.6.0 release from `overhaul/second-edition`, adds the path to `AGENTS.md` under “Dates, status,
+fixture order and standings”, immediately after `tests/dom/poster.test.tsx`, and raises the pin in
+`tests/tier.test.ts` by one. The test requires each entry to match a tracked file.
+Until the entry lands on `main`, a PR into any branch that changes only
+`tests/dom/posterClock.test.tsx` computes Tier 2 because `tier.yml` reads `main`'s list for every PR.

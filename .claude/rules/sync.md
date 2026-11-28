@@ -96,9 +96,12 @@ A quiet check inside 20 hours fetches, reports, and stops; the run is green and 
 stamp does not move. A legacy `standings=failed` report fails closed. Quiet commits, when
 they do publish, say `sync: verified unchanged` and carry the full report line; all three
 generated files move together to preserve the snapshot boundary and rolling-window counts.
-A failed or dry run publishes nothing. The header stamp advances after a publishing PR
-merges and Pages deploys, or a local checkout pulls. The schedule does not promise a
-delivery interval. `STATUS_SUSPENDED`, `STATUS_ABANDONED`, `STATUS_FINAL_AET` and
+A failed run publishes nothing. A dry run of `main`'s workflow publishes nothing. A dispatch
+runs the branch's copy. Before dispatching on a feature branch, follow the
+[review skill's write-gate check](../skills/kickoff-pr-review/SKILL.md#4-dynamic-pass--scoped-to-what-actually-changed).
+The header stamp advances after a publishing PR merges and Pages deploys, or a local checkout
+pulls. The schedule does not promise a delivery interval. `STATUS_SUSPENDED`,
+`STATUS_ABANDONED`, `STATUS_FINAL_AET` and
 `STATUS_FINAL_PEN` are stored statuses (`suspended`, `abandoned`, `after_extra_time`,
 `after_penalties`). Every other unmapped ESPN status still aborts the snapshot with exit 2
 before any write. `STATUS_SHOOTOUT`, and any in-progress extra-time or shootout name, stay
