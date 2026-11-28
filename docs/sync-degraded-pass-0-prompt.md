@@ -1,4 +1,4 @@
-# PR #358 — the degraded-standings sync test's review cycle, Pass 0 to the merge (27 Nov 2026, TZ=America/New_York)
+# PR #358 — degraded-standings sync review, Pass 0 to the merge (27 Nov 2026, TZ=America/New_York)
 
 Written by the Overall Planner seat (Claude Code, Opus 5.5) at about 9:40 PM EST on Fri 27 Nov
 2026, on Beni's "Yes, write it". Claude built #358, so Claude does not write the Pass 1 opener.
