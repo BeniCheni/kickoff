@@ -15,6 +15,7 @@ releases.
 ### Fixed
 
 - Writing about the app outside its source no longer changes its stylesheet.
+- Sync verification accepts a valid snapshot after the Champions League table becomes unavailable.
 
 ## [0.5.5] — 2026-11-14
 

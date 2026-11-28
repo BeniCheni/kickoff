@@ -3,6 +3,8 @@ import { spawnSync } from 'node:child_process'
 import { runSync } from '../scripts/sync'
 import { normalizeEvent } from '../scripts/providers/espn'
 import { renderSyncPrBody } from '../scripts/sync-pr-body'
+import { LEAGUE_TABLES } from '../src/lib/competitions'
+import { standingsFileSchema } from '../src/lib/schema'
 import { addDays, todayIso } from '../src/lib/time'
 
 const mocks = vi.hoisted(() => ({ fixtures: vi.fn(), standings: vi.fn(), write: vi.fn(), read: vi.fn(), exists: vi.fn() }))
@@ -19,6 +21,7 @@ vi.mock('node:fs', async (original) => ({
 }))
 
 const realFs = await vi.importActual<typeof import('node:fs')>('node:fs')
+const { normalizeStandingEntry } = await vi.importActual<typeof import('../scripts/providers/espn-standings')>('../scripts/providers/espn-standings')
 const events = JSON.parse(realFs.readFileSync(new URL('./fixtures/espn-ligue1-md1.json', import.meta.url), 'utf8')).events
 const fixture = normalizeEvent(events[0], 'ligue1', '2026-09-05T12:00:00.000Z')!
 const table = JSON.parse(realFs.readFileSync(new URL('../src/data/standings.json', import.meta.url), 'utf8'))
@@ -72,16 +75,25 @@ describe('the sync entry point — fixtures + standings are one authoritative sn
     expect(vi.mocked(console.error).mock.calls.flat().join('\n')).toContain('fetchedAt')
   })
 
-  // The committed snapshot is generated, so its degraded list is not this test's to assume:
-  // once the UCL league phase ends, a legitimate sync writes `degraded: ['ucl']` with no UCL
-  // table. Each case states its own availability, built from the committed rows, and the
-  // report must name exactly that list.
-  const { degraded: _committed, ...available } = table
-  const { ucl: _ucl, ...withoutUcl } = available.leagues
+  // The committed snapshot is generated, so neither its degraded list nor its UCL table is this
+  // test's to assume: once the UCL league phase ends, a legitimate sync writes `degraded: ['ucl']`
+  // with no UCL table. The available case takes its UCL table from the checked-in ESPN
+  // recording, normalized by the provider's own row transform; the degraded case removes that
+  // table and states the marker. The report must name exactly each case's list.
+  const recordedUcl = JSON.parse(realFs.readFileSync(new URL('./fixtures/espn/ucl-standings.json', import.meta.url), 'utf8'))
+  const uclRows = recordedUcl.children.find((child: any) => child.name === 'League Phase').standings.entries
+    .map(normalizeStandingEntry).sort((a: any, b: any) => a.rank - b.rank)
+  const { degraded: _committed, leagues: { ucl: _committedUcl, ...domestic }, ...committed } = table
+  const available = standingsFileSchema.parse({ ...committed, leagues: { ...domestic, ucl: uclRows } })
+  const domesticKeys = Object.keys(LEAGUE_TABLES).filter((key) => key !== 'ucl').sort()
   it.each([
-    { state: 'every table available', standings: available, degraded: 'none' },
-    { state: 'UCL degraded after its league phase', standings: { ...available, leagues: withoutUcl, degraded: ['ucl'] }, degraded: 'ucl' },
-  ])('waits for standings validation before the first write, then writes the complete snapshot ($state)', async ({ standings, degraded }) => {
+    { state: 'every table available', standings: available, ucl: LEAGUE_TABLES.ucl!.teams, degraded: 'none' },
+    { state: 'UCL degraded after its league phase', standings: { ...available, leagues: domestic, degraded: ['ucl'] }, ucl: undefined, degraded: 'ucl' },
+  ])('waits for standings validation before the first write, then writes the complete snapshot ($state)', async ({ standings, ucl, degraded }) => {
+    // Each case's availability is stated, not inherited from the generated file.
+    expect(Object.keys(standings.leagues).sort()).toEqual(ucl ? [...domesticKeys, 'ucl'].sort() : domesticKeys)
+    expect(standings.leagues.ucl?.length).toBe(ucl)
+    if (ucl) expect(new Set(standings.leagues.ucl!.map((row: any) => row.teamId)).size).toBe(ucl)
     mocks.standings.mockImplementation(async () => {
       expect(mocks.write).not.toHaveBeenCalled()
       return structuredClone(standings)
